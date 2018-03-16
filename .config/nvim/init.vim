@@ -1,0 +1,2 @@
+set termguicolors
+source ~/.vimrc
