@@ -77,6 +77,37 @@ if executable('javascript-typescript-stdio')
 endif
 
 " Language Server configuration for python
-let g:LanguageClient_serverCommands.python = ['pyls']
-autocmd FileType python nnoremap <buffer>
+if executable('javascript-typescript-stdio')
+  let g:LanguageClient_serverCommands.python = ['pyls']
+  autocmd FileType python setlocal omnifunc=LanguageClient#complete
+  " <leader>lf to fuzzy find the symbols in the current document
+  autocmd FileType python nnoremap <buffer>
+    \ <leader>lf :call LanguageClient_textDocument_documentSymbol()<cr>
+  " <leader>ld to go to definition
+  autocmd FileType python nnoremap <buffer>
+    \ <leader>ld :call LanguageClient_textDocument_definition()<cr>
+  " <leader>lh for type info under cursor
+  autocmd FileType python nnoremap <buffer>
+    \ <leader>lh :call LanguageClient_textDocument_hover()<cr>
+  " <leader>lr to rename variable under cursor
+  autocmd FileType python nnoremap <buffer>
     \ <leader>lr :call LanguageClient_textDocument_rename()<cr>
+endif
+
+" Language Server configuration for dart
+if executable('dart-language-server')
+  let g:LanguageClient_serverCommands.dart = ['dart-language-server']
+  autocmd FileType dart setlocal omnifunc=LanguageClient#complete
+  " <leader>lf to fuzzy find the symbols in the current document
+  autocmd FileType dart nnoremap <buffer>
+    \ <leader>lf :call LanguageClient_textDocument_documentSymbol()<cr>
+  " <leader>ld to go to definition
+  autocmd FileType dart nnoremap <buffer>
+    \ <leader>ld :call LanguageClient_textDocument_definition()<cr>
+  " <leader>lh for type info under cursor
+  autocmd FileType dart nnoremap <buffer>
+    \ <leader>lh :call LanguageClient_textDocument_hover()<cr>
+  " <leader>lr to rename variable under cursor
+  autocmd FileType dart nnoremap <buffer>
+    \ <leader>lr :call LanguageClient_textDocument_rename()<cr>
+endif
