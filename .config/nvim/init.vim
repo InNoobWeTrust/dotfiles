@@ -50,7 +50,7 @@ let g:oceanic_next_terminal_italic = 1
 set number
 set binary
 set list
-set listchars=eol:$,tab:▷·,trail:…,extends:»,precedes:«,space:·
+set listchars=eol:$,tab:▷␣,trail:…,extends:»,precedes:«,space:␣,nbsp:☠
 
 """ Language servers
 " Automatically start language servers.
