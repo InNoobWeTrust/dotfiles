@@ -1,4 +1,4 @@
-" Vim-plug configurations
+"""" Vim-plug configurations
 if empty(glob('~/.config/nvim/autoload/plug.vim'))
   silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -10,7 +10,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
 " Fuzzy selection
 Plug 'junegunn/fzf'
-" IDE-like autocompletion without
+" IDE-like autocompletion
 Plug 'roxma/nvim-completion-manager'
 Plug 'mileszs/ack.vim'
 Plug 'corntrace/bufexplorer'
@@ -20,7 +20,6 @@ Plug 'scrooloose/snipmate-snippets'
 Plug 'scrooloose/syntastic'
 Plug 'ryanoasis/vim-devicons'
 Plug 'amix/open_file_under_cursor.vim'
-Plug 'altercation/vim-colors-solarized'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'groenewege/vim-less'
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
@@ -31,28 +30,43 @@ Plug 'airblade/vim-gitgutter'
 Plug 'nvie/vim-flake8', { 'for': 'python' }
 Plug 'maxbrunsfeld/vim-yankstack'
 Plug 'itchyny/lightline.vim'
+"" Language specific plugins
 Plug 'udalov/kotlin-vim', { 'for': 'kotlin' }
 Plug 'davidhalter/jedi-vim', { 'for': 'python'}
 Plug 'dart-lang/dart-vim-plugin', { 'for': 'dart' }
+"" Themes plugins
 Plug 'mhartington/oceanic-next'
+Plug 'altercation/vim-colors-solarized'
+Plug 'morhetz/gruvbox'
 call plug#end()
 
 if (has("termguicolors"))
  set termguicolors
 endif
-" Theme
-syntax enable
-:silent! colorscheme OceanicNext
-syntax on
-let g:oceanic_next_terminal_bold = 1
-let g:oceanic_next_terminal_italic = 1
 
+"""" Theme section
+syntax enable
+syntax on
+"" Oceanic
+"colorscheme OceanicNext
+"let g:oceanic_next_terminal_bold = 1
+"let g:oceanic_next_terminal_italic = 1
+"" GruvBox
+highlight Normal ctermbg=black ctermfg=white
+set background=dark
+let g:gruvbox_italic=1
+colorscheme gruvbox
+let g:gruvbox_contrast_dark = 'hard'
+"""" End theme section
+
+"""" Misc section
 set number
 set binary
-"set list
+set list
 set listchars=eol:$,tab:▷—,trail:…,extends:»,precedes:«,space:␣,nbsp:☠
+"""" End misc section
 
-""" Language servers
+"""" Language servers section
 " Automatically start language servers.
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_serverCommands = {}
