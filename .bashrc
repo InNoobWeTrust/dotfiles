@@ -142,6 +142,7 @@ ex ()
 export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1;41;5:votes=1;44:dsc=0:other=1;35"
 
 
+
 ######### User config
 
 # Alias definitions.
@@ -175,11 +176,21 @@ export GTK_IM_MODULE=ibus
 export XMODIFIERS=@im=ibus
 export QT_IM_MODUL=ibus
 
+# Set neovim as default editor
+if [[ $(which nvim) ]]; then
+    export VISUAL="$(which nvim)"
+    export EDITOR="$(which nvim)"
+fi
+
 # Add flutter to PATH
-export PATH="$HOME/flutter/bin:$PATH"
+if [ -f $HOME/flutter/bin ]; then
+    export PATH="$HOME/flutter/bin:$PATH"
+fi
 
 # Add pub cache to PATH
-export PATH="$HOME/.pub-cache/bin:$PATH"
+if [ -f $HOME/.pub-cache/bin ]; then
+    export PATH="$HOME/.pub-cache/bin:$PATH"
+fi
 
 # Activate nvm
 export NVM_DIR="$HOME/.nvm"
@@ -187,5 +198,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # added by Miniconda3 installer
-export PATH="$HOME/miniconda3/bin:$PATH"
+if [ -f $HOME/miniconda3/bin ]; then
+    export PATH="$HOME/miniconda3/bin:$PATH"
+fi
 ######### End user config
