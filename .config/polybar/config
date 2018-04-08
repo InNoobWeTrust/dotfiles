@@ -24,9 +24,9 @@ font-1 = "FontAwesome5Free:style=Solid:size=12"
 font-2 = "FontAwesome5Brands:size=12"
 font-3 = "TwitterColorEmoji;size=12"
 
-modules-left = i3
-modules-center = cpu memory powermenu temperature battery
-modules-right = mpd backlight pulseaudio volume date
+modules-left = i3 mpd
+modules-center = cpu memory date temperature battery
+modules-right = backlight pulseaudio volume
 
 tray-position = right
 tray-detached = false
