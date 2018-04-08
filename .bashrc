@@ -171,34 +171,26 @@ shopt -s checkwinsize
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# Activate ibus on xfce
-export GTK_IM_MODULE=ibus
-export XMODIFIERS=@im=ibus
-export QT_IM_MODUL=ibus
-
 # Set neovim as default editor
 if [[ $(which nvim) ]]; then
-    export VISUAL="$(which nvim)"
     export EDITOR="$(which nvim)"
+else
+    export EDITOR=/usr/bin/nano
 fi
 
 # Add flutter to PATH
-if [ -f $HOME/flutter/bin ]; then
-    export PATH="$HOME/flutter/bin:$PATH"
-fi
+[[ -d $HOME/flutter/bin ]] && [[ ":$PATH:" != *":$HOME/flutter/bin:"* ]] && export PATH="$HOME/flutter/bin:$PATH"
 
 # Add pub cache to PATH
-if [ -f $HOME/.pub-cache/bin ]; then
-    export PATH="$HOME/.pub-cache/bin:$PATH"
-fi
-
-# Activate nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[[ -d $HOME/.pub-cache/bin ]] && [[ ":$PATH:" != *":$HOME/.pub-cache/bin:"* ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
 
 # added by Miniconda3 installer
-if [ -f $HOME/miniconda3/bin ]; then
-    export PATH="$HOME/miniconda3/bin:$PATH"
+[[ -d $HOME/miniconda3/bin ]] && [[ ":$PATH:" != *":$HOME/miniconda3/bin:"* ]] && export PATH="$HOME/miniconda3/bin:$PATH"
+
+# Activate nvm
+if [ -d $HOME/.nvm ]; then
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi
 ######### End user config

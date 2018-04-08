@@ -1,0 +1,313 @@
+[bar/i3wmthemer_bar]
+width = 100%
+height = 40
+radius = 0
+fixed-center = false
+
+background = #1d1f21
+foreground = #c5c8c6
+
+line-size = 3
+line-color =
+
+border-size = 0
+border-color =
+
+padding-left = 0
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = "SourceCodePro:size=12"
+font-1 = "FontAwesome5Free:style=Solid:size=12"
+font-2 = "FontAwesome5Brands:size=12"
+font-3 = "TwitterColorEmoji;size=12"
+
+modules-left = i3
+modules-center = cpu memory powermenu temperature battery
+modules-right = mpd backlight pulseaudio volume date
+
+tray-position = right
+tray-detached = false
+tray-max-size = 16
+tray-padding = 2
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[module/i3]
+type = internal/i3
+format = <label-state> <label-mode>
+index-sort = true
+wrapping-scroll = false
+
+label-mode-padding = 2
+label-mode-foreground = #c5c8c6
+label-mode-background = #282a2e
+
+label-focused = %index%
+label-focused-background = #373b41
+label-focused-foreground = #6b7443
+label-focused-padding = 2
+
+label-unfocused = %index%
+label-unfocused-background = #282a2e
+label-unfocused-foreground = #c5c8c6
+label-unfocused-padding = 2
+
+label-visible = %index%
+label-visible-background = #282a2e
+label-visible-foreground = #c5c8c6
+label-visible-padding = 2
+
+label-urgent = %index%
+label-urgent-background = #BA2922
+label-urgent-padding = 2
+
+[module/title]
+type = internal/xwindow
+format = <label>
+format-background = #222
+format-foreground = #fff
+format-padding = 1
+
+label = %title%
+label-maxlen = 20
+
+[module/mpd]
+type = internal/mpd
+format-online = <label-song>  <icon-prev><icon-stop><toggle><icon-next> <icon-repeat> <icon-random> <icon-repeatone>
+;format-online = <label-song> <icon-repeat> <icon-random>
+ 
+label-song = %{F#e60053}🎶%{F#ff} %title%
+label-song-maxlen = 20
+label-song-ellipsis = true
+ 
+icon-prev = ⏮️
+icon-seekb = ⏪
+icon-stop = ⏹️
+icon-play = ▶️
+icon-pause = ⏸️
+icon-next = ⏭️
+icon-seekf = ⏩
+ 
+icon-random = 🔀
+icon-repeat = 🔁
+icon-repeatone = 🔂
+ 
+toggle-on-foreground = #e60053
+toggle-off-foreground = #66
+ 
+ 
+[module/backlight]
+type = internal/xbacklight
+ 
+format = <label> <ramp>
+label = %percentage%%
+
+ramp-0 = 🌕
+ramp-1 = 🌔
+ramp-2 = 🌓
+ramp-3 = 🌒
+ramp-4 = 🌑
+
+bar-width = 10
+bar-indicator = ⚫
+bar-indicator-foreground = #ff
+bar-fill = ⬛
+bar-fill-foreground = #9f78e1
+bar-empty = ➖
+bar-empty-foreground = #55
+ 
+[module/cpu]
+type = internal/cpu
+interval = 2
+label = %{F#ff9900}⚙️%{F#ff} %percentage%%
+label-overline = #ff0
+ 
+ 
+[module/memory]
+type = internal/memory
+interval = 2
+label = %{F#ffcc66}🎚️%{F#ff} %percentage_used%%
+label-overline = #4bffdc
+
+[module/wlan]
+type = internal/network
+interface = wlp3s0
+interval = 3.0
+
+format-connected = <ramp-signal> <label-connected>
+format-connected-foreground = #c5c8c6
+format-connected-background = #282a2e
+format-connected-padding = 2
+label-connected = %essid%
+
+format-disconnected =
+
+ramp-signal-0 = 
+ramp-signal-1 = 
+ramp-signal-2 = 
+ramp-signal-3 = 
+ramp-signal-4 = 
+ramp-signal-foreground = #c5c8c6
+
+[module/eth]
+type = internal/network
+interface = enp0s25
+interval = 3.0
+
+format-connected-padding = 2
+format-connected-foreground = #c5c8c6
+format-connected-background = #282a2e
+format-connected-prefix = " "
+format-connected-prefix-foreground = #c5c8c6
+label-connected = %local_ip%
+
+format-disconnected =
+
+[module/date]
+type = internal/date
+interval = 1
+
+date = " %m-%d"
+date-alt = " %Y-%m-%d"
+
+time = %H:%M:%S
+time-alt = %H:%M:%S
+
+format-prefix = 
+;format-foreground = #c5c8c6
+;format-background = #282a2e
+format-padding = 1
+
+label = %date% %time%
+
+[module/volume]
+type = internal/volume
+ 
+format-volume = <label-volume> <ramp-volume>
+ramp-volume-0 = 🔈
+ramp-volume-1 = 🔉
+ramp-volume-2 = 🔊
+ 
+label-volume = %percentage%%
+label-volume-foreground = ${root.foreground}
+ 
+label-muted = 🔇 sound muted
+label-muted-foreground = #55
+ 
+bar-volume-width = 10
+bar-volume-foreground-0 = #55aa55
+bar-volume-foreground-1 = #55aa55
+bar-volume-foreground-2 = #55aa55
+bar-volume-foreground-3 = #55aa55
+bar-volume-foreground-4 = #55aa55
+bar-volume-foreground-5 = #f5a70a
+bar-volume-foreground-6 = #ff5555
+bar-volume-gradient = false
+bar-volume-indicator = ⚫
+bar-volume-indicator-foreground = #ff
+bar-volume-fill = ⬛
+bar-volume-empty = ➖
+bar-volume-empty-foreground = #55
+
+[module/pulseaudio]
+type = internal/pulseaudio
+sink = alsa_output.pci-0000_00_1b.0.analog-stereo
+
+format-volume = <ramp-volume> <label-volume>
+ramp-volume-0 = 🔈
+ramp-volume-1 = 🔉
+ramp-volume-2 = 🔊
+label-volume = %percentage%%
+
+format-muted = <label-muted>
+label-muted = 🔇 muted
+label-muted-foreground = #66
+
+[module/battery]
+type = internal/battery
+battery = BAT0
+adapter = AC0
+full-at = 98
+ 
+format-charging = <animation-charging><label-charging>
+format-charging-overline = #ffb52a
+format-discharging = <ramp-capacity> <label-discharging>
+format-discharging-overline = ${self.format-charging-overline}
+format-full = %{F#55}%{F#ff}  <label-full>
+format-full-overline = ${self.format-charging-overline}
+
+ramp-capacity-0 = 
+ramp-capacity-1 =  
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-foreground = #55
+
+animation-charging-0 = 🔌
+animation-charging-1 = 🔌
+animation-charging-2 = 🔌
+animation-charging-foreground = #55
+animation-charging-framerate = 750
+ 
+ 
+[module/temperature]
+type = internal/temperature
+thermal-zone = 0
+warn-temperature = 60
+ 
+format = <ramp><label>
+format-overline = #ff7f50
+format-warn = <ramp><label-warn>
+format-warn-overline = ${self.format-overline}
+ 
+label = %temperature%
+label-warn = ☢️%temperature%
+label-warn-foreground = #e60053
+ 
+ramp-0 = 🌡️
+ramp-1 = 🌡️
+ramp-2 = 🌡️
+;ramp-foreground = #55
+ramp-2-foreground = #ffff00
+ramp-1-foreground = #00cc00
+ramp-0-foreground = #0000ff
+ 
+ 
+[module/powermenu]
+type = custom/menu
+
+expand-right = true
+
+format-spacing = 1
+
+label-open = 
+label-open-foreground = #c5c8c6
+label-close =  cancel
+label-close-foreground = #c5c8c6
+label-separator = |
+label-separator-foreground = #c5c8c6
+
+menu-0-0 = reboot
+menu-0-0-exec = menu-open-1
+menu-0-1 = power off
+menu-0-1-exec = menu-open-2
+
+menu-1-0 = cancel
+menu-1-0-exec = menu-open-0
+menu-1-1 = reboot
+menu-1-1-exec = sudo reboot
+
+menu-2-0 = power off
+menu-2-0-exec = sudo poweroff
+menu-2-1 = cancel
+menu-2-1-exec = menu-open-0
+
+[settings]
+screenchange-reload = true
+
+[global/wm]
+margin-top = 0
+margin-bottom = 0

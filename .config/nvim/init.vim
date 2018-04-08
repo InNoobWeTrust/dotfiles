@@ -60,6 +60,9 @@ let g:gruvbox_contrast_dark = 'hard'
 """" End theme section
 
 """" Misc section
+set t_Co=256
+set encoding=utf-8
+set guifont=SauceCodePro
 set number
 set binary
 set list
