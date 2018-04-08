@@ -39,6 +39,13 @@ bindsym $mod+d exec --no-startup-id rofi -show run
 # launch categorized menu
 bindsym $mod+z exec --no-startup-id morc_menu
 
+# Translate to Vietnamese
+bindsym $mod+Ctrl+v exec --no-startup-id /$HOME/notitrans/notitrans-vi
+# Translate to English
+bindsym $mod+Ctrl+e exec --no-startup-id /$HOME/notitrans/notitrans-en
+# Translate to Japanese
+bindsym $mod+Ctrl+j exec --no-startup-id /$HOME/notitrans/notitrans-ja
+
 ################################################################################################
 ## sound-section - DO NOT EDIT if you wish to automatically upgrade Alsa -> Pulseaudio later! ##
 ################################################################################################

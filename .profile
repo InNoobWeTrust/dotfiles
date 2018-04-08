@@ -12,3 +12,6 @@ if [[ $(which nvim) ]]; then
 else
     export EDITOR=/usr/bin/nano
 fi
+
+# Set mousepad as default visual editor
+[[ $(which mousepad) ]] && export EDITOR="$(which mousepad)"
