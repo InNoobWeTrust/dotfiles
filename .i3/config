@@ -28,7 +28,7 @@ font xft:URWGothic-Book 12
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec st -f "SourceCodePro:size=12"
+bindsym $mod+Return exec xfce4-terminal
 
 # kill focused window
 bindsym $mod+Shift+q kill
