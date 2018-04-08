@@ -14,4 +14,4 @@ else
 fi
 
 # Set mousepad as default visual editor
-[[ $(which mousepad) ]] && export EDITOR="$(which mousepad)"
+[[ $(which nvim-gtk) ]] && export EDITOR="$(which nvim-gtk)"

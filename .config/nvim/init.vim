@@ -62,11 +62,16 @@ let g:gruvbox_contrast_dark = 'hard'
 """" Misc section
 set t_Co=256
 set encoding=utf-8
-set guifont=SauceCodePro
+set guifont=FiraCodeRetina
 set number
 set binary
 set list
 set listchars=eol:$,tab:▷—,trail:…,extends:»,precedes:«,space:␣,nbsp:☠
+if exists('g:GtkGuiLoaded')
+    call rpcnotify(1, 'Gui', 'Font', 'Fira Code Retina 18') 
+    call rpcnotify(1, 'Gui', 'Option', 'Cmdline', 1)
+    let g:GuiInternalClipboard = 1 
+endif
 """" End misc section
 
 """" Language servers section
