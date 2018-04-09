@@ -25,8 +25,8 @@ font-2 = "FontAwesome5Brands:size=12"
 font-3 = "TwitterColorEmoji;size=12"
 
 modules-left = i3 mpd
-modules-center = cpu memory date temperature battery0 battery1
-modules-right = backlight pulseaudio volume
+modules-center = cpu memory temperature date battery0 battery1
+modules-right = wlan eth backlight pulseaudio volume
 
 tray-position = right
 tray-detached = false
@@ -138,34 +138,46 @@ type = internal/network
 interface = wlp3s0
 interval = 3.0
 
-format-connected = <ramp-signal> <label-connected>
+accumulate-stats = true
+unknown-as-up = true
+
+format-connected = <label-connected>
 format-connected-foreground = #c5c8c6
 format-connected-background = #282a2e
 format-connected-padding = 2
-label-connected = %essid%
+format-connected-prefix = " "
+label-connected = %signal% %{F#f88}%upspeed% %{F#88f}%downspeed%
+format-packetloss = <animation-packetloss> <label-connected>
 
 format-disconnected =
-
-ramp-signal-0 = 
-ramp-signal-1 = 
-ramp-signal-2 = 
-ramp-signal-3 = 
-ramp-signal-4 = 
-ramp-signal-foreground = #c5c8c6
+animation-packetloss-0 = ⚠
+animation-packetloss-0-foreground = #ffa64c
+animation-packetloss-1 = 📶
+animation-packetloss-1-foreground = #000000
+animation-packetloss-framerate = 500
 
 [module/eth]
 type = internal/network
 interface = enp0s25
 interval = 3.0
 
+accumulate-stats = true
+unknown-as-up = true
+
 format-connected-padding = 2
 format-connected-foreground = #c5c8c6
 format-connected-background = #282a2e
 format-connected-prefix = " "
 format-connected-prefix-foreground = #c5c8c6
-label-connected = %local_ip%
+label-connected = %signal% %{F#f88}%upspeed% %{F#88f}%downspeed%
+format-packetloss = <animation-packetloss> <label-connected>
 
 format-disconnected =
+animation-packetloss-0 = ⚠
+animation-packetloss-0-foreground = #ffa64c
+animation-packetloss-1 = 🆘
+animation-packetloss-1-foreground = #000000
+animation-packetloss-framerate = 500
 
 [module/date]
 type = internal/date
@@ -233,11 +245,11 @@ battery = BAT0
 adapter = AC
 full-at = 98
  
-format-charging = 0 <animation-charging>  <label-charging>
+format-charging = <animation-charging>  <label-charging>
 format-charging-overline = #ffb52a
-format-discharging = 0 <ramp-capacity> <label-discharging>
+format-discharging = <ramp-capacity> <label-discharging>
 format-discharging-overline = ${self.format-charging-overline}
-format-full = %{F#00ff00}0 %{F#ff}  <label-full>
+format-full = %{F#00ff00}%{F#ff}  <label-full>
 format-full-overline = ${self.format-charging-overline}
 
 ramp-capacity-0 = 
@@ -259,11 +271,11 @@ battery = BAT1
 adapter = AC
 full-at = 98
  
-format-charging = 1 <animation-charging>  <label-charging>
+format-charging = <animation-charging>  <label-charging>
 format-charging-overline = #ffb52a
-format-discharging = 1 <ramp-capacity><label-discharging>
+format-discharging = <ramp-capacity><label-discharging>
 format-discharging-overline = ${self.format-charging-overline}
-format-full = %{F#00ff00}1 %{F#ff}  <label-full>
+format-full = %{F#00ff00}%{F#ff}  <label-full>
 format-full-overline = ${self.format-charging-overline}
 
 ramp-capacity-0 = 
