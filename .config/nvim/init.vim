@@ -66,7 +66,7 @@ set guifont=FiraCodeRetina
 set number
 set binary
 set list
-set listchars=eol:$,tab:▷—,trail:…,extends:»,precedes:«,space:␣,nbsp:☠
+set listchars=eol:$,tab:↣—,trail:…,extends:»,precedes:«,space:·,nbsp:☠
 if exists('g:GtkGuiLoaded')
     call rpcnotify(1, 'Gui', 'Font', 'Fira Code Retina 18') 
     call rpcnotify(1, 'Gui', 'Option', 'Cmdline', 1)
