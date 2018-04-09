@@ -19,13 +19,13 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 2
 
-font-0 = "SourceCodePro:size=12"
+font-0 = "SauceCodePro:size=12"
 font-1 = "FontAwesome5Free:style=Solid:size=12"
 font-2 = "FontAwesome5Brands:size=12"
 font-3 = "TwitterColorEmoji;size=12"
 
 modules-left = i3 mpd
-modules-center = cpu memory date temperature battery
+modules-center = cpu memory date temperature battery0 battery1
 modules-right = backlight pulseaudio volume
 
 tray-position = right
@@ -123,14 +123,14 @@ bar-empty-foreground = #55
 [module/cpu]
 type = internal/cpu
 interval = 2
-label = %{F#ff9900}⚙️%{F#ff} %percentage%%
+label = %{F#ff9900}💻%{F#ff} %percentage%%
 label-overline = #ff0
  
  
 [module/memory]
 type = internal/memory
 interval = 2
-label = %{F#ffcc66}🎚️%{F#ff} %percentage_used%%
+label = %{F#ffcc66}💾%{F#ff} %percentage_used%%
 label-overline = #4bffdc
 
 [module/wlan]
@@ -227,17 +227,17 @@ format-muted = <label-muted>
 label-muted = 🔇 muted
 label-muted-foreground = #66
 
-[module/battery]
+[module/battery0]
 type = internal/battery
 battery = BAT0
-adapter = AC0
+adapter = AC
 full-at = 98
  
-format-charging = <animation-charging><label-charging>
+format-charging = 0 <animation-charging>  <label-charging>
 format-charging-overline = #ffb52a
-format-discharging = <ramp-capacity> <label-discharging>
+format-discharging = 0 <ramp-capacity> <label-discharging>
 format-discharging-overline = ${self.format-charging-overline}
-format-full = %{F#55}%{F#ff}  <label-full>
+format-full = %{F#00ff00}0 %{F#ff}  <label-full>
 format-full-overline = ${self.format-charging-overline}
 
 ramp-capacity-0 = 
@@ -246,30 +246,56 @@ ramp-capacity-2 = 
 ramp-capacity-3 = 
 ramp-capacity-foreground = #55
 
-animation-charging-0 = 🔌
-animation-charging-1 = 🔌
-animation-charging-2 = 🔌
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
 animation-charging-foreground = #55
 animation-charging-framerate = 750
  
+[module/battery1]
+type = internal/battery
+battery = BAT1
+adapter = AC
+full-at = 98
+ 
+format-charging = 1 <animation-charging>  <label-charging>
+format-charging-overline = #ffb52a
+format-discharging = 1 <ramp-capacity><label-discharging>
+format-discharging-overline = ${self.format-charging-overline}
+format-full = %{F#00ff00}1 %{F#ff}  <label-full>
+format-full-overline = ${self.format-charging-overline}
+
+ramp-capacity-0 = 
+ramp-capacity-1 =  
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-foreground = #55
+
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
+animation-charging-foreground = #55
+animation-charging-framerate = 750
  
 [module/temperature]
 type = internal/temperature
 thermal-zone = 0
 warn-temperature = 60
  
-format = <ramp><label>
+format = <ramp> <label>
 format-overline = #ff7f50
 format-warn = <ramp><label-warn>
 format-warn-overline = ${self.format-overline}
  
 label = %temperature%
-label-warn = ☢️%temperature%
+label-warn = 🔥 %temperature%
 label-warn-foreground = #e60053
  
-ramp-0 = 🌡️
-ramp-1 = 🌡️
-ramp-2 = 🌡️
+ramp-0 = 🌡
+ramp-1 = 🌡
+ramp-2 = 🌡
 ;ramp-foreground = #55
 ramp-2-foreground = #ffff00
 ramp-1-foreground = #00cc00
