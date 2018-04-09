@@ -9,8 +9,10 @@ set $mod Mod4
 # workspace_layout tabbed <stacking|tabbed>
 
 # Configure border style <normal|1pixel|pixel xx|none|pixel>
-new_window none
-new_float none
+new_window pixel 1
+new_float pixel 1
+default_border pixel 1
+default_floating_border pixel 1
 
 # Hide borders
 hide_edge_borders none
@@ -297,7 +299,7 @@ exec --no-startup-id /$HOME/.config/conky/conky.sh
 exec --no-startup-id xautolock -time 10 -locker blurlock
 exec_always --no-startup-id ff-theme-util
 exec_always --no-startup-id fix_xcursor
-exec_always --no-startup-id ibus-daemon
+exec_always --no-startup-id ibus-daemon &
 exec_always --no-startup-id /$HOME/.config/polybar/i3wmthemer_bar_launch.sh
 
 # Color palette used for the terminal ( ~/.Xresources file )
