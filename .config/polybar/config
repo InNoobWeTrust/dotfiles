@@ -181,8 +181,8 @@ animation-packetloss-framerate = 500
 type = internal/date
 interval = 1
 
-date = " %m-%d"
-date-alt = " %Y-%m-%d"
+date = " %d-%m"
+date-alt = " %d-%m-%Y"
 
 time = %H:%M:%S
 time-alt = %H:%M:%S
