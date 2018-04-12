@@ -13,5 +13,5 @@ else
     export EDITOR=/usr/bin/nano
 fi
 
-# Set mousepad as default visual editor
-[[ $(which nvim-gtk) ]] && export EDITOR="$(which nvim-gtk)"
+# Set nvim-gtk as default visual editor and fallback to system default if fail
+[[ $(which nvim-gtk) ]] && export VISUAL="$(which nvim-gtk)"

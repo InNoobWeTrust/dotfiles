@@ -63,7 +63,7 @@ let g:gruvbox_contrast_dark = 'hard'
 """" Misc section
 set t_Co=256
 set encoding=utf-8
-set guifont=FiraCodeRetina
+set guifont=FuraCodeNerdFont
 set number
 set binary
 set list
@@ -79,8 +79,8 @@ endif
 " copy and paste
 vmap <C-c> "+yi
 vmap <C-x> "+c
-vmap <C-v> c<ESC>"+p
-imap <C-v> <ESC>"+pa
+vmap <S-Insert> c<ESC>"+p
+imap <S-Insert> <ESC>"+pa
 """" End keyboard shortcuts section
 
 """" Language servers section
