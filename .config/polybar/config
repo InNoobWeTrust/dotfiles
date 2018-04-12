@@ -19,10 +19,8 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 2
 
-font-0 = "SauceCodePro:size=12"
-font-1 = "FontAwesome5Free:style=Solid:size=12"
-font-2 = "FontAwesome5Brands:size=12"
-font-3 = "TwitterColorEmoji;size=12"
+font-0 = "RobotoMonoNerdFont:size=12"
+font-1 = "TwitterColorEmoji;size=12"
 
 modules-left = i3 mpd
 modules-center = cpu memory temperature date battery0 battery1
@@ -252,10 +250,10 @@ format-discharging-overline = ${self.format-charging-overline}
 format-full = %{F#00ff00}%{F#ff}  <label-full>
 format-full-overline = ${self.format-charging-overline}
 
-ramp-capacity-0 = 
-ramp-capacity-1 =  
-ramp-capacity-2 = 
-ramp-capacity-3 = 
+ramp-capacity-0 = %{F#f00}%{-F}
+ramp-capacity-1 = %{F#d40}%{-F} 
+ramp-capacity-2 = %{F#880}%{-F}
+ramp-capacity-3 = %{F#4e0}%{-F}
 ramp-capacity-foreground = #55
 
 animation-charging-0 = 

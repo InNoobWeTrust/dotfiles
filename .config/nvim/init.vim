@@ -34,6 +34,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'udalov/kotlin-vim', { 'for': 'kotlin' }
 Plug 'davidhalter/jedi-vim', { 'for': 'python'}
 Plug 'dart-lang/dart-vim-plugin', { 'for': 'dart' }
+Plug 'rstacruz/sparkup', {'rtp': 'vim', 'for': ['html', 'htmldjango', 'javascript.jsx']}
 "" Themes plugins
 Plug 'mhartington/oceanic-next'
 Plug 'altercation/vim-colors-solarized'
@@ -73,6 +74,14 @@ if exists('g:GtkGuiLoaded')
     let g:GuiInternalClipboard = 1 
 endif
 """" End misc section
+
+"""" Keyboard shortcuts section
+" copy and paste
+vmap <C-c> "+yi
+vmap <C-x> "+c
+vmap <C-v> c<ESC>"+p
+imap <C-v> <ESC>"+pa
+"""" End keyboard shortcuts section
 
 """" Language servers section
 " Automatically start language servers.
