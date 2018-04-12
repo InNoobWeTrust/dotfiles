@@ -13,17 +13,18 @@ line-color =
 border-size = 0
 border-color =
 
-padding-left = 0
+padding-left = 2
 padding-right = 2
 
 module-margin-left = 1
 module-margin-right = 2
 
 font-0 = "RobotoMono Nerd Font:size=12"
+font-1 = "Emoji:pixelsize=12"
 
-modules-left = i3 mpd
+modules-left = apps windows i3 mpd
 modules-center = cpu memory temperature date battery0 battery1
-modules-right = wlan eth backlight pulseaudio volume
+modules-right = backlight pulseaudio wlan eth
 
 tray-position = right
 tray-detached = false
@@ -315,8 +316,17 @@ ramp-4 = 
 ramp-2-foreground = #ffff00
 ramp-1-foreground = #00cc00
 ramp-0-foreground = #0000ff
- 
- 
+
+[module/apps]
+type = custom/text
+content = 
+click-left = rofi -show drun
+
+[module/windows]
+type = custom/text
+content = 
+click-left = rofi -show window
+
 [module/powermenu]
 type = custom/menu
 
