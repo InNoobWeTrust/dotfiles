@@ -22,7 +22,7 @@ module-margin-right = 2
 font-0 = "RobotoMono Nerd Font:size=12"
 font-1 = "Emoji:pixelsize=12"
 
-modules-left = apps windows i3 mpd
+modules-left = apps windows i3
 modules-center = cpu memory temperature date battery0 battery1
 modules-right = backlight pulseaudio wlan eth
 
@@ -85,7 +85,7 @@ label-song-ellipsis = true
 icon-prev = ⏮️
 icon-seekb = ⏪
 icon-stop = ⏹️
-icon-play = ▶️
+icon-play = ⏯
 icon-pause = ⏸️
 icon-next = ⏭️
 icon-seekf = ⏩
@@ -102,7 +102,7 @@ toggle-off-foreground = #66
 type = internal/xbacklight
  
 format = <label> <bar>
-label = %{F#ff0}%percentage%%
+label = %{F#ff0}  %percentage%%
 
 ramp-0 = 🌑
 ramp-1 = 🌒
@@ -115,7 +115,7 @@ bar-indicator = 
 bar-indicator-foreground = #ff
 bar-fill = 
 bar-fill-foreground = #9f78e1
-bar-empty = —
+bar-empty = 
 bar-empty-foreground = #55
 
 [module/cpu]
@@ -128,7 +128,8 @@ label-overline = #ff0
 [module/memory]
 type = internal/memory
 interval = 2
-label = %{F#ffcc66}%{F#ff} %percentage_used%%
+;label = %{F#ffcc66}%{F#ff} %percentage_used%%
+label = %{F#ffcc66}%{F#ff} %percentage_used%%
 label-overline = #4bffdc
 
 [module/wlan]
@@ -144,7 +145,8 @@ format-connected-foreground = #c5c8c6
 format-connected-background = #282a2e
 format-connected-padding = 2
 format-connected-prefix = " "
-label-connected = %signal% %{F#f88}%upspeed% %{F#88f}%downspeed%
+;label-connected = %signal% %{F#f88}%upspeed% %{F#88f}%downspeed%
+label-connected = %{F#f88}%upspeed% %{F#88f}%downspeed%
 format-packetloss = <animation-packetloss> <label-connected>
 
 format-disconnected =
@@ -167,7 +169,8 @@ format-connected-foreground = #c5c8c6
 format-connected-background = #282a2e
 format-connected-prefix = " "
 format-connected-prefix-foreground = #c5c8c6
-label-connected = %signal% %{F#f88}%upspeed% %{F#88f}%downspeed%
+;label-connected = %signal% %{F#f88}%upspeed% %{F#88f}%downspeed%
+label-connected = %{F#f88}%upspeed% %{F#88f}%downspeed%
 format-packetloss = <animation-packetloss> <label-connected>
 
 format-disconnected =
@@ -220,7 +223,7 @@ bar-volume-gradient = false
 bar-volume-indicator = 
 bar-volume-indicator-foreground = #ff
 bar-volume-fill = 
-bar-volume-empty = —
+bar-volume-empty = 
 bar-volume-empty-foreground = #55
 
 [module/pulseaudio]
@@ -306,14 +309,20 @@ format-warn-overline = ${self.format-overline}
 label = %temperature%
 label-warn = 🔥 %temperature%
 label-warn-foreground = #e60053
- 
+
+;ramp-0 = 
+;ramp-1 = 
+;ramp-2 = 
+
 ramp-0 = 
 ramp-1 = 
 ramp-2 = 
 ramp-3 = 
 ramp-4 = 
-;ramp-foreground = #55
-ramp-2-foreground = #ffff00
+ramp-foreground = #55
+ramp-4-foreground = #ff2200
+ramp-3-foreground = #ff8800
+ramp-2-foreground = #88ff00
 ramp-1-foreground = #00cc00
 ramp-0-foreground = #0000ff
 
