@@ -11,7 +11,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 alias pacmanauto='sudo pacman -Syyu'
 
 # automate conda update
-alias condauto='conda update conda && conda clean --all -y'
+alias condauto='conda update conda -y && conda clean --all -y'
 
 # automate nvm update node
 alias nvmauto='nvm install node --reinstall-packages-from=node'
