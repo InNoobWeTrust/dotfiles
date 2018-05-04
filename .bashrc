@@ -178,6 +178,9 @@ else
     export EDITOR=/usr/bin/nano
 fi
 
+# Add dart-sdk to PATH
+[[ -d $HOME/dart-sdk/bin ]] && [[ ":$PATH:" != *":$HOME/dart-sdk/bin:"* ]] && export PATH="$HOME/dart-sdk/bin:$PATH"
+
 # Add flutter to PATH
 [[ -d $HOME/flutter/bin ]] && [[ ":$PATH:" != *":$HOME/flutter/bin:"* ]] && export PATH="$HOME/flutter/bin:$PATH"
 
