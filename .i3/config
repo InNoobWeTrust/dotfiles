@@ -10,9 +10,9 @@ set $mod Mod4
 
 # Configure border style <normal|1pixel|pixel xx|none|pixel>
 new_window none
-new_float normal
+new_float none
 default_border none
-default_floating_border normal
+default_floating_border none
 
 # Hide borders
 hide_edge_borders none
@@ -36,8 +36,8 @@ bindsym $mod+Return exec xfce4-terminal
 bindsym $mod+Shift+q kill
 
 # start program launcher
-bindsym $mod+d exec --no-startup-id rofi -show run
-bindsym $mod+z exec --no-startup-id rofi -show drun
+bindsym $mod+d exec --no-startup-id "rofi -show run -modi run,window,ssh -markup -show-icons -sidebar-mode -terminal xfce4-terminal"
+bindsym $mod+z exec --no-startup-id "rofi -show drun -modi drun,window,ssh -markup -show-icons -sidebar-mode -terminal xfce4-terminal"
 
 # launch categorized menu
 #bindsym $mod+z exec --no-startup-id morc_menu
@@ -77,7 +77,7 @@ bindsym $mod+F5 exec terminal -e 'mocp'
 bindsym $mod+t exec --no-startup-id pkill compton
 bindsym $mod+Ctrl+t exec --no-startup-id compton -b
 bindsym $mod+Shift+d --release exec "killall dunst; exec notify-send 'restart dunst'"
-bindsym Print exec --no-startup-id i3-scrot
+bindsym Shift+Print exec --no-startup-id i3-scrot
 bindsym $mod+Print --release exec --no-startup-id i3-scrot -w
 bindsym $mod+Shift+Print --release exec --no-startup-id i3-scrot -s
 bindsym $mod+Shift+h exec xdg-open /usr/share/doc/manjaro/i3_help.pdf
