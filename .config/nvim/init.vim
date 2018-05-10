@@ -83,6 +83,12 @@ vmap <S-Insert> c<ESC>"+p
 imap <S-Insert> <ESC>"+pa
 """" End keyboard shortcuts section
 
+""" Indentation config section
+autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
+autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
+autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
+""" End indentation config section
+
 """" Language servers section
 " Automatically start language servers.
 let g:LanguageClient_autoStart = 1
