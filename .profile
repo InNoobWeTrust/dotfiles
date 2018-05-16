@@ -13,5 +13,5 @@ else
     export EDITOR=/usr/bin/nano
 fi
 
-# Set nvim-gtk as default visual editor and fallback to system default if fail
-[[ $(which nvim-gtk) ]] && export VISUAL="$(which nvim-gtk)"
+# Set OniVim as default visual editor and fallback to system default if fail
+[[ $(which oni) ]] && export VISUAL="$(which oni)"
