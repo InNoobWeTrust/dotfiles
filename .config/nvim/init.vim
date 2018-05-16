@@ -56,7 +56,9 @@ syntax on
 "" GruvBox
 highlight Normal ctermbg=black ctermfg=white
 set background=dark
-let g:gruvbox_italic=1
+if !exists('g:gui_oni')
+    let g:gruvbox_italic=1
+endif
 colorscheme gruvbox
 let g:gruvbox_contrast_dark = 'hard'
 """" End theme section
