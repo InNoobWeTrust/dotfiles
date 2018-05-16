@@ -29,7 +29,7 @@ export const configuration = {
 
     //"oni.useDefaultConfig": true,
     //"oni.bookmarks": ["~/Documents"],
-    //"oni.loadInitVim": false,
+    "oni.loadInitVim": true,
     "editor.fontSize": "13px",
     "editor.fontFamily": "FuraCode Nerd Font",
 
