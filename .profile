@@ -14,4 +14,4 @@ else
 fi
 
 # Set OniVim as default visual editor and fallback to system default if fail
-[[ $(which oni) ]] && export VISUAL="$(which oni)"
+[[ -d $HOME/Oni ]] && export VISUAL="$HOME/Oni/oni"
