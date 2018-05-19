@@ -7,23 +7,11 @@
 
 call plug#begin('$HOME/.local/share/nvim/plugged')
 "" Language Client
-if has('nvim')
-    Plug 'autozimu/LanguageClient-neovim', {
-        \ 'branch': 'next',
-        \ 'do': 'bash install.sh',
-        \ }
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
-let g:deoplete#enable_at_startup = 1
-" Required for operations modifying multiple buffers like rename.
-set hidden
-nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+"" Completion integration with nvim-completion-manager.
+Plug 'roxma/nvim-completion-manager'
+"" Showing function signature and inline doc.
+Plug 'Shougo/echodoc.vim'
 "" Fuzzy selection
 Plug 'junegunn/fzf'
 "" Searching
@@ -34,13 +22,6 @@ Plug 'junegunn/fzf'
 Plug 'scrooloose/nerdtree'
 "" Syntax checking
 Plug 'vim-syntastic/syntastic'
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
 "" Text object per indent level
 Plug 'michaeljsmith/vim-indent-object'
 "" Code commenting
@@ -53,10 +34,6 @@ Plug 'airblade/vim-gitgutter'
 Plug 'maxbrunsfeld/vim-yankstack'
 "" Status line
 Plug 'itchyny/lightline.vim'
-set noshowmode
-let g:lightline = {
-      \ 'colorscheme': 'wombat',
-      \ }
 "" Language specific plugins
 " Markdown
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
@@ -67,9 +44,6 @@ Plug 'davidhalter/jedi-vim', { 'for': 'python'}
 Plug 'udalov/kotlin-vim', { 'for': 'kotlin' }
 " Dart
 Plug 'dart-lang/dart-vim-plugin', { 'for': 'dart' }
-let dart_html_in_string=v:true
-let dart_style_guide = 2
-let dart_format_on_save = 1
 " HTML helper (same as Emmet)
 Plug 'rstacruz/sparkup', {'rtp': 'vim', 'for': ['html', 'htmldjango', 'javascript.jsx']}
 "" File icons
@@ -153,62 +127,52 @@ autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
 """ End indentation config section
 
-"""" Language servers section
+"""" Syntax section
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+"""" End syntax section
+
+"""" Status line section
+set noshowmode
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ }
+"""" End status line section
+
+"""" Language specific plugin section
+"" Dart
+let dart_html_in_string=v:true
+let dart_style_guide = 2
+let dart_format_on_save = 1
+"""" End language specific plugin section
+
+"""" Language client section
+" Required for operations modifying multiple buffers like rename.
+set hidden
 " Automatically start language servers.
 let g:LanguageClient_autoStart = 1
+nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 let g:LanguageClient_serverCommands = {}
-
-" Minimal LSP configuration for JavaScript
 if executable('javascript-typescript-stdio')
-  let g:LanguageClient_serverCommands.javascript = ['javascript-typescript-stdio']
-  " Use LanguageServer for omnifunc completion
-  autocmd FileType javascript setlocal omnifunc=LanguageClient#complete
-  " <leader>lf to fuzzy find the symbols in the current document
-  autocmd FileType javascript nnoremap <buffer>
-    \ <leader>lf :call LanguageClient_textDocument_documentSymbol()<cr>
-  " <leader>ld to go to definition
-  autocmd FileType javascript nnoremap <buffer>
-    \ <leader>ld :call LanguageClient_textDocument_definition()<cr>
-  " <leader>lh for type info under cursor
-  autocmd FileType javascript nnoremap <buffer>
-    \ <leader>lh :call LanguageClient_textDocument_hover()<cr>
-  " <leader>lr to rename variable under cursor
-  autocmd FileType javascript nnoremap <buffer>
-    \ <leader>lr :call LanguageClient_textDocument_rename()<cr>
+    let g:LanguageClient_serverCommands.javascript = ['javascript-typescript-stdio']
+    " Use LanguageServer for omnifunc completion
+    autocmd FileType javascript setlocal omnifunc=LanguageClient#complete
 endif
-
-" Language Server configuration for python
 if executable('pyls')
-  let g:LanguageClient_serverCommands.python = ['pyls']
-  autocmd FileType python setlocal omnifunc=LanguageClient#complete
-  " <leader>lf to fuzzy find the symbols in the current document
-  autocmd FileType python nnoremap <buffer>
-    \ <leader>lf :call LanguageClient_textDocument_documentSymbol()<cr>
-  " <leader>ld to go to definition
-  autocmd FileType python nnoremap <buffer>
-    \ <leader>ld :call LanguageClient_textDocument_definition()<cr>
-  " <leader>lh for type info under cursor
-  autocmd FileType python nnoremap <buffer>
-    \ <leader>lh :call LanguageClient_textDocument_hover()<cr>
-  " <leader>lr to rename variable under cursor
-  autocmd FileType python nnoremap <buffer>
-    \ <leader>lr :call LanguageClient_textDocument_rename()<cr>
+    let g:LanguageClient_serverCommands.python = ['pyls']
+    " Use LanguageServer for omnifunc completion
+    autocmd FileType python setlocal omnifunc=LanguageClient#complete
 endif
-
-" Language Server configuration for dart
 if executable('dart_language_server')
-  let g:LanguageClient_serverCommands.dart = ['dart_language_server']
-  autocmd FileType dart setlocal omnifunc=LanguageClient#complete
-  " <leader>lf to fuzzy find the symbols in the current document
-  autocmd FileType dart nnoremap <buffer>
-    \ <leader>lf :call LanguageClient_textDocument_documentSymbol()<cr>
-  " <leader>ld to go to definition
-  autocmd FileType dart nnoremap <buffer>
-    \ <leader>ld :call LanguageClient_textDocument_definition()<cr>
-  " <leader>lh for type info under cursor
-  autocmd FileType dart nnoremap <buffer>
-    \ <leader>lh :call LanguageClient_textDocument_hover()<cr>
-  " <leader>lr to rename variable under cursor
-  autocmd FileType dart nnoremap <buffer>
-    \ <leader>lr :call LanguageClient_textDocument_rename()<cr>
+    let g:LanguageClient_serverCommands.dart = ['dart_language_server']
+    " Use LanguageServer for omnifunc completion
+    autocmd FileType dart setlocal omnifunc=LanguageClient#complete
 endif
+"""" End language client section
