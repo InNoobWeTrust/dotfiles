@@ -6,7 +6,9 @@ exports.activate = function (oni) {
     //
     // Add input bindings here:
     //
-    oni.input.bind("<c-enter>", function () { return console.log("Control+Enter was pressed"); });
+    //oni.input.bind("<c-enter>", () => console.log("Control+Enter was pressed"))
+    //oni.input.unbind("<c-g>") // make C-g work as expected in vim
+    //oni.input.bind("<s-c-g>", () => oni.commands.executeCommand("sneak.show"))
     //
     // Or remove the default bindings here by uncommenting the below line:
     //
@@ -21,7 +23,12 @@ exports.configuration = {
     //"oni.useDefaultConfig": true,
     //"oni.bookmarks": ["~/Documents"],
     "oni.loadInitVim": true,
-    "editor.fontSize": "13px",
+    "oni.useDefaultConfig": false,
+    "learning.enabled": false,
+    "achievements.enabled": false,
+    "editor.textMateHighlighting.enabled": false,
+    "editor.typingPrediction": false,
+    "editor.fontSize": "14px",
     "editor.fontFamily": "FuraCode Nerd Font",
     // Language Server
     "language.dart.languageServer.command": "dart_language_server",
