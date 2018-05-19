@@ -7,11 +7,24 @@
 
 call plug#begin('$HOME/.local/share/nvim/plugged')
 "" Language Client
-Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
-"" Completion integration with nvim-completion-manager.
-Plug 'roxma/nvim-completion-manager'
-"" Showing function signature and inline doc.
-Plug 'Shougo/echodoc.vim'
+if has('win16') || has('win32') || has('win64') || has('win32unix')
+    Plug 'autozimu/LanguageClient-neovim', {
+        \ 'branch': 'next',
+        \ 'do': 'powershell install.ps1',
+        \ }
+else
+    Plug 'autozimu/LanguageClient-neovim', {
+        \ 'branch': 'next',
+        \ 'do': 'bash install.sh',
+        \ }
+endif
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
 "" Fuzzy selection
 Plug 'junegunn/fzf'
 "" Searching
@@ -152,6 +165,8 @@ let dart_format_on_save = 1
 """" End language specific plugin section
 
 """" Language client section
+" Automaticaly start deoplete
+let g:deoplete#enable_at_startup = 1
 " Required for operations modifying multiple buffers like rename.
 set hidden
 " Automatically start language servers.
