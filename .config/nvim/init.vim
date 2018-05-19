@@ -6,37 +6,75 @@
 "endif
 
 call plug#begin('$HOME/.local/share/nvim/plugged')
-" Language Client
-Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
-" Fuzzy selection
+"" Language Client
+if has('nvim')
+    Plug 'autozimu/LanguageClient-neovim', {
+        \ 'branch': 'next',
+        \ 'do': 'bash install.sh',
+        \ }
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
+let g:deoplete#enable_at_startup = 1
+" Required for operations modifying multiple buffers like rename.
+set hidden
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+"" Fuzzy selection
 Plug 'junegunn/fzf'
-" IDE-like autocompletion
-Plug 'roxma/nvim-completion-manager'
-Plug 'mileszs/ack.vim'
-Plug 'corntrace/bufexplorer'
-Plug 'ctrlpvim/ctrlp.vim'
+"" Searching
+"Plug 'mileszs/ack.vim'
+"Plug 'corntrace/bufexplorer'
+"Plug 'ctrlpvim/ctrlp.vim'
+"" Tree explorer
 Plug 'scrooloose/nerdtree'
-Plug 'scrooloose/snipmate-snippets'
-Plug 'scrooloose/syntastic'
-Plug 'amix/open_file_under_cursor.vim'
+"" Syntax checking
+Plug 'vim-syntastic/syntastic'
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+"" Text object per indent level
 Plug 'michaeljsmith/vim-indent-object'
-Plug 'groenewege/vim-less'
+"" Code commenting
 Plug 'tpope/vim-commentary'
+"" Sublime-text alike multiple cursors
 Plug 'terryma/vim-multiple-cursors'
+"" Git gutter
 Plug 'airblade/vim-gitgutter'
+"" Use registers as stack for yank and delete
 Plug 'maxbrunsfeld/vim-yankstack'
+"" Status line
 Plug 'itchyny/lightline.vim'
+set noshowmode
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ }
 "" Language specific plugins
+" Markdown
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
-"Plug 'fatih/vim-go', { 'for': 'go' }
+" Python
 Plug 'nvie/vim-flake8', { 'for': 'python' }
 Plug 'davidhalter/jedi-vim', { 'for': 'python'}
+" Kotlin
 Plug 'udalov/kotlin-vim', { 'for': 'kotlin' }
+" Dart
 Plug 'dart-lang/dart-vim-plugin', { 'for': 'dart' }
+let dart_html_in_string=v:true
+let dart_style_guide = 2
+let dart_format_on_save = 1
+" HTML helper (same as Emmet)
 Plug 'rstacruz/sparkup', {'rtp': 'vim', 'for': ['html', 'htmldjango', 'javascript.jsx']}
 "" File icons
 Plug 'ryanoasis/vim-devicons'
-"" Themes plugins
+"" Themes
 "Plug 'mhartington/oceanic-next'
 "Plug 'altercation/vim-colors-solarized'
 Plug 'morhetz/gruvbox'
@@ -56,13 +94,17 @@ syntax on
 "" GruvBox
 highlight Normal ctermbg=black ctermfg=white
 set background=dark
-let g:gruvbox_italic=1
+if !exists('g:gui_oni')
+    let g:gruvbox_italic=1
+endif
 colorscheme gruvbox
 let g:gruvbox_contrast_dark = 'hard'
 """" End theme section
 
 """" Misc section
-set t_Co=256
+if has('gui_running')
+    set t_Co=256
+endif
 set encoding=utf-8
 set mouse=a
 set guifont=FuraCodeNerdFont
@@ -136,7 +178,7 @@ if executable('javascript-typescript-stdio')
 endif
 
 " Language Server configuration for python
-if executable('javascript-typescript-stdio')
+if executable('pyls')
   let g:LanguageClient_serverCommands.python = ['pyls']
   autocmd FileType python setlocal omnifunc=LanguageClient#complete
   " <leader>lf to fuzzy find the symbols in the current document
@@ -154,8 +196,8 @@ if executable('javascript-typescript-stdio')
 endif
 
 " Language Server configuration for dart
-if executable('dart-language-server')
-  let g:LanguageClient_serverCommands.dart = ['dart-language-server']
+if executable('dart_language_server')
+  let g:LanguageClient_serverCommands.dart = ['dart_language_server']
   autocmd FileType dart setlocal omnifunc=LanguageClient#complete
   " <leader>lf to fuzzy find the symbols in the current document
   autocmd FileType dart nnoremap <buffer>
