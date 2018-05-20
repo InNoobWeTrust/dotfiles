@@ -13,5 +13,20 @@ else
     export EDITOR=/usr/bin/nano
 fi
 
+# Add OniVim to PATH
+[[ -d $HOME/Oni ]] && [[ ":$PATH:" != *":$HOME/Oni:"* ]] && export PATH="$HOME/Oni:$PATH"
+
+# Add dart-sdk to PATH
+[[ -d $HOME/dart-sdk/bin ]] && [[ ":$PATH:" != *":$HOME/dart-sdk/bin:"* ]] && export PATH="$HOME/dart-sdk/bin:$PATH"
+
+# Add flutter to PATH
+[[ -d $HOME/flutter/bin ]] && [[ ":$PATH:" != *":$HOME/flutter/bin:"* ]] && export PATH="$HOME/flutter/bin:$PATH"
+
+# Add pub cache to PATH
+[[ -d $HOME/.pub-cache/bin ]] && [[ ":$PATH:" != *":$HOME/.pub-cache/bin:"* ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
+
+# Add Miniconda3 to PATH
+[[ -d $HOME/miniconda3/bin ]] && [[ ":$PATH:" != *":$HOME/miniconda3/bin:"* ]] && export PATH="$HOME/miniconda3/bin:$PATH"
+
 # Set OniVim as default visual editor and fallback to system default if fail
 [[ -d $HOME/Oni ]] && export VISUAL="$HOME/Oni/oni"
