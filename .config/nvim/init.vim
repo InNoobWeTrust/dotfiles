@@ -7,24 +7,9 @@
 
 call plug#begin('$HOME/.local/share/nvim/plugged')
 "" Language Client
-if has('win16') || has('win32') || has('win64') || has('win32unix')
-    Plug 'autozimu/LanguageClient-neovim', {
-        \ 'branch': 'next',
-        \ 'do': 'powershell install.ps1',
-        \ }
-else
-    Plug 'autozimu/LanguageClient-neovim', {
-        \ 'branch': 'next',
-        \ 'do': 'bash install.sh',
-        \ }
-endif
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
+Plug 'natebosch/vim-lsc'
+"" Asynchronous lint engine
+Plug 'w0rp/ale'
 "" Fuzzy selection
 Plug 'junegunn/fzf'
 "" Searching
@@ -33,8 +18,6 @@ Plug 'junegunn/fzf'
 "Plug 'ctrlpvim/ctrlp.vim'
 "" Tree explorer
 Plug 'scrooloose/nerdtree'
-"" Syntax checking
-Plug 'vim-syntastic/syntastic'
 "" Text object per indent level
 Plug 'michaeljsmith/vim-indent-object'
 "" Code commenting
@@ -47,6 +30,8 @@ Plug 'airblade/vim-gitgutter'
 Plug 'maxbrunsfeld/vim-yankstack'
 "" Status line
 Plug 'itchyny/lightline.vim'
+"" Show lint errors and warnings on status line
+Plug 'maximbaz/lightline-ale'
 "" Language specific plugins
 " Markdown
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
@@ -126,6 +111,16 @@ if exists('g:gui_oni')
 endif
 """" End misc section
 
+"""" Autoclose brackets section
+inoremap " ""<left>
+inoremap ' ''<left>
+inoremap ( ()<left>
+inoremap [ []<left>
+inoremap { {}<left>
+inoremap {<CR> {<CR>}<ESC>0
+inoremap {;<CR> {<CR>};<ESC>0
+"""" End autoclose brackets section
+
 """" Keyboard shortcuts section
 " copy and paste
 vmap <C-c> "+yi
@@ -140,22 +135,44 @@ autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
 """ End indentation config section
 
-"""" Syntax section
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-"""" End syntax section
-
 """" Status line section
 set noshowmode
 let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ }
+"" Linting information on status line
+let g:lightline.component_expand = {
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \ }
+let g:lightline.component_type = {
+      \     'linter_checking': 'left',
+      \     'linter_warnings': 'warning',
+      \     'linter_errors': 'error',
+      \     'linter_ok': 'left',
+      \ }
+let g:lightline.active = { 'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ]] }
+let g:lightline#ale#indicator_checking = "\uf110"
+let g:lightline#ale#indicator_warnings = "\uf071"
+let g:lightline#ale#indicator_errors = "\uf05e"
+let g:lightline#ale#indicator_ok = "\uf00c"
 """" End status line section
+
+"""" Linting section
+" Enable completion where available.
+let g:ale_completion_enabled = 1
+" Keep the sign gutter open at all times
+let g:ale_sign_column_always = 1
+" Key mapping for navigating between errors
+nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
+nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
+" Don't lint on text change
+let g:ale_lint_on_text_changed = 'never'
+" Don't lint on opening a file
+let g:ale_lint_on_enter = 0
+"""" End linting section
 
 """" Language specific plugin section
 "" Dart
@@ -165,29 +182,7 @@ let dart_format_on_save = 1
 """" End language specific plugin section
 
 """" Language client section
-" Automaticaly start deoplete
-let g:deoplete#enable_at_startup = 1
-" Required for operations modifying multiple buffers like rename.
-set hidden
-" Automatically start language servers.
-let g:LanguageClient_autoStart = 1
-nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
-let g:LanguageClient_serverCommands = {}
-if executable('javascript-typescript-stdio')
-    let g:LanguageClient_serverCommands.javascript = ['javascript-typescript-stdio']
-    " Use LanguageServer for omnifunc completion
-    autocmd FileType javascript setlocal omnifunc=LanguageClient#complete
-endif
-if executable('pyls')
-    let g:LanguageClient_serverCommands.python = ['pyls']
-    " Use LanguageServer for omnifunc completion
-    autocmd FileType python setlocal omnifunc=LanguageClient#complete
-endif
-if executable('dart_language_server')
-    let g:LanguageClient_serverCommands.dart = ['dart_language_server']
-    " Use LanguageServer for omnifunc completion
-    autocmd FileType dart setlocal omnifunc=LanguageClient#complete
-endif
+let g:lsc_server_commands = {'dart': 'dart_language_server'}
+" Default key mapping
+let g:lsc_auto_map = v:true
 """" End language client section
