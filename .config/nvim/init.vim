@@ -27,6 +27,8 @@ else
 endif
 "" Fuzzy selection
 Plug 'junegunn/fzf'
+"" Add surrounding brackets, quotes, xml tags,...
+Plug 'tpope/vim-surround'
 "" Searching
 "Plug 'mileszs/ack.vim'
 "Plug 'corntrace/bufexplorer'
@@ -135,7 +137,7 @@ inoremap ' ''<left>
 inoremap ( ()<left>
 inoremap [ []<left>
 inoremap { {}<left>
-inoremap {<CR> {<CR>}<ESC>0
+inoremap {<CR> {<CR>}<up><ESC>$o
 """" End autoclose brackets section
 
 """" Keyboard shortcuts section
