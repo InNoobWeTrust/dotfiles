@@ -5,11 +5,24 @@
 "  autocmd VimEnter * PlugInstall --sync | source '$HOME/.config/nvim/init.vim'
 "endif
 
-call plug#begin('$HOME/.local/share/nvim/plugged')
+"" Register minconda's python when running on Windows
+"if has("win16") || has("win32") || has("win64")
+"    let g:python3_host_prog = "python"
+"endif
+
+call plug#begin('$HOME/AppData/Local/nvim/plugged')
 "" Language Client
 Plug 'natebosch/vim-lsc'
 "" Asynchronous lint engine
 Plug 'w0rp/ale'
+"" Autocomplete
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
 "" Fuzzy selection
 Plug 'junegunn/fzf'
 "" Searching
@@ -118,15 +131,14 @@ inoremap ( ()<left>
 inoremap [ []<left>
 inoremap { {}<left>
 inoremap {<CR> {<CR>}<ESC>0
-inoremap {;<CR> {<CR>};<ESC>0
 """" End autoclose brackets section
 
 """" Keyboard shortcuts section
 " copy and paste
-vmap <C-c> "+yi
-vmap <C-x> "+c
-vmap <S-Insert> c<ESC>"+p
-imap <S-Insert> <ESC>"+pa
+vnoremap <C-c> "+yi
+vnoremap <C-x> "+c
+vnoremap <S-Insert> c<ESC>"+p
+inoremap <S-Insert> <ESC>"+pa
 """" End keyboard shortcuts section
 
 """ Indentation config section
@@ -161,8 +173,8 @@ let g:lightline#ale#indicator_ok = "\uf00c"
 """" End status line section
 
 """" Linting section
-" Enable completion where available.
-let g:ale_completion_enabled = 1
+" Disable completion to use deoplete instead
+let g:ale_completion_enabled = 0
 " Keep the sign gutter open at all times
 let g:ale_sign_column_always = 1
 " Key mapping for navigating between errors
@@ -173,6 +185,10 @@ let g:ale_lint_on_text_changed = 'never'
 " Don't lint on opening a file
 let g:ale_lint_on_enter = 0
 """" End linting section
+
+"""" Autocomplete section
+let g:deoplete#enable_at_startup = 1
+"""" End autocomplete section
 
 """" Language specific plugin section
 "" Dart
