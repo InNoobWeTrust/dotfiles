@@ -6,11 +6,18 @@
 "endif
 
 "" Register minconda's python when running on Windows
-"if has("win16") || has("win32") || has("win64")
-"    let g:python3_host_prog = "python"
-"endif
+if (has("win16") || has("win32") || has("win64"))
+    let g:python3_host_prog = "python"
+endif
 
-call plug#begin('$HOME/AppData/Local/nvim/plugged')
+"" Set path for plugins based on platform
+if (has("win16") || has("win32") || has("win64"))
+    let plugged_path = '$HOME/AppData/Local/nvim/plugged'
+else
+    let plugged_path = '$HOME/.local/shared/nvim/plugged'
+endif
+
+call plug#begin(plugged_path)
 "" Language Client
 Plug 'natebosch/vim-lsc'
 "" Asynchronous lint engine
@@ -82,7 +89,10 @@ set background=dark
 if !exists('g:gui_oni')
     let g:gruvbox_italic=1
 endif
-colorscheme gruvbox
+try
+    colorscheme gruvbox
+catch
+endtry
 let g:gruvbox_contrast_dark = 'hard'
 """" End theme section
 
