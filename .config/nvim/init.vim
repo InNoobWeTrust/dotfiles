@@ -5,11 +5,6 @@
 "  autocmd VimEnter * PlugInstall --sync | source '$HOME/.config/nvim/init.vim'
 "endif
 
-"" Register minconda's python when running on Windows
-if (has("win16") || has("win32") || has("win64"))
-    let g:python3_host_prog = "python"
-endif
-
 "" Set path for plugins based on platform
 if (has("win16") || has("win32") || has("win64"))
     let plugged_path = '$HOME/AppData/Local/nvim/plugged'
