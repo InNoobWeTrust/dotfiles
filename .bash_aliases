@@ -7,8 +7,17 @@ alias l='ls -CF'
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
+# List orphan packages with pacman
+alias pacorphan='pacman -Qdt'
+
+# Remove orphan packages and dependencies with pacman
+alias pacorphanrm='sudo pacman -Rs $(pacman -Qqdt)'
+
 # automate pacman update
-alias pacmanauto='sudo pacman -Syyu -y'
+alias pacauto='sudo pacman -Syyu -y'
+
+# automate apt update
+alias aptauto='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
 
 # automate conda update
 alias condauto='conda update -n base conda -y && conda clean --all -y'
@@ -17,4 +26,4 @@ alias condauto='conda update -n base conda -y && conda clean --all -y'
 alias nvmauto='nvm install node --reinstall-packages-from=node -y'
 
 # automate update system all
-alias auto='pacmanauto && condauto && nvmauto'
+alias auto='pacauto && condauto && nvmauto'
