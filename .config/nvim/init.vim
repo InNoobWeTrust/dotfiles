@@ -1,4 +1,4 @@
-"""" Vim-plug configurations
+﻿"""" Vim-plug configurations
 "if empty(glob('$HOME/.config/nvim/autoload/plug.vim'))
 "  silent !curl -fLo $HOME/.config/nvim/autoload/plug.vim --create-dirs
 "    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -130,15 +130,6 @@ if exists('g:gui_oni')
     tnoremap <Esc> <C-\><C-n>
 endif
 """" End misc section
-
-"""" Autoclose brackets section
-inoremap " ""<left>
-inoremap ' ''<left>
-inoremap ( ()<left>
-inoremap [ []<left>
-inoremap { {}<left>
-inoremap {<CR> {<CR>}<up><ESC>$o
-"""" End autoclose brackets section
 
 """" Keyboard shortcuts section
 " copy and paste
