@@ -25,8 +25,5 @@ fi
 # Add pub cache to PATH
 [[ -d $HOME/.pub-cache/bin ]] && [[ ":$PATH:" != *":$HOME/.pub-cache/bin:"* ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
 
-# Add Miniconda3 to PATH
-[[ -d $HOME/miniconda3/bin ]] && [[ ":$PATH:" != *":$HOME/miniconda3/bin:"* ]] && export PATH="$HOME/miniconda3/bin:$PATH"
-
-# Set OniVim as default visual editor and fallback to system default if fail
+# Set OniVim as default visual editor
 [[ -d $HOME/Oni ]] && export VISUAL="$HOME/Oni/oni"
