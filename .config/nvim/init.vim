@@ -1,4 +1,4 @@
-﻿"""" Vim-plug configurations
+"""" Vim-plug configurations
 "if empty(glob('$HOME/.config/nvim/autoload/plug.vim'))
 "  silent !curl -fLo $HOME/.config/nvim/autoload/plug.vim --create-dirs
 "    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -8,6 +8,7 @@
 "" Set path for plugins based on platform
 if (has("win16") || has("win32") || has("win64"))
     let plugged_path = '$HOME/AppData/Local/nvim/plugged'
+    let g:python3_host_prog = '$HOME/Miniconda3/python.exe'
 else
     let plugged_path = '$HOME/.local/shared/nvim/plugged'
 endif
@@ -15,6 +16,10 @@ endif
 call plug#begin(plugged_path)
 "" Language Client
 Plug 'natebosch/vim-lsc'
+" Plug 'autozimu/LanguageClient-neovim', {
+"     \ 'branch': 'next',
+"     \ 'do': 'powershell install.ps1',
+"     \ }
 "" Asynchronous lint engine
 Plug 'w0rp/ale'
 "" Autocomplete
@@ -196,7 +201,20 @@ let dart_format_on_save = 1
 """" End language specific plugin section
 
 """" Language client section
+"" vim-lsc
 let g:lsc_server_commands = {'dart': 'dart_language_server'}
 " Default key mapping
 let g:lsc_auto_map = v:true
+"" Language Client Neovim
+set hidden
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+    \ 'javascript': ['javascript-typescript-stdio'],
+    \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
+    \ 'dart': ['dart_language_server'],
+    \ }
+nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 """" End language client section
