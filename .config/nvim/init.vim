@@ -8,6 +8,7 @@
 "" Set path for plugins based on platform
 if (has("win16") || has("win32") || has("win64"))
     let plugged_path = '$HOME/AppData/Local/nvim/plugged'
+    let g:python3_host_prog = '$HOME/Miniconda3/python.exe'
 else
     let plugged_path = '$HOME/.local/shared/nvim/plugged'
 endif
@@ -15,6 +16,10 @@ endif
 call plug#begin(plugged_path)
 "" Language Client
 Plug 'natebosch/vim-lsc'
+" Plug 'autozimu/LanguageClient-neovim', {
+"     \ 'branch': 'next',
+"     \ 'do': 'powershell install.ps1',
+"     \ }
 "" Asynchronous lint engine
 Plug 'w0rp/ale'
 "" Autocomplete
@@ -131,15 +136,6 @@ if exists('g:gui_oni')
 endif
 """" End misc section
 
-"""" Autoclose brackets section
-inoremap " ""<left>
-inoremap ' ''<left>
-inoremap ( ()<left>
-inoremap [ []<left>
-inoremap { {}<left>
-inoremap {<CR> {<CR>}<up><ESC>$o
-"""" End autoclose brackets section
-
 """" Keyboard shortcuts section
 " copy and paste
 vnoremap <C-c> "+yi
@@ -172,7 +168,12 @@ let g:lightline.component_type = {
       \     'linter_errors': 'error',
       \     'linter_ok': 'left',
       \ }
-let g:lightline.active = { 'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ]] }
+let g:lightline.active = { 'right': [
+      \                                 [ 'lineinfo' ],
+      \                                 [ 'percent' ],
+      \                                 [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ],
+      \                                 [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ]
+      \                             ] }
 let g:lightline#ale#indicator_checking = "\uf110"
 let g:lightline#ale#indicator_warnings = "\uf071"
 let g:lightline#ale#indicator_errors = "\uf05e"
@@ -205,7 +206,20 @@ let dart_format_on_save = 1
 """" End language specific plugin section
 
 """" Language client section
+"" vim-lsc
 let g:lsc_server_commands = {'dart': 'dart_language_server'}
 " Default key mapping
 let g:lsc_auto_map = v:true
+"" Language Client Neovim
+set hidden
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+    \ 'javascript': ['javascript-typescript-stdio'],
+    \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
+    \ 'dart': ['dart_language_server'],
+    \ }
+nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 """" End language client section
