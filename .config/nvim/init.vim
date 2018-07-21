@@ -16,20 +16,8 @@ endif
 call plug#begin(plugged_path)
 "" Language Client
 Plug 'natebosch/vim-lsc'
-" Plug 'autozimu/LanguageClient-neovim', {
-"     \ 'branch': 'next',
-"     \ 'do': 'powershell install.ps1',
-"     \ }
 "" Asynchronous lint engine
 Plug 'w0rp/ale'
-"" Autocomplete
-" if has('nvim')
-"   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" else
-"   Plug 'Shougo/deoplete.nvim'
-"   Plug 'roxma/nvim-yarp'
-"   Plug 'roxma/vim-hug-neovim-rpc'
-" endif
 "" Fuzzy selection
 Plug 'junegunn/fzf'
 "" Add surrounding brackets, quotes, xml tags,...
@@ -44,8 +32,6 @@ Plug 'scrooloose/nerdtree'
 Plug 'michaeljsmith/vim-indent-object'
 "" Code commenting
 Plug 'tpope/vim-commentary'
-"" Sublime-text alike multiple cursors
-Plug 'terryma/vim-multiple-cursors'
 "" Git gutter
 Plug 'airblade/vim-gitgutter'
 "" Use registers as stack for yank and delete
@@ -181,8 +167,6 @@ let g:lightline#ale#indicator_ok = "\uf00c"
 """" End status line section
 
 """" Linting section
-" Disable completion to use deoplete instead
-" let g:ale_completion_enabled = 0
 " Keep the sign gutter open at all times
 let g:ale_sign_column_always = 1
 " Key mapping for navigating between errors
@@ -193,10 +177,6 @@ let g:ale_lint_on_text_changed = 'never'
 " Don't lint on opening a file
 let g:ale_lint_on_enter = 0
 """" End linting section
-
-"""" Autocomplete section
-let g:deoplete#enable_at_startup = 0
-"""" End autocomplete section
 
 """" Language specific plugin section
 "" Dart
@@ -210,16 +190,6 @@ let dart_format_on_save = 1
 let g:lsc_server_commands = {'dart': 'dart_language_server'}
 " Default key mapping
 let g:lsc_auto_map = v:true
-"" Language Client Neovim
-" set hidden
-" let g:LanguageClient_serverCommands = {
-"     \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
-"     \ 'javascript': ['javascript-typescript-stdio'],
-"     \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
-"     \ 'dart': ['dart_language_server'],
-"     \ }
-" nnoremap <F5> :call LanguageClient_contextMenu()<CR>
-" nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+" Autoclose documentation window
+autocmd CompleteDone * silent! pclose
 """" End language client section
