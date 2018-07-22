@@ -26,21 +26,31 @@
     # Font
     guifont = 'FuraCode Nerd Font:h11'
     # File tree
-    filemanager = "nerdtree"
-    # Configurations for vim-lsc
-    # bootstrap_before = "vim_lsc_config#before"
-    bootstrap_after = "vim_lsc_config#after"
+    # filemanager = "nerdtree"
+    # Custom vim config
+    bootstrap_before = "init#before"
+    bootstrap_after = "init#after"
 
 # Enable autocomplete layer
 [[layers]]
 name = 'autocomplete'
 auto-completion-return-key-behavior = "complete"
 auto-completion-tab-key-behavior = "smart"
+auto-completion-complete-with-key-sequence = 'jk'
 
 [[layers]]
 name = 'shell'
 default_position = 'top'
 default_height = 30
+
+# [[layers]]
+# name = "lsp"
+# filetypes = [
+  # "dart",
+# ]
+
+[[layers]]
+name = "lang#dart"
 
 [[custom_plugins]]
 name = "dart-lang/dart-vim-plugin"
@@ -48,4 +58,8 @@ merged = 0
 
 [[custom_plugins]]
 name = "natebosch/vim-lsc"
+merged = 0
+
+[[custom_plugins]]
+name = "ryanoasis/vim-devicons"
 merged = 0
