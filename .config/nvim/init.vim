@@ -5,12 +5,26 @@
 "  autocmd VimEnter * PlugInstall --sync | source '$HOME/.config/nvim/init.vim'
 "endif
 
+if (has("win16") || has("win32") || has("win64"))
+    let nvim_root = "$HOME/AppData/Local/nvim/"
+    let vim_root = "$HOME/vimfiles/"
+else
+    let nvim_root = "$HOME/.config/nvim/"
+    let vim_root = "$HOME/.vim/"
+endif
+
+if has("nvim")
+    let user_root = nvim_root
+else
+    let user_root = vim_root
+endif
+
 "" Set path for plugins based on platform
 if (has("win16") || has("win32") || has("win64"))
-    let plugged_path = '$HOME/AppData/Local/nvim/plugged'
+    let plugged_path = user_root . "plugged"
     let g:python3_host_prog = '$HOME/Miniconda3/python.exe'
 else
-    let plugged_path = '$HOME/.local/shared/nvim/plugged'
+    let plugged_path = user_root . "plugged"
 endif
 
 call plug#begin(plugged_path)
@@ -61,7 +75,7 @@ Plug 'morhetz/gruvbox'
 call plug#end()
 
 if (has("termguicolors"))
- set termguicolors
+    set termguicolors
 endif
 
 """" Theme section
@@ -90,7 +104,7 @@ if has('gui_running')
 endif
 set encoding=utf-8
 set mouse=a
-set guifont=FuraCodeNerdFont
+set guifont=FuraCode\ Nerd\ Font:h11
 set smartcase
 set number
 set binary
@@ -101,7 +115,7 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab
 if exists('g:GtkGuiLoaded')
-    call rpcnotify(1, 'Gui', 'Font', 'Fira Code Retina 18') 
+    call rpcnotify(1, 'Gui', 'Font', 'FuraCode Nerd Font 12') 
     call rpcnotify(1, 'Gui', 'Option', 'Cmdline', 1)
     let g:GuiInternalClipboard = 1 
 endif
@@ -139,27 +153,27 @@ autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
 """" Status line section
 set noshowmode
 let g:lightline = {
-      \ 'colorscheme': 'wombat',
-      \ }
+            \ 'colorscheme': 'wombat',
+            \ }
 "" Linting information on status line
 let g:lightline.component_expand = {
-      \  'linter_checking': 'lightline#ale#checking',
-      \  'linter_warnings': 'lightline#ale#warnings',
-      \  'linter_errors': 'lightline#ale#errors',
-      \  'linter_ok': 'lightline#ale#ok',
-      \ }
+            \  'linter_checking': 'lightline#ale#checking',
+            \  'linter_warnings': 'lightline#ale#warnings',
+            \  'linter_errors': 'lightline#ale#errors',
+            \  'linter_ok': 'lightline#ale#ok',
+            \ }
 let g:lightline.component_type = {
-      \     'linter_checking': 'left',
-      \     'linter_warnings': 'warning',
-      \     'linter_errors': 'error',
-      \     'linter_ok': 'left',
-      \ }
+            \     'linter_checking': 'left',
+            \     'linter_warnings': 'warning',
+            \     'linter_errors': 'error',
+            \     'linter_ok': 'left',
+            \ }
 let g:lightline.active = { 'right': [
-      \                                 [ 'lineinfo' ],
-      \                                 [ 'percent' ],
-      \                                 [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ],
-      \                                 [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ]
-      \                             ] }
+            \                                 [ 'lineinfo' ],
+            \                                 [ 'percent' ],
+            \                                 [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ],
+            \                                 [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ]
+            \                             ] }
 let g:lightline#ale#indicator_checking = "\uf110"
 let g:lightline#ale#indicator_warnings = "\uf071"
 let g:lightline#ale#indicator_errors = "\uf05e"
@@ -176,6 +190,9 @@ nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
 let g:ale_lint_on_text_changed = 'never'
 " Don't lint on opening a file
 let g:ale_lint_on_enter = 0
+let g:ale_linters = {
+            \   'dart': ['dart_language_server'],
+            \}
 """" End linting section
 
 """" Language specific plugin section
