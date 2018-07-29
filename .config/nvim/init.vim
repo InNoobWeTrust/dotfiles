@@ -1,4 +1,4 @@
-"""" Vim-plug configurations
+﻿"""" Vim-plug configurations
 "if empty(glob('$HOME/.config/nvim/autoload/plug.vim'))
 "  silent !curl -fLo $HOME/.config/nvim/autoload/plug.vim --create-dirs
 "    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -22,16 +22,36 @@ endif
 "" Set path for plugins based on platform
 if (has("win16") || has("win32") || has("win64"))
     let plugged_path = user_root . "plugged"
-    let g:python3_host_prog = '$HOME/Miniconda3/python.exe'
 else
     let plugged_path = user_root . "plugged"
 endif
 
 call plug#begin(plugged_path)
 "" Language Client
-Plug 'natebosch/vim-lsc'
+" Plug 'natebosch/vim-lsc'
+if (has("win16") || has("win32") || has("win64"))
+    Plug 'autozimu/LanguageClient-neovim', {
+                \ 'branch': 'next',
+                \ 'do': 'powershell install.ps1',
+                \ }
+else
+    Plug 'autozimu/LanguageClient-neovim', {
+                \ 'branch': 'next',
+                \ 'do': 'bash install.sh',
+                \ }
+endif
 "" Asynchronous lint engine
 Plug 'w0rp/ale'
+"" Autocompletion
+if has('nvim')
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+    Plug 'Shougo/deoplete.nvim'
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
+endif
+let g:deoplete#enable_at_startup = 1
+Plug 'villainy/deoplete-dart', { 'for': 'dart' }
 "" Fuzzy selection
 Plug 'junegunn/fzf'
 "" Add surrounding brackets, quotes, xml tags,...
@@ -53,7 +73,7 @@ Plug 'maxbrunsfeld/vim-yankstack'
 "" Status line
 Plug 'itchyny/lightline.vim'
 "" Show lint errors and warnings on status line
-Plug 'maximbaz/lightline-ale'
+" Plug 'maximbaz/lightline-ale'
 "" Language specific plugins
 " Markdown
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
@@ -147,7 +167,7 @@ inoremap <S-Insert> <ESC>"+pa
 """ Indentation config section
 autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
-autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
+" autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
 """ End indentation config section
 
 """" Status line section
@@ -181,6 +201,8 @@ let g:lightline#ale#indicator_ok = "\uf00c"
 """" End status line section
 
 """" Linting section
+"" Enable autocomplete
+let g:ale_completion_enabled = 1
 " Keep the sign gutter open at all times
 let g:ale_sign_column_always = 1
 " Key mapping for navigating between errors
@@ -204,9 +226,31 @@ let dart_format_on_save = 1
 
 """" Language client section
 "" vim-lsc
-let g:lsc_server_commands = {'dart': 'dart_language_server'}
+" let g:lsc_server_commands = {'dart': 'dart_language_server'}
 " Default key mapping
-let g:lsc_auto_map = v:true
+" let g:lsc_auto_map = v:true
 " Autoclose documentation window
-autocmd CompleteDone * silent! pclose
+" autocmd CompleteDone * silent! pclose
+"" LanguageClient-neovim
+" Required for operations modifying multiple buffers like rename.
+set hidden
+if (has("win16") || has("win32") || has("win64"))
+    let g:LanguageClient_serverCommands = {
+                \ 'javascript': ['javascript-typescript-langserver.cmd'],
+                \ 'python': ['pyls.exe'],
+                \ 'dart': ['dart_language_server.bat'],
+                \ }
+else
+    let g:LanguageClient_serverCommands = {
+                \ 'rust': ['rustup', 'run', 'stable', 'rls'],
+                \ 'javascript': ['javascript-typescript-langserver'],
+                \ 'python': ['pyls'],
+                \ 'dart': ['dart_language_server'],
+                \ }
+endif
+nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+" Or map each action separately
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 """" End language client section
