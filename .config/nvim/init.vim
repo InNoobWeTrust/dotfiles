@@ -1,4 +1,4 @@
-﻿"""" Vim-plug configurations
+"""" Vim-plug configurations
 "if empty(glob('$HOME/.config/nvim/autoload/plug.vim'))
 "  silent !curl -fLo $HOME/.config/nvim/autoload/plug.vim --create-dirs
 "    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -32,7 +32,7 @@ call plug#begin(plugged_path)
 if (has("win16") || has("win32") || has("win64"))
     Plug 'autozimu/LanguageClient-neovim', {
                 \ 'branch': 'next',
-                \ 'do': 'powershell install.ps1',
+                \ 'do': 'Powershell.exe -File install.ps1',
                 \ }
 else
     Plug 'autozimu/LanguageClient-neovim', {
