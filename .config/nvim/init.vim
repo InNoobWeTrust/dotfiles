@@ -29,39 +29,38 @@ endif
 call plug#begin(plugged_path)
 "" Language Client
 " Plug 'natebosch/vim-lsc'
-if (has("win16") || has("win32") || has("win64"))
-    Plug 'autozimu/LanguageClient-neovim', {
-                \ 'branch': 'next',
-                \ 'do': 'Powershell.exe -File install.ps1',
-                \ }
-else
-    Plug 'autozimu/LanguageClient-neovim', {
-                \ 'branch': 'next',
-                \ 'do': 'bash install.sh',
-                \ }
-endif
-"" Asynchronous lint engine
-Plug 'w0rp/ale'
+" if (has("win16") || has("win32") || has("win64"))
+"     Plug 'autozimu/LanguageClient-neovim', {
+"                 \ 'branch': 'next',
+"                 \ 'do': 'Powershell.exe -File install.ps1',
+"                 \ }
+" else
+"     Plug 'autozimu/LanguageClient-neovim', {
+"                 \ 'branch': 'next',
+"                 \ 'do': 'bash install.sh',
+"                 \ }
+" endif
 "" Autocompletion
-if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-    Plug 'Shougo/deoplete.nvim'
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
-endif
-let g:deoplete#enable_at_startup = 1
-Plug 'villainy/deoplete-dart', { 'for': 'dart' }
+" if has('nvim')
+"     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" else
+"     Plug 'Shougo/deoplete.nvim'
+"     Plug 'roxma/nvim-yarp'
+"     Plug 'roxma/vim-hug-neovim-rpc'
+" endif
+" let g:deoplete#enable_at_startup = 1
+" Plug 'villainy/deoplete-dart', { 'for': 'dart' }
+"" Asynchronous lint engine
+Plug 'w0rp/ale', {'branch': 'v2.0.x'}
 "" Fuzzy selection
 Plug 'junegunn/fzf'
 "" Add surrounding brackets, quotes, xml tags,...
 Plug 'tpope/vim-surround'
-"" Searching
-"Plug 'mileszs/ack.vim'
-"Plug 'corntrace/bufexplorer'
-"Plug 'ctrlpvim/ctrlp.vim'
 "" Tree explorer
 Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+"" Enhanced terminal
+Plug 'Shougo/deol.nvim'
 "" Text object per indent level
 Plug 'michaeljsmith/vim-indent-object'
 "" Code commenting
@@ -73,7 +72,7 @@ Plug 'maxbrunsfeld/vim-yankstack'
 "" Status line
 Plug 'itchyny/lightline.vim'
 "" Show lint errors and warnings on status line
-" Plug 'maximbaz/lightline-ale'
+Plug 'maximbaz/lightline-ale'
 "" Language specific plugins
 " Markdown
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
@@ -87,24 +86,14 @@ Plug 'dart-lang/dart-vim-plugin', { 'for': 'dart' }
 " HTML helper (same as Emmet)
 Plug 'rstacruz/sparkup', {'rtp': 'vim', 'for': ['html', 'htmldjango', 'javascript.jsx']}
 "" File icons
-Plug 'ryanoasis/vim-devicons'
-"" Themes
-"Plug 'mhartington/oceanic-next'
-"Plug 'altercation/vim-colors-solarized'
+" Plug 'ryanoasis/vim-devicons'
+"" Theme
 Plug 'morhetz/gruvbox'
 call plug#end()
-
-if (has("termguicolors"))
-    set termguicolors
-endif
 
 """" Theme section
 syntax enable
 syntax on
-"" Oceanic
-"colorscheme OceanicNext
-"let g:oceanic_next_terminal_bold = 1
-"let g:oceanic_next_terminal_italic = 1
 "" GruvBox
 highlight Normal ctermbg=black ctermfg=white
 set background=dark
@@ -119,6 +108,9 @@ let g:gruvbox_contrast_dark = 'hard'
 """" End theme section
 
 """" Misc section
+if (has("termguicolors"))
+    set termguicolors
+endif
 if has('gui_running')
     set t_Co=256
 endif
@@ -208,20 +200,24 @@ let g:ale_sign_column_always = 1
 " Key mapping for navigating between errors
 nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
 nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
-" Don't lint on text change
-let g:ale_lint_on_text_changed = 'never'
-" Don't lint on opening a file
-let g:ale_lint_on_enter = 0
-let g:ale_linters = {
-            \   'dart': ['dart_language_server'],
-            \}
+" Lint on text change
+" let g:ale_lint_on_text_changed = 'never'
+" let g:ale_lint_on_text_changed = 'normal'
+" Lint on opening a file
+" let g:ale_lint_on_enter = 0
+" Fix files when you saving
+" let g:ale_fix_on_save = 0
+" Show 3 lines of errors (default: 10)
+let g:ale_list_window_size = 3
+"" Key mapping for IDE-like behaviour
+nnoremap <silent> K :ALEHover<CR>
 """" End linting section
 
 """" Language specific plugin section
 "" Dart
 let dart_html_in_string=v:true
 let dart_style_guide = 2
-let dart_format_on_save = 1
+" let dart_format_on_save = 1
 """" End language specific plugin section
 
 """" Language client section
@@ -233,24 +229,24 @@ let dart_format_on_save = 1
 " autocmd CompleteDone * silent! pclose
 "" LanguageClient-neovim
 " Required for operations modifying multiple buffers like rename.
-set hidden
-if (has("win16") || has("win32") || has("win64"))
-    let g:LanguageClient_serverCommands = {
-                \ 'javascript': ['javascript-typescript-langserver.cmd'],
-                \ 'python': ['pyls.exe'],
-                \ 'dart': ['dart_language_server.bat'],
-                \ }
-else
-    let g:LanguageClient_serverCommands = {
-                \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-                \ 'javascript': ['javascript-typescript-langserver'],
-                \ 'python': ['pyls'],
-                \ 'dart': ['dart_language_server'],
-                \ }
-endif
-nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+" set hidden
+" if (has("win16") || has("win32") || has("win64"))
+"     let g:LanguageClient_serverCommands = {
+"                 \ 'javascript': ['javascript-typescript-langserver.cmd'],
+"                 \ 'python': ['pyls.exe'],
+"                 \ 'dart': ['dart_language_server.bat'],
+"                 \ }
+" else
+"     let g:LanguageClient_serverCommands = {
+"                 \ 'rust': ['rustup', 'run', 'stable', 'rls'],
+"                 \ 'javascript': ['javascript-typescript-langserver'],
+"                 \ 'python': ['pyls'],
+"                 \ 'dart': ['dart_language_server'],
+"                 \ }
+" endif
+" nnoremap <F5> :call LanguageClient_contextMenu()<CR>
 " Or map each action separately
-nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+" nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 """" End language client section
