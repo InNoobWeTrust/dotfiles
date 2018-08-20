@@ -145,19 +145,6 @@ export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1
 
 ######### User config
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
-#Platform-aware definitions.
-if [ -f ~/.bash_wsl ]; then
-    . ~/.bash_wsl
-fi
-
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -176,32 +163,22 @@ shopt -s checkwinsize
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# Set neovim as default editor
-if [[ $(which nvim) ]]; then
-    export EDITOR="$(which nvim)"
-else
-    export EDITOR=/usr/bin/nano
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
 fi
 
-# Add Oni to PATH
-[[ -d $HOME/Oni ]] && [[ ":$PATH:" != *":$HOME/Oni:"* ]] && export PATH="$HOME/Oni:$PATH"
-
-# Add flutter to PATH
-[[ -d $HOME/flutter/bin ]] && [[ ":$PATH:" != *":$HOME/flutter/bin:"* ]] && export PATH="$HOME/flutter/bin:$PATH"
-
-# Add dart-sdk to PATH
-[[ -d $HOME/flutter/bin/cache/dart-sdk/bin ]] && [[ ":$PATH:" != *":$HOME/flutter/bin/cache/dart-sdk/bin:"* ]] && export PATH="$HOME/flutter/bin/cache/dart-sdk/bin:$PATH"
-
-# Add pub cache to PATH
-[[ -d $HOME/.pub-cache/bin ]] && [[ ":$PATH:" != *":$HOME/.pub-cache/bin:"* ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
-
-# Add Miniconda3 to PATH
-[[ -d $HOME/miniconda3/bin ]] && [[ ":$PATH:" != *":$HOME/miniconda3/bin:"* ]] && export PATH="$HOME/miniconda3/bin:$PATH"
-
-# Activate nvm
-if [ -d $HOME/.nvm ]; then
-	export NVM_DIR="$HOME/.nvm"
-	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Platform-aware definitions.
+if [ -f ~/.bash_wsl ]; then
+    . ~/.bash_wsl
 fi
+
+# PATH definition
+if [ -f ~/.bash_path ]; then
+    . ~/.bash_path
+fi
+
 ######### End user config
