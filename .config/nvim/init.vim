@@ -21,7 +21,7 @@ endif
 
 "" Set path for plugins based on platform
 if (has("win16") || has("win32") || has("win64"))
-    let plugged_path = user_root . "plugged"
+    let plugged_path = nvim_root . "plugged"
 else
     let plugged_path = user_root . "plugged"
 endif
@@ -113,6 +113,10 @@ if (has("termguicolors"))
 endif
 if has('gui_running')
     set t_Co=256
+    " set guioptions-=m  "remove menu bar
+    set guioptions-=T  "remove toolbar
+    set guioptions-=r  "remove right-hand scroll bar
+    set guioptions-=L  "remove left-hand scroll bar
 endif
 set encoding=utf-8
 set mouse=a
@@ -122,6 +126,7 @@ set number
 set binary
 set list
 set listchars=eol:$,tab:↣—,trail:…,extends:»,precedes:«,space:·,nbsp:☠
+set backspace=indent,eol,start
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
@@ -154,11 +159,13 @@ vnoremap <C-c> "+yi
 vnoremap <C-x> "+c
 vnoremap <S-Insert> c<ESC>"+p
 inoremap <S-Insert> <ESC>"+pa
+map <C-n> :NERDTreeToggle<CR>
 """" End keyboard shortcuts section
 
 """ Indentation config section
 autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
+autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
 " autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
 """ End indentation config section
 
