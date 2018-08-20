@@ -132,7 +132,7 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab
 if exists('g:GtkGuiLoaded')
-    call rpcnotify(1, 'Gui', 'Font', 'FuraCode Nerd Font 12') 
+    call rpcnotify(1, 'Gui', 'Font', 'FuraCode Nerd Font 14') 
     call rpcnotify(1, 'Gui', 'Option', 'Cmdline', 1)
     let g:GuiInternalClipboard = 1 
 endif
