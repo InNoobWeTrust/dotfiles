@@ -24,6 +24,7 @@ font-1 = "Emoji:pixelsize=12"
 
 modules-left = apps windows i3
 modules-center = cpu memory temperature date battery0 battery1
+;modules-right = backlight wlan eth
 modules-right = backlight pulseaudio wlan eth
 
 tray-position = right
@@ -200,7 +201,7 @@ label = %date% %time%
 [module/volume]
 type = internal/volume
  
-format-volume = <label-volume> <bar-volume>
+format-volume = <label-volume> <bar>
 ramp-volume-0 = 🔈
 ramp-volume-1 = 🔉
 ramp-volume-2 = 🔊
@@ -230,7 +231,7 @@ bar-volume-empty-foreground = #55
 type = internal/pulseaudio
 sink = alsa_output.pci-0000_00_1b.0.analog-stereo
 
-format-volume = <ramp-volume> <label-volume>
+format-volume = <bar-volume> <label-volume>
 ramp-volume-0 = 🔈
 ramp-volume-1 = 🔉
 ramp-volume-2 = 🔊
@@ -239,6 +240,21 @@ label-volume = %percentage%%
 format-muted = <label-muted>
 label-muted = 🔇 muted
 label-muted-foreground = #66
+
+bar-volume-width = 5
+bar-volume-foreground-0 = #55aa55
+bar-volume-foreground-1 = #55aa55
+bar-volume-foreground-2 = #55aa55
+bar-volume-foreground-3 = #55aa55
+bar-volume-foreground-4 = #55aa55
+bar-volume-foreground-5 = #f5a70a
+bar-volume-foreground-6 = #ff5555
+bar-volume-gradient = false
+bar-volume-indicator = 
+bar-volume-indicator-foreground = #ff
+bar-volume-fill = 
+bar-volume-empty = 
+bar-volume-empty-foreground = #55
 
 [module/battery0]
 type = internal/battery
