@@ -1,9 +1,3 @@
-#
-# ~/.bash_profile
-#
-
-[[ -f ~/.bashrc ]] && . ~/.bashrc
-
 # PATH definition
 if [ -f ~/.sh_path ]; then
     . ~/.sh_path

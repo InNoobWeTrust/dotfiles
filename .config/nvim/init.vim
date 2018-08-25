@@ -67,6 +67,8 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'tpope/vim-commentary'
 "" Git gutter
 Plug 'airblade/vim-gitgutter'
+"" Automatically toggle relative line number
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
 "" Use registers as stack for yank and delete
 Plug 'maxbrunsfeld/vim-yankstack'
 "" Status line
@@ -85,6 +87,11 @@ Plug 'udalov/kotlin-vim', { 'for': 'kotlin' }
 Plug 'dart-lang/dart-vim-plugin', { 'for': 'dart' }
 " HTML helper (same as Emmet)
 Plug 'rstacruz/sparkup', {'rtp': 'vim', 'for': ['html', 'htmldjango', 'javascript.jsx']}
+" Rust
+Plug 'rust-lang/rust.vim'
+Plug 'racer-rust/vim-racer', { 'for': 'rust' }
+let g:racer_cmd = "~/.cargo/bin/racer"
+let g:racer_experimental_completer = 1
 "" File icons
 " Plug 'ryanoasis/vim-devicons'
 "" Theme
@@ -118,11 +125,12 @@ if has('gui_running')
     set guioptions-=r  "remove right-hand scroll bar
     set guioptions-=L  "remove left-hand scroll bar
 endif
+set hidden
 set encoding=utf-8
 set mouse=a
 set guifont=FuraCode\ Nerd\ Font:h11
 set smartcase
-set number
+set number relativenumber
 set binary
 set list
 set listchars=eol:$,tab:↣—,trail:…,extends:»,precedes:«,space:·,nbsp:☠
@@ -132,7 +140,7 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab
 if exists('g:GtkGuiLoaded')
-    call rpcnotify(1, 'Gui', 'Font', 'FuraCode Nerd Font 14') 
+    call rpcnotify(1, 'Gui', 'Font', 'FuraCode Nerd Font 16') 
     call rpcnotify(1, 'Gui', 'Option', 'Cmdline', 1)
     let g:GuiInternalClipboard = 1 
 endif
@@ -154,11 +162,15 @@ endif
 """" End misc section
 
 """" Keyboard shortcuts section
-" copy and paste
+" Copy and paste
 vnoremap <C-c> "+yi
 vnoremap <C-x> "+c
 vnoremap <S-Insert> c<ESC>"+p
 inoremap <S-Insert> <ESC>"+pa
+" Map Ctrl-Del & Ctrl-BS to delete word
+inoremap <C-BS> <C-W>
+inoremap <C-Delete> <ESC>dwi
+" Toggle NERDTree
 map <C-n> :NERDTreeToggle<CR>
 """" End keyboard shortcuts section
 
@@ -218,6 +230,8 @@ nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
 let g:ale_list_window_size = 3
 "" Key mapping for IDE-like behaviour
 nnoremap <silent> K :ALEHover<CR>
+"" Enable all linters for rust
+let g:ale_linters = { 'rust': ['rls', 'rustc', 'cargo'] }
 """" End linting section
 
 """" Language specific plugin section
@@ -225,6 +239,11 @@ nnoremap <silent> K :ALEHover<CR>
 let dart_html_in_string=v:true
 let dart_style_guide = 2
 " let dart_format_on_save = 1
+"" Rust
+au FileType rust nmap gd <Plug>(rust-def)
+au FileType rust nmap gs <Plug>(rust-def-split)
+au FileType rust nmap gx <Plug>(rust-def-vertical)
+au FileType rust nmap <leader>gd <Plug>(rust-doc)
 """" End language specific plugin section
 
 """" Language client section
