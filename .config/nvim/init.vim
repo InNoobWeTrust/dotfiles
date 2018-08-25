@@ -89,9 +89,6 @@ Plug 'dart-lang/dart-vim-plugin', { 'for': 'dart' }
 Plug 'rstacruz/sparkup', {'rtp': 'vim', 'for': ['html', 'htmldjango', 'javascript.jsx']}
 " Rust
 Plug 'rust-lang/rust.vim'
-Plug 'racer-rust/vim-racer', { 'for': 'rust' }
-let g:racer_cmd = "~/.cargo/bin/racer"
-let g:racer_experimental_completer = 1
 "" File icons
 " Plug 'ryanoasis/vim-devicons'
 "" Theme
@@ -167,8 +164,7 @@ vnoremap <C-c> "+yi
 vnoremap <C-x> "+c
 vnoremap <S-Insert> c<ESC>"+p
 inoremap <S-Insert> <ESC>"+pa
-" Map Ctrl-Del & Ctrl-BS to delete word
-inoremap <C-BS> <C-W>
+" Map Ctrl-Del to delete word
 inoremap <C-Delete> <ESC>dwi
 " Toggle NERDTree
 map <C-n> :NERDTreeToggle<CR>
@@ -232,6 +228,8 @@ let g:ale_list_window_size = 3
 nnoremap <silent> K :ALEHover<CR>
 "" Enable all linters for rust
 let g:ale_linters = { 'rust': ['rls', 'rustc', 'cargo'] }
+let g:ale_rust_rls_toolchain = 'stable'
+let g:ale_rust_rustc_options = ''
 """" End linting section
 
 """" Language specific plugin section
@@ -239,11 +237,6 @@ let g:ale_linters = { 'rust': ['rls', 'rustc', 'cargo'] }
 let dart_html_in_string=v:true
 let dart_style_guide = 2
 " let dart_format_on_save = 1
-"" Rust
-au FileType rust nmap gd <Plug>(rust-def)
-au FileType rust nmap gs <Plug>(rust-def-split)
-au FileType rust nmap gx <Plug>(rust-def-vertical)
-au FileType rust nmap <leader>gd <Plug>(rust-doc)
 """" End language specific plugin section
 
 """" Language client section
