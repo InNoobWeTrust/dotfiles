@@ -73,6 +73,8 @@ Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'maxbrunsfeld/vim-yankstack'
 "" Status line
 Plug 'itchyny/lightline.vim'
+"" Show buffer in tabline
+Plug 'mgee/lightline-bufferline'
 "" Show lint errors and warnings on status line
 Plug 'maximbaz/lightline-ale'
 "" Language specific plugins
@@ -86,9 +88,18 @@ Plug 'udalov/kotlin-vim', { 'for': 'kotlin' }
 " Dart
 Plug 'dart-lang/dart-vim-plugin', { 'for': 'dart' }
 " HTML helper (same as Emmet)
-Plug 'rstacruz/sparkup', {'rtp': 'vim', 'for': ['html', 'htmldjango', 'javascript.jsx']}
+Plug 'rstacruz/sparkup', {
+            \ 'rtp': 'vim',
+            \ 'for': ['html', 'htmldjango', 'javascript.jsx']}
 " Rust
 Plug 'rust-lang/rust.vim'
+let g:autofmt_autosave = 1
+if (has("win16") || has("win32") || has("win64"))
+    let g:rust_clip_command = 'win32yank'
+else
+    let g:rust_clip_command = 'xclip -selection clipboard'
+endif
+" Plug 'mattn/webapi-vim'
 "" File icons
 " Plug 'ryanoasis/vim-devicons'
 "" Theme
@@ -118,27 +129,34 @@ endif
 if has('gui_running')
     set t_Co=256
     " set guioptions-=m  "remove menu bar
-    set guioptions-=T  "remove toolbar
-    set guioptions-=r  "remove right-hand scroll bar
-    set guioptions-=L  "remove left-hand scroll bar
+    set guioptions-=T   "remove toolbar
+    set guioptions-=r   "remove right-hand scroll bar
+    set guioptions-=L   "remove left-hand scroll bar
+    set guioptions-=e   "Use tabline from configs instead of GUI
 endif
 set hidden
+" set cmdheight=2
 set encoding=utf-8
 set mouse=a
 set guifont=FuraCode\ Nerd\ Font:h11
 set smartcase
 set number relativenumber
+set cursorline
 set binary
 set list
-set listchars=eol:$,tab:↣—,trail:…,extends:»,precedes:«,space:·,nbsp:☠
+set listchars=eol:$,tab:—,trail:…,extends:»,precedes:«,space:·,nbsp:☠
 set backspace=indent,eol,start
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
 if exists('g:GtkGuiLoaded')
-    call rpcnotify(1, 'Gui', 'Font', 'FuraCode Nerd Font 16') 
+    call rpcnotify(1, 'Gui', 'Font', 'FuraCode Nerd Font 12') 
     call rpcnotify(1, 'Gui', 'Option', 'Cmdline', 1)
+    " To disable external autocompletion popup menu (enabled by default)
+    call rpcnotify(1, 'Gui', 'Option', 'Popupmenu', 0)
+    " To disable external tabline (enabled by default)
+    call rpcnotify(1, 'Gui', 'Option', 'Tabline', 0)
     let g:GuiInternalClipboard = 1 
 endif
 if exists('g:gui_oni')
@@ -177,30 +195,92 @@ autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
 " autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
 """ End indentation config section
 
-"""" Status line section
-set noshowmode
+"""" Statusline/tabline section
 let g:lightline = {
             \ 'colorscheme': 'wombat',
             \ }
-"" Linting information on status line
+let g:lightline.enable = {
+            \ 'statusline': 1,
+            \ 'tabline': 1
+            \ }
+let g:lightline.separator = {
+            \ 'left': '', 'right': ''
+            \ }
+let g:lightline.subseparator = {
+            \ 'left': '', 'right': '' 
+            \ }
+function! MyLightLinePercent()
+    if &ft !=? 'nerdtree'
+        return line('.') * 100 / line('$') . '%'
+    else
+        return ''
+    endif
+endfunction
+function! MyLightLineLineInfo()
+    if &ft !=? 'nerdtree'
+        return line('.').':'. col('.')
+    else
+        return ''
+    endif
+endfunction
 let g:lightline.component_expand = {
-            \  'linter_checking': 'lightline#ale#checking',
-            \  'linter_warnings': 'lightline#ale#warnings',
-            \  'linter_errors': 'lightline#ale#errors',
-            \  'linter_ok': 'lightline#ale#ok',
+            \ 'buffers': 'lightline#bufferline#buffers',
+            \ 'linter_checking': 'lightline#ale#checking',
+            \ 'linter_warnings': 'lightline#ale#warnings',
+            \ 'linter_errors': 'lightline#ale#errors',
+            \ 'linter_ok': 'lightline#ale#ok',
             \ }
 let g:lightline.component_type = {
-            \     'linter_checking': 'left',
-            \     'linter_warnings': 'warning',
-            \     'linter_errors': 'error',
-            \     'linter_ok': 'left',
+            \ 'buffers': 'tabsel',
+            \ 'linter_checking': 'left',
+            \ 'linter_warnings': 'warning',
+            \ 'linter_errors': 'error',
+            \ 'linter_ok': 'left',
             \ }
-let g:lightline.active = { 'right': [
-            \                                 [ 'lineinfo' ],
-            \                                 [ 'percent' ],
-            \                                 [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ],
-            \                                 [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ]
-            \                             ] }
+let g:lightline.component_function = {
+            \ 'percent': 'MyLightLinePercent',
+            \ 'lineinfo': 'MyLightLineLineInfo'
+            \ }
+"" Statusline
+set noshowmode
+let g:lightline.active = { 'right':
+            \ [[ 'lineinfo' ],
+            \  [ 'percent' ],
+            \  [ 'linter_checking',
+            \    'linter_errors',
+            \    'linter_warnings',
+            \    'linter_ok']
+            \ ]}
+"" Tabline
+set showtabline=2
+let g:lightline#bufferline#enable_devicons = 1
+let g:lightline#bufferline#unicode_symbols = 1
+let g:lightline#bufferline#show_number = 1
+let g:lightline#bufferline#number_map = {
+            \ 0: '⁰', 1: '¹', 2: '²',
+            \ 3: '³', 4: '⁴', 5: '⁵',
+            \ 6: '⁶', 7: '⁷', 8: '⁸',
+            \ 9: '⁹'}
+" Quickly switch between buffers
+nmap <Leader>1 <Plug>lightline#bufferline#go(1)
+nmap <Leader>2 <Plug>lightline#bufferline#go(2)
+nmap <Leader>3 <Plug>lightline#bufferline#go(3)
+nmap <Leader>4 <Plug>lightline#bufferline#go(4)
+nmap <Leader>5 <Plug>lightline#bufferline#go(5)
+nmap <Leader>6 <Plug>lightline#bufferline#go(6)
+nmap <Leader>7 <Plug>lightline#bufferline#go(7)
+nmap <Leader>8 <Plug>lightline#bufferline#go(8)
+nmap <Leader>9 <Plug>lightline#bufferline#go(9)
+nmap <Leader>0 <Plug>lightline#bufferline#go(10)
+let g:lightline.tabline = {
+            \ 'left': [['buffers']],
+            \ 'right': [
+            \   ['close'],
+            \   ['fileformat',
+            \    'fileencoding',
+            \    'filetype']
+            \ ]}
+"" Linting options
 let g:lightline#ale#indicator_checking = "\uf110"
 let g:lightline#ale#indicator_warnings = "\uf071"
 let g:lightline#ale#indicator_errors = "\uf05e"
@@ -228,6 +308,8 @@ let g:ale_list_window_size = 3
 nnoremap <silent> K :ALEHover<CR>
 "" Enable all linters for rust
 let g:ale_linters = { 'rust': ['rls', 'rustc', 'cargo'] }
+"" Enable all fixers for rust
+let g:ale_fixers = { 'rust': ['rustfmt', 'remove_trailing_lines', 'trim_whitespace'] }
 let g:ale_rust_rls_toolchain = 'stable'
 let g:ale_rust_rustc_options = ''
 """" End linting section
