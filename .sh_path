@@ -1,6 +1,7 @@
 # Set neovim as default editor
 if [[ $(which nvim) ]]; then
     export EDITOR="$(which nvim)"
+    export VISUAL="$(which nvim)"
 else
     export EDITOR=/usr/bin/nano
 fi
@@ -16,6 +17,9 @@ fi
 
 # Add pub cache to PATH
 [[ -d $HOME/.pub-cache/bin ]] && [[ ":$PATH:" != *":$HOME/.pub-cache/bin:"* ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
+
+# Add cargo to PATH
+[[ -d $HOME/.cargo/bin ]] && [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$HOME/.cargo/bin:$PATH"
 
 # Add Miniconda3 to PATH
 [[ -d $HOME/miniconda3/bin ]] && [[ ":$PATH:" != *":$HOME/miniconda3/bin:"* ]] && export PATH="$HOME/miniconda3/bin:$PATH"

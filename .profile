@@ -5,9 +5,3 @@ export BROWSER=/usr/bin/firefox
 
 # Set TERMINFO
 #export TERMINFO=/usr/lib/terminfo
-
-############################## PATH ###################################
-if [ -f ~/.sh_path ]; then
-    . ~/.sh_path
-fi
-############################ End PATH ################################

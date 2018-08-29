@@ -26,4 +26,7 @@ alias condauto='conda update -n base conda -y && conda clean --all -y'
 alias nvmauto='nvm install node --reinstall-packages-from=node -y'
 
 # automate update system all
-alias auto='pacauto && condauto && nvmauto'
+alias manjaroauto='pacauto && condauto && nvmauto'
+
+# automate termux android
+alias termuxauto='apt update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y'

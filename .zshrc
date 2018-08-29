@@ -4,6 +4,18 @@ if [ -f ~/.bash_aliases ]; then
 fi
 ######################### End aliases ################################
 
+#################### Platform-aware definition #######################
+if [ -f ~/.bash_wsl ]; then
+    . ~/.bash_wsl
+fi
+################## End Platform-aware definition #####################
+
+######################### PATH definition ############################
+if [ -f ~/.sh_path ]; then
+    . ~/.sh_path
+fi
+###################### End PATH definition ###########################
+
 ####################### Theme ##############################
 # Easily switch primary foreground/background colors
 DEFAULT_FOREGROUND=006 DEFAULT_BACKGROUND=235

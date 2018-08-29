@@ -175,4 +175,9 @@ fi
 if [ -f ~/.bash_wsl ]; then
     . ~/.bash_wsl
 fi
+
+# PATH definition
+if [ -f ~/.sh_path ]; then
+    . ~/.sh_path
+fi
 ######### End user config
