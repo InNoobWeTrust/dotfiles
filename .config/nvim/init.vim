@@ -101,7 +101,7 @@ else
 endif
 " Plug 'mattn/webapi-vim'
 "" File icons
-" Plug 'ryanoasis/vim-devicons'
+Plug 'ryanoasis/vim-devicons'
 "" Theme
 Plug 'morhetz/gruvbox'
 call plug#end()
@@ -138,7 +138,7 @@ set hidden
 " set cmdheight=2
 set encoding=utf-8
 set mouse=a
-set guifont=FuraCode\ Nerd\ Font:h11
+" set guifont=FuraCode\ Nerd\ Font:h12
 set smartcase
 set number relativenumber
 set cursorline
@@ -204,10 +204,10 @@ let g:lightline.enable = {
             \ 'tabline': 1
             \ }
 let g:lightline.separator = {
-            \ 'left': '', 'right': ''
+            \ 'left': '', 'right': ''
             \ }
 let g:lightline.subseparator = {
-            \ 'left': '', 'right': '' 
+            \ 'left': '', 'right': ''
             \ }
 function! MyLightLinePercent()
     if &ft !=? 'nerdtree'
@@ -222,6 +222,13 @@ function! MyLightLineLineInfo()
     else
         return ''
     endif
+endfunction
+function! MyFiletype()
+  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+endfunction
+
+function! MyFileformat()
+  return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
 endfunction
 let g:lightline.component_expand = {
             \ 'buffers': 'lightline#bufferline#buffers',
@@ -239,7 +246,9 @@ let g:lightline.component_type = {
             \ }
 let g:lightline.component_function = {
             \ 'percent': 'MyLightLinePercent',
-            \ 'lineinfo': 'MyLightLineLineInfo'
+            \ 'lineinfo': 'MyLightLineLineInfo',
+            \ 'filetype': 'MyFiletype',
+            \ 'fileformat': 'MyFileformat',
             \ }
 "" Statusline
 set noshowmode
