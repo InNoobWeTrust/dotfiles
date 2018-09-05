@@ -120,6 +120,8 @@ else
     let g:rust_clip_command = 'xclip -selection clipboard'
 endif
 " Plug 'mattn/webapi-vim'
+"" Start screen
+Plug 'mhinz/vim-startify'
 "" File icons
 Plug 'ryanoasis/vim-devicons'
 "" Theme
