@@ -1,32 +1,52 @@
-"""" Vim-plug configurations
-"if empty(glob('$HOME/.config/nvim/autoload/plug.vim'))
-"  silent !curl -fLo $HOME/.config/nvim/autoload/plug.vim --create-dirs
-"    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-"  autocmd VimEnter * PlugInstall --sync | source '$HOME/.config/nvim/init.vim'
-"endif
-
-if (has("win16") || has("win32") || has("win64"))
-    let nvim_root = "$HOME/AppData/Local/nvim/"
-    let vim_root = "$HOME/vimfiles/"
+""""""" The code to check and download Vim-Plug is found here:
+""""""" https://github.com/yous/dotfiles/blob/e6f1e71b6106f6953874c6b81f0753663f901578/vimrc#L30-L81
+if !empty(&rtp)
+  let s:vimfiles = split(&rtp, ',')[0]
 else
-    let nvim_root = "$HOME/.config/nvim/"
-    let vim_root = "$HOME/.vim/"
+  echohl ErrorMsg
+  echomsg 'Unable to determine runtime path for Vim.'
+  echohl NONE
 endif
 
-if has("nvim")
-    let user_root = nvim_root
-else
-    let user_root = vim_root
-endif
+" Install vim-plug if it isn't installed and call plug#begin() out of box
+function! s:DownloadVimPlug()
+  if !exists('s:vimfiles')
+    return
+  endif
+  if empty(glob(s:vimfiles . '/autoload/plug.vim'))
+    let plug_url = 'https://github.com/junegunn/vim-plug.git'
+    let tmp = tempname()
+    let new = tmp . '/plug.vim'
 
-"" Set path for plugins based on platform
-if (has("win16") || has("win32") || has("win64"))
-    let plugged_path = nvim_root . "plugged"
-else
-    let plugged_path = user_root . "plugged"
-endif
+    try
+      let out = system(printf('git clone --depth 1 %s %s', plug_url, tmp))
+      if v:shell_error
+        echohl ErrorMsg
+        echomsg 'Error downloading vim-plug: ' . out
+        echohl NONE
+        return
+      endif
 
-call plug#begin(plugged_path)
+      if !isdirectory(s:vimfiles . '/autoload')
+        call mkdir(s:vimfiles . '/autoload', 'p')
+      endif
+      call rename(new, s:vimfiles . '/autoload/plug.vim')
+
+      " Install plugins at first
+      autocmd VimEnter * PlugInstall | quit
+    finally
+      if isdirectory(tmp)
+        let dir = '"' . escape(tmp, '"') . '"'
+        silent call system((has('win32') ? 'rmdir /S /Q ' : 'rm -rf ') . dir)
+      endif
+    endtry
+  endif
+  call plug#begin(s:vimfiles . '/plugged')
+endfunction
+
+call s:DownloadVimPlug()
+
+call plug#begin(s:vimfiles . "/plugged")
 "" Language Client
 " Plug 'natebosch/vim-lsc'
 " if (has("win16") || has("win32") || has("win64"))
