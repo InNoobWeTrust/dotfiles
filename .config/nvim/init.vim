@@ -164,6 +164,8 @@ set mouse=a
 set smartcase
 set number relativenumber
 set cursorline
+set nowrap
+set colorcolumn=80
 set binary
 set list
 set listchars=eol:$,tab:—,trail:…,extends:»,precedes:«,space:·,nbsp:☠
