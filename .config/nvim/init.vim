@@ -1,47 +1,47 @@
 """"""" The code to check and download Vim-Plug is found here:
 """"""" https://github.com/yous/dotfiles/blob/e6f1e71b6106f6953874c6b81f0753663f901578/vimrc#L30-L81
 if !empty(&rtp)
-  let s:vimfiles = split(&rtp, ',')[0]
+    let s:vimfiles = split(&rtp, ',')[0]
 else
-  echohl ErrorMsg
-  echomsg 'Unable to determine runtime path for Vim.'
-  echohl NONE
+    echohl ErrorMsg
+    echomsg 'Unable to determine runtime path for Vim.'
+    echohl NONE
 endif
 
 " Install vim-plug if it isn't installed and call plug#begin() out of box
 function! s:DownloadVimPlug()
-  if !exists('s:vimfiles')
-    return
-  endif
-  if empty(glob(s:vimfiles . '/autoload/plug.vim'))
-    let plug_url = 'https://github.com/junegunn/vim-plug.git'
-    let tmp = tempname()
-    let new = tmp . '/plug.vim'
-
-    try
-      let out = system(printf('git clone --depth 1 %s %s', plug_url, tmp))
-      if v:shell_error
-        echohl ErrorMsg
-        echomsg 'Error downloading vim-plug: ' . out
-        echohl NONE
+    if !exists('s:vimfiles')
         return
-      endif
+    endif
+    if empty(glob(s:vimfiles . '/autoload/plug.vim'))
+        let plug_url = 'https://github.com/junegunn/vim-plug.git'
+        let tmp = tempname()
+        let new = tmp . '/plug.vim'
 
-      if !isdirectory(s:vimfiles . '/autoload')
-        call mkdir(s:vimfiles . '/autoload', 'p')
-      endif
-      call rename(new, s:vimfiles . '/autoload/plug.vim')
+        try
+            let out = system(printf('git clone --depth 1 %s %s', plug_url, tmp))
+            if v:shell_error
+                echohl ErrorMsg
+                echomsg 'Error downloading vim-plug: ' . out
+                echohl NONE
+                return
+            endif
 
-      " Install plugins at first
-      autocmd VimEnter * PlugInstall | quit
-    finally
-      if isdirectory(tmp)
-        let dir = '"' . escape(tmp, '"') . '"'
-        silent call system((has('win32') ? 'rmdir /S /Q ' : 'rm -rf ') . dir)
-      endif
-    endtry
-  endif
-  call plug#begin(s:vimfiles . '/plugged')
+            if !isdirectory(s:vimfiles . '/autoload')
+                call mkdir(s:vimfiles . '/autoload', 'p')
+            endif
+            call rename(new, s:vimfiles . '/autoload/plug.vim')
+
+            " Install plugins at first
+            autocmd VimEnter * PlugInstall | quit
+        finally
+            if isdirectory(tmp)
+                let dir = '"' . escape(tmp, '"') . '"'
+                silent call system((has('win32') ? 'rmdir /S /Q ' : 'rm -rf ') . dir)
+            endif
+        endtry
+    endif
+    call plug#begin(s:vimfiles . '/plugged')
 endfunction
 
 call s:DownloadVimPlug()
@@ -110,7 +110,11 @@ Plug 'dart-lang/dart-vim-plugin', { 'for': 'dart' }
 " HTML helper (same as Emmet)
 Plug 'rstacruz/sparkup', {
             \ 'rtp': 'vim',
-            \ 'for': ['html', 'htmldjango', 'javascript.jsx']}
+            \ 'for': [
+            \           'html',
+            \           'htmldjango',
+            \           'javascript.jsx'
+            \ ]}
 " Rust
 Plug 'rust-lang/rust.vim'
 let g:autofmt_autosave = 1
@@ -160,7 +164,7 @@ set hidden
 " set cmdheight=2
 set encoding=utf-8
 set mouse=a
-" set guifont=FuraCode\ Nerd\ Font:h12
+" set guifont=FuraCode\ Nerd\ Font\ Mono:h12
 set smartcase
 set number relativenumber
 set cursorline
@@ -175,10 +179,10 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab
 if exists('g:GtkGuiLoaded')
-    call rpcnotify(1, 'Gui', 'Font', 'FuraCode Nerd Font 12') 
+    call rpcnotify(1, 'Gui', 'Font', 'FuraCode Nerd Font Mono 12') 
     call rpcnotify(1, 'Gui', 'Option', 'Cmdline', 1)
     " To disable external autocompletion popup menu (enabled by default)
-    call rpcnotify(1, 'Gui', 'Option', 'Popupmenu', 0)
+    " call rpcnotify(1, 'Gui', 'Option', 'Popupmenu', 0)
     " To disable external tabline (enabled by default)
     call rpcnotify(1, 'Gui', 'Option', 'Tabline', 0)
     let g:GuiInternalClipboard = 1 
@@ -195,8 +199,6 @@ if exists('g:gui_oni')
     set noshowcmd
     " All config settings after this point 
     " can be removed, once an Oni config option is added.
-    " Use ESC to exit insert mode in :term
-    tnoremap <Esc> <C-\><C-n>
 endif
 """" End misc section
 
@@ -208,6 +210,8 @@ vnoremap <S-Insert> c<ESC>"+p
 inoremap <S-Insert> <ESC>"+pa
 " Map Ctrl-Del to delete word
 inoremap <C-Delete> <ESC>dwi
+" Use ESC to exit insert mode in :term
+tnoremap <Esc> <C-\><C-n>
 " Toggle NERDTree
 map <C-n> :NERDTreeToggle<CR>
 """" End keyboard shortcuts section
@@ -221,17 +225,17 @@ autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
 
 """" Statusline/tabline section
 let g:lightline = {
-            \ 'colorscheme': 'wombat',
+            \ 'colorscheme': 'gruvbox',
             \ }
 let g:lightline.enable = {
             \ 'statusline': 1,
             \ 'tabline': 1
             \ }
 let g:lightline.separator = {
-            \ 'left': '', 'right': ''
+            \ 'left': '', 'right': ''
             \ }
 let g:lightline.subseparator = {
-            \ 'left': '', 'right': ''
+            \ 'left': '', 'right': ''
             \ }
 function! MyLightLinePercent()
     if &ft !=? 'nerdtree'
@@ -248,11 +252,11 @@ function! MyLightLineLineInfo()
     endif
 endfunction
 function! MyFiletype()
-  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+    return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
 endfunction
 
 function! MyFileformat()
-  return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+    return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
 endfunction
 let g:lightline.component_expand = {
             \ 'buffers': 'lightline#bufferline#buffers',
@@ -342,7 +346,12 @@ nnoremap <silent> K :ALEHover<CR>
 "" Enable all linters for rust
 let g:ale_linters = { 'rust': ['rls', 'rustc', 'cargo'] }
 "" Enable all fixers for rust
-let g:ale_fixers = { 'rust': ['rustfmt', 'remove_trailing_lines', 'trim_whitespace'] }
+let g:ale_fixers = { 'rust': [
+            \                   'rustfmt',
+            \                   'remove_trailing_lines',
+            \                   'trim_whitespace'
+            \                ]
+            \      }
 let g:ale_rust_rls_toolchain = 'stable'
 let g:ale_rust_rustc_options = ''
 """" End linting section
