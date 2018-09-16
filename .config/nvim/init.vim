@@ -124,12 +124,17 @@ else
     let g:rust_clip_command = 'xclip -selection clipboard'
 endif
 " Plug 'mattn/webapi-vim'
+"" Detect file encoding
+Plug 's3rvac/AutoFenc'
+"" Indent line
+Plug 'Yggdroot/indentLine'
 "" Start screen
 Plug 'mhinz/vim-startify'
 "" File icons
 Plug 'ryanoasis/vim-devicons'
 "" Theme
 Plug 'morhetz/gruvbox'
+" Plug 'ayu-theme/ayu-vim'
 call plug#end()
 
 """" Theme section
@@ -137,15 +142,15 @@ syntax enable
 syntax on
 "" GruvBox
 highlight Normal ctermbg=black ctermfg=white
-set background=dark
-if !exists('g:gui_oni')
-    let g:gruvbox_italic=1
-endif
 try
     colorscheme gruvbox
 catch
 endtry
+let ayucolor="dark"
+let g:gruvbox_italic=1
 let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_invert_tabline = 1
+let g:gruvbox_invert_indent_guides=1
 """" End theme section
 
 """" Misc section
@@ -162,7 +167,7 @@ if has('gui_running')
 endif
 set hidden
 " set cmdheight=2
-set encoding=utf-8
+" set encoding=utf-8
 set mouse=a
 " set guifont=FuraCode\ Nerd\ Font\ Mono:h12
 set smartcase
@@ -172,7 +177,7 @@ set nowrap
 set colorcolumn=80
 set binary
 set list
-set listchars=eol:$,tab:—,trail:…,extends:»,precedes:«,space:·,nbsp:☠
+set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:<,space:.
 set backspace=indent,eol,start
 set tabstop=4
 set shiftwidth=4
@@ -225,7 +230,7 @@ autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
 
 """" Statusline/tabline section
 let g:lightline = {
-            \ 'colorscheme': 'gruvbox',
+            \ 'colorscheme': 'seoul256',
             \ }
 let g:lightline.enable = {
             \ 'statusline': 1,
@@ -292,7 +297,7 @@ let g:lightline.active = { 'right':
 set showtabline=2
 let g:lightline#bufferline#enable_devicons = 1
 let g:lightline#bufferline#unicode_symbols = 1
-let g:lightline#bufferline#show_number = 1
+let g:lightline#bufferline#show_number = 0
 let g:lightline#bufferline#number_map = {
             \ 0: '⁰', 1: '¹', 2: '²',
             \ 3: '³', 4: '⁴', 5: '⁵',
@@ -344,7 +349,7 @@ let g:ale_list_window_size = 3
 "" Key mapping for IDE-like behaviour
 nnoremap <silent> K :ALEHover<CR>
 "" Enable all linters for rust
-let g:ale_linters = { 'rust': ['rls', 'rustc', 'cargo'] }
+let g:ale_linters = { 'rust': ['rustc', 'cargo', 'rls'] }
 "" Enable all fixers for rust
 let g:ale_fixers = { 'rust': [
             \                   'rustfmt',
