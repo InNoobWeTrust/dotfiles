@@ -177,7 +177,7 @@ set nowrap
 set colorcolumn=80
 set binary
 set list
-set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:<,space:.
+set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:<
 set backspace=indent,eol,start
 set tabstop=4
 set shiftwidth=4
