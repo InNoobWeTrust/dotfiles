@@ -76,6 +76,9 @@ Plug 'w0rp/ale', {'branch': 'v2.0.x'}
 Plug 'junegunn/fzf'
 "" Add surrounding brackets, quotes, xml tags,...
 Plug 'tpope/vim-surround'
+" Autocompletion for pairs
+Plug 'Raimondi/delimitMate'
+" Plug "cohama/lexima.vim"
 "" Tree explorer
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -118,6 +121,8 @@ Plug 'rstacruz/sparkup', {
 " Rust
 Plug 'rust-lang/rust.vim'
 let g:autofmt_autosave = 1
+Plug 'racer-rust/vim-racer', { 'for': 'rust'}
+let g:racer_experimental_completer = 1
 if (has("win16") || has("win32") || has("win64"))
     let g:rust_clip_command = 'win32yank'
 else
@@ -169,7 +174,7 @@ set hidden
 " set cmdheight=2
 " set encoding=utf-8
 set mouse=a
-" set guifont=FuraCode\ Nerd\ Font\ Mono:h12
+" set guifont=Iosevka\ Nerd\ Font\ Mono:h14
 set smartcase
 set number relativenumber
 set cursorline
@@ -183,28 +188,6 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
-if exists('g:GtkGuiLoaded')
-    call rpcnotify(1, 'Gui', 'Font', 'FuraCode Nerd Font Mono 12') 
-    call rpcnotify(1, 'Gui', 'Option', 'Cmdline', 1)
-    " To disable external autocompletion popup menu (enabled by default)
-    " call rpcnotify(1, 'Gui', 'Option', 'Popupmenu', 0)
-    " To disable external tabline (enabled by default)
-    call rpcnotify(1, 'Gui', 'Option', 'Tabline', 0)
-    let g:GuiInternalClipboard = 1 
-endif
-if exists('g:gui_oni')
-    set noswapfile
-    set smartcase
-    set splitright
-    set splitbelow
-    " Turn off statusbar, because it is externalized
-    set noshowmode
-    set noruler
-    set laststatus=0
-    set noshowcmd
-    " All config settings after this point 
-    " can be removed, once an Oni config option is added.
-endif
 """" End misc section
 
 """" Keyboard shortcuts section
@@ -219,6 +202,11 @@ inoremap <C-Delete> <ESC>dwi
 tnoremap <Esc> <C-\><C-n>
 " Toggle NERDTree
 map <C-n> :NERDTreeToggle<CR>
+" Racer (Rust) keys binding
+au FileType rust nmap gd <Plug>(rust-def)
+au FileType rust nmap gs <Plug>(rust-def-split)
+au FileType rust nmap gx <Plug>(rust-def-vertical)
+au FileType rust nmap <leader>gd <Plug>(rust-doc)
 """" End keyboard shortcuts section
 
 """ Indentation config section
