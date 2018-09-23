@@ -174,7 +174,7 @@ set hidden
 " set cmdheight=2
 " set encoding=utf-8
 set mouse=a
-" set guifont=Iosevka\ Nerd\ Font\ Mono:h14
+" set guifont=Iosevka\ Nerd\ Font\ Mono:h13
 set smartcase
 set number relativenumber
 set cursorline
