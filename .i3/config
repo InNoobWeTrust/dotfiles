@@ -30,14 +30,14 @@ font xft:URWGothic-Book 12
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec xfce4-terminal
+bindsym $mod+Return exec qterminal
 
 # kill focused window
 bindsym $mod+Shift+q kill
 
 # start program launcher
-bindsym $mod+d exec --no-startup-id "rofi -show run -modi run,window,ssh -markup -show-icons -sidebar-mode -terminal xfce4-terminal"
-bindsym $mod+z exec --no-startup-id "rofi -show drun -modi drun,window,ssh -markup -show-icons -sidebar-mode -terminal xfce4-terminal"
+bindsym $mod+d exec --no-startup-id "rofi -show run -modi run,window,ssh -markup -show-icons -sidebar-mode -terminal qterminal"
+bindsym $mod+z exec --no-startup-id "rofi -show drun -modi drun,window,ssh -markup -show-icons -sidebar-mode -terminal qterminal"
 
 # launch categorized menu
 #bindsym $mod+z exec --no-startup-id morc_menu
