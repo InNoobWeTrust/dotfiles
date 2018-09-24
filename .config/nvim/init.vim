@@ -47,29 +47,6 @@ endfunction
 call s:DownloadVimPlug()
 
 call plug#begin(s:vimfiles . "/plugged")
-"" Language Client
-" Plug 'natebosch/vim-lsc'
-" if (has("win16") || has("win32") || has("win64"))
-"     Plug 'autozimu/LanguageClient-neovim', {
-"                 \ 'branch': 'next',
-"                 \ 'do': 'Powershell.exe -File install.ps1',
-"                 \ }
-" else
-"     Plug 'autozimu/LanguageClient-neovim', {
-"                 \ 'branch': 'next',
-"                 \ 'do': 'bash install.sh',
-"                 \ }
-" endif
-"" Autocompletion
-" if has('nvim')
-"     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" else
-"     Plug 'Shougo/deoplete.nvim'
-"     Plug 'roxma/nvim-yarp'
-"     Plug 'roxma/vim-hug-neovim-rpc'
-" endif
-" let g:deoplete#enable_at_startup = 1
-" Plug 'villainy/deoplete-dart', { 'for': 'dart' }
 "" Asynchronous lint engine
 Plug 'w0rp/ale', {'branch': 'v2.0.x'}
 "" Fuzzy selection
@@ -84,6 +61,8 @@ Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 "" Enhanced terminal
 Plug 'Shougo/deol.nvim'
+"" Run shell command asynchromously
+Plug 'skywind3000/asyncrun.vim'
 "" Text object per indent level
 Plug 'michaeljsmith/vim-indent-object'
 "" Code commenting
