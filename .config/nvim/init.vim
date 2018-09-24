@@ -17,7 +17,6 @@ function! s:DownloadVimPlug()
         let plug_url = 'https://github.com/junegunn/vim-plug.git'
         let tmp = tempname()
         let new = tmp . '/plug.vim'
-
         try
             let out = system(printf('git clone --depth 1 %s %s', plug_url, tmp))
             if v:shell_error
@@ -26,12 +25,10 @@ function! s:DownloadVimPlug()
                 echohl NONE
                 return
             endif
-
             if !isdirectory(s:vimfiles . '/autoload')
                 call mkdir(s:vimfiles . '/autoload', 'p')
             endif
             call rename(new, s:vimfiles . '/autoload/plug.vim')
-
             " Install plugins at first
             autocmd VimEnter * PlugInstall | quit
         finally
@@ -55,12 +52,8 @@ Plug 'junegunn/fzf'
 Plug 'tpope/vim-surround'
 " Autocompletion for pairs
 Plug 'Raimondi/delimitMate'
-" Plug "cohama/lexima.vim"
 "" Tree explorer
-Plug 'scrooloose/nerdtree'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-"" Enhanced terminal
-Plug 'Shougo/deol.nvim'
+Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] } | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'ryanoasis/vim-devicons'
 "" Run shell command asynchromously
 Plug 'skywind3000/asyncrun.vim'
 "" Text object per indent level
@@ -77,8 +70,12 @@ Plug 'maxbrunsfeld/vim-yankstack'
 Plug 'itchyny/lightline.vim'
 "" Show buffer in tabline
 Plug 'mgee/lightline-bufferline'
+"" Delete buffers without messing window layout
+Plug 'moll/vim-bbye'
 "" Show lint errors and warnings on status line
 Plug 'maximbaz/lightline-ale'
+"" Maintain coding style per project
+Plug 'editorconfig/editorconfig-vim'
 "" Language specific plugins
 " Markdown
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
@@ -107,18 +104,16 @@ if (has("win16") || has("win32") || has("win64"))
 else
     let g:rust_clip_command = 'xclip -selection clipboard'
 endif
-" Plug 'mattn/webapi-vim'
+"Plug 'mattn/webapi-vim'
 "" Detect file encoding
 Plug 's3rvac/AutoFenc'
 "" Indent line
 Plug 'Yggdroot/indentLine'
 "" Start screen
 Plug 'mhinz/vim-startify'
-"" File icons
-Plug 'ryanoasis/vim-devicons'
 "" Theme
 Plug 'morhetz/gruvbox'
-" Plug 'ayu-theme/ayu-vim'
+"Plug 'ayu-theme/ayu-vim'
 call plug#end()
 
 """" Theme section
@@ -180,7 +175,24 @@ inoremap <C-Delete> <ESC>dwi
 " Use ESC to exit insert mode in :term
 tnoremap <Esc> <C-\><C-n>
 " Toggle NERDTree
-map <C-n> :NERDTreeToggle<CR>
+map <Leader>f :NERDTreeToggle<CR>
+nnoremap <silent> <Leader>v :NERDTreeFind<CR>
+" Quickly switch between buffers
+nmap <Leader>1 <Plug>lightline#bufferline#go(1)
+nmap <Leader>2 <Plug>lightline#bufferline#go(2)
+nmap <Leader>3 <Plug>lightline#bufferline#go(3)
+nmap <Leader>4 <Plug>lightline#bufferline#go(4)
+nmap <Leader>5 <Plug>lightline#bufferline#go(5)
+nmap <Leader>6 <Plug>lightline#bufferline#go(6)
+nmap <Leader>7 <Plug>lightline#bufferline#go(7)
+nmap <Leader>8 <Plug>lightline#bufferline#go(8)
+nmap <Leader>9 <Plug>lightline#bufferline#go(9)
+nmap <Leader>0 <Plug>lightline#bufferline#go(10)
+" Key mapping for navigating between errors
+nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
+nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
+" Key mapping for IDE-like behaviour
+nnoremap <silent> K :ALEHover<CR>
 " Racer (Rust) keys binding
 au FileType rust nmap gd <Plug>(rust-def)
 au FileType rust nmap gs <Plug>(rust-def-split)
@@ -188,12 +200,19 @@ au FileType rust nmap gx <Plug>(rust-def-vertical)
 au FileType rust nmap <leader>gd <Plug>(rust-doc)
 """" End keyboard shortcuts section
 
-""" Indentation config section
+"""" Indentation config section
 autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
-" autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
-""" End indentation config section
+"autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
+"""" End indentation config section
+
+"""" Directory tree browser section
+let NERDTreeQuitOnOpen = 1
+let NERDTreeAutoDeleteBuffer = 1
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+"""" End directory tree browser section
 
 """" Statusline/tabline section
 let g:lightline = {
@@ -270,17 +289,6 @@ let g:lightline#bufferline#number_map = {
             \ 3: '³', 4: '⁴', 5: '⁵',
             \ 6: '⁶', 7: '⁷', 8: '⁸',
             \ 9: '⁹'}
-" Quickly switch between buffers
-nmap <Leader>1 <Plug>lightline#bufferline#go(1)
-nmap <Leader>2 <Plug>lightline#bufferline#go(2)
-nmap <Leader>3 <Plug>lightline#bufferline#go(3)
-nmap <Leader>4 <Plug>lightline#bufferline#go(4)
-nmap <Leader>5 <Plug>lightline#bufferline#go(5)
-nmap <Leader>6 <Plug>lightline#bufferline#go(6)
-nmap <Leader>7 <Plug>lightline#bufferline#go(7)
-nmap <Leader>8 <Plug>lightline#bufferline#go(8)
-nmap <Leader>9 <Plug>lightline#bufferline#go(9)
-nmap <Leader>0 <Plug>lightline#bufferline#go(10)
 let g:lightline.tabline = {
             \ 'left': [['buffers']],
             \ 'right': [
@@ -301,9 +309,6 @@ let g:lightline#ale#indicator_ok = "\uf00c"
 let g:ale_completion_enabled = 1
 " Keep the sign gutter open at all times
 let g:ale_sign_column_always = 1
-" Key mapping for navigating between errors
-nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
-nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
 " Lint on text change
 " let g:ale_lint_on_text_changed = 'never'
 " let g:ale_lint_on_text_changed = 'normal'
@@ -313,8 +318,6 @@ nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
 " let g:ale_fix_on_save = 0
 " Show 3 lines of errors (default: 10)
 let g:ale_list_window_size = 3
-"" Key mapping for IDE-like behaviour
-nnoremap <silent> K :ALEHover<CR>
 "" Enable all linters for rust
 let g:ale_linters = { 'rust': ['rustc', 'cargo', 'rls'] }
 "" Enable all fixers for rust
@@ -334,34 +337,3 @@ let dart_html_in_string=v:true
 let dart_style_guide = 2
 " let dart_format_on_save = 1
 """" End language specific plugin section
-
-"""" Language client section
-"" vim-lsc
-" let g:lsc_server_commands = {'dart': 'dart_language_server'}
-" Default key mapping
-" let g:lsc_auto_map = v:true
-" Autoclose documentation window
-" autocmd CompleteDone * silent! pclose
-"" LanguageClient-neovim
-" Required for operations modifying multiple buffers like rename.
-" set hidden
-" if (has("win16") || has("win32") || has("win64"))
-"     let g:LanguageClient_serverCommands = {
-"                 \ 'javascript': ['javascript-typescript-langserver.cmd'],
-"                 \ 'python': ['pyls.exe'],
-"                 \ 'dart': ['dart_language_server.bat'],
-"                 \ }
-" else
-"     let g:LanguageClient_serverCommands = {
-"                 \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-"                 \ 'javascript': ['javascript-typescript-langserver'],
-"                 \ 'python': ['pyls'],
-"                 \ 'dart': ['dart_language_server'],
-"                 \ }
-" endif
-" nnoremap <F5> :call LanguageClient_contextMenu()<CR>
-" Or map each action separately
-" nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
-"""" End language client section
