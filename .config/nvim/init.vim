@@ -46,10 +46,12 @@ call s:DownloadVimPlug()
 call plug#begin(s:vimfiles . "/plugged")
 "" Asynchronous lint engine
 Plug 'w0rp/ale', {'branch': 'v2.0.x'}
-"" Fuzzy selection
-Plug 'junegunn/fzf'
+"" Fuzzy finder
+Plug 'mhinz/vim-grepper', { 'on': ['Grepper', '<plug>(GrepperOperator)'] }
 "" Add surrounding brackets, quotes, xml tags,...
 Plug 'tpope/vim-surround'
+"" Extended matching for the % operator
+Plug 'adelarsq/vim-matchit'
 " Autocompletion for pairs
 Plug 'Raimondi/delimitMate'
 "" Tree explorer
@@ -62,6 +64,8 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'tpope/vim-commentary'
 "" Git gutter
 Plug 'airblade/vim-gitgutter'
+"" Git management inside vim
+Plug 'jreybert/vimagit'
 "" Automatically toggle relative line number
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 "" Use registers as stack for yank and delete
@@ -96,14 +100,7 @@ Plug 'rstacruz/sparkup', {
             \ ]}
 " Rust
 Plug 'rust-lang/rust.vim'
-let g:autofmt_autosave = 1
 Plug 'racer-rust/vim-racer', { 'for': 'rust'}
-let g:racer_experimental_completer = 1
-if (has("win16") || has("win32") || has("win64"))
-    let g:rust_clip_command = 'win32yank'
-else
-    let g:rust_clip_command = 'xclip -selection clipboard'
-endif
 "Plug 'mattn/webapi-vim'
 "" Detect file encoding
 Plug 's3rvac/AutoFenc'
@@ -121,15 +118,16 @@ syntax enable
 syntax on
 "" GruvBox
 highlight Normal ctermbg=black ctermfg=white
-try
-    colorscheme gruvbox
-catch
-endtry
-let ayucolor="dark"
 let g:gruvbox_italic=1
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_invert_tabline = 1
 let g:gruvbox_invert_indent_guides=1
+"" Ayu
+let ayucolor="dark"
+try
+    colorscheme gruvbox
+catch
+endtry
 """" End theme section
 
 """" Misc section
@@ -145,10 +143,10 @@ if has('gui_running')
     set guioptions-=e   "Use tabline from configs instead of GUI
 endif
 set hidden
-" set cmdheight=2
-" set encoding=utf-8
+"set cmdheight=2
+"set encoding=utf-8
 set mouse=a
-" set guifont=Iosevka\ Nerd\ Font\ Mono:h13
+"set guifont=Iosevka\ Nerd\ Font\ Mono:h13
 set smartcase
 set number relativenumber
 set cursorline
@@ -162,6 +160,9 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
+set completeopt+=preview
+set completeopt+=menuone
+set completeopt+=longest
 """" End misc section
 
 """" Keyboard shortcuts section
@@ -191,8 +192,10 @@ nmap <Leader>0 <Plug>lightline#bufferline#go(10)
 " Key mapping for navigating between errors
 nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
 nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
-" Key mapping for IDE-like behaviour
+" Key :apping for IDE-like behaviour
 nnoremap <silent> K :ALEHover<CR>
+nnoremap <silent> gd :ALEGoToDefinition<CR>
+nnoremap <silent> gr :ALEFindReferences<CR>
 " Racer (Rust) keys binding
 au FileType rust nmap gd <Plug>(rust-def)
 au FileType rust nmap gs <Plug>(rust-def-split)
@@ -310,16 +313,16 @@ let g:ale_completion_enabled = 1
 " Keep the sign gutter open at all times
 let g:ale_sign_column_always = 1
 " Lint on text change
-" let g:ale_lint_on_text_changed = 'never'
-" let g:ale_lint_on_text_changed = 'normal'
+"let g:ale_lint_on_text_changed = 'never'
+"let g:ale_lint_on_text_changed = 'normal'
 " Lint on opening a file
-" let g:ale_lint_on_enter = 0
+"let g:ale_lint_on_enter = 0
 " Fix files when you saving
-" let g:ale_fix_on_save = 0
+"let g:ale_fix_on_save = 0
 " Show 3 lines of errors (default: 10)
 let g:ale_list_window_size = 3
 "" Enable all linters for rust
-let g:ale_linters = { 'rust': ['rustc', 'cargo', 'rls'] }
+let g:ale_linters = { 'rust': ['rls'] }
 "" Enable all fixers for rust
 let g:ale_fixers = { 'rust': [
             \                   'rustfmt',
@@ -335,5 +338,13 @@ let g:ale_rust_rustc_options = ''
 "" Dart
 let dart_html_in_string=v:true
 let dart_style_guide = 2
-" let dart_format_on_save = 1
+let dart_format_on_save = 1
+"" Rust
+let g:autofmt_autosave = 1
+let g:racer_experimental_completer = 1
+if (has("win16") || has("win32") || has("win64"))
+    let g:rust_clip_command = 'win32yank'
+else
+    let g:rust_clip_command = 'xclip -selection clipboard'
+endif
 """" End language specific plugin section
