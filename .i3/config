@@ -55,7 +55,7 @@ bindsym $mod+Ctrl+j exec --no-startup-id /$HOME/notitrans/notitrans-ja
 
 #exec --no-startup-id volumeicon
 #bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
-exec --no-startup-id pulseaudio
+#exec --no-startup-id pulseaudio
 exec --no-startup-id pa-applet
 bindsym $mod+Ctrl+m exec pavucontrol
 
