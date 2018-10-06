@@ -83,6 +83,8 @@ Plug 'editorconfig/editorconfig-vim'
 "" Language specific plugins
 " Markdown
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+" Arduino syntax
+Plug 'sudar/vim-arduino-syntax'
 " Python
 Plug 'nvie/vim-flake8', { 'for': 'python' }
 Plug 'davidhalter/jedi-vim', { 'for': 'python'}
