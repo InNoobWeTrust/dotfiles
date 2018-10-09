@@ -25,7 +25,7 @@ tray-background = #0063ff
 
 modules-left   = apps windows workspaces coreuse
 modules-center = memory temperature date battery battery1
-modules-right  = wireless-network wired-network backlight audio_pulse pkg
+modules-right  = wireless-network wired-network backlight audio_pulse pkg menu
 
 ;=====================================================
 ;     i3wm Bars
