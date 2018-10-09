@@ -300,7 +300,7 @@ exec --no-startup-id xautolock -time 10 -locker blurlock
 exec_always --no-startup-id ff-theme-util
 exec_always --no-startup-id fix_xcursor
 exec_always --no-startup-id ibus-daemon &
-exec_always --no-startup-id /$HOME/.config/polybar/i3wmthemer_bar_launch.sh
+exec_always --no-startup-id /$HOME/.config/polybar/i3wm_bar_launch.sh
 
 # Color palette used for the terminal ( ~/.Xresources file )
 # Colors are gathered based on the documentation:

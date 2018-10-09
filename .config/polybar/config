@@ -1,4 +1,37 @@
-[bar/i3wmthemer_bar]
+;=====================================================
+;     File Includes
+;=====================================================
+
+[section/base]
+include-file = $HOME/.config/polybar/master.conf
+include-file = $HOME/.config/polybar/modules.conf
+
+
+;=====================================================
+;     Openbox Bars
+;=====================================================
+
+[bar/openbox-bar]
+inherit = bar/master
+
+; Use $ xrandr -q | grep " connected" | cut -d ' ' -f1
+monitor = eDP-1
+monitor-fallback = HDMI-1
+
+tray-position = right
+tray-padding =
+tray-transparent = true
+tray-background = #0063ff
+
+modules-left   = apps windows workspaces coreuse
+modules-center = memory temperature date battery battery1
+modules-right  = wireless-network wired-network backlight audio_pulse pkg
+
+;=====================================================
+;     i3wm Bars
+;=====================================================
+
+[bar/i3wm_bar]
 width = 100%
 height = 30
 radius = 0
@@ -23,9 +56,8 @@ font-0 = "Iosevka Nerd Font: Monosize=12"
 font-1 = "Emoji:pixelsize=12"
 
 modules-left = apps windows i3
-modules-center = cpu memory temperature date battery0 battery1
-;modules-right = backlight wlan eth
-modules-right = backlight pulseaudio wlan eth
+modules-center = cpu memory temperature date battery battery1
+modules-right = backlight audio_pulse wlan eth
 
 tray-position = right
 tray-detached = false
@@ -74,284 +106,6 @@ format-padding = 1
 label = %title%
 label-maxlen = 20
 
-[module/mpd]
-type = internal/mpd
-format-online = <label-song>  <icon-prev><icon-stop><toggle><icon-next> <icon-repeat> <icon-random> <icon-repeatone>
-;format-online = <label-song> <icon-repeat> <icon-random>
- 
-label-song = %{F#e60053}🎶%{F#ff} %title%
-label-song-maxlen = 20
-label-song-ellipsis = true
- 
-icon-prev = ⏮️
-icon-seekb = ⏪
-icon-stop = ⏹️
-icon-play = ⏯
-icon-pause = ⏸️
-icon-next = ⏭️
-icon-seekf = ⏩
- 
-icon-random = 🔀
-icon-repeat = 🔁
-icon-repeatone = 🔂
- 
-toggle-on-foreground = #e60053
-toggle-off-foreground = #66
- 
- 
-[module/backlight]
-type = internal/xbacklight
- 
-format = <label> <bar>
-label = %{F#ff0}  %percentage%%
-
-ramp-0 = 🌑
-ramp-1 = 🌒
-ramp-2 = 🌓
-ramp-3 = 🌔
-ramp-4 = 🌕
-
-bar-width = 3
-bar-indicator = 
-bar-indicator-foreground = #ff
-bar-fill = 
-bar-fill-foreground = #9f78e1
-bar-empty = 
-bar-empty-foreground = #55
-
-[module/cpu]
-type = internal/cpu
-interval = 2
-label = %{F#ff9900} %{F#ff} %percentage%%
-label-overline = #ff0
- 
- 
-[module/memory]
-type = internal/memory
-interval = 2
-;label = %{F#ffcc66}%{F#ff} %percentage_used%%
-label = %{F#ffcc66}%{F#ff} %percentage_used%%
-label-overline = #4bffdc
-
-[module/wlan]
-type = internal/network
-interface = wlp3s0
-interval = 3.0
-
-accumulate-stats = true
-unknown-as-up = true
-
-format-connected = <label-connected>
-format-connected-foreground = #c5c8c6
-format-connected-background = #282a2e
-format-connected-padding = 2
-format-connected-prefix = " "
-;label-connected = %signal% %{F#f88}%upspeed% %{F#88f}%downspeed%
-label-connected = %{F#f88}%upspeed% %{F#88f}%downspeed%
-format-packetloss = <animation-packetloss> <label-connected>
-
-format-disconnected =
-animation-packetloss-0 = ⚠
-animation-packetloss-0-foreground = #ffa64c
-animation-packetloss-1 = 📶
-animation-packetloss-1-foreground = #000000
-animation-packetloss-framerate = 500
-
-[module/eth]
-type = internal/network
-interface = enp0s25
-interval = 3.0
-
-accumulate-stats = true
-unknown-as-up = true
-
-format-connected-padding = 2
-format-connected-foreground = #c5c8c6
-format-connected-background = #282a2e
-format-connected-prefix = " "
-format-connected-prefix-foreground = #c5c8c6
-;label-connected = %signal% %{F#f88}%upspeed% %{F#88f}%downspeed%
-label-connected = %{F#f88}%upspeed% %{F#88f}%downspeed%
-format-packetloss = <animation-packetloss> <label-connected>
-
-format-disconnected =
-animation-packetloss-0 = ⚠
-animation-packetloss-0-foreground = #ffa64c
-animation-packetloss-1 = 🆘
-animation-packetloss-1-foreground = #000000
-animation-packetloss-framerate = 500
-
-[module/date]
-type = internal/date
-interval = 1
-
-date = " %A|%B|%d"
-date-alt = " %A|%B|%d|%Y"
-
-time = %H:%M:%S
-time-alt = %H:%M:%S
-
-format-prefix = 
-;format-foreground = #c5c8c6
-;format-background = #282a2e
-format-padding = 1
-
-label = %date% %time%
-
-[module/volume]
-type = internal/volume
- 
-format-volume = <label-volume> <bar>
-ramp-volume-0 = 🔈
-ramp-volume-1 = 🔉
-ramp-volume-2 = 🔊
- 
-label-volume = %{F#66f} %percentage%%
-label-volume-foreground = ${root.foreground}
- 
-label-muted = 🔇 sound muted
-label-muted-foreground = #55
- 
-bar-volume-width = 3
-bar-volume-foreground-0 = #55aa55
-bar-volume-foreground-1 = #55aa55
-bar-volume-foreground-2 = #55aa55
-bar-volume-foreground-3 = #55aa55
-bar-volume-foreground-4 = #55aa55
-bar-volume-foreground-5 = #f5a70a
-bar-volume-foreground-6 = #ff5555
-bar-volume-gradient = false
-bar-volume-indicator = 
-bar-volume-indicator-foreground = #ff
-bar-volume-fill = 
-bar-volume-empty = 
-bar-volume-empty-foreground = #55
-
-[module/pulseaudio]
-type = internal/pulseaudio
-sink = alsa_output.pci-0000_00_1b.0.analog-stereo
-
-format-volume = <label-volume> <bar-volume>
-ramp-volume-0 = 🔈
-ramp-volume-1 = 🔉
-ramp-volume-2 = 🔊
-label-volume = %{F#66f} %percentage%%
-
-format-muted = <label-muted>
-label-muted = 🔇 muted
-label-muted-foreground = #66
-
-bar-volume-width = 3
-bar-volume-foreground-0 = #55aa55
-bar-volume-foreground-1 = #55aa55
-bar-volume-foreground-2 = #55aa55
-bar-volume-foreground-3 = #55aa55
-bar-volume-foreground-4 = #55aa55
-bar-volume-foreground-5 = #f5a70a
-bar-volume-foreground-6 = #ff5555
-bar-volume-gradient = false
-bar-volume-indicator = 
-bar-volume-indicator-foreground = #ff
-bar-volume-fill = 
-bar-volume-empty = 
-bar-volume-empty-foreground = #55
-
-[module/battery0]
-type = internal/battery
-battery = BAT0
-adapter = AC
-full-at = 98
- 
-format-charging = <animation-charging>  <label-charging>
-format-charging-overline = #ffb52a
-format-discharging = <ramp-capacity> <label-discharging>
-format-discharging-overline = ${self.format-charging-overline}
-format-full = %{F#00ff00}%{F#ff}  <label-full>
-format-full-overline = ${self.format-charging-overline}
-
-ramp-capacity-0 = 
-ramp-capacity-1 = 
-ramp-capacity-2 = 
-ramp-capacity-3 = 
-ramp-capacity-4 = 
-ramp-capacity-foreground = #55
-
-animation-charging-0 = 
-animation-charging-1 = 
-animation-charging-2 = 
-animation-charging-3 = 
-animation-charging-4 = 
-animation-charging-foreground = #55
-animation-charging-framerate = 750
- 
-[module/battery1]
-type = internal/battery
-battery = BAT1
-adapter = AC
-full-at = 98
- 
-format-charging = <animation-charging>  <label-charging>
-format-charging-overline = #ffb52a
-format-discharging = <ramp-capacity><label-discharging>
-format-discharging-overline = ${self.format-charging-overline}
-format-full = %{F#00ff00}%{F#ff}  <label-full>
-format-full-overline = ${self.format-charging-overline}
-
-ramp-capacity-0 = 
-ramp-capacity-1 = 
-ramp-capacity-2 = 
-ramp-capacity-3 = 
-ramp-capacity-4 = 
-ramp-capacity-foreground = #55
-
-animation-charging-0 = 
-animation-charging-1 = 
-animation-charging-2 = 
-animation-charging-3 = 
-animation-charging-4 = 
-animation-charging-foreground = #55
-animation-charging-framerate = 750
- 
-[module/temperature]
-type = internal/temperature
-thermal-zone = 0
-warn-temperature = 60
- 
-format = <ramp> <label>
-format-overline = #ff7f50
-format-warn = <ramp><label-warn>
-format-warn-overline = ${self.format-overline}
- 
-label = %temperature%
-label-warn = 🔥 %temperature%
-label-warn-foreground = #e60053
-
-;ramp-0 = 
-;ramp-1 = 
-;ramp-2 = 
-
-ramp-0 = 
-ramp-1 = 
-ramp-2 = 
-ramp-3 = 
-ramp-4 = 
-ramp-foreground = #55
-ramp-4-foreground = #ff2200
-ramp-3-foreground = #ff8800
-ramp-2-foreground = #88ff00
-ramp-1-foreground = #00cc00
-ramp-0-foreground = #0000ff
-
-[module/apps]
-type = custom/text
-content = 
-click-left = rofi -show drun
-
-[module/windows]
-type = custom/text
-content = 
-click-left = rofi -show window
-
 [module/powermenu]
 type = custom/menu
 
@@ -380,10 +134,3 @@ menu-2-0 = power off
 menu-2-0-exec = sudo poweroff
 menu-2-1 = cancel
 menu-2-1-exec = menu-open-0
-
-[settings]
-screenchange-reload = true
-
-[global/wm]
-margin-top = 0
-margin-bottom = 0
