@@ -20,7 +20,7 @@ alias pacauto='sudo pacman -Syyu -y'
 alias aptauto='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
 
 # automate conda update
-alias condauto='conda update -n base conda -y && conda clean --all -y'
+alias condauto='conda update --all -y && conda clean --all -y'
 
 # automate nvm update node
 alias nvmauto='nvm install node --reinstall-packages-from=node -y'
