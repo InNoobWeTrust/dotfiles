@@ -65,6 +65,8 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'tpope/vim-commentary'
 "" Git gutter
 Plug 'airblade/vim-gitgutter'
+"" Git wrapper
+Plug 'tpope/vim-fugitive'
 "" Git management inside vim
 Plug 'jreybert/vimagit'
 "" Automatically toggle relative line number
