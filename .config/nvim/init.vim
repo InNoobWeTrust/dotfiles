@@ -45,9 +45,10 @@ call s:DownloadVimPlug()
 
 call plug#begin(s:vimfiles . "/plugged")
 "" Asynchronous lint engine
-Plug 'w0rp/ale', {'branch': 'v2.0.x'}
+" Enable autocomplete
+let g:ale_completion_enabled = 1 | Plug 'w0rp/ale', {'branch': 'v2.2.x'}
 "" Fuzzy finder
-Plug 'mhinz/vim-grepper', { 'on': ['Grepper', '<plug>(GrepperOperator)'] }
+Plug 'mhinz/vim-grepper', {'on': ['Grepper', '<plug>(GrepperOperator)']}
 "" Add surrounding brackets, quotes, xml tags,...
 Plug 'tpope/vim-surround'
 "" Extended matching for the % operator
@@ -55,7 +56,7 @@ Plug 'adelarsq/vim-matchit'
 " Autocompletion for pairs
 Plug 'Raimondi/delimitMate'
 "" Tree explorer
-Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeToggle', 'NERDTreeFind'] } | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'ryanoasis/vim-devicons'
+Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'ryanoasis/vim-devicons'
 "" Run shell command asynchromously
 Plug 'skywind3000/asyncrun.vim'
 "" Text object per indent level
@@ -82,18 +83,20 @@ Plug 'maximbaz/lightline-ale'
 Plug 'editorconfig/editorconfig-vim'
 "" Language specific plugins
 " Markdown
-Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+Plug 'tpope/vim-markdown', {'for': 'markdown'}
 " Arduino syntax
 Plug 'sudar/vim-arduino-syntax'
 " Godot syntax
 Plug 'calviken/vim-gdscript3'
+" Love2d syntax
+Plug 'davisdude/vim-love-docs', {'branch': 'build', 'for': 'lua'}
 " Python
-Plug 'nvie/vim-flake8', { 'for': 'python' }
-Plug 'davidhalter/jedi-vim', { 'for': 'python'}
+Plug 'nvie/vim-flake8', {'for': 'python'}
+Plug 'davidhalter/jedi-vim', {'for': 'python'}
 " Kotlin
-Plug 'udalov/kotlin-vim', { 'for': 'kotlin' }
+Plug 'udalov/kotlin-vim', {'for': 'kotlin'}
 " Dart
-Plug 'dart-lang/dart-vim-plugin', { 'for': 'dart' }
+Plug 'dart-lang/dart-vim-plugin', {'for': 'dart'}
 " HTML helper (same as Emmet)
 Plug 'rstacruz/sparkup', {
             \ 'rtp': 'vim',
@@ -104,7 +107,7 @@ Plug 'rstacruz/sparkup', {
             \ ]}
 " Rust
 Plug 'rust-lang/rust.vim'
-Plug 'racer-rust/vim-racer', { 'for': 'rust'}
+Plug 'racer-rust/vim-racer', {'for': 'rust'}
 "Plug 'mattn/webapi-vim'
 "" Detect file encoding
 Plug 's3rvac/AutoFenc'
@@ -154,7 +157,7 @@ set mouse=a
 set smartcase
 set number relativenumber
 set cursorline
-set nowrap
+set wrap
 set colorcolumn=80
 set binary
 set list
@@ -278,7 +281,7 @@ let g:lightline.component_function = {
             \ }
 "" Statusline
 set noshowmode
-let g:lightline.active = { 'right':
+let g:lightline.active = {'right':
             \ [[ 'lineinfo' ],
             \  [ 'percent' ],
             \  [ 'linter_checking',
@@ -312,8 +315,6 @@ let g:lightline#ale#indicator_ok = "\uf00c"
 """" End status line section
 
 """" Linting section
-"" Enable autocomplete
-let g:ale_completion_enabled = 1
 " Keep the sign gutter open at all times
 let g:ale_sign_column_always = 1
 " Lint on text change
@@ -326,9 +327,9 @@ let g:ale_sign_column_always = 1
 " Show 3 lines of errors (default: 10)
 let g:ale_list_window_size = 3
 "" Enable all linters for rust
-let g:ale_linters = { 'rust': ['rls'] }
+let g:ale_linters = {'rust': ['rls','cargo','rustc','rustfmt']}
 "" Enable all fixers for rust
-let g:ale_fixers = { 'rust': [
+let g:ale_fixers = {'rust': [
             \                   'rustfmt',
             \                   'remove_trailing_lines',
             \                   'trim_whitespace'
