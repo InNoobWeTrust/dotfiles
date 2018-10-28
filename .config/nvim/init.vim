@@ -47,6 +47,20 @@ call plug#begin(s:vimfiles . "/plugged")
 "" Asynchronous lint engine
 " Enable autocomplete
 let g:ale_completion_enabled = 1 | Plug 'w0rp/ale', {'branch': 'v2.2.x'}
+"" More autocomplete
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
+let g:deoplete#enable_at_startup = 1
+Plug 'wokalski/autocomplete-flow'
+" Func argument completion
+Plug 'Shougo/neosnippet'
+Plug 'Shougo/neosnippet-snippets'
+let g:neosnippet#enable_completed_snippet = 1
 "" Fuzzy finder
 Plug 'mhinz/vim-grepper', {'on': ['Grepper', '<plug>(GrepperOperator)']}
 "" Add surrounding brackets, quotes, xml tags,...
@@ -92,6 +106,9 @@ Plug 'sudar/vim-arduino-syntax'
 Plug 'calviken/vim-gdscript3'
 " Love2d syntax
 Plug 'davisdude/vim-love-docs', {'branch': 'build', 'for': 'lua'}
+" JS
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
 " Python
 Plug 'nvie/vim-flake8', {'for': 'python'}
 Plug 'davidhalter/jedi-vim', {'for': 'python'}
@@ -319,13 +336,15 @@ let g:lightline#ale#indicator_ok = "\uf00c"
 """" Linting section
 " Keep the sign gutter open at all times
 let g:ale_sign_column_always = 1
+let g:ale_sign_error = '❌'
+let g:ale_sign_warning = '⚠'
 " Lint on text change
 "let g:ale_lint_on_text_changed = 'never'
 "let g:ale_lint_on_text_changed = 'normal'
 " Lint on opening a file
-"let g:ale_lint_on_enter = 0
+let g:ale_lint_on_enter = 0
 " Fix files when you saving
-"let g:ale_fix_on_save = 0
+let g:ale_fix_on_save = 0
 " Show 3 lines of errors (default: 10)
 let g:ale_list_window_size = 3
 "" Enable all linters for rust
@@ -335,7 +354,8 @@ let g:ale_fixers = {'rust': [
             \                   'rustfmt',
             \                   'remove_trailing_lines',
             \                   'trim_whitespace'
-            \                ]
+            \                ],
+            \        'javascript': ['eslint']
             \      }
 let g:ale_rust_rls_toolchain = 'stable'
 let g:ale_rust_rustc_options = ''
