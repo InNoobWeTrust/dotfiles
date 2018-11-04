@@ -192,6 +192,10 @@ set completeopt+=longest
 """" End misc section
 
 """" Keyboard shortcuts section
+"" Change leader key
+let mapleader = " "
+"" Visual indication of leader key timeout
+set showcmd
 " Copy and paste
 vnoremap <C-c> "+yi
 vnoremap <C-x> "+c
@@ -237,7 +241,7 @@ autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
 """" End indentation config section
 
 """" Directory tree browser section
-let NERDTreeQuitOnOpen = 1
+" let NERDTreeQuitOnOpen = 1
 let NERDTreeAutoDeleteBuffer = 1
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
@@ -336,8 +340,8 @@ let g:lightline#ale#indicator_ok = "\uf00c"
 """" Linting section
 " Keep the sign gutter open at all times
 let g:ale_sign_column_always = 1
-let g:ale_sign_error = '❌'
-let g:ale_sign_warning = '⚠'
+let g:ale_sign_error = 'X'
+let g:ale_sign_warning = 'i'
 " Lint on text change
 "let g:ale_lint_on_text_changed = 'never'
 "let g:ale_lint_on_text_changed = 'normal'
