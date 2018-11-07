@@ -22,6 +22,12 @@ elseif exists('g:gui_oni')
     set noshowcmd
     " All config settings after this point 
     " can be removed, once an Oni config option is added.
+elseif has('gui_running')
+    if has('gui_win32')
+        set guifont=Iosevka_Nerd_Font_Mono:h13
+    else
+        set guifont=Iosevka\ Nerd\ Font\ Mono\ 13
+    endif
 else
     GuiFont! Iosevka Nerd Font Mono:h13
     GuiTabline 0
