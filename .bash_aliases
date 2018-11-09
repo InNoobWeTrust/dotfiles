@@ -14,7 +14,7 @@ alias pacorphan='pacman -Qdt'
 alias pacorphanrm='sudo pacman -Rs $(pacman -Qqdt)'
 
 # automate pacman update
-alias pacauto='sudo pacman -Syyu -y'
+alias pacauto='sudo pacman -Syyu --noconfirm'
 
 # automate apt update
 alias aptauto='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
