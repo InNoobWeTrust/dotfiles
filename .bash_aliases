@@ -22,6 +22,9 @@ alias aptauto='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge au
 # automate conda update
 alias condauto='conda update --all -y && conda clean --all -y'
 
+# automate pip update
+alias pipauto='pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U'
+
 # automate nvm update node
 alias nvmauto='nvm install node --reinstall-packages-from=node -y'
 
