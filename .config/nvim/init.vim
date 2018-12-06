@@ -204,7 +204,7 @@ inoremap <S-Insert> <ESC>"+pa
 " Map Ctrl-Del to delete word
 inoremap <C-Delete> <ESC>dwi
 " Use ESC to exit insert mode in :term
-tnoremap <Esc> <C-\><C-n>
+" tnoremap <Esc> <C-\><C-n>
 " Toggle NERDTree
 map <Leader>f :NERDTreeToggle<CR>
 nnoremap <silent> <Leader>v :NERDTreeFind<CR>
