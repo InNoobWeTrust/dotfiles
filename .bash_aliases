@@ -28,11 +28,17 @@ alias pipauto='pip install -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
 # automate nvm update node
 alias nvmauto='nvm install node --reinstall-packages-from=node -y'
 
+# automate rustup update
+alias rustupauto='rustup update'
+
+# automate flutter upgrade
+alias flutterauto='flutter upgrade'
+
+# automate neovim update
+alias nvimauto='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
+
 # automate update system all
-alias manjaroauto='pacauto && condauto && nvmauto'
+alias manjaroauto='pacauto && condauto && nvmauto && rustupauto && nvimauto && flutterauto && pipauto'
 
 # automate termux android
-alias termuxauto='apt update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y'
-
-# automate neovim
-alias nvimauto='nvim +PlugUpgrade +PlugUpdate +PlugClean +qa'
+alias termuxauto='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y && nvimauto && pipauto'
