@@ -33,3 +33,6 @@ alias manjaroauto='pacauto && condauto && nvmauto'
 
 # automate termux android
 alias termuxauto='apt update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y'
+
+# automate neovim
+alias nvimauto='nvim +PlugUpgrade +PlugUpdate +PlugClean +qa'
