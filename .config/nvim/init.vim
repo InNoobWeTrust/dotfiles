@@ -70,7 +70,8 @@ Plug 'adelarsq/vim-matchit'
 " Autocompletion for pairs
 Plug 'Raimondi/delimitMate'
 "" Tree explorer
-Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'ryanoasis/vim-devicons'
+" Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'ryanoasis/vim-devicons'
+Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin'
 "" Run shell command asynchromously
 Plug 'skywind3000/asyncrun.vim'
 "" Text object per indent level
@@ -255,12 +256,12 @@ let g:lightline.enable = {
             \ 'statusline': 1,
             \ 'tabline': 1
             \ }
-let g:lightline.separator = {
-            \ 'left': '', 'right': ''
-            \ }
-let g:lightline.subseparator = {
-            \ 'left': '', 'right': ''
-            \ }
+" let g:lightline.separator = {
+"             \ 'left': '', 'right': ''
+"             \ }
+" let g:lightline.subseparator = {
+"             \ 'left': '', 'right': ''
+"             \ }
 function! MyLightLinePercent()
     if &ft !=? 'nerdtree'
         return line('.') * 100 / line('$') . '%'
@@ -276,11 +277,13 @@ function! MyLightLineLineInfo()
     endif
 endfunction
 function! MyFiletype()
-    return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+    " return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+    return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
 endfunction
 
 function! MyFileformat()
-    return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+    " return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+    return winwidth(0) > 70 ? (&fileformat) : ''
 endfunction
 let g:lightline.component_expand = {
             \ 'buffers': 'lightline#bufferline#buffers',
@@ -314,7 +317,7 @@ let g:lightline.active = {'right':
             \ ]}
 "" Tabline
 set showtabline=2
-let g:lightline#bufferline#enable_devicons = 1
+let g:lightline#bufferline#enable_devicons = 0
 let g:lightline#bufferline#unicode_symbols = 1
 let g:lightline#bufferline#show_number = 0
 let g:lightline#bufferline#number_map = {
@@ -331,10 +334,14 @@ let g:lightline.tabline = {
             \    'filetype']
             \ ]}
 "" Linting options
-let g:lightline#ale#indicator_checking = "\uf110"
-let g:lightline#ale#indicator_warnings = "\uf071"
-let g:lightline#ale#indicator_errors = "\uf05e"
-let g:lightline#ale#indicator_ok = "\uf00c"
+" let g:lightline#ale#indicator_checking = "\uf110"
+" let g:lightline#ale#indicator_warnings = "\uf071"
+" let g:lightline#ale#indicator_errors = "\uf05e"
+" let g:lightline#ale#indicator_ok = "\uf00c"
+let g:lightline#ale#indicator_checking = "≒"
+let g:lightline#ale#indicator_warnings = "¡"
+let g:lightline#ale#indicator_errors = "※"
+let g:lightline#ale#indicator_ok = "●"
 """" End status line section
 
 """" Linting section
