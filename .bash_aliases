@@ -7,6 +7,9 @@ alias l='ls -CF'
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
+# Kill parallel processes running in another session
+alias rampage='printf "what to kill? => "; victim=;read victim;ps -A | grep $victim | awk "{print $1}" | xargs kill'
+
 # Gacha-inspired number generator
 alias gacha='printf "Lower limit: ";read low;printf "Upper limit: ";read high;diff=$(($high - $low));while true;do printf "\r%5d" $(($RANDOM % $((diff + 1)) + $low));read -t 0.25 -N 1 input;if [[ $input ]]; then echo ;break;fi;done'
 
