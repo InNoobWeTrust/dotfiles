@@ -386,3 +386,9 @@ else
     let g:rust_clip_command = 'xclip -selection clipboard'
 endif
 """" End language specific plugin section
+
+"""" Load external config per project
+" exrc allows loading local executing local rc files.
+set exrc
+" secure disallows the use of :autocmd, shell and write commands in local `.nvimrc` | `.vimrc` | `.exrc` files
+set secure
