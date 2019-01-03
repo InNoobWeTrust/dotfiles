@@ -39,106 +39,104 @@ function! s:DownloadVimPlug()
         endtry
     endif
     call plug#begin(s:vimfiles . '/plugged')
+    "" Asynchronous lint engine
+    " Enable autocomplete
+    let g:ale_completion_enabled = 1 | Plug 'w0rp/ale', {'branch': 'v2.2.x'}
+    "" More autocomplete
+    if has('nvim')
+      Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    else
+      Plug 'Shougo/deoplete.nvim'
+      Plug 'roxma/nvim-yarp'
+      Plug 'roxma/vim-hug-neovim-rpc'
+    endif
+    let g:deoplete#enable_at_startup = 1
+    Plug 'wokalski/autocomplete-flow'
+    " Func argument completion
+    Plug 'Shougo/neosnippet'
+    Plug 'Shougo/neosnippet-snippets'
+    let g:neosnippet#enable_completed_snippet = 1
+    "" Fuzzy finder
+    Plug 'mhinz/vim-grepper', {'on': ['Grepper', '<plug>(GrepperOperator)']}
+    "" Add surrounding brackets, quotes, xml tags,...
+    Plug 'tpope/vim-surround'
+    "" Extended matching for the % operator
+    Plug 'adelarsq/vim-matchit'
+    " Autocompletion for pairs
+    Plug 'Raimondi/delimitMate'
+    "" Tree explorer
+    " Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'ryanoasis/vim-devicons'
+    Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin'
+    "" Run shell command asynchromously
+    Plug 'skywind3000/asyncrun.vim'
+    "" Text object per indent level
+    Plug 'michaeljsmith/vim-indent-object'
+    "" Code commenting
+    Plug 'tpope/vim-commentary'
+    "" Git gutter
+    Plug 'airblade/vim-gitgutter'
+    "" Git wrapper
+    Plug 'tpope/vim-fugitive'
+    "" Git management inside vim
+    Plug 'jreybert/vimagit'
+    "" Automatically toggle relative line number
+    Plug 'jeffkreeftmeijer/vim-numbertoggle'
+    "" Use registers as stack for yank and delete
+    Plug 'maxbrunsfeld/vim-yankstack'
+    "" Status line
+    Plug 'itchyny/lightline.vim'
+    "" Show buffer in tabline
+    Plug 'mgee/lightline-bufferline'
+    "" Delete buffers without messing window layout
+    Plug 'moll/vim-bbye'
+    "" Show lint errors and warnings on status line
+    Plug 'maximbaz/lightline-ale'
+    "" Maintain coding style per project
+    Plug 'editorconfig/editorconfig-vim'
+    "" Language specific plugins
+    " Markdown
+    Plug 'tpope/vim-markdown', {'for': 'markdown'}
+    " Arduino syntax
+    Plug 'sudar/vim-arduino-syntax'
+    " Godot syntax
+    Plug 'calviken/vim-gdscript3'
+    " Love2d syntax
+    Plug 'davisdude/vim-love-docs', {'branch': 'build', 'for': 'lua'}
+    " JS
+    Plug 'pangloss/vim-javascript'
+    Plug 'mxw/vim-jsx'
+    " Python
+    Plug 'nvie/vim-flake8', {'for': 'python'}
+    Plug 'davidhalter/jedi-vim', {'for': 'python'}
+    " Kotlin
+    Plug 'udalov/kotlin-vim', {'for': 'kotlin'}
+    " Dart
+    Plug 'dart-lang/dart-vim-plugin', {'for': 'dart'}
+    " HTML helper (same as Emmet)
+    Plug 'rstacruz/sparkup', {
+                \ 'rtp': 'vim',
+                \ 'for': [
+                \           'html',
+                \           'htmldjango',
+                \           'javascript.jsx'
+                \ ]}
+    " Rust
+    Plug 'rust-lang/rust.vim'
+    Plug 'racer-rust/vim-racer', {'for': 'rust'}
+    "Plug 'mattn/webapi-vim'
+    "" Detect file encoding
+    Plug 's3rvac/AutoFenc'
+    "" Indent line
+    Plug 'Yggdroot/indentLine'
+    "" Start screen
+    Plug 'mhinz/vim-startify'
+    "" Theme
+    Plug 'morhetz/gruvbox'
+    "Plug 'ayu-theme/ayu-vim'
+    call plug#end()
 endfunction
 
 call s:DownloadVimPlug()
-
-call plug#begin(s:vimfiles . "/plugged")
-"" Asynchronous lint engine
-" Enable autocomplete
-let g:ale_completion_enabled = 1 | Plug 'w0rp/ale', {'branch': 'v2.2.x'}
-"" More autocomplete
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
-let g:deoplete#enable_at_startup = 1
-Plug 'wokalski/autocomplete-flow'
-" Func argument completion
-Plug 'Shougo/neosnippet'
-Plug 'Shougo/neosnippet-snippets'
-let g:neosnippet#enable_completed_snippet = 1
-"" Fuzzy finder
-Plug 'mhinz/vim-grepper', {'on': ['Grepper', '<plug>(GrepperOperator)']}
-"" Add surrounding brackets, quotes, xml tags,...
-Plug 'tpope/vim-surround'
-"" Extended matching for the % operator
-Plug 'adelarsq/vim-matchit'
-" Autocompletion for pairs
-Plug 'Raimondi/delimitMate'
-"" Tree explorer
-" Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'ryanoasis/vim-devicons'
-Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin'
-"" Run shell command asynchromously
-Plug 'skywind3000/asyncrun.vim'
-"" Text object per indent level
-Plug 'michaeljsmith/vim-indent-object'
-"" Code commenting
-Plug 'tpope/vim-commentary'
-"" Git gutter
-Plug 'airblade/vim-gitgutter'
-"" Git wrapper
-Plug 'tpope/vim-fugitive'
-"" Git management inside vim
-Plug 'jreybert/vimagit'
-"" Automatically toggle relative line number
-Plug 'jeffkreeftmeijer/vim-numbertoggle'
-"" Use registers as stack for yank and delete
-Plug 'maxbrunsfeld/vim-yankstack'
-"" Status line
-Plug 'itchyny/lightline.vim'
-"" Show buffer in tabline
-Plug 'mgee/lightline-bufferline'
-"" Delete buffers without messing window layout
-Plug 'moll/vim-bbye'
-"" Show lint errors and warnings on status line
-Plug 'maximbaz/lightline-ale'
-"" Maintain coding style per project
-Plug 'editorconfig/editorconfig-vim'
-"" Language specific plugins
-" Markdown
-Plug 'tpope/vim-markdown', {'for': 'markdown'}
-" Arduino syntax
-Plug 'sudar/vim-arduino-syntax'
-" Godot syntax
-Plug 'calviken/vim-gdscript3'
-" Love2d syntax
-Plug 'davisdude/vim-love-docs', {'branch': 'build', 'for': 'lua'}
-" JS
-Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
-" Python
-Plug 'nvie/vim-flake8', {'for': 'python'}
-Plug 'davidhalter/jedi-vim', {'for': 'python'}
-" Kotlin
-Plug 'udalov/kotlin-vim', {'for': 'kotlin'}
-" Dart
-Plug 'dart-lang/dart-vim-plugin', {'for': 'dart'}
-" HTML helper (same as Emmet)
-Plug 'rstacruz/sparkup', {
-            \ 'rtp': 'vim',
-            \ 'for': [
-            \           'html',
-            \           'htmldjango',
-            \           'javascript.jsx'
-            \ ]}
-" Rust
-Plug 'rust-lang/rust.vim'
-Plug 'racer-rust/vim-racer', {'for': 'rust'}
-"Plug 'mattn/webapi-vim'
-"" Detect file encoding
-Plug 's3rvac/AutoFenc'
-"" Indent line
-Plug 'Yggdroot/indentLine'
-"" Start screen
-Plug 'mhinz/vim-startify'
-"" Theme
-Plug 'morhetz/gruvbox'
-"Plug 'ayu-theme/ayu-vim'
-call plug#end()
 
 """" Theme section
 syntax enable
@@ -161,19 +159,10 @@ endtry
 if (has("termguicolors"))
     set termguicolors
 endif
-if has('gui_running')
-    set t_Co=256
-    " set guioptions-=m  "remove menu bar
-    set guioptions-=T   "remove toolbar
-    set guioptions-=r   "remove right-hand scroll bar
-    set guioptions-=L   "remove left-hand scroll bar
-    set guioptions-=e   "Use tabline from configs instead of GUI
-endif
 set hidden
 "set cmdheight=2
 "set encoding=utf-8
 set mouse=a
-"set guifont=Iosevka\ Nerd\ Font\ Mono:h13
 set smartcase
 set number relativenumber
 set cursorline
@@ -183,9 +172,9 @@ set binary
 set list
 set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:<
 set backspace=indent,eol,start
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+" set tabstop=4
+" set shiftwidth=4
+" set softtabstop=4
 set expandtab
 set completeopt+=preview
 set completeopt+=menuone
@@ -223,7 +212,7 @@ nmap <Leader>0 <Plug>lightline#bufferline#go(10)
 " Key mapping for navigating between errors
 nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
 nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
-" Key :apping for IDE-like behaviour
+" Key mapping for IDE-like behaviour
 nnoremap <silent> K :ALEHover<CR>
 nnoremap <silent> gd :ALEGoToDefinition<CR>
 nnoremap <silent> gr :ALEFindReferences<CR>
@@ -235,10 +224,10 @@ au FileType rust nmap <leader>gd <Plug>(rust-doc)
 """" End keyboard shortcuts section
 
 """" Indentation config section
-autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
-autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
-autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
-"autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
+autocmd FileType html setlocal shiftwidth=2 tabstop=2
+autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
+autocmd FileType json setlocal shiftwidth=2 tabstop=2
+"autocmd FileType dart setlocal shiftwidth=2 tabstop=2
 """" End indentation config section
 
 """" Directory tree browser section
@@ -262,26 +251,26 @@ let g:lightline.enable = {
 " let g:lightline.subseparator = {
 "             \ 'left': '', 'right': ''
 "             \ }
-function! MyLightLinePercent()
+function! LightLinePercent()
     if &ft !=? 'nerdtree'
         return line('.') * 100 / line('$') . '%'
     else
         return ''
     endif
 endfunction
-function! MyLightLineLineInfo()
+function! LightLineLineInfo()
     if &ft !=? 'nerdtree'
         return line('.').':'. col('.')
     else
         return ''
     endif
 endfunction
-function! MyFiletype()
+function! Filetype()
     " return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
     return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
 endfunction
 
-function! MyFileformat()
+function! Fileformat()
     " return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
     return winwidth(0) > 70 ? (&fileformat) : ''
 endfunction
@@ -300,10 +289,10 @@ let g:lightline.component_type = {
             \ 'linter_ok': 'left',
             \ }
 let g:lightline.component_function = {
-            \ 'percent': 'MyLightLinePercent',
-            \ 'lineinfo': 'MyLightLineLineInfo',
-            \ 'filetype': 'MyFiletype',
-            \ 'fileformat': 'MyFileformat',
+            \ 'percent': 'LightLinePercent',
+            \ 'lineinfo': 'LightLineLineInfo',
+            \ 'filetype': 'Filetype',
+            \ 'fileformat': 'Fileformat',
             \ }
 "" Statusline
 set noshowmode
@@ -347,20 +336,20 @@ let g:lightline#ale#indicator_ok = "●"
 """" Linting section
 " Keep the sign gutter open at all times
 let g:ale_sign_column_always = 1
-let g:ale_sign_error = 'X'
-let g:ale_sign_warning = 'i'
+let g:ale_sign_error = '※'
+let g:ale_sign_warning = '¡'
 " Lint on text change
 "let g:ale_lint_on_text_changed = 'never'
 "let g:ale_lint_on_text_changed = 'normal'
 " Lint on opening a file
-let g:ale_lint_on_enter = 0
+let g:ale_lint_on_enter = 1
 " Fix files when you saving
-let g:ale_fix_on_save = 0
+let g:ale_fix_on_save = 1
 " Show 3 lines of errors (default: 10)
 let g:ale_list_window_size = 3
-"" Enable all linters for rust
+"" Explicitly enable linters
 let g:ale_linters = {'rust': ['rls','cargo','rustc','rustfmt']}
-"" Enable all fixers for rust
+"" Explicitly enable fixers
 let g:ale_fixers = {'rust': [
             \                   'rustfmt',
             \                   'remove_trailing_lines',
@@ -391,4 +380,4 @@ endif
 " exrc allows loading local executing local rc files.
 set exrc
 " secure disallows the use of :autocmd, shell and write commands in local `.nvimrc` | `.vimrc` | `.exrc` files
-set secure
+"set secure

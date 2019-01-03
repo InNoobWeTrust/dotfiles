@@ -1,5 +1,5 @@
 if exists('g:GtkGuiLoaded')
-    call rpcnotify(1, 'Gui', 'Font', 'Iosevka Nerd Font Mono 13') 
+    call rpcnotify(1, 'Gui', 'Font', 'Iosevka Nerd Font Mono 14') 
     " To enable cmdline popup (disabled by default)
     " This function currently have some limitations.
     call rpcnotify(1, 'Gui', 'Option', 'Cmdline', 1)
@@ -23,12 +23,14 @@ elseif exists('g:gui_oni')
     " All config settings after this point 
     " can be removed, once an Oni config option is added.
 elseif has('gui_running')
-    if has('gui_win32')
-        set guifont=Iosevka_Nerd_Font_Mono:h13
-    else
-        set guifont=Iosevka\ Nerd\ Font\ Mono\ 13
-    endif
+    set t_Co=256
+    " set guioptions-=m  "remove menu bar
+    set guioptions-=T   "remove toolbar
+    set guioptions-=r   "remove right-hand scroll bar
+    set guioptions-=L   "remove left-hand scroll bar
+    set guioptions-=e   "Use tabline from configs instead of GUI
+    "set guifont=Iosevka\ Nerd\ Font\ Mono:h13
 else
-    GuiFont! Iosevka Nerd Font Mono:h13
+    GuiFont Iosevka Nerd Font Mono:h14
     GuiTabline 0
 endif
