@@ -156,9 +156,9 @@ endtry
 """" End theme section
 
 """" Misc section
-if (has("termguicolors"))
-    set termguicolors
-endif
+" if (has("termguicolors"))
+"     set termguicolors
+" endif
 set hidden
 "set cmdheight=2
 "set encoding=utf-8
