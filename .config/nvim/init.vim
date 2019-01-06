@@ -41,7 +41,7 @@ function! s:DownloadVimPlug()
     call plug#begin(s:vimfiles . '/plugged')
     "" Asynchronous lint engine
     " Enable autocomplete
-    let g:ale_completion_enabled = 1 | Plug 'w0rp/ale', {'branch': 'v2.2.x'}
+    let g:ale_completion_enabled = 1 | Plug 'w0rp/ale', {'branch': 'v2.3.x'}
     "" More autocomplete
     if has('nvim')
       Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
