@@ -1,37 +1,14 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# Auto-install ~/.oh-my-zsh if missing.
-if [ ! -d $ZSH ]; then
-  curl -L http://install.ohmyz.sh | sh
-fi
-
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
-# Platform-aware definitions.
-if [ -f ~/.bash_wsl ]; then
-    . ~/.bash_wsl
-fi
-
-# PATH definition
-if [ -f ~/.sh_path ]; then
-    . ~/.sh_path
-fi
-
 # Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
+  export ZSH="/home/innoobwetrust/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="mortalscumbag"
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -86,31 +63,7 @@ ZSH_THEME="mortalscumbag"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  archlinux,
-  # autopep8,
-  command-not-found,
-  common-aliases,
-  compleat,
-  copyfile,
-  # debian,
-  dircycle,
-  dirhistory,
-  encode64,
-  extract,
-  git,
-  jsontools,
-  last-working-dir,
-  npm,
-  perms,
-  # pep8,
-  pip,
-  # pylint,
-  python,
-  screen,
-  tmux,
-  urltools,
-  vi-mode,
-  wd,
+  git
 )
 
 source $ZSH/oh-my-zsh.sh
