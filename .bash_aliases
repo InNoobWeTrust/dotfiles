@@ -47,4 +47,9 @@ alias nvimauto='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +q
 alias manjaroauto='pacauto && condauto && nvmauto && rustupauto && nvimauto && flutterauto && pipauto'
 
 # automate termux android
-alias termuxauto='pkg upgrade && apt-get autoremove -y && apt-get autoclean -y && nvimauto && pipauto'
+alias termuxauto='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y && nvimauto && pipauto'
+
+# Import custom alias for current system
+if [ -f ~/.bash_aliases.user ]; then
+    . ~/.bash_aliases.user
+fi
