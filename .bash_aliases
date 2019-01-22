@@ -11,7 +11,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 alias rampage='printf "what to kill? => "; victim=;read victim;ps -A | grep $victim | awk "{print $1}" | xargs -r kill'
 
 # Gacha-inspired number generator
-alias gacha='printf "Lower limit: ";read low;printf "Upper limit: ";read high;diff=$(($high - $low));while true;do printf "\r%5d" $(($RANDOM % $((diff + 1)) + $low));read -t 0.25 -N 1 input;if [[ $input ]]; then echo ;break;fi;done'
+alias gacha='printf "Lower limit: ";read low;printf "Upper limit: ";read high;diff=$(($high - $low));echo "Press ENTER key to stop!";while ! read -t 0.25 -rsn 1;do printf "\r%5d" $(($RANDOM % $((diff + 1)) + $low));done'
 
 # List orphan packages with pacman
 alias pacorphan='pacman -Qdt'
