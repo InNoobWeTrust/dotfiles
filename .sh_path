@@ -27,6 +27,9 @@ fi
 # Add Miniconda3 to PATH
 [[ -d $HOME/miniconda3/bin ]] && [[ ":$PATH:" != *":$HOME/miniconda3/bin:"* ]] && export PATH="$HOME/miniconda3/bin:$PATH"
 
+# Add pyenv to PATH
+[[ -d $HOME/.pyenv ]] && [[ ":$PATH:" != *":$HOME/.pyenv/bin:"* ]] && export PATH="$HOME/.pyenv/bin:$PATH" && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
+
 # Activate nvm
 if [ -d $HOME/.nvm ]; then
     export NVM_DIR="$HOME/.nvm"
