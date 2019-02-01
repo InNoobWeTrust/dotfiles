@@ -86,31 +86,31 @@ ZSH_THEME="mortalscumbag"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  archlinux,
-  # autopep8,
-  command-not-found,
-  common-aliases,
-  compleat,
-  copyfile,
-  # debian,
-  dircycle,
-  dirhistory,
-  encode64,
-  extract,
-  git,
-  jsontools,
-  last-working-dir,
-  npm,
-  perms,
-  # pep8,
-  pip,
-  # pylint,
-  python,
-  screen,
-  tmux,
-  urltools,
-  vi-mode,
-  wd,
+  archlinux
+  # autopep8
+  command-not-found
+  common-aliases
+  compleat
+  copyfile
+  # debian
+  dircycle
+  dirhistory
+  encode64
+  extract
+  git
+  jsontools
+  last-working-dir
+  npm
+  perms
+  # pep8
+  pip
+  # pylint
+  python
+  screen
+  tmux
+  urltools
+  vi-mode
+  wd
 )
 
 source $ZSH/oh-my-zsh.sh
