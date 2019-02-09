@@ -22,7 +22,7 @@ fi
 [[ -d $HOME/.pub-cache/bin ]] && [[ ":$PATH:" != *":$HOME/.pub-cache/bin:"* ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
 
 # Add Go bin to PATH
-[[ -d $HOME/go/bin ]] && [[":$PATH:" != *"$HOME/go/bin:"* ]] && export PATH="$HOME/go/bin:$PATH"
+[[ -d $HOME/go/bin ]] && [[ ":$PATH:" != *"$HOME/go/bin:"* ]] && export PATH="$HOME/go/bin:$PATH"
 
 # Add cargo to PATH
 [[ -d $HOME/.cargo/bin ]] && [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$HOME/.cargo/bin:$PATH"
