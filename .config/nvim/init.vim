@@ -198,19 +198,30 @@ set completeopt+=longest
 let mapleader = " "
 "" Visual indication of leader key timeout
 set showcmd
-" Copy and paste
+"" Copy and paste
 vnoremap <C-c> "+yi
 vnoremap <C-x> "+c
 vnoremap <S-Insert> c<ESC>"+p
 inoremap <S-Insert> <ESC>"+pa
-" Map Ctrl-Del to delete word
+"" Map Ctrl-Del to delete word
 inoremap <C-Delete> <ESC>dwi
-" Use ESC to exit insert mode in :term
+"" Use ESC to exit insert mode in :term
 " tnoremap <Esc> <C-\><C-n>
-" Toggle NERDTree
+"" Tab to autocomplete if in middle of line
+function! InsertTabWrapper()
+	let col = col('.') - 1
+	if !col || getline('.')[col - 1] !~ '\k'
+		return "\<tab>"
+	else
+		return "\<c-p>"
+	endif
+endfunction
+inoremap <expr> <tab> InsertTabWrapper()
+inoremap <s-tab> <c-n>"
+"" Toggle NERDTree
 map <Leader>f :NERDTreeToggle<CR>
 nnoremap <silent> <Leader>v :NERDTreeFind<CR>
-" Quickly switch between buffers
+"" Quickly switch between buffers
 nmap <Leader>1 <Plug>lightline#bufferline#go(1)
 nmap <Leader>2 <Plug>lightline#bufferline#go(2)
 nmap <Leader>3 <Plug>lightline#bufferline#go(3)
@@ -221,14 +232,14 @@ nmap <Leader>7 <Plug>lightline#bufferline#go(7)
 nmap <Leader>8 <Plug>lightline#bufferline#go(8)
 nmap <Leader>9 <Plug>lightline#bufferline#go(9)
 nmap <Leader>0 <Plug>lightline#bufferline#go(10)
-" Key mapping for navigating between errors
+"" Key mapping for navigating between errors
 nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
 nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
-" Key :apping for IDE-like behaviour
+"" Key mapping for IDE-like behaviour
 nnoremap <silent> K :ALEHover<CR>
 nnoremap <silent> gd :ALEGoToDefinition<CR>
 nnoremap <silent> gr :ALEFindReferences<CR>
-" Racer (Rust) keys binding
+"" Racer (Rust) keys binding
 au FileType rust nmap gd <Plug>(rust-def)
 au FileType rust nmap gs <Plug>(rust-def-split)
 au FileType rust nmap gx <Plug>(rust-def-vertical)

@@ -1,2 +1,14 @@
 [core]
 	editor = nvim
+[credential]
+	helper = manager
+[merge]
+	tool = nvim
+[mergetool]
+	prompt = true
+[mergetool "nvim"]
+	cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
+[difftool]
+	prompt = false
+[diff]
+	tool = nvim
