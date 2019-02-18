@@ -188,6 +188,7 @@ set backspace=indent,eol,start
 "set shiftwidth=4
 "set softtabstop=4
 "set expandtab
+set spell
 set completeopt+=preview
 set completeopt+=menuone
 set completeopt+=longest
