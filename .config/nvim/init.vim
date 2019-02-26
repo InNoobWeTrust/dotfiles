@@ -173,6 +173,7 @@ set hidden
 set mouse=a
 "set guifont=Iosevka\ Nerd\ Font\ Mono:h13
 set smartcase
+set autoread
 set number
 set relativenumber
 set cursorline
