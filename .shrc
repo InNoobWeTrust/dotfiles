@@ -1,0 +1,3 @@
+if [ -f ~/.shrc.user ]; then
+    . ~/.shrc.user
+fi
