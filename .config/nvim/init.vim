@@ -371,15 +371,39 @@ let g:ale_lint_on_enter = 0
 let g:ale_fix_on_save = 0
 " Show 3 lines of errors (default: 10)
 let g:ale_list_window_size = 3
-"" Enable all linters for rust
-let g:ale_linters = {'rust': ['rls','cargo','rustc','rustfmt']}
-"" Enable all fixers for rust
-let g:ale_fixers = {'rust': [
-            \                   'rustfmt',
+"" Explicitly enable linters
+let g:ale_linters = {   'rust': [
+            \               'rls',
+            \               'cargo',
+            \               'rustc',
+            \               'rustfmt',
+            \           ],
+            \           'python': [
+            \               'pyls',
+            \               'flake8',
+            \               'mypy',
+            \               'prospector',
+            \               'pycodestyle',
+            \               'pyflakes',
+            \               'pylint',
+            \               'pyre',
+            \               'vulture',
+            \           ],
+            \       }
+"" Explicitly enable fixers
+let g:ale_fixers = {    'rust': ['rustfmt'],
+            \           'javascript': ['eslint'],
+            \           'python': [
+            \               'add_blank_lines_for_python_control_statements',
+            \               'autopep8',
+            \               'black',
+            \               'isort',
+            \               'yapf',
+            \           ],
+            \           '*': [
             \                   'remove_trailing_lines',
-            \                   'trim_whitespace'
-            \                ],
-            \        'javascript': ['eslint']
+            \                   'trim_whitespace',
+            \           ]
             \      }
 let g:ale_rust_rls_toolchain = 'stable'
 let g:ale_rust_rustc_options = ''
