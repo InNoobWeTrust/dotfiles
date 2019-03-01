@@ -403,7 +403,7 @@ let g:ale_fixers = {    'rust': ['rustfmt'],
             \           '*': [
             \                   'remove_trailing_lines',
             \                   'trim_whitespace',
-            \           ]
+            \           ],
             \      }
 let g:ale_rust_rls_toolchain = 'stable'
 let g:ale_rust_rustc_options = ''
