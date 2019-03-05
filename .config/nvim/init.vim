@@ -51,10 +51,7 @@ function! s:DownloadVimPlug()
       Plug 'roxma/vim-hug-neovim-rpc'
     endif
     let g:deoplete#enable_at_startup = 1
-    " Autocomplete for javascript's flow
     Plug 'wokalski/autocomplete-flow'
-    " Autocomplete for C/C++/objC by Clang
-    Plug 'Shougo/deoplete-clangx', {'for': ['c', 'cpp', 'objc']}
     " Func argument completion
     Plug 'Shougo/neosnippet'
     Plug 'Shougo/neosnippet-snippets'
@@ -70,6 +67,8 @@ function! s:DownloadVimPlug()
     "" Tree explorer
     " Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'ryanoasis/vim-devicons'
     Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin'
+    "" Tag tree
+    Plug 'majutsushi/tagbar'
     "" Run shell command asynchromously
     Plug 'skywind3000/asyncrun.vim'
     "" Text object per indent level
@@ -115,8 +114,6 @@ function! s:DownloadVimPlug()
     Plug 'udalov/kotlin-vim', {'for': 'kotlin'}
     " Dart
     Plug 'dart-lang/dart-vim-plugin', {'for': 'dart'}
-    " C/C++/ObjC
-    Plug 'jeaye/color_coded', {'for': ['c', 'cpp', 'objc']}
     " HTML helper (same as Emmet)
     Plug 'rstacruz/sparkup', {
                 \ 'rtp': 'vim',
