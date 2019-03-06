@@ -170,7 +170,7 @@ if has('gui_running')
     set guioptions-=e   "Use tabline from configs instead of GUI
 endif
 set hidden
-"set cmdheight=2
+set cmdheight=2
 "set encoding=utf-8
 set mouse=a
 "set guifont=Iosevka\ Nerd\ Font\ Mono:h13
@@ -215,11 +215,16 @@ function! InsertTabWrapper()
 	if !col || getline('.')[col - 1] !~ '\k'
 		return "\<tab>"
 	else
-		return "\<c-p>"
+		return "\<c-n>"
 	endif
 endfunction
 inoremap <expr> <tab> InsertTabWrapper()
-inoremap <s-tab> <c-n>"
+inoremap <s-tab> <c-p>"
+"" Expand CR when autocomplete pairs
+let g:delimitMate_expand_cr = 2
+let g:delimitMate_expand_space = 1
+let g:delimitMate_expand_inside_quotes = 1
+let g:delimitMate_jump_expansion = 1
 "" Toggle NERDTree
 map <Leader>f :NERDTreeToggle<CR>
 nnoremap <silent> <Leader>v :NERDTreeFind<CR>
@@ -328,7 +333,7 @@ let g:lightline.active = {'right':
             \  [ 'linter_checking',
             \    'linter_errors',
             \    'linter_warnings',
-            \    'linter_ok']
+            \    'linter_ok'],
             \ ]}
 "" Tabline
 set showtabline=2
