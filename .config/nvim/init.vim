@@ -51,6 +51,7 @@ function! s:DownloadVimPlug()
       Plug 'roxma/vim-hug-neovim-rpc'
     endif
     let g:deoplete#enable_at_startup = 1
+    Plug 'tweekmonster/deoplete-clang2'
     Plug 'wokalski/autocomplete-flow'
     " Func argument completion
     Plug 'Shougo/neosnippet'
@@ -132,6 +133,8 @@ function! s:DownloadVimPlug()
     Plug 'Yggdroot/indentLine'
     "" Start screen
     Plug 'mhinz/vim-startify'
+    "" Advanced code highlighting
+    Plug 'jeaye/color_coded'
     "" Theme
     Plug 'morhetz/gruvbox'
     "Plug 'ayu-theme/ayu-vim'
