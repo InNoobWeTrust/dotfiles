@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "coc-css": "^1.0.7",
+    "coc-dictionary": "^1.2.0",
+    "coc-emmet": "^1.0.9",
+    "coc-emoji": "^1.2.0",
+    "coc-eslint": "^1.0.9",
+    "coc-highlight": "^1.0.5",
+    "coc-html": "^1.0.7",
+    "coc-java": "^1.1.10",
+    "coc-json": "^1.0.11",
+    "coc-lists": "^1.0.3",
+    "coc-neosnippet": "^1.2.0",
+    "coc-prettier": "^1.0.7",
+    "coc-pyls": "^1.0.6",
+    "coc-rls": "^1.0.8",
+    "coc-snippets": "^1.0.18",
+    "coc-stylelint": "^1.0.8",
+    "coc-tag": "^1.2.0",
+    "coc-tslint": "^1.0.15",
+    "coc-tslint-plugin": "^1.0.1",
+    "coc-tsserver": "^1.1.29",
+    "coc-ultisnips": "^1.2.0",
+    "coc-word": "^1.2.0",
+    "coc-yaml": "^1.0.0",
+    "coc-yank": "^1.0.2"
+  }
+}
