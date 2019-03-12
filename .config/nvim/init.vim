@@ -135,8 +135,6 @@ function! s:DownloadVimPlug()
     Plug 'Yggdroot/indentLine'
     "" Start screen
     Plug 'mhinz/vim-startify'
-    "" Advanced code highlighting
-    Plug 'jeaye/color_coded'
     "" Theme
     Plug 'morhetz/gruvbox'
     "Plug 'ayu-theme/ayu-vim'
