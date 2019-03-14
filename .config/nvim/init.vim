@@ -182,6 +182,7 @@ set autoread
 set number
 set relativenumber
 set cursorline
+set scrolloff=10
 set wrap
 set colorcolumn=80
 set binary
