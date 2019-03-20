@@ -13,6 +13,9 @@ alias rampage='printf "what to kill? => "; victim=;read victim;ps -A | grep $vic
 # Gacha-inspired number generator
 alias gacha='printf "Lower limit: ";read low;printf "Upper limit: ";read high;diff=$(($high - $low));echo "Press ENTER key to stop!";while ! read -t 0.25 -rsn 1;do printf "\r%5d" $(($RANDOM % $((diff + 1)) + $low));done'
 
+# Web browser in terminal
+alias browsh='docker run -it --rm browsh/browsh'
+
 # List orphan packages with pacman
 alias pacorphan='pacman -Qdt'
 
