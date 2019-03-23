@@ -117,6 +117,9 @@ function! s:DownloadVimPlug()
     Plug 'udalov/kotlin-vim', {'for': 'kotlin'}
     " Dart
     Plug 'dart-lang/dart-vim-plugin', {'for': 'dart'}
+    Plug 'thosakwe/vim-flutter'
+    " Enable Flutter menu
+    call FlutterMenu()
     " HTML helper (same as Emmet)
     Plug 'rstacruz/sparkup', {
                 \ 'rtp': 'vim',
@@ -255,6 +258,11 @@ au FileType rust nmap gd <Plug>(rust-def)
 au FileType rust nmap gs <Plug>(rust-def-split)
 au FileType rust nmap gx <Plug>(rust-def-vertical)
 au FileType rust nmap <leader>gd <Plug>(rust-doc)
+"" Flutter keys binding
+nnoremap <leader>fa :FlutterRun<cr>
+nnoremap <leader>fq :FlutterQuit<cr>
+nnoremap <leader>fr :FlutterHotReload<cr>
+nnoremap <leader>fR :FlutterHotRestart<cr>
 """" End keyboard shortcuts section
 
 """" Indentation config section
