@@ -119,7 +119,10 @@ function! s:DownloadVimPlug()
     Plug 'dart-lang/dart-vim-plugin', {'for': 'dart'}
     Plug 'thosakwe/vim-flutter'
     " Enable Flutter menu
-    call FlutterMenu()
+    try
+        call FlutterMenu()
+    catch
+    endtry
     " HTML helper (same as Emmet)
     Plug 'rstacruz/sparkup', {
                 \ 'rtp': 'vim',
