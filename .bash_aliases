@@ -16,6 +16,9 @@ alias gacha='printf "Lower limit: ";read low;printf "Upper limit: ";read high;di
 # Web browser in terminal
 alias browsh='docker run -it --rm browsh/browsh'
 
+# IDE over browser
+alias theia='docker run -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
+
 # List orphan packages with pacman
 alias pacorphan='pacman -Qdt'
 
