@@ -190,7 +190,7 @@ set relativenumber
 set cursorline
 set scrolloff=10
 set wrap
-set colorcolumn=80,100,120
+set colorcolumn=80,100,120,140
 set binary
 set list
 set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:<
