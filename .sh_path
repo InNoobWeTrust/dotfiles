@@ -1,6 +1,9 @@
 # Add ~/bin to PATH
 [[ -d $HOME/bin ]] && [[ ":$PATH:" != *":$HOME/bin:"* ]] && export PATH="$HOME/bin:$PATH"
 
+# Add ~/.local/bin to PATH
+[[ -d $HOME/.local/bin ]] && [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$HOME/.local/bin:$PATH"
+
 # Set neovim as default editor
 if [[ $(which nvim) ]]; then
     export EDITOR="$(which nvim)"
