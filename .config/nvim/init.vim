@@ -259,6 +259,7 @@ nnoremap <Leader>x :Bd<CR>
 nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
 nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
 "" Key mapping for IDE-like behaviour
+inoremap <silent> <C-Space> <Plug>(ale_complete)
 nnoremap <silent> K :ALEHover<CR>
 nnoremap <silent> gd :ALEGoToDefinition<CR>
 nnoremap <silent> gr :ALEFindReferences<CR>
