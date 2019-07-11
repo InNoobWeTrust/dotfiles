@@ -40,25 +40,14 @@ function! s:DownloadVimPlug()
     endif
     call plug#begin(s:vimfiles . '/plugged')
     "" Asynchronous lint engine
-    " Enable autocomplete
     let g:ale_completion_enabled = 1 | Plug 'w0rp/ale', {'branch': 'v2.5.x'}
     "" Language server autocompletion with coc.nvim
     " Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
-    "" More autocomplete
-    if has('nvim')
-      Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    else
-      Plug 'Shougo/deoplete.nvim'
-      Plug 'roxma/nvim-yarp'
-      Plug 'roxma/vim-hug-neovim-rpc'
-    endif
-    let g:deoplete#enable_at_startup = 1
-    Plug 'tweekmonster/deoplete-clang2'
-    Plug 'wokalski/autocomplete-flow'
-    " Func argument completion
-    Plug 'Shougo/neosnippet'
-    Plug 'Shougo/neosnippet-snippets'
-    let g:neosnippet#enable_completed_snippet = 1
+    "" Language server
+    Plug 'prabirshrestha/asyncomplete.vim'
+    Plug 'prabirshrestha/async.vim'
+    Plug 'prabirshrestha/vim-lsp'
+    Plug 'prabirshrestha/asyncomplete-lsp.vim'
     "" Fuzzy finder
     Plug 'mhinz/vim-grepper', {'on': ['Grepper', '<plug>(GrepperOperator)']}
     "" Add surrounding brackets, quotes, xml tags,...
@@ -92,8 +81,6 @@ function! s:DownloadVimPlug()
     Plug 'maxbrunsfeld/vim-yankstack'
     "" Status line
     Plug 'itchyny/lightline.vim'
-    "" Show buffer in tabline
-    "Plug 'mgee/lightline-bufferline'
     "" Delete buffers without messing window layout
     Plug 'moll/vim-bbye'
     "" Show lint errors and warnings on status line
@@ -101,6 +88,8 @@ function! s:DownloadVimPlug()
     "" Maintain coding style per project
     Plug 'editorconfig/editorconfig-vim'
     "" Language specific plugins
+    " Ctags supported languages
+    Plug 'ludovicchabant/vim-gutentags'
     " Markdown
     Plug 'tpope/vim-markdown', {'for': 'markdown'}
     " Arduino syntax
@@ -117,6 +106,8 @@ function! s:DownloadVimPlug()
     Plug 'davidhalter/jedi-vim', {'for': 'python'}
     " Kotlin
     Plug 'udalov/kotlin-vim', {'for': 'kotlin'}
+    " Java
+    Plug 'udalov/javap-vim'
     " Dart
     Plug 'dart-lang/dart-vim-plugin', {'for': 'dart'}
     Plug 'thosakwe/vim-flutter'
@@ -135,8 +126,10 @@ function! s:DownloadVimPlug()
                 \ ]}
     " Rust
     Plug 'rust-lang/rust.vim'
-    Plug 'racer-rust/vim-racer', {'for': 'rust'}
+    "Plug 'racer-rust/vim-racer', {'for': 'rust'}
     "Plug 'mattn/webapi-vim'
+    " Syslog
+    Plug 'mtdl9/vim-log-highlighting', {'for': 'messages'}
     "" Detect file encoding
     Plug 's3rvac/AutoFenc'
     "" Indent line
@@ -145,7 +138,7 @@ function! s:DownloadVimPlug()
     Plug 'mhinz/vim-startify'
     "" Theme
     Plug 'morhetz/gruvbox'
-    "Plug 'ayu-theme/ayu-vim'
+    Plug 'ayu-theme/ayu-vim'
     call plug#end()
 endfunction
 
@@ -161,17 +154,18 @@ let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_invert_tabline = 1
 let g:gruvbox_invert_indent_guides=1
 "" Ayu
-let ayucolor="dark"
+let ayucolor="mirage"
 try
     colorscheme gruvbox
+    " colorscheme ayu
 catch
 endtry
 """" End theme section
 
 """" Misc section
-if (has("termguicolors"))
-    set termguicolors
-endif
+" if (has("termguicolors"))
+"     set termguicolors
+" endif
 if has('gui_running')
     set t_Co=256
     " set guioptions-=m  "remove menu bar
@@ -185,6 +179,7 @@ set cmdheight=2
 "set encoding=utf-8
 set mouse=a
 "set guifont=Iosevka\ Nerd\ Font\ Mono:h13
+set linespace=4
 " set smartcase
 set smartindent
 set confirm
@@ -220,20 +215,20 @@ vnoremap <C-x> "+c
 vnoremap <S-Insert> c<ESC>"+p
 inoremap <S-Insert> <ESC>"+pa
 "" Map Ctrl-Del to delete word
-inoremap <C-Delete> <ESC>dwi
+inoremap <C-Delete> <ESC>bdwa
 "" Use ESC to exit insert mode in :term
 " tnoremap <Esc> <C-\><C-n>
 "" Tab to autocomplete if in middle of line
-function! InsertTabWrapper()
-	let col = col('.') - 1
-	if !col || getline('.')[col - 1] !~ '\k'
-		return "\<tab>"
-	else
-		return "\<c-n>"
-	endif
-endfunction
-inoremap <expr> <tab> InsertTabWrapper()
-inoremap <s-tab> <c-p>"
+" function! InsertTabWrapper()
+" 	let col = col('.') - 1
+" 	if !col || getline('.')[col - 1] !~ '\k'
+" 		return "\<tab>"
+" 	else
+" 		return "\<c-n>"
+" 	endif
+" endfunction
+" inoremap <expr> <tab> InsertTabWrapper()
+" inoremap <expr> <s-tab> <c-p>"
 "" Expand CR when autocomplete pairs
 let g:delimitMate_expand_cr = 2
 let g:delimitMate_expand_space = 1
@@ -243,31 +238,33 @@ let g:delimitMate_jump_expansion = 1
 map <Leader>f :NERDTreeToggle<CR>
 nnoremap <silent> <Leader>v :NERDTreeFind<CR>
 "" Delete buffer without messing layout
-nnoremap <Leader>x :Bd<CR>
-"" Quickly switch between buffers
-"nmap <Leader>1 <Plug>lightline#bufferline#go(1)
-"nmap <Leader>2 <Plug>lightline#bufferline#go(2)
-"nmap <Leader>3 <Plug>lightline#bufferline#go(3)
-"nmap <Leader>4 <Plug>lightline#bufferline#go(4)
-"nmap <Leader>5 <Plug>lightline#bufferline#go(5)
-"nmap <Leader>6 <Plug>lightline#bufferline#go(6)
-"nmap <Leader>7 <Plug>lightline#bufferline#go(7)
-"nmap <Leader>8 <Plug>lightline#bufferline#go(8)
-"nmap <Leader>9 <Plug>lightline#bufferline#go(9)
-"nmap <Leader>0 <Plug>lightline#bufferline#go(10)
+nmap <Leader>x :Bd<CR>
 "" Key mapping for navigating between errors
-nnoremap <silent> <C-k> <Plug>(ale_previous_wrap)
-nnoremap <silent> <C-j> <Plug>(ale_next_wrap)
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
 "" Key mapping for IDE-like behaviour
-inoremap <silent> <C-Space> <Plug>(ale_complete)
-nnoremap <silent> K :ALEHover<CR>
-nnoremap <silent> gd :ALEGoToDefinition<CR>
-nnoremap <silent> gr :ALEFindReferences<CR>
-"" Racer (Rust) keys binding
-au FileType rust nmap gd <Plug>(rust-def)
-au FileType rust nmap gs <Plug>(rust-def-split)
-au FileType rust nmap gx <Plug>(rust-def-vertical)
-au FileType rust nmap <leader>gd <Plug>(rust-doc)
+imap <C-Space> <Plug>(ale_complete)
+imap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+imap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
+nmap <leader>h <Plug>(ale_hover)
+nmap <leader>doc <Plug>(ale_documentation)
+nmap <leader>def <Plug>(ale_go_to_definition)
+nmap <leader>deft <Plug>(ale_go_to_definition_in_tab)
+nmap <leader>defs <Plug>(ale_go_to_definition_in_split)
+nmap <leader>defv <Plug>(ale_go_to_definition_in_vsplit)
+nmap <leader>tdef <Plug>(ale_go_to_type_definition)
+nmap <leader>tdeft <Plug>(ale_go_to_type_definition_in_tab)
+nmap <leader>tdefs <Plug>(ale_go_to_type_definition_in_split)
+nmap <leader>tdefv <Plug>(ale_go_to_type_definition_in_vsplit)
+nmap <leader>ref <Plug>(ale_find_references)
+nmap <leader>fix <Plug>(ale_fix)
+nmap <leader>decl <Plug>(lsp-declaration)
+nmap <leader>impl <Plug>(lsp-implementation)
+nmap <leader>rn <Plug>(lsp-rename)
+nmap <leader>fmt <Plug>(lsp-document-format)
+nmap <leader>act <Plug>(lsp-code-action)
 "" Flutter keys binding
 nnoremap <leader>fa :FlutterRun<cr>
 nnoremap <leader>fq :FlutterQuit<cr>
@@ -327,20 +324,6 @@ function! Fileformat()
     " return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
     return winwidth(0) > 70 ? (&fileformat) : ''
 endfunction
-"let g:lightline.component_expand = {
-"            \ 'buffers': 'lightline#bufferline#buffers',
-"            \ 'linter_checking': 'lightline#ale#checking',
-"            \ 'linter_warnings': 'lightline#ale#warnings',
-"            \ 'linter_errors': 'lightline#ale#errors',
-"            \ 'linter_ok': 'lightline#ale#ok',
-"            \ }
-"let g:lightline.component_type = {
-"            \ 'buffers': 'tabsel',
-"            \ 'linter_checking': 'left',
-"            \ 'linter_warnings': 'warning',
-"            \ 'linter_errors': 'error',
-"            \ 'linter_ok': 'left',
-"            \ }
 let g:lightline.component_expand = {
             \ 'linter_checking': 'lightline#ale#checking',
             \ 'linter_warnings': 'lightline#ale#warnings',
@@ -362,7 +345,7 @@ let g:lightline.component_function = {
 "" Statusline
 set noshowmode
 let g:lightline.active = {
-            \   'right': 
+            \   'right':
             \       [
             \           [ 'lineinfo' ],
             \           [ 'percent' ],
@@ -376,14 +359,6 @@ let g:lightline.active = {
             \}
 "" Tabline
 set showtabline=2
-" let g:lightline#bufferline#enable_devicons = 0
-" let g:lightline#bufferline#unicode_symbols = 1
-" let g:lightline#bufferline#show_number = 0
-" let g:lightline#bufferline#number_map = {
-"             \ 0: '⁰', 1: '¹', 2: '²',
-"             \ 3: '³', 4: '⁴', 5: '⁵',
-"             \ 6: '⁶', 7: '⁷', 8: '⁸',
-"             \ 9: '⁹'}
 let g:lightline.tabline = {
             \ 'right': [
             \   ['close'],
@@ -396,22 +371,23 @@ let g:lightline.tabline = {
 " let g:lightline#ale#indicator_warnings = "\uf071"
 " let g:lightline#ale#indicator_errors = "\uf05e"
 " let g:lightline#ale#indicator_ok = "\uf00c"
-let g:lightline#ale#indicator_checking = "≒"
-let g:lightline#ale#indicator_warnings = "¡"
-let g:lightline#ale#indicator_errors = "※"
-let g:lightline#ale#indicator_ok = "●"
+let g:lightline#ale#indicator_checking = "∵"
+let g:lightline#ale#indicator_warnings = "▲"
+let g:lightline#ale#indicator_errors = "✗"
+let g:lightline#ale#indicator_ok = "✓"
 """" End status line section
 
 """" Linting section
 " Keep the sign gutter open at all times
 let g:ale_sign_column_always = 1
-let g:ale_sign_error = 'X'
-let g:ale_sign_warning = 'i'
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '▲'
+let g:ale_sign_info = 'i'
 " Lint on text change
 "let g:ale_lint_on_text_changed = 'never'
 "let g:ale_lint_on_text_changed = 'normal'
 " Lint on opening a file
-let g:ale_lint_on_enter = 0
+" let g:ale_lint_on_enter = 1
 " Fix files when you saving
 let g:ale_fix_on_save = 0
 " Show 3 lines of errors (default: 10)
@@ -436,7 +412,17 @@ let g:ale_linters = {   'rust': [
             \           ],
             \       }
 "" Explicitly enable fixers
-let g:ale_fixers = {    'rust': ['rustfmt'],
+let g:ale_fixers = {    'rust': [
+            \               'rustfmt',
+            \               'remove_trailing_lines',
+            \               'trim_whitespace',
+            \           ],
+            \           'c': [
+            \               'clang-format',
+            \               'remove_trailing_lines',
+            \               'trim_whitespace',
+            \               'uncrustify',
+            \           ],
             \           'javascript': ['eslint'],
             \           'python': [
             \               'add_blank_lines_for_python_control_statements',
@@ -444,10 +430,14 @@ let g:ale_fixers = {    'rust': ['rustfmt'],
             \               'black',
             \               'isort',
             \               'yapf',
+            \               'remove_trailing_lines',
+            \               'trim_whitespace',
             \           ],
-            \           '*': [
-            \                   'remove_trailing_lines',
-            \                   'trim_whitespace',
+            \           'java': [
+            \               'google_java_format',
+            \               'remove_trailing_lines',
+            \               'trim_whitespace',
+            \               'uncrustify',
             \           ],
             \      }
 let g:ale_rust_rls_toolchain = 'stable'
@@ -470,6 +460,45 @@ endif
 """" End language specific plugin section
 
 """" Language server section
+""" vim-lsp
+if executable('clangd')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'clangd',
+        \ 'cmd': {server_info->['clangd', '-background-index']},
+        \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
+        \ })
+endif
+if executable('pyls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'whitelist': ['python'],
+        \ 'workspace_config': {'pyls': {'plugins': {'pydocstyle': {'enabled': v:true}}}}
+        \ })
+endif
+if executable('java') && filereadable(expand('~/.local/bin/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar'))
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'eclipse.jdt.ls',
+        \ 'cmd': {server_info->[
+        \     'java',
+        \     '-Declipse.application=org.eclipse.jdt.ls.core.id1',
+        \     '-Dosgi.bundles.defaultStartLevel=4',
+        \     '-Declipse.product=org.eclipse.jdt.ls.core.product',
+        \     '-Dlog.level=ALL',
+        \     '-noverify',
+        \     '-Dfile.encoding=UTF-8',
+        \     '-Xmx1G',
+        \     '-jar',
+        \     expand('~/.local/bin/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar'),
+        \     '-configuration',
+        \     expand('~/.local/bin/eclipse.jdt.ls/config_linux'),
+        \     '-data',
+        \     getcwd()
+        \ ]},
+        \ 'whitelist': ['java'],
+        \ })
+endif
+""" coc.nvim
 " " Smaller updatetime for CursorHold & CursorHoldI
 " set updatetime=300
 " " don't give |ins-completion-menu| messages.
