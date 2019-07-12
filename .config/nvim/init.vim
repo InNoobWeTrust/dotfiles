@@ -41,13 +41,14 @@ function! s:DownloadVimPlug()
     call plug#begin(s:vimfiles . '/plugged')
     "" Asynchronous lint engine
     let g:ale_completion_enabled = 1 | Plug 'w0rp/ale', {'branch': 'v2.5.x'}
+    set omnifunc=ale#completion#OmniFunc
     "" Language server autocompletion with coc.nvim
     " Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
     "" Language server
-    Plug 'prabirshrestha/asyncomplete.vim'
+    " Plug 'prabirshrestha/asyncomplete.vim'
     Plug 'prabirshrestha/async.vim'
     Plug 'prabirshrestha/vim-lsp'
-    Plug 'prabirshrestha/asyncomplete-lsp.vim'
+    " Plug 'prabirshrestha/asyncomplete-lsp.vim'
     "" Fuzzy finder
     Plug 'mhinz/vim-grepper', {'on': ['Grepper', '<plug>(GrepperOperator)']}
     "" Add surrounding brackets, quotes, xml tags,...
@@ -144,6 +145,10 @@ endfunction
 
 call s:DownloadVimPlug()
 
+"""" Custom commands section
+command PlugSync PlugUpgrade | PlugUpdate | UpdateRemotePlugins | PlugClean
+"""" End custom commands section
+
 """" Theme section
 syntax enable
 syntax on
@@ -219,16 +224,16 @@ inoremap <C-Delete> <ESC>bdwa
 "" Use ESC to exit insert mode in :term
 " tnoremap <Esc> <C-\><C-n>
 "" Tab to autocomplete if in middle of line
-" function! InsertTabWrapper()
-" 	let col = col('.') - 1
-" 	if !col || getline('.')[col - 1] !~ '\k'
-" 		return "\<tab>"
-" 	else
-" 		return "\<c-n>"
-" 	endif
-" endfunction
-" inoremap <expr> <tab> InsertTabWrapper()
-" inoremap <expr> <s-tab> <c-p>"
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    else
+        return "\<c-n>"
+    endif
+endfunction
+inoremap <expr> <tab> InsertTabWrapper()
+inoremap <expr> <s-tab> <c-p>"
 "" Expand CR when autocomplete pairs
 let g:delimitMate_expand_cr = 2
 let g:delimitMate_expand_space = 1
@@ -244,10 +249,10 @@ nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 "" Key mapping for IDE-like behaviour
 imap <C-Space> <Plug>(ale_complete)
-imap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-imap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
-autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
+" imap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" imap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+" autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 nmap <leader>h <Plug>(ale_hover)
 nmap <leader>doc <Plug>(ale_documentation)
 nmap <leader>def <Plug>(ale_go_to_definition)
