@@ -146,7 +146,7 @@ endfunction
 call s:DownloadVimPlug()
 
 """" Custom commands section
-command PlugSync PlugUpgrade | PlugUpdate | UpdateRemotePlugins | PlugClean
+command PlugSync PlugUpgrade <bar> PlugUpdate <bar> UpdateRemotePlugins
 """" End custom commands section
 
 """" Theme section
