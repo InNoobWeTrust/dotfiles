@@ -453,7 +453,7 @@ let g:ale_rust_rustc_options = ''
 "" Dart
 let dart_html_in_string=v:true
 let dart_style_guide = 2
-let dart_format_on_save = 1
+let dart_format_on_save = 0
 "" Rust
 let g:autofmt_autosave = 1
 let g:racer_experimental_completer = 1
