@@ -146,7 +146,7 @@ endfunction
 call s:DownloadVimPlug()
 
 """" Custom commands section
-command PlugSync PlugUpgrade <bar> PlugUpdate <bar> UpdateRemotePlugins
+command! PlugSync PlugUpgrade <bar> PlugUpdate <bar> UpdateRemotePlugins
 """" End custom commands section
 
 """" Theme section
@@ -253,28 +253,31 @@ imap <C-Space> <Plug>(ale_complete)
 " imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 " imap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
 " autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
-nmap <leader>h <Plug>(ale_hover)
-nmap <leader>doc <Plug>(ale_documentation)
-nmap <leader>def <Plug>(ale_go_to_definition)
-nmap <leader>deft <Plug>(ale_go_to_definition_in_tab)
-nmap <leader>defs <Plug>(ale_go_to_definition_in_split)
-nmap <leader>defv <Plug>(ale_go_to_definition_in_vsplit)
-nmap <leader>tdef <Plug>(ale_go_to_type_definition)
-nmap <leader>tdeft <Plug>(ale_go_to_type_definition_in_tab)
-nmap <leader>tdefs <Plug>(ale_go_to_type_definition_in_split)
-nmap <leader>tdefv <Plug>(ale_go_to_type_definition_in_vsplit)
-nmap <leader>ref <Plug>(ale_find_references)
-nmap <leader>fix <Plug>(ale_fix)
-nmap <leader>decl <Plug>(lsp-declaration)
-nmap <leader>impl <Plug>(lsp-implementation)
-nmap <leader>rn <Plug>(lsp-rename)
-nmap <leader>fmt <Plug>(lsp-document-format)
-nmap <leader>act <Plug>(lsp-code-action)
+nmap <Leader>h <Plug>(ale_hover)
+nmap <Leader>doc <Plug>(ale_documentation)
+nmap <Leader>def <Plug>(ale_go_to_definition)
+nmap <Leader>deft <Plug>(ale_go_to_definition_in_tab)
+nmap <Leader>defs <Plug>(ale_go_to_definition_in_split)
+nmap <Leader>defv <Plug>(ale_go_to_definition_in_vsplit)
+nmap <Leader>tdef <Plug>(ale_go_to_type_definition)
+nmap <Leader>tdeft <Plug>(ale_go_to_type_definition_in_tab)
+nmap <Leader>tdefs <Plug>(ale_go_to_type_definition_in_split)
+nmap <Leader>tdefv <Plug>(ale_go_to_type_definition_in_vsplit)
+nmap <Leader>ref <Plug>(ale_find_references)
+nmap <Leader>detail <Plug>(ale_detail)
+nmap <Leader>fix <Plug>(ale_fix)
+nmap <Leader>lint <Plug>(ale_lint)
+nmap <Leader>reset <Plug>(ale_reset)
+nmap <Leader>decl <Plug>(lsp-declaration)
+nmap <Leader>impl <Plug>(lsp-implementation)
+nmap <Leader>rn <Plug>(lsp-rename)
+nmap <Leader>fmt <Plug>(lsp-document-format)
+nmap <Leader>act <Plug>(lsp-code-action)
 "" Flutter keys binding
-nnoremap <leader>fa :FlutterRun<cr>
-nnoremap <leader>fq :FlutterQuit<cr>
-nnoremap <leader>fr :FlutterHotReload<cr>
-nnoremap <leader>fR :FlutterHotRestart<cr>
+nnoremap <Leader>fa :FlutterRun<cr>
+nnoremap <Leader>fq :FlutterQuit<cr>
+nnoremap <Leader>fr :FlutterHotReload<cr>
+nnoremap <Leader>fR :FlutterHotRestart<cr>
 """" End keyboard shortcuts section
 
 """" Indentation config section
@@ -423,6 +426,12 @@ let g:ale_fixers = {    'rust': [
             \               'trim_whitespace',
             \           ],
             \           'c': [
+            \               'clang-format',
+            \               'remove_trailing_lines',
+            \               'trim_whitespace',
+            \               'uncrustify',
+            \           ],
+            \           'cpp': [
             \               'clang-format',
             \               'remove_trailing_lines',
             \               'trim_whitespace',
