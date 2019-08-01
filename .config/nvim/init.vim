@@ -40,7 +40,7 @@ function! s:DownloadVimPlug()
     endif
     call plug#begin(s:vimfiles . '/plugged')
     "" Asynchronous lint engine
-    let g:ale_completion_enabled = 1 | Plug 'w0rp/ale', {'branch': 'v2.5.x'}
+    let g:ale_completion_enabled = 1 | Plug 'dense-analysis/ale', {'branch': 'v2.5.x'}
     set omnifunc=ale#completion#OmniFunc
     "" Language server autocompletion with coc.nvim
     " Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
@@ -267,11 +267,13 @@ nmap <Leader>ref <Plug>(ale_find_references)
 nmap <Leader>detail <Plug>(ale_detail)
 nmap <Leader>fix <Plug>(ale_fix)
 nmap <Leader>lint <Plug>(ale_lint)
+nmap <Leader>info <Plug>(ale_info)
 nmap <Leader>reset <Plug>(ale_reset)
 nmap <Leader>decl <Plug>(lsp-declaration)
 nmap <Leader>impl <Plug>(lsp-implementation)
 nmap <Leader>rn <Plug>(lsp-rename)
 nmap <Leader>fmt <Plug>(lsp-document-format)
+vmap <Leader>fmt :LspDocumentRangeFormat<CR>
 nmap <Leader>act <Plug>(lsp-code-action)
 "" Flutter keys binding
 nnoremap <Leader>fa :FlutterRun<cr>
