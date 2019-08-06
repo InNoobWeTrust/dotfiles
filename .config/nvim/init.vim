@@ -267,7 +267,7 @@ nmap <Leader>ref <Plug>(ale_find_references)
 nmap <Leader>detail <Plug>(ale_detail)
 nmap <Leader>fix <Plug>(ale_fix)
 nmap <Leader>lint <Plug>(ale_lint)
-nmap <Leader>info <Plug>(ale_info)
+nmap <Leader>info :ALEInfo<CR>
 nmap <Leader>reset <Plug>(ale_reset)
 nmap <Leader>decl <Plug>(lsp-declaration)
 nmap <Leader>impl <Plug>(lsp-implementation)
