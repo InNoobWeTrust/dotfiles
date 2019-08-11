@@ -185,7 +185,8 @@ set cmdheight=2
 set mouse=a
 "set guifont=Iosevka\ Nerd\ Font\ Mono:h13
 set linespace=4
-" set smartcase
+set ignorecase
+set smartcase
 set smartindent
 set confirm
 set autoread
