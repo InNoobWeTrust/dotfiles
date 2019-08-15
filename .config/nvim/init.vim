@@ -440,7 +440,16 @@ let g:ale_fixers = {    'rust': [
             \               'trim_whitespace',
             \               'uncrustify',
             \           ],
-            \           'javascript': ['eslint'],
+            \           'javascript': [
+            \               'eslint',
+            \               'fecs',
+            \               'importjs',
+            \               'prettier_eslint',
+            \               'standard',
+            \               'xo',
+            \               'remove_trailing_lines',
+            \               'trim_whitespace',
+            \           ],
             \           'python': [
             \               'add_blank_lines_for_python_control_statements',
             \               'autopep8',
