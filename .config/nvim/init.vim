@@ -66,6 +66,8 @@ function! s:DownloadVimPlug()
     Plug 'majutsushi/tagbar'
     "" Run shell command asynchromously
     Plug 'skywind3000/asyncrun.vim'
+    "" REPL alike
+    Plug 'thinca/vim-quickrun'
     "" Text object per indent level
     Plug 'michaeljsmith/vim-indent-object'
     "" Code commenting
