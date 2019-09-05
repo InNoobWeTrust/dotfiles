@@ -38,7 +38,7 @@ alias aptauto='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge au
 alias condauto='conda update --all -y && conda clean --all -y'
 
 # automate pip update
-alias pipauto='pip install -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
+alias pipauto='pip install --user -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
 
 # automate nvm update node
 alias nvmauto='nvm install node --reinstall-packages-from=node -y'
@@ -51,6 +51,9 @@ alias flutterauto='flutter upgrade'
 
 # automate neovim update
 alias nvimauto='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
+
+# Download latest eclipse jdt language server
+alias jlsauto='mkdir -p ~/.local/bin/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/bin/eclipse.jdt.ls/'
 
 # automate update system all
 alias manjaroauto='pacauto && condauto && nvmauto && rustupauto && nvimauto && flutterauto && pipauto'
