@@ -129,8 +129,10 @@ function! s:DownloadVimPlug()
                 \ ]}
     " Rust
     Plug 'rust-lang/rust.vim'
-    "Plug 'racer-rust/vim-racer', {'for': 'rust'}
-    "Plug 'mattn/webapi-vim'
+    Plug 'mattn/webapi-vim'
+    if executable('racer')
+        Plug 'racer-rust/vim-racer', {'for': 'rust'}
+    endif
     " Syslog
     Plug 'mtdl9/vim-log-highlighting', {'for': 'messages'}
     "" Detect file encoding
@@ -470,7 +472,15 @@ let g:ale_fixers = {    'rust': [
             \           ],
             \      }
 let g:ale_rust_rls_toolchain = 'stable'
+let g:ale_rust_rls_config = {   'rust': {
+            \                       'clippy_preference': 'on',
+            \                   }
+            \               }
 let g:ale_rust_rustc_options = ''
+let g:ale_rust_cargo_check_all_targets = 1
+let g:ale_rust_cargo_check_tests = 1
+let g:ale_rust_cargo_check_examples = 1
+let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
 """" End linting section
 
 """" Language specific plugin section
@@ -479,12 +489,18 @@ let dart_html_in_string=v:true
 let dart_style_guide = 2
 let dart_format_on_save = 0
 "" Rust
-let g:autofmt_autosave = 1
+let g:rustfmt_autosave = 1
 let g:racer_experimental_completer = 1
+let g:racer_insert_paren = 1
 if (has("win16") || has("win32") || has("win64"))
     let g:rust_clip_command = 'win32yank'
-else
-    let g:rust_clip_command = 'xclip -selection clipboard'
+elseif has("unix")
+    let s:uname = system("uname -s")
+    if s:uname == "Darwin"
+        let g:rust_clip_command = 'pbcopy'
+    else
+        let g:rust_clip_command = 'xclip -selection clipboard'
+    endif
 endif
 """" End language specific plugin section
 
