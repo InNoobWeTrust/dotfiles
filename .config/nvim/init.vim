@@ -151,6 +151,7 @@ call s:DownloadVimPlug()
 
 """" Custom commands section
 command! PlugSync PlugUpgrade <bar> PlugUpdate <bar> UpdateRemotePlugins
+command! Reload source $MYVIMRC
 """" End custom commands section
 
 """" Theme section
@@ -207,7 +208,7 @@ set backspace=indent,eol,start
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
-set expandtab
+"set expandtab
 set spell
 set completeopt+=preview
 set completeopt+=menuone
