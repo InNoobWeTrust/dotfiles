@@ -49,6 +49,10 @@ alias rustupauto='rustup update'
 # automate flutter upgrade
 alias flutterauto='flutter upgrade'
 
+
+# Update nightly build of neovim
+alias nnvimauto='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
+
 # automate neovim update
 alias nvimauto='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
 
