@@ -40,17 +40,23 @@ function! s:DownloadVimPlug()
     endif
     call plug#begin(s:vimfiles . '/plugged')
     "" Asynchronous lint engine
-    let g:ale_completion_enabled = 1 | Plug 'dense-analysis/ale', {'branch': 'v2.5.x'}
-    set omnifunc=ale#completion#OmniFunc
-    "" Language server autocompletion with coc.nvim
-    " Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
-    "" Language server
-    " Plug 'prabirshrestha/asyncomplete.vim'
-    Plug 'prabirshrestha/async.vim'
-    Plug 'prabirshrestha/vim-lsp'
-    " Plug 'prabirshrestha/asyncomplete-lsp.vim'
-    "" Fuzzy finder
-    Plug 'mhinz/vim-grepper', {'on': ['Grepper', '<plug>(GrepperOperator)']}
+    let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v2.5.x'}
+    "set omnifunc=ale#completion#OmniFunc
+    "" Full language server with coc.nvim
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    " Install coc extensions on first run
+    try
+        call CocInstall()
+    catch
+    endtry
+    "" Language server with vim-lsp
+    "Plug 'prabirshrestha/asyncomplete.vim'
+    "Plug 'prabirshrestha/async.vim'
+    "Plug 'prabirshrestha/vim-lsp'
+    "Plug 'prabirshrestha/asyncomplete-lsp.vim'
+    "" Grep everything
+    " Plug 'mhinz/vim-grepper', {'on': ['Grepper', '<plug>(GrepperOperator)']}
+    Plug 'mhinz/vim-grepper'
     "" Add surrounding brackets, quotes, xml tags,...
     Plug 'tpope/vim-surround'
     "" Extended matching for the % operator
@@ -61,7 +67,7 @@ function! s:DownloadVimPlug()
     Plug 'chrisbra/NrrwRgn'
     "" Tree explorer
     " Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'ryanoasis/vim-devicons'
-    Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin'
+    "Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin'
     "" Tag tree
     Plug 'majutsushi/tagbar'
     "" Run shell command asynchromously
@@ -73,11 +79,13 @@ function! s:DownloadVimPlug()
     "" Code commenting
     Plug 'tpope/vim-commentary'
     "" Git gutter
-    Plug 'airblade/vim-gitgutter'
+    "Plug 'airblade/vim-gitgutter'
     "" Git wrapper
     Plug 'tpope/vim-fugitive'
     "" Git management inside vim
     Plug 'jreybert/vimagit'
+    "" Gerrit inside vim
+    Plug 'dstanek/vim-gertty'
     "" Automatically toggle relative line number
     Plug 'jeffkreeftmeijer/vim-numbertoggle'
     "" Use registers as stack for yank and delete
@@ -208,7 +216,7 @@ set backspace=indent,eol,start
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
-"set expandtab
+
 set spell
 set completeopt+=preview
 set completeopt+=menuone
@@ -238,44 +246,44 @@ function! InsertTabWrapper()
         return "\<c-n>"
     endif
 endfunction
-inoremap <expr> <tab> InsertTabWrapper()
-inoremap <expr> <s-tab> <c-p>"
+imap <expr> <tab> InsertTabWrapper()
+imap <expr> <s-tab> <c-p>"
 "" Expand CR when autocomplete pairs
 let g:delimitMate_expand_cr = 2
 let g:delimitMate_expand_space = 1
 let g:delimitMate_expand_inside_quotes = 1
 let g:delimitMate_jump_expansion = 1
 "" Toggle NERDTree
-map <Leader>f :NERDTreeToggle<CR>
-nnoremap <silent> <Leader>v :NERDTreeFind<CR>
+"map <Leader>f :NERDTreeToggle<CR>
+"nmap <silent> <Leader>v :NERDTreeFind<CR>
 "" Delete buffer without messing layout
 nmap <Leader>x :Bd<CR>
 "" Key mapping for navigating between errors
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 "" Key mapping for IDE-like behaviour
-imap <C-Space> <Plug>(ale_complete)
+imap <expr> <C-Space> <Plug>(ale_complete)
 " imap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 " imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 " imap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
 " autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 nmap <Leader>h <Plug>(ale_hover)
 nmap <Leader>doc <Plug>(ale_documentation)
-nmap <Leader>def <Plug>(ale_go_to_definition)
-nmap <Leader>deft <Plug>(ale_go_to_definition_in_tab)
-nmap <Leader>defs <Plug>(ale_go_to_definition_in_split)
-nmap <Leader>defv <Plug>(ale_go_to_definition_in_vsplit)
-nmap <Leader>tdef <Plug>(ale_go_to_type_definition)
-nmap <Leader>tdeft <Plug>(ale_go_to_type_definition_in_tab)
-nmap <Leader>tdefs <Plug>(ale_go_to_type_definition_in_split)
-nmap <Leader>tdefv <Plug>(ale_go_to_type_definition_in_vsplit)
-nmap <Leader>ref <Plug>(ale_find_references)
-nmap <Leader>detail <Plug>(ale_detail)
-nmap <Leader>fix <Plug>(ale_fix)
-nmap <Leader>lint <Plug>(ale_lint)
-nmap <Leader>info :ALEInfo<CR>
-nmap <Leader>reset <Plug>(ale_reset)
-nmap <Leader>decl <Plug>(lsp-declaration)
+nmap <Leader>df <Plug>(ale_go_to_definition)
+nmap <Leader>dft <Plug>(ale_go_to_definition_in_tab)
+nmap <Leader>dfs <Plug>(ale_go_to_definition_in_split)
+nmap <Leader>dfv <Plug>(ale_go_to_definition_in_vsplit)
+nmap <Leader>tdf <Plug>(ale_go_to_type_definition)
+nmap <Leader>tdft <Plug>(ale_go_to_type_definition_in_tab)
+nmap <Leader>tdfs <Plug>(ale_go_to_type_definition_in_split)
+nmap <Leader>tdfv <Plug>(ale_go_to_type_definition_in_vsplit)
+nmap <Leader>rf <Plug>(ale_find_references)
+nmap <Leader>dtl <Plug>(ale_detail)
+nmap <Leader>fx <Plug>(ale_fix)
+nmap <Leader>lnt <Plug>(ale_lint)
+nmap <Leader>ifo :ALEInfo<CR>
+nmap <Leader>arst <Plug>(ale_reset)
+nmap <Leader>dcl <Plug>(lsp-declaration)
 nmap <Leader>impl <Plug>(lsp-implementation)
 nmap <Leader>rn <Plug>(lsp-rename)
 nmap <Leader>fmt <Plug>(lsp-document-format)
@@ -318,17 +326,17 @@ let g:lightline.enable = {
 "             \ 'left': '', 'right': ''
 "             \ }
 function! LightLinePercent()
-    if &ft !=? 'nerdtree'
-        return line('.') * 100 / line('$') . '%'
-    else
+    if (&ft ==? 'nerdtree' || &ft ==? 'coc-explorer')
         return ''
+    else
+        return line('.') * 100 / line('$') . '%'
     endif
 endfunction
 function! LightLineLineInfo()
-    if &ft !=? 'nerdtree'
-        return line('.').':'. col('.')
-    else
+    if (&ft ==? 'nerdtree' || &ft ==? 'coc-explorer')
         return ''
+    else
+        return line('.').':'. col('.')
     endif
 endfunction
 function! Filetype()
@@ -507,6 +515,7 @@ endif
 
 """" Language server section
 """ vim-lsp
+let g:lsp_diagnostics_enabled = 0
 if executable('clangd')
     au User lsp_setup call lsp#register_server({
         \ 'name': 'clangd',
@@ -545,89 +554,110 @@ if executable('java') && filereadable(expand('~/.local/bin/eclipse.jdt.ls/plugin
         \ })
 endif
 """ coc.nvim
-" " Smaller updatetime for CursorHold & CursorHoldI
-" set updatetime=300
-" " don't give |ins-completion-menu| messages.
-" set shortmess+=c
-" " always show signcolumns
-" set signcolumn=yes
-" " Use tab for trigger completion with characters ahead and navigate.
-" " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-" inoremap <silent><expr> <TAB>
-"       \ pumvisible() ? "\<C-n>" :
-"       \ <SID>check_back_space() ? "\<TAB>" :
-"       \ coc#refresh()
-" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-" function! s:check_back_space() abort
-"   let col = col('.') - 1
-"   return !col || getline('.')[col - 1]  =~# '\s'
-" endfunction
-" " Use <c-space> for trigger completion.
-" inoremap <silent><expr> <c-space> coc#refresh()
-" " Use <cr> for confirm completion, `<C-g>u` means break undo chain at current position.
-" " Coc only does snippet and additional edit on confirm.
-" inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-" " Use `[c` and `]c` for navigate diagnostics
-" nmap <silent> [c <Plug>(coc-diagnostic-prev)
-" nmap <silent> ]c <Plug>(coc-diagnostic-next)
-" " Remap keys for gotos
-" nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gy <Plug>(coc-type-definition)
-" nmap <silent> gi <Plug>(coc-implementation)
-" nmap <silent> gr <Plug>(coc-references)
-" " Use K for show documentation in preview window
-" nnoremap <silent> K :call <SID>show_documentation()<CR>
-" function! s:show_documentation()
-"   if &filetype == 'vim'
-"     execute 'h '.expand('<cword>')
-"   else
-"     call CocAction('doHover')
-"   endif
-" endfunction
-" " Highlight symbol under cursor on CursorHold
-" autocmd CursorHold * silent call CocActionAsync('highlight')
-" " Remap for rename current word
-" nmap <leader>rn <Plug>(coc-rename)
-" " Remap for format selected region
-" vmap <leader>f  <Plug>(coc-format-selected)
-" nmap <leader>f  <Plug>(coc-format-selected)
-" augroup mygroup
-"   autocmd!
-"   " Setup formatexpr specified filetype(s).
-"   autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-"   " Update signature help on jump placeholder
-"   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-" augroup end
-" " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
-" vmap <leader>a  <Plug>(coc-codeaction-selected)
-" nmap <leader>a  <Plug>(coc-codeaction-selected)
-" " Remap for do codeAction of current line
-" nmap <leader>ac  <Plug>(coc-codeaction)
-" " Fix autofix problem of current line
-" nmap <leader>qf  <Plug>(coc-fix-current)
-" " Use `:Format` for format current buffer
-" command! -nargs=0 Format :call CocAction('format')
-" " Use `:Fold` for fold current buffer
-" command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-" " Using CocList
-" " Show all diagnostics
-" nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
-" " Manage extensions
-" nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
-" " Show commands
-" nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
-" " Find symbol of current document
-" nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
-" " Search workspace symbols
-" nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
-" " Do default action for next item.
-" nnoremap <silent> <space>j  :<C-u>CocNext<CR>
-" " Do default action for previous item.
-" nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
-" " Resume latest coc list
-" nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+" Some servers have issues with backup files, see #649
+set nobackup
+set nowritebackup
+" Smaller updatetime for CursorHold & CursorHoldI
+set updatetime=300
+" don't give |ins-completion-menu| messages.
+set shortmess+=c
+" always show signcolumns
+set signcolumn=yes
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+" Use <c-space> to trigger completion.
+inoremap <silent> <expr> <c-space> coc#refresh()
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Or use `complete_info` if your vim support it, like:
+" inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+" Remap keys for gotos
+nmap <silent> <Leader>df <Plug>(coc-definition)
+nmap <silent> <Leader>tdf <Plug>(coc-type-definition)
+nmap <silent> <Leader>impl <Plug>(coc-implementation)
+nmap <silent> <Leader>rf <Plug>(coc-references)
+" Use show documentation in preview window
+nnoremap <silent> <Leader>h :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+" Remap for rename current word
+nmap <Leader>rn <Plug>(coc-rename)
+" Remap for format selected region
+xmap <Leader>fmt <Plug>(coc-format-selected)
+nmap <Leader>fmt <Plug>(coc-format-selected)
+augroup cocgroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+" Remap for do codeAction of selected region, ex: `<Leader>aap` for current paragraph
+xmap <Leader>a <Plug>(coc-codeaction-selected)
+nmap <Leader>a <Plug>(coc-codeaction-selected)
+" Remap for do codeAction of current line
+nmap <Leader>ac <Plug>(coc-codeaction)
+" Fix autofix problem of current line
+nmap <Leader>qf <Plug>(coc-fix-current)
+" Create mappings for function text object, requires document symbols feature of languageserver.
+xmap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap if <Plug>(coc-funcobj-i)
+omap af <Plug>(coc-funcobj-a)
+" Use <C-d> for select selections ranges, needs server support, like: coc-tsserver, coc-python
+nmap <silent> <C-d> <Plug>(coc-range-select)
+xmap <silent> <C-d> <Plug>(coc-range-select)
+" Use `:Format` to format current buffer
+command! -nargs=0 Format :call CocAction('format')
+" Use `:Fold` to fold current buffer
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
+" use `:OR` for organize import of current buffer
+command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
+" Add status line support, for integration with other plugin, checkout `:h coc-status`
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+" Using CocList
+" Show all diagnostics
+nnoremap <silent> ,a :<C-u>CocList diagnostics<cr>
+" Manage extensions
+nnoremap <silent> ,e :<C-u>CocList extensions<cr>
+" Show commands
+nnoremap <silent> ,c :<C-u>CocList commands<cr>
+" Find symbol of current document
+nnoremap <silent> ,o :<C-u>CocList outline<cr>
+" Search workspace symbols
+nnoremap <silent> ,s :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent> ,j :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent> ,k :<C-u>CocPrev<CR>
+" Resume latest coc list
+nnoremap <silent> ,p :<C-u>CocListResume<CR>
+" Using CocExplorer
+" Toggle
+nmap <silent> <Leader>f :CocCommand explorer<CR>
+" Expand to current file
+nmap <silent> <Leader>v :CocCommand explorer --reveal<CR>
 """" End language server section
-
 """" Load external config per project
 " exrc allows loading local executing local rc files.
 set exrc
