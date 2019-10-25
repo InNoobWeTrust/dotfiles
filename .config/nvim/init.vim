@@ -40,7 +40,7 @@ function! s:DownloadVimPlug()
     endif
     call plug#begin(s:vimfiles . '/plugged')
     "" Asynchronous lint engine
-    let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v2.5.x'}
+    let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v2.6.x'}
     "set omnifunc=ale#completion#OmniFunc
     "" Full language server with coc.nvim
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
