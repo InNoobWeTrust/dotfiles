@@ -1,7 +1,32 @@
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
+use_color=true
+friendly_builtin=true
+
+if ${use_color} ; then
+    alias ls='ls --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
+    alias grep='grep --colour=auto'
+    alias egrep='egrep --colour=auto'
+    alias fgrep='fgrep --colour=auto'
+    alias ls='ls --color=auto'
+
+    # colored GCC warnings and errors
+    export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+fi
+unset use_color
+
+if ${friendly_builtin} ; then
+    alias cp="cp -i"                          # confirm before overwriting something
+    alias df='df -h'                          # human-readable sizes
+    alias free='free -m'                      # show sizes in MB
+    alias np='nano -w PKGBUILD'
+    alias more=less
+    # some more ls aliases
+    alias ll='ls -alF'
+    alias la='ls -A'
+    alias l='ls -CF'
+fi
+unset friendly_builtin
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -67,7 +92,7 @@ alias manjaroauto='pacauto && condauto && nvmauto && rustupauto && nvimauto && f
 # automate termux android
 alias termuxauto='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y && nvimauto && pipauto'
 
-# Import custom alias for current system
-if [ -f ~/.bash_aliases.user ]; then
-    . ~/.bash_aliases.user
+# Import custom alias
+if [ -f ~/.sh_aliases.user ]; then
+    . ~/.sh_aliases.user
 fi
