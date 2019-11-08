@@ -32,7 +32,7 @@ if [ -r ~/.sh_hooks ]; then
 fi
 
 # Platform-aware definitions (WSL, CYGWIN,...).
-for f in $(ls -1 ~/.sh_platform_*); do
+for f in $(ls -1 ~/.sh_platform_* 2>/dev/null); do
     if [ -r $f ]; then
         . $f
     fi
