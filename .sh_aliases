@@ -1,7 +1,6 @@
-use_color=true
-friendly_builtin=true
+#!/usr/bin/env sh
 
-if ${use_color} ; then
+if [ -n "$use_color" ]; then
     alias ls='ls --color=auto'
     alias dir='dir --color=auto'
     alias vdir='vdir --color=auto'
@@ -15,7 +14,7 @@ if ${use_color} ; then
 fi
 unset use_color
 
-if ${friendly_builtin} ; then
+if [ -n "$friendly_builtin" ] ; then
     alias cp="cp -i"                          # confirm before overwriting something
     alias df='df -h'                          # human-readable sizes
     alias free='free -m'                      # show sizes in MB
@@ -27,6 +26,15 @@ if ${friendly_builtin} ; then
     alias l='ls -CF'
 fi
 unset friendly_builtin
+
+# Force colorful prompt for current session
+alias rainbow_my_shell='use_color="true" exec ${0#-}'
+
+# Force friendly builtin for current session
+alias friend_my_shell='friendly_builtin="true" exec ${0#-}'
+
+# Force all enhancement for current sessions
+alias godmode_my_shell='use_color="true" friendly_builtin="true" exec ${0#-}'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -86,13 +94,16 @@ alias nvimauto='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +q
 # Download latest eclipse jdt language server
 alias jlsauto='mkdir -p ~/.local/bin/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/bin/eclipse.jdt.ls/'
 
-# automate update system all
+# automate update manjaro
 alias manjaroauto='pacauto && condauto && nvmauto && rustupauto && nvimauto && flutterauto && pipauto'
+
+# automate update debian-based distros
+alias debianauto='aptauto && nvmauto && rustupauto && nvimauto && flutterauto && pipauto'
 
 # automate termux android
 alias termuxauto='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y && nvimauto && pipauto'
 
 # Import custom alias
-if [ -f ~/.sh_aliases.user ]; then
+if [ -r ~/.sh_aliases.user ]; then
     . ~/.sh_aliases.user
 fi

@@ -1,34 +1,44 @@
-# Expand aliases on demand
-shopt -s expand_aliases
+#!/usr/bin/env sh
 
 xhost +local:root > /dev/null 2>&1
 
 complete -cf sudo
 
 # Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-if [ -f ~/.sh_aliases ]; then
+if [ -r ~/.sh_aliases ]; then
     . ~/.sh_aliases
 fi
+# Expand aliases on demand
+shopt -s expand_aliases
 
-# Function definitions
-if [ -f ~/.sh_func ]; then
+# Environment definitions.
+if [ -r ~/.sh_vars ]; then
+    . ~/.sh_vars
+fi
+
+# Function definitions.
+if [ -r ~/.sh_func ]; then
     . ~/.sh_func
 fi
 
-# Platform-aware definitions.
-if [ -f ~/.sh_wsl ]; then
-    . ~/.sh_wsl
-fi
-
 # PATH definition
-if [ -f ~/.sh_path ]; then
+if [ -r ~/.sh_path ]; then
     . ~/.sh_path
 fi
 
+# Hook definitions
+if [ -r ~/.sh_hooks ]; then
+    . ~/.sh_hooks
+fi
+
+# Platform-aware definitions (WSL, CYGWIN,...).
+for f in $(ls -1 ~/.sh_platform_*); do
+    if [ -r $f ]; then
+        . $f
+    fi
+done
+
 # Custom definitions
-if [ -f ~/.shrc.user ]; then
+if [ -r ~/.shrc.user ]; then
     . ~/.shrc.user
 fi

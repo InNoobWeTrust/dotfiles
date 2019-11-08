@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+#
 autocomplete_nvm=false
 
 # Add ~/.local/bin to PATH if it's not there
@@ -11,9 +13,6 @@ else
     export EDITOR=/usr/bin/nano
 fi
 
-# Add Oni to PATH
-[[ -d $HOME/Oni ]] && [[ ":$PATH:" != *":$HOME/Oni:"* ]] && export PATH="$HOME/Oni:$PATH"
-
 # Add flutter to PATH
 [[ -d $HOME/flutter/bin ]] && [[ ":$PATH:" != *":$HOME/flutter/bin:"* ]] && export PATH="$HOME/flutter/bin:$PATH"
 
@@ -23,11 +22,11 @@ fi
 # Add pub cache to PATH
 [[ -d $HOME/.pub-cache/bin ]] && [[ ":$PATH:" != *":$HOME/.pub-cache/bin:"* ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
 
-# Add Go to PATH
-[[ -d $HOME/.local/go/bin ]] && [[ ":$PATH:" != *"$HOME/.local/go/bin:"* ]] && export PATH="$HOME/.local/go/bin:$PATH" && export GOPATH="$HOME/.go/bin"
+# Add Golang to PATH
+[[ -d $HOME/.local/go/bin ]] && [[ ":$PATH:" != *"$HOME/.local/go/bin:"* ]] && export PATH="$HOME/.local/go/bin:$PATH"
 
-# Add GOPATH to PATH
-[[ ! -z $GOPATH ]] && export PATH="$GOPATH:$PATH"
+# Export GOPATH and add GOPATH to PATH
+[[ -d $HOME/.go/bin ]] && export GOPATH="$HOME/.go/bin"  && export PATH="$GOPATH:$PATH"
 
 # Add cargo to PATH
 [[ -d $HOME/.cargo/bin ]] && [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$HOME/.cargo/bin:$PATH"
@@ -43,4 +42,9 @@ if [ -d $HOME/.nvm ]; then
     export NVM_DIR="$HOME/.nvm"
     [[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
     [[ -n $autocomplete_nvm ]] && [[ -s "$NVM_DIR/bash_completion" ]] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+fi
+
+# Add python argcomplete's bash completion globally
+if [ -r ~/.bash_completion.d/python-argcomplete.sh ]; then
+    . ~/.bash_completion.d/python-argcomplete.sh
 fi

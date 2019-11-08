@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+# Hook direnv
+which direnv &>/dev/null && eval "$(direnv hook bash)"

@@ -55,3 +55,7 @@ ex ()
     fi
 }
 
+# Custom functions
+if [ -r ~/.sh_func.user ]; then
+    . ~/.sh_func.user
+fi
