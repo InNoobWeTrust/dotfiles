@@ -13,11 +13,9 @@ else
     export EDITOR=/usr/bin/nano
 fi
 
-# Add flutter to PATH
-[[ -d $HOME/flutter/bin ]] && [[ ":$PATH:" != *":$HOME/flutter/bin:"* ]] && export PATH="$HOME/flutter/bin:$PATH"
-
 # Add dart-sdk to PATH
 [[ -d $HOME/dart-sdk/bin ]] && [[ ":$PATH:" != *":$HOME/dart-sdk/bin:"* ]] && export PATH="$HOME/dart-sdk/bin:$PATH"
+[[ -d /usr/lib/dart/bin ]] && [[ ":$PATH:" != *":/usr/lib/dart/bin:"* ]] && export PATH="$PATH:/usr/lib/dart/bin"
 
 # Add pub cache to PATH
 [[ -d $HOME/.pub-cache/bin ]] && [[ ":$PATH:" != *":$HOME/.pub-cache/bin:"* ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
