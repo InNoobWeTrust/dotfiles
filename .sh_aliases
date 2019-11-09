@@ -79,9 +79,6 @@ alias nvmauto='nvm install node --reinstall-packages-from=node -y'
 # automate rustup update
 alias rustupauto='rustup update'
 
-# automate flutter upgrade
-alias flutterauto='flutter upgrade'
-
 # Update stable build of neovim
 alias snvimauto='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage'
 
@@ -95,10 +92,10 @@ alias nvimauto='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +q
 alias jlsauto='mkdir -p ~/.local/bin/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/bin/eclipse.jdt.ls/'
 
 # automate update manjaro
-alias manjaroauto='pacauto && condauto && nvmauto && rustupauto && nvimauto && flutterauto && pipauto'
+alias manjaroauto='pacauto && condauto && nvmauto && rustupauto && nvimauto && pipauto'
 
 # automate update debian-based distros
-alias debianauto='aptauto && nvmauto && rustupauto && nvimauto && flutterauto && pipauto'
+alias debianauto='aptauto && nvmauto && rustupauto && nvimauto && pipauto'
 
 # automate termux android
 alias termuxauto='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y && nvimauto && pipauto'
