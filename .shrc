@@ -4,14 +4,6 @@ xhost +local:root > /dev/null 2>&1
 
 complete -cf sudo
 
-# Expand aliases on non-interactive shell too
-shopt -s expand_aliases
-
-# Alias definitions.
-if [ -r ~/.sh_aliases ]; then
-    . ~/.sh_aliases
-fi
-
 # Environment definitions.
 if [ -r ~/.sh_vars ]; then
     . ~/.sh_vars
@@ -30,6 +22,14 @@ fi
 # Hook definitions
 if [ -r ~/.sh_hooks ]; then
     . ~/.sh_hooks
+fi
+
+# Expand aliases on non-interactive shell too
+shopt -s expand_aliases
+
+# Alias definitions.
+if [ -r ~/.sh_aliases ]; then
+    . ~/.sh_aliases
 fi
 
 # Platform-aware definitions (WSL, CYGWIN,...).

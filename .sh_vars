@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+export use_color=true
+export friendly_builtin=true
+export with_starship=true
