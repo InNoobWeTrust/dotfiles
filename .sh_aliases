@@ -12,9 +12,8 @@ if [ -n "$use_color" ]; then
     # colored GCC warnings and errors
     export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 fi
-unset use_color
 
-if [ -n "$friendly_builtin" ] ; then
+if [ -n "$friendly_builtin" ]; then
     alias cp="cp -i"                          # confirm before overwriting something
     alias df='df -h'                          # human-readable sizes
     alias free='free -m'                      # show sizes in MB
@@ -25,16 +24,27 @@ if [ -n "$friendly_builtin" ] ; then
     alias la='ls -A'
     alias l='ls -CF'
 fi
-unset friendly_builtin
+
+# Activate starship prompt
+alias env_starship='with_starship=true'
+alias to_the_space='which starship &> /dev/null && eval "$(starship init ${0#-})"'
+if [ -n "$with_starship" ]; then
+    to_the_space
+fi
+
+# Reload shell
+alias reload_my_shell='exec ${0#-}'
 
 # Force colorful prompt for current session
-alias rainbow_my_shell='use_color="true" exec ${0#-}'
+alias env_rainbow='use_color=true'
+alias rainbow_my_shell='env_rainbow reload_my_shell'
 
 # Force friendly builtin for current session
-alias friend_my_shell='friendly_builtin="true" exec ${0#-}'
+alias env_friendly='friendly_builtin=true'
+alias friend_my_shell='env_friendly reload_my_shell'
 
 # Force all enhancement for current sessions
-alias godmode_my_shell='use_color="true" friendly_builtin="true" exec ${0#-}'
+alias godmode_my_shell='env_rainbow env_friendly env_starship reload_my_shell'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -84,6 +94,9 @@ alias snvimauto='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/re
 
 # Update nightly build of neovim
 alias nnvimauto='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
+
+# Update starship prompt
+alias starshipauto='curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ target/x86_64-unknown-linux-gnu/release/starship && mv ~/.local/bin/target/x86_64-unknown-linux-gnu/release/starship ~/.local/bin/starship && rm -rf ~/.local/bin/target'
 
 # automate neovim update
 alias nvimauto='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'

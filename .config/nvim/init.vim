@@ -60,17 +60,15 @@ function! s:DownloadVimPlug()
     Plug 'Raimondi/delimitMate'
     "" Edit a region in new buffer
     Plug 'chrisbra/NrrwRgn'
-    "" Tree explorer
-    " Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin' | Plug 'ryanoasis/vim-devicons'
-    "Plug 'scrooloose/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']} | Plug 'Xuyuanp/nerdtree-git-plugin'
     "" Run shell command asynchromously
     Plug 'skywind3000/asyncrun.vim'
     "" REPL alike
     Plug 'thinca/vim-quickrun'
+    let g:quickrun_no_default_key_mappings = 1
     "" Text object per indent level
     Plug 'michaeljsmith/vim-indent-object'
     "" Code commenting
-    Plug 'tpope/vim-commentary'
+    Plug 'scrooloose/nerdcommenter'
     "" Git wrapper
     Plug 'tpope/vim-fugitive'
     "" Git management inside vim
@@ -225,6 +223,7 @@ set smartcase
 set smartindent
 set confirm
 set autoread
+au CursorHold * checktime
 set number
 set relativenumber
 set cursorline
@@ -275,20 +274,12 @@ let g:delimitMate_expand_cr = 2
 let g:delimitMate_expand_space = 1
 let g:delimitMate_expand_inside_quotes = 1
 let g:delimitMate_jump_expansion = 1
-"" Toggle NERDTree
-"map <Leader>f :NERDTreeToggle<CR>
-"nmap <silent> <Leader>v :NERDTreeFind<CR>
 "" Delete buffer without messing layout
 nmap <Leader>x :Bd<CR>
 "" Key mapping for navigating between errors
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 "" Key mapping for IDE-like behaviour
-imap <expr> <C-Space> <Plug>(ale_complete)
-" imap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-" imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" imap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
-" autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 nmap <Leader>h <Plug>(ale_hover)
 nmap <Leader>doc <Plug>(ale_documentation)
 nmap <Leader>df <Plug>(ale_go_to_definition)
@@ -326,13 +317,6 @@ autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
 "autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
 """" End indentation config section
 
-"""" Directory tree browser section
-" let NERDTreeQuitOnOpen = 1
-let NERDTreeAutoDeleteBuffer = 1
-let NERDTreeMinimalUI = 1
-let NERDTreeDirArrows = 1
-"""" End directory tree browser section
-
 """" Statusline/tabline section
 let g:lightline = {
             \ 'colorscheme': 'seoul256',
@@ -365,10 +349,24 @@ function! Filetype()
     " return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
     return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
 endfunction
-
 function! Fileformat()
     " return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
     return winwidth(0) > 70 ? (&fileformat) : ''
+endfunction
+function! CocCurrentFunction()
+    return get(b:, 'coc_current_function', '')
+endfunction
+function! CocStatusDiagnostic() abort
+    let info = get(b:, 'coc_diagnostic_info', {})
+    if empty(info) | return '' | endif
+    let msgs = []
+    if get(info, 'error', 0)
+        call add(msgs, 'E' . info['error'])
+    endif
+    if get(info, 'warning', 0)
+        call add(msgs, 'W', info['warning'])
+    endif
+    return join(msgs, ' ') . ' ' . get(g:, 'coc_status', '')
 endfunction
 let g:lightline.component_expand = {
             \ 'linter_checking': 'lightline#ale#checking',
@@ -383,6 +381,8 @@ let g:lightline.component_type = {
             \ 'linter_ok': 'left',
             \ }
 let g:lightline.component_function = {
+            \ 'cocstatus': 'CocStatusDiagnostic',
+            \ 'currentfunction': 'CocCurrentFunction',
             \ 'percent': 'LightLinePercent',
             \ 'lineinfo': 'LightLineLineInfo',
             \ 'filetype': 'Filetype',
@@ -395,6 +395,10 @@ let g:lightline.active = {
             \       [
             \           [ 'lineinfo' ],
             \           [ 'percent' ],
+            \           [
+            \               'cocstatus',
+            \               'currentfunction',
+            \           ],
             \           [
             \               'linter_checking',
             \               'linter_errors',
@@ -438,24 +442,17 @@ let g:ale_sign_info = 'i'
 let g:ale_fix_on_save = 0
 " Show 3 lines of errors (default: 10)
 let g:ale_list_window_size = 3
+" Speed up executable checks
+let g:ale_cache_executable_check_failures = 1
+" Disable certain features
+let g:ale_virtualenv_dir_names = []
 "" Explicitly enable linters
 let g:ale_linters = {   'rust': [
-            \               'rls',
             \               'cargo',
             \               'rustc',
             \               'rustfmt',
             \           ],
-            \           'python': [
-            \               'pyls',
-            \               'flake8',
-            \               'mypy',
-            \               'prospector',
-            \               'pycodestyle',
-            \               'pyflakes',
-            \               'pylint',
-            \               'pyre',
-            \               'vulture',
-            \           ],
+            \           'python': [],
             \       }
 "" Explicitly enable fixers
 let g:ale_fixers = {    'rust': [
@@ -536,47 +533,8 @@ endif
 """" End language specific plugin section
 
 """" Language server section
-""" vim-lsp
-let g:lsp_diagnostics_enabled = 0
-if executable('clangd')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'clangd',
-        \ 'cmd': {server_info->['clangd', '-background-index']},
-        \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
-        \ })
-endif
-if executable('pyls')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pyls',
-        \ 'cmd': {server_info->['pyls']},
-        \ 'whitelist': ['python'],
-        \ 'workspace_config': {'pyls': {'plugins': {'pydocstyle': {'enabled': v:true}}}}
-        \ })
-endif
-if executable('java') && filereadable(expand('~/.local/bin/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar'))
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'eclipse.jdt.ls',
-        \ 'cmd': {server_info->[
-        \     'java',
-        \     '-Declipse.application=org.eclipse.jdt.ls.core.id1',
-        \     '-Dosgi.bundles.defaultStartLevel=4',
-        \     '-Declipse.product=org.eclipse.jdt.ls.core.product',
-        \     '-Dlog.level=ALL',
-        \     '-noverify',
-        \     '-Dfile.encoding=UTF-8',
-        \     '-Xmx1G',
-        \     '-jar',
-        \     expand('~/.local/bin/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar'),
-        \     '-configuration',
-        \     expand('~/.local/bin/eclipse.jdt.ls/config_linux'),
-        \     '-data',
-        \     getcwd()
-        \ ]},
-        \ 'whitelist': ['java'],
-        \ })
-endif
 """ coc.nvim
-" Some servers have issues with backup files, see #649
+" Some servers have issues with backup files
 set nobackup
 set nowritebackup
 " Smaller updatetime for CursorHold & CursorHoldI
@@ -680,6 +638,7 @@ nmap <silent> <Leader>f :CocCommand explorer<CR>
 " Expand to current file
 nmap <silent> <Leader>v :CocCommand explorer --reveal<CR>
 """" End language server section
+
 """" Load external config per project
-" exrc allows loading local executing local rc files.
+" exrc allows loading local config files.
 set exrc
