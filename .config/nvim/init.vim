@@ -442,9 +442,9 @@ let g:ale_sign_info = 'i'
 let g:ale_fix_on_save = 0
 " Show 3 lines of errors (default: 10)
 let g:ale_list_window_size = 3
-" Speed up executable checks
+" Speed up executable checks
 let g:ale_cache_executable_check_failures = 1
-" Disable certain features
+" Disable certain features
 let g:ale_virtualenv_dir_names = []
 "" Explicitly enable linters
 let g:ale_linters = {   'rust': [
@@ -626,6 +626,10 @@ nnoremap <silent> ,c :<C-u>CocList commands<cr>
 nnoremap <silent> ,o :<C-u>CocList outline<cr>
 " Search workspace symbols
 nnoremap <silent> ,s :<C-u>CocList -I symbols<cr>
+" Search with ripgrep
+nnoremap <silent> ,f :<C-u>CocList grep<cr>
+" Open all lists
+nnoremap <silent> ,l :<C-u>CocList<cr>
 " Do default action for next item.
 nnoremap <silent> ,j :<C-u>CocNext<CR>
 " Do default action for previous item.
