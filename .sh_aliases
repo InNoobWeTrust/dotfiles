@@ -50,6 +50,8 @@ alias godmode_my_shell='env_rainbow env_friendly env_starship reload_my_shell'
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
+# List processes run by current user
+alias ps_me_not='ps -U `whoami` -u `whoami` u'
 # Kill parallel processes running in another session
 alias rampage='printf "what to kill? => "; victim=;read victim;ps -A | grep $victim | awk "{print $1}" | xargs -r kill'
 
