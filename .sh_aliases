@@ -37,14 +37,14 @@ alias reload-my-shell='exec ${0#-}'
 
 # Force colorful prompt for current session
 alias env_rainbow='use_color=true'
-alias rainbow-my-shell='env_rainbow reload_my_shell'
+alias rainbow-my-shell='env_rainbow reload-my-shell'
 
 # Force friendly builtin for current session
 alias env_friendly='friendly_builtin=true'
-alias friend-my-shell='env_friendly reload_my_shell'
+alias friend-my-shell='env_friendly reload-my-shell'
 
 # Force all enhancement for current sessions
-alias godmode-my-shell='env_rainbow env_friendly env_starship reload_my_shell'
+alias godmode-my-shell='env_rainbow env_friendly env_starship reload-my-shell'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
