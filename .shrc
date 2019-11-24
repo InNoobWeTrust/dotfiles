@@ -24,6 +24,11 @@ if [ -r ~/.sh_hooks ]; then
     . ~/.sh_hooks
 fi
 
+# Completion definitions
+if [ -r ~/.sh_completion ]; then
+    . ~/.sh_completion
+fi
+
 # Expand aliases on non-interactive shell too
 shopt -s expand_aliases
 
