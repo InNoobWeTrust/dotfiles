@@ -33,18 +33,18 @@ if [ -n "$with_starship" ]; then
 fi
 
 # Reload shell
-alias reload-my-shell='exec ${0#-}'
+alias reload-alias='. ~/.sh_aliases'
 
 # Force colorful prompt for current session
 alias env_rainbow='use_color=true'
-alias rainbow-my-shell='env_rainbow reload-my-shell'
+alias rainbow-my-shell='env_rainbow reload-alias'
 
 # Force friendly builtin for current session
 alias env_friendly='friendly_builtin=true'
-alias friend-my-shell='env_friendly reload-my-shell'
+alias friend-my-shell='env_friendly reload-alias'
 
 # Force all enhancement for current sessions
-alias godmode-my-shell='env_rainbow env_friendly env_starship reload-my-shell'
+alias godmode-my-shell='env_rainbow env_friendly env_starship reload-alias'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
