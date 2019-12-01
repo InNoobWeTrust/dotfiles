@@ -42,6 +42,8 @@ function! s:DownloadVimPlug()
     "" Asynchronous lint engine
     let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v2.6.x'}
     "set omnifunc=ale#completion#OmniFunc
+    "" Native neovim language server config plugin
+    Plug 'neovim/nvim-lsp'
     "" Full language server with coc.nvim
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
     " Install coc extensions on first run
