@@ -98,7 +98,7 @@ alias snvimauto='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/re
 alias nnvimauto='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
 
 # Update starship prompt
-alias starshipauto='curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ target/x86_64-unknown-linux-gnu/release/starship && mv ~/.local/bin/target/x86_64-unknown-linux-gnu/release/starship ~/.local/bin/starship && rm -rf ~/.local/bin/target'
+alias starshipauto='curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ target/x86_64-unknown-linux-gnu/release/starship && mv ~/.local/bin/target/x86_64-unknown-linux-gnu/release/starship ~/.local/bin/starship && rm -rf ~/.local/bin/target'
 
 # automate neovim update
 alias nvimauto='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
