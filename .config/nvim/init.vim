@@ -137,6 +137,11 @@ endfunction
 
 call s:DownloadVimPlug()
 
+if executable('pyenv')
+    let g:python_host_prog = system('pyenv shims | grep python2$ | tr -d "\n"')
+    let g:python3_host_prog = system('pyenv shims | grep python3$ | tr -d "\n"')
+endif
+
 " Floating Term
 let s:float_term_border_win = 0
 let s:float_term_win = 0
