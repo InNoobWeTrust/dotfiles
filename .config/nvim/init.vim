@@ -371,7 +371,7 @@ function! CocStatusDiagnostic() abort
         call add(msgs, 'E' . info['error'])
     endif
     if get(info, 'warning', 0)
-        call add(msgs, 'W', info['warning'])
+        call add(msgs, 'W'. info['warning'])
     endif
     return join(msgs, ' ') . ' ' . get(g:, 'coc_status', '')
 endfunction
