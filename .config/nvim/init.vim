@@ -58,8 +58,10 @@ function! s:DownloadVimPlug()
     Plug 'tpope/vim-surround'
     "" Extended matching for the % operator
     Plug 'adelarsq/vim-matchit'
-    " Autocompletion for pairs
+    "" Autocompletion for pairs
     Plug 'Raimondi/delimitMate'
+    "" Multiple cursor
+    Plug 'terryma/vim-multiple-cursors'
     "" Edit a region in new buffer
     Plug 'chrisbra/NrrwRgn'
     "" Run shell command asynchromously
