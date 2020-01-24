@@ -20,9 +20,9 @@ function! s:DownloadVimPlug()
         try
             let out = system(printf('git clone --depth 1 %s %s', plug_url, tmp))
             if v:shell_error
-                echohl ErrorMsg
-                echomsg 'Error downloading vim-plug: ' . out
-                echohl NONE
+                echohl errormsg
+                echomsg 'error downloading vim-plug: ' . out
+                echohl none
                 return
             endif
             if !isdirectory(s:vimfiles . '/autoload')
@@ -43,7 +43,17 @@ function! s:DownloadVimPlug()
     let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v2.6.x'}
     "set omnifunc=ale#completion#OmniFunc
     "" Native neovim language server config plugin
-    Plug 'neovim/nvim-lsp'
+    let nvimver = substitute(matchstr(execute('version'), 'NVIM v\zs[^\n]*'), '\.', '', 'g')
+    if nvimver >= 050
+        Plug 'neovim/nvim-lsp'
+        echohl InfoMsg
+        echomsg 'Loaded native LSP'
+        echohl none
+    else
+        echohl InfoMsg
+        echomsg 'Native LSP not loaded'
+        echohl none
+    endif
     "" Full language server with coc.nvim
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
     " Install coc extensions on first run
