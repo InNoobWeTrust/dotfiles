@@ -37,14 +37,14 @@ alias reload-alias='. ~/.sh_aliases'
 
 # Force colorful prompt for current session
 alias env_rainbow='use_color=true'
-alias rainbow-my-shell='env_rainbow reload-alias'
+alias rainbow-shell='env_rainbow reload-alias'
 
 # Force friendly builtin for current session
 alias env_friendly='friendly_builtin=true'
-alias friend-my-shell='env_friendly reload-alias'
+alias friendly-shell='env_friendly reload-alias'
 
 # Force all enhancement for current sessions
-alias godmode-my-shell='env_rainbow env_friendly env_starship reload-alias'
+alias godmode='env_rainbow env_friendly env_starship reload-alias'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -67,6 +67,9 @@ alias browsh='docker run -it --rm browsh/browsh'
 # IDE over browser
 alias theia='docker run -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
 
+# Full VsCode over browser
+alias code-server-docker='docker run -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
+
 # List orphan packages with pacman
 alias pacorphan='pacman -Qdt'
 
@@ -74,46 +77,49 @@ alias pacorphan='pacman -Qdt'
 alias pacorphanrm='sudo pacman -Rs $(pacman -Qqdt)'
 
 # automate pacman update
-alias pacauto='sudo pacman -Syyu --noconfirm'
+alias auto-update-arch='sudo pacman -Syyu --noconfirm'
 
 # automate apt update
-alias aptauto='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
+alias auto-update-apt='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
 
 # automate conda update
-alias condauto='conda update --all -y && conda clean --all -y'
+alias auto-update-conda='conda update --all -y && conda clean --all -y'
 
 # automate pip update
-alias pipauto='pip install --user -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
+alias auto-update-pip='pip install --user -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
 
 # automate nvm update node
-alias nvmauto='nvm install node --reinstall-packages-from=node -y'
+alias auto-update-nvm='nvm install node --reinstall-packages-from=node -y'
 
 # automate rustup update
-alias rustupauto='rustup update'
+alias auto-update-rustup='rustup update'
 
 # Update stable build of neovim
-alias snvimauto='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage'
+alias auto-update-nvim-stable='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage'
 
 # Update nightly build of neovim
-alias nnvimauto='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
+alias auto-update-nvim-nightly='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
 
 # Update starship prompt
-alias starshipauto='curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ starship'
+alias auto-update-starship='curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ starship'
+
+# Update code-server
+alias auto-download-code-server='curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ --wildcards "**/code-server" --strip-components 1'
 
 # automate neovim update
-alias nvimauto='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
+alias auto-update-nvim-plugins='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
 
 # Download latest eclipse jdt language server
-alias jlsauto='mkdir -p ~/.local/bin/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/bin/eclipse.jdt.ls/'
+alias auto-update-jls='mkdir -p ~/.local/bin/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/bin/eclipse.jdt.ls/'
 
 # automate update manjaro
-alias manjaroauto='pacauto && condauto && nvmauto && rustupauto && nvimauto && pipauto'
+alias auto-update-manjaro='pacauto && condauto && nvmauto && rustupauto && nvimauto && pipauto'
 
 # automate update debian-based distros
-alias debianauto='aptauto && nvmauto && rustupauto && nvimauto && pipauto'
+alias auto-update-debian='aptauto && nvmauto && rustupauto && nvimauto && pipauto'
 
 # automate termux android
-alias termuxauto='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y && nvimauto && pipauto'
+alias auto-update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y && nvimauto && pipauto'
 
 # Import custom alias
 if [ -r ~/.sh_aliases.user ]; then
