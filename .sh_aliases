@@ -104,7 +104,7 @@ alias auto-update-nvim-nightly='curl -LJo ~/.local/bin/nvim https://github.com/n
 alias auto-update-starship='curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ starship'
 
 # Update code-server
-alias auto-download-code-server='curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ --wildcards "**/code-server" --strip-components 1'
+alias auto-update-code-server='curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ --wildcards "**/code-server" --strip-components 1'
 
 # automate neovim update
 alias auto-update-nvim-plugins='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
@@ -113,13 +113,13 @@ alias auto-update-nvim-plugins='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugi
 alias auto-update-jls='mkdir -p ~/.local/bin/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/bin/eclipse.jdt.ls/'
 
 # automate update manjaro
-alias auto-update-manjaro='pacauto && condauto && nvmauto && rustupauto && nvimauto && pipauto'
+alias auto-update-manjaro='auto-update-arch && auto-update-conda && auto-update-nvm && auto-update-rustup && auto-update-nvim-plugins && auto-update-pip'
 
 # automate update debian-based distros
-alias auto-update-debian='aptauto && nvmauto && rustupauto && nvimauto && pipauto'
+alias auto-update-debian='auto-update-apt && auto-update-nvm && auto-update-rustup && auto-update-nvim-plugins && auto-update-pip'
 
 # automate termux android
-alias auto-update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y && nvimauto && pipauto'
+alias auto-update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y && auto-update-nvim-plugins && auto-update-pip'
 
 # Import custom alias
 if [ -r ~/.sh_aliases.user ]; then
