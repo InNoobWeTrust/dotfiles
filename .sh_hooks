@@ -1,4 +1,15 @@
 #!/usr/bin/env sh
 
+# Hook pyenv
+if [ ":$PATH:" == *":$HOME/.pyenv/bin:"* ]; then
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+fi
+
 # Hook direnv
 which direnv &>/dev/null && eval "$(direnv hook bash)"
+
+# Hook starship
+if [ -n "$with_starship" ]; then
+    which starship &> /dev/null && eval "$(starship init ${0#-})"
+fi

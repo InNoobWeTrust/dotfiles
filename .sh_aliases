@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
+########################### Fancy prompt ######################################
 if [ -n "$use_color" ]; then
     alias ls='ls --color=auto'
     alias dir='dir --color=auto'
@@ -27,25 +28,29 @@ fi
 
 # Activate starship prompt
 alias env_starship='with_starship=true'
-alias to-the-space='which starship &> /dev/null && eval "$(starship init ${0#-})"'
-if [ -n "$with_starship" ]; then
-    to-the-space
-fi
 
 # Reload shell
-alias reload-alias='. ~/.sh_aliases'
+alias reload-shrc='. ~/.shrc'
 
 # Force colorful prompt for current session
 alias env_rainbow='use_color=true'
-alias rainbow-shell='env_rainbow reload-alias'
+alias rainbow-shell='env_rainbow reload-shrc'
 
 # Force friendly builtin for current session
 alias env_friendly='friendly_builtin=true'
-alias friendly-shell='env_friendly reload-alias'
+alias friendly-shell='env_friendly reload-shrc'
 
 # Force all enhancement for current sessions
-alias godmode='env_rainbow env_friendly env_starship reload-alias'
+alias godmode='env_rainbow env_friendly env_starship reload-shrc'
 
+# install starship prompt
+alias install-starship='mkdir -p ~/.local/bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/bin --platform unknown-linux-gnu'
+alias install-starship-cargo='cargo install starship'
+
+# Update starship prompt
+alias auto-update-starship='mkdir -p ~/.local/bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ starship'
+
+########################## Life hacks #########################################
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -70,6 +75,7 @@ alias theia='docker run -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiai
 # Full VsCode over browser
 alias code-server-docker='docker run -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
 
+############################ Platform management ##############################
 # List orphan packages with pacman
 alias pacorphan='pacman -Qdt'
 
@@ -82,46 +88,6 @@ alias auto-update-arch='sudo pacman -Syyu --noconfirm'
 # automate apt update
 alias auto-update-apt='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
 
-# automate conda update
-alias auto-update-conda='conda update --all -y && conda clean --all -y'
-
-# automate pip update
-alias auto-update-pip='pip install --user -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
-
-# install nvm
-alias install-nvm='curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash -s -- --no-use'
-
-# automate nvm update node
-alias auto-update-nvm='nvm install node --reinstall-packages-from=node -y'
-
-# install rustup
-alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal --component rls rust-analysis rust-src --target wasm32-unknown-unknown -y'
-
-# automate rustup update
-alias auto-update-rustup='rustup update'
-
-# Update stable build of neovim
-alias auto-update-nvim-stable='mkdir -p ~/.local/bin && curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage'
-
-# Update nightly build of neovim
-alias auto-update-nvim-nightly='mkdir -p ~/.local/bin && curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
-
-# install starship prompt
-alias install-starship='mkdir -p ~/.local/bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/bin --platform unknown-linux-gnu'
-alias install-starship-cargo='cargo install starship'
-
-# Update starship prompt
-alias auto-update-starship='mkdir -p ~/.local/bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ starship'
-
-# Update code-server
-alias auto-update-code-server='mkdir -p ~/.local/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ --wildcards "**/code-server" --strip-components 1'
-
-# automate neovim update
-alias auto-update-nvim-plugins='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
-
-# Download latest eclipse jdt language server
-alias auto-update-jls='mkdir -p ~/.local/bin/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/bin/eclipse.jdt.ls/'
-
 # automate update manjaro
 alias auto-update-manjaro='auto-update-arch && auto-update-conda && auto-update-nvm && auto-update-rustup && auto-update-nvim-plugins && auto-update-pip'
 
@@ -131,6 +97,52 @@ alias auto-update-debian='auto-update-apt && auto-update-nvm && auto-update-rust
 # automate termux android
 alias auto-update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y && auto-update-nvim-plugins && auto-update-pip'
 
+################################ Tooling ######################################
+
+################### Python #####################
+# automate conda update
+alias auto-update-conda='conda update --all -y && conda clean --all -y'
+
+# automate pip update
+alias auto-update-pip='pip install --user -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
+
+# install pyenv
+alias install-pyenv='curl https://pyenv.run | bash'
+
+# update pyenv
+alias auto-update-pyenv='pyenv update'
+
+################### NodeJs #####################
+# install nvm
+alias install-nvm='curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash -s -- --no-use'
+
+# automate nvm update node
+alias auto-update-nvm='nvm install node --reinstall-packages-from=node -y'
+
+################### Editor #####################
+# Update stable build of neovim
+alias auto-update-nvim-stable='mkdir -p ~/.local/bin && curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage'
+
+# Update nightly build of neovim
+alias auto-update-nvim-nightly='mkdir -p ~/.local/bin && curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
+
+# automate neovim update
+alias auto-update-nvim-plugins='pip install --user -U neovim; npm update -g neovim; nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
+
+# Update code-server
+alias auto-update-code-server='mkdir -p ~/.local/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ --wildcards "**/code-server" --strip-components 1'
+
+# Download latest eclipse jdt language server
+alias auto-update-jls='mkdir -p ~/.local/bin/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/bin/eclipse.jdt.ls/'
+
+################### Rust #######################
+# install rustup
+alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal --component rls rust-analysis rust-src --target wasm32-unknown-unknown -v -y'
+
+# automate rustup update
+alias auto-update-rustup='rustup update'
+
+############################# Custom ##########################################
 # Import custom alias
 if [ -r ~/.sh_aliases.user ]; then
     . ~/.sh_aliases.user
