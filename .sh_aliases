@@ -88,23 +88,33 @@ alias auto-update-conda='conda update --all -y && conda clean --all -y'
 # automate pip update
 alias auto-update-pip='pip install --user -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
 
+# install nvm
+alias install-nvm='curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash -s -- --no-use'
+
 # automate nvm update node
 alias auto-update-nvm='nvm install node --reinstall-packages-from=node -y'
+
+# install rustup
+alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal --component rls rust-analysis rust-src --target wasm32-unknown-unknown -y'
 
 # automate rustup update
 alias auto-update-rustup='rustup update'
 
 # Update stable build of neovim
-alias auto-update-nvim-stable='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage'
+alias auto-update-nvim-stable='mkdir -p ~/.local/bin && curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage'
 
 # Update nightly build of neovim
-alias auto-update-nvim-nightly='curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
+alias auto-update-nvim-nightly='mkdir -p ~/.local/bin && curl -LJo ~/.local/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
+
+# install starship prompt
+alias install-starship='mkdir -p ~/.local/bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/bin --platform unknown-linux-gnu'
+alias install-starship-cargo='cargo install starship'
 
 # Update starship prompt
-alias auto-update-starship='curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ starship'
+alias auto-update-starship='mkdir -p ~/.local/bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ starship'
 
 # Update code-server
-alias auto-update-code-server='curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ --wildcards "**/code-server" --strip-components 1'
+alias auto-update-code-server='mkdir -p ~/.local/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/bin/ --wildcards "**/code-server" --strip-components 1'
 
 # automate neovim update
 alias auto-update-nvim-plugins='nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
