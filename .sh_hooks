@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Hook pyenv
-if [ ":$PATH:" == *":$HOME/.pyenv/bin:"* ]; then
+if [[ "$PATH" == *":$HOME/.pyenv/bin:"* ]]; then
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
 fi

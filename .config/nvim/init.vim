@@ -100,27 +100,8 @@ function! s:DownloadVimPlug()
     "" Maintain coding style per project
     Plug 'editorconfig/editorconfig-vim'
     "" Language specific plugins
-    " Markdown
-    Plug 'tpope/vim-markdown', {'for': 'markdown'}
-    " Arduino syntax
-    Plug 'sudar/vim-arduino-syntax'
-    " Godot syntax
-    Plug 'calviken/vim-gdscript3'
-    " Love2d syntax
-    Plug 'davisdude/vim-love-docs', {'branch': 'build', 'for': 'lua'}
-    " JS
-    Plug 'pangloss/vim-javascript'
-    Plug 'mxw/vim-jsx'
-    " Kotlin
-    Plug 'udalov/kotlin-vim', {'for': 'kotlin'}
-    " Dart
-    Plug 'dart-lang/dart-vim-plugin', {'for': 'dart'}
-    Plug 'thosakwe/vim-flutter'
-    " Enable Flutter menu
-    try
-        call FlutterMenu()
-    catch
-    endtry
+    " Language packs
+    Plug 'sheerun/vim-polyglot'
     " HTML helper (same as Emmet)
     Plug 'rstacruz/sparkup', {
                 \ 'rtp': 'vim',
@@ -130,13 +111,22 @@ function! s:DownloadVimPlug()
                 \           'javascript.jsx'
                 \ ]}
     " Rust
-    Plug 'rust-lang/rust.vim'
     Plug 'mattn/webapi-vim'
     if executable('racer')
         Plug 'racer-rust/vim-racer', {'for': 'rust'}
     endif
-    " Syslog
-    Plug 'mtdl9/vim-log-highlighting', {'for': 'messages'}
+    "" Framework specific plugins
+    " Godot syntax
+    Plug 'calviken/vim-gdscript3'
+    " Love2d syntax
+    Plug 'davisdude/vim-love-docs', {'branch': 'build', 'for': 'lua'}
+    " Flutter
+    Plug 'thosakwe/vim-flutter'
+    " Enable Flutter menu
+    try
+        call FlutterMenu()
+    catch
+    endtry
     "" Detect file encoding
     Plug 's3rvac/AutoFenc'
     "" Indent line
@@ -338,7 +328,7 @@ autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
 
 """" Statusline/tabline section
 let g:lightline = {
-            \ 'colorscheme': 'seoul256',
+            \ 'colorscheme': 'gruvbox',
             \ }
 let g:lightline.enable = {
             \ 'statusline': 1,
