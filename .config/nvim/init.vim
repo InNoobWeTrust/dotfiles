@@ -638,7 +638,7 @@ nnoremap <silent> ,s :<C-u>CocList -I symbols<cr>
 " Search with ripgrep
 nnoremap <silent> ,f :<C-u>CocList grep <C-r><C-w><cr>
 " Interactive search with ripgrep
-nnoremap <silent> ,f :<C-u>CocList grep<cr>
+nnoremap <silent> ,fi :<C-u>CocList grep<cr>
 " Open all lists
 nnoremap <silent> ,l :<C-u>CocList<cr>
 " Do default action for next item.
