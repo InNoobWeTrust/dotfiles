@@ -1,0 +1,3 @@
+#!/data/data/com.termux/files/usr/bin/env bash
+. ~/.shrc
+curl -s wttr.in/?format=4 | termux-toast
