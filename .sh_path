@@ -3,12 +3,12 @@
 autocomplete_nvm=false
 
 # Add ~/.local/**/bin to PATH if it's not there
-for bin_path in $(ls -d -1 $HOME/.local/**/bin); do
+[[ -d $HOME/.local ]] && for bin_path in $(find $HOME/.local -name bin -type d 2>/dev/null); do
     [[ ":$PATH:" != *":$bin_path:"* ]] && [[ -d $bin_path ]] && export PATH="$bin_path:$PATH"
 done
 
 # Set neovim as default editor
-if [[ $(which nvim) ]]; then
+if [[ $(which nvim &>/dev/null) ]]; then
     export EDITOR="$(which nvim)"
     export VISUAL="$(which nvim)"
 else
@@ -48,3 +48,6 @@ fi
 if [ -r ~/.bash_completion.d/python-argcomplete.sh ]; then
     . ~/.bash_completion.d/python-argcomplete.sh
 fi
+
+# Add completion for github's cli
+which gh &>/dev/null && eval "$(gh completion)"
