@@ -3,7 +3,9 @@
 autocomplete_nvm=false
 
 # Add ~/.local/**/bin to PATH if it's not there
-[[ ":$PATH:" != *":$HOME/.local/**/bin:"* ]] && [[ -d $HOME/.local/**/bin ]] && export PATH="$HOME/.local/**/bin:$PATH"
+for bin_path in $(ls -d -1 $HOME/.local/**/bin); do
+    [[ ":$PATH:" != *":$bin_path:"* ]] && [[ -d $bin_path ]] && export PATH="$bin_path:$PATH"
+done
 
 # Set neovim as default editor
 if [[ $(which nvim) ]]; then

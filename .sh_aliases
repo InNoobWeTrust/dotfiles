@@ -30,6 +30,9 @@ fi
 alias env_starship='with_starship=true'
 
 # Reload shell
+alias reload-shell='exec $SHELL'
+
+# Reload master config
 alias reload-shrc='. ~/.shrc'
 
 # Force colorful prompt for current session
