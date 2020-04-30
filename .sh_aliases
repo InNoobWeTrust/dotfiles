@@ -115,6 +115,9 @@ alias install-pyenv='curl https://pyenv.run | bash'
 # update pyenv
 alias auto-update-pyenv='pyenv update'
 
+# install poetry
+alias install-poetry='curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=$HOME/.local/poetry python'
+
 ################### NodeJs #####################
 # install nvm
 alias install-nvm='curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash -s -- --no-use'
