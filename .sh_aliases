@@ -47,11 +47,11 @@ alias friendly-shell='env_friendly reload-shrc'
 alias godmode='env_rainbow env_friendly env_starship reload-shrc'
 
 # install starship prompt
-alias install-starship='mkdir -p ~/.local/standalone_bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/standalone_bin --platform unknown-linux-gnu'
+alias install-starship="mkdir -p ~/.local/$USER/bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/$USER/bin --platform unknown-linux-gnu"
 alias install-starship-cargo='cargo install starship'
 
 # Update starship prompt
-alias auto-update-starship='mkdir -p ~/.local/standalone_bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/standalone_bin/ starship'
+alias auto-update-starship="mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep 'browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz' | head -n1 | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ starship"
 
 ########################## Life hacks #########################################
 # Add an "alert" alias for long running commands.  Use like so:
@@ -127,16 +127,16 @@ alias auto-update-nvm='nvm install node --reinstall-packages-from=node -y'
 
 ################### Editor #####################
 # Update stable build of neovim
-alias auto-update-nvim-stable='mkdir -p ~/.local/standalone_bin && curl -LJo ~/.local/standalone_bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage'
+alias auto-update-nvim-stable="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage"
 
 # Update nightly build of neovim
-alias auto-update-nvim-nightly='mkdir -p ~/.local/standalone_bin && curl -LJo ~/.local/standalone_bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
+alias auto-update-nvim-nightly="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage"
 
 # automate neovim update
 alias auto-update-nvim-plugins='pip install --user -U neovim; npm update -g neovim; nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
 
 # Update code-server
-alias auto-update-code-server='mkdir -p ~/.local/standalone_bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/standalone_bin/ --wildcards "**/code-server" --strip-components 1'
+alias auto-update-code-server="mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep 'browser_download_url.*linux-x86_64.tar.gz' | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards '**/code-server' --strip-components 1"
 
 # Download latest eclipse jdt language server
 alias auto-update-jls='mkdir -p ~/.local/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/eclipse.jdt.ls/'
@@ -147,6 +147,9 @@ alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs 
 
 # automate rustup update
 alias auto-update-rustup='rustup update'
+
+# automate cargo update
+alias auto-update-cargo='cargo install --list | grep -o "^\S*" | xargs cargo install'
 
 ############################# Custom ##########################################
 # Import custom alias
