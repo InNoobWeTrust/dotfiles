@@ -102,6 +102,10 @@ alias auto-update-termux='pkg update && apt upgrade -y && apt-get autoremove -y 
 
 ################################ Tooling ######################################
 
+################# Cheat sheet ##################
+
+alias install-cheat-sh="mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/:cht.sh > $HOME/.local/$USER/bin/cht.sh && chmod +x $HOME/.local/$USER/bin/cht.sh"
+
 ################### Python #####################
 # automate conda update
 alias auto-update-conda='conda update --all -y && conda clean --all -y'
