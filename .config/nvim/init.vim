@@ -80,7 +80,7 @@ function! s:DownloadVimPlug()
     Plug 'thinca/vim-quickrun'
     let g:quickrun_no_default_key_mappings = 1
     "" Text object per indent level
-    Plug 'michaeljsmith/vim-indent-object'
+    Plug 'michaeljsmith/vim-indent-object', {'for': 'python'}
     "" Code commenting
     Plug 'scrooloose/nerdcommenter'
     "" Git wrapper
@@ -139,10 +139,6 @@ endfunction
 
 call s:DownloadVimPlug()
 
-if executable('pyenv')
-    let g:python_host_prog = system('pyenv shims | grep python2$ | tr -d "\n"')
-    let g:python3_host_prog = system('pyenv shims | grep python3$ | tr -d "\n"')
-endif
 
 " Floating Term
 let s:float_term_border_win = 0
@@ -185,13 +181,21 @@ function! s:FloatTerm()
   autocmd TermClose * ++once :q | call nvim_win_close(s:float_term_border_win, v:true)
 endfunction
 
-"""" Custom commands section
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""" Custom commands section
 command! PlugSync PlugUpgrade <bar> PlugUpdate <bar> UpdateRemotePlugins
 command! Reload source $MYVIMRC
 command! FloatTerm call s:FloatTerm()
-"""" End custom commands section
+" Use `:Format` to format current buffer
+command! -nargs=0 Format :call CocAction('format')
+" Use `:Fold` to fold current buffer
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
+" use `:OR` for organize import of current buffer
+command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
+""""""""""""""""""""""""""""""""""""""""""""""""""" End custom commands section
 
-"""" Theme section
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" Theme section
 syntax enable
 syntax on
 "" GruvBox
@@ -207,9 +211,56 @@ try
     " colorscheme ayu
 catch
 endtry
-"""" End theme section
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End theme section
 
-"""" Misc section
+
+"""" General section
+set nocompatible
+filetype plugin on
+" Search down sub-folder when tab-completing find: command
+set path+=**
+" Display all matching files when we tab complete
+set wildmenu
+" Auto reload file on changes outside editor
+set autoread
+set hidden
+set cmdheight=2
+"set encoding=utf-8
+set mouse=a
+"set guifont=Iosevka\ Nerd\ Font\ Mono:h13
+set linespace=4
+set ignorecase
+set smartcase
+set smartindent
+set confirm
+" Smaller updatetime for CursorHold & CursorHoldI
+set updatetime=300
+autocmd CursorHold * checktime
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+set signcolumn=yes
+set number
+set relativenumber
+set cursorline
+set scrolloff=10
+set wrap
+set colorcolumn=80,100,120,140,160,180,200
+set binary
+set list
+set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:<
+set backspace=indent,eol,start
+set spell
+set completeopt+=preview
+set completeopt+=menuone
+set completeopt+=longest
+if executable('pyenv')
+    let g:python_host_prog = system('pyenv shims | grep python2$ | tr -d "\n"')
+    let g:python3_host_prog = system('pyenv shims | grep python3$ | tr -d "\n"')
+endif
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End General section
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" Misc section
 " if (has("termguicolors"))
 "     set termguicolors
 " endif
@@ -221,39 +272,19 @@ if has('gui_running')
     set guioptions-=L   "remove left-hand scroll bar
     set guioptions-=e   "Use tabline from configs instead of GUI
 endif
-set hidden
-set cmdheight=2
-"set encoding=utf-8
-set mouse=a
-"set guifont=Iosevka\ Nerd\ Font\ Mono:h13
-set linespace=4
-set ignorecase
-set smartcase
-set smartindent
-set confirm
-set autoread
-au CursorHold * checktime
-set number
-set relativenumber
-set cursorline
-set scrolloff=10
-set wrap
-set colorcolumn=80,100,120,140,160,180,200
-set binary
-set list
-set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:<
-set backspace=indent,eol,start
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End misc section
 
-set spell
-set completeopt+=preview
-set completeopt+=menuone
-set completeopt+=longest
-"""" End misc section
 
-"""" Keyboard shortcuts section
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" Netrw section
+let g:netrw_banner=0        " disable annoying banner
+let g:netrw_browse_split=4  " open in prior window
+let g:netrw_altv=1          " open splits to the right
+let g:netrw_liststyle=3     " tree view
+let g:netrw_list_hide=netrw_gitignore#Hide()
+let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End Netrw section
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""" Keyboard shortcuts section
 "" Change leader key
 let mapleader = " "
 "" Visual indication of leader key timeout
@@ -316,17 +347,112 @@ nnoremap <Leader>fa :FlutterRun<cr>
 nnoremap <Leader>fq :FlutterQuit<cr>
 nnoremap <Leader>fr :FlutterHotReload<cr>
 nnoremap <Leader>fR :FlutterHotRestart<cr>
-"""" End keyboard shortcuts section
+""" CocNvim keys binding
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+" Use <c-space> to trigger completion.
+inoremap <silent> <expr> <c-space> coc#refresh()
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Or use `complete_info` if your vim support it, like:
+" inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+" Remap keys for gotos
+nmap <silent> <Leader>df <Plug>(coc-definition)
+nmap <silent> <Leader>tdf <Plug>(coc-type-definition)
+nmap <silent> <Leader>impl <Plug>(coc-implementation)
+nmap <silent> <Leader>rf <Plug>(coc-references)
+" Use show documentation in preview window
+nnoremap <silent> <Leader>h :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+" Remap for rename current word
+nmap <Leader>rn <Plug>(coc-rename)
+" Remap for format selected region
+xmap <Leader>fmt <Plug>(coc-format-selected)
+nmap <Leader>fmt <Plug>(coc-format-selected)
+augroup cocgroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+" Remap for do codeAction of selected region, ex: `<Leader>aap` for current paragraph
+xmap <Leader>a <Plug>(coc-codeaction-selected)
+nmap <Leader>a <Plug>(coc-codeaction-selected)
+" Remap for do codeAction of current line
+nmap <Leader>ac <Plug>(coc-codeaction)
+" Fix autofix problem of current line
+nmap <Leader>qf <Plug>(coc-fix-current)
+" Create mappings for function text object, requires document symbols feature of languageserver.
+xmap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap if <Plug>(coc-funcobj-i)
+omap af <Plug>(coc-funcobj-a)
+" Use <C-d> for select selections ranges, needs server support, like: coc-tsserver, coc-python
+nmap <silent> <C-d> <Plug>(coc-range-select)
+xmap <silent> <C-d> <Plug>(coc-range-select)
+" Using CocList
+" Show all diagnostics
+nnoremap <silent> ,a :<C-u>CocList diagnostics<cr>
+" Manage extensions
+nnoremap <silent> ,e :<C-u>CocList extensions<cr>
+" Show commands
+nnoremap <silent> ,c :<C-u>CocList commands<cr>
+" Find symbol of current document
+nnoremap <silent> ,o :<C-u>CocList outline<cr>
+" Search workspace symbols
+nnoremap <silent> ,s :<C-u>CocList -I symbols<cr>
+" Search with ripgrep
+nnoremap <silent> ,f :<C-u>CocList grep <C-r><C-w><cr>
+" Interactive search with ripgrep
+nnoremap <silent> ,fi :<C-u>CocList grep<cr>
+" Open all lists
+nnoremap <silent> ,l :<C-u>CocList<cr>
+" Do default action for next item.
+nnoremap <silent> ,j :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent> ,k :<C-u>CocPrev<CR>
+" Resume latest coc list
+nnoremap <silent> ,p :<C-u>CocListResume<CR>
+" Using CocExplorer
+" Toggle
+nmap <silent> <Leader>f :CocCommand explorer<CR>
+" Expand to current file
+nmap <silent> <Leader>v :CocCommand explorer --reveal<CR>
+"""""""""""""""""""""""""""""""""""""""""""""""" End keyboard shortcuts section
 
-"""" Indentation config section
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""" Indentation config section
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
 autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType xml setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
 "autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
-"""" End indentation config section
+"""""""""""""""""""""""""""""""""""""""""""""""" End indentation config section
 
-"""" Statusline/tabline section
+"""""""""""""""""""""""""""""""""""""""""""""""""""" Statusline/tabline section
 let g:lightline = {
             \ 'colorscheme': 'gruvbox',
             \ }
@@ -434,9 +560,12 @@ let g:lightline#ale#indicator_checking = "∵"
 let g:lightline#ale#indicator_warnings = "▲"
 let g:lightline#ale#indicator_errors = "✗"
 let g:lightline#ale#indicator_ok = "✓"
-"""" End status line section
+" Add status line support for coc
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+""""""""""""""""""""""""""""""""""""""""""""""""""""""" End status line section
 
-"""" Linting section
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" Linting section
 " Keep the sign gutter open at all times
 let g:ale_sign_column_always = 1
 let g:ale_sign_error = '✗'
@@ -518,9 +647,10 @@ let g:ale_rust_cargo_check_all_targets = 1
 let g:ale_rust_cargo_check_tests = 1
 let g:ale_rust_cargo_check_examples = 1
 let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
-"""" End linting section
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End linting section
 
-"""" Language specific plugin section
+
+"""""""""""""""""""""""""""""""""""""""""""""" Language specific plugin section
 "" Dart
 let dart_html_in_string=v:true
 let dart_style_guide = 2
@@ -539,121 +669,19 @@ elseif has("unix")
         let g:rust_clip_command = 'xclip -selection clipboard'
     endif
 endif
-"""" End language specific plugin section
+"""""""""""""""""""""""""""""""""""""""""" End language specific plugin section
 
-"""" Language server section
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""" Language server section
 """ coc.nvim
 " Some servers have issues with backup files
 set nobackup
 set nowritebackup
-" Smaller updatetime for CursorHold & CursorHoldI
-set updatetime=300
 " don't give |ins-completion-menu| messages.
 set shortmess+=c
-" always show signcolumns
-set signcolumn=yes
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-" Use <c-space> to trigger completion.
-inoremap <silent> <expr> <c-space> coc#refresh()
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-" Or use `complete_info` if your vim support it, like:
-" inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-" Use `[g` and `]g` to navigate diagnostics
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-" Remap keys for gotos
-nmap <silent> <Leader>df <Plug>(coc-definition)
-nmap <silent> <Leader>tdf <Plug>(coc-type-definition)
-nmap <silent> <Leader>impl <Plug>(coc-implementation)
-nmap <silent> <Leader>rf <Plug>(coc-references)
-" Use show documentation in preview window
-nnoremap <silent> <Leader>h :call <SID>show_documentation()<CR>
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-" Remap for rename current word
-nmap <Leader>rn <Plug>(coc-rename)
-" Remap for format selected region
-xmap <Leader>fmt <Plug>(coc-format-selected)
-nmap <Leader>fmt <Plug>(coc-format-selected)
-augroup cocgroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
-" Remap for do codeAction of selected region, ex: `<Leader>aap` for current paragraph
-xmap <Leader>a <Plug>(coc-codeaction-selected)
-nmap <Leader>a <Plug>(coc-codeaction-selected)
-" Remap for do codeAction of current line
-nmap <Leader>ac <Plug>(coc-codeaction)
-" Fix autofix problem of current line
-nmap <Leader>qf <Plug>(coc-fix-current)
-" Create mappings for function text object, requires document symbols feature of languageserver.
-xmap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap if <Plug>(coc-funcobj-i)
-omap af <Plug>(coc-funcobj-a)
-" Use <C-d> for select selections ranges, needs server support, like: coc-tsserver, coc-python
-nmap <silent> <C-d> <Plug>(coc-range-select)
-xmap <silent> <C-d> <Plug>(coc-range-select)
-" Use `:Format` to format current buffer
-command! -nargs=0 Format :call CocAction('format')
-" Use `:Fold` to fold current buffer
-command! -nargs=? Fold :call CocAction('fold', <f-args>)
-" use `:OR` for organize import of current buffer
-command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
-" Add status line support, for integration with other plugin, checkout `:h coc-status`
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-" Using CocList
-" Show all diagnostics
-nnoremap <silent> ,a :<C-u>CocList diagnostics<cr>
-" Manage extensions
-nnoremap <silent> ,e :<C-u>CocList extensions<cr>
-" Show commands
-nnoremap <silent> ,c :<C-u>CocList commands<cr>
-" Find symbol of current document
-nnoremap <silent> ,o :<C-u>CocList outline<cr>
-" Search workspace symbols
-nnoremap <silent> ,s :<C-u>CocList -I symbols<cr>
-" Search with ripgrep
-nnoremap <silent> ,f :<C-u>CocList grep <C-r><C-w><cr>
-" Interactive search with ripgrep
-nnoremap <silent> ,fi :<C-u>CocList grep<cr>
-" Open all lists
-nnoremap <silent> ,l :<C-u>CocList<cr>
-" Do default action for next item.
-nnoremap <silent> ,j :<C-u>CocNext<CR>
-" Do default action for previous item.
-nnoremap <silent> ,k :<C-u>CocPrev<CR>
-" Resume latest coc list
-nnoremap <silent> ,p :<C-u>CocListResume<CR>
-" Using CocExplorer
-" Toggle
-nmap <silent> <Leader>f :CocCommand explorer<CR>
-" Expand to current file
-nmap <silent> <Leader>v :CocCommand explorer --reveal<CR>
-"""" End language server section
+""""""""""""""""""""""""""""""""""""""""""""""""""" End language server section
 
-"""" Load external config per project
+
+"""""""""""""""""""""""""""""""""""""""""""""" Load external config per project
 " exrc allows loading local config files.
 set exrc
