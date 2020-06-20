@@ -3,7 +3,7 @@
 autocomplete_nvm=false
 
 # Add ~/.local/**/bin to PATH if it's not there
-[[ -d $HOME/.local ]] && for bin_path in $(find $HOME/.local -name bin -type d 2>/dev/null); do
+[[ -d $HOME/.local ]] && for bin_path in $(find $HOME/.local -maxdepth 3 -name bin -type d 2>/dev/null); do
     [[ ":$PATH:" != *":$bin_path:"* ]] && [[ -d $bin_path ]] && export PATH="$bin_path:$PATH"
 done
 
@@ -16,23 +16,16 @@ else
 fi
 
 # Add dart-sdk to PATH
-[[ -d $HOME/dart-sdk/bin ]] && [[ ":$PATH:" != *":$HOME/dart-sdk/bin:"* ]] && export PATH="$HOME/dart-sdk/bin:$PATH"
 [[ -d /usr/lib/dart/bin ]] && [[ ":$PATH:" != *":/usr/lib/dart/bin:"* ]] && export PATH="$PATH:/usr/lib/dart/bin"
 
 # Add pub cache to PATH
 [[ -d $HOME/.pub-cache/bin ]] && [[ ":$PATH:" != *":$HOME/.pub-cache/bin:"* ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
-
-# Add Golang to PATH
-[[ -d $HOME/.local/go/bin ]] && [[ ":$PATH:" != *"$HOME/.local/go/bin:"* ]] && export PATH="$HOME/.local/go/bin:$PATH"
 
 # Export GOPATH and add GOPATH to PATH
 [[ -d $HOME/.go/bin ]] && export GOPATH="$HOME/.go/bin"  && export PATH="$GOPATH:$PATH"
 
 # Add cargo to PATH
 [[ -d $HOME/.cargo/bin ]] && [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$HOME/.cargo/bin:$PATH"
-
-# Add Miniconda3 to PATH
-[[ -d $HOME/miniconda3/bin ]] && [[ ":$PATH:" != *":$HOME/miniconda3/bin:"* ]] && export PATH="$HOME/miniconda3/bin:$PATH"
 
 # Add pyenv to PATH
 [[ -d $HOME/.pyenv/bin ]] && [[ ":$PATH:" != *":$HOME/.pyenv/bin:"* ]] && export PATH="$HOME/.pyenv/bin:$PATH" && export PYENV_VIRTUALENV_DISABLE_PROMPT=1
@@ -45,8 +38,8 @@ if [ -d $HOME/.nvm ]; then
 fi
 
 # Add python argcomplete's bash completion globally
-if [ -r ~/.bash_completion.d/python-argcomplete.sh ]; then
-    . ~/.bash_completion.d/python-argcomplete.sh
+if [ -r ~/.bash_completion.d/python-argcomplete ]; then
+    . ~/.bash_completion.d/python-argcomplete
 fi
 
 # Add completion for github's cli

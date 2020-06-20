@@ -140,6 +140,7 @@ endfunction
 call s:DownloadVimPlug()
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""" Custom functions section
 " Floating Term
 let s:float_term_border_win = 0
 let s:float_term_win = 0
@@ -180,6 +181,7 @@ function! s:FloatTerm()
   " Close border window when terminal window close
   autocmd TermClose * ++once :q | call nvim_win_close(s:float_term_border_win, v:true)
 endfunction
+"""""""""""""""""""""""""""""""""""""""""""""""""" End custom functions section
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""" Custom commands section
@@ -214,7 +216,7 @@ endtry
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End theme section
 
 
-"""" General section
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" General section
 set nocompatible
 filetype plugin on
 " Search down sub-folder when tab-completing find: command
@@ -283,6 +285,7 @@ let g:netrw_liststyle=3     " tree view
 let g:netrw_list_hide=netrw_gitignore#Hide()
 let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End Netrw section
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""" Keyboard shortcuts section
 "" Change leader key
@@ -451,6 +454,7 @@ autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
 autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
 "autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
 """""""""""""""""""""""""""""""""""""""""""""""" End indentation config section
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""" Statusline/tabline section
 let g:lightline = {
