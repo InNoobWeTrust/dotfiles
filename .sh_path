@@ -30,6 +30,13 @@ fi
 # Add pyenv to PATH
 [[ -d $HOME/.pyenv/bin ]] && [[ ":$PATH:" != *":$HOME/.pyenv/bin:"* ]] && export PATH="$HOME/.pyenv/bin:$PATH" && export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
+# Add homebrew to PATH
+if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+elif [ -x $HOME/.linuxbrew/bin/brew ]; then
+    eval $($HOME/.linuxbrew/bin/brew shellenv)
+fi
+
 # Activate nvm
 if [ -d $HOME/.nvm ]; then
     export NVM_DIR="$HOME/.nvm"
