@@ -131,7 +131,7 @@ alias auto-update-nvm='nvm install node --reinstall-packages-from=node -y'
 
 ################### Editor #####################
 # Update stable build of neovim
-alias auto-update-nvim-stable="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage"
+alias auto-update-nvim-stable="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage && chmod +x ~/.local/$USER/bin/nvim"
 
 # Update nightly build of neovim
 alias auto-update-nvim-nightly="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage"
