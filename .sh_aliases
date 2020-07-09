@@ -111,7 +111,7 @@ alias install-cheat-sh="mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/
 alias auto-update-conda='conda update --all -y && conda clean --all -y'
 
 # automate pip update
-alias auto-update-pip='pip install --user -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
+alias auto-update-pip='pip install -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
 
 # install pyenv
 alias install-pyenv='curl https://pyenv.run | bash'
@@ -120,7 +120,7 @@ alias install-pyenv='curl https://pyenv.run | bash'
 alias auto-update-pyenv='pyenv update'
 
 # install poetry
-alias install-poetry='curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=$HOME/.local/poetry python'
+alias install-poetry='curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python'
 
 ################### NodeJs #####################
 # install nvm

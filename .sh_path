@@ -22,13 +22,16 @@ fi
 [[ -d $HOME/.pub-cache/bin ]] && [[ ":$PATH:" != *":$HOME/.pub-cache/bin:"* ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
 
 # Export GOPATH and add GOPATH to PATH
-[[ -d $HOME/.go/bin ]] && export GOPATH="$HOME/.go/bin"  && export PATH="$GOPATH:$PATH"
+[[ -d $HOME/.go/bin ]] && export GOPATH="$HOME/.go"  && export PATH="$GOPATH/bin:$PATH"
 
 # Add cargo to PATH
 [[ -d $HOME/.cargo/bin ]] && [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$HOME/.cargo/bin:$PATH"
 
-# Add pyenv to PATH
-[[ -d $HOME/.pyenv/bin ]] && [[ ":$PATH:" != *":$HOME/.pyenv/bin:"* ]] && export PATH="$HOME/.pyenv/bin:$PATH" && export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+# Set home/root for pyenv and python-poetry
+export PYENV_ROOT=$HOME/.local/pyenv
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+export POETRY_HOME=$HOME/.local/poetry
+[[ -d $HOME/.local/poetry ]] && source $HOME/.local/poetry/env
 
 # Add homebrew to PATH
 if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
