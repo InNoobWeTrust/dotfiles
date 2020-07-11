@@ -137,7 +137,7 @@ alias auto-update-nvim-stable="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local
 alias auto-update-nvim-nightly="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage"
 
 # automate neovim update
-alias auto-update-nvim-plugins='pip install --user -U neovim; npm update -g neovim; nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
+alias auto-update-nvim-plugins='pip install -U neovim; npm update -g neovim; nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
 
 # Update code-server
 alias auto-update-code-server="mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep 'browser_download_url.*linux-x86_64.tar.gz' | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards '**/code-server' --strip-components 1"
