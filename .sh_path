@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
-#
-autocomplete_nvm=false
 
 # Add ~/.local/**/bin to PATH if it's not there
 [[ -d $HOME/.local ]] && for bin_path in $(find $HOME/.local -maxdepth 3 -name bin -type d 2>/dev/null); do
@@ -8,7 +6,7 @@ autocomplete_nvm=false
 done
 
 # Set neovim as default editor
-if [[ $(which nvim &>/dev/null) ]]; then
+if [[ $(which nvim >/dev/null 2>&1) ]]; then
     export EDITOR="$(which nvim)"
     export VISUAL="$(which nvim)"
 else
@@ -19,19 +17,13 @@ fi
 [[ -d /usr/lib/dart/bin ]] && [[ ":$PATH:" != *":/usr/lib/dart/bin:"* ]] && export PATH="$PATH:/usr/lib/dart/bin"
 
 # Add pub cache to PATH
-[[ -d $HOME/.pub-cache/bin ]] && [[ ":$PATH:" != *":$HOME/.pub-cache/bin:"* ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
+[[ -d $PUB_CACHE/bin ]] && [[ ":$PATH:" != *":$PUB_CACHE/bin:"* ]] && export PATH="$PUB_CACHE/bin:$PATH"
 
 # Export GOPATH and add GOPATH to PATH
-[[ -d $HOME/.go/bin ]] && export GOPATH="$HOME/.go"  && export PATH="$GOPATH/bin:$PATH"
+[[ -d $GOPATH/bin ]] && export PATH="$GOPATH/bin:$PATH"
 
 # Add cargo to PATH
-[[ -d $HOME/.cargo/bin ]] && [[ ":$PATH:" != *":$HOME/.cargo/bin:"* ]] && export PATH="$HOME/.cargo/bin:$PATH"
-
-# Set home/root for pyenv and python-poetry
-export PYENV_ROOT=$HOME/.local/pyenv
-export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-export POETRY_HOME=$HOME/.local/poetry
-[[ -d $HOME/.local/poetry ]] && source $HOME/.local/poetry/env
+[[ -d $CARGO_HOME/bin ]] && [[ ":$PATH:" != *":$CARGO_HOME/bin:"* ]] && export PATH="$CARGO_HOME/bin:$PATH"
 
 # Add homebrew to PATH
 if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
@@ -40,12 +32,12 @@ elif [ -x $HOME/.linuxbrew/bin/brew ]; then
     eval $($HOME/.linuxbrew/bin/brew shellenv)
 fi
 
+# Activate python-poetry
+[[ -d $POETRY_HOME ]] && source $POETRY_HOME/env
+
 # Activate nvm
-if [ -d $HOME/.nvm ]; then
-    export NVM_DIR="$HOME/.nvm"
-    [[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-    [[ -n $autocomplete_nvm ]] && [[ -s "$NVM_DIR/bash_completion" ]] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-fi
+[[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[[ -n "$autocomplete_nvm" ]] && [[ -s "$NVM_DIR/bash_completion" ]] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Add python argcomplete's bash completion globally
 if [ -r ~/.bash_completion.d/python-argcomplete ]; then
@@ -53,4 +45,4 @@ if [ -r ~/.bash_completion.d/python-argcomplete ]; then
 fi
 
 # Add completion for github's cli
-which gh &>/dev/null && eval "$(gh completion)"
+which gh >/dev/null 2>&1 && eval "$(gh completion)"
