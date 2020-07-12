@@ -56,6 +56,6 @@ ex ()
 }
 
 # Custom functions
-if [ -r ~/.sh_func.user ]; then
-    . ~/.sh_func.user
+if [ -r $CONF_SH_DIR/func.user.sh ]; then
+    source $CONF_SH_DIR/func.user.sh
 fi

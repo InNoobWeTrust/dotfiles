@@ -157,6 +157,6 @@ alias auto-update-cargo='cargo install --list | grep -o "^\S*" | xargs cargo ins
 
 ############################# Custom ##########################################
 # Import custom alias
-if [ -r ~/.sh_aliases.user ]; then
-    . ~/.sh_aliases.user
+if [ -r $CONF_SH_DIR/aliases.user.sh ]; then
+    source $CONF_SH_DIR/aliases.user.sh
 fi

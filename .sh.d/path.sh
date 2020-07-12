@@ -40,8 +40,8 @@ fi
 [[ -n "$autocomplete_nvm" ]] && [[ -s "$NVM_DIR/bash_completion" ]] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Add python argcomplete's bash completion globally
-if [ -r ~/.bash_completion.d/python-argcomplete ]; then
-    . ~/.bash_completion.d/python-argcomplete
+if [ -r $HOME/bash_completion.d/python-argcomplete ]; then
+    source $HOME/bash_completion.d/python-argcomplete
 fi
 
 # Add completion for github's cli
