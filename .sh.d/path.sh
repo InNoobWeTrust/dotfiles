@@ -37,12 +37,9 @@ fi
 
 # Activate nvm
 [[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[[ -n "$autocomplete_nvm" ]] && [[ -s "$NVM_DIR/bash_completion" ]] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# Add python argcomplete's bash completion globally
-if [ -r $HOME/bash_completion.d/python-argcomplete ]; then
-    source $HOME/bash_completion.d/python-argcomplete
-fi
 
 # Add completion for github's cli
 which gh >/dev/null 2>&1 && eval "$(gh completion)"
+
+# Add Nix
+if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then source $HOME/.nix-profile/etc/profile.d/nix.sh; fi
