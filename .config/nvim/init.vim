@@ -40,7 +40,7 @@ function! s:DownloadVimPlug()
     endif
     call plug#begin(s:vimfiles . '/plugged')
     "" Asynchronous lint engine
-    let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v2.6.x'}
+    let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v2.7.x'}
     "set omnifunc=ale#completion#OmniFunc
     "" Native neovim language server config plugin
     let nvimver = substitute(matchstr(execute('version'), 'NVIM v\zs[^\n]*'), '\.', '', 'g')
@@ -589,12 +589,12 @@ let g:ale_cache_executable_check_failures = 1
 " Disable certain features
 let g:ale_virtualenv_dir_names = []
 "" Explicitly enable linters
-let g:ale_linters = {   'rust': [
-            \               'cargo',
-            \               'rustc',
-            \               'rustfmt',
-            \           ],
-            \           'python': [],
+let g:ale_linters = {
+            \           'rust': [
+            \                       'analyzer',
+            \                       'cargo',
+            \                       'rls',
+            \                   ],
             \       }
 "" Explicitly enable fixers
 let g:ale_fixers = {    'rust': [
