@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-export DISPLAY=localhost:0.0
+test -n $DISPLAY && export DISPLAY=localhost:0.0
