@@ -19,3 +19,12 @@ export POETRY_HOME=$HOME/.local/poetry
 export NVM_DIR=$HOME/.local/nvm
 # Turnoff auto complete for nvm as the loading is slow
 export autocomplete_nvm=
+# Set prefix for byobu if installed by linuxbrew
+if [ -d /home/linuxbrew/.linuxbrew ]; then
+    export BREW_HOME=/home/linuxbrew/.linuxbrew
+elif [ -d $HOME/.linuxbrew ]; then
+    export BREW_HOME=$HOME/.linuxbrew
+fi
+if [ -n "$BREW_HOME" ]; then
+    export BYOBU_PREFIX=$BREW_HOME
+fi

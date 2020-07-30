@@ -9,5 +9,10 @@ if [ -n "$BASH_VERSION" ]; then
     if [ -r $HOME/bash_completion.d/python-argcomplete ]; then
         source $HOME/bash_completion.d/python-argcomplete
     fi
+    if [ -n "$BREW_HOME" ] && [ -d $BREW_HOME/etc/bash_completion.d ]; then
+        for s in $(find $BREW_HOME/etc/bash_completion.d -maxdepth 1 -follow -type f -readable); do
+            source $s
+        done
+    fi
 fi
 

@@ -26,10 +26,8 @@ fi
 [[ -d $CARGO_HOME/bin ]] && [[ ":$PATH:" != *":$CARGO_HOME/bin:"* ]] && export PATH="$CARGO_HOME/bin:$PATH"
 
 # Add homebrew to PATH
-if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
-    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-elif [ -x $HOME/.linuxbrew/bin/brew ]; then
-    eval $($HOME/.linuxbrew/bin/brew shellenv)
+if [ -n "$BREW_HOME" ]; then
+    eval $($BREW_HOME/bin/brew shellenv)
 fi
 
 # Activate python-poetry
@@ -42,4 +40,4 @@ fi
 which gh >/dev/null 2>&1 && eval "$(gh completion)"
 
 # Add Nix
-if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then source $HOME/.nix-profile/etc/profile.d/nix.sh; fi
+if [ -r $HOME/.nix-profile/etc/profile.d/nix.sh ]; then source $HOME/.nix-profile/etc/profile.d/nix.sh; fi
