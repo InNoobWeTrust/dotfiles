@@ -591,10 +591,28 @@ let g:ale_virtualenv_dir_names = []
 "" Explicitly enable linters
 let g:ale_linters = {
             \           'rust': [
-            \                       'analyzer',
-            \                       'cargo',
-            \                       'rls',
-            \                   ],
+            \               'analyzer',
+            \               'rls',
+            \               'cargo',
+            \           ],
+            \           'c': [
+            \               'clangd',
+            \               'clangtidy',
+            \               'clangcheck',
+            \               'cppcheck',
+            \               'flawfinder',
+            \               'clazy',
+            \               'cpplint',
+            \           ],
+            \           'cpp': [
+            \               'clangd',
+            \               'clangtidy',
+            \               'clangcheck',
+            \               'cppcheck',
+            \               'flawfinder',
+            \               'clazy',
+            \               'cpplint',
+            \           ],
             \       }
 "" Explicitly enable fixers
 let g:ale_fixers = {    'rust': [
