@@ -1,3 +1,5 @@
 #!/usr/bin/env sh
 
-test -n $DISPLAY && export DISPLAY=localhost:0.0
+if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
+    test -n $DISPLAY && export DISPLAY=localhost:0.0
+fi
