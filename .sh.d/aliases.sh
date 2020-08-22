@@ -124,7 +124,7 @@ alias install-poetry='curl -sSL https://raw.githubusercontent.com/python-poetry/
 
 ################### NodeJs #####################
 # install nvm
-alias install-nvm='curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash -s -- --no-use'
+alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash -s -- --no-use'
 
 # automate nvm update node
 alias auto-update-nvm='nvm install node --reinstall-packages-from=node -y'
