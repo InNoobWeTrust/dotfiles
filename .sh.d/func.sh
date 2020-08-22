@@ -55,6 +55,10 @@ ex ()
     fi
 }
 
+usable() {
+    which "$1" >/dev/null 2>&1
+}
+
 # Custom functions
 if [ -r $CONF_SH_DIR/func.user.sh ]; then
     source $CONF_SH_DIR/func.user.sh

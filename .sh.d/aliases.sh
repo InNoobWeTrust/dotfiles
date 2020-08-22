@@ -49,9 +49,7 @@ alias godmode='env_rainbow env_friendly env_starship reload-shrc'
 # install starship prompt
 alias install-starship="mkdir -p ~/.local/$USER/bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/$USER/bin --platform unknown-linux-gnu"
 alias install-starship-cargo='cargo install starship'
-
-# Update starship prompt
-alias auto-update-starship="mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep 'browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz' | head -n1 | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ starship"
+alias install-starship-x86="mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep 'browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz' | head -n1 | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ starship"
 
 ########################## Life hacks #########################################
 # Add an "alert" alias for long running commands.  Use like so:
@@ -86,21 +84,26 @@ alias pacorphan='pacman -Qdt'
 alias pacorphanrm='sudo pacman -Rs $(pacman -Qqdt)'
 
 # automate pacman update
-alias auto-update-arch='sudo pacman -Syyu --noconfirm'
+alias update-arch='sudo pacman -Syyu --noconfirm'
 
 # automate apt update
-alias auto-update-apt='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
+alias update-apt='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
 
 # automate update manjaro
-alias auto-update-manjaro='auto-update-arch && auto-update-conda && auto-update-nvm && auto-update-rustup && auto-update-nvim-plugins && auto-update-pip'
+alias update-manjaro='update-arch'
 
 # automate update debian-based distros
-alias auto-update-debian='auto-update-apt && auto-update-nvm && auto-update-rustup && auto-update-nvim-plugins && auto-update-pip'
+alias update-debian='update-apt'
 
 # automate termux android
-alias auto-update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y && auto-update-nvim-plugins && auto-update-pip'
+alias update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y'
 
 ################################ Tooling ######################################
+
+# Update possible tools (normal mode)
+alias tooling-update='update-nvim || update-rustup || update-pip || update-pyenv || update-nvm'
+# Update all tools below (nuke mode, force update all cargo packages is slow)
+alias tooling-nuke-update='tooling-update || update-cargo'
 
 ################# Cheat sheet ##################
 
@@ -108,16 +111,16 @@ alias install-cheat-sh="mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/
 
 ################### Python #####################
 # automate conda update
-alias auto-update-conda='conda update --all -y && conda clean --all -y'
+alias update-conda='usable conda && conda update --all -y && conda clean --all -y'
 
 # automate pip update
-alias auto-update-pip='pip install -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
+alias update-pip='usable pip && pip install -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
 
 # install pyenv
 alias install-pyenv='curl https://pyenv.run | bash'
 
 # update pyenv
-alias auto-update-pyenv='pyenv update'
+alias update-pyenv='usable pyenv && pyenv update'
 
 # install poetry
 alias install-poetry='curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python'
@@ -127,33 +130,33 @@ alias install-poetry='curl -sSL https://raw.githubusercontent.com/python-poetry/
 alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash -s -- --no-use'
 
 # automate nvm update node
-alias auto-update-nvm='nvm install node --reinstall-packages-from=node -y'
+alias update-nvm='usable nvm && nvm install node --reinstall-packages-from=node -y'
 
 ################### Editor #####################
 # Update stable build of neovim
-alias auto-update-nvim-stable="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage && chmod +x ~/.local/$USER/bin/nvim"
+alias install-nvim-stable="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage && chmod +x ~/.local/$USER/bin/nvim"
 
 # Update nightly build of neovim
-alias auto-update-nvim-nightly="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage"
+alias install-nvim-nightly="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage"
 
 # automate neovim update
-alias auto-update-nvim-plugins='pip install -U neovim; npm update -g neovim; nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
+alias update-nvim='usable nvim && pip install -U neovim; npm update -g neovim; nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
 
 # Update code-server
-alias auto-update-code-server="mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep 'browser_download_url.*linux-x86_64.tar.gz' | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards '**/code-server' --strip-components 1"
+alias install-code-server="mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep 'browser_download_url.*linux-x86_64.tar.gz' | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards '**/code-server' --strip-components 1"
 
 # Download latest eclipse jdt language server
-alias auto-update-jls='mkdir -p ~/.local/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/eclipse.jdt.ls/'
+alias install-jls='mkdir -p ~/.local/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/eclipse.jdt.ls/'
 
 ################### Rust #######################
 # install rustup
 alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal --component rls rust-analysis rust-src --target wasm32-unknown-unknown -v -y'
 
 # automate rustup update
-alias auto-update-rustup='rustup update'
+alias update-rustup='usable rustup && rustup update'
 
 # automate cargo update
-alias auto-update-cargo='cargo install --list | grep -o "^\S*" | xargs cargo install'
+alias update-cargo='usable cargo && cargo install --list | grep -o "^\S*" | xargs cargo install --force'
 
 ############################# Custom ##########################################
 # Import custom alias
