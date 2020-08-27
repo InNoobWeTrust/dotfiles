@@ -6,7 +6,7 @@
 done
 
 # Set neovim as default editor
-if [[ $(which nvim >/dev/null 2>&1) ]]; then
+if usable nvim ; then
     export EDITOR="$(which nvim)"
     export VISUAL="$(which nvim)"
 else
@@ -37,7 +37,10 @@ fi
 [[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # Add completion for github's cli
-which gh >/dev/null 2>&1 && eval "$(gh completion)"
+usable gh && eval "$(gh completion)"
+
+# Add completion for kitty terminal
+usable kitty && source <(kitty + complete setup bash)
 
 # Add Nix
 if [ -r $HOME/.nix-profile/etc/profile.d/nix.sh ]; then source $HOME/.nix-profile/etc/profile.d/nix.sh; fi

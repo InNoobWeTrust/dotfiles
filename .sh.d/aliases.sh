@@ -101,9 +101,13 @@ alias update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && ap
 ################################ Tooling ######################################
 
 # Update possible tools (normal mode)
-alias tooling-update='update-nvim || update-rustup || update-pip || update-pyenv || update-nvm'
+alias tooling-update='update-nvim || update-rustup || update-pip || update-pyenv || update-nvm || update-brew'
 # Update all tools below (nuke mode, force update all cargo packages is slow)
 alias tooling-nuke-update='tooling-update || update-cargo'
+
+#################### Brew ######################
+alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"'
+alias update-brew='usable brew && brew update && brew upgrade'
 
 ################# Cheat sheet ##################
 
