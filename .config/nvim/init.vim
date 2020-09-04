@@ -56,11 +56,6 @@ function! s:DownloadVimPlug()
     endif
     "" Full language server with coc.nvim
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
-    " Install coc extensions on first run
-    try
-        call CocInstall()
-    catch
-    endtry
     "" Symbol map using language server
     Plug 'liuchengxu/vista.vim'
     let g:vista_default_executive = 'coc'
@@ -256,8 +251,8 @@ set completeopt+=preview
 set completeopt+=menuone
 set completeopt+=longest
 if executable('pyenv')
-    let g:python_host_prog = system('pyenv shims | grep python2$ | tr -d "\n"')
-    let g:python3_host_prog = system('pyenv shims | grep python3$ | tr -d "\n"')
+    let g:python_host_prog = system('pyenv shims | grep "/python2$" | tr -d "\n"')
+    let g:python3_host_prog = system('pyenv shims | grep "/python3$" | tr -d "\n"')
 endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""" End General section
 
@@ -707,3 +702,4 @@ set shortmess+=c
 """""""""""""""""""""""""""""""""""""""""""""" Load external config per project
 " exrc allows loading local config files.
 set exrc
+set secure
