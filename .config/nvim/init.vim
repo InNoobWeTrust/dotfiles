@@ -214,10 +214,9 @@ endtry
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" General section
 set nocompatible
 filetype plugin on
-" Search down sub-folder when tab-completing find: command
-set path+=**
 " Display all matching files when we tab complete
 set wildmenu
+set wildignorecase
 " Auto reload file on changes outside editor
 set autoread
 set hidden
