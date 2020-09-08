@@ -110,6 +110,10 @@ function! s:DownloadVimPlug()
     if executable('racer')
         Plug 'racer-rust/vim-racer', {'for': 'rust'}
     endif
+    " Enhanced C and C++ syntax highlighting
+    Plug 'bfrg/vim-cpp-modern'
+    " C/C++/Cuda/ObjC semantic highlighting using the language server protocol
+    Plug 'jackguo380/vim-lsp-cxx-highlight'
     "" Framework specific plugins
     " Godot syntax
     Plug 'calviken/vim-gdscript3'

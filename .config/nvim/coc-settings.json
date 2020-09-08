@@ -12,5 +12,6 @@
         }
       }
     }
-  }
+  },
+  "clangd.semanticHighlighting": true
 }
