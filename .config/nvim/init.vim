@@ -149,10 +149,7 @@ set secure
 
 """" Check installed plugin
 function! s:PlugLoaded(name)
-    return (
-        \ has_key(g:plugs, a:name) &&
-        \ isdirectory(g:plugs[a:name].dir) &&
-        \ stridx(&rtp, g:plugs[a:name].dir) >= 0)
+    return has_key(g:plugs, a:name)
 endfunction
 
 
@@ -294,7 +291,7 @@ function! s:DownloadVimPlug()
     """""""""""""""""""""""""""""""""""""""" Custom commands
     command! PlugSync PlugUpgrade <bar> PlugUpdate <bar> UpdateRemotePlugins
     command! Reload source $MYVIMRC
-    if s:PlugLoaded('coc')
+    if s:PlugLoaded('coc.nvim')
         " Use `:Format` to format current buffer
         command! -nargs=0 Format :call CocAction('format')
         " Use `:Fold` to fold current buffer
@@ -324,7 +321,7 @@ function! s:DownloadVimPlug()
     " Smaller updatetime for CursorHold & CursorHoldI
     set updatetime=300
     autocmd CursorHold * checktime
-    if s:PlugLoaded('coc')
+    if s:PlugLoaded('coc.nvim')
         " Highlight symbol under cursor on CursorHold
         autocmd CursorHold * silent call CocActionAsync('highlight')
     endif
@@ -369,7 +366,7 @@ function! s:DownloadVimPlug()
     nnoremap <Leader>fq :FlutterQuit<cr>
     nnoremap <Leader>fr :FlutterHotReload<cr>
     nnoremap <Leader>fR :FlutterHotRestart<cr>
-    if s:PlugLoaded('coc')
+    if s:PlugLoaded('coc.nvim')
         """ CocNvim keys binding
         " Use tab for trigger completion with characters ahead and navigate.
         " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
@@ -552,7 +549,7 @@ function! s:DownloadVimPlug()
     "let g:lightline#ale#indicator_errors = "✗"
     "let g:lightline#ale#indicator_ok = "✓"
     " Add status line support for coc
-    if s:PlugLoaded('coc')
+    if s:PlugLoaded('coc.nvim')
         set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
     endif
     """"""""""""""""""""""""""""""""" End statusline/tabline
@@ -682,7 +679,7 @@ function! s:DownloadVimPlug()
 
     """""""""""""""""""""""""""""""""""""""" Language server
     """ coc.nvim
-    if s:PlugLoaded('coc')
+    if s:PlugLoaded('coc.nvim')
         " Some servers have issues with backup files
         set nobackup
         set nowritebackup
