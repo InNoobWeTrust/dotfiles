@@ -204,7 +204,7 @@ function! s:DownloadVimPlug()
         echohl none
     endif
     "" Asynchronous lint engine
-    let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v2.7.x'}
+    let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v3.0.x'}
     "set omnifunc=ale#completion#OmniFunc
     "" Symbol map using language server
     Plug 'liuchengxu/vista.vim'
