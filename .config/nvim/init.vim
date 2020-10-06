@@ -1,3 +1,161 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" No-plugin
+"""""""""""""""""""""""""""""""""""""""""""""""""""" General
+set nocompatible
+filetype plugin on
+" Display all matching files when we tab complete
+set wildmenu
+set wildignorecase
+" Auto reload file on changes outside editor
+set autoread
+set hidden
+set cmdheight=2
+"set encoding=utf-8
+set mouse=a
+"set guifont=Iosevka\ Nerd\ Font\ Mono:h13
+set linespace=4
+set ignorecase
+set smartcase
+set smartindent
+set confirm
+set signcolumn=yes
+set number
+set relativenumber
+set cursorline
+set scrolloff=10
+set wrap
+set colorcolumn=80,100,120,140,160,180,200
+set binary
+set list
+set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:<
+set backspace=indent,eol,start
+set spell
+set completeopt+=preview
+set completeopt+=menuone
+set completeopt+=longest
+if executable('pyenv')
+    let g:python_host_prog = system('pyenv shims | grep "/python2$" | tr -d "\n"')
+    let g:python3_host_prog = system('pyenv shims | grep "/python3$" | tr -d "\n"')
+endif
+"""""""""""""""""""""""""""""""""""""""""""""""" End General
+""""""""""""""""""""""""""""""""""""""""""""""" Highlighting
+syntax enable
+syntax on
+""""""""""""""""""""""""""""""""""""""""""" End Highlighting
+"""""""""""""""""""""""""""""""""""""""""""""""" Indentation
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
+autocmd FileType xml setlocal shiftwidth=2 tabstop=2 expandtab
+autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
+autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
+autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
+"""""""""""""""""""""""""""""""""""""""""""" End indentation
+"""""""""""""""""""""""""""""""""""""""""""""""""""""" Netrw
+let g:netrw_banner=0        " disable annoying banner
+let g:netrw_browse_split=4  " open in prior window
+let g:netrw_altv=1          " open splits to the right
+let g:netrw_liststyle=3     " tree view
+let g:netrw_list_hide=netrw_gitignore#Hide()
+let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
+"""""""""""""""""""""""""""""""""""""""""""""""""" End Netrw
+""""""""""""""""""""""""""""""""""""""""""""""""""" Keyboard
+"" Change leader key
+let mapleader = " "
+"" Visual indication of leader key timeout
+set showcmd
+"" Copy and paste
+vnoremap <C-c> "+yi
+vnoremap <C-x> "+c
+vnoremap <S-Insert> c<ESC>"+p
+inoremap <S-Insert> <ESC>"+pa
+"" Map Ctrl-Del to delete word
+inoremap <C-Delete> <ESC>bdwa
+"" Use ESC to exit insert mode in :term
+" tnoremap <Esc> <C-\><C-n>
+"" Tab to autocomplete if in middle of line
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    else
+        return "\<c-n>"
+    endif
+endfunction
+imap <expr> <tab> InsertTabWrapper()
+imap <expr> <s-tab> <c-p>"
+""""""""""""""""""""""""""""""""""""""""""""""""""""""" Misc
+" if (has("termguicolors"))
+"     set termguicolors
+" endif
+if has('gui_running')
+    set t_Co=256
+    " set guioptions-=m  "remove menu bar
+    set guioptions-=T   "remove toolbar
+    set guioptions-=r   "remove right-hand scroll bar
+    set guioptions-=L   "remove left-hand scroll bar
+    set guioptions-=e   "Use tabline from configs instead of GUI
+endif
+""""""""""""""""""""""""""""""""""""""""""""""""""" End Misc
+""""""""""""""""""""""""""""""""""""""""""" Custom functions
+" Floating Term
+let s:float_term_border_win = 0
+let s:float_term_win = 0
+function! s:FloatTerm()
+  " Configuration
+  let height = float2nr((&lines - 2) * 0.6)
+  let row = float2nr((&lines - height) / 2)
+  let width = float2nr(&columns * 0.6)
+  let col = float2nr((&columns - width) / 2)
+  " Border Window
+  let border_opts = {
+        \ 'relative': 'editor',
+        \ 'row': row - 1,
+        \ 'col': col - 2,
+        \ 'width': width + 4,
+        \ 'height': height + 2,
+        \ 'style': 'minimal'
+        \ }
+  let border_buf = nvim_create_buf(v:false, v:true)
+  let s:float_term_border_win = nvim_open_win(border_buf, v:true, border_opts)
+  " Terminal Window
+  let opts = {
+        \ 'relative': 'editor',
+        \ 'row': row,
+        \ 'col': col,
+        \ 'width': width,
+        \ 'height': height,
+        \ 'style': 'minimal'
+        \ }
+  let buf = nvim_create_buf(v:false, v:true)
+  let s:float_term_win = nvim_open_win(buf, v:true, opts)
+  " Styling
+  hi FloatTermNormal term=None guibg=#2d3d45
+  call setwinvar(s:float_term_border_win, '&winhl', 'Normal:FloatTermNormal')
+  call setwinvar(s:float_term_win, '&winhl', 'Normal:FloatTermNormal')
+  terminal
+  startinsert
+  " Close border window when terminal window close
+  autocmd TermClose * ++once :q | call nvim_win_close(s:float_term_border_win, v:true)
+endfunction
+
+command! FloatTerm call s:FloatTerm()
+""""""""""""""""""""""""""""""""""""""" End custom functions
+"""""""""""""""""""""""""""""""""""""""""""" External config
+" exrc allows loading local config files.
+set exrc
+set secure
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End No-plugins
+
+"""" Check installed plugin
+function! s:PlugLoaded(name)
+    return (
+        \ has_key(g:plugs, a:name) &&
+        \ isdirectory(g:plugs[a:name].dir) &&
+        \ stridx(&rtp, g:plugs[a:name].dir) >= 0)
+endfunction
+
+
 """"""" The code to check and download Vim-Plug is found here:
 """"""" https://github.com/yous/dotfiles/blob/e6f1e71b6106f6953874c6b81f0753663f901578/vimrc#L30-L81
 if !empty(&rtp)
@@ -29,8 +187,6 @@ function! s:DownloadVimPlug()
                 call mkdir(s:vimfiles . '/autoload', 'p')
             endif
             call rename(new, s:vimfiles . '/autoload/plug.vim')
-            " Install plugins at first
-            autocmd VimEnter * PlugInstall | quit
         finally
             if isdirectory(tmp)
                 let dir = '"' . escape(tmp, '"') . '"'
@@ -39,9 +195,6 @@ function! s:DownloadVimPlug()
         endtry
     endif
     call plug#begin(s:vimfiles . '/plugged')
-    "" Asynchronous lint engine
-    let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v2.7.x'}
-    "set omnifunc=ale#completion#OmniFunc
     "" Native neovim language server config plugin
     let nvimver = substitute(matchstr(execute('version'), 'NVIM v\zs[^\n]*'), '\.', '', 'g')
     if nvimver >= 050
@@ -49,16 +202,19 @@ function! s:DownloadVimPlug()
         echohl InfoMsg
         echomsg 'Loaded native LSP'
         echohl none
-    else
-        echohl InfoMsg
-        echomsg 'Native LSP not loaded'
-        echohl none
     endif
-    "" Full language server with coc.nvim
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    "" Asynchronous lint engine
+    let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v2.7.x'}
+    "set omnifunc=ale#completion#OmniFunc
     "" Symbol map using language server
     Plug 'liuchengxu/vista.vim'
-    let g:vista_default_executive = 'coc'
+    if nvimver >= 043
+        "" Full language server with coc.nvim
+        Plug 'neoclide/coc.nvim', {'branch': 'release'}
+        let g:vista_default_executive = 'coc'
+    else
+        let g:vista_default_executive = 'ale'
+    endif
     "" Add surrounding brackets, quotes, xml tags,...
     Plug 'tpope/vim-surround'
     "" Extended matching for the % operator
@@ -134,575 +290,406 @@ function! s:DownloadVimPlug()
     Plug 'morhetz/gruvbox'
     Plug 'ayu-theme/ayu-vim'
     call plug#end()
+
+    """""""""""""""""""""""""""""""""""""""" Custom commands
+    command! PlugSync PlugUpgrade <bar> PlugUpdate <bar> UpdateRemotePlugins
+    command! Reload source $MYVIMRC
+    if s:PlugLoaded('coc')
+        " Use `:Format` to format current buffer
+        command! -nargs=0 Format :call CocAction('format')
+        " Use `:Fold` to fold current buffer
+        command! -nargs=? Fold :call CocAction('fold', <f-args>)
+        " use `:OR` for organize import of current buffer
+        command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
+    endif
+    """""""""""""""""""""""""""""""""""" End custom commands
+
+    """""""""""""""""""""""""""""""""""""""""""""""""" Theme
+    "" GruvBox
+    highlight Normal ctermbg=black ctermfg=white
+    let g:gruvbox_italic=1
+    let g:gruvbox_contrast_dark = 'hard'
+    let g:gruvbox_invert_tabline = 1
+    let g:gruvbox_invert_indent_guides=1
+    "" Ayu
+    let ayucolor="mirage"
+    try
+        colorscheme gruvbox
+        " colorscheme ayu
+    catch
+    endtry
+    """""""""""""""""""""""""""""""""""""""""""""" End theme
+
+    """""""""""""""""""""""""""""""""""""""""""""""" General
+    " Smaller updatetime for CursorHold & CursorHoldI
+    set updatetime=300
+    autocmd CursorHold * checktime
+    if s:PlugLoaded('coc')
+        " Highlight symbol under cursor on CursorHold
+        autocmd CursorHold * silent call CocActionAsync('highlight')
+    endif
+    """""""""""""""""""""""""""""""""""""""""""" End general
+
+    """"""""""""""""""""""""""""""""""""""Keyboard shortcuts
+    "" Expand CR when autocomplete pairs
+    let g:delimitMate_expand_cr = 2
+    let g:delimitMate_expand_space = 1
+    let g:delimitMate_expand_inside_quotes = 1
+    let g:delimitMate_jump_expansion = 1
+    "" Delete buffer without messing layout
+    nmap <Leader>x :Bd<CR>
+    "" Key mapping for navigating between errors
+    nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+    nmap <silent> <C-j> <Plug>(ale_next_wrap)
+    "" Key mapping for IDE-like behaviour
+    nmap <Leader>h <Plug>(ale_hover)
+    nmap <Leader>doc <Plug>(ale_documentation)
+    nmap <Leader>df <Plug>(ale_go_to_definition)
+    nmap <Leader>dft <Plug>(ale_go_to_definition_in_tab)
+    nmap <Leader>dfs <Plug>(ale_go_to_definition_in_split)
+    nmap <Leader>dfv <Plug>(ale_go_to_definition_in_vsplit)
+    nmap <Leader>tdf <Plug>(ale_go_to_type_definition)
+    nmap <Leader>tdft <Plug>(ale_go_to_type_definition_in_tab)
+    nmap <Leader>tdfs <Plug>(ale_go_to_type_definition_in_split)
+    nmap <Leader>tdfv <Plug>(ale_go_to_type_definition_in_vsplit)
+    nmap <Leader>rf <Plug>(ale_find_references)
+    nmap <Leader>dtl <Plug>(ale_detail)
+    nmap <Leader>fx <Plug>(ale_fix)
+    nmap <Leader>lnt <Plug>(ale_lint)
+    nmap <Leader>ifo :ALEInfo<CR>
+    nmap <Leader>arst <Plug>(ale_reset)
+    nmap <Leader>dcl <Plug>(lsp-declaration)
+    nmap <Leader>impl <Plug>(lsp-implementation)
+    nmap <Leader>rn <Plug>(lsp-rename)
+    nmap <Leader>fmt <Plug>(lsp-document-format)
+    vmap <Leader>fmt :LspDocumentRangeFormat<CR>
+    nmap <Leader>act <Plug>(lsp-code-action)
+    "" Flutter keys binding
+    nnoremap <Leader>fa :FlutterRun<cr>
+    nnoremap <Leader>fq :FlutterQuit<cr>
+    nnoremap <Leader>fr :FlutterHotReload<cr>
+    nnoremap <Leader>fR :FlutterHotRestart<cr>
+    if s:PlugLoaded('coc')
+        """ CocNvim keys binding
+        " Use tab for trigger completion with characters ahead and navigate.
+        " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+        inoremap <silent><expr> <TAB>
+              \ pumvisible() ? "\<C-n>" :
+              \ <SID>check_back_space() ? "\<TAB>" :
+              \ coc#refresh()
+        inoremap <expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+        function! s:check_back_space() abort
+          let col = col('.') - 1
+          return !col || getline('.')[col - 1]  =~# '\s'
+        endfunction
+        " Use <c-space> to trigger completion.
+        inoremap <silent> <expr> <c-space> coc#refresh()
+        " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+        " Coc only does snippet and additional edit on confirm.
+        inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+        " Or use `complete_info` if your vim support it, like:
+        " inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+        " Use `[g` and `]g` to navigate diagnostics
+        nmap <silent> [g <Plug>(coc-diagnostic-prev)
+        nmap <silent> ]g <Plug>(coc-diagnostic-next)
+        " Remap keys for gotos
+        nmap <silent> <Leader>df <Plug>(coc-definition)
+        nmap <silent> <Leader>tdf <Plug>(coc-type-definition)
+        nmap <silent> <Leader>impl <Plug>(coc-implementation)
+        nmap <silent> <Leader>rf <Plug>(coc-references)
+        " Use show documentation in preview window
+        nnoremap <silent> <Leader>h :call <SID>show_documentation()<CR>
+        function! s:show_documentation()
+          if (index(['vim','help'], &filetype) >= 0)
+            execute 'h '.expand('<cword>')
+          else
+            call CocAction('doHover')
+          endif
+        endfunction
+        " Remap for rename current word
+        nmap <Leader>rn <Plug>(coc-rename)
+        " Remap for format selected region
+        xmap <Leader>fmt <Plug>(coc-format-selected)
+        nmap <Leader>fmt <Plug>(coc-format-selected)
+        augroup cocgroup
+          autocmd!
+          " Setup formatexpr specified filetype(s).
+          autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+          " Update signature help on jump placeholder
+          autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+        augroup end
+        " Remap for do codeAction of selected region, ex: `<Leader>aap` for current paragraph
+        xmap <Leader>a <Plug>(coc-codeaction-selected)
+        nmap <Leader>a <Plug>(coc-codeaction-selected)
+        " Remap for do codeAction of current line
+        nmap <Leader>ac <Plug>(coc-codeaction)
+        " Fix autofix problem of current line
+        nmap <Leader>qf <Plug>(coc-fix-current)
+        " Create mappings for function text object, requires document symbols feature of languageserver.
+        xmap if <Plug>(coc-funcobj-i)
+        xmap af <Plug>(coc-funcobj-a)
+        omap if <Plug>(coc-funcobj-i)
+        omap af <Plug>(coc-funcobj-a)
+        " Use <C-d> for select selections ranges, needs server support, like: coc-tsserver, coc-python
+        nmap <silent> <C-d> <Plug>(coc-range-select)
+        xmap <silent> <C-d> <Plug>(coc-range-select)
+        " Using CocList
+        " Show all diagnostics
+        nnoremap <silent> ,a :<C-u>CocList diagnostics<cr>
+        " Manage extensions
+        nnoremap <silent> ,e :<C-u>CocList extensions<cr>
+        " Show commands
+        nnoremap <silent> ,c :<C-u>CocList commands<cr>
+        " Find symbol of current document
+        nnoremap <silent> ,o :<C-u>CocList outline<cr>
+        " Search workspace symbols
+        nnoremap <silent> ,s :<C-u>CocList -I symbols<cr>
+        " Search with ripgrep
+        nnoremap <silent> ,f :<C-u>CocList grep <C-r><C-w><cr>
+        " Interactive search with ripgrep
+        nnoremap <silent> ,fi :<C-u>CocList grep<cr>
+        " Open all lists
+        nnoremap <silent> ,l :<C-u>CocList<cr>
+        " Do default action for next item.
+        nnoremap <silent> ,j :<C-u>CocNext<CR>
+        " Do default action for previous item.
+        nnoremap <silent> ,k :<C-u>CocPrev<CR>
+        " Resume latest coc list
+        nnoremap <silent> ,p :<C-u>CocListResume<CR>
+        " Using CocExplorer
+        " Toggle
+        nmap <silent> <Leader>f :CocCommand explorer<CR>
+        " Expand to current file
+        nmap <silent> <Leader>v :CocCommand explorer --reveal<CR>
+    endif
+    """"""""""""""""""""""""""""""""" End keyboard shortcuts
+
+    """"""""""""""""""""""""""""""""""""" Statusline/tabline
+    let g:lightline = {
+                \ 'colorscheme': 'gruvbox',
+                \ }
+    let g:lightline.enable = {
+                \ 'statusline': 1,
+                \ 'tabline': 1
+                \ }
+    " let g:lightline.separator = {
+    "             \ 'left': '', 'right': ''
+    "             \ }
+    " let g:lightline.subseparator = {
+    "             \ 'left': '', 'right': ''
+    "             \ }
+    function! LightLinePercent()
+        if (&ft ==? 'nerdtree' || &ft ==? 'coc-explorer')
+            return ''
+        else
+            return line('.') * 100 / line('$') . '%'
+        endif
+    endfunction
+    function! LightLineLineInfo()
+        if (&ft ==? 'nerdtree' || &ft ==? 'coc-explorer')
+            return ''
+        else
+            return line('.').':'. col('.')
+        endif
+    endfunction
+    function! Filetype()
+        " return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+        return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
+    endfunction
+    function! Fileformat()
+        " return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+        return winwidth(0) > 70 ? (&fileformat) : ''
+    endfunction
+    let g:lightline.component_expand = {
+                \ 'linter_checking': 'lightline#ale#checking',
+                \ 'linter_warnings': 'lightline#ale#warnings',
+                \ 'linter_errors': 'lightline#ale#errors',
+                \ 'linter_ok': 'lightline#ale#ok',
+                \ }
+    let g:lightline.component_type = {
+                \ 'linter_checking': 'left',
+                \ 'linter_warnings': 'warning',
+                \ 'linter_errors': 'error',
+                \ 'linter_ok': 'left',
+                \ }
+    let g:lightline.component_function = {
+                \ 'percent': 'LightLinePercent',
+                \ 'lineinfo': 'LightLineLineInfo',
+                \ 'filetype': 'Filetype',
+                \ 'fileformat': 'Fileformat',
+                \ }
+    "" Statusline
+    set noshowmode
+    let g:lightline.active = {
+                \   'right':
+                \       [
+                \           [ 'lineinfo' ],
+                \           [ 'percent' ],
+                \           [
+                \               'linter_checking',
+                \               'linter_errors',
+                \               'linter_warnings',
+                \               'linter_ok',
+                \           ],
+                \       ],
+                \}
+    "" Tabline
+    set showtabline=2
+    let g:lightline.tabline = {
+                \ 'right': [
+                \   ['close'],
+                \   ['fileformat',
+                \    'fileencoding',
+                \    'filetype'],
+                \ ]}
+    "" Linting options
+    let g:lightline#ale#indicator_checking = "\uf110"
+    let g:lightline#ale#indicator_warnings = "\uf071"
+    let g:lightline#ale#indicator_errors = "\uf05e"
+    let g:lightline#ale#indicator_ok = "\uf00c"
+    "let g:lightline#ale#indicator_checking = "∵"
+    "let g:lightline#ale#indicator_warnings = "▲"
+    "let g:lightline#ale#indicator_errors = "✗"
+    "let g:lightline#ale#indicator_ok = "✓"
+    " Add status line support for coc
+    if s:PlugLoaded('coc')
+        set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+    endif
+    """"""""""""""""""""""""""""""""" End statusline/tabline
+
+    """""""""""""""""""""""""""""""""""""""""""""""" Linting
+    " Keep the sign gutter open at all times
+    let g:ale_sign_column_always = 1
+    let g:ale_sign_error = '✗'
+    let g:ale_sign_warning = '▲'
+    let g:ale_sign_info = 'i'
+    " Lint on text change
+    "let g:ale_lint_on_text_changed = 'never'
+    "let g:ale_lint_on_text_changed = 'normal'
+    " Lint on opening a file
+    " let g:ale_lint_on_enter = 1
+    " Fix files when you saving
+    let g:ale_fix_on_save = 0
+    " Show 3 lines of errors (default: 10)
+    let g:ale_list_window_size = 3
+    " Speed up executable checks
+    let g:ale_cache_executable_check_failures = 1
+    " Disable certain features
+    let g:ale_virtualenv_dir_names = []
+    "" Explicitly enable linters
+    let g:ale_linters = {
+                \           'rust': [
+                \               'analyzer',
+                \               'rls',
+                \               'cargo',
+                \           ],
+                \           'c': [
+                \               'clangd',
+                \               'clangtidy',
+                \               'clangcheck',
+                \               'cppcheck',
+                \               'flawfinder',
+                \               'clazy',
+                \               'cpplint',
+                \           ],
+                \           'cpp': [
+                \               'clangd',
+                \               'clangtidy',
+                \               'clangcheck',
+                \               'cppcheck',
+                \               'flawfinder',
+                \               'clazy',
+                \               'cpplint',
+                \           ],
+                \       }
+    "" Explicitly enable fixers
+    let g:ale_fixers = {    'rust': [
+                \               'rustfmt',
+                \               'remove_trailing_lines',
+                \               'trim_whitespace',
+                \           ],
+                \           'c': [
+                \               'clang-format',
+                \               'remove_trailing_lines',
+                \               'trim_whitespace',
+                \               'uncrustify',
+                \           ],
+                \           'cpp': [
+                \               'clang-format',
+                \               'remove_trailing_lines',
+                \               'trim_whitespace',
+                \               'uncrustify',
+                \           ],
+                \           'javascript': [
+                \               'eslint',
+                \               'fecs',
+                \               'importjs',
+                \               'prettier',
+                \               'prettier_eslint',
+                \               'standard',
+                \               'xo',
+                \               'remove_trailing_lines',
+                \               'trim_whitespace',
+                \           ],
+                \           'python': [
+                \               'add_blank_lines_for_python_control_statements',
+                \               'autopep8',
+                \               'black',
+                \               'isort',
+                \               'yapf',
+                \               'remove_trailing_lines',
+                \               'trim_whitespace',
+                \           ],
+                \           'java': [
+                \               'google_java_format',
+                \               'remove_trailing_lines',
+                \               'trim_whitespace',
+                \               'uncrustify',
+                \           ],
+                \      }
+    let g:ale_rust_rls_toolchain = 'stable'
+    let g:ale_rust_rls_config = {   'rust': {
+                \                       'clippy_preference': 'on',
+                \                   }
+                \               }
+    let g:ale_rust_rustc_options = ''
+    let g:ale_rust_cargo_check_all_targets = 1
+    let g:ale_rust_cargo_check_tests = 1
+    let g:ale_rust_cargo_check_examples = 1
+    let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
+    """""""""""""""""""""""""""""""""""""""""""" End linting
+
+    """""""""""""""""""""""""""""""""""""" Language specific
+    "" Dart
+    let dart_html_in_string=v:true
+    let dart_style_guide = 2
+    let dart_format_on_save = 0
+    "" Rust
+    let g:rustfmt_autosave = 1
+    let g:racer_experimental_completer = 1
+    let g:racer_insert_paren = 1
+    if (has("win16") || has("win32") || has("win64"))
+        let g:rust_clip_command = 'win32yank'
+    elseif has("unix")
+        let s:uname = system("uname -s")
+        if s:uname == "Darwin"
+            let g:rust_clip_command = 'pbcopy'
+        else
+            let g:rust_clip_command = 'xclip -selection clipboard'
+        endif
+    endif
+    """""""""""""""""""""""""""""""""" End language specific
+
+    """""""""""""""""""""""""""""""""""""""" Language server
+    """ coc.nvim
+    if s:PlugLoaded('coc')
+        " Some servers have issues with backup files
+        set nobackup
+        set nowritebackup
+        " don't give |ins-completion-menu| messages.
+        set shortmess+=c
+    endif
+    """""""""""""""""""""""""""""""""""" End language server
 endfunction
 
 call s:DownloadVimPlug()
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""" Custom functions section
-" Floating Term
-let s:float_term_border_win = 0
-let s:float_term_win = 0
-function! s:FloatTerm()
-  " Configuration
-  let height = float2nr((&lines - 2) * 0.6)
-  let row = float2nr((&lines - height) / 2)
-  let width = float2nr(&columns * 0.6)
-  let col = float2nr((&columns - width) / 2)
-  " Border Window
-  let border_opts = {
-        \ 'relative': 'editor',
-        \ 'row': row - 1,
-        \ 'col': col - 2,
-        \ 'width': width + 4,
-        \ 'height': height + 2,
-        \ 'style': 'minimal'
-        \ }
-  let border_buf = nvim_create_buf(v:false, v:true)
-  let s:float_term_border_win = nvim_open_win(border_buf, v:true, border_opts)
-  " Terminal Window
-  let opts = {
-        \ 'relative': 'editor',
-        \ 'row': row,
-        \ 'col': col,
-        \ 'width': width,
-        \ 'height': height,
-        \ 'style': 'minimal'
-        \ }
-  let buf = nvim_create_buf(v:false, v:true)
-  let s:float_term_win = nvim_open_win(buf, v:true, opts)
-  " Styling
-  hi FloatTermNormal term=None guibg=#2d3d45
-  call setwinvar(s:float_term_border_win, '&winhl', 'Normal:FloatTermNormal')
-  call setwinvar(s:float_term_win, '&winhl', 'Normal:FloatTermNormal')
-  terminal
-  startinsert
-  " Close border window when terminal window close
-  autocmd TermClose * ++once :q | call nvim_win_close(s:float_term_border_win, v:true)
-endfunction
-"""""""""""""""""""""""""""""""""""""""""""""""""" End custom functions section
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""" Custom commands section
-command! PlugSync PlugUpgrade <bar> PlugUpdate <bar> UpdateRemotePlugins
-command! Reload source $MYVIMRC
-command! FloatTerm call s:FloatTerm()
-" Use `:Format` to format current buffer
-command! -nargs=0 Format :call CocAction('format')
-" Use `:Fold` to fold current buffer
-command! -nargs=? Fold :call CocAction('fold', <f-args>)
-" use `:OR` for organize import of current buffer
-command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
-""""""""""""""""""""""""""""""""""""""""""""""""""" End custom commands section
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" Theme section
-syntax enable
-syntax on
-"" GruvBox
-highlight Normal ctermbg=black ctermfg=white
-let g:gruvbox_italic=1
-let g:gruvbox_contrast_dark = 'hard'
-let g:gruvbox_invert_tabline = 1
-let g:gruvbox_invert_indent_guides=1
-"" Ayu
-let ayucolor="mirage"
-try
-    colorscheme gruvbox
-    " colorscheme ayu
-catch
-endtry
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End theme section
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" General section
-set nocompatible
-filetype plugin on
-" Display all matching files when we tab complete
-set wildmenu
-set wildignorecase
-" Auto reload file on changes outside editor
-set autoread
-set hidden
-set cmdheight=2
-"set encoding=utf-8
-set mouse=a
-"set guifont=Iosevka\ Nerd\ Font\ Mono:h13
-set linespace=4
-set ignorecase
-set smartcase
-set smartindent
-set confirm
-" Smaller updatetime for CursorHold & CursorHoldI
-set updatetime=300
-autocmd CursorHold * checktime
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-set signcolumn=yes
-set number
-set relativenumber
-set cursorline
-set scrolloff=10
-set wrap
-set colorcolumn=80,100,120,140,160,180,200
-set binary
-set list
-set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:<
-set backspace=indent,eol,start
-set spell
-set completeopt+=preview
-set completeopt+=menuone
-set completeopt+=longest
-if executable('pyenv')
-    let g:python_host_prog = system('pyenv shims | grep "/python2$" | tr -d "\n"')
-    let g:python3_host_prog = system('pyenv shims | grep "/python3$" | tr -d "\n"')
-endif
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End General section
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" Misc section
-" if (has("termguicolors"))
-"     set termguicolors
-" endif
-if has('gui_running')
-    set t_Co=256
-    " set guioptions-=m  "remove menu bar
-    set guioptions-=T   "remove toolbar
-    set guioptions-=r   "remove right-hand scroll bar
-    set guioptions-=L   "remove left-hand scroll bar
-    set guioptions-=e   "Use tabline from configs instead of GUI
-endif
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End misc section
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" Netrw section
-let g:netrw_banner=0        " disable annoying banner
-let g:netrw_browse_split=4  " open in prior window
-let g:netrw_altv=1          " open splits to the right
-let g:netrw_liststyle=3     " tree view
-let g:netrw_list_hide=netrw_gitignore#Hide()
-let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End Netrw section
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""" Keyboard shortcuts section
-"" Change leader key
-let mapleader = " "
-"" Visual indication of leader key timeout
-set showcmd
-"" Copy and paste
-vnoremap <C-c> "+yi
-vnoremap <C-x> "+c
-vnoremap <S-Insert> c<ESC>"+p
-inoremap <S-Insert> <ESC>"+pa
-"" Map Ctrl-Del to delete word
-inoremap <C-Delete> <ESC>bdwa
-"" Use ESC to exit insert mode in :term
-" tnoremap <Esc> <C-\><C-n>
-"" Tab to autocomplete if in middle of line
-function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-n>"
-    endif
-endfunction
-imap <expr> <tab> InsertTabWrapper()
-imap <expr> <s-tab> <c-p>"
-"" Expand CR when autocomplete pairs
-let g:delimitMate_expand_cr = 2
-let g:delimitMate_expand_space = 1
-let g:delimitMate_expand_inside_quotes = 1
-let g:delimitMate_jump_expansion = 1
-"" Delete buffer without messing layout
-nmap <Leader>x :Bd<CR>
-"" Key mapping for navigating between errors
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
-"" Key mapping for IDE-like behaviour
-nmap <Leader>h <Plug>(ale_hover)
-nmap <Leader>doc <Plug>(ale_documentation)
-nmap <Leader>df <Plug>(ale_go_to_definition)
-nmap <Leader>dft <Plug>(ale_go_to_definition_in_tab)
-nmap <Leader>dfs <Plug>(ale_go_to_definition_in_split)
-nmap <Leader>dfv <Plug>(ale_go_to_definition_in_vsplit)
-nmap <Leader>tdf <Plug>(ale_go_to_type_definition)
-nmap <Leader>tdft <Plug>(ale_go_to_type_definition_in_tab)
-nmap <Leader>tdfs <Plug>(ale_go_to_type_definition_in_split)
-nmap <Leader>tdfv <Plug>(ale_go_to_type_definition_in_vsplit)
-nmap <Leader>rf <Plug>(ale_find_references)
-nmap <Leader>dtl <Plug>(ale_detail)
-nmap <Leader>fx <Plug>(ale_fix)
-nmap <Leader>lnt <Plug>(ale_lint)
-nmap <Leader>ifo :ALEInfo<CR>
-nmap <Leader>arst <Plug>(ale_reset)
-nmap <Leader>dcl <Plug>(lsp-declaration)
-nmap <Leader>impl <Plug>(lsp-implementation)
-nmap <Leader>rn <Plug>(lsp-rename)
-nmap <Leader>fmt <Plug>(lsp-document-format)
-vmap <Leader>fmt :LspDocumentRangeFormat<CR>
-nmap <Leader>act <Plug>(lsp-code-action)
-"" Flutter keys binding
-nnoremap <Leader>fa :FlutterRun<cr>
-nnoremap <Leader>fq :FlutterQuit<cr>
-nnoremap <Leader>fr :FlutterHotReload<cr>
-nnoremap <Leader>fR :FlutterHotRestart<cr>
-""" CocNvim keys binding
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-" Use <c-space> to trigger completion.
-inoremap <silent> <expr> <c-space> coc#refresh()
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-" Or use `complete_info` if your vim support it, like:
-" inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-" Use `[g` and `]g` to navigate diagnostics
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-" Remap keys for gotos
-nmap <silent> <Leader>df <Plug>(coc-definition)
-nmap <silent> <Leader>tdf <Plug>(coc-type-definition)
-nmap <silent> <Leader>impl <Plug>(coc-implementation)
-nmap <silent> <Leader>rf <Plug>(coc-references)
-" Use show documentation in preview window
-nnoremap <silent> <Leader>h :call <SID>show_documentation()<CR>
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-" Remap for rename current word
-nmap <Leader>rn <Plug>(coc-rename)
-" Remap for format selected region
-xmap <Leader>fmt <Plug>(coc-format-selected)
-nmap <Leader>fmt <Plug>(coc-format-selected)
-augroup cocgroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
-" Remap for do codeAction of selected region, ex: `<Leader>aap` for current paragraph
-xmap <Leader>a <Plug>(coc-codeaction-selected)
-nmap <Leader>a <Plug>(coc-codeaction-selected)
-" Remap for do codeAction of current line
-nmap <Leader>ac <Plug>(coc-codeaction)
-" Fix autofix problem of current line
-nmap <Leader>qf <Plug>(coc-fix-current)
-" Create mappings for function text object, requires document symbols feature of languageserver.
-xmap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap if <Plug>(coc-funcobj-i)
-omap af <Plug>(coc-funcobj-a)
-" Use <C-d> for select selections ranges, needs server support, like: coc-tsserver, coc-python
-nmap <silent> <C-d> <Plug>(coc-range-select)
-xmap <silent> <C-d> <Plug>(coc-range-select)
-" Using CocList
-" Show all diagnostics
-nnoremap <silent> ,a :<C-u>CocList diagnostics<cr>
-" Manage extensions
-nnoremap <silent> ,e :<C-u>CocList extensions<cr>
-" Show commands
-nnoremap <silent> ,c :<C-u>CocList commands<cr>
-" Find symbol of current document
-nnoremap <silent> ,o :<C-u>CocList outline<cr>
-" Search workspace symbols
-nnoremap <silent> ,s :<C-u>CocList -I symbols<cr>
-" Search with ripgrep
-nnoremap <silent> ,f :<C-u>CocList grep <C-r><C-w><cr>
-" Interactive search with ripgrep
-nnoremap <silent> ,fi :<C-u>CocList grep<cr>
-" Open all lists
-nnoremap <silent> ,l :<C-u>CocList<cr>
-" Do default action for next item.
-nnoremap <silent> ,j :<C-u>CocNext<CR>
-" Do default action for previous item.
-nnoremap <silent> ,k :<C-u>CocPrev<CR>
-" Resume latest coc list
-nnoremap <silent> ,p :<C-u>CocListResume<CR>
-" Using CocExplorer
-" Toggle
-nmap <silent> <Leader>f :CocCommand explorer<CR>
-" Expand to current file
-nmap <silent> <Leader>v :CocCommand explorer --reveal<CR>
-"""""""""""""""""""""""""""""""""""""""""""""""" End keyboard shortcuts section
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""" Indentation config section
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
-autocmd FileType html setlocal shiftwidth=2 tabstop=2 expandtab
-autocmd FileType xml setlocal shiftwidth=2 tabstop=2 expandtab
-autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 expandtab
-autocmd FileType json setlocal shiftwidth=2 tabstop=2 expandtab
-"autocmd FileType dart setlocal shiftwidth=2 tabstop=2 expandtab
-"""""""""""""""""""""""""""""""""""""""""""""""" End indentation config section
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""" Statusline/tabline section
-let g:lightline = {
-            \ 'colorscheme': 'gruvbox',
-            \ }
-let g:lightline.enable = {
-            \ 'statusline': 1,
-            \ 'tabline': 1
-            \ }
-" let g:lightline.separator = {
-"             \ 'left': '', 'right': ''
-"             \ }
-" let g:lightline.subseparator = {
-"             \ 'left': '', 'right': ''
-"             \ }
-function! LightLinePercent()
-    if (&ft ==? 'nerdtree' || &ft ==? 'coc-explorer')
-        return ''
-    else
-        return line('.') * 100 / line('$') . '%'
-    endif
-endfunction
-function! LightLineLineInfo()
-    if (&ft ==? 'nerdtree' || &ft ==? 'coc-explorer')
-        return ''
-    else
-        return line('.').':'. col('.')
-    endif
-endfunction
-function! Filetype()
-    " return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
-    return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
-endfunction
-function! Fileformat()
-    " return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
-    return winwidth(0) > 70 ? (&fileformat) : ''
-endfunction
-function! CocCurrentFunction()
-    return get(b:, 'coc_current_function', '')
-endfunction
-function! CocStatusDiagnostic() abort
-    let info = get(b:, 'coc_diagnostic_info', {})
-    if empty(info) | return '' | endif
-    let msgs = []
-    if get(info, 'error', 0)
-        call add(msgs, 'E' . info['error'])
-    endif
-    if get(info, 'warning', 0)
-        call add(msgs, 'W'. info['warning'])
-    endif
-    return join(msgs, ' ') . ' ' . get(g:, 'coc_status', '')
-endfunction
-let g:lightline.component_expand = {
-            \ 'linter_checking': 'lightline#ale#checking',
-            \ 'linter_warnings': 'lightline#ale#warnings',
-            \ 'linter_errors': 'lightline#ale#errors',
-            \ 'linter_ok': 'lightline#ale#ok',
-            \ }
-let g:lightline.component_type = {
-            \ 'linter_checking': 'left',
-            \ 'linter_warnings': 'warning',
-            \ 'linter_errors': 'error',
-            \ 'linter_ok': 'left',
-            \ }
-let g:lightline.component_function = {
-            \ 'cocstatus': 'CocStatusDiagnostic',
-            \ 'currentfunction': 'CocCurrentFunction',
-            \ 'percent': 'LightLinePercent',
-            \ 'lineinfo': 'LightLineLineInfo',
-            \ 'filetype': 'Filetype',
-            \ 'fileformat': 'Fileformat',
-            \ }
-"" Statusline
-set noshowmode
-let g:lightline.active = {
-            \   'right':
-            \       [
-            \           [ 'lineinfo' ],
-            \           [ 'percent' ],
-            \           [
-            \               'cocstatus',
-            \               'currentfunction',
-            \           ],
-            \           [
-            \               'linter_checking',
-            \               'linter_errors',
-            \               'linter_warnings',
-            \               'linter_ok',
-            \           ],
-            \       ],
-            \}
-"" Tabline
-set showtabline=2
-let g:lightline.tabline = {
-            \ 'right': [
-            \   ['close'],
-            \   ['fileformat',
-            \    'fileencoding',
-            \    'filetype'],
-            \ ]}
-"" Linting options
-" let g:lightline#ale#indicator_checking = "\uf110"
-" let g:lightline#ale#indicator_warnings = "\uf071"
-" let g:lightline#ale#indicator_errors = "\uf05e"
-" let g:lightline#ale#indicator_ok = "\uf00c"
-let g:lightline#ale#indicator_checking = "∵"
-let g:lightline#ale#indicator_warnings = "▲"
-let g:lightline#ale#indicator_errors = "✗"
-let g:lightline#ale#indicator_ok = "✓"
-" Add status line support for coc
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-""""""""""""""""""""""""""""""""""""""""""""""""""""""" End status line section
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" Linting section
-" Keep the sign gutter open at all times
-let g:ale_sign_column_always = 1
-let g:ale_sign_error = '✗'
-let g:ale_sign_warning = '▲'
-let g:ale_sign_info = 'i'
-" Lint on text change
-"let g:ale_lint_on_text_changed = 'never'
-"let g:ale_lint_on_text_changed = 'normal'
-" Lint on opening a file
-" let g:ale_lint_on_enter = 1
-" Fix files when you saving
-let g:ale_fix_on_save = 0
-" Show 3 lines of errors (default: 10)
-let g:ale_list_window_size = 3
-" Speed up executable checks
-let g:ale_cache_executable_check_failures = 1
-" Disable certain features
-let g:ale_virtualenv_dir_names = []
-"" Explicitly enable linters
-let g:ale_linters = {
-            \           'rust': [
-            \               'analyzer',
-            \               'rls',
-            \               'cargo',
-            \           ],
-            \           'c': [
-            \               'clangd',
-            \               'clangtidy',
-            \               'clangcheck',
-            \               'cppcheck',
-            \               'flawfinder',
-            \               'clazy',
-            \               'cpplint',
-            \           ],
-            \           'cpp': [
-            \               'clangd',
-            \               'clangtidy',
-            \               'clangcheck',
-            \               'cppcheck',
-            \               'flawfinder',
-            \               'clazy',
-            \               'cpplint',
-            \           ],
-            \       }
-"" Explicitly enable fixers
-let g:ale_fixers = {    'rust': [
-            \               'rustfmt',
-            \               'remove_trailing_lines',
-            \               'trim_whitespace',
-            \           ],
-            \           'c': [
-            \               'clang-format',
-            \               'remove_trailing_lines',
-            \               'trim_whitespace',
-            \               'uncrustify',
-            \           ],
-            \           'cpp': [
-            \               'clang-format',
-            \               'remove_trailing_lines',
-            \               'trim_whitespace',
-            \               'uncrustify',
-            \           ],
-            \           'javascript': [
-            \               'eslint',
-            \               'fecs',
-            \               'importjs',
-            \               'prettier',
-            \               'prettier_eslint',
-            \               'standard',
-            \               'xo',
-            \               'remove_trailing_lines',
-            \               'trim_whitespace',
-            \           ],
-            \           'python': [
-            \               'add_blank_lines_for_python_control_statements',
-            \               'autopep8',
-            \               'black',
-            \               'isort',
-            \               'yapf',
-            \               'remove_trailing_lines',
-            \               'trim_whitespace',
-            \           ],
-            \           'java': [
-            \               'google_java_format',
-            \               'remove_trailing_lines',
-            \               'trim_whitespace',
-            \               'uncrustify',
-            \           ],
-            \      }
-let g:ale_rust_rls_toolchain = 'stable'
-let g:ale_rust_rls_config = {   'rust': {
-            \                       'clippy_preference': 'on',
-            \                   }
-            \               }
-let g:ale_rust_rustc_options = ''
-let g:ale_rust_cargo_check_all_targets = 1
-let g:ale_rust_cargo_check_tests = 1
-let g:ale_rust_cargo_check_examples = 1
-let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" End linting section
-
-
-"""""""""""""""""""""""""""""""""""""""""""""" Language specific plugin section
-"" Dart
-let dart_html_in_string=v:true
-let dart_style_guide = 2
-let dart_format_on_save = 0
-"" Rust
-let g:rustfmt_autosave = 1
-let g:racer_experimental_completer = 1
-let g:racer_insert_paren = 1
-if (has("win16") || has("win32") || has("win64"))
-    let g:rust_clip_command = 'win32yank'
-elseif has("unix")
-    let s:uname = system("uname -s")
-    if s:uname == "Darwin"
-        let g:rust_clip_command = 'pbcopy'
-    else
-        let g:rust_clip_command = 'xclip -selection clipboard'
-    endif
-endif
-"""""""""""""""""""""""""""""""""""""""""" End language specific plugin section
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""" Language server section
-""" coc.nvim
-" Some servers have issues with backup files
-set nobackup
-set nowritebackup
-" don't give |ins-completion-menu| messages.
-set shortmess+=c
-""""""""""""""""""""""""""""""""""""""""""""""""""" End language server section
-
-
-"""""""""""""""""""""""""""""""""""""""""""""" Load external config per project
-" exrc allows loading local config files.
-set exrc
-set secure
