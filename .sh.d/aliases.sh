@@ -21,9 +21,11 @@ if [ -n "$friendly_builtin" ]; then
     alias np='nano -w PKGBUILD'
     alias more=less
     # some more ls aliases
-    alias ll='ls -alF'
-    alias la='ls -A'
-    alias l='ls -CF'
+    alias li='ls --almost-all --classify --human-readable --inode -l'
+    alias lh='ls --almost-all --classify --human-readable -l'
+    alias ll='ls --almost-all --classify -l'
+    alias la='ls --almost-all --classify'
+    alias l='ls --almost-all --classify'
 fi
 
 # Activate starship prompt
@@ -76,7 +78,14 @@ alias theia='docker run -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiai
 # Full VsCode over browser
 alias code-server-docker='docker run -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
 
+############################### PATH management ###############################
+
+alias install-pathman='curl -s https://webinstall.dev/pathman | bash'
+
+alias install-pathman-npm='npm install -g pathman'
+
 ############################ Platform management ##############################
+
 # List orphan packages with pacman
 alias pacorphan='pacman -Qdt'
 
@@ -106,7 +115,9 @@ alias tooling-update='update-nvim || update-rustup || update-pyenv || update-nvm
 alias tooling-nuke-update='tooling-update || update-cargo'
 
 #################### Brew ######################
+
 alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"'
+
 alias update-brew='usable brew && brew update && brew upgrade'
 
 ################# Cheat sheet ##################
@@ -114,6 +125,7 @@ alias update-brew='usable brew && brew update && brew upgrade'
 alias install-cheat-sh="mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/:cht.sh > $HOME/.local/$USER/bin/cht.sh && chmod +x $HOME/.local/$USER/bin/cht.sh"
 
 ################### Python #####################
+
 # automate conda update
 alias update-conda='usable conda && conda update --all -y && conda clean --all -y'
 
@@ -131,6 +143,7 @@ alias update-pyenv='usable pyenv && pyenv update'
 alias install-poetry='curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python'
 
 ################### NodeJs #####################
+
 # install nvm
 alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash -s -- --no-use'
 
@@ -138,6 +151,7 @@ alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.c
 alias update-nvm='usable nvm && nvm install node --reinstall-packages-from=node -y'
 
 ################### Editor #####################
+
 # Update stable build of neovim
 alias install-nvim-stable="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage && chmod +x ~/.local/$USER/bin/nvim"
 
@@ -154,6 +168,7 @@ alias install-code-server="mkdir -p ~/.local/$USER/bin && curl -s https://api.gi
 alias install-jls='mkdir -p ~/.local/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/eclipse.jdt.ls/'
 
 ################### Rust #######################
+
 # install rustup
 alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal --component rls rust-analysis rust-src --target wasm32-unknown-unknown -v -y'
 
