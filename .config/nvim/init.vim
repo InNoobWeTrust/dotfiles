@@ -339,6 +339,7 @@ function! s:DownloadVimPlug()
     nmap <silent> <C-k> <Plug>(ale_previous_wrap)
     nmap <silent> <C-j> <Plug>(ale_next_wrap)
     "" Key mapping for IDE-like behaviour
+    imap <silent> <C-Space> <Plug>(ale_complete)
     nmap <Leader>h <Plug>(ale_hover)
     nmap <Leader>doc <Plug>(ale_documentation)
     nmap <Leader>df <Plug>(ale_go_to_definition)
@@ -350,17 +351,22 @@ function! s:DownloadVimPlug()
     nmap <Leader>tdfs <Plug>(ale_go_to_type_definition_in_split)
     nmap <Leader>tdfv <Plug>(ale_go_to_type_definition_in_vsplit)
     nmap <Leader>rf <Plug>(ale_find_references)
+    nmap <Leader>rn :ALERename<Return>
+    nmap <Leader>import :ALEImport<Return>
+    nmap <Leader>or :ALEOrganizeImports<Return>
     nmap <Leader>dtl <Plug>(ale_detail)
     nmap <Leader>fx <Plug>(ale_fix)
     nmap <Leader>lnt <Plug>(ale_lint)
-    nmap <Leader>ifo :ALEInfo<CR>
-    nmap <Leader>arst <Plug>(ale_reset)
-    nmap <Leader>dcl <Plug>(lsp-declaration)
-    nmap <Leader>impl <Plug>(lsp-implementation)
-    nmap <Leader>rn <Plug>(lsp-rename)
-    nmap <Leader>fmt <Plug>(lsp-document-format)
-    vmap <Leader>fmt :LspDocumentRangeFormat<CR>
-    nmap <Leader>act <Plug>(lsp-code-action)
+    nmap <Leader>ifo :ALEInfo<Return>
+    nmap <Leader>rst <Plug>(ale_reset)
+    if s:PlugLoaded('nvim-lsp')
+      nmap <Leader>dcl <Plug>(lsp-declaration)
+      nmap <Leader>impl <Plug>(lsp-implementation)
+      nmap <Leader>rn <Plug>(lsp-rename)
+      nmap <Leader>fmt <Plug>(lsp-document-format)
+      vmap <Leader>fmt :LspDocumentRangeFormat<CR>
+      nmap <Leader>act <Plug>(lsp-code-action)
+    endif
     "" Flutter keys binding
     nnoremap <Leader>fa :FlutterRun<cr>
     nnoremap <Leader>fq :FlutterQuit<cr>
