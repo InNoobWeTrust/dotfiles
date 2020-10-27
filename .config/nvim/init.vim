@@ -386,7 +386,7 @@ function! s:DownloadVimPlug()
           return !col || getline('.')[col - 1]  =~# '\s'
         endfunction
         " Use <c-space> to trigger completion.
-        inoremap <silent> <expr> <c-space> coc#refresh()
+        imap <silent> <expr> <c-space> coc#refresh()
         " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
         " Coc only does snippet and additional edit on confirm.
         inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
@@ -482,14 +482,14 @@ function! s:DownloadVimPlug()
     "             \ 'left': '', 'right': ''
     "             \ }
     function! LightLinePercent()
-        if (&ft ==? 'nerdtree' || &ft ==? 'coc-explorer')
+        if (&ft ==? 'netrw' || &ft ==? 'nerdtree' || &ft ==? 'coc-explorer' || &ft ==? 'vista_kind')
             return ''
         else
             return line('.') * 100 / line('$') . '%'
         endif
     endfunction
     function! LightLineLineInfo()
-        if (&ft ==? 'nerdtree' || &ft ==? 'coc-explorer')
+        if (&ft ==? 'netrw' || &ft ==? 'nerdtree' || &ft ==? 'coc-explorer' || &ft ==? 'vista_kind')
             return ''
         else
             return line('.').':'. col('.')
