@@ -7,11 +7,18 @@ if [ -n "$BASH_VERSION" ]; then
 
     # Add python argcomplete's bash completion globally
     if [ -r $HOME/bash_completion.d/python-argcomplete ]; then
-        source $HOME/bash_completion.d/python-argcomplete
+        . $HOME/bash_completion.d/python-argcomplete
     fi
     if [ -n "$BREW_HOME" ] && [ -d $BREW_HOME/etc/bash_completion.d ]; then
         for s in $(find $BREW_HOME/etc/bash_completion.d -maxdepth 1 -follow -type f -readable); do
-            source $s
+            . $s
+        done
+    fi
+
+    # Custom completion
+    if [ -d $HOME/.bash_completion.d/ ]; then
+        for s in $(find $HOME/.bash_completion.d/ -maxdepth 1 -follow -type f -readable); do
+            . $s
         done
     fi
 fi
