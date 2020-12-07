@@ -120,6 +120,10 @@ alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com
 
 alias update-brew='usable brew && brew update && brew upgrade'
 
+#################### Sdkman ####################
+
+alias install-sdkman='mkdir -p $HOME/.local && export SDKMAN_DIR="$HOME/.local/sdkman" && curl -s "https://get.sdkman.io" | bash'
+
 ################# Cheat sheet ##################
 
 alias install-cheat-sh="mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/:cht.sh > $HOME/.local/$USER/bin/cht.sh && chmod +x $HOME/.local/$USER/bin/cht.sh"
