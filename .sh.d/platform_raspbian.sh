@@ -10,4 +10,5 @@ if test -r /etc/os-release && test 'raspbian' = "$(cat /etc/os-release | sed -n 
     alias vnc-res-1200='xrandr -s 1600x1200'
     alias vnc-res-1080='xrandr -s 1920x1080'
     alias remote-it-now='sudo apt update && sudo apt install -y connectd && sudo connectd_installer'
+    alias install-pikiss='curl -sSL https://git.io/JfAPE | bash'
 fi
