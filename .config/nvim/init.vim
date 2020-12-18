@@ -235,6 +235,8 @@ function! s:DownloadVimPlug()
     Plug 'tpope/vim-fugitive'
     "" Git management inside vim
     Plug 'jreybert/vimagit'
+    "" REST console
+    Plug 'diepm/vim-rest-console'
     "" Automatically toggle relative line number
     Plug 'jeffkreeftmeijer/vim-numbertoggle'
     "" Use registers as stack for yank and delete
