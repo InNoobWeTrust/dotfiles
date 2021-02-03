@@ -153,10 +153,13 @@ alias install-poetry-by-pipx='pipx install poetry'
 ################### NodeJs #####################
 
 # install nvm
-alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash -s -- --no-use'
+alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash -s -- --no-use'
 
 # automate nvm update node
 alias update-nvm='usable nvm && nvm install node --reinstall-packages-from=node -y'
+
+# cleanup unused version of node
+alias cleanup-nvm="nvm ls --no-colors | grep -o '^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*' | tr -d '[[:blank:]]v' | xargs -I % $SHELL -c \". $NVM_DIR/nvm.sh && nvm uninstall %\""
 
 ################### Editor #####################
 
