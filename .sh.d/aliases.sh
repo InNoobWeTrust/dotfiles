@@ -28,25 +28,20 @@ if [ -n "$friendly_builtin" ]; then
     alias l='ls --almost-all --classify'
 fi
 
-# Activate starship prompt
-alias env_starship='with_starship=true'
-
 # Reload shell
 alias reload-shell='exec $SHELL'
 
-# Reload master config
-alias reload-shrc='. ~/.shrc'
+# Activate starship prompt
+alias env_starship='with_starship=true'
 
 # Force colorful prompt for current session
 alias env_rainbow='use_color=true'
-alias rainbow-shell='env_rainbow reload-shrc'
 
 # Force friendly builtin for current session
 alias env_friendly='friendly_builtin=true'
-alias friendly-shell='env_friendly reload-shrc'
 
 # Force all enhancement for current sessions
-alias godmode='env_rainbow env_friendly env_starship reload-shrc'
+alias godmode='env_rainbow env_friendly env_starship reload-shell'
 
 # install starship prompt
 alias install-starship="mkdir -p ~/.local/$USER/bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/$USER/bin --platform unknown-linux-gnu"
@@ -60,19 +55,20 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 # List processes run by current user
 alias ps-me-not='ps -U `whoami` -u `whoami` u'
-# Kill parallel processes running in another session
-alias rampage='printf "what to kill? => "; victim=;read victim;ps -A | grep $victim | awk "{print $1}" | xargs -r kill'
 
-# Gacha-inspired number generator
-alias gacha='printf "Lower limit: ";read low;printf "Upper limit: ";read high;diff=$(($high - $low));echo "Press ENTER key to stop!";while ! read -t 0.25 -rsn 1;do printf "\r%5d" $(($RANDOM % $((diff + 1)) + $low));done'
+# Kill parallel processes running in another session
+alias rampage='printf "what to kill? => "; victim=; read victim; ps -A | grep $victim | awk "{print $1}" | xargs -r kill'
+
+# Random number generator
+alias gacha='printf "Lower limit: "; read low; printf "Upper limit: "; read high; diff=$(($high - $low)); echo "Press ENTER key to stop!"; while ! read -t 0.25 -rsn 1; do printf "\r%5d" $(($RANDOM % $((diff + 1)) + $low)); done'
 
 # Update all git repositories in current directory
-alias forgit-me-pull='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Updating git repo $d" && (cd $d; git stash; git pull --rebase --all; git stash pop); done'
+alias for-git-me-pull='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Updating git repo $d" && (cd $d; git stash; git pull --rebase --all; git stash pop); done'
 
 # Web browser in terminal
 alias browsh='docker run -it --rm browsh/browsh'
 
-# IDE over browser
+# IDE on browser
 alias theia='docker run -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
 
 # Full VsCode over browser
@@ -87,22 +83,16 @@ alias install-pathman-npm='npm install -g pathman'
 ############################ Platform management ##############################
 
 # List orphan packages with pacman
-alias pacorphan='pacman -Qdt'
+alias pac-orphan='pacman -Qdt'
 
 # Remove orphan packages and dependencies with pacman
-alias pacorphanrm='sudo pacman -Rs $(pacman -Qqdt)'
+alias pac-orphan-rm='sudo pacman -Rs $(pacman -Qqdt)'
 
 # automate pacman update
 alias update-arch='sudo pacman -Syyu --noconfirm'
 
-# automate apt update
-alias update-apt='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
-
-# automate update manjaro
-alias update-manjaro='update-arch'
-
 # automate update debian-based distros
-alias update-debian='update-apt'
+alias update-debian='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
 
 # automate termux android
 alias update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y'
@@ -110,9 +100,7 @@ alias update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && ap
 ################################ Tooling ######################################
 
 # Update possible tools (normal mode)
-alias tooling-update='update-nvim || update-rustup || update-pyenv || update-nvm || update-brew'
-# Update all tools below (nuke mode, force update all cargo packages is slow)
-alias tooling-nuke-update='tooling-update || update-cargo'
+alias update-tooling='update-nvim || update-rustup || update-pyenv || update-nvm || update-brew'
 
 #################### Brew ######################
 
