@@ -29,7 +29,7 @@ if [ -n "$friendly_builtin" ]; then
 fi
 
 # Reload shell
-alias reload-shell='exec $SHELL'
+alias reload-shell='exec $SHELL -l'
 
 # Activate starship prompt
 alias env_starship='with_starship=true'
