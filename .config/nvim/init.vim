@@ -192,14 +192,6 @@ function! s:DownloadVimPlug()
         endtry
     endif
     call plug#begin(s:vimfiles . '/plugged')
-    "" Native neovim language server config plugin
-    let nvimver = substitute(matchstr(execute('version'), 'NVIM v\zs[^\n]*'), '\.', '', 'g')
-    if nvimver >= 050
-        Plug 'neovim/nvim-lsp'
-        echohl InfoMsg
-        echomsg 'Loaded native LSP'
-        echohl none
-    endif
     "" Asynchronous lint engine
     let g:ale_completion_enabled = 0 | Plug 'dense-analysis/ale', {'branch': 'v3.0.x'}
     "set omnifunc=ale#completion#OmniFunc
@@ -361,14 +353,6 @@ function! s:DownloadVimPlug()
     nmap <Leader>lnt <Plug>(ale_lint)
     nmap <Leader>ifo :ALEInfo<Return>
     nmap <Leader>rst <Plug>(ale_reset)
-    if s:PlugLoaded('nvim-lsp')
-      nmap <Leader>dcl <Plug>(lsp-declaration)
-      nmap <Leader>impl <Plug>(lsp-implementation)
-      nmap <Leader>rn <Plug>(lsp-rename)
-      nmap <Leader>fmt <Plug>(lsp-document-format)
-      vmap <Leader>fmt :LspDocumentRangeFormat<CR>
-      nmap <Leader>act <Plug>(lsp-code-action)
-    endif
     "" Flutter keys binding
     nnoremap <Leader>fa :FlutterRun<cr>
     nnoremap <Leader>fq :FlutterQuit<cr>
