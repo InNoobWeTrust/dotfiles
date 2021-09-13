@@ -197,6 +197,8 @@ function! s:DownloadVimPlug()
     "set omnifunc=ale#completion#OmniFunc
     "" Symbol map using language server
     Plug 'liuchengxu/vista.vim'
+    "" Native neovim language server config plugin
+     let nvimver = substitute(matchstr(execute('version'), 'NVIM v\zs[^\n]*'), '\.', '', 'g')
     if nvimver >= 043
         "" Full language server with coc.nvim
         Plug 'neoclide/coc.nvim', {'branch': 'release'}
