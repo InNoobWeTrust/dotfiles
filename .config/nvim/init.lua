@@ -116,7 +116,7 @@ end
 local autocmds = {
     reload_vimrc = {
         -- Reload vim config automatically
-        -- {'BufWritePost',[[$VIM_PATH/{*.vim,*.yaml,vimrc} nested source $MYVIMRC | redraw]]};
+        {'BufWritePost',[[$VIM_PATH/{*.vim,*.yaml,vimrc} nested source $MYVIMRC | redraw]]};
         {'BufWritePre', '$MYVIMRC', 'lua ReloadConfig()'};
     };
     packer = {
@@ -185,7 +185,8 @@ nvim_create_augroups(packer_autocmds)
 local use = require('packer').use
 require('packer').startup(function()
     use {'wbthomason/packer.nvim', opt = true}
-    -- Language client
+    -- Language clients
+    use {'neoclide/coc.nvim', branch = 'release'}
     use 'neovim/nvim-lspconfig'
     use 'glepnir/lspsaga.nvim'
     use 'kabouzeid/nvim-lspinstall'
@@ -281,7 +282,6 @@ require('packer').startup(function()
     use 'ayu-theme/ayu-vim'
 
     ---------------------------------------- Custom commands
-    cmd 'command! Reload source $MYVIMRC'
     ------------------------------------ End custom commands
 
     -------------------------------------------------- Theme
@@ -530,6 +530,8 @@ require('packer').startup(function()
     --- lspsaga
     local saga = require 'lspsaga'
     saga.init_lsp_saga()
+    --- coc.nvim
+    require('coc')
     ------------------------------------ End language server
     ------------------------------------------- Autocomplete
     local cmp = require('cmp')
