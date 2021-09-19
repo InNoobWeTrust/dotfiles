@@ -486,9 +486,9 @@ require('packer').startup(function()
         },
         java = {
             'google_java_format',
+            'uncrustify',
             'remove_trailing_lines',
             'trim_whitespace',
-            'uncrustify',
         },
         typescript = {
             'tslint',
@@ -496,7 +496,14 @@ require('packer').startup(function()
             'prettier',
             'deno',
             'xo',
+            'remove_trailing_lines',
+            'trim_whitespace',
         },
+        json = {
+            'prettier',
+            'remove_trailing_lines',
+            'trim_whitespace',
+        }
     }
     g.ale_rust_rls_toolchain = 'stable'
     g.ale_rust_rls_config = {
