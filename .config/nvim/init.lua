@@ -320,7 +320,7 @@ require('packer').startup(function()
     map('n', '<Leader>tdft', '<Plug>(ale_go_to_type_definition_in_tab)', {noremap = false})
     map('n', '<Leader>tdfs', '<Plug>(ale_go_to_type_definition_in_split)', {noremap = false})
     map('n', '<Leader>tdfv', '<Plug>(ale_go_to_type_definition_in_vsplit)', {noremap = false})
-    map('n', '<Leader>rf', '<Plug>(ale_find_reference)', {noremap = false})
+    map('n', '<Leader>rf', '<Plug>(ale_find_references)', {noremap = false})
     map('n', '<Leader><Leader>rn', ':ALERename<Return>', {noremap = false})
     map('n', '<Leader>import', ':ALEImport<Return>', {noremap = false})
     map('n', '<Leader>or', ':ALEOrganizeImports<Return>', {noremap = false})
@@ -340,8 +340,8 @@ require('packer').startup(function()
     -- lsp provider to find the cursor word definition and reference
     map('n', 'gh', ':Lspsaga lsp_finder<CR>', {noremap = true, silent = true})
     -- code action
-    map('n', '<Leader>ca', ':Lspsaga code_action<CR>', {noremap = true, silent = true})
-    map('v', '<Leader>ca', ':<C-U>Lspsaga range_code_action<CR>', {noremap = true, silent = true})
+    map('n', '<Leader>act', ':Lspsaga code_action<CR>', {noremap = true, silent = true})
+    map('v', '<Leader>act', ':<C-U>Lspsaga range_code_action<CR>', {noremap = true, silent = true})
     -- show hover doc
     map('n', 'K', ':Lspsaga hover_doc<CR>', {noremap = true, silent = true})
     -- scroll down hover doc or scroll in definition preview
@@ -356,9 +356,9 @@ require('packer').startup(function()
     -- preview definition
     map('n', 'gd', ':Lspsaga preview_definition<CR>', {noremap = true, silent = true})
     -- show diagnostics
-    map('n', '<Leader>cd', ':Lspsaga show_line_diagnostics<CR>', {noremap = true, silent = true})
+    map('n', '<Leader>diag', ':Lspsaga show_line_diagnostics<CR>', {noremap = true, silent = true})
     -- only show diagnostic if cursor is over the area
-    map('n', '<Leader>cc', '<cmd>lua require("lspsaga.diagnostic").show_cursor_diagnostics()<CR>', {noremap = true, silent = true})
+    map('n', '<Leader>cdiag', '<cmd>lua require("lspsaga.diagnostic").show_cursor_diagnostics()<CR>', {noremap = true, silent = true})
     -- jump diagnostic
     map('n', '[e', ':Lspsaga diagnostic_jump_next<CR>', {noremap = true, silent = true})
     map('n', ']e', ':Lspsaga diagnostic_jump_prev<CR>', {noremap = true, silent = true})
