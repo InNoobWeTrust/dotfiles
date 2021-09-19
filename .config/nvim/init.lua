@@ -200,7 +200,6 @@ require('packer').startup(function()
             'hrsh7th/cmp-nvim-lsp',
             'hrsh7th/cmp-path',
             'hrsh7th/cmp-emoji',
-            'f3fora/cmp-spell',
             'quangnguyen30192/cmp-nvim-tags',
         }
     }
@@ -491,6 +490,13 @@ require('packer').startup(function()
             'trim_whitespace',
             'uncrustify',
         },
+        typescript = {
+            'tslint',
+            'eslint',
+            'prettier',
+            'deno',
+            'xo',
+        },
     }
     g.ale_rust_rls_toolchain = 'stable'
     g.ale_rust_rls_config = {
@@ -531,7 +537,7 @@ require('packer').startup(function()
     local saga = require 'lspsaga'
     saga.init_lsp_saga()
     --- coc.nvim
-    require('coc')
+    --require('coc')
     ------------------------------------ End language server
     ------------------------------------------- Autocomplete
     local cmp = require('cmp')
@@ -559,7 +565,6 @@ require('packer').startup(function()
                 { name = 'nvim_lsp' },
                 { name = 'crates' },
                 { name = 'emoji' },
-                { name = 'spell' },
                 { name = 'tags' },
             }
         })
@@ -574,9 +579,9 @@ require('packer').startup(function()
         --'ccls',
         'clangd',
         'cmake',
-        --'cssls',
-        --'dartls',
-        --'denols',
+        'cssls',
+        'dartls',
+        'denols',
         --'dockerls',
         'efm',
         --'flow',
@@ -594,7 +599,7 @@ require('packer').startup(function()
         'rls',
         'rust_analyzer',
         --'sqlls',
-        'sumneko_lua',
+        --'sumneko_lua',
         'svelte',
         --'tailwindcss',
         --'texlab',
