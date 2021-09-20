@@ -1,4 +1,5 @@
 ---------------------------------------------------------------------- No-plugin
+
 ---------------------------------------------------- Aliases
 local execute = vim.api.nvim_command
 local opt  = vim.opt   -- global
@@ -9,7 +10,11 @@ local wo = vim.wo      -- window local
 local bo = vim.bo      -- buffer local
 local fn = vim.fn      -- access vim functions
 local cmd = vim.cmd    -- vim commands
+local win = fn.has('win16') or fn.has('win32') or fn.has('win64')
+local linux = fn.has('unix') and not fn.system('uname -s') == 'Darwin'
+local mac = fn.has('unix') and fn.system('uname -s') == 'Darwin'
 ------------------------------------------------ End aliases
+
 ---------------------------------------------------- General
 --o.nocompatible = true
 cmd 'filetype plugin on'
@@ -46,16 +51,19 @@ if fn.executable('pyenv') then
     g.python3_host_prog = fn.system('pyenv shims | grep "/python3$" | tr -d "\n"')
 end
 ------------------------------------------------ End General
+
 ----------------------------------------------- Highlighting
 cmd 'syntax enable'
 cmd 'syntax on'
 ------------------------------------------- End Highlighting
+
 ------------------------------------------------ Indentation
 o.tabstop = 4
 o.shiftwidth = 4
 o.softtabstop = 4
 o.expandtab = true
 -------------------------------------------- End indentation
+
 ------------------------------------------------------ Netrw
 g.netrw_banner = 0        -- disable annoying banner
 g.netrw_browse_split = 4  -- open in prior window
@@ -63,7 +71,8 @@ g.netrw_altv = 1          -- open splits to the right
 g.netrw_liststyle = 3     -- tree view
 g.netrw_list_hide = {fn['netrw_gitignore#Hide()'], ',\\(^\\|\\s\\s\\)\\zs\\.\\S\\+'}
 -------------------------------------------------- End Netrw
---------------------------------------------------- Keyboard
+
+----------------------------------------- Keyboard shortcuts
 -- Change leader key
 g.mapleader = ' '
 -- Visual indication of leader key timeout
@@ -76,15 +85,14 @@ local function map(mode, lhs, rhs, opts)
 end
 
 -- Copy and paste
-map('v', '<C-c>', '"+yi')
+map('v', '<C-c>', '"+y')
 map('v', '<C-x>', '"+c')
 map('v', '<S-Insert>', 'c<ESC>"+p')
 map('i', '<S-Insert>', '<ESC>"+pa')
 -- Map Ctrl-Del to delete word
-map('i', '<C-Delete>', '<ESC>bdwa')
--- Use ESC to exit insert mode in :term
---map('t', '<Esc>', '<C-\><C-n>')
--- Tab to autocomplete if in middle of line
+map('i', '<C-Delete>', '<ESC>bdwi')
+------------------------------------- End keyboard shortcuts
+
 ---------------------------------------------------- Autocmd
 -------- This function is taken from https://github.com/norcalli/nvim_utils
 local function nvim_create_augroups(definitions)
@@ -119,9 +127,6 @@ local autocmds = {
         {'BufWritePost',[[$VIM_PATH/{*.vim,*.yaml,vimrc} nested source $MYVIMRC | redraw]]};
         {'BufWritePre', '$MYVIMRC', 'lua ReloadConfig()'};
     };
-    packer = {
-        { 'BufWritePost', 'plugins.lua', 'PackerCompile' };
-    };
     terminal_job = {
         --{ 'TermOpen', '*', [[tnoremap <buffer> <Esc> <c-\><c-n>]] };
         { 'TermOpen', '*', 'startinsert' };
@@ -154,14 +159,19 @@ local autocmds = {
 
 nvim_create_augroups(autocmds)
 ------------------------------------------------ End autocmd
+
 ------------------------------------------------------- Misc
 --------------------------------------------------- End Misc
+
 ------------------------------------------- Custom functions
 --------------------------------------- End custom functions
+
 -------------------------------------------- External config
 -- exrc allows loading local config files.
 o.exrc = true
 o.secure = true
+---------------------------------------- End external config
+
 ----------------------------------------------------------------- End No-plugins
 
 -- Install packer
@@ -185,8 +195,15 @@ nvim_create_augroups(packer_autocmds)
 local use = require('packer').use
 require('packer').startup(function()
     use {'wbthomason/packer.nvim', opt = true}
+    -- Fuzzy finder
+    use {
+        'nvim-telescope/telescope.nvim',
+        requires = {
+            'nvim-lua/plenary.nvim',
+        }
+    }
     -- Language clients
-    use {'neoclide/coc.nvim', branch = 'release'}
+    --use {'neoclide/coc.nvim', branch = 'release'}
     use 'neovim/nvim-lspconfig'
     use 'glepnir/lspsaga.nvim'
     use 'kabouzeid/nvim-lspinstall'
@@ -296,7 +313,17 @@ require('packer').startup(function()
     --cmd 'colorscheme ayu'
     ---------------------------------------------- End theme
 
-    --------------------------------------Keyboard shortcuts
+    ------------------------------------------------ Autocmd
+    local plugin_autocmds = {
+        packer = {
+            { 'BufWritePost', 'plugins.lua', 'PackerCompile' };
+        };
+    }
+
+    nvim_create_augroups(plugin_autocmds)
+    -------------------------------------------- End autocmd
+
+    ------------------------------------- Keyboard shortcuts
     -- Expand CR when autocomplete pairs
     g.delimitMate_expand_cr = 2
     g.delimitMate_expand_space = 1
@@ -304,6 +331,11 @@ require('packer').startup(function()
     g.delimitMate_jump_expansion = 1
     -- Delete buffer without messing layout
     map('n', '<Leader>x', ':Bd<CR>', {noremap = false})
+    -- Key mapping for fuzzy finder
+    map('n', '<leader>ff', '<cmd>Telescope find_files<cr>')
+    map('n', '<leader>fg', '<cmd>Telescope live_grep<cr>')
+    map('n', '<leader>fb', '<cmd>Telescope buffers<cr>')
+    map('n', '<leader>fh', '<cmd>Telescope help_tags<cr>')
     -- Key mapping for navigating between errors
     map('n', '<C-k>', '<Plug>(ale_previous_wrap)', {noremap = false, silent = true})
     map('n', '<C-j>', '<Plug>(ale_next_wrap)', {noremap = false, silent = true})
@@ -447,11 +479,6 @@ require('packer').startup(function()
     }
     -- Explicitly enable fixers
     g.ale_fixers = {
-        rust = {
-            'rustfmt',
-            'remove_trailing_lines',
-            'trim_whitespace',
-        },
         c = {
             'clang-format',
             'remove_trailing_lines',
@@ -464,6 +491,22 @@ require('packer').startup(function()
             'trim_whitespace',
             'uncrustify',
         },
+        css = {
+            'prettier',
+            'remove_trailing_lines',
+            'trim_whitespace',
+        },
+        html = {
+            'prettier',
+            'remove_trailing_lines',
+            'trim_whitespace',
+        },
+        java = {
+            'google_java_format',
+            'uncrustify',
+            'remove_trailing_lines',
+            'trim_whitespace',
+        },
         javascript = {
             'eslint',
             'fecs',
@@ -472,6 +515,11 @@ require('packer').startup(function()
             'prettier_eslint',
             'standard',
             'xo',
+            'remove_trailing_lines',
+            'trim_whitespace',
+        },
+        json = {
+            'prettier',
             'remove_trailing_lines',
             'trim_whitespace',
         },
@@ -484,9 +532,8 @@ require('packer').startup(function()
             'remove_trailing_lines',
             'trim_whitespace',
         },
-        java = {
-            'google_java_format',
-            'uncrustify',
+        rust = {
+            'rustfmt',
             'remove_trailing_lines',
             'trim_whitespace',
         },
@@ -498,14 +545,6 @@ require('packer').startup(function()
             'xo',
             'remove_trailing_lines',
             'trim_whitespace',
-        },
-        json = {
-            'prettier',
-            'remove_trailing_lines',
-            'trim_whitespace',
-        },
-        html = {
-            'prettier',
         },
     }
     g.ale_rust_rls_toolchain = 'stable'
@@ -530,15 +569,12 @@ require('packer').startup(function()
     g.rustfmt_autosave = 1
     g.racer_experimental_completer = 1
     g.racer_insert_paren = 1
-    if (fn.has('win16') or fn.has('win32') or fn.has('win64')) then
+    if win then
         g.rust_clip_command = 'win32yank'
-    elseif fn.has('unix') then
-        local uname = fn.system('uname -s')
-        if o.uname == 'Darwin' then
-            g.rust_clip_command = 'pbcopy'
-        else
-            g.rust_clip_command = 'xclip -selection clipboard'
-        end
+    elseif linux then
+        g.rust_clip_command = 'xclip -selection clipboard'
+    elseif mac then
+        g.rust_clip_command = 'pbcopy'
     end
     ---------------------------------- End language specific
 
@@ -549,6 +585,7 @@ require('packer').startup(function()
     --- coc.nvim
     --require('coc')
     ------------------------------------ End language server
+
     ------------------------------------------- Autocomplete
     local cmp = require('cmp')
     cmp.setup({
