@@ -332,9 +332,12 @@ require('packer').startup(function()
     -- Delete buffer without messing layout
     map('n', '<Leader>x', ':Bd<CR>', {noremap = false})
     -- Key mapping for fuzzy finder
+    map('n', '<leader>ft', '<cmd>Telescope<cr>')
     map('n', '<leader>ff', '<cmd>Telescope find_files<cr>')
+    map('n', '<leader>fbr', '<cmd>Telescope file_browser<cr>')
+    map('n', '<leader>fcur', '<cmd>Telescope grep_string<cr>')
     map('n', '<leader>fg', '<cmd>Telescope live_grep<cr>')
-    map('n', '<leader>fb', '<cmd>Telescope buffers<cr>')
+    map('n', '<leader>fbuf', '<cmd>Telescope buffers<cr>')
     map('n', '<leader>fh', '<cmd>Telescope help_tags<cr>')
     -- Key mapping for navigating between errors
     map('n', '<C-k>', '<Plug>(ale_previous_wrap)', {noremap = false, silent = true})
@@ -396,11 +399,6 @@ require('packer').startup(function()
     -- float terminal also you can pass the cli command in open_float_terminal function
     map('n', '<A-d>', ':Lspsaga open_floaterm<CR>', {noremap = true, silent = true})
     map('t', '<A-d>', '<C-\\><C-n>:Lspsaga close_floaterm<CR>', {noremap = true, silent = true})
-    -- Flutter keys binding
-    map('n', '<Leader>fa', ':FlutterRun<cr>')
-    map('n', '<Leader>fq', ':FlutterQuit<cr>')
-    map('n', '<Leader>fr', ':FlutterHotReload<cr>')
-    map('n', '<Leader>fR', ':FlutterHotRestart<cr>')
     --------------------------------- End keyboard shortcuts
 
     ------------------------------------- Statusline/tabline
