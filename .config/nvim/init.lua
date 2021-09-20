@@ -503,7 +503,10 @@ require('packer').startup(function()
             'prettier',
             'remove_trailing_lines',
             'trim_whitespace',
-        }
+        },
+        html = {
+            'prettier',
+        },
     }
     g.ale_rust_rls_toolchain = 'stable'
     g.ale_rust_rls_config = {
