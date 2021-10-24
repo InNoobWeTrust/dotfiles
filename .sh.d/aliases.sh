@@ -100,7 +100,7 @@ alias update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && ap
 ################################ Tooling ######################################
 
 # Update possible tools (normal mode)
-alias update-tooling='update-nvim || update-rustup || update-pyenv || update-nvm || update-brew'
+alias update-tooling='update-rustup || update-pyenv || update-nvm || update-brew'
 
 #################### Brew ######################
 
@@ -156,9 +156,6 @@ alias install-nvim-stable="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$US
 
 # Update nightly build of neovim
 alias install-nvim-nightly="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage"
-
-# automate neovim update
-alias update-nvim='usable nvim && nvim +PlugUpgrade +PlugUpdate +UpdateRemotePlugins +PlugClean +qa'
 
 # Update code-server
 alias install-code-server="mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep 'browser_download_url.*linux-x86_64.tar.gz' | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards '**/code-server' --strip-components 1"

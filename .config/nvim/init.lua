@@ -249,8 +249,8 @@ require('packer').startup(function()
     use 'scrooloose/nerdcommenter'
     -- Git wrapper
     use 'tpope/vim-fugitive'
-    -- Git management inside vim
-    use 'jreybert/vimagit'
+    -- Git gutter
+    use 'airblade/vim-gitgutter'
     -- REST console
     use 'diepm/vim-rest-console'
     -- Automatically toggle relative line number
