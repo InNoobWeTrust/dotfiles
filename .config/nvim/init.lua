@@ -205,7 +205,7 @@ require('packer').startup(function()
     -- Language clients
     --use {'neoclide/coc.nvim', branch = 'release'}
     use 'neovim/nvim-lspconfig'
-    use 'glepnir/lspsaga.nvim'
+    use { 'tami5/lspsaga.nvim', branch = 'nvim6.0' }
     use 'kabouzeid/nvim-lspinstall'
     use 'Shadorain/shadovim'
     -- Completion engine plugin for neovim written in Lua
@@ -619,39 +619,39 @@ require('packer').startup(function()
 
     local servers = {
         'angularls',
-        --'arduino_language_server',
-        --'bashls',
-        --'ccls',
+        'arduino_language_server',
+        'bashls',
+        'ccls',
         'clangd',
         'cmake',
         'cssls',
         'dartls',
         'denols',
-        --'dockerls',
+        'dockerls',
         'efm',
-        --'flow',
-        --'gdscript',
+        'flow',
+        'gdscript',
         'gopls',
         'html',
-        --'java_language_server',
-        --'jdtls',
-        --'jedi_language_server',
+        'java_language_server',
+        'jdtls',
+        'jedi_language_server',
         'jsonls',
-        --'kotlin_language_server',
+        'kotlin_language_server',
         'powershell_es',
-        --'pylsp',
+        'pylsp',
         'pyright',
         'rls',
         'rust_analyzer',
-        --'sqlls',
-        --'sumneko_lua',
+        'sqlls',
+        'sumneko_lua',
         'svelte',
-        --'tailwindcss',
-        --'texlab',
+        'tailwindcss',
+        'texlab',
         'tsserver',
         'vimls',
-        --'volar',
-        --'vuels',
+        'volar',
+        'vuels',
         'yamlls',
     }
     for _,server in pairs(servers) do
