@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id "org.jetbrains.kotlin.jvm" version "1.6.21"
+    id 'eclipse'
+    id 'idea'
+    id 'application'
+}
+
+mainClassName = 'dummy.HelloWorld'
+
+repositories { 
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.8.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+jar {
+    archiveBaseName = 'dummy'
+    archiveVersion =  '0.1.0'
+}

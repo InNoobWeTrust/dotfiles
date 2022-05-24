@@ -1,0 +1,13 @@
+[package]
+name = "dummy"
+version = "0.1.0"
+authors = ["Your Name <you@example.com>"]
+edition = "2018"
+
+[workspace]
+members = []
+
+[dependencies]
+
+[profile.dev.package.'*']
+opt-level = 3

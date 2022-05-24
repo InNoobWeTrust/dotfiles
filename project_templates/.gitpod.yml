@@ -1,0 +1,10 @@
+# Commands to start on workspace startup
+tasks:
+  - init: |
+      npm i -g @angular/cli
+      npm ci
+    command: npm start
+# Ports to expose on workspace startup
+ports:
+  - port: 8000
+    onOpen: open-preview
