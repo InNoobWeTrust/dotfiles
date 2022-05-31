@@ -8,7 +8,6 @@ if [ -n "$use_color" ]; then
     alias grep='grep --colour=auto'
     alias egrep='egrep --colour=auto'
     alias fgrep='fgrep --colour=auto'
-    alias ls='ls --color=auto'
 
     # colored GCC warnings and errors
     export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -21,11 +20,10 @@ if [ -n "$friendly_builtin" ]; then
     alias np='nano -w PKGBUILD'
     alias more=less
     # some more ls aliases
-    alias li='ls --almost-all --classify --human-readable --inode -l'
-    alias lh='ls --almost-all --classify --human-readable -l'
-    alias ll='ls --almost-all --classify -l'
-    alias la='ls --almost-all --classify'
-    alias l='ls --almost-all --classify'
+    alias l='ls -hail'
+    alias li='ls -hil'
+    alias lh='ls -hl'
+    alias la='ls -al'
 fi
 
 # Reload shell
