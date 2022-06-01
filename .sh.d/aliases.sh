@@ -64,13 +64,16 @@ alias gacha='printf "Lower limit: "; read low; printf "Upper limit: "; read high
 alias for-git-me-pull='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Updating git repo $d" && (cd $d; git stash; git pull --rebase --all; git stash pop); done'
 
 # Web browser in terminal
-alias browsh='docker run -it --rm browsh/browsh'
+alias browsh-docker='docker run -it --rm browsh/browsh'
 
 # IDE on browser
 alias theia='docker run -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
 
 # Full VsCode over browser
 alias code-server-docker='docker run -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
+
+# Swagger api documentation generator
+alias swagger-docker='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
 
 ############################### PATH management ###############################
 
