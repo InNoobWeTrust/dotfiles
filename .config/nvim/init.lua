@@ -154,6 +154,7 @@ local autocmds = {
         { 'FileType', 'json', 'setlocal shiftwidth=2 tabstop=2 expandtab'};
         { 'FileType', 'dart', 'setlocal shiftwidth=2 tabstop=2 expandtab'};
         { 'FileType', 'markdown', 'setlocal shiftwidth=2 tabstop=2 noexpandtab'};
+        { 'FileType', 'go', 'set nolist'};
     }
 }
 
@@ -205,7 +206,14 @@ require('packer').startup(function()
     -- Language clients
     --use {'neoclide/coc.nvim', branch = 'release'}
     use 'neovim/nvim-lspconfig'
-    use { 'tami5/lspsaga.nvim', branch = 'nvim6.0' }
+    --use { 'tami5/lspsaga.nvim', branch = 'nvim6.0' }
+    use {
+        'ray-x/navigator.lua',
+        requires = {
+            { 'ray-x/guihua.lua', run = 'cd lua/fzy && make' },
+            { 'neovim/nvim-lspconfig' },
+        },
+    }
     use 'kabouzeid/nvim-lspinstall'
     use 'Shadorain/shadovim'
     use 'github/copilot.vim'
@@ -283,6 +291,8 @@ require('packer').startup(function()
             ft = {'rust'}
         }
     end
+    -- Highlight using language servers
+    use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
     -- Enhanced C and C++ syntax highlighting
     use 'bfrg/vim-cpp-modern'
     -- C/C++/Cuda/ObjC semantic highlighting using the language server protocol
@@ -333,13 +343,13 @@ require('packer').startup(function()
     -- Delete buffer without messing layout
     map('n', '<Leader>x', ':Bd<CR>', {noremap = false})
     -- Key mapping for fuzzy finder
-    map('n', '<leader>ft', '<cmd>Telescope<cr>')
-    map('n', '<leader>ff', '<cmd>Telescope find_files<cr>')
-    map('n', '<leader>fbr', '<cmd>Telescope file_browser<cr>')
-    map('n', '<leader>fcur', '<cmd>Telescope grep_string<cr>')
-    map('n', '<leader>fg', '<cmd>Telescope live_grep<cr>')
-    map('n', '<leader>fbuf', '<cmd>Telescope buffers<cr>')
-    map('n', '<leader>fh', '<cmd>Telescope help_tags<cr>')
+    map('n', '<leader><leader>', '<cmd>Telescope<cr>')
+    map('n', '<leader><leader>f', '<cmd>Telescope find_files<cr>')
+    map('n', '<leader><leader>br', '<cmd>Telescope file_browser<cr>')
+    map('n', '<leader><leader>s', '<cmd>Telescope grep_string<cr>')
+    map('n', '<leader><leader>g', '<cmd>Telescope live_grep<cr>')
+    map('n', '<leader><leader>bu', '<cmd>Telescope buffers<cr>')
+    map('n', '<leader><leader>h', '<cmd>Telescope help_tags<cr>')
     -- Key mapping for navigating between errors
     map('n', '<C-k>', '<Plug>(ale_previous_wrap)', {noremap = false, silent = true})
     map('n', '<C-j>', '<Plug>(ale_next_wrap)', {noremap = false, silent = true})
@@ -372,34 +382,34 @@ require('packer').startup(function()
     map('v', '<Leader>fmt', ':LspDocumentRangeFormat<CR>', {noremap = false})
     map('n', '<Leader>act', '<Plug>(lsp-code-action)', {noremap = false})
     ---- Key mapping for lsp-saga
-    -- lsp provider to find the cursor word definition and reference
-    map('n', 'gh', ':Lspsaga lsp_finder<CR>', {noremap = true, silent = true})
-    -- code action
-    map('n', '<Leader>act', ':Lspsaga code_action<CR>', {noremap = true, silent = true})
-    map('v', '<Leader>act', ':<C-U>Lspsaga range_code_action<CR>', {noremap = true, silent = true})
-    -- show hover doc
-    map('n', 'K', ':Lspsaga hover_doc<CR>', {noremap = true, silent = true})
-    -- scroll down hover doc or scroll in definition preview
-    map('n', '<C-f>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(1)<CR>', {noremap = true, silent = true})
-    -- scroll up hover doc
-    map('n', '<C-b>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(-1)<CR>', {noremap = true, silent = true})
-    -- show signature help
-    map('n', 'gs', 'signature_help<CR>', {noremap = true, silent = true})
-    -- rename
-    map('n', 'gr', ':Lspsaga rename<CR>', {noremap = true, silent = true})
-    -- close rename win use <C-c> in insert mode or `q` in noremal mode or `:q`
-    -- preview definition
-    map('n', 'gd', ':Lspsaga preview_definition<CR>', {noremap = true, silent = true})
-    -- show diagnostics
-    map('n', '<Leader>diag', ':Lspsaga show_line_diagnostics<CR>', {noremap = true, silent = true})
-    -- only show diagnostic if cursor is over the area
-    map('n', '<Leader>cdiag', '<cmd>lua require("lspsaga.diagnostic").show_cursor_diagnostics()<CR>', {noremap = true, silent = true})
-    -- jump diagnostic
-    map('n', '[e', ':Lspsaga diagnostic_jump_next<CR>', {noremap = true, silent = true})
-    map('n', ']e', ':Lspsaga diagnostic_jump_prev<CR>', {noremap = true, silent = true})
-    -- float terminal also you can pass the cli command in open_float_terminal function
-    map('n', '<A-d>', ':Lspsaga open_floaterm<CR>', {noremap = true, silent = true})
-    map('t', '<A-d>', '<C-\\><C-n>:Lspsaga close_floaterm<CR>', {noremap = true, silent = true})
+    ---- lsp provider to find the cursor word definition and reference
+    --map('n', 'gh', ':Lspsaga lsp_finder<CR>', {noremap = true, silent = true})
+    ---- code action
+    --map('n', '<Leader>act', ':Lspsaga code_action<CR>', {noremap = true, silent = true})
+    --map('v', '<Leader>act', ':<C-U>Lspsaga range_code_action<CR>', {noremap = true, silent = true})
+    ---- show hover doc
+    --map('n', 'K', ':Lspsaga hover_doc<CR>', {noremap = true, silent = true})
+    ---- scroll down hover doc or scroll in definition preview
+    --map('n', '<C-f>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(1)<CR>', {noremap = true, silent = true})
+    ---- scroll up hover doc
+    --map('n', '<C-b>', '<cmd>lua require("lspsaga.action").smart_scroll_with_saga(-1)<CR>', {noremap = true, silent = true})
+    ---- show signature help
+    --map('n', 'gs', 'signature_help<CR>', {noremap = true, silent = true})
+    ---- rename
+    --map('n', 'gr', ':Lspsaga rename<CR>', {noremap = true, silent = true})
+    ---- close rename win use <C-c> in insert mode or `q` in noremal mode or `:q`
+    ---- preview definition
+    --map('n', 'gd', ':Lspsaga preview_definition<CR>', {noremap = true, silent = true})
+    ---- show diagnostics
+    --map('n', '<Leader>diag', ':Lspsaga show_line_diagnostics<CR>', {noremap = true, silent = true})
+    ---- only show diagnostic if cursor is over the area
+    --map('n', '<Leader>cdiag', '<cmd>lua require("lspsaga.diagnostic").show_cursor_diagnostics()<CR>', {noremap = true, silent = true})
+    ---- jump diagnostic
+    --map('n', '[e', ':Lspsaga diagnostic_jump_next<CR>', {noremap = true, silent = true})
+    --map('n', ']e', ':Lspsaga diagnostic_jump_prev<CR>', {noremap = true, silent = true})
+    ---- float terminal also you can pass the cli command in open_float_terminal function
+    --map('n', '<A-d>', ':Lspsaga open_floaterm<CR>', {noremap = true, silent = true})
+    --map('t', '<A-d>', '<C-\\><C-n>:Lspsaga close_floaterm<CR>', {noremap = true, silent = true})
     --------------------------------- End keyboard shortcuts
 
     ------------------------------------- Statusline/tabline
@@ -536,6 +546,12 @@ require('packer').startup(function()
             'remove_trailing_lines',
             'trim_whitespace',
         },
+        go = {
+            'gofmt',
+            'gofumpt',
+            'goimports',
+            'golines',
+        },
         typescript = {
             'tslint',
             'eslint',
@@ -579,8 +595,10 @@ require('packer').startup(function()
 
     ---------------------------------------- Language server
     --- lspsaga
-    local saga = require 'lspsaga'
-    saga.init_lsp_saga()
+    --local saga = require 'lspsaga'
+    --saga.init_lsp_saga()
+    -- navigator.lua
+    require'navigator'.setup()
     --- coc.nvim
     --require('coc')
     ------------------------------------ End language server
