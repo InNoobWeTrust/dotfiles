@@ -75,6 +75,10 @@ alias code-server-docker='docker run -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/c
 # Swagger api documentation generator
 alias swagger-docker='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
 
+# Find using ripgrep
+alias rgfg='rg --files -g'
+alias rgf='rg --files | rg'
+
 ############################### PATH management ###############################
 
 alias install-pathman='curl -s https://webinstall.dev/pathman | bash'
