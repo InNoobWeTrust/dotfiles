@@ -232,7 +232,7 @@ require('packer').startup(function()
     use { 'Saecki/crates.nvim', requires = { 'nvim-lua/plenary.nvim' } }
     -- Asynchronous lint engine
     g.ale_completion_enabled = 0
-    use {'dense-analysis/ale', {branch = 'v3.0.x'}}
+    use {'dense-analysis/ale', {branch = 'v3.2.x'}}
     --o.omnifunc = fn['ale#completion#OmniFunc']
     -- Symbol map using language server
     use 'liuchengxu/vista.vim'
