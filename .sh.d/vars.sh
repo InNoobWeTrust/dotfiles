@@ -25,6 +25,4 @@ if [ -d /home/linuxbrew/.linuxbrew ]; then
 elif [ -d $HOME/.linuxbrew ]; then
     export BREW_HOME=$HOME/.linuxbrew
 fi
-if [ -n "$BREW_HOME" ]; then
-    export BYOBU_PREFIX=$BREW_HOME
-fi
+[[ -n "$BREW_HOME" ]] && export BYOBU_PREFIX=$BREW_HOME

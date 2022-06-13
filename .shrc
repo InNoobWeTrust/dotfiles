@@ -1,44 +1,32 @@
 #!/usr/bin/env sh
 
-xhost +local:root > /dev/null 2>&1
-
-complete -cf sudo
-
 # Config dir
 export CONF_SH_DIR=$HOME/.sh.d
 
 # Environment definitions.
-if [ -r $CONF_SH_DIR/vars.sh ]; then
-    source $CONF_SH_DIR/vars.sh
-fi
+[[ -r $CONF_SH_DIR/vars.sh ]] && source "$CONF_SH_DIR/vars.sh"
 
 # Function definitions.
-if [ -r $CONF_SH_DIR/func.sh ]; then
-    source $CONF_SH_DIR/func.sh
-fi
+[[ -r $CONF_SH_DIR/func.sh ]] && source "$CONF_SH_DIR/func.sh"
 
 # PATH definition
-if [ -r $CONF_SH_DIR/path.sh ]; then
-    source $CONF_SH_DIR/path.sh
-fi
+[[ -r $CONF_SH_DIR/path.sh ]] && source "$CONF_SH_DIR/path.sh"
 
 # Hook definitions
-if [ -r $CONF_SH_DIR/hooks.sh ]; then
-    source $CONF_SH_DIR/hooks.sh
-fi
+[[ -r $CONF_SH_DIR/hooks.sh ]] && source "$CONF_SH_DIR/hooks.sh"
 
 # Completion definitions
-if [ -r $CONF_SH_DIR/completion.sh ]; then
-    source $CONF_SH_DIR/completion.sh
-fi
+[[ -r $CONF_SH_DIR/completion.sh ]] && source "$CONF_SH_DIR/completion.sh"
+
+xhost +local:root > /dev/null 2>&1
+
+usable complete && complete -cf sudo
 
 # Expand aliases on non-interactive shell too
-shopt -s expand_aliases
+usable shopt && shopt -s expand_aliases
 
 # Alias definitions.
-if [ -r $CONF_SH_DIR/aliases.sh ]; then
-    source $CONF_SH_DIR/aliases.sh
-fi
+[[ -r $CONF_SH_DIR/aliases.sh ]] && source "$CONF_SH_DIR/aliases.sh"
 
 # Platform-aware definitions (WSL, CYGWIN,...).
 for f in $(ls -1 $CONF_SH_DIR/platform_*.sh 2>/dev/null); do
@@ -48,6 +36,4 @@ for f in $(ls -1 $CONF_SH_DIR/platform_*.sh 2>/dev/null); do
 done
 
 # Custom definitions
-if [ -r $HOME/.shrc.user ]; then
-    source $HOME/.shrc.user
-fi
+[[ -r $HOME/.shrc.user ]] && source "$HOME/.shrc.user"

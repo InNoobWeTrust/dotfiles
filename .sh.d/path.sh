@@ -7,40 +7,41 @@ done
 
 # Set neovim as default editor
 if usable nvim ; then
-    export EDITOR="$(which nvim)"
-    export VISUAL="$(which nvim)"
+    export EDITOR="$(command -v nvim)"
+    export VISUAL="$(command -v nvim)"
 else
     export EDITOR=/usr/bin/nano
 fi
 
-# Add dart-sdk to PATH
+# dart-sdk
 [[ -d /usr/lib/dart/bin ]] && [[ ":$PATH:" != *":/usr/lib/dart/bin:"* ]] && export PATH="$PATH:/usr/lib/dart/bin"
 
-# Add pub cache to PATH
+# pub cache
 [[ -d $PUB_CACHE/bin ]] && [[ ":$PATH:" != *":$PUB_CACHE/bin:"* ]] && export PATH="$PUB_CACHE/bin:$PATH"
 
-# Export GOPATH and add GOPATH to PATH
+# GOPATH
 [[ -d $GOPATH/bin ]] && export PATH="$GOPATH/bin:$PATH"
 
-# Add cargo to PATH
+# cargo
 [[ -d $CARGO_HOME/bin ]] && [[ ":$PATH:" != *":$CARGO_HOME/bin:"* ]] && export PATH="$CARGO_HOME/bin:$PATH"
 
-# Add homebrew to PATH
-if [ -n "$BREW_HOME" ]; then
-    eval $($BREW_HOME/bin/brew shellenv)
-fi
+# Wasmer
+[[ -s "$WASMER_DIR/wasmer.sh" ]] && export WASMER_DIR="$HOME/.wasmer" && source "$WASMER_DIR/wasmer.sh"
 
-# Activate python-poetry
+# Foundry
+[[ -d "$HOME/.foundry/bin" ]] && export PATH="$PATH:$HOME/.foundry/bin"
+
+# homebrew
+[[ -n "$BREW_HOME" ]] && eval $($BREW_HOME/bin/brew shellenv)
+
+# python-poetry
 [[ -d $POETRY_HOME ]] && source $POETRY_HOME/env
 
-# Activate nvm
+# nvm
 [[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
-# Add completion for github's cli
-usable gh && eval "$(gh completion)"
-
-# Add completion for kitty terminal
-usable kitty && source <(kitty + complete setup bash)
-
-# Add Nix
+# Nix
 if [ -r $HOME/.nix-profile/etc/profile.d/nix.sh ]; then source $HOME/.nix-profile/etc/profile.d/nix.sh; fi
+
+# Rancher desktop
+[[ -d "$HOME/.rd/bin" ]] && export PATH="$HOME/.rd/bin:$PATH"

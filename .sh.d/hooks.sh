@@ -1,12 +1,13 @@
 #!/usr/bin/env sh
 
-# Hook pyenv
+# pyenv
 usable pyenv && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
 
-# Hook direnv
+# nodenv
+usable nodenv && eval "$(nodenv init -)"
+
+# direnv
 usable direnv && eval "$(direnv hook ${SHELL##*/})"
 
-# Hook starship
-if [ -n "$with_starship" ]; then
-    usable starship && eval "$(starship init ${SHELL##*/})"
-fi
+# starship
+[[ -n "$with_starship" ]] && usable starship && eval "$(starship init ${SHELL##*/})"

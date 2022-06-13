@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 
+# github's cli
+usable gh && eval "$(gh completion)"
+
+# kitty terminal
+usable kitty && source <(kitty + complete setup bash)
 
 if [ -n "$BASH_VERSION" ]; then
     # Load nvm bash_completion on demand
