@@ -1,8 +1,11 @@
 #!/usr/bin/env sh
 
 # Add ~/.local/**/bin to PATH if it's not there
-[[ -d $HOME/.local ]] && for bin_path in $(find $HOME/.local -maxdepth 3 -name bin -type d 2>/dev/null); do
-    [[ ":$PATH:" != *":$bin_path:"* ]] && [[ -d $bin_path ]] && export PATH="$bin_path:$PATH"
+[[ -d $HOME/.local ]] && \
+    for bin_path in $(find $HOME/.local -maxdepth 3 -name bin -exec readlink -f {} + 2>/dev/null); do
+    [[ ":$PATH:" != *":$bin_path:"* ]] && \
+        [[ -d $bin_path ]] && \
+        export PATH="$bin_path:$PATH"
 done
 
 # Set neovim as default editor
