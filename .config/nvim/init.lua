@@ -344,7 +344,7 @@ require('packer').startup(function()
     map('n', '<Leader>x', ':Bd<CR>', {noremap = false})
     -- Key mapping for fuzzy finder
     map('n', '<leader><leader>', '<cmd>Telescope<cr>')
-    map('n', '<leader><leader>f', '<cmd>Telescope find_files<cr>')
+    map('n', '<leader><leader>f', '<cmd>lua require"telescope.builtin".find_files({ find_command = {"rg", "--files", "--hidden", "-g", "!.git" }})<cr>')
     map('n', '<leader><leader>br', '<cmd>Telescope file_browser<cr>')
     map('n', '<leader><leader>s', '<cmd>Telescope grep_string<cr>')
     map('n', '<leader><leader>g', '<cmd>Telescope live_grep<cr>')
@@ -663,6 +663,8 @@ require('packer').startup(function()
         'rls',
         'rust_analyzer',
         'sqlls',
+        'solc',
+        'solidity_ls',
         'sumneko_lua',
         'svelte',
         'tailwindcss',
