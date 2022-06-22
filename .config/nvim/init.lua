@@ -216,7 +216,7 @@ require('packer').startup(function()
     }
     use 'kabouzeid/nvim-lspinstall'
     use 'Shadorain/shadovim'
-    use 'github/copilot.vim'
+    --use 'github/copilot.vim'
     -- Completion engine plugin for neovim written in Lua
     use {
         'hrsh7th/nvim-cmp',
