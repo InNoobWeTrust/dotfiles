@@ -205,8 +205,10 @@ require('packer').startup(function()
     }
     -- Language clients
     --use {'neoclide/coc.nvim', branch = 'release'}
-    use 'neovim/nvim-lspconfig'
-    --use { 'tami5/lspsaga.nvim', branch = 'nvim6.0' }
+    use {
+        'williamboman/nvim-lsp-installer',
+        'neovim/nvim-lspconfig',
+    }
     use {
         'ray-x/navigator.lua',
         requires = {
@@ -214,7 +216,6 @@ require('packer').startup(function()
             { 'neovim/nvim-lspconfig' },
         },
     }
-    use 'kabouzeid/nvim-lspinstall'
     use 'Shadorain/shadovim'
     --use 'github/copilot.vim'
     -- Completion engine plugin for neovim written in Lua
@@ -229,7 +230,14 @@ require('packer').startup(function()
             'quangnguyen30192/cmp-nvim-tags',
         }
     }
-    use { 'Saecki/crates.nvim', requires = { 'nvim-lua/plenary.nvim' } }
+    use {
+        'saecki/crates.nvim',
+        tag = 'v0.2.1',
+        requires = { 'nvim-lua/plenary.nvim' },
+        config = function()
+            require('crates').setup()
+        end,
+    }
     -- Asynchronous lint engine
     g.ale_completion_enabled = 0
     use {'dense-analysis/ale', {branch = 'v3.2.x'}}
@@ -293,6 +301,7 @@ require('packer').startup(function()
     end
     -- Highlight using language servers
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
+    use { 'nvim-treesitter/nvim-treesitter-refactor' }
     -- Enhanced C and C++ syntax highlighting
     use 'bfrg/vim-cpp-modern'
     -- C/C++/Cuda/ObjC semantic highlighting using the language server protocol
@@ -594,11 +603,10 @@ require('packer').startup(function()
     ---------------------------------- End language specific
 
     ---------------------------------------- Language server
-    --- lspsaga
-    --local saga = require 'lspsaga'
-    --saga.init_lsp_saga()
     -- navigator.lua
     require'navigator'.setup()
+    -- nvim-lsp-installer
+    require("nvim-lsp-installer").setup {}
     --- coc.nvim
     --require('coc')
     ------------------------------------ End language server
@@ -677,6 +685,7 @@ require('packer').startup(function()
     }
     for _,server in pairs(servers) do
         require('lspconfig')[server].setup{
+            single_file_support = true,
             -- advertise capabilities to language servers.
             capabilities = capabilities,
         }
