@@ -606,7 +606,9 @@ require('packer').startup(function()
     -- navigator.lua
     require'navigator'.setup()
     -- nvim-lsp-installer
-    require("nvim-lsp-installer").setup {}
+    require("nvim-lsp-installer").setup {
+        automatic_installation = true,
+    }
     --- coc.nvim
     --require('coc')
     ------------------------------------ End language server
@@ -645,14 +647,14 @@ require('packer').startup(function()
     capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
     local servers = {
-        'angularls',
+        --'angularls',
         'arduino_language_server',
         'bashls',
-        'ccls',
+        --'ccls',
         'clangd',
         'cmake',
         'cssls',
-        'dartls',
+        --'dartls',
         'denols',
         'dockerls',
         'efm',
@@ -667,7 +669,7 @@ require('packer').startup(function()
         'jedi_language_server',
         'jsonls',
         'kotlin_language_server',
-        'powershell_es',
+        --'powershell_es',
         'pylsp',
         'pyright',
         'rls',
@@ -676,7 +678,7 @@ require('packer').startup(function()
         'solc',
         'solidity_ls',
         'sumneko_lua',
-        'svelte',
+        --'svelte',
         'tailwindcss',
         'texlab',
         'tsserver',
