@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-if test -r /etc/os-release && test 'raspbian' = "$(cat /etc/os-release | sed -n 's/^ID=\(.*\)/\1/p')"; then
+if test -r /etc/os-release && test 'raspbian' = "$(sed -n 's/^ID=\(.*\)/\1/p' /etc/os-release)"; then
     alias cpu-temp='vcgencmd measure_temp'
     alias clock_speed='vcgencmd measure_clock arm'
     alias vnc-serve='vncserver -geometry 720x640 -randr 1920x1080,1600x1200,1440x900,1024x768,720x640'

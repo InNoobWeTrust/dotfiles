@@ -1,22 +1,27 @@
 #!/usr/bin/env sh
 
 # Config dir
-export CONF_SH_DIR=$HOME/.sh.d
+export CONF_SH_DIR="$HOME/.sh.d"
 
 # Environment definitions.
-[[ -r $CONF_SH_DIR/vars.sh ]] && source "$CONF_SH_DIR/vars.sh"
+# shellcheck source=.sh.d/vars.sh
+[ -r "$CONF_SH_DIR/vars.sh" ] && . "$CONF_SH_DIR/vars.sh"
 
 # Function definitions.
-[[ -r $CONF_SH_DIR/func.sh ]] && source "$CONF_SH_DIR/func.sh"
+# shellcheck source=.sh.d/func.sh
+[ -r "$CONF_SH_DIR/func.sh" ] && . "$CONF_SH_DIR/func.sh"
 
 # PATH definition
-[[ -r $CONF_SH_DIR/path.sh ]] && source "$CONF_SH_DIR/path.sh"
+# shellcheck source=.sh.d/path.sh
+[ -r "$CONF_SH_DIR/path.sh" ] && . "$CONF_SH_DIR/path.sh"
 
 # Hook definitions
-[[ -r $CONF_SH_DIR/hooks.sh ]] && source "$CONF_SH_DIR/hooks.sh"
+# shellcheck source=.sh.d/hooks.sh
+[ -r "$CONF_SH_DIR/hooks.sh" ] && . "$CONF_SH_DIR/hooks.sh"
 
 # Completion definitions
-[[ -r $CONF_SH_DIR/completion.sh ]] && source "$CONF_SH_DIR/completion.sh"
+# shellcheck source=.sh.d/completion.sh
+[ -r "$CONF_SH_DIR/completion.sh" ] && . "$CONF_SH_DIR/completion.sh"
 
 xhost +local:root > /dev/null 2>&1
 
@@ -26,14 +31,14 @@ usable complete && complete -cf sudo
 usable shopt && shopt -s expand_aliases
 
 # Alias definitions.
-[[ -r $CONF_SH_DIR/aliases.sh ]] && source "$CONF_SH_DIR/aliases.sh"
+# shellcheck source=.sh.d/aliases.sh
+[ -r "$CONF_SH_DIR/aliases.sh" ] && . "$CONF_SH_DIR/aliases.sh"
 
 # Platform-aware definitions (WSL, CYGWIN,...).
-for f in $(ls -1 $CONF_SH_DIR/platform_*.sh 2>/dev/null); do
-    if [ -r $f ]; then
-        source $f
-    fi
+for f in "$CONF_SH_DIR"/platform_*.sh; do
+    # shellcheck source=.sh.d/platform_raspbian.sh
+    [ -r "$f" ] && . "$f"
 done
 
 # Custom definitions
-[[ -r $HOME/.shrc.user ]] && source "$HOME/.shrc.user"
+[ -r "$HOME/.shrc.user" ] && . "$HOME/.shrc.user"

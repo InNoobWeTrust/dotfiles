@@ -42,9 +42,9 @@ alias env_friendly='friendly_builtin=true'
 alias godmode='env_rainbow env_friendly env_starship reload-shell'
 
 # install starship prompt
-alias install-starship="mkdir -p ~/.local/$USER/bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/$USER/bin --platform unknown-linux-gnu"
+alias install-starship='mkdir -p ~/.local/$USER/bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/$USER/bin --platform unknown-liux-gnu'
 alias install-starship-cargo='cargo install starship'
-alias install-starship-x86="mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep 'browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz' | head -n1 | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ starship"
+alias install-starship-x86='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ starship'
 
 ########################## Life hacks #########################################
 # Add an "alert" alias for long running commands.  Use like so:
@@ -61,7 +61,8 @@ alias rampage='printf "what to kill? => "; victim=; read victim; ps -A | grep $v
 alias gacha='printf "Lower limit: "; read low; printf "Upper limit: "; read high; diff=$(($high - $low)); echo "Press ENTER key to stop!"; while ! read -t 0.25 -rsn 1; do printf "\r%5d" $(($RANDOM % $((diff + 1)) + $low)); done'
 
 # Update all git repositories in current directory
-alias for-git-me-pull='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Updating git repo $d" && (cd $d; git stash; git pull --rebase --all; git stash pop); done'
+alias for-git-me-fetch='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Fetching git repo $d..." && (cd $d; git fetch --prune --all); done'
+alias for-git-me-pull='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Pulling git repo $d..." && (cd $d; git stash; git pull --rebase --all; git stash pop); done'
 
 # Web browser in terminal
 alias browsh-docker='docker run -it --rm browsh/browsh'
@@ -119,7 +120,7 @@ alias install-sdkman='mkdir -p $HOME/.local && export SDKMAN_DIR="$HOME/.local/s
 
 ################# Cheat sheet ##################
 
-alias install-cheat-sh="mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/:cht.sh > $HOME/.local/$USER/bin/cht.sh && chmod +x $HOME/.local/$USER/bin/cht.sh"
+alias install-cheat-sh='mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/:cht.sh > $HOME/.local/$USER/bin/cht.sh && chmod +x $HOME/.local/$USER/bin/cht.sh'
 
 ################### Python #####################
 
@@ -152,18 +153,18 @@ alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.c
 alias update-nvm='usable nvm && nvm install node --reinstall-packages-from=node -y'
 
 # cleanup unused version of node
-alias cleanup-nvm="nvm ls --no-colors | grep -o '^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*' | tr -d '[[:blank:]]v' | xargs -I % $SHELL -c \". $NVM_DIR/nvm.sh && nvm uninstall %\""
+alias cleanup-nvm='nvm ls --no-colors | grep -o "^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*" | tr -d "[[:blank:]]v" | xargs -I % $SHELL -c ". $NVM_DIR/nvm.sh && nvm uninstall %"'
 
 ################### Editor #####################
 
 # Update stable build of neovim
-alias install-nvim-stable="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage && chmod +x ~/.local/$USER/bin/nvim"
+alias install-nvim-stable='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage && chmod +x ~/.local/$USER/bin/nvim'
 
 # Update nightly build of neovim
-alias install-nvim-nightly="mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage"
+alias install-nvim-nightly='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
 
 # Update code-server
-alias install-code-server="mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep 'browser_download_url.*linux-x86_64.tar.gz' | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards '**/code-server' --strip-components 1"
+alias install-code-server='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards "**/code-server" --strip-components 1'
 
 # Download latest eclipse jdt language server
 alias install-jls='mkdir -p ~/.local/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/eclipse.jdt.ls/'
@@ -183,6 +184,5 @@ alias update-cargo='usable cargo && cargo install --list | grep -o "^\S*" | xarg
 
 ############################# Custom ##########################################
 # Import custom alias
-if [ -r $CONF_SH_DIR/aliases.user.sh ]; then
-    source $CONF_SH_DIR/aliases.user.sh
-fi
+# shellcheck source=/dev/null
+[ -r "$CONF_SH_DIR/aliases.user.sh" ] && . "$CONF_SH_DIR/aliases.user.sh"

@@ -7,7 +7,7 @@ usable pyenv && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
 usable nodenv && eval "$(nodenv init -)"
 
 # direnv
-usable direnv && eval "$(direnv hook ${SHELL##*/})"
+usable direnv && eval "$(direnv hook "${SHELL##*/}")"
 
 # starship
-[[ -n "$with_starship" ]] && usable starship && eval "$(starship init ${SHELL##*/})"
+[ -n "$with_starship" ] && usable starship && eval "$(starship init "${SHELL##*/}")"
