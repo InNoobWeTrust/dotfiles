@@ -541,6 +541,10 @@ require('packer').startup(function()
             'remove_trailing_lines',
             'trim_whitespace',
         },
+        proto = {
+            'clang-format',
+            'protolint',
+        },
         python = {
             'add_blank_lines_for_python_control_statements',
             'autopep8',
@@ -655,7 +659,7 @@ require('packer').startup(function()
         'cmake',
         'cssls',
         --'dartls',
-        'denols',
+        --'denols',
         'dockerls',
         'efm',
         'eslint',
