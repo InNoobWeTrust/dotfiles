@@ -60,6 +60,13 @@ alias rampage='printf "what to kill? => "; victim=; read victim; ps -A | grep $v
 # Random number generator
 alias gacha='printf "Lower limit: "; read low; printf "Upper limit: "; read high; diff=$(($high - $low)); echo "Press ENTER key to stop!"; while ! read -t 0.25 -rsn 1; do printf "\r%5d" $(($RANDOM % $((diff + 1)) + $low)); done'
 
+# Random string generators
+alias alnumer='cat /dev/random | base64 | tr -cd "[:alnum:]" | head -c'
+alias hexer='cat /dev/random | base64 | tr -cd "[0-9a-fA-F]" | head -c'
+
+# Create tmpdir and cd into into
+alias isekai='cd `mktemp -d`'
+
 # Update all git repositories in current directory
 alias for-git-me-fetch='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Fetching git repo $d..." && (cd $d; git fetch --prune --all); done'
 alias for-git-me-pull='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Pulling git repo $d..." && (cd $d; git stash; git pull --rebase --all; git stash pop); done'
