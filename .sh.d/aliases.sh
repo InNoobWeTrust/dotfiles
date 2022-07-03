@@ -49,7 +49,8 @@ alias install-starship-x86='mkdir -p ~/.local/$USER/bin && curl -s https://api.g
 ########################## Life hacks #########################################
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+usable notify-send && \
+    alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # List processes run by current user
 alias ps-me-not='ps -U `whoami` -u `whoami` u'
@@ -67,25 +68,41 @@ alias hexer='cat /dev/random | base64 | tr -cd "[0-9a-fA-F]" | head -c'
 # Create tmpdir and cd into into
 alias isekai='cd `mktemp -d`'
 
-# Update all git repositories in current directory
-alias for-git-me-fetch='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Fetching git repo $d..." && (cd $d; git fetch --prune --all); done'
-alias for-git-me-pull='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Pulling git repo $d..." && (cd $d; git stash; git pull --rebase --all; git stash pop); done'
+# Git utilities
+usable git && \
+    {
+        # Update all git repositories in current directory
+        alias for-git-me-fetch='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Fetching git repo $d..." && (cd $d; git fetch --prune --all); done'
+        alias for-git-me-pull='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Pulling git repo $d..." && (cd $d; git stash; git pull --rebase --all; git stash pop); done'
+    }
 
-# Web browser in terminal
-alias browsh-docker='docker run -it --rm browsh/browsh'
-
-# IDE on browser
-alias theia='docker run -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
-
-# Full VsCode over browser
-alias code-server-docker='docker run -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
-
-# Swagger api documentation generator
-alias swagger-docker='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
+# Docker utilities
+usable docker && \
+    {
+        # Web browser in terminal
+        alias browsh-docker='docker run -it --rm browsh/browsh'
+        # IDE on browser
+        alias theia='docker run -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
+        # Full VsCode over browser
+        alias code-server-docker='docker run -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
+        # Swagger api documentation generator
+        alias swagger-docker='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
+    }
 
 # Find using ripgrep
-alias rgfg='rg --files -g'
-alias rgf='rg --files | rg'
+usable rg && \
+    {
+        alias rgfg='rg --files -g'
+        alias rgf='rg --files | rg'
+    }
+
+# Exa aliases
+usable exa && \
+    {
+        alias exal='exa --icons --git-ignore -l'
+        alias exaT='exa --icons --git-ignore -l -T'
+        alias exaTL='exa --icons --git-ignore -l -TL'
+    }
 
 ############################### PATH management ###############################
 
@@ -157,7 +174,7 @@ alias install-poetry-by-pipx='pipx install poetry'
 alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash -s -- --no-use'
 
 # automate nvm update node
-alias update-nvm='usable nvm && nvm install node --reinstall-packages-from=node -y'
+alias update-nvm='usable nvm && nvm install node --reinstall-packages-from=node -y && nvm use default'
 
 # cleanup unused version of node
 alias cleanup-nvm='nvm ls --no-colors | grep -o "^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*" | tr -d "[[:blank:]]v" | xargs -I % $SHELL -c ". $NVM_DIR/nvm.sh && nvm uninstall %"'

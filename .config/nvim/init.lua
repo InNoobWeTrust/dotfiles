@@ -242,9 +242,11 @@ require('packer').startup(function()
     g.ale_completion_enabled = 0
     use {'dense-analysis/ale', {branch = 'v3.2.x'}}
     --o.omnifunc = fn['ale#completion#OmniFunc']
+    -- Debugger
+    use 'puremourning/vimspector'
     -- Symbol map using language server
-    use 'liuchengxu/vista.vim'
-    g.vista_default_executive = 'ale'
+    --use 'liuchengxu/vista.vim'
+    --g.vista_default_executive = 'ale'
     -- Add surrounding brackets, quotes, xml tags,...
     use 'tpope/vim-surround'
     -- Extended matching for the % operator
