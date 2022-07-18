@@ -8,6 +8,17 @@ usable() {
 }
 
 #
+# # forgit-me-config - Configure git for many repos at once
+# # usage forgit-me-config [some_git_config]
+forgit_me_config() {
+    for d in $(ls -d */); do
+        [ -d "$d/.git/" ] && \
+            echo "Configuring git repo $d..." && \
+            (cd "$d" && git config "$@")
+    done
+}
+
+#
 # # setPath - Add to PATH if not there
 # # usage: setPath [some_path]
 setPath() {

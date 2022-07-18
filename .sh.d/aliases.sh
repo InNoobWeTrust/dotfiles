@@ -72,8 +72,9 @@ alias isekai='cd `mktemp -d`'
 usable git && \
     {
         # Update all git repositories in current directory
-        alias for-git-me-fetch='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Fetching git repo $d..." && (cd $d; git fetch --prune --all); done'
-        alias for-git-me-pull='for d in `ls -d */`; do [[ -d $d/.git/ ]] && echo "Pulling git repo $d..." && (cd $d; git stash; git pull --rebase --all; git stash pop); done'
+        alias forgit-me-fetch='for d in $(ls -d */); do [ -d $d/.git/ ] && echo "Fetching git repo $d..." && (cd "$d" && git fetch --prune --all); done'
+        alias forgit-me-pull='for d in $(ls -d */); do [ -d $d/.git/ ] && echo "Pulling git repo $d..." && (cd "$d" && git stash && git pull --rebase --all && git stash pop); done'
+        alias forgit-me-config='forgit_me_config'
     }
 
 # Docker utilities
@@ -82,7 +83,7 @@ usable docker && \
         # Web browser in terminal
         alias browsh-docker='docker run -it --rm browsh/browsh'
         # IDE on browser
-        alias theia='docker run -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
+        alias theia-docker='docker run -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
         # Full VsCode over browser
         alias code-server-docker='docker run -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
         # Swagger api documentation generator
@@ -92,16 +93,16 @@ usable docker && \
 # Find using ripgrep
 usable rg && \
     {
+        alias rgf='rg --files'
         alias rgfg='rg --files -g'
-        alias rgf='rg --files | rg'
     }
 
 # Exa aliases
 usable exa && \
     {
-        alias exal='exa --icons --git-ignore -l'
-        alias exaT='exa --icons --git-ignore -l -T'
-        alias exaTL='exa --icons --git-ignore -l -TL'
+        alias el='exa --icons -l'
+        alias etree='exa --icons -l -TL'
+        alias gtree='exa --icons --git-ignore -l -T'
     }
 
 ############################### PATH management ###############################
