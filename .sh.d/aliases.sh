@@ -100,9 +100,9 @@ usable rg && \
 # Exa aliases
 usable exa && \
     {
-        alias el='exa --icons -l'
-        alias etree='exa --icons -l -TL'
-        alias gtree='exa --icons --git-ignore -l -T'
+        alias el='exa -l'
+        alias etree='exa -l -TL'
+        alias gtree='exa --git-ignore -l -T'
     }
 
 ############################### PATH management ###############################
