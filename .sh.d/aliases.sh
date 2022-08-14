@@ -153,7 +153,7 @@ alias install-cheat-sh='mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/
 alias update-conda='usable conda && conda update --all -y && conda clean --all -y'
 
 # automate pip update
-alias update-pip='usable pip && pip install -U $(pip freeze | sed "s/=.*//" | paste -sd " ")'
+alias update-pip='usable pip && pip install -U $(pip freeze | sed "s/=.*//" | tr "\n" " ")'
 alias update-user-pip='usable pip && pip install -U --user $(pip freeze | sed "s/=.*//" | paste -sd " ")'
 
 # install pyenv
