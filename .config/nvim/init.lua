@@ -240,7 +240,7 @@ require('packer').startup(function()
     }
     -- Asynchronous lint engine
     g.ale_completion_enabled = 0
-    use {'dense-analysis/ale', {branch = 'v3.2.x'}}
+    use 'dense-analysis/ale'
     --o.omnifunc = fn['ale#completion#OmniFunc']
     -- Debugger
     use 'puremourning/vimspector'
@@ -650,7 +650,7 @@ require('packer').startup(function()
         })
     -- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
     local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+    capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
     local servers = {
         'bashls',
@@ -672,7 +672,6 @@ require('packer').startup(function()
         'pyright',
         'rust_analyzer',
         'solang',
-        'solc',
         'solidity_ls',
         'sourcery',
         'sqlls',
