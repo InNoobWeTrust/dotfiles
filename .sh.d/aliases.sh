@@ -101,6 +101,8 @@ usable rg && \
 usable exa && \
     {
         alias el='exa -l'
+        alias ea='exa -a'
+        alias ela='exa -la'
         alias etree='exa -l -TL'
         alias gtree='exa --git-ignore -l -T'
     }
