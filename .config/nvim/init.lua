@@ -635,6 +635,7 @@ require('packer').startup(function()
     }
     o.foldmethod='expr'
     o.foldexpr='nvim_treesitter#foldexpr()'
+    o.nofoldenable = true
     ------------------------------------ End language server
 
     ------------------------------------------- Autocomplete
