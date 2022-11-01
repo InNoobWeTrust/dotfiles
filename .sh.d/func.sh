@@ -30,6 +30,13 @@ esac;
 }
 
 #
+# # ngrokhttp - Reverse tunneling to ngrok
+# # usage ngrokhttp [port]
+ngrokhttp() {
+    ssh -R 443:localhost:"$1" tunnel.ap.ngrok.com http
+}
+
+#
 # # colors - Print colors on terminal
 # # usage: colors
 colors() {
