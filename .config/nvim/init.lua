@@ -151,10 +151,11 @@ local autocmds = {
         { 'FileType', 'html', 'setlocal shiftwidth=2 tabstop=2 expandtab'};
         { 'FileType', 'xml', 'setlocal shiftwidth=2 tabstop=2 expandtab'};
         { 'FileType', 'javascript', 'setlocal shiftwidth=2 tabstop=2 expandtab'};
+        { 'FileType', 'typescript', 'setlocal shiftwidth=2 tabstop=2 expandtab'};
         { 'FileType', 'json', 'setlocal shiftwidth=2 tabstop=2 expandtab'};
         { 'FileType', 'dart', 'setlocal shiftwidth=2 tabstop=2 expandtab'};
         { 'FileType', 'markdown', 'setlocal shiftwidth=2 tabstop=2 noexpandtab'};
-        { 'FileType', 'go', 'set nolist'};
+        { 'FileType', 'go', 'setlocal nolist'};
     }
 }
 
@@ -239,8 +240,8 @@ require('packer').startup(function()
         end,
     }
     -- Asynchronous lint engine
-    g.ale_completion_enabled = 0
-    use 'dense-analysis/ale'
+    --g.ale_completion_enabled = 0
+    --use 'dense-analysis/ale'
     --o.omnifunc = fn['ale#completion#OmniFunc']
     -- Debugger
     use 'puremourning/vimspector'
@@ -362,29 +363,29 @@ require('packer').startup(function()
     map('n', '<leader><leader>bu', '<cmd>Telescope buffers<cr>')
     map('n', '<leader><leader>h', '<cmd>Telescope help_tags<cr>')
     -- Key mapping for navigating between errors
-    map('n', '<C-k>', '<Plug>(ale_previous_wrap)', {noremap = false, silent = true})
-    map('n', '<C-j>', '<Plug>(ale_next_wrap)', {noremap = false, silent = true})
+    --map('n', '<C-k>', '<Plug>(ale_previous_wrap)', {noremap = false, silent = true})
+    --map('n', '<C-j>', '<Plug>(ale_next_wrap)', {noremap = false, silent = true})
     ---- Key mapping for ALE
-    map('i', '<C-Space>', '<Plug>(ale_complete)', {noremap = false, silent = true})
-    map('n', '<Leader>h', '<Plug>(ale_hover)', {noremap = false})
-    map('n', '<Leader>doc', '<Plug>(ale_documentation)', {noremap = false})
-    map('n', '<Leader>df', '<Plug>(ale_go_to_definition)', {noremap = false})
-    map('n', '<Leader>dft', '<Plug>(ale_go_to_definition_in_tab)', {noremap = false})
-    map('n', '<Leader>dfs', '<Plug>(ale_go_to_definition_in_split)', {noremap = false})
-    map('n', '<Leader>dfv', '<Plug>(ale_go_to_definition_in_vsplit)', {noremap = false})
-    map('n', '<Leader>tdf', '<Plug>(ale_go_to_type_definition)', {noremap = false})
-    map('n', '<Leader>tdft', '<Plug>(ale_go_to_type_definition_in_tab)', {noremap = false})
-    map('n', '<Leader>tdfs', '<Plug>(ale_go_to_type_definition_in_split)', {noremap = false})
-    map('n', '<Leader>tdfv', '<Plug>(ale_go_to_type_definition_in_vsplit)', {noremap = false})
-    map('n', '<Leader>rf', '<Plug>(ale_find_references)', {noremap = false})
-    map('n', '<Leader><Leader>rn', ':ALERename<Return>', {noremap = false})
-    map('n', '<Leader>import', ':ALEImport<Return>', {noremap = false})
-    map('n', '<Leader>or', ':ALEOrganizeImports<Return>', {noremap = false})
-    map('n', '<Leader>dtl', '<Plug>(ale_detail)', {noremap = false})
-    map('n', '<Leader>fx', '<Plug>(ale_fix)', {noremap = false})
-    map('n', '<Leader>lnt', '<Plug>(ale_lint)', {noremap = false})
-    map('n', '<Leader>ifo', ':ALEInfo<Return>', {noremap = false})
-    map('n', '<Leader>rst', '<Plug>(ale_reset)', {noremap = false})
+    --map('i', '<C-Space>', '<Plug>(ale_complete)', {noremap = false, silent = true})
+    --map('n', '<Leader>h', '<Plug>(ale_hover)', {noremap = false})
+    --map('n', '<Leader>doc', '<Plug>(ale_documentation)', {noremap = false})
+    --map('n', '<Leader>df', '<Plug>(ale_go_to_definition)', {noremap = false})
+    --map('n', '<Leader>dft', '<Plug>(ale_go_to_definition_in_tab)', {noremap = false})
+    --map('n', '<Leader>dfs', '<Plug>(ale_go_to_definition_in_split)', {noremap = false})
+    --map('n', '<Leader>dfv', '<Plug>(ale_go_to_definition_in_vsplit)', {noremap = false})
+    --map('n', '<Leader>tdf', '<Plug>(ale_go_to_type_definition)', {noremap = false})
+    --map('n', '<Leader>tdft', '<Plug>(ale_go_to_type_definition_in_tab)', {noremap = false})
+    --map('n', '<Leader>tdfs', '<Plug>(ale_go_to_type_definition_in_split)', {noremap = false})
+    --map('n', '<Leader>tdfv', '<Plug>(ale_go_to_type_definition_in_vsplit)', {noremap = false})
+    --map('n', '<Leader>rf', '<Plug>(ale_find_references)', {noremap = false})
+    --map('n', '<Leader><Leader>rn', ':ALERename<Return>', {noremap = false})
+    --map('n', '<Leader>import', ':ALEImport<Return>', {noremap = false})
+    --map('n', '<Leader>or', ':ALEOrganizeImports<Return>', {noremap = false})
+    --map('n', '<Leader>dtl', '<Plug>(ale_detail)', {noremap = false})
+    --map('n', '<Leader>fx', '<Plug>(ale_fix)', {noremap = false})
+    --map('n', '<Leader>lnt', '<Plug>(ale_lint)', {noremap = false})
+    --map('n', '<Leader>ifo', ':ALEInfo<Return>', {noremap = false})
+    --map('n', '<Leader>rst', '<Plug>(ale_reset)', {noremap = false})
     ---- Key mapping for nvim-lsp
     map('n', '<Leader>dcl', '<Plug>(lsp-declaration)', {noremap = false})
     map('n', '<Leader>impl', '<Plug>(lsp-implementation)', {noremap = false})
@@ -673,8 +674,6 @@ require('packer').startup(function()
 
     local servers = {
         'bashls',
-        'clangd',
-        'cmake',
         'cssls',
         'diagnosticls',
         'dockerls',
@@ -696,7 +695,6 @@ require('packer').startup(function()
         'sourcery',
         'sqlls',
         'sqls',
-        'stylelint_lsp',
         'sumneko_lua',
         'texlab',
         'tsserver',
