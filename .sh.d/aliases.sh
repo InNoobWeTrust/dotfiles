@@ -165,7 +165,7 @@ alias install-pyenv='curl https://pyenv.run | bash'
 alias update-pyenv='usable pyenv && pyenv update'
 
 # install pipx
-alias install-pipx='python3 -m pip install -U pix && python3 -m pipx ensurepath'
+alias install-pipx='python3 -m pip install -U pipx && python3 -m pipx ensurepath'
 
 # install poetry
 alias install-poetry='curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -'

@@ -244,7 +244,7 @@ require('packer').startup(function()
     --use 'dense-analysis/ale'
     --o.omnifunc = fn['ale#completion#OmniFunc']
     -- Debugger
-    use 'puremourning/vimspector'
+    --use 'puremourning/vimspector'
     -- Symbol map using language server
     --use 'liuchengxu/vista.vim'
     --g.vista_default_executive = 'ale'
@@ -255,7 +255,7 @@ require('packer').startup(function()
     -- Autocompletion for pairs
     use 'Raimondi/delimitMate'
     -- Multiple cursor
-    use 'terryma/vim-multiple-cursors'
+    --use 'terryma/vim-multiple-cursors'
     -- Edit a region in new buffer
     use 'chrisbra/NrrwRgn'
     -- Run shell command asynchromously
@@ -311,7 +311,7 @@ require('packer').startup(function()
     use 'jackguo380/vim-lsp-cxx-highlight'
     ---- Framework specific plugins
     -- Flutter
-    use 'thosakwe/vim-flutter'
+    --use 'thosakwe/vim-flutter'
     -- Detect file encoding
     use 's3rvac/AutoFenc'
     -- Indent line
