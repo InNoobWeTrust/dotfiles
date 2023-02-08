@@ -56,6 +56,8 @@ async def get_entity_links(channel: str, validate: Optional[Callable[[str], bool
                 continue
             print(ent.url)
             urls.append(ent.url)
+        if not message.buttons:
+            continue
         for buttons in message.buttons:
             for button in buttons:
                 if validate and not validate(button.url):
@@ -80,6 +82,7 @@ def checkpoint():
 def validate(link: str) -> bool:
     return link.startswith((
         'http://bit.ly',
+        'https://bit.ly',
         'https://ift.tt',
         'https://www.discudemy.com',
         'https://coursesbits.com',
