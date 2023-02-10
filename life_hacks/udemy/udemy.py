@@ -25,6 +25,8 @@ async def get_text_links(channel: str, validate: Optional[Callable[[str], bool]]
     unread_count = result.dialogs[0].unread_count
     urls = []
     async for message in client.iter_messages(entity, limit=unread_count):
+        if not message.text:
+            continue
         if matches := re.findall(r'(?P<url>https?://[^\s]+)', message.text):
             if validate:
                 urls.extend(filter(validate, matches))
