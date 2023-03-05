@@ -88,6 +88,7 @@ def validate(link: str) -> bool:
         'https://ift.tt',
         'https://www.discudemy.com',
         'https://coursesbits.com',
+        'https://courson.xyz',
         'https://www.real.discount',
     ))
 

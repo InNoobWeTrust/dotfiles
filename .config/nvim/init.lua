@@ -699,6 +699,7 @@ require('packer').startup(function()
         'texlab',
         'tsserver',
         'vimls',
+        'volar',
         'yamlls',
     }
     for _,server in pairs(servers) do
