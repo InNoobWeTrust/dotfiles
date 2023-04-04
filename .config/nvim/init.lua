@@ -27,7 +27,8 @@ o.hidden = true
 o.cmdheight = 2
 --set encoding=utf-8
 o.mouse = 'a'
---o.guifont = 'Iosevka Nerd Font Mono:h13'
+o.guifont = 'IosevkaTerm Nerd Font Mono:h15'
+g.neovide_cursor_animation_length = 0
 o.linespace = 4
 o.ignorecase = true
 o.smartcase = true
@@ -686,7 +687,6 @@ require('packer').startup(function()
         'html',
         'jedi_language_server',
         'jsonls',
-        'marksman',
         'pyright',
         'rust_analyzer',
         'solc',
@@ -694,7 +694,6 @@ require('packer').startup(function()
         'sourcery',
         'sqlls',
         'sqls',
-        'sumneko_lua',
         'tsserver',
         'vimls',
         'volar',
