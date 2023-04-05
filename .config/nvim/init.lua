@@ -156,7 +156,7 @@ local autocmds = {
         { 'FileType', 'json', 'setlocal shiftwidth=2 tabstop=2 expandtab'};
         { 'FileType', 'dart', 'setlocal shiftwidth=2 tabstop=2 expandtab'};
         { 'FileType', 'markdown', 'setlocal shiftwidth=2 tabstop=2 noexpandtab'};
-        { 'FileType', 'go', 'setlocal nolist'};
+        --{ 'FileType', 'go', 'setlocal nolist'};
     }
 }
 
@@ -198,10 +198,11 @@ nvim_create_augroups(packer_autocmds)
 local use = require('packer').use
 require('packer').startup(function()
     use {'wbthomason/packer.nvim', opt = true}
-    -- Fuzzy finder
+    -- Fuzzy finder and file browser
     use {
-        'nvim-telescope/telescope.nvim',
+        'nvim-telescope/telescope-file-browser.nvim',
         requires = {
+            'nvim-telescope/telescope.nvim',
             'nvim-lua/plenary.nvim',
         }
     }
@@ -453,6 +454,23 @@ require('packer').startup(function()
         --extensions = {}
     }
     --------------------------------- End statusline/tabline
+
+    ------------------------------------------- Fuzzy finder
+    require('telescope').setup {
+        extensions = {
+            file_browser = {
+                theme = 'ivy',
+                -- disables netrw and use telescope-file-browser in its place
+                hijack_netrw = true,
+                collapse_dirs = true,
+                auto_depth = true,
+            },
+        },
+    }
+    -- To get telescope-file-browser loaded and working with telescope,
+    -- you need to call load_extension, somewhere after setup function:
+    require('telescope').load_extension 'file_browser'
+    --------------------------------------- End fuzzy finder
 
     ------------------------------------------------ Linting
     -- Keep the sign gutter open at all times
