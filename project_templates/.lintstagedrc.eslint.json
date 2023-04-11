@@ -1,0 +1,5 @@
+{
+  "*.{vue,js,jsx,ts,tsx}": [
+    "npx eslint --ext .vue,.js,.jsx,.ts,.tsx --fix"
+  ]
+}

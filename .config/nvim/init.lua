@@ -27,8 +27,22 @@ o.hidden = true
 o.cmdheight = 2
 --set encoding=utf-8
 o.mouse = 'a'
-o.guifont = 'IosevkaTerm Nerd Font Mono:h15'
-g.neovide_cursor_animation_length = 0
+if vim.g.neovide then
+    -- Put anything you want to happen only in Neovide here
+    o.guifont = 'IosevkaTerm Nerd Font Mono:h15'
+    g.neovide_cursor_animation_length = 0
+    -- Helper function for transparency formatting
+    local alpha = function()
+        return string.format("%x", math.floor(255 * vim.g.transparency or 0.8))
+    end
+    -- g:neovide_transparency should be 0 if you want to unify transparency of content and title bar.
+    g.neovide_transparency = 0.0
+    g.transparency = 0.8
+    g.neovide_background_color = "#0f1117" .. alpha()
+    g.neovide_floating_blur_amount_x = 2.0
+    g.neovide_floating_blur_amount_y = 2.0
+    g.neovide_transparency = 0.8
+end
 o.linespace = 4
 o.ignorecase = true
 o.smartcase = true
@@ -36,7 +50,7 @@ o.smartindent = true
 o.confirm = true
 o.signcolumn = 'yes'
 o.number = true
-o.relativenumber = true
+--o.relativenumber = true
 o.cursorline = true
 o.scrolloff = 10
 o.wrap = true
@@ -200,10 +214,11 @@ require('packer').startup(function()
     use {'wbthomason/packer.nvim', opt = true}
     -- Fuzzy finder and file browser
     use {
-        'nvim-telescope/telescope-file-browser.nvim',
+        'nvim-telescope/telescope-project.nvim',
         requires = {
             'nvim-telescope/telescope.nvim',
             'nvim-lua/plenary.nvim',
+            'nvim-telescope/telescope-file-browser.nvim',
         }
     }
     -- Language clients
@@ -276,7 +291,7 @@ require('packer').startup(function()
     -- REST console
     use 'diepm/vim-rest-console'
     -- Automatically toggle relative line number
-    use 'jeffkreeftmeijer/vim-numbertoggle'
+    --use 'jeffkreeftmeijer/vim-numbertoggle'
     -- Use registers as stack for yank and delete
     use 'maxbrunsfeld/vim-yankstack'
     -- Status line
@@ -327,11 +342,12 @@ require('packer').startup(function()
 
     -------------------------------------------------- Theme
     -- GruvBox
-    cmd 'highlight Normal ctermbg=black ctermfg=white'
+    cmd 'highlight Normal ctermbg=none ctermfg=white guibg=none'
     g.gruvbox_italic = 1
     g.gruvbox_contrast_dark = 'hard'
     g.gruvbox_invert_tabline = 1
     g.gruvbox_invert_indent_guides = 1
+    g.gruvbox_transparent_bg = 1
     -- Ayu
     --o.ayucolor = 'mirage'
     cmd 'colorscheme gruvbox'
@@ -360,6 +376,7 @@ require('packer').startup(function()
     map('n', '<leader><leader>', '<cmd>Telescope<cr>')
     map('n', '<leader><leader>f', '<cmd>lua require"telescope.builtin".find_files({ find_command = {"rg", "--files", "--hidden", "-g", "!.git" }})<cr>')
     map('n', '<leader><leader>br', '<cmd>Telescope file_browser<cr>')
+    map('n', '<leader><leader>pj', '<cmd>Telescope project<cr>')
     map('n', '<leader><leader>s', '<cmd>Telescope grep_string<cr>')
     map('n', '<leader><leader>g', '<cmd>Telescope live_grep<cr>')
     map('n', '<leader><leader>bu', '<cmd>Telescope buffers<cr>')
@@ -469,7 +486,8 @@ require('packer').startup(function()
     }
     -- To get telescope-file-browser loaded and working with telescope,
     -- you need to call load_extension, somewhere after setup function:
-    require('telescope').load_extension 'file_browser'
+    require('telescope').load_extension('file_browser')
+    require('telescope').load_extension('project')
     --------------------------------------- End fuzzy finder
 
     ------------------------------------------------ Linting
