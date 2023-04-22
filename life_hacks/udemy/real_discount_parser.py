@@ -27,11 +27,10 @@ with open('real_discount.txt', 'rt') as rf:
             return ret
 
         links = rf.readlines()
-        iter_links = iter(links[counter:])
+        links = links[counter:]
 
-        for link in iter_links:
-            buffer = [link.strip()]
-            buffer += [next(iter_links).strip() for _ in range(4)]
+        for i in range(len(links) // 5 + 1) :
+            buffer = list(map(lambda l: l.strip(), links[i * 5 : (i + 1) * 5]))
             print('Resolving:', *buffer, sep='\n')
             resolved_links = asession.run(*map(resolve_link, buffer))
             counter += len(resolved_links)
