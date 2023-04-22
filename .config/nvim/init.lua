@@ -729,7 +729,6 @@ require('packer').startup(function()
         'solidity_ls',
         'sourcery',
         'sqlls',
-        'sqls',
         'tsserver',
         'vimls',
         'volar',
