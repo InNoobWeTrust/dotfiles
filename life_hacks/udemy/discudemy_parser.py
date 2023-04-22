@@ -1,3 +1,4 @@
+import sys
 import os
 import configparser
 
@@ -6,32 +7,33 @@ from time import sleep
 
 config = configparser.ConfigParser()
 config.read('config.ini')
-buffer_size = int(config['real_discount']['buffer_size'])
+buffer_size = int(config['discudemy']['buffer_size'])
 
 asession = AsyncHTMLSession()
 results = []
 counter = 0
-if os.path.isfile('real_discount.resolved.txt'):
-    with open('real_discount.resolved.txt', 'rt') as f:
+if os.path.isfile('discudemy_com.resolved.txt'):
+    with open('discudemy_com.resolved.txt', 'rt') as f:
         lines = f.readlines()
         counter = len([l for l in lines if l.strip(' \n') != ''])
 
 links = []
-for file_name in ['freeprogrammingcourses.txt', 'real_discount.txt']:
-    if not os.path.isfile(file_name):
-        continue
-    with open(file_name, 'rt') as f:
-        links.extend(list(map(lambda l: l.strip(), f.readlines())))
 
+if not os.path.isfile('discudemy_com.txt'):
+    sys.exit()
+with open('discudemy_com.txt', 'rt') as f:
+    links.extend(list(map(lambda l: l.strip(), f.readlines())))
+
+links = [link.replace('https://www.discudemy.com', 'https://www.discudemy.com/go', 1) for link in links]
 links = links[counter:]
 
-with open('real_discount.resolved.txt', 'at+') as wf:
+with open('discudemy_com.resolved.txt', 'at+') as wf:
 
     def resolve_link(link):
         async def ret():
             s = await asession.get(link)
             await s.html.arender(retries=3, wait=1, scrolldown=2, sleep=1)
-            a = s.html.find('a:has(.card.widget-card.text-center)', first=True)
+            a = s.html.find('a#couponLink', first=True)
             if a:
                 result = a.element.attrib['href']
                 # print('Resolved:', result)

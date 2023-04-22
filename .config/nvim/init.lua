@@ -221,6 +221,11 @@ require('packer').startup(function()
             'nvim-telescope/telescope-file-browser.nvim',
         }
     }
+    -- Manager for editor toolings
+    use {
+        "williamboman/mason.nvim",
+        run = ":MasonUpdate" -- :MasonUpdate updates registry contents
+    }
     -- Language clients
     --use {'neoclide/coc.nvim', branch = 'release'}
     use {
@@ -645,6 +650,10 @@ require('packer').startup(function()
         g.rust_clip_command = 'pbcopy'
     end
     ---------------------------------- End language specific
+
+    --------------------------------- Editor tooling manager
+    require("mason").setup()
+    ----------------------------- End editor tooling manager
 
     ---------------------------------------- Language server
     -- navigator.lua
