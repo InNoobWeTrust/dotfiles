@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "Udemy Couponator!"
+version = "0.1.0"
+description = ""
+authors = ["InNoobWeTrust"]
+license = "WTFPL"
+#readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+Telethon = "^1.28.5"
+requests-html = "^0.10.0"
+pyppeteer = "^1.0.2"
+
+[tool.poetry.group.dev.dependencies]
+poethepoet = "^0.19.0"
+
+[tool.poe.tasks]
+udemy   = { shell = "python udemy.py" }
+courson-parse   = { shell = "python courson_parser.py" }
+discudemy-parse   = { shell = "python discudemy_parser.py" }
+realdiscount-parse   = { shell = "python real_discount_parser.py" }
+parse = ["courson-parse", "discudemy-parse", "realdiscount-parse"]
+clean = { shell = "trash *.txt" }
+all = ["udemy", "parse"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
