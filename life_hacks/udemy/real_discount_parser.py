@@ -28,6 +28,7 @@ links = links[counter:]
 with open('real_discount.resolved.txt', 'at+') as wf:
 
     def resolve_link(link):
+
         async def ret():
             s = await asession.get(link)
             await s.html.arender(retries=3, wait=1, scrolldown=2, sleep=1)
@@ -36,22 +37,25 @@ with open('real_discount.resolved.txt', 'at+') as wf:
                 result = a.element.attrib['href']
                 # print('Resolved:', result)
                 return result
+
         return ret
 
-    for i in range(len(links) // buffer_size + 1) :
-        buffer = list(map(lambda l: l.strip(), links[i * buffer_size : (i + 1) * buffer_size]))
+    for i in range(len(links) // buffer_size + 1):
+        buffer = list(
+            map(lambda l: l.strip(),
+                links[i * buffer_size:(i + 1) * buffer_size]))
         if len(buffer) == 0:
             break
         print('Resolving:', *buffer, sep='\n')
         resolved_links = asession.run(*map(resolve_link, buffer))
         resolved_links = [link for link in resolved_links if link]
         counter += len(resolved_links)
-        print("Resolved:", *resolved_links, sep='\n')
+        print('Resolved:', *resolved_links, sep='\n')
         results.extend(resolved_links)
         wf.writelines([line + '\n' for line in resolved_links])
         wf.flush()
-        print("Total processed:", counter)
+        print('Processed:', counter)
         sleep(5)
 
-print(results)
-print("Total processed:", counter)
+print('Results:', *results, sep='\n')
+print('Total processed:', counter)

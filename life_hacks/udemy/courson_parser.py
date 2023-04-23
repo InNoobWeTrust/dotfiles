@@ -46,12 +46,12 @@ with open('courson.resolved.txt', 'at+') as wf:
         resolved_links = asession.run(*map(resolve_link, buffer))
         resolved_links = [link for link in resolved_links if link]
         counter += len(resolved_links)
-        print("Resolved:", *resolved_links, sep='\n')
+        print('Resolved:', *resolved_links, sep='\n')
         results.extend(resolved_links)
         wf.writelines([line + '\n' for line in resolved_links])
         wf.flush()
-        print("Total processed:", counter)
+        print('Processed:', counter)
         sleep(5)
 
-print(results)
-print("Total processed:", counter)
+print('Results:', *results, sep='\n')
+print('Total processed:', counter)
