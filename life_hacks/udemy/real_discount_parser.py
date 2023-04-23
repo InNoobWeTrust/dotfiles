@@ -32,7 +32,7 @@ with open('real_discount.resolved.txt', 'at+') as wf:
         async def ret():
             s = await asession.get(link)
             await s.html.arender(retries=3, wait=1, scrolldown=2, sleep=1)
-            a = s.html.find('a:has(.card.widget-card.text-center)', first=True)
+            a = s.html.find('a:has(> .card.widget-card.text-center)', first=True)
             if a:
                 result = a.element.attrib['href']
                 # print('Resolved:', result)

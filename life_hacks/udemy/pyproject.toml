@@ -7,19 +7,20 @@ license = "WTFPL"
 #readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 Telethon = "^1.28.5"
 requests-html = "^0.10.0"
 pyppeteer = "^1.0.2"
+pyquery = "^2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 poethepoet = "^0.19.0"
 
 [tool.poe.tasks]
-udemy   = { shell = "python udemy.py" }
-courson-parse   = { shell = "python courson_parser.py" }
-discudemy-parse   = { shell = "python discudemy_parser.py" }
-realdiscount-parse   = { shell = "python real_discount_parser.py" }
+udemy   = { shell = "poetry run python udemy.py" }
+courson-parse   = { shell = "poetry run python courson_parser.py" }
+discudemy-parse   = { shell = "poetry run python discudemy_parser.py" }
+realdiscount-parse   = { shell = "poetry run python real_discount_parser.py" }
 parse = ["courson-parse", "discudemy-parse", "realdiscount-parse"]
 clean = { shell = "trash *.txt" }
 all = ["udemy", "parse"]
