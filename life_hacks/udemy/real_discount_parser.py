@@ -11,10 +11,14 @@ buffer_size = int(config['real_discount']['buffer_size'])
 asession = AsyncHTMLSession()
 results = []
 counter = 0
-if os.path.isfile('real_discount.resolved.txt'):
-    with open('real_discount.resolved.txt', 'rt') as f:
-        lines = f.readlines()
-        counter = len([l for l in lines if l.strip(' \n') != ''])
+if os.path.isfile('real_discount.checkpoint.txt'):
+    with open('real_discount.checkpoint.txt', 'rt') as f:
+        counter = int(f.read().strip())
+
+def checkpoint(count):
+    with open('real_discount.checkpoint.txt', 'wt') as f:
+        f.write(str(count))
+        f.flush()
 
 links = []
 for file_name in ['freeprogrammingcourses.txt', 'real_discount.txt']:
@@ -32,7 +36,7 @@ with open('real_discount.resolved.txt', 'at+') as wf:
         async def ret():
             s = await asession.get(link)
             await s.html.arender(retries=3, wait=1, scrolldown=2, sleep=1)
-            a = s.html.find('a:has(> .card.widget-card.text-center)', first=True)
+            a = s.html.find('a:has(.card.widget-card.text-center)', first=True)
             if a:
                 result = a.element.attrib['href']
                 # print('Resolved:', result)
@@ -46,14 +50,15 @@ with open('real_discount.resolved.txt', 'at+') as wf:
                 links[i * buffer_size:(i + 1) * buffer_size]))
         if len(buffer) == 0:
             break
+        counter += len(buffer)
         print('Resolving:', *buffer, sep='\n')
         resolved_links = asession.run(*map(resolve_link, buffer))
         resolved_links = [link for link in resolved_links if link]
-        counter += len(resolved_links)
         print('Resolved:', *resolved_links, sep='\n')
         results.extend(resolved_links)
         wf.writelines([line + '\n' for line in resolved_links])
         wf.flush()
+        checkpoint(counter)
         print('Processed:', counter)
         sleep(5)
 
