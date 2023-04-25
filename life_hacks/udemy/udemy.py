@@ -6,6 +6,7 @@ from types import FunctionType
 from typing import Callable, List, Optional
 
 from telethon import TelegramClient, events, sync, functions, types
+from telethon.sessions import StringSession
 from telethon.utils import get_input_dialog
 
 config = configparser.ConfigParser()
@@ -13,7 +14,8 @@ config.read('config.ini')
 api_id = config['auth'].getint('api_id')
 api_hash = config['auth']['api_hash']
 bot_token = config['auth']['bot_token']
-client = TelegramClient('udemy', api_id, api_hash)
+session = config['auth']['session']
+client = TelegramClient(StringSession(session if session else None), api_id, api_hash)
 
 async def get_text_links(channel: str, validate: Optional[Callable[[str], bool]]=None):
     client.start(bot_token=bot_token)
@@ -99,3 +101,6 @@ if __name__ == '__main__':
         for channel in ['udemy_learning_courses', 'Udemy4U']:
             client.loop.run_until_complete(get_entity_links(channel, validate=validate))
         checkpoint()
+        with open('session.txt', 'wt') as f:
+            f.write(client.session.save())
+            f.flush()
