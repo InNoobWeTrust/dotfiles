@@ -341,8 +341,10 @@ require('packer').startup(function()
 	g.delimitMate_expand_inside_quotes = 1
 	g.delimitMate_jump_expansion = 1
 	-- Tab switching
-	map('n', '<leader><leader>n', ':tabn<cr>', { noremap = false })
-	map('n', '<leader><leader>p', ':tabp<cr>', { noremap = false })
+	map('n', '<c-tab>', ':tabnext<cr>', { noremap = false })
+	map('n', '<leader><tab>', ':tabnext<cr>', { noremap = false })
+	map('n', '<c-s-tab>', ':tabprevious<cr>', { noremap = false })
+	map('n', '<leader><leader><tab>', ':tabprevious<cr>', { noremap = false })
 	-- Delete buffer without messing layout
 	map('n', '<Leader>x', ':Bd<cr>', { noremap = false })
 	-- Key mapping for fuzzy finder
