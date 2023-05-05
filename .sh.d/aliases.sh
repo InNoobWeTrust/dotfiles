@@ -219,6 +219,15 @@ alias update-rustup='usable rustup && rustup update'
 # automate cargo update
 alias update-cargo='usable cargo && cargo install --list | grep -o "^\S*" | xargs cargo install --force'
 
+################ Shell toolings ################
+
+## Advanced shell
+alias install-nushell-cargo='cargo install --locked nu'
+alias install-nushell-npm='npm install -g nushell'
+
+## Terminal multiplexer
+alias install-zellij-cargo='cargo install --locked zellij'
+
 ############################# Custom ##########################################
 # Import custom alias
 # shellcheck source=/dev/null
