@@ -72,7 +72,7 @@ alias isekai='cd `mktemp -d`'
 alias lag5s='sleep 5 & job=$!; while kill -0 $job 2>/dev/null; do for s in / - \\ \|; do printf "\r%s" $s; sleep .1; done; done'
 
 # Quick terminal multiplexer
-alias zellij='bash <(curl -L zellij.dev/launch)'
+alias netmux='bash <(curl -L zellij.dev/launch)'
 
 # Git utilities
 usable git && \
