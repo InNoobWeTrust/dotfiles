@@ -85,7 +85,8 @@ usable git && \
         alias forgit-me-pull='for d in $(ls -d */); do [ -d $d/.git/ ] && echo "Pulling git repo $d..." && (cd "$d" && git stash && git pull --rebase --all && git stash pop); done'
         alias forgit-me-config='forgit_me_config'
         alias git-web-url="git_web_url"
-        alias gitlab-web-pr-create='gitlab_web_pr_create'
+        alias gitlab-web-mr-create='gitlab_web_mr_create'
+        alias gitlab-push-mr-create='gitlab_push_mr_create'
     }
 
 # Docker utilities

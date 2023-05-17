@@ -52,33 +52,51 @@ git_web_url() {
 }
 
 #
-# # gitlab_web_pr_create - Get url for creating PR on gitlab with information prefilled
-# # usage gitlab_web_pr_create
-gitlab_web_pr_create() {
+# # gitlab_web_mr_create - Get url for creating PR on gitlab with information prefilled
+# # usage gitlab_web_mr_create [target_branch] [assignees] [reviewers] [remote]
+gitlab_web_mr_create() {
     remove_branch="merge_request[force_remove_source_branch]=true"
     current_branch="&merge_request[source_branch]=$(git branch --show-current)"
 
-    target_branch="&merge_request[target_branch]=$1"
-    if [ -z "$1" ]; then
-        target_branch=""
-    fi
-
+    target_branch="&merge_request[target_branch]=${1:-develop}"
     assignees="&merge_request[assignee_ids][]=$2"
-    if [ -z "$2" ]; then
-        assignees=""
-    fi
-
     reviewers="&merge_request[reviewer_ids][]=$3"
-    if [ -z "$3" ]; then
-        reviewers=""
-    fi
 
-    origin=$4
-    repo=$(git_web_url "$origin")
+    remote=${4:-origin}
+    repo=$(git_web_url "$remote")
 
     title="&merge_request[title]='$(git log -1 --pretty=format:%s)'"
 
     echo "${repo}/-/merge_requests/new?${remove_branch}${current_branch}${target_branch}${assignees}${reviewers}${title}"
+}
+
+#
+# # gitlab_push_mr_create - Creating PR on gitlab by git push
+# # usage gitlab_push_mr_create [target_branch] [assignees] [reviewers] [remote]
+gitlab_push_mr_create() {
+    set -x
+
+    remove_branch="merge_request.force_remove_source_branch=true"
+    current_branch="merge_request.source_branch=$(git branch --show-current)"
+
+    target_branch="merge_request.target_branch=${1:-develop}"
+    assignees="merge_request.assignee_ids[]=$2"
+    reviewers="merge_request.reviewer_ids[]=$3"
+
+    remote=${4:-origin}
+
+    title="merge_request.title='$(git log -1 --pretty=format:%s)'"
+
+    git push "$remote" \
+        -o merge_request.create \
+        -o "$remove_branch" \
+        -o "$current_branch" \
+        -o "$target_branch" \
+        -o "$assignees" \
+        -o "$reviewers" \
+        -o "$title"
+
+    set +x
 }
 
 #
