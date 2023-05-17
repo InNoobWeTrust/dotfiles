@@ -8,14 +8,77 @@ usable() {
 }
 
 #
-# # forgit-me-config - Configure git for many repos at once
-# # usage forgit-me-config [some_git_config]
+# # forgit_me_config - Configure git for many repos at once
+# # usage forgit_me_config [some_git_config]
 forgit_me_config() {
     for d in $(ls -d */); do
         [ -d "$d/.git/" ] && \
             echo "Configuring git repo $d..." && \
             (cd "$d" && git config "$@")
     done
+}
+
+#
+# # git_web_url - Get url in https for remote url
+# # usage git_web_url
+git_web_url() {
+    # Remote from input or default to 'origin'
+    remote=$1
+    if [ -z "$remote" ]; then
+        remote="origin"
+    fi
+
+    # Get Git remote URL
+    url=$(git config --get remote."$remote".url)
+
+    # Remove ".git" suffix
+    url=$(echo "$url" | sed 's/\.git$//')
+
+    # Remove prefixes
+    case "$url" in
+        https://*) url=${url#https://};;
+        http://*) url=${url#http://};;
+        ssh://*) url=${url#ssh://};;
+    esac
+
+    # Remove "git@"
+    url=$(echo "$url" | sed 's/git@//')
+
+    # Replaces ':' with '/' in the middle of the SSH URL
+    url=$(echo "$url" | sed 's/:/\//')
+
+    # Format URL as a GitLab web URL
+    echo "https://$url"
+}
+
+#
+# # gitlab_web_pr_create - Get url for creating PR on gitlab with information prefilled
+# # usage gitlab_web_pr_create
+gitlab_web_pr_create() {
+    remove_branch="merge_request[force_remove_source_branch]=true"
+    current_branch="&merge_request[source_branch]=$(git branch --show-current)"
+
+    target_branch="&merge_request[target_branch]=$1"
+    if [ -z "$1" ]; then
+        target_branch=""
+    fi
+
+    assignees="&merge_request[assignee_ids][]=$2"
+    if [ -z "$2" ]; then
+        assignees=""
+    fi
+
+    reviewers="&merge_request[reviewer_ids][]=$3"
+    if [ -z "$3" ]; then
+        reviewers=""
+    fi
+
+    origin=$4
+    repo=$(git_web_url "$origin")
+
+    title="&merge_request[title]='$(git log -1 --pretty=format:%s)'"
+
+    echo "${repo}/-/merge_requests/new?${remove_branch}${current_branch}${target_branch}${assignees}${reviewers}${title}"
 }
 
 #

@@ -29,7 +29,7 @@ o.cmdheight = 2
 o.mouse = 'a'
 if vim.g.neovide then
 	-- Put anything you want to happen only in Neovide here
-	o.guifont = 'IosevkaTerm Nerd Font Mono:h15'
+	--o.guifont = 'Iosevka Nerd Font:h15'
 	g.neovide_cursor_animation_length = 0
 	-- Helper function for transparency formatting
 	local alpha = function()
