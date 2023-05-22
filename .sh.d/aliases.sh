@@ -225,6 +225,8 @@ alias update-rustup='usable rustup && rustup update'
 # automate cargo update
 alias update-cargo='usable cargo && cargo install --list | grep -o "^\S*" | xargs cargo install --force'
 
+alias cargo-cross-install-armv6l='usable cargo && cargo install --target arm-unknown-linux-gnueabihf --root . '
+
 ################ Shell toolings ################
 
 ## Advanced shell

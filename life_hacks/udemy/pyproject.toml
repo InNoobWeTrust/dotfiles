@@ -18,9 +18,9 @@ poethepoet = "^0.19.0"
 
 [tool.poe.tasks]
 udemy   = { shell = "poetry run python udemy.py" }
-courson-parse   = { shell = "until poetry run python courson_parser.py; do sleep 5; done" }
-discudemy-parse   = { shell = "until poetry run python discudemy_parser.py; do sleep 5; done" }
-realdiscount-parse   = { shell = "until poetry run python real_discount_parser.py; do sleep 5; done" }
+courson-parse   = { shell = "until poetry run python courson_parser.py; do sleep 10; done" }
+discudemy-parse   = { shell = "until poetry run python discudemy_parser.py; do sleep 10; done" }
+realdiscount-parse   = { shell = "until poetry run python real_discount_parser.py; do sleep 10; done" }
 parse = ["courson-parse", "discudemy-parse", "realdiscount-parse"]
 clean = { shell = "trash *.txt" }
 all = ["udemy", "parse"]
