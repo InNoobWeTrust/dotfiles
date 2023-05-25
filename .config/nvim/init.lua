@@ -481,7 +481,7 @@ require('packer').startup(function()
 		sources = {
 			-- Eslint for js, jsx, ts, tsx, vue
 			null_ls.builtins.diagnostics.eslint_d,
-			null_ls.builtins.formatting.eslint_d,
+			--null_ls.builtins.formatting.eslint_d,
 			null_ls.builtins.code_actions.eslint_d,
 			-- Prettier format html, css, json
 			null_ls.builtins.formatting.prettierd,
