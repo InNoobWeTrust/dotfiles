@@ -14,6 +14,6 @@ def main [f: string, n: int = 25] {
 		let links = (open $f | lines | range $s..$e)
 		print $links
 		input --suppress-output
-		open $f | lines | range $s..$e | ^open $in
+		$links | ^open $in
 	}
 }
