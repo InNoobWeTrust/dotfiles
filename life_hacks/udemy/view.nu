@@ -1,6 +1,6 @@
 #!/usr/bin/env nu
 
-def main [f: string, n: int = 25] {
+def main [f: string = 'links.txt', n: int = 25] {
 	cat *.resolved.txt | save -f $f
 	let len = (open $f | lines | length)
 	let end = ($len / $n | math floor)
