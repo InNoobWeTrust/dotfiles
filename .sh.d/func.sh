@@ -66,8 +66,9 @@ gitlab_web_mr_create() {
     repo=$(git_web_url "$remote")
 
     title="&merge_request[title]='$(git log -1 --pretty=format:%s)'"
+    description="&merge_request[description]='$(git log --pretty=format:%s origin/develop..HEAD | jq -sRr @uri)'"
 
-    echo "${repo}/-/merge_requests/new?${remove_branch}${current_branch}${target_branch}${assignees}${reviewers}${title}"
+    echo "${repo}/-/merge_requests/new?${remove_branch}${current_branch}${target_branch}${assignees}${reviewers}${title}${description}"
 }
 
 #
