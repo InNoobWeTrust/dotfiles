@@ -280,6 +280,11 @@ require('packer').startup(function()
 	}
 	-- REST console
 	use 'diepm/vim-rest-console'
+	-- Interation with databases
+	use {
+		'kristijanhusak/vim-dadbod-ui',
+		requires = { 'tpope/vim-dadbod' }
+	}
 	-- Automatically toggle relative line number
 	--use 'jeffkreeftmeijer/vim-numbertoggle'
 	-- Use registers as stack for yank and delete
