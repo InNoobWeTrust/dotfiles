@@ -17,6 +17,8 @@ export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 export POETRY_HOME="$HOME/.local/poetry"
 # Set home for nvm
 export NVM_DIR="$HOME/.local/nvm"
+# Set home for volta
+export VOLTA_HOME="$HOME/.local/volta"
 # Turnoff auto complete for nvm as the loading is slow
 export autocomplete_nvm=
 # Set prefix for byobu if installed by linuxbrew

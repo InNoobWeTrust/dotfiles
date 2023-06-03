@@ -145,7 +145,7 @@ alias update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && ap
 ################################ Tooling ######################################
 
 # Update possible tools (normal mode)
-alias update-tooling='update-rustup || update-pyenv || update-nvm || update-brew'
+alias update-tooling='(update-rustup) || (update-pyenv) || (update-conda) || (update-brew)'
 
 #################### Brew ######################
 
@@ -190,6 +190,9 @@ alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.c
 
 # automate nvm update node
 alias update-nvm='usable nvm && nvm install node --reinstall-packages-from=node -y && nvm use default'
+
+# install volta
+alias install-volta='mkdir -p $VOLTA_HOME && curl https://get.volta.sh | bash -s -- --skip-setup'
 
 # cleanup unused version of node
 alias cleanup-nvm='nvm ls --no-colors | grep -o "^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*" | tr -d "[[:blank:]]v" | xargs -I % $SHELL -c ". $NVM_DIR/nvm.sh && nvm uninstall %"'
