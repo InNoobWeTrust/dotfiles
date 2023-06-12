@@ -5,21 +5,8 @@ Object.defineProperty(Array.prototype, "sample", {
   },
 });
 
-Object.defineProperty(NodeList.prototype, "sample", {
-  value: function () {
-    const idx = Math.floor(Math.random() * (this.length + 1));
-    return [...this][idx];
-  },
-});
-
-Object.defineProperty(NodeList.prototype, "find", {
-  value: function (predicate) {
-    return [...this].find(predicate);
-  },
-});
-
 const $ = (selectors) => document.querySelector(selectors);
-const $$ = (selectors) => document.querySelectorAll(selectors);
+const $$ = (selectors) => [...document.querySelectorAll(selectors)];
 
 const REPORTS = {
   "Fake account": [
@@ -52,55 +39,16 @@ const REPORTS = {
       ),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
-  "I want to help => Suicide": [
+  "I want to help": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
         (e) => e.innerText === "I want to help"
       ),
     () =>
-      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Suicide"
-      ),
-  ],
-  "I want to help => Self-injury": [
-    () =>
-      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "I want to help"
-      ),
-    () =>
-      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Self-injury"
-      ),
-  ],
-  "I want to help => Harassment": [
-    () =>
-      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "I want to help"
-      ),
-    () =>
-      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Harassment"
-      ),
-  ],
-  "I want to help => Hacked": [
-    () =>
-      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "I want to help"
-      ),
-    () =>
-      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Hacked"
-      ),
-  ],
-  "I want to help => Hacked": [
-    () =>
-      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "I want to help"
-      ),
-    () =>
-      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Hacked"
-      ),
+      $$(
+        'div[role="dialog"] div[role="listitem"] div[role="button"]'
+      )?.sample(),
+    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Something else": [
     () =>
@@ -187,43 +135,79 @@ const REPORTS = {
   ],
 };
 
+const delayClick = () =>
+  1000 + 1000 * Math.random() + 500 * Math.random() + 250 * Math.random();
+
 const timer = async (durationMs) => {
   await new Promise((resolve) => {
     setTimeout(resolve, durationMs);
   });
 };
 
-const report = async (...clickProviders) => {
+const holdOn = async () => await timer(delayClick());
+
+const listReportTypes = async () => {
   // Open profile menu
-  $('[aria-label="See Options"]')?.click();
-  await timer(500);
+  $('div[aria-label="See Options"]')?.click();
+  $('div[aria-label="See options"]')?.click();
+  await holdOn();
   // Click report option
   $$('div[role="menuitem"]')
     ?.find((e) => e.innerText === "Find support or report")
     ?.click();
-  await timer(1000);
+  await holdOn();
+  const reportTypes = $$(
+    'div[role="dialog"] div[role="listitem"] div[role="button"]'
+  )?.map((e) => e.innerText);
+  // Make sure to close the dialog on teardown
+  $('div[aria-label="Close"]')?.click();
+  return reportTypes;
+};
+
+const report = async (...clickProviders) => {
+  // Open profile menu
+  $('div[aria-label="See Options"]')?.click();
+  $('[aria-label="See options"]')?.click();
+  await holdOn();
+  // Click report option
+  $$('div[role="menuitem"]')
+    ?.find((e) => e.innerText === "Find support or report")
+    ?.click();
+  await holdOn();
   // Follow defined steps to report
   for (const clickProvider of clickProviders) {
     const target = clickProvider();
     if (!target) {
       // Click target not found, closing early
       $('div[aria-label="Close"]')?.click();
-      await timer(500);
+      await holdOn();
       return;
     }
     target.click();
-    await timer(1000);
+    await holdOn();
   }
   // Make sure to close the dialog on teardown
   $('div[aria-label="Close"]')?.click();
-  await timer(500);
+  await holdOn();
 };
 
 // Single entry point to nuke the asshole with all the FUDs
 const reportAll = async () => {
-  for (const [k, v] of Object.entries(REPORTS)) {
-    console.debug(`Reporting for: ${k}`);
-    await report(...v);
+  const start = Date.now();
+  const reportTypes = (await listReportTypes()).filter((rt) => rt in REPORTS);
+  console.debug("Available report types:", reportTypes);
+  for (const rt of reportTypes) {
+    console.debug(`Reporting for: ${rt}`);
+    await report(...REPORTS[rt]);
   }
-  alert("Pressing asshole completed! Thanks for waiting comrade!");
+  const end = Date.now();
+  const duration = Math.ceil((end - start) / 1000);
+  new Notification("FB auto pressing", {
+    body: `Pressing asshole ${location.href.replace(
+      location.origin,
+      ""
+    )} completed after ${duration}s! Thanks for waiting comrade!`,
+  });
 };
+
+reportAll();
