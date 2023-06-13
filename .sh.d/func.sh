@@ -119,6 +119,15 @@ ngrokhttp() {
 }
 
 #
+# # nvim_ssh_server - Start and connect to neovim on remote server
+# # usage nvim_ssh_server [remote-machine] [shell]
+nvim_ssh_server() {
+    shell='bash'
+    [ -n "$2" ] && shell="$2"
+    ssh -L 6666:localhost:6666 "$1" -t "${shell} -l -c 'nvim --headless --listen localhost:6666'"
+}
+
+#
 # # colors - Print colors on terminal
 # # usage: colors
 colors() {

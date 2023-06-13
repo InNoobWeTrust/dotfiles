@@ -119,6 +119,25 @@ usable exa && \
         alias gtree='exa --git-ignore -l -T'
     }
 
+# Start neovim server locally
+usable nvim && \
+    {
+        alias nvim-server='nvim --headless --listen localhost:6666'
+        alias nvim-remote='nvim --server localhost:6666'
+    }
+
+usable ssh && \
+    {
+        alias nvim-ssh-server='nvim_ssh_server '
+    }
+
+# Connect to neovim server
+usable neovide && \
+    {
+        alias neovide-remote='neovide --server=localhost:6666'
+    }
+
+
 ############################### PATH management ###############################
 
 alias install-pathman='curl -s https://webinstall.dev/pathman | bash'
