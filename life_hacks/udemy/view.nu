@@ -7,8 +7,7 @@ def main [f: string = 'links.txt', n: int = 25] {
 	let r = (0..$end | each { |step|
 		$step *  $n
 	})
-	for $i in $r {
-		let s = ($i + 1)
+	for $s in $r {
 		let e = ($s + $n - 1)
 		print -n $s ~ $e "\n"
 		let links = (open $f | lines | range $s..$e)
