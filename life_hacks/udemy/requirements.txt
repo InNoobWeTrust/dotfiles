@@ -1,2 +1,0 @@
-requests-html==0.10.0
-Telethon==1.27.0

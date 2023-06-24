@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 
 def main [f: string = 'links.txt', n: int = 25] {
-	cat *.resolved.txt | save -f $f
+	if ($f | path exists) {} else { cat *.resolved.txt | tee $f }
 	let len = (open $f | lines | length)
 	let end = ($len / $n | math floor)
 	let r = (0..$end | each { |step|
