@@ -12,3 +12,12 @@
 	prompt = false
 [diff]
 	tool = nvim
+
+[includeIf "gitdir:~/Developer/"]
+	path = ~/.weeaboo.gitconfig
+[includeIf "gitdir:~/Developer/InNoobWeTrust/"]
+	path = ~/.nerd.gitconfig
+[includeIf "gitdir:~/Developer/tokoinofficial/"]
+	path = ~/.work.gitconfig
+[includeIf "gitdir:~/Developer/rex/"]
+	path = ~/.work.collab.gitconfig
