@@ -12,7 +12,7 @@ const REPORTS = {
   "Fake account": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Fake account"
+        (e) => e.innerText === "Fake account",
       ),
     () => $('div[role="dialog"] div[aria-label="Submit"][role="button"]'),
     () => $('div[role="dialog"] div[aria-label="Next"][role="button"]'),
@@ -21,115 +21,115 @@ const REPORTS = {
   "Fake name": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Fake name"
+        (e) => e.innerText === "Fake name",
       ),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Posting inappropriate things": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Posting inappropriate things"
+        (e) => e.innerText === "Posting inappropriate things",
       ),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Harassment or bullying": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Harassment or bullying"
+        (e) => e.innerText === "Harassment or bullying",
       ),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "I want to help": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "I want to help"
+        (e) => e.innerText === "I want to help",
       ),
     () =>
       $$(
-        'div[role="dialog"] div[role="listitem"] div[role="button"]'
+        'div[role="dialog"] div[role="listitem"] div[role="button"]',
       )?.sample(),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Something else": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Something else"
+        (e) => e.innerText === "Something else",
       ),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Hate speech": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Hate speech"
+        (e) => e.innerText === "Hate speech",
       ),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Nudity or sexual content": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Nudity or sexual content"
+        (e) => e.innerText === "Nudity or sexual content",
       ),
     () =>
       $$(
-        'div[role="dialog"] div[role="listitem"] div[role="button"]'
+        'div[role="dialog"] div[role="listitem"] div[role="button"]',
       )?.sample(),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   Violence: [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Violence"
+        (e) => e.innerText === "Violence",
       ),
     () =>
       $$(
-        'div[role="dialog"] div[role="listitem"] div[role="button"]'
+        'div[role="dialog"] div[role="listitem"] div[role="button"]',
       )?.sample(),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   Harassment: [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Harassment"
+        (e) => e.innerText === "Harassment",
       ),
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "It's someone else"
+        (e) => e.innerText === "It's someone else",
       ),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Unauthorised sales": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Unauthorised sales"
+        (e) => e.innerText === "Unauthorised sales",
       ),
     () =>
       $$(
-        'div[role="dialog"] div[role="listitem"] div[role="button"]'
+        'div[role="dialog"] div[role="listitem"] div[role="button"]',
       )?.sample(),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Fraud or scam": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Fraud or scam"
+        (e) => e.innerText === "Fraud or scam",
       ),
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Other"
+        (e) => e.innerText === "Other",
       ),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Intellectual property": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "Intellectual property"
+        (e) => e.innerText === "Intellectual property",
       ),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "I can't access my account": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
-        (e) => e.innerText === "I can't access my account"
+        (e) => e.innerText === "I can't access my account",
       ),
     () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
@@ -157,7 +157,7 @@ const listReportTypes = async () => {
     ?.click();
   await holdOn();
   const reportTypes = $$(
-    'div[role="dialog"] div[role="listitem"] div[role="button"]'
+    'div[role="dialog"] div[role="listitem"] div[role="button"]',
   )?.map((e) => e.innerText);
   // Make sure to close the dialog on teardown
   $('div[aria-label="Close"]')?.click();
@@ -203,11 +203,16 @@ const reportAll = async () => {
   const end = Date.now();
   const duration = Math.ceil((end - start) / 1000);
   new Notification("FB auto pressing", {
-    body: `Pressing asshole ${location.href.replace(
-      location.origin,
-      ""
-    )} completed after ${duration}s! Thanks for waiting comrade!`,
+    body: `Pressing asshole ${
+      location.href.replace(
+        location.origin,
+        "",
+      )
+    } completed after ${duration}s! Thanks for waiting comrade!`,
   });
+  if (arguments?.length > 0) {
+    arguments[arguments.length - 1]()
+  }
 };
 
 reportAll();
