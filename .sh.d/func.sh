@@ -101,6 +101,25 @@ gitlab_push_mr_create() {
 }
 
 #
+# # batch_open - open links in batches
+# # usage: batch_open [file_contain_links] [batch_size] [start]
+batch_open() {
+    f=${1:-links.txt}
+    size=${2:-25}
+    start=${3:-1}
+    browser=${4:-firefox}
+    len=$(wc -l < "$f")
+
+    for s in $(seq "$start" "$size" "$len"); do
+        echo "$s"+"$size":
+        links=$(tail -n +"$s" "$f" | head -n "$size")
+        echo "$links"
+        read -n 1
+        echo "$links" | xargs open -a "$browser"
+    done
+}
+
+#
 # # setPath - Add to PATH if not there
 # # usage: setPath [some_path]
 setPath() {

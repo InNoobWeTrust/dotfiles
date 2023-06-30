@@ -71,6 +71,12 @@ alias isekai='cd `mktemp -d`'
 # Dummy sleep 5s with a spinner
 alias lag5s='sleep 5 & job=$!; while kill -0 $job 2>/dev/null; do for s in / - \\ \|; do printf "\r%s" $s; sleep .1; done; done'
 
+# Batch open links.txt
+usable open && \
+    {
+        alias batch-open='batch_open'
+    }
+
 # Quick terminal multiplexer
 usable curl && \
     {
