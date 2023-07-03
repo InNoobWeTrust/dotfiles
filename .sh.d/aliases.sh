@@ -106,6 +106,10 @@ usable docker && \
         alias code-server-docker='docker run -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
         # Swagger api documentation generator
         alias swagger-docker='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
+        # MongoDB
+        alias mongo-docker='docker run --rm -d -p 27017:27017 --name mongo mongo:latest'
+        # MySQL
+        alias mysql-docker='docker run --rm -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root --name mysql mysql:latest'
     }
 
 # Find using ripgrep
