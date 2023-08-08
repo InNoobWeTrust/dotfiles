@@ -1,6 +1,7 @@
 #!/usr/bin/env -S bun run
 
 import { Builder, By } from "selenium-webdriver";
+import { Duration } from "luxon";
 import yaml from "js-yaml";
 import log from "npmlog";
 Object.defineProperty(log, "heading", {
@@ -13,7 +14,7 @@ import logfile from "npmlog-file";
 
 const CONFIG = Bun.env.CONFIG || "./config.yml";
 const SCRIPT = Bun.env.SCRIPT || "./fb_auto_pressing.js";
-const LOGLEVEL = Bun.env.LOGLEVEL || "silly";
+const LOGLEVEL = Bun.env.LOGLEVEL || "info";
 
 log.level = LOGLEVEL;
 
@@ -31,18 +32,16 @@ const choose = (...arr) => {
   return arr[Math.floor(Math.random() * arr.length)];
 };
 
+const durationFmt = (durationMs) => {
+  return Duration.fromMillis(durationMs).toFormat("hh:mm:ss");
+};
+
 const holdon = async () => {
   const {
     delay: { min, max },
   } = await getConfig();
   const durationMs = min + Math.floor(Math.random() * (max - min));
-  log.verbose(
-    `Delay for ${
-      durationMs.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-      })
-    }ms...`,
-  );
+  log.verbose(`Delay for ${durationFmt(durationMs)}...`);
   await new Promise((resolve) => setTimeout(resolve, durationMs));
 };
 
@@ -51,13 +50,7 @@ const sleep = async () => {
     sleep: { min, max },
   } = await getConfig();
   const durationMs = min + Math.floor(Math.random() * (max - min));
-  log.info(
-    `Sleeping for ${
-      durationMs.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-      })
-    }ms...`,
-  );
+  log.info(`Sleeping for ${durationFmt(durationMs)}...`);
   await new Promise((resolve) => setTimeout(resolve, durationMs));
 };
 
@@ -105,10 +98,7 @@ const pressing = async (driver) => {
     log.verbose("Cleaning up...");
   }
   const end = Date.now();
-  const duration = Math.ceil((end - start) / 1_000);
-  log.info(
-    `Pressing done after ${Math.floor(duration / 60)}m${duration % 60}s}`,
-  );
+  log.info(`Pressing done after ${durationFmt(end - start)}`);
 };
 
 while (true) {
