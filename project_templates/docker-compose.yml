@@ -1,0 +1,99 @@
+version: "3.9"
+
+volumes:
+  mysqldata:
+  mongodata:
+  rabbitmqdata:
+
+networks:
+  skynet:
+    driver: bridge
+
+services:
+  #### MySQL
+  mysql:
+    hostname: mysql
+    container_name: mysql
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dummy
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    expose:
+      - 3306
+    ports:
+      - 3306:3306
+    networks:
+      - skynet
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - mysqldata:/var/lib/mysql
+
+  #### MongoDB
+  mongo:
+    hostname: mongo
+    container_name: mongo
+    image: mongo:latest
+    environment:
+      MONGO_HOSTNAME: mongo
+      MONGO_REPLICA_SET_NAME: rs0
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: dummy
+    expose:
+      - 27017
+    ports:
+      - 27017:27017
+    networks:
+      - skynet
+    volumes:
+      - mongodata:/data/db
+    restart: always
+    entrypoint:
+      - bash
+      - -c
+      - |
+        openssl rand -base64 6 > /data/replica.key
+        chmod 400 /data/replica.key
+        chown 999:999 /data/replica.key
+        exec docker-entrypoint.sh $$@
+    command:
+      [--bind_ip_all, --replSet, rs0, --keyFile, /data/replica.key, --auth]
+
+  #### Mongo-seed
+  mongo-seed:
+    hostname: mongo-seed
+    container_name: mongo-seed
+    image: mongo:latest
+    environment:
+      MONGO_URI: mongodb://root:root@localhost:27017/dummy?authSource=admin
+    networks:
+      - skynet
+    restart: "no"
+    depends_on:
+      - mongo
+    entrypoint:
+      - bash
+      - -c
+      - |
+        until mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'mongo'}]})" 'mongodb://root:root@mongo:27017/dummy?authSource=admin'; do sleep 5; done
+
+
+  #### RabbitMQ
+  rabbitmq:
+    hostname: rabbitmq
+    container_name: rabbitmq
+    image: rabbitmq:management
+    expose:
+      - 5672
+      - 15672
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - skynet
+    restart: always
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq/mnesia
