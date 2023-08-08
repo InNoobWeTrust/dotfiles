@@ -1,0 +1,44 @@
+[
+  {
+    "InstanceCount": 1,
+    "InstanceGroupType": "CORE",
+    "Name": "Core",
+    "InstanceType": "m4.large",
+    "EbsConfiguration": {
+      "EbsBlockDeviceConfigs": [
+        {
+          "VolumeSpecification": { "VolumeType": "gp2", "SizeInGB": 32 },
+          "VolumesPerInstance": 1
+        }
+      ]
+    }
+  },
+  {
+    "InstanceCount": 1,
+    "InstanceGroupType": "TASK",
+    "Name": "Task - 1",
+    "InstanceType": "m4.large",
+    "EbsConfiguration": {
+      "EbsBlockDeviceConfigs": [
+        {
+          "VolumeSpecification": { "VolumeType": "gp2", "SizeInGB": 32 },
+          "VolumesPerInstance": 1
+        }
+      ]
+    }
+  },
+  {
+    "InstanceCount": 1,
+    "InstanceGroupType": "MASTER",
+    "Name": "Primary",
+    "InstanceType": "m4.large",
+    "EbsConfiguration": {
+      "EbsBlockDeviceConfigs": [
+        {
+          "VolumeSpecification": { "VolumeType": "gp2", "SizeInGB": 32 },
+          "VolumesPerInstance": 1
+        }
+      ]
+    }
+  }
+]

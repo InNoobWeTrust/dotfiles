@@ -1,0 +1,30 @@
+[
+  {
+    "Name": "0.0.original-data.hql",
+    "ActionOnFailure": "TERMINATE_CLUSTER",
+    "Args": [
+      "-f",
+      "s3://{{BUCKET}}/script/0.0.original-data.hql"
+    ],
+    "Type": "hive"
+  },
+  {
+    "Name": "0.1.optimized-data.hql",
+    "ActionOnFailure": "TERMINATE_CLUSTER",
+    "Args": [
+      "-f",
+      "s3://{{BUCKET}}/script/0.1.optimized-data.hql",
+      "-d",
+      "LOCATION=s3://{{BUCKET}}/data"
+    ],
+    "Type": "hive"
+  },
+  {
+    "Name": "1.1.hive-world.hql",
+    "Args": [
+      "-f",
+      "s3://{{BUCKET}}/script/1.1.hive-world.hql"
+    ],
+    "Type": "hive"
+  }
+]
