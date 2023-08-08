@@ -33,10 +33,13 @@ try {
       await driver.executeAsyncScript(script);
     } catch (e) {
       console.log(e);
+      console.log("Some shits happen, please proceed with escalation!");
     }
     await holdon();
   }
+  console.log("Justice has been executed, thanks for waiting, comrade!");
 } finally {
+  console.log("Cleaning up...");
   await driver.quit();
 }
 const end = Date.now();
