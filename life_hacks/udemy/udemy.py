@@ -15,7 +15,7 @@ api_id = config['auth'].getint('api_id')
 api_hash = config['auth']['api_hash']
 bot_token = config['auth']['bot_token']
 session = config['auth']['session']
-client = TelegramClient(StringSession(session if session else None), api_id, api_hash)
+client = TelegramClient(StringSession(session if session else ''), api_id, api_hash)
 
 async def get_text_links(channel: str, validate: Optional[Callable[[str], bool]]=None):
     client.start(bot_token=bot_token)
