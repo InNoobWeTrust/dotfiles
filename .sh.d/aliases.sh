@@ -236,7 +236,7 @@ alias update-nvm='usable nvm && nvm install node --reinstall-packages-from=node 
 # install volta
 alias install-volta='mkdir -p $VOLTA_HOME && curl https://get.volta.sh | bash -s -- --skip-setup'
 
-alias install-bun='usable curl && BUN_INSTALL="$HOME/.local/bun" "${SHELL}" <(curl -fsSL https://bun.sh/install)'
+alias install-bun='usable bash && usable curl && BUN_INSTALL="$HOME/.local/bun" bash <(curl -fsSL https://bun.sh/install)'
 
 # cleanup unused version of node
 alias cleanup-nvm='nvm ls --no-colors | grep -o "^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*" | tr -d "[[:blank:]]v" | xargs -I % $SHELL -c ". $NVM_DIR/nvm.sh && nvm uninstall %"'

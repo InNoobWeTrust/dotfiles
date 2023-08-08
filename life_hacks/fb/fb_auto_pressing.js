@@ -217,7 +217,13 @@ const report = async (...clickProviders) => {
 // Single entry point to nuke the asshole with all the FUDs
 const reportAll = async () => {
   const start = Date.now();
-  const reportTypes = (await listReportTypes()).filter((rt) => rt in REPORTS);
+  let reportTypes = (await listReportTypes()).filter((rt) => rt in REPORTS);
+  for (const _ of Array(10)) {
+    if (reportTypes.length > 0) break;
+
+    await timer(5000);
+    reportTypes = (await listReportTypes()).filter((rt) => rt in REPORTS);
+  }
   console.debug("Available report types:", reportTypes);
   for (const rt of reportTypes) {
     console.debug(`Reporting for: ${rt}`);
@@ -239,3 +245,9 @@ const reportAll = async () => {
 };
 
 reportAll();
+//(async () => {
+//  while (true) {
+//    await reportAll();
+//    await timer(10000);
+//  }
+//})();
