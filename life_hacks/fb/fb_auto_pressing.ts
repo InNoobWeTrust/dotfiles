@@ -28,6 +28,7 @@ try {
 
   for (const link of links) {
     console.log(`Pressing asshole @ ${link}`);
+    console.time(link);
     await driver.get(link);
     try {
       await driver.executeAsyncScript(script);
@@ -35,6 +36,7 @@ try {
       console.log(e);
       console.log("Some shits happen, please proceed with escalation!");
     }
+    console.timeEnd(link);
     await holdon();
   }
   console.log("Justice has been executed, thanks for waiting, comrade!");
