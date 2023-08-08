@@ -7,8 +7,10 @@ const links = Deno.readTextFileSync("./links.txt").split("\n");
 const script = Deno.readTextFileSync("./fb_auto_pressing.js");
 const holdon = () =>
   new Promise((resolve) => setTimeout(resolve, 1000 + 500 * Math.random()));
+const randomHour = () => Math.floor(4 + Math.random() * 2);
+const sleep = (hours: number) =>
+  new Promise((resolve) => setTimeout(resolve, hours * 3600 * 1000));
 
-const start = Date.now();
 const firefoxOptions = new firefox.Options().headless();
 const driver = await new Builder()
   .forBrowser("firefox")
@@ -16,37 +18,52 @@ const driver = await new Builder()
   .build();
 driver.manage().setTimeouts({
   implicit: 1500,
-  pageLoad: 20000,
+  pageLoad: 30000,
   script: 300000,
 });
-try {
+
+const login = async () => {
   console.log("Logging in...");
   await driver.get("http://www.facebook.com/login");
   await driver.findElement(By.id("email")).sendKeys(Deno.env.get("EMAIL"));
   await driver.findElement(By.id("pass")).sendKeys(Deno.env.get("PASS"));
   await driver.findElement(By.id("loginbutton")).click();
+};
 
-  for (const link of links) {
-    console.log(`Pressing asshole @ ${link}`);
-    console.time(link);
-    await driver.get(link);
-    try {
-      await driver.executeAsyncScript(script);
-    } catch (e) {
-      console.log(e);
-      console.log("Some shits happen, please proceed with escalation!");
+const pressing = async () => {
+  const start = Date.now();
+  try {
+    for (const link of links) {
+      console.log(`Pressing asshole @ ${link}`);
+      console.time(link);
+      try {
+        await driver.get(link);
+        await driver.executeAsyncScript(script);
+      } catch (e) {
+        console.log(e);
+      }
+      console.timeEnd(link);
+      await holdon();
     }
-    console.timeEnd(link);
-    await holdon();
+    console.log("Justice has been executed, thanks for waiting, comrade!");
+  } catch (e) {
+    console.log(e);
+  } finally {
+    console.log("Cleaning up...");
   }
-  console.log("Justice has been executed, thanks for waiting, comrade!");
-} finally {
-  console.log("Cleaning up...");
-  await driver.quit();
+  const end = Date.now();
+  const duration = Math.ceil((end - start) / 1000);
+  console.log(
+    `Pressing done after ${Math.floor(duration / 60)}m${duration % 60}s}`,
+  );
+};
+
+await login();
+while (true) {
+  await pressing();
+  const hours = randomHour();
+  console.log(`Sleeping for ${hours} hours...`);
+  await sleep(hours);
 }
-const end = Date.now();
-const duration = Math.ceil((end - start) / 1000);
-console.log(
-  `Pressing done after ${Math.floor(duration / 60)}m${duration % 60}s}`,
-);
-Deno.exit();
+//await driver.quit();
+//Deno.exit();

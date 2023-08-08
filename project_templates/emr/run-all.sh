@@ -10,7 +10,7 @@ aws s3 sync script "s3://$BUCKET/script/"
 sed 's,{{BUCKET}},'"${BUCKET}"',g' > ./config/steps.json < ./config/steps.template.json
 
 # Start cluster and run steps
-aws emr create-cluster \
+CLUSTER_INFO=$(aws emr create-cluster \
     --name "MyUnderwareHouse" \
     --log-uri "s3n://$BUCKET/logs/" \
     --release-label "emr-5.26.0" \
@@ -21,6 +21,10 @@ aws emr create-cluster \
     --steps file://./config/steps.json \
     --scale-down-behavior "TERMINATE_AT_TASK_COMPLETION" \
     --auto-terminate \
-    --region "$REGION"
+    --region "$REGION")
+
+echo $CLUSTER_INFO
+
+export CLUSTERID=$(echo $CLUSTER_INFO | jq .ClusterId | tr -d '"')
 
 rm ./config/steps.json
