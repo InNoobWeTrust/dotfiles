@@ -12,9 +12,6 @@
   prompt = false
 [diff]
   tool = nvim
-[status]
-  showuntrackedfiles = no
-
 [url "git@github.com:"]
   insteadOf = https://github.com/
 
