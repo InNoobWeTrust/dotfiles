@@ -1,25 +1,28 @@
 [core]
-	editor = nvim
+  editor = nvim
 [credential]
-	helper = manager
+  helper = manager
 [merge]
-	tool = nvim
+  tool = nvim
 [mergetool]
-	prompt = true
+  prompt = true
 [mergetool "nvim"]
-	cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
+  cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 [difftool]
-	prompt = false
+  prompt = false
 [diff]
-	tool = nvim
+  tool = nvim
 [status]
   showuntrackedfiles = no
 
+[url "git@github.com:"]
+  insteadOf = https://github.com/
+
 [includeIf "gitdir:~/Developer/"]
-	path = ~/.weeaboo.gitconfig
+  path = ~/.weeaboo.gitconfig
 [includeIf "gitdir:~/Developer/InNoobWeTrust/"]
-	path = ~/.nerd.gitconfig
+  path = ~/.nerd.gitconfig
 [includeIf "gitdir:~/Developer/tokoinofficial/"]
-	path = ~/.work.gitconfig
+  path = ~/.work.gitconfig
 [includeIf "gitdir:~/Developer/rex/"]
-	path = ~/.work.collab.gitconfig
+  path = ~/.work.collab.gitconfig
