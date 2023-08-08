@@ -115,6 +115,12 @@ usable docker && \
         alias mysql-docker='docker run --rm -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root --name mysql mysql:latest'
     }
 
+# Node utilities
+usable npx && \
+    {
+        alias http-server='printf "%s\n" "$HTTP_SERVER_OPTIONS" | xargs npx http-server'
+    }
+
 # Find using ripgrep
 usable rg && \
     {

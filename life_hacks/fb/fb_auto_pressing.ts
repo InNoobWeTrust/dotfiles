@@ -1,14 +1,12 @@
 #!/usr/bin/env -S deno run -A
 
-import { Builder, By, Key, until } from "npm:selenium-webdriver";
+import { Builder, By } from "npm:selenium-webdriver";
 import firefox from "npm:selenium-webdriver/firefox.js";
 
 const links = Deno.readTextFileSync("./links.txt").split("\n");
 const script = Deno.readTextFileSync("./fb_auto_pressing.js");
-const holdon = (timeout: number | undefined) =>
-  new Promise((resolve) =>
-    setTimeout(resolve, timeout || 1000 + 500 * Math.random())
-  );
+const holdon = () =>
+  new Promise((resolve) => setTimeout(resolve, 1000 + 500 * Math.random()));
 
 const start = Date.now();
 const firefoxOptions = new firefox.Options().headless();
