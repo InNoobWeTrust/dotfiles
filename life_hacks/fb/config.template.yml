@@ -1,0 +1,39 @@
+accounts:
+  - email: 0795245066
+    pass: 0795245066
+  - email: 0344007095
+    pass: 0344007095
+  - email: 0908146006
+    pass: 0908146006
+  - email: 0911018990
+    pass: 0911018990
+  - email: 0762634353
+    pass: 0762634353
+  - email: 0973486893
+    pass: 0973486893
+
+browsers:
+  - MicrosoftEdge
+  - firefox
+  - internet explorer
+  - safari
+
+timeouts:
+  implicit: 1500
+  pageLoad: 30000
+  script: 120000
+
+delay:
+  min: 1000
+  max: 2000
+
+sleep:
+  min: 14400000
+  max: 28800000
+
+links:
+  - https://www.facebook.com/zuck/
+  - https://www.facebook.com/zuck/
+  - https://www.facebook.com/zuck/
+  - https://www.facebook.com/zuck/
+  - https://www.facebook.com/zuck/

@@ -1,7 +1,7 @@
 #!/usr/bin/env -S bun run
 
 import { Builder, By } from "selenium-webdriver";
-import firefox from "selenium-webdriver/firefox.js";
+import yaml from "js-yaml";
 import log from "npmlog";
 Object.defineProperty(log, "heading", {
   get: () => {
@@ -9,39 +9,81 @@ Object.defineProperty(log, "heading", {
   },
 });
 log.headingStyle = { bg: "", fg: "white" };
-log.level = "silly";
 import logfile from "npmlog-file";
 
-const firefoxOptions = new firefox.Options().headless();
-const driver = await new Builder()
-  .forBrowser("firefox")
-  .setFirefoxOptions(firefoxOptions)
-  .build();
-driver.manage().setTimeouts({
-  implicit: 1_500,
-  pageLoad: 30_000,
-  script: 120_000,
-});
+const CONFIG = Bun.env.CONFIG || "./config.yml";
+const SCRIPT = Bun.env.SCRIPT || "./fb_auto_pressing.js";
+const LOGLEVEL = Bun.env.LOGLEVEL || "silly";
 
-const holdon = () =>
-  new Promise((resolve) => setTimeout(resolve, 1_000 + 500 * Math.random()));
+log.level = LOGLEVEL;
 
-const randomHour = () => Math.floor(4 + Math.random() * 2);
+const getConfig = async () => {
+  log.verbose(`Using config at ${CONFIG}...`);
+  return yaml.load(await Bun.file(CONFIG).text());
+};
 
-const sleep = (hours: number) =>
-  new Promise((resolve) => setTimeout(resolve, hours * 3_600 * 1_000));
+const getScript = async () => {
+  log.verbose(`Using script at ${SCRIPT}...`);
+  return await Bun.file(SCRIPT).text();
+};
 
-const login = async () => {
-  log.info("Logging in...");
+const choose = (...arr) => {
+  return arr[Math.floor(Math.random() * arr.length)];
+};
+
+const holdon = async () => {
+  const {
+    delay: { min, max },
+  } = await getConfig();
+  const durationMs = min + Math.floor(Math.random() * (max - min));
+  log.verbose(
+    `Delay for ${
+      durationMs.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+      })
+    }ms...`,
+  );
+  await new Promise((resolve) => setTimeout(resolve, durationMs));
+};
+
+const sleep = async () => {
+  const {
+    sleep: { min, max },
+  } = await getConfig();
+  const durationMs = min + Math.floor(Math.random() * (max - min));
+  log.info(
+    `Sleeping for ${
+      durationMs.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+      })
+    }ms...`,
+  );
+  await new Promise((resolve) => setTimeout(resolve, durationMs));
+};
+
+const getDriver = async () => {
+  const { browsers, timeouts } = await getConfig();
+
+  const browser = choose(...browsers);
+  log.info(`Using browser: ${browser}`);
+  const driver = await new Builder().forBrowser(browser).build();
+  driver.manage().setTimeouts(timeouts);
+  return driver;
+};
+
+const login = async (driver) => {
+  const { accounts } = await getConfig();
+  const acc = choose(...accounts);
+  log.info(`Logging in with ${JSON.stringify(acc)}...`);
   await driver.get("http://www.facebook.com/login");
-  await driver.findElement(By.id("email")).sendKeys(Bun.env.EMAIL);
-  await driver.findElement(By.id("pass")).sendKeys(Bun.env.PASS);
+  await driver.findElement(By.id("email")).sendKeys(acc.email);
+  await driver.findElement(By.id("pass")).sendKeys(acc.pass);
   await driver.findElement(By.id("loginbutton")).click();
 };
 
-const pressing = async () => {
-  const links = (await Bun.file("./links.txt").text()).split("\n");
-  const script = await Bun.file("./fb_auto_pressing.js").text();
+const pressing = async (driver) => {
+  const { links } = await getConfig();
+  const script = await getScript();
   const start = Date.now();
   try {
     for (const link of links) {
@@ -69,12 +111,11 @@ const pressing = async () => {
   );
 };
 
-await login();
 while (true) {
-  await pressing();
-  const hours = randomHour();
-  log.info(`Sleeping for ${hours} hours...`);
-  logfile.write(log, "log.txt");
-  await sleep(hours);
+  const driver = await getDriver();
+  await login(driver);
+  await pressing(driver);
+  await driver.quit();
+  logfile.write(log, "out.log");
+  await sleep();
 }
-//await driver.quit();
