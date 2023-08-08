@@ -12,6 +12,8 @@
 	prompt = false
 [diff]
 	tool = nvim
+[status]
+  showuntrackedfiles = no
 
 [includeIf "gitdir:~/Developer/"]
 	path = ~/.weeaboo.gitconfig
