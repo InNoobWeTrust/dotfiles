@@ -18,7 +18,7 @@ const driver = await new Builder()
   .build();
 driver.manage().setTimeouts({
   implicit: 1500,
-  pageLoad: 10000,
+  pageLoad: 20000,
   script: 300000,
 });
 try {

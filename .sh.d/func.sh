@@ -120,6 +120,21 @@ batch_open() {
 }
 
 #
+# # cron_routine - cron at random time over a day
+# # usage: cron_routine [shell_script_file] [number_of_runs]
+cron_routine() {
+    SCRIPT=${1:-cron.sh}
+    RUNS=${2:-5}
+    MIN_STEP=${3:-3}
+    MIN=$(($RANDOM % 60))
+    HOURS=$(seq 0 $MIN_STEP 23 | shuf | head -n $RUNS | sort --general-numeric-sort | tr '\n' ' ' | sed -e 's/[[:space:]]$//' | tr ' ' ',')
+
+    CONF="$MIN\t$HOURS\t*\t*\t*\tcd $PWD && /usr/bin/env -S zsh -l -c '. ./.envrc && ./$SCRIPT | tee ./out.log'"
+
+    echo -e $CONF
+}
+
+#
 # # setPath - Add to PATH if not there
 # # usage: setPath [some_path]
 setPath() {
