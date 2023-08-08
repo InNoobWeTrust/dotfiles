@@ -185,7 +185,6 @@ const openReportMenu = async () => {
 };
 
 const listReportTypes = async () => {
-  await openReportMenu();
   const reportTypes = $$(
     'div[role="dialog"] div[role="listitem"] div[role="button"]',
   )?.map((e) => e.innerText);
@@ -217,8 +216,9 @@ const report = async (...clickProviders) => {
 // Single entry point to nuke the asshole with all the FUDs
 const reportAll = async () => {
   const start = Date.now();
+  await openReportMenu();
   let reportTypes = (await listReportTypes()).filter((rt) => rt in REPORTS);
-  for (const _ of Array(10)) {
+  for (const _ of Array(3)) {
     if (reportTypes.length > 0) break;
 
     await timer(5000);
