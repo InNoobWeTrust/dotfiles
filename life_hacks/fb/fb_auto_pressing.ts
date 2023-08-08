@@ -1,6 +1,9 @@
 #!/usr/bin/env -S bun run
 
 import { Builder, By } from "selenium-webdriver";
+import { Options as chromeOptions } from "selenium-webdriver/chrome";
+import { Options as edgeOptions } from "selenium-webdriver/edge";
+import { Options as firefoxOptions } from "selenium-webdriver/firefox";
 import { Duration } from "luxon";
 import yaml from "js-yaml";
 import log from "npmlog";
@@ -59,7 +62,12 @@ const getDriver = async () => {
 
   const browser = choose(...browsers);
   log.info(`Using browser: ${browser}`);
-  const driver = await new Builder().forBrowser(browser).build();
+  const driver = await new Builder()
+    .forBrowser(browser)
+    .setChromeOptions(new chromeOptions().headless())
+    .setEdgeOptions(new edgeOptions().headless())
+    .setFirefoxOptions(new firefoxOptions().headless())
+    .build();
   driver.manage().setTimeouts(timeouts);
   return driver;
 };

@@ -13,6 +13,7 @@ accounts:
     pass: 0973486893
 
 browsers:
+  - chrome
   - MicrosoftEdge
   - firefox
   - internet explorer
