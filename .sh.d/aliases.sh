@@ -110,7 +110,7 @@ usable docker && \
         # Swagger api documentation generator
         alias swagger-docker='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
         # MongoDB
-        alias mongo-docker='docker run --rm -d -p 27017:27017 --name mongo mongo:latest'
+        alias mongo-docker='docker run --rm -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=root --name mongo mongo:latest'
         # MySQL
         alias mysql-docker='docker run --rm -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root --name mysql mysql:latest'
     }
