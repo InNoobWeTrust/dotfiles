@@ -14,30 +14,30 @@ const REPORTS = {
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
         (e) => e.innerText === "Fake account",
       ),
-    () => $('div[role="dialog"] div[aria-label="Submit"][role="button"]'),
-    () => $('div[role="dialog"] div[aria-label="Next"][role="button"]'),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
+  ],
+  "Fake Page": [
+    () =>
+      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
+        (e) => e.innerText === "Fake Page",
+      ),
   ],
   "Fake name": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
         (e) => e.innerText === "Fake name",
       ),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Posting inappropriate things": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
         (e) => e.innerText === "Posting inappropriate things",
       ),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Harassment or bullying": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
         (e) => e.innerText === "Harassment or bullying",
       ),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "I want to help": [
     () =>
@@ -48,21 +48,18 @@ const REPORTS = {
       $$(
         'div[role="dialog"] div[role="listitem"] div[role="button"]',
       )?.sample(),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Something else": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
         (e) => e.innerText === "Something else",
       ),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Hate speech": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
         (e) => e.innerText === "Hate speech",
       ),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Nudity or sexual content": [
     () =>
@@ -73,7 +70,16 @@ const REPORTS = {
       $$(
         'div[role="dialog"] div[role="listitem"] div[role="button"]',
       )?.sample(),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
+  ],
+  "Nudity or sexual activity": [
+    () =>
+      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
+        (e) => e.innerText === "Nudity or sexual activity",
+      ),
+    () =>
+      $$(
+        'div[role="dialog"] div[role="listitem"] div[role="button"]',
+      )?.sample(),
   ],
   Violence: [
     () =>
@@ -84,7 +90,6 @@ const REPORTS = {
       $$(
         'div[role="dialog"] div[role="listitem"] div[role="button"]',
       )?.sample(),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   Harassment: [
     () =>
@@ -95,7 +100,6 @@ const REPORTS = {
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
         (e) => e.innerText === "It's someone else",
       ),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Unauthorised sales": [
     () =>
@@ -106,7 +110,6 @@ const REPORTS = {
       $$(
         'div[role="dialog"] div[role="listitem"] div[role="button"]',
       )?.sample(),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "Fraud or scam": [
     () =>
@@ -117,23 +120,42 @@ const REPORTS = {
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
         (e) => e.innerText === "Other",
       ),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
+  ],
+  "False information": [
+    () =>
+      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
+        (e) => e.innerText === "Fraud or scam",
+      ),
+    () =>
+      $$(
+        'div[role="dialog"] div[role="listitem"] div[role="button"]',
+      )?.sample(),
+  ],
+  Spam: [
+    () =>
+      $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
+        (e) => e.innerText === "Spam",
+      ),
   ],
   "Intellectual property": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
         (e) => e.innerText === "Intellectual property",
       ),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
   "I can't access my account": [
     () =>
       $$('div[role="dialog"] div[role="listitem"] div[role="button"]')?.find(
         (e) => e.innerText === "I can't access my account",
       ),
-    () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
   ],
 };
+
+const SUBMIT_STEPS = [
+  () => $('div[role="dialog"] div[aria-label="Submit"][role="button"]'),
+  () => $('div[role="dialog"] div[aria-label="Next"][role="button"]'),
+  () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
+];
 
 const delayClick = () =>
   1000 + 1000 * Math.random() + 500 * Math.random() + 250 * Math.random();
@@ -146,16 +168,24 @@ const timer = async (durationMs) => {
 
 const holdOn = async () => await timer(delayClick());
 
-const listReportTypes = async () => {
-  // Open profile menu
+const openReportMenu = async () => {
+  // Open menu
   $('div[aria-label="See Options"]')?.click();
   $('div[aria-label="See options"]')?.click();
+  $('div[aria-label="More"]')?.click();
   await holdOn();
   // Click report option
   $$('div[role="menuitem"]')
     ?.find((e) => e.innerText === "Find support or report")
     ?.click();
+  $$('div[role="menuitem"]')
+    ?.find((e) => e.innerText === "Report group")
+    ?.click();
   await holdOn();
+};
+
+const listReportTypes = async () => {
+  await openReportMenu();
   const reportTypes = $$(
     'div[role="dialog"] div[role="listitem"] div[role="button"]',
   )?.map((e) => e.innerText);
@@ -165,17 +195,10 @@ const listReportTypes = async () => {
 };
 
 const report = async (...clickProviders) => {
-  // Open profile menu
-  $('div[aria-label="See Options"]')?.click();
-  $('[aria-label="See options"]')?.click();
-  await holdOn();
-  // Click report option
-  $$('div[role="menuitem"]')
-    ?.find((e) => e.innerText === "Find support or report")
-    ?.click();
+  await openReportMenu();
   await holdOn();
   // Follow defined steps to report
-  for (const clickProvider of clickProviders) {
+  for (const clickProvider of [...clickProviders, ...SUBMIT_STEPS]) {
     const target = clickProvider();
     if (!target) {
       // Click target not found, closing early
@@ -211,7 +234,7 @@ const reportAll = async () => {
     } completed after ${duration}s! Thanks for waiting comrade!`,
   });
   if (arguments?.length > 0) {
-    arguments[arguments.length - 1]()
+    arguments[arguments.length - 1]();
   }
 };
 
