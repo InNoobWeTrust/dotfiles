@@ -300,6 +300,7 @@ require('packer').startup(function()
 	use 'editorconfig/editorconfig-vim'
 	-- Language packs
 	use 'sheerun/vim-polyglot'
+	use 'jidn/vim-dbml'
 	-- Highlight using language servers
 	use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
 	use { 'nvim-treesitter/nvim-treesitter-refactor' }
