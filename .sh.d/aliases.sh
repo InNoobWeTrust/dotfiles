@@ -221,6 +221,10 @@ alias install-pipx='python3 -m pip install -U pipx && python3 -m pipx ensurepath
 alias install-poetry='curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -'
 alias install-poetry-by-pipx='pipx install poetry'
 
+# install micromamba
+alias install-micromamba='usable curl && "${SHELL}" <(curl -L micro.mamba.pm/install.sh)'
+alias update-micromamba='usable micromamba && micromamba self-update'
+
 ################### NodeJs #####################
 
 # install nvm
