@@ -113,6 +113,8 @@ usable docker && \
         alias mongo-docker='docker run --rm -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=root --name mongo mongo:latest'
         # MySQL
         alias mysql-docker='docker run --rm -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root --name mysql mysql:latest'
+        # PySpark notebook
+        alias sparkbook-docker='docker run -it --rm -p 8888:8888 -v $(pwd):/home/jovyan/work jupyter/pyspark-notebook'
     }
 
 # Node utilities
