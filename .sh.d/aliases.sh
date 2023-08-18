@@ -121,6 +121,7 @@ usable docker && \
 usable npx && \
     {
         alias http-server='printf "%s\n" "$HTTP_SERVER_OPTIONS" | xargs npx http-server'
+        alias remixd='npx @remix-project/remixd'
     }
 
 # Find using ripgrep
