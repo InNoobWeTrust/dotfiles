@@ -1,34 +1,47 @@
 #!/usr/bin/env -S bun run
 
+import fs from "fs";
 import { Builder, By } from "selenium-webdriver";
 import { Options as chromeOptions } from "selenium-webdriver/chrome";
 import { Options as edgeOptions } from "selenium-webdriver/edge";
 import { Options as firefoxOptions } from "selenium-webdriver/firefox";
 import { Duration } from "luxon";
 import yaml from "js-yaml";
-import log from "npmlog";
-Object.defineProperty(log, "heading", {
-  get: () => {
-    return new Date().toLocaleString("sv", { timeZoneName: "short" });
-  },
+import winston from "winston";
+
+const CONFIG = process.env.CONFIG || "./config.yml";
+const SCRIPT = process.env.SCRIPT || "./fb_auto_pressing.js";
+const LOGLEVEL = process.env.LOGLEVEL || "info";
+const CHECKPOINT = !!process.env.CHECKPOINT || "checkpoint.txt";
+const CRON = process.env.CRON || false
+
+const logger = winston.createLogger({
+  level: LOGLEVEL,
+  format: winston.format.combine(
+    winston.format.colorize(),
+    winston.format.timestamp(),
+    winston.format.printf(
+      ({ level, message, label, timestamp }) => [
+        `${timestamp}`,
+        label ? `[${label}]` : '',
+        `${level}:`,
+        message,
+      ].filter(Boolean).join(' ')
+    )
+  ),
+  transports: [
+    new winston.transports.Console(),
+  ],
 });
-log.headingStyle = { bg: "", fg: "white" };
-import logfile from "npmlog-file";
-
-const CONFIG = Bun.env.CONFIG || "./config.yml";
-const SCRIPT = Bun.env.SCRIPT || "./fb_auto_pressing.js";
-const LOGLEVEL = Bun.env.LOGLEVEL || "info";
-
-log.level = LOGLEVEL;
 
 const getConfig = async () => {
-  log.verbose(`Using config at ${CONFIG}...`);
-  return yaml.load(await Bun.file(CONFIG).text());
+  logger.debug(`Loading config at path ${CONFIG}`)
+  return yaml.load(fs.readFileSync(CONFIG, "utf8"));
 };
 
 const getScript = async () => {
-  log.verbose(`Using script at ${SCRIPT}...`);
-  return await Bun.file(SCRIPT).text();
+  logger.debug(`Using script at ${SCRIPT}...`);
+  return fs.readFileSync(SCRIPT, "utf8");
 };
 
 const choose = (...arr: unknown[]) => {
@@ -36,13 +49,13 @@ const choose = (...arr: unknown[]) => {
 };
 
 const permutate = (...arr: unknown[]) =>
-  function* (arr: unknown[]) {
+  function*(arr: unknown[]) {
     while (arr.length > 0) {
       const [picked, ..._] = arr.splice(
         Math.floor(Math.random() * arr.length),
         1,
       );
-      log.verbose(`picked: ${picked}`);
+      logger.debug(`picked: ${picked}`);
       yield picked;
     }
   }.bind(this)(arr);
@@ -56,16 +69,7 @@ const holdon = async () => {
     delay: { min, max },
   } = await getConfig();
   const durationMs = min + Math.floor(Math.random() * (max - min));
-  log.verbose(`Delay for ${durationFmt(durationMs)}...`);
-  await new Promise((resolve) => setTimeout(resolve, durationMs));
-};
-
-const sleep = async () => {
-  const {
-    sleep: { min, max },
-  } = await getConfig();
-  const durationMs = min + Math.floor(Math.random() * (max - min));
-  log.info(`Sleeping for ${durationFmt(durationMs)}...`);
+  logger.debug(`Delay for ${durationFmt(durationMs)}...`);
   await new Promise((resolve) => setTimeout(resolve, durationMs));
 };
 
@@ -73,7 +77,7 @@ const getDriver = async () => {
   const { browsers, timeouts } = await getConfig();
 
   const browser = choose(...browsers);
-  log.info(`Using browser: ${browser}`);
+  logger.info(`Using browser: ${browser}`);
   const driver = await new Builder()
     .forBrowser(browser)
     .setChromeOptions(new chromeOptions().headless())
@@ -87,7 +91,7 @@ const getDriver = async () => {
 const login = async (driver: any) => {
   const { accounts } = await getConfig();
   const acc = choose(...accounts) as { email: string; pass: string };
-  log.info(`Logging in with ${JSON.stringify(acc)}...`);
+  logger.info(`Logging in with ${JSON.stringify(acc)}...`);
   await driver.get("http://www.facebook.com/login");
   await driver.findElement(By.id("email")).sendKeys(acc.email);
   await driver.findElement(By.id("pass")).sendKeys(acc.pass);
@@ -101,33 +105,61 @@ const pressing = async (driver: any) => {
   const start = Date.now();
   try {
     for (const link of permutate(...links)) {
-      log.info(`Pressing asshole @ ${link}`);
+      logger.info(`Pressing asshole @ ${link}`);
       const start = performance.now();
       try {
         await driver.get(link);
         await driver.executeAsyncScript(script);
       } catch (e) {
-        log.error(e);
+        logger.error(e);
+      } finally {
+        await checkpoint();
       }
       const end = performance.now();
-      log.info(`Took ${durationFmt(end - start)}...`);
+      logger.info(`Took ${durationFmt(end - start)}...`);
       await holdon();
     }
-    log.info("Justice has been executed, thanks for waiting, comrade!");
+    logger.info("Justice has been executed, thanks for waiting, comrade!");
   } catch (e) {
-    log.error(e);
-  } finally {
-    log.verbose("Cleaning up...");
+    logger.error(e);
   }
   const end = Date.now();
-  log.info(`Pressing done after ${durationFmt(end - start)}`);
+  logger.info(`Pressing done after ${durationFmt(end - start)}`);
 };
 
-while (true) {
+const checkpoint = async () => {
+  fs.writeFileSync(CHECKPOINT, new Date().toISOString())
+}
+
+const cronDelayCheck = async () => {
+  if (!CRON) {
+    return
+  }
+
+  if (!fs.existsSync(CHECKPOINT)) {
+    return
+  }
+
+  const dateStr = fs.readFileSync(CHECKPOINT)
+  const mtimeMs = Date.parse(dateStr)
+  const {
+    sleep: { min, max },
+  } = await getConfig();
+  const durationMs = min + Math.floor(Math.random() * (max - min));
+  const eta = durationMs - (Date.now() - mtimeMs);
+  if (eta > 0) {
+    logger.verbose(`Not running, will run in at least ${durationFmt(eta)}...`)
+    process.exit(0)
+  }
+}
+
+const runner = async () => {
+  await cronDelayCheck()
+
   const driver = await getDriver();
   await login(driver);
   await pressing(driver);
   await driver.quit();
-  logfile.write(log, "out.log");
-  await sleep();
 }
+
+await runner()
