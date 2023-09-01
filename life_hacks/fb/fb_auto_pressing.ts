@@ -31,11 +31,23 @@ const getScript = async () => {
   return await Bun.file(SCRIPT).text();
 };
 
-const choose = (...arr) => {
+const choose = (...arr: unknown[]) => {
   return arr[Math.floor(Math.random() * arr.length)];
 };
 
-const durationFmt = (durationMs) => {
+const permutate = (...arr: unknown[]) =>
+  function* (arr: unknown[]) {
+    while (arr.length > 0) {
+      const [picked, ..._] = arr.splice(
+        Math.floor(Math.random() * arr.length),
+        1,
+      );
+      log.verbose(`picked: ${picked}`);
+      yield picked;
+    }
+  }.bind(this)(arr);
+
+const durationFmt = (durationMs: number) => {
   return Duration.fromMillis(durationMs).toFormat("hh:mm:ss");
 };
 
@@ -72,31 +84,33 @@ const getDriver = async () => {
   return driver;
 };
 
-const login = async (driver) => {
+const login = async (driver: any) => {
   const { accounts } = await getConfig();
-  const acc = choose(...accounts);
+  const acc = choose(...accounts) as { email: string; pass: string };
   log.info(`Logging in with ${JSON.stringify(acc)}...`);
   await driver.get("http://www.facebook.com/login");
   await driver.findElement(By.id("email")).sendKeys(acc.email);
   await driver.findElement(By.id("pass")).sendKeys(acc.pass);
   await driver.findElement(By.id("loginbutton")).click();
+  await holdon();
 };
 
-const pressing = async (driver) => {
+const pressing = async (driver: any) => {
   const { links } = await getConfig();
   const script = await getScript();
   const start = Date.now();
   try {
-    for (const link of links) {
+    for (const link of permutate(...links)) {
       log.info(`Pressing asshole @ ${link}`);
-      console.time(link);
+      const start = performance.now();
       try {
         await driver.get(link);
         await driver.executeAsyncScript(script);
       } catch (e) {
         log.error(e);
       }
-      console.timeEnd(link);
+      const end = performance.now();
+      log.info(`Took ${durationFmt(end - start)}...`);
       await holdon();
     }
     log.info("Justice has been executed, thanks for waiting, comrade!");
