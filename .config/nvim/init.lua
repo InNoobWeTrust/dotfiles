@@ -29,7 +29,7 @@ o.cmdheight = 2
 o.mouse = 'a'
 if vim.g.neovide then
 	-- Put anything you want to happen only in Neovide here
-	o.guifont = 'Iosevka Nerd Font:h15'
+	o.guifont = 'Iosevka Nerd Font:h14'
 	g.neovide_cursor_animation_length = 0
 	-- Helper function for transparency formatting
 	local alpha = function()
@@ -363,6 +363,8 @@ require('packer').startup(function()
 	map('n', '<leader><leader>g', '<cmd>Telescope live_grep<cr>')
 	map('n', '<leader><leader>bu', '<cmd>Telescope buffers<cr>')
 	map('n', '<leader><leader>h', '<cmd>Telescope help_tags<cr>')
+	-- Key mapping for native LSP
+	map('n', 'ff', '<cmd>lua vim.lsp.buf.format()<cr>')
 	---- Key mapping for git signs
 	-- Navigation
 	map('n', ']c', "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", { expr = true })
@@ -487,12 +489,26 @@ require('packer').startup(function()
 		sources = {
 			-- Eslint for js, jsx, ts, tsx, vue
 			null_ls.builtins.diagnostics.eslint_d,
-			--null_ls.builtins.formatting.eslint_d,
+			null_ls.builtins.formatting.eslint_d,
 			null_ls.builtins.code_actions.eslint_d,
 			-- Prettier format html, css, json
-			null_ls.builtins.formatting.prettierd,
+			null_ls.builtins.formatting.prettierd.with({
+				filetypes = {
+					"css",
+					"scss",
+					"html",
+					"json",
+					"yaml",
+					"markdown",
+					"graphql",
+					"md",
+					"txt",
+				},
+			}),
+			-- Format c, cpp, cs, java, cuda, proto
+			null_ls.builtins.formatting.clang_format,
 			-- Git actions
-			null_ls.builtins.code_actions.gitsigns,
+			--null_ls.builtins.code_actions.gitsigns,
 			-- Conventional git commits
 			null_ls.builtins.diagnostics.commitlint,
 			null_ls.builtins.diagnostics.gitlint,
@@ -513,7 +529,7 @@ require('packer').startup(function()
 			-- Lint dotenv
 			null_ls.builtins.diagnostics.dotenv_linter,
 			-- Lint Makefile
-			null_ls.builtins.diagnostics.checkmake,
+			--null_ls.builtins.diagnostics.checkmake,
 			-- Lint Dockerfile
 			null_ls.builtins.diagnostics.hadolint,
 			-- Markdown and Latex actions
