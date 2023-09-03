@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 BUCKET=a_unit_of_data_that_can_be_transferred_from_a_backing_store_in_a_single_operation
 # https://console.aws.amazon.com/vpc/
 SUBNET=subnet-000000000BEEFCAFE
