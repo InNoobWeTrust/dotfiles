@@ -114,7 +114,7 @@ usable docker && \
         # MySQL
         alias mysql-docker='docker run --rm -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root --name mysql mysql:latest'
         # PySpark notebook
-        alias sparkbook-docker='docker run -it --rm -p 8888:8888 -v $(pwd):/home/jovyan/work jupyter/pyspark-notebook'
+        alias sparkbook-docker='docker run --rm -d -p 8888:8888 -v "$(pwd):/home/jovyan/work" --name pyspark jupyter/pyspark-notebook:latest'
     }
 
 # Node utilities
