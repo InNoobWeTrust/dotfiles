@@ -6,27 +6,30 @@ SUBNET=subnet-000000000BEEFCAFE
 REGION=us-east-1
 
 # Upload scripts to S3
-aws s3 sync script "s3://$BUCKET/script/"
+aws s3 sync scripts "s3://$BUCKET/scripts/"
 
 # Replace bucket string in config file
 sed 's,{{BUCKET}},'"${BUCKET}"',g' > ./config/steps.json < ./config/steps.template.json
 
 # Start cluster and run steps
-CLUSTER_INFO=$(aws emr create-cluster \
+CLUSTERID=$(aws emr create-cluster \
     --name "MyUnderwareHouse" \
     --log-uri "s3n://$BUCKET/logs/" \
-    --release-label "emr-5.26.0" \
+    --release-label "emr-6.12.0" \
     --use-default-roles \
     --ec2-attributes "SubnetId=$SUBNET" \
-    --applications Name=Hadoop Name=Hive Name=Tez \
+    --applications Name=Hadoop Name=Hive Name=Tez Name=Spark Name=Zeppelin \
     --instance-groups file://./config/instance-groups.json \
     --steps file://./config/steps.json \
     --scale-down-behavior "TERMINATE_AT_TASK_COMPLETION" \
+    --os-release-label "2.0.20230808.0" \
     --auto-terminate \
-    --region "$REGION")
+    --region "$REGION" \
+    --query "ClusterId" \
+    --output text)
 
-echo $CLUSTER_INFO
+echo $CLUSTERID
 
-export CLUSTERID=$(echo $CLUSTER_INFO | jq .ClusterId | tr -d '"')
+export CLUSTERID
 
 rm ./config/steps.json

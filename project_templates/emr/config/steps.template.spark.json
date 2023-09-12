@@ -1,0 +1,36 @@
+[
+  {
+    "Name": "01_FeatureExtraction.py",
+    "ActionOnFailure": "TERMINATE_CLUSTER",
+    "Type": "CUSTOM_JAR",
+    "Jar": "command-runner.jar",
+    "Args": [
+      "spark-submit",
+      "s3://{{BUCKET}}/spark/scripts/01_FeatureExtraction.py",
+      "{{BUCKET}}/spark"
+    ]
+  },
+  {
+    "Name": "02_EDA.py",
+    "ActionOnFailure": "TERMINATE_CLUSTER",
+    "Type": "CUSTOM_JAR",
+    "Jar": "command-runner.jar",
+    "Args": [
+      "spark-submit",
+      "s3://{{BUCKET}}/spark/scripts/02_EDA.py",
+      "{{BUCKET}}/spark"
+    ]
+  },
+  {
+    "Name": "03_Modeling.py",
+    "ActionOnFailure": "TERMINATE_CLUSTER",
+    "Type": "CUSTOM_JAR",
+    "Jar": "command-runner.jar",
+    "Args": [
+      "spark-submit",
+      "s3://{{BUCKET}}/spark/scripts/03_Modeling.py",
+      "{{BUCKET}}/spark"
+    ]
+  }
+]
+

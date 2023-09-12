@@ -55,5 +55,8 @@ echo 'Public DNS of Master node: ' $MASTERNODE_DNS
     set -x
     aws emr wait cluster-running --cluster-id $CLUSTERID
     aws ec2-instance-connect send-ssh-public-key --instance-id $MASTERID --instance-os-user hadoop --ssh-public-key "file://~/.ssh/id_rsa.pub"
-    ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -N -L 8998:$MASTERNODE_DNS:8998 hadoop@$MASTERNODE_DNS
+    # Port-forward Livy and JupyterHub
+    ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -N -L 8998:$MASTERNODE_DNS:8998 -L 9443:$MASTERNODE_DNS:9443 hadoop@$MASTERNODE_DNS &
+    # Then go to https://localhost:9443 and login with user "jovyan" and password "jupyter"
+    # If using sparkmagic with local Jupyter, then nothing else to do
 )
