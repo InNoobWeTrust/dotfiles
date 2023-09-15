@@ -129,7 +129,7 @@ cron_routine() {
     MIN=$(($RANDOM % 60))
     HOURS=$(seq 0 $MIN_STEP 23 | shuf | head -n $RUNS | sort --general-numeric-sort | tr '\n' ' ' | sed -e 's/[[:space:]]$//' | tr ' ' ',')
 
-    CONF="$MIN\t$HOURS\t*\t*\t*\tcd $PWD && /usr/bin/env -S zsh -l -c '. ./.envrc && ./$SCRIPT | tee ./out.log'"
+    CONF="$MIN\t$HOURS\t*\t*\t*\tcd $PWD && /usr/bin/env -S bash -l -c 'CRON=true LOGLEVEL=DEBUG ./$SCRIPT > ./out.log 2>> ./error.log'"
 
     echo -e $CONF
 }
