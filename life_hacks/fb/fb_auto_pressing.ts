@@ -1,19 +1,18 @@
-#!/usr/bin/env -S bun run
+#!/usr/bin/env -S deno run -A
 
-import fs from "fs";
-import { Builder, By } from "selenium-webdriver";
-import { Options as chromeOptions } from "selenium-webdriver/chrome";
-import { Options as edgeOptions } from "selenium-webdriver/edge";
-import { Options as firefoxOptions } from "selenium-webdriver/firefox";
-import { Duration } from "luxon";
-import yaml from "js-yaml";
-import winston from "winston";
+import { Builder, By } from "npm:selenium-webdriver";
+import { Options as chromeOptions } from "npm:selenium-webdriver/chrome.js";
+import { Options as edgeOptions } from "npm:selenium-webdriver/edge.js";
+import { Options as firefoxOptions } from "npm:selenium-webdriver/firefox.js";
+import { Duration } from "npm:luxon";
+import yaml from "npm:js-yaml";
+import winston from "npm:winston";
 
-const CONFIG = process.env.CONFIG || "./config.yml";
-const SCRIPT = process.env.SCRIPT || "./fb_auto_pressing.js";
-const LOGLEVEL = process.env.LOGLEVEL || "info";
-const CHECKPOINT = !!process.env.CHECKPOINT || "checkpoint.txt";
-const CRON = process.env.CRON || false
+const CONFIG = Deno.env.CONFIG || "./config.yml";
+const SCRIPT = Deno.env.SCRIPT || "./fb_auto_pressing.js";
+const LOGLEVEL = Deno.env.LOGLEVEL || "info";
+const CHECKPOINT = Deno.env.CHECKPOINT || "./checkpoint.txt";
+const CRON = Deno.env.CRON || false;
 
 const logger = winston.createLogger({
   level: LOGLEVEL,
@@ -21,27 +20,31 @@ const logger = winston.createLogger({
     winston.format.colorize(),
     winston.format.timestamp(),
     winston.format.printf(
-      ({ level, message, label, timestamp }) => [
-        `${timestamp}`,
-        label ? `[${label}]` : '',
-        `${level}:`,
-        message,
-      ].filter(Boolean).join(' ')
-    )
+      ({ level, message, label, timestamp }) =>
+        [
+          `${timestamp}`,
+          label ? `[${label}]` : "",
+          `${level}:`,
+          message,
+        ].filter(Boolean).join(" "),
+    ),
   ),
   transports: [
     new winston.transports.Console(),
+    new winston.transports.File({
+      filename: "out.log",
+    }),
   ],
 });
 
 const getConfig = async () => {
-  logger.debug(`Loading config at path ${CONFIG}`)
-  return yaml.load(fs.readFileSync(CONFIG, "utf8"));
+  logger.debug(`Loading config at path ${CONFIG}`);
+  return yaml.load(Deno.readTextFileSync(CONFIG));
 };
 
 const getScript = async () => {
   logger.debug(`Using script at ${SCRIPT}...`);
-  return fs.readFileSync(SCRIPT, "utf8");
+  return Deno.readTextFileSync(SCRIPT);
 };
 
 const choose = (...arr: unknown[]) => {
@@ -49,7 +52,7 @@ const choose = (...arr: unknown[]) => {
 };
 
 const permutate = (...arr: unknown[]) =>
-  function*(arr: unknown[]) {
+  function* (arr: unknown[]) {
     while (arr.length > 0) {
       const [picked, ..._] = arr.splice(
         Math.floor(Math.random() * arr.length),
@@ -128,38 +131,38 @@ const pressing = async (driver: any) => {
 };
 
 const checkpoint = async () => {
-  fs.writeFileSync(CHECKPOINT, new Date().toISOString())
-}
+  Deno.writeTextFileSync(CHECKPOINT, new Date().toISOString());
+};
 
 const cronDelayCheck = async () => {
   if (!CRON) {
-    return
+    return;
   }
 
-  if (!fs.existsSync(CHECKPOINT)) {
-    return
+  if (!Deno.statSync(CHECKPOINT).isFile) {
+    return;
   }
 
-  const dateStr = fs.readFileSync(CHECKPOINT)
-  const mtimeMs = Date.parse(dateStr)
+  const dateStr = Deno.readTextFileSync(CHECKPOINT);
+  const mtimeMs = Date.parse(dateStr);
   const {
     sleep: { min, max },
   } = await getConfig();
   const durationMs = min + Math.floor(Math.random() * (max - min));
   const eta = durationMs - (Date.now() - mtimeMs);
   if (eta > 0) {
-    logger.verbose(`Not running, will run in at least ${durationFmt(eta)}...`)
-    process.exit(0)
+    logger.verbose(`Not running, will run in at least ${durationFmt(eta)}...`);
+    Deno.exit(0);
   }
-}
+};
 
 const runner = async () => {
-  await cronDelayCheck()
+  await cronDelayCheck();
 
   const driver = await getDriver();
   await login(driver);
   await pressing(driver);
   await driver.quit();
-}
+};
 
-await runner()
+await runner();
