@@ -221,7 +221,7 @@ alias update-pyenv='usable pyenv && pyenv update'
 alias install-pipx='python3 -m pip install -U pipx && python3 -m pipx ensurepath'
 
 # install poetry
-alias install-poetry='curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -'
+alias install-poetry='curl -sSL https://install.python-poetry.org | python -'
 alias install-poetry-by-pipx='pipx install poetry'
 
 # install micromamba
