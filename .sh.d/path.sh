@@ -46,6 +46,9 @@ fi
 # shellcheck source=/dev/null
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
+# deno
+[ -d "$HOME/.deno/bin" ] && setPath "$HOME/.deno/bin"
+
 # Nix
 # shellcheck source=/dev/null
 [ -r "$HOME/.nix-profile/etc/profile.d/nix.sh" ] && . "$HOME/.nix-profile/etc/profile.d/nix.sh"

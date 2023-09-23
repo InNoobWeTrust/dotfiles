@@ -1,9 +1,9 @@
 #!/usr/bin/env -S deno run -A
 
 import { Builder, By } from "npm:selenium-webdriver";
-import { Options as chromeOptions } from "npm:selenium-webdriver/chrome.js";
-import { Options as edgeOptions } from "npm:selenium-webdriver/edge.js";
-import { Options as firefoxOptions } from "npm:selenium-webdriver/firefox.js";
+import chrome from "npm:selenium-webdriver/chrome.js";
+import edge from "npm:selenium-webdriver/edge.js";
+import firefox from "npm:selenium-webdriver/firefox.js";
 import { Duration } from "npm:luxon";
 import yaml from "npm:js-yaml";
 import winston from "npm:winston";
@@ -83,9 +83,9 @@ const getDriver = async () => {
   logger.info(`Using browser: ${browser}`);
   const driver = await new Builder()
     .forBrowser(browser)
-    .setChromeOptions(new chromeOptions().headless())
-    .setEdgeOptions(new edgeOptions().headless())
-    .setFirefoxOptions(new firefoxOptions().headless())
+    .setChromeOptions(new chrome.Options().headless())
+    .setEdgeOptions(new edge.Options().headless())
+    .setFirefoxOptions(new firefox.Options().headless())
     .build();
   driver.manage().setTimeouts(timeouts);
   return driver;
@@ -160,6 +160,11 @@ const runner = async () => {
   await cronDelayCheck();
 
   const driver = await getDriver();
+  Deno.addSignalListener("SIGINT", async () => {
+    logger.warning("interrupted!");
+    await driver.quit();
+    Deno.exit();
+  });
   await login(driver);
   await pressing(driver);
   await driver.quit();

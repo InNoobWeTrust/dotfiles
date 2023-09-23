@@ -158,7 +158,7 @@ const SUBMIT_STEPS = [
 ];
 
 const delayClick = () =>
-  1000 + 1000 * Math.random() + 500 * Math.random() + 250 * Math.random();
+  2000 + 1500 * Math.random() + 1000 * Math.random() + 750 * Math.random();
 
 const timer = async (durationMs) => {
   await new Promise((resolve) => {
@@ -222,6 +222,7 @@ const reportAll = async () => {
     if (reportTypes.length > 0) break;
 
     await timer(5000);
+    await holdOn();
     reportTypes = (await listReportTypes()).filter((rt) => rt in REPORTS);
   }
   console.debug("Available report types:", reportTypes);
