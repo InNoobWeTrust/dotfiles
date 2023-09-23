@@ -2,14 +2,21 @@ import sys
 import os
 import configparser
 
-from requests_html import AsyncHTMLSession
 from time import sleep
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+options = webdriver.FirefoxOptions()
+options.add_argument('--headless')
+driver = None
 
 config = configparser.ConfigParser()
 config.read('config.ini')
 buffer_size = int(config['discudemy']['buffer_size'])
 
-asession = AsyncHTMLSession()
 results = []
 counter = 0
 if os.path.isfile('discudemy_com.checkpoint.txt'):
@@ -34,15 +41,21 @@ links = links[counter:]
 with open('discudemy_com.resolved.txt', 'at+') as wf:
 
     def resolve_link(link):
-        async def ret():
-            s = await asession.get(link)
-            await s.html.arender(retries=3, wait=1, scrolldown=2, sleep=1)
-            a = s.html.find('a#couponLink', first=True)
-            if a:
-                result = a.element.attrib['href']
-                # print('Resolved:', result)
-                return result
-        return ret
+        global driver
+        if not driver:
+            driver = webdriver.Firefox(
+               options=options
+            )
+
+        driver.get(link)
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'a#couponLink'))
+        )
+        a = driver.find_element(By.CSS_SELECTOR, 'a#couponLink')
+        if len(str(a.get_attribute('href') or "").strip()) > 0:
+            result = a.get_attribute('href')
+            # print('Resolved:', result)
+            return result
 
     for i in range(len(links) // buffer_size + 1) :
         buffer = list(map(lambda l: l.strip(), links[i * buffer_size : (i + 1) * buffer_size]))
@@ -50,7 +63,7 @@ with open('discudemy_com.resolved.txt', 'at+') as wf:
             break
         counter += len(buffer)
         print('Resolving:', *buffer, sep='\n')
-        resolved_links = asession.run(*map(resolve_link, buffer))
+        resolved_links = map(resolve_link, buffer)
         resolved_links = [link for link in resolved_links if link]
         print('Resolved:', *resolved_links, sep='\n')
         results.extend(resolved_links)
