@@ -157,8 +157,7 @@ const SUBMIT_STEPS = [
   () => $('div[role="dialog"] div[aria-label="Done"][role="button"]'),
 ];
 
-const delayClick = () =>
-  2000 + 1500 * Math.random() + 1000 * Math.random() + 750 * Math.random();
+const delayClick = () => 1000 + 500 * Math.random() + 250 * Math.random();
 
 const timer = async (durationMs) => {
   await new Promise((resolve) => {
@@ -170,9 +169,10 @@ const holdOn = async () => await timer(delayClick());
 
 const openReportMenu = async () => {
   // Open menu
-  $('div[aria-label="See Options"]')?.click();
-  $('div[aria-label="See options"]')?.click();
-  $('div[aria-label="More"]')?.click();
+  //$('div[aria-label="See Options"]')?.click();
+  //$('div[aria-label="See options"]')?.click();
+  //$('div[aria-label="More"]')?.click();
+  $("div[aria-haspopup=menu][role=button]")?.click();
   await holdOn();
   // Click report option
   $$('div[role="menuitem"]')
@@ -190,6 +190,7 @@ const listReportTypes = async () => {
   )?.map((e) => e.innerText);
   // Make sure to close the dialog on teardown
   $('div[aria-label="Close"]')?.click();
+  await holdOn();
   return reportTypes;
 };
 
@@ -221,8 +222,6 @@ const reportAll = async () => {
   for (const _ of Array(3)) {
     if (reportTypes.length > 0) break;
 
-    await timer(5000);
-    await holdOn();
     reportTypes = (await listReportTypes()).filter((rt) => rt in REPORTS);
   }
   console.debug("Available report types:", reportTypes);
@@ -240,15 +239,6 @@ const reportAll = async () => {
       )
     } completed after ${duration}s! Thanks for waiting comrade!`,
   });
-  if (arguments?.length > 0) {
-    arguments[arguments.length - 1]();
-  }
 };
 
 reportAll();
-//(async () => {
-//  while (true) {
-//    await reportAll();
-//    await timer(10000);
-//  }
-//})();

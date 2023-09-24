@@ -1,6 +1,7 @@
 #!/usr/bin/env -S deno run -A
 
 import { Builder, By } from "npm:selenium-webdriver";
+import until from "npm:selenium-webdriver/lib/until.js";
 import chrome from "npm:selenium-webdriver/chrome.js";
 import edge from "npm:selenium-webdriver/edge.js";
 import firefox from "npm:selenium-webdriver/firefox.js";
@@ -76,6 +77,10 @@ const holdon = async () => {
   await new Promise((resolve) => setTimeout(resolve, durationMs));
 };
 
+const checkpoint = async () => {
+  Deno.writeTextFileSync(CHECKPOINT, new Date().toISOString());
+};
+
 const getDriver = async () => {
   const { browsers, timeouts } = await getConfig();
 
@@ -92,27 +97,46 @@ const getDriver = async () => {
 };
 
 const login = async (driver: any) => {
-  const { accounts } = await getConfig();
+  const { accounts, timeouts } = await getConfig();
   const acc = choose(...accounts) as { email: string; pass: string };
   logger.info(`Logging in with ${JSON.stringify(acc)}...`);
   await driver.get("http://www.facebook.com/login");
+  await driver.wait(
+    until.elementLocated(By.id("loginbutton")),
+    timeouts.pageLoad,
+  );
   await driver.findElement(By.id("email")).sendKeys(acc.email);
   await driver.findElement(By.id("pass")).sendKeys(acc.pass);
   await driver.findElement(By.id("loginbutton")).click();
   await holdon();
 };
 
-const pressing = async (driver: any) => {
-  const { links } = await getConfig();
+const pressingSingle = async (driver: any, target: string) => {
+  const { timeouts } = await getConfig();
   const script = await getScript();
+
+  logger.info(`Navigating to asshole @ ${target}...`);
+  await driver.get(target);
+  await driver.wait(
+    until.elementLocated(By.css("div[aria-haspopup=menu][role=button]")),
+    timeouts.pageLoad,
+  );
+  logger.info(`Pressing asshole @ ${target}...`);
+  await driver.executeAsyncScript(
+    "const callback = arguments[arguments.length - 1];\n" +
+      script.trim().slice(0, -1) +
+      ".then(callback)",
+  );
+};
+
+const pressingAll = async (driver: any) => {
+  const { links } = await getConfig();
   const start = Date.now();
   try {
     for (const link of permutate(...links)) {
-      logger.info(`Pressing asshole @ ${link}`);
       const start = performance.now();
       try {
-        await driver.get(link);
-        await driver.executeAsyncScript(script);
+        await pressingSingle(driver, link as string);
       } catch (e) {
         logger.error(e);
       } finally {
@@ -128,10 +152,6 @@ const pressing = async (driver: any) => {
   }
   const end = Date.now();
   logger.info(`Pressing done after ${durationFmt(end - start)}`);
-};
-
-const checkpoint = async () => {
-  Deno.writeTextFileSync(CHECKPOINT, new Date().toISOString());
 };
 
 const cronDelayCheck = async () => {
@@ -166,7 +186,7 @@ const runner = async () => {
     Deno.exit();
   });
   await login(driver);
-  await pressing(driver);
+  await pressingAll(driver);
   await driver.quit();
 };
 
