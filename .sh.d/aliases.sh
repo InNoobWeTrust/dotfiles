@@ -115,6 +115,8 @@ usable docker && \
         alias mysql-docker='docker run --rm -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root --name mysql mysql:latest'
         # PySpark notebook
         alias sparkbook-docker='docker run --rm -d -p 8888:8888 -v "$(pwd):/home/jovyan/work" --name pyspark jupyter/pyspark-notebook:latest'
+        # Google's colab runtime
+        alias colab-docker='docker run --rm -d -p 9000:8080 -v "$(pwd):/content" --name colab us-docker.pkg.dev/colab-images/public/runtime'
     }
 
 # Node utilities
