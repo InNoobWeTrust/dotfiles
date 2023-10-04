@@ -41,20 +41,21 @@ with open('real_discount.resolved.txt', 'at+') as wf:
     def resolve_link(link):
         global driver
         if not driver:
-            driver = webdriver.Firefox(
-               options=options
-            )
+            driver = webdriver.Firefox(options=options)
 
         driver.get(link)
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, '.card.widget-card.text-center'))
-        )
-        inner_a = driver.find_element(By.CSS_SELECTOR, '.card.widget-card.text-center')
-        a = driver.execute_script('return arguments[0].parentNode;', inner_a)
-        if len(str(a.get_attribute('href') or "").strip()) > 0:
-            result = a.get_attribute('href')
-            # print('Resolved:', result)
-            return result
+        try:
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '.card.widget-card.text-center'))
+            )
+            inner_a = driver.find_element(By.CSS_SELECTOR, '.card.widget-card.text-center')
+            a = driver.execute_script('return arguments[0].parentNode;', inner_a)
+            if len(str(a.get_attribute('href') or "").strip()) > 0:
+                result = a.get_attribute('href')
+                # print('Resolved:', result)
+                return result
+        except:
+            pass
 
 
     for i in range(len(links) // buffer_size + 1):

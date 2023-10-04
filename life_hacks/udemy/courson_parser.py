@@ -41,19 +41,20 @@ with open('courson.resolved.txt', 'at+') as wf:
     def resolve_link(link):
         global driver
         if not driver:
-            driver = webdriver.Firefox(
-               options=options
-            )
+            driver = webdriver.Firefox(options=options)
 
         driver.get(link)
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.enroll-btn > a'))
-        )
-        a = driver.find_element(By.CSS_SELECTOR, 'div.enroll-btn > a')
-        if len(str(a.get_attribute('href') or "").strip()) > 0:
-            result = a.get_attribute('href')
-            # print('Resolved:', result)
-            return result
+        try:
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'div.enroll-btn > a'))
+            )
+            a = driver.find_element(By.CSS_SELECTOR, 'div.enroll-btn > a')
+            if len(str(a.get_attribute('href') or "").strip()) > 0:
+                result = a.get_attribute('href')
+                # print('Resolved:', result)
+                return result
+        except:
+            pass
 
     for i in range(len(links) // buffer_size + 1) :
         buffer = list(map(lambda l: l.strip(), links[i * buffer_size : (i + 1) * buffer_size]))
