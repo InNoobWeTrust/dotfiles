@@ -120,6 +120,17 @@ batch_open() {
 }
 
 #
+# # mux - pickup terminal multiplexer or download and execute one
+# # usage: mux [zellij_args]
+mux() {
+    if $(usable zellij); then
+        zellij "$@"
+    else
+        bash <(curl -L zellij.dev/launch) "$@"
+    fi
+}
+
+#
 # # cron_routine - cron at random time over a day
 # # usage: cron_routine [shell_script_file] [number_of_runs]
 cron_routine() {
