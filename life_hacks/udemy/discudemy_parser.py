@@ -48,9 +48,9 @@ with open('discudemy_com.resolved.txt', 'at+') as wf:
         driver.get(link)
         try:
             WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'a#couponLink'))
+                EC.presence_of_element_located((By.CSS_SELECTOR, '.ui.segment > a'))
             )
-            a = driver.find_element(By.CSS_SELECTOR, 'a#couponLink')
+            a = driver.find_element(By.CSS_SELECTOR, '.ui.segment > a')
             if len(str(a.get_attribute('href') or "").strip()) > 0:
                 result = a.get_attribute('href')
                 # print('Resolved:', result)
