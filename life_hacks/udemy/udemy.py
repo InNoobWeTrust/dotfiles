@@ -27,13 +27,13 @@ async def get_text_links(channel: str, validate: Optional[Callable[[str], bool]]
     unread_count = result.dialogs[0].unread_count
     urls = []
     async for message in client.iter_messages(entity, limit=unread_count):
-        if not message.text:
-            continue
-        if matches := re.findall(r'(?P<url>https?://[^\s]+)', message.text):
-            if validate:
-                urls.extend(filter(validate, matches))
-            else:
-                urls.extend(matches)
+        if message.text:
+            if matches := re.findall(r'(?P<url>https?://[^\s]+)', message.text):
+                if validate:
+                    urls.extend(filter(validate, matches))
+                else:
+                    urls.extend(matches)
+        message.mark_read()
     if len(urls):
         pprint(urls)
     save_links(channel, urls)
@@ -61,6 +61,7 @@ async def get_entity_links(channel: str, validate: Optional[Callable[[str], bool
             print(ent.url)
             urls.append(ent.url)
         if not message.buttons:
+            message.mark_read()
             continue
         for buttons in message.buttons:
             for button in buttons:
@@ -68,6 +69,7 @@ async def get_entity_links(channel: str, validate: Optional[Callable[[str], bool
                     continue
                 print(button.url)
                 urls.append(button.url)
+        message.mark_read()
     save_links(channel, urls)
 
 
