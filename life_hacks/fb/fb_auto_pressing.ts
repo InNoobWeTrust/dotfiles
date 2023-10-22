@@ -144,7 +144,9 @@ const pressingAll = async (driver: any) => {
       }
       const end = performance.now();
       logger.info(`Took ${durationFmt(end - start)}...`);
-      await holdon();
+      for (const _ of Array(3)) {
+        await holdon();
+      }
     }
     logger.info("Justice has been executed, thanks for waiting, comrade!");
   } catch (e) {

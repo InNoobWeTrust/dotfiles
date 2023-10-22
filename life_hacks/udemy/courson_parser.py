@@ -72,5 +72,8 @@ with open('courson.resolved.txt', 'at+') as wf:
         print('Processed:', counter)
         sleep(5)
 
+if driver:
+    driver.quit()
+
 print('Results:', *results, sep='\n')
 print('Total processed:', counter)
