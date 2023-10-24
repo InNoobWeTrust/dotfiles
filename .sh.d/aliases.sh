@@ -38,7 +38,7 @@ alias env_rainbow='use_color=true'
 # Force friendly builtin for current session
 alias env_friendly='friendly_builtin=true'
 
-# Force all enhancement for current sessions
+# Force all enhancements for current session
 alias godmode='env_rainbow env_friendly env_starship reload-shell'
 
 # install starship prompt
@@ -65,7 +65,7 @@ alias gacha='printf "Lower limit: "; read low; printf "Upper limit: "; read high
 alias alnumer='cat /dev/random | base64 | tr -cd "[:alnum:]" | head -c'
 alias hexer='cat /dev/random | base64 | tr -cd "[0-9a-fA-F]" | head -c'
 
-# Create tmpdir and cd into into
+# Create tmpdir and cd into it
 alias isekai='cd `mktemp -d`'
 
 # Dummy sleep 5s with a spinner
@@ -96,6 +96,12 @@ usable git && \
         alias git-web-url="git_web_url"
         alias gitlab-web-mr-create='gitlab_web_mr_create'
         alias gitlab-push-mr-create='gitlab_push_mr_create'
+    }
+
+# MicroK8s
+usable microk8s && \
+    {
+        alias mkctl='microk8s kubectl'
     }
 
 # Docker utilities
