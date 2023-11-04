@@ -133,7 +133,8 @@ const pressingAll = async (driver: any) => {
   const { links } = await getConfig();
   const start = Date.now();
   try {
-    for (const link of permutate(...links)) {
+    // Maximum of 25 per session
+    for (const link of [...permutate(...links)].slice(0, 25)) {
       const start = performance.now();
       try {
         await pressingSingle(driver, link as string);
