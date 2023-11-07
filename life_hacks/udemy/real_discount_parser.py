@@ -48,7 +48,7 @@ with open('real_discount.resolved.txt', 'at+') as wf:
                 inner_a = driver.find_element(By.CSS_SELECTOR, '.card.widget-card.text-center')
                 a = driver.execute_script('return arguments[0].parentNode;', inner_a)
                 if len(str(a.get_attribute('href') or "").strip()) > 0:
-                    result = a.get_attribute('href')
+                    result = a.get_attribute('href').removeprefix('https://click.linksynergy.com/deeplink?id=bnwWbXPyqPU&mid=47901&murl=')
                     # print('Resolved:', result)
                     return result
             except:
