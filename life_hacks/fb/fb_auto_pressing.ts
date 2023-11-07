@@ -96,6 +96,21 @@ const getDriver = async () => {
   return driver;
 };
 
+const getRemoteDriver = async () => {
+  const { remote, timeouts } = await getConfig();
+
+  logger.info(`Using remote selenium driver`);
+  const driver = await new Builder()
+    .usingServer(remote.host)
+    .forBrowser(remote.browser)
+    .setChromeOptions(new chrome.Options().headless())
+    .setEdgeOptions(new edge.Options().headless())
+    .setFirefoxOptions(new firefox.Options().headless())
+    .build();
+  driver.manage().setTimeouts(timeouts);
+  return driver;
+};
+
 const login = async (driver: any) => {
   const { accounts, timeouts } = await getConfig();
   const acc = choose(...accounts) as { email: string; pass: string };
@@ -182,7 +197,13 @@ const cronDelayCheck = async () => {
 const runner = async () => {
   await cronDelayCheck();
 
-  const driver = await getDriver();
+  const { useRemote } = await getConfig();
+  let driver: any;
+  if (useRemote) {
+    driver = await getRemoteDriver();
+  } else {
+    driver = await getDriver();
+  }
   Deno.addSignalListener("SIGINT", async () => {
     logger.warning("interrupted!");
     await driver.quit();

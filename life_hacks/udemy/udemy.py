@@ -18,7 +18,7 @@ session = config['auth']['session']
 client = TelegramClient(StringSession(session if session else ''), api_id, api_hash)
 
 async def get_text_links(channel: str, validate: Optional[Callable[[str], bool]]=None):
-    client.start(bot_token=bot_token)
+    await client.start(bot_token=bot_token)
     dialog = await client._get_input_dialog(channel)
     entity = await client.get_input_entity(channel)
     result = await client(functions.messages.GetPeerDialogsRequest(
@@ -33,7 +33,7 @@ async def get_text_links(channel: str, validate: Optional[Callable[[str], bool]]
                     urls.extend(filter(validate, matches))
                 else:
                     urls.extend(matches)
-        message.mark_read()
+        await message.mark_read()
     if len(urls):
         pprint(urls)
     save_links(channel, urls)
@@ -41,7 +41,7 @@ async def get_text_links(channel: str, validate: Optional[Callable[[str], bool]]
 
 
 async def get_entity_links(channel: str, validate: Optional[Callable[[str], bool]]=None):
-    client.start(bot_token=bot_token)
+    await client.start(bot_token=bot_token)
     dialog = await client._get_input_dialog(channel)
     entity = await client.get_input_entity(channel)
     result = await client(functions.messages.GetPeerDialogsRequest(
@@ -61,7 +61,7 @@ async def get_entity_links(channel: str, validate: Optional[Callable[[str], bool
             print(ent.url)
             urls.append(ent.url)
         if not message.buttons:
-            message.mark_read()
+            await message.mark_read()
             continue
         for buttons in message.buttons:
             for button in buttons:
@@ -69,7 +69,7 @@ async def get_entity_links(channel: str, validate: Optional[Callable[[str], bool
                     continue
                 print(button.url)
                 urls.append(button.url)
-        message.mark_read()
+        await message.mark_read()
     save_links(channel, urls)
 
 

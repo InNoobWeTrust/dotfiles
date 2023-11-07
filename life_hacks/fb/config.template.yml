@@ -19,6 +19,11 @@ browsers:
   - internet explorer
   - safari
 
+useRemote: false
+remote:
+  host: http://localhost:4444/wd/hub
+  browser: chrome
+
 timeouts:
   implicit: 1500
   pageLoad: 30000

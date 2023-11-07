@@ -102,6 +102,8 @@ usable git && \
 usable microk8s && \
     {
         alias mkctl='microk8s kubectl'
+        # Selenium chromium on ARM
+        alias selenium-arm-mircrok8s='mkctl run selenium --image=seleniarm/standalone-chromium --port=4444 && mkctl expose pod selenium --type NodePort --port 4444 --target-port 4444'
     }
 
 # Docker utilities
@@ -123,6 +125,10 @@ usable docker && \
         alias sparkbook-docker='docker run --rm -d -p 8888:8888 -v "$(pwd):/home/jovyan/work" --name pyspark jupyter/pyspark-notebook:latest'
         # Google's colab runtime
         alias colab-docker='docker run --rm -d -p 9000:8080 -v "$(pwd):/content" --name colab us-docker.pkg.dev/colab-images/public/runtime'
+        # Selenium chromium
+        alias selenium-docker='docker run --rm -d -p 4444:4444 --shm-size 2g --name selenium selenium/standalone-chrome:latest'
+        # Selenium chromium on ARM
+        alias selenium-arm-docker='docker run --rm -d -p 4444:4444 --shm-size 2g --name selenium seleniarm/standalone-chromium'
     }
 
 # Node utilities
