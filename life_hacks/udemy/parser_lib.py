@@ -10,7 +10,7 @@ use_remote_selenium = config['selenium']['use'] == 'true'
 selenium_host = None
 # remote_browser_options = webdriver.ChromeOptions()
 remote_browser_options = webdriver.FirefoxOptions()
-# remote_browser_options.add_argument('--headless')
+remote_browser_options.add_argument('--headless')
 if use_remote_selenium:
     selenium_host = config['selenium']['host']
 

@@ -2,3 +2,4 @@ config.ini
 poetry.lock
 links.txt
 *.txt
+__pycache__/

@@ -39,38 +39,39 @@ def checkpoint(count):
         f.flush()
 
 
-with open('discudemy_com.resolved.txt', 'at+') as wf:
-    with parser_lib.DriverContext() as driver:
-        def resolve_link(link):
-            driver.get(link)
-            try:
-                WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, '.ui.segment > a'))
-                )
-                a = driver.find_element(By.CSS_SELECTOR, '.ui.segment > a')
-                if len(str(a.get_attribute('href') or "").strip()) > 0:
-                    result = a.get_attribute('href')
-                    # print('Resolved:', result)
-                    return result
-            except:
-                pass
-            parser_lib.quit_driver()
+if len(links):
+    with open('discudemy_com.resolved.txt', 'at+') as wf:
+        with parser_lib.DriverContext() as driver:
+            def resolve_link(link):
+                driver.get(link)
+                try:
+                    WebDriverWait(driver, 10).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, '.ui.segment > a'))
+                    )
+                    a = driver.find_element(By.CSS_SELECTOR, '.ui.segment > a')
+                    if len(str(a.get_attribute('href') or "").strip()) > 0:
+                        result = a.get_attribute('href')
+                        # print('Resolved:', result)
+                        return result
+                except:
+                    pass
+                parser_lib.quit_driver()
 
-        for i in range(len(links) // buffer_size + 1) :
-            buffer = list(map(lambda l: l.strip(), links[i * buffer_size : (i + 1) * buffer_size]))
-            if len(buffer) == 0:
-                break
-            counter += len(buffer)
-            print('Resolving:', *buffer, sep='\n')
-            resolved_links = map(resolve_link, buffer)
-            resolved_links = [link for link in resolved_links if link]
-            print('Resolved:', *resolved_links, sep='\n')
-            results.extend(resolved_links)
-            wf.writelines([line + '\n' for line in resolved_links])
-            wf.flush()
-            checkpoint(counter)
-            print('Processed:', counter)
-            sleep(5)
+            for i in range(len(links) // buffer_size + 1) :
+                buffer = list(map(lambda l: l.strip(), links[i * buffer_size : (i + 1) * buffer_size]))
+                if len(buffer) == 0:
+                    break
+                counter += len(buffer)
+                print('Resolving:', *buffer, sep='\n')
+                resolved_links = map(resolve_link, buffer)
+                resolved_links = [link for link in resolved_links if link]
+                print('Resolved:', *resolved_links, sep='\n')
+                results.extend(resolved_links)
+                wf.writelines([line + '\n' for line in resolved_links])
+                wf.flush()
+                checkpoint(counter)
+                print('Processed:', counter)
+                sleep(5)
 
 
 print('Results:', *results, sep='\n')
