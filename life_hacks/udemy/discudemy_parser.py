@@ -55,7 +55,6 @@ if len(links):
                         return result
                 except:
                     pass
-                parser_lib.quit_driver()
 
             for i in range(len(links) // buffer_size + 1) :
                 buffer = list(map(lambda l: l.strip(), links[i * buffer_size : (i + 1) * buffer_size]))
