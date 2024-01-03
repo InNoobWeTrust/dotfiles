@@ -24,6 +24,11 @@ remote:
   host: http://localhost:4444/wd/hub
   browser: chrome
 
+useCookies: false
+cookies:
+  - c_user: "000000000000000"
+    xs: "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
 timeouts:
   implicit: 1500
   pageLoad: 30000

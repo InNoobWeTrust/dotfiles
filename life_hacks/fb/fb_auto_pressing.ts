@@ -88,9 +88,21 @@ const getDriver = async () => {
   logger.info(`Using browser: ${browser}`);
   const driver = await new Builder()
     .forBrowser(browser)
-    .setChromeOptions(new chrome.Options().headless())
-    .setEdgeOptions(new edge.Options().headless())
-    .setFirefoxOptions(new firefox.Options().headless())
+    .setChromeOptions(
+      new chrome.Options().headless().addArguments(
+        "--disable-blink-features=AutomationControlled",
+      ),
+    )
+    .setEdgeOptions(
+      new edge.Options().headless().addArguments(
+        "--disable-blink-features=AutomationControlled",
+      ),
+    )
+    .setFirefoxOptions(
+      new firefox.Options().headless().addArguments(
+        "--disable-blink-features=AutomationControlled",
+      ),
+    )
     .build();
   driver.manage().setTimeouts(timeouts);
   return driver;
@@ -103,26 +115,47 @@ const getRemoteDriver = async () => {
   const driver = await new Builder()
     .usingServer(remote.host)
     .forBrowser(remote.browser)
-    .setChromeOptions(new chrome.Options().headless())
-    .setEdgeOptions(new edge.Options().headless())
-    .setFirefoxOptions(new firefox.Options().headless())
+    .setChromeOptions(
+      new chrome.Options().headless().addArguments(
+        "--disable-blink-features=AutomationControlled",
+      ),
+    )
+    .setEdgeOptions(
+      new edge.Options().headless().addArguments(
+        "--disable-blink-features=AutomationControlled",
+      ),
+    )
+    .setFirefoxOptions(
+      new firefox.Options().headless().addArguments(
+        "--disable-blink-features=AutomationControlled",
+      ),
+    )
     .build();
   driver.manage().setTimeouts(timeouts);
   return driver;
 };
 
 const login = async (driver: any) => {
-  const { accounts, timeouts } = await getConfig();
-  const acc = choose(...accounts) as { email: string; pass: string };
-  logger.info(`Logging in with ${JSON.stringify(acc)}...`);
+  const { accounts, timeouts, useCookies, cookies } = await getConfig();
   await driver.get("http://www.facebook.com/login");
   await driver.wait(
     until.elementLocated(By.id("loginbutton")),
     timeouts.pageLoad,
   );
-  await driver.findElement(By.id("email")).sendKeys(acc.email);
-  await driver.findElement(By.id("pass")).sendKeys(acc.pass);
-  await driver.findElement(By.id("loginbutton")).click();
+  if (!useCookies) {
+    const acc = choose(...accounts) as { email: string; pass: string };
+    logger.info(`Logging in with ${JSON.stringify(acc)}...`);
+    await driver.findElement(By.id("email")).sendKeys(acc.email);
+    await driver.findElement(By.id("pass")).sendKeys(acc.pass);
+    await driver.findElement(By.id("loginbutton")).click();
+  } else {
+    const cookie = choose(...cookies) as Record<string, string>;
+    logger.info(`Logging in with cookie ${JSON.stringify(cookie)}...`);
+    for (const [key, value] of Object.entries(cookie)) {
+      driver.manage().addCookie({ name: key, value });
+    }
+    await driver.get("http://www.facebook.com");
+  }
   await holdon();
 };
 
