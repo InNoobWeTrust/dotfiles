@@ -618,7 +618,6 @@ require('packer').startup(function()
 		ensure_installed = {
 			'bashls',
 			'bufls',
-			'clangd',
 			'cssls',
 			'cssmodules_ls',
 			'diagnosticls',
