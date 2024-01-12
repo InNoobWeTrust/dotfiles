@@ -647,7 +647,7 @@ require('packer').startup(function()
 			'volar',
 			'yamlls',
 		},
-		automatic_installation = true,
+		--automatic_installation = true,
 	}
 	----------------------------- End editor tooling manager
 end)
