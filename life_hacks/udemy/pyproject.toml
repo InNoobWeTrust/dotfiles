@@ -15,12 +15,9 @@ selenium = "^4.12.0"
 poethepoet = "^0.19.0"
 
 [tool.poe.tasks]
-udemy   = { shell = "poetry run python udemy.py" }
-courson-parse   = { shell = "until poetry run python courson_parser.py; do sleep 30; done" }
-discudemy-parse   = { shell = "until poetry run python discudemy_parser.py; do sleep 30; done" }
-realdiscount-parse   = { shell = "until poetry run python real_discount_parser.py; do sleep 30; done" }
-parse = ["courson-parse", "discudemy-parse", "realdiscount-parse"]
-clean = { shell = "trash *.txt" }
+udemy.shell = "poetry run python udemy.py"
+parse.shell = "poetry run python parse_all.py"
+clean.shell = "trash *.txt"
 all = ["udemy", "parse"]
 
 [build-system]
