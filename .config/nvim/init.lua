@@ -240,6 +240,30 @@ require('packer').startup(function()
 	}
 	-- AI code completion
 	use 'Exafunction/codeium.vim'
+	---- TODO: Self-hosted alternative to Codeium
+	--use {
+	--  'huggingface/llm.nvim',
+	--  config = function()
+	--    require('llm').setup({
+	--      -- cf Setup
+	--      tokens_to_clear = { "<EOT>" },
+	--      fim = {
+	--        enabled = true,
+	--        prefix = "<PRE> ",
+	--        middle = " <MID>",
+	--        suffix = " <SUF>",
+	--      },
+	--      model = "codellama/CodeLlama-13b-hf",
+	--      context_window = 4096,
+	--      tokenizer = {
+	--        repository = "codellama/CodeLlama-13b-hf",
+	--      },
+	--      lsp = {
+	--        bin_path = vim.api.nvim_call_function("stdpath", { "data" }) .. "/mason/bin/llm-ls",
+	--      },
+	--    })
+	--  end
+	--}
 	-- Completion engine plugin for neovim written in Lua
 	use {
 		'hrsh7th/nvim-cmp',
