@@ -16,7 +16,7 @@ fi
 if [ -n "$friendly_builtin" ]; then
     alias cp="cp -i"                          # confirm before overwriting something
     alias df='df -h'                          # human-readable sizes
-    alias free='free -m'                      # show sizes in MB
+    #alias free='free -g'                      # show sizes in GB
     alias np='nano -w PKGBUILD'
     alias more=less
     # some more ls aliases
@@ -104,6 +104,20 @@ usable microk8s && \
         alias mkctl='microk8s kubectl'
         # Selenium chromium on ARM
         alias selenium-arm-mircrok8s='mkctl run selenium --image=seleniarm/standalone-chromium --port=4444 && mkctl expose pod selenium --type NodePort --port 4444 --target-port 4444'
+    }
+
+# Colima (container runtime on Mac/Linux with minimal setup)
+usable colima && \
+    {
+        [ $(uname -s) = 'Darwin' ] && \
+            {
+            alias colima-start='colima start --cpu $(sysctl -n hw.ncpu) --memory $(system_profiler SPHardwareDataType | awk '"'"'/Memory/ {print $2}'"'"')'
+            }
+
+        [ $(uname -s) = 'Linux' ] && \
+            {
+                alias colima-start='colima start --cpu $(($(nproc) / 2)) --memory $(($(free -g | awk '"'"'/Mem/ {print $2}'"'"') / 2))'
+            }
     }
 
 # Docker utilities
