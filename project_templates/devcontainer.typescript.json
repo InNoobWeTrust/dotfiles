@@ -1,0 +1,47 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+    "name": "TypeScript Node",
+    // Use the official image. More info: https://aka.ms/devcontainers/base
+    "image": "mcr.microsoft.com/devcontainers/typescript-node",
+    // Add the 'devcontainer' feature. More info: https://aka.ms/devcontainers/feature
+    "features": {
+        // Docker in Docker
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        // Add make
+        "ghcr.io/jungaretti/features/make:1": {},
+        // Add ripgrep
+        "ghcr.io/devcontainers-contrib/features/ripgrep:1": {},
+        // Install APT packages
+        "ghcr.io/devcontainers-contrib/features/apt-packages:1": {
+            "packages": "curl,neovim"
+        }
+    },
+    // Use 'updateContentCommand' to run commands before the container is created.
+    "updateContentCommand": "echo 'Updating content...'",
+    // Use 'postCreateCommand' to run commands after the container is created.
+    "postCreateCommand": "corepack enable && corepack install -g yarn@1",
+    // Configure tool-specific properties.
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.makefile-tools",
+                "ms-python.python",
+                "ms-toolsai.jupyter",
+                "ms-toolsai.vscode-jupyter-cell-tags",
+                "ms-toolsai.jupyter-keymap",
+                "ms-toolsai.jupyter-renderers",
+                "ms-toolsai.vscode-jupyter-slideshow",
+                "ms-python.vscode-pylance",
+                "zhang-renyang.vscode-react",
+                "github.vscode-github-actions"
+            ],
+            "settings": {
+                "terminal.integrated.scrollback": 10000,
+                "terminal.integrated.persistentSessionScrollback": 10000
+            }
+        }
+    },
+    // Use 'remoteUser' to run commands as a specific user.
+    "remoteUser": "root"
+}
