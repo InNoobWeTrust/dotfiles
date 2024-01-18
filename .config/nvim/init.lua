@@ -205,6 +205,17 @@ nvim_create_augroups(packer_autocmds)
 local use = require('packer').use
 require('packer').startup(function()
 	use { 'wbthomason/packer.nvim', opt = true }
+	-- Use devcontainer just like VsCode
+	use {
+		'esensar/nvim-dev-container',
+		requires = {
+			'nvim-treesitter/nvim-treesitter',
+		},
+		config = function()
+			require("devcontainer").setup({
+			})
+		end
+	}
 	-- Fuzzy finder and file browser
 	use {
 		'nvim-telescope/telescope-project.nvim',
@@ -239,7 +250,17 @@ require('packer').startup(function()
 		},
 	}
 	-- AI code completion
-	use 'Exafunction/codeium.vim'
+	use {
+		"Exafunction/codeium.nvim",
+		requires = {
+			"nvim-lua/plenary.nvim",
+			"hrsh7th/nvim-cmp",
+		},
+		config = function()
+			require("codeium").setup({
+			})
+		end
+	}
 	---- TODO: Self-hosted alternative to Codeium
 	--use {
 	--  'huggingface/llm.nvim',
@@ -268,14 +289,11 @@ require('packer').startup(function()
 	use {
 		'hrsh7th/nvim-cmp',
 		requires = {
-			'hrsh7th/vim-vsnip',
-			'hrsh7th/cmp-vsnip',
 			'hrsh7th/cmp-buffer',
 			'hrsh7th/cmp-nvim-lsp',
 			'hrsh7th/cmp-nvim-lsp-signature-help',
 			'FelipeLema/cmp-async-path',
 			'hrsh7th/cmp-emoji',
-			'quangnguyen30192/cmp-nvim-tags',
 		}
 	}
 	-- Add surrounding brackets, quotes, xml tags,...
@@ -557,18 +575,11 @@ require('packer').startup(function()
 
 	local cmp = require('cmp')
 	cmp.setup({
-		snippet = {
-			expand = function(args)
-				fn['vsnip#anonymous'](args.body)
-			end,
-		},
 		mapping = cmp.mapping.preset.insert({
 			--['<C-y>'] = cmp.mapping.confirm({ select = true }),
 			["<Tab>"] = cmp.mapping(function(fallback)
 				if cmp.visible() then
 					cmp.select_next_item()
-				elseif vim.fn["vsnip#available"](1) == 1 then
-					feedkey("<Plug>(vsnip-expand-or-jump)", "")
 				elseif has_words_before() then
 					cmp.complete()
 				else
@@ -578,8 +589,6 @@ require('packer').startup(function()
 			["<S-Tab>"] = cmp.mapping(function()
 				if cmp.visible() then
 					cmp.select_prev_item()
-				elseif vim.fn["vsnip#jumpable"](-1) == 1 then
-					feedkey("<Plug>(vsnip-jump-prev)", "")
 				end
 			end, { "i", "s" }),
 			['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -595,9 +604,8 @@ require('packer').startup(function()
 			{ name = 'buffer' },
 			{ name = 'nvim_lsp' },
 			{ name = 'nvim_lsp_signature_help' },
-			{ name = 'vsnip' },
 			{ name = 'emoji' },
-			{ name = 'ctags' },
+			{ name = "codeium" },
 		}
 	})
 	-- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
