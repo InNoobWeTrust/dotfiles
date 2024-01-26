@@ -1,19 +1,19 @@
-#!/usr/bin/env -S deno run -A
+#!/usr/bin/env -S bun run
 
-import { Builder, By } from "npm:selenium-webdriver";
-import until from "npm:selenium-webdriver/lib/until.js";
-import chrome from "npm:selenium-webdriver/chrome.js";
-import edge from "npm:selenium-webdriver/edge.js";
-import firefox from "npm:selenium-webdriver/firefox.js";
-import { Duration } from "npm:luxon";
-import yaml from "npm:js-yaml";
-import winston from "npm:winston";
+import { Builder, By } from "selenium-webdriver";
+import until from "selenium-webdriver/lib/until.js";
+import chrome from "selenium-webdriver/chrome.js";
+import edge from "selenium-webdriver/edge.js";
+import firefox from "selenium-webdriver/firefox.js";
+import { Duration } from "luxon";
+import yaml from "js-yaml";
+import winston from "winston";
 
-const CONFIG = Deno.env.CONFIG || "./config.yml";
-const SCRIPT = Deno.env.SCRIPT || "./fb_auto_pressing.js";
-const LOGLEVEL = Deno.env.LOGLEVEL || "info";
-const CHECKPOINT = Deno.env.CHECKPOINT || "./checkpoint.txt";
-const CRON = Deno.env.CRON || false;
+const CONFIG = process.env.CONFIG || "./config.yml";
+const SCRIPT = process.env.SCRIPT || "./fb_auto_pressing.js";
+const LOGLEVEL = process.env.LOGLEVEL || "info";
+const CHECKPOINT = process.env.CHECKPOINT || "./checkpoint.txt";
+const CRON = process.env.CRON || false;
 
 const logger = winston.createLogger({
   level: LOGLEVEL,
@@ -40,12 +40,12 @@ const logger = winston.createLogger({
 
 const getConfig = async () => {
   logger.debug(`Loading config at path ${CONFIG}`);
-  return yaml.load(Deno.readTextFileSync(CONFIG));
+  return yaml.load(await Bun.file(CONFIG).text());
 };
 
 const getScript = async () => {
   logger.debug(`Using script at ${SCRIPT}...`);
-  return Deno.readTextFileSync(SCRIPT);
+  return await Bun.file(SCRIPT).text();
 };
 
 const choose = (...arr: unknown[]) => {
@@ -78,7 +78,7 @@ const holdon = async () => {
 };
 
 const checkpoint = async () => {
-  Deno.writeTextFileSync(CHECKPOINT, new Date().toISOString());
+  await Bun.write(CHECKPOINT, new Date().toISOString());
 };
 
 const getDriver = async () => {
@@ -89,17 +89,19 @@ const getDriver = async () => {
   const driver = await new Builder()
     .forBrowser(browser)
     .setChromeOptions(
-      new chrome.Options().headless().addArguments(
+      new chrome.Options().addArguments(
+        "--headless=new",
         "--disable-blink-features=AutomationControlled",
       ),
     )
     .setEdgeOptions(
-      new edge.Options().headless().addArguments(
+      new edge.Options().addArguments(
         "--disable-blink-features=AutomationControlled",
       ),
     )
     .setFirefoxOptions(
-      new firefox.Options().headless().addArguments(
+      new firefox.Options().addArguments(
+        "--headless",
         "--disable-blink-features=AutomationControlled",
       ),
     )
@@ -210,11 +212,11 @@ const cronDelayCheck = async () => {
     return;
   }
 
-  if (!Deno.statSync(CHECKPOINT).isFile) {
+  if (!await Bun.file(CHECKPOINT).exists()) {
     return;
   }
 
-  const dateStr = Deno.readTextFileSync(CHECKPOINT);
+  const dateStr = await Bun.file(CHECKPOINT).text();
   const mtimeMs = Date.parse(dateStr);
   const {
     sleep: { min, max },
@@ -223,7 +225,7 @@ const cronDelayCheck = async () => {
   const eta = durationMs - (Date.now() - mtimeMs);
   if (eta > 0) {
     logger.verbose(`Not running, will run in at least ${durationFmt(eta)}...`);
-    Deno.exit(0);
+    process.exit(0);
   }
 };
 
@@ -237,14 +239,23 @@ const runner = async () => {
   } else {
     driver = await getDriver();
   }
-  Deno.addSignalListener("SIGINT", async () => {
-    logger.warning("interrupted!");
-    await driver.quit();
-    Deno.exit();
+  process.on("SIGINT", async () => {
+    try {
+      // Call this only if running on remote selenium server
+      await driver.quit();
+    } catch {
+      // Ignore
+    }
+    process.exit(-1);
   });
   await login(driver);
   await pressingAll(driver);
-  await driver.quit();
+  try {
+    // Call this only if running on remote selenium server
+    await driver.quit();
+  } catch {
+    // Ignore
+  }
 };
 
 await runner();
