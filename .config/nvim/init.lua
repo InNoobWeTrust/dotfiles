@@ -569,10 +569,6 @@ require('packer').startup(function()
 		return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 	end
 
-	local feedkey = function(key, mode)
-		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
-	end
-
 	local cmp = require('cmp')
 	cmp.setup({
 		mapping = cmp.mapping.preset.insert({
@@ -611,37 +607,6 @@ require('packer').startup(function()
 	-- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
 	local capabilities = vim.lsp.protocol.make_client_capabilities()
 	capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-
-	local servers = {
-		'bashls',
-		'cssls',
-		'diagnosticls',
-		'dockerls',
-		'efm',
-		'emmet_ls',
-		'eslint',
-		'golangci_lint_ls',
-		'gopls',
-		'grammarly',
-		'html',
-		'jsonls',
-		'pyright',
-		'rust_analyzer',
-		'solc',
-		'solidity_ls',
-		'sqlls',
-		'tsserver',
-		'vimls',
-		'volar',
-		'yamlls',
-	}
-	for _, server in pairs(servers) do
-		require('lspconfig')[server].setup {
-			single_file_support = true,
-			-- advertise capabilities to language servers.
-			capabilities = capabilities,
-		}
-	end
 	----------------------------------------- End completion
 
 	--------------------------------- Editor tooling manager
@@ -655,31 +620,42 @@ require('packer').startup(function()
 			'diagnosticls',
 			'dockerls',
 			'docker_compose_language_service',
-			'efm',
 			'emmet_ls',
 			'eslint',
-			'golangci_lint_ls',
-			'gopls',
 			'grammarly',
 			'html',
 			'jsonls',
 			'tsserver',
-			'texlab',
 			'lua_ls',
-			'marksman',
 			'pyright',
 			'rust_analyzer',
 			'sqlls',
-			'solang',
-			'solc',
-			'solidity',
 			'stylelint_lsp',
 			'tailwindcss',
 			'vimls',
-			'volar',
 			'yamlls',
 		},
 		--automatic_installation = true,
+	}
+	require("mason-lspconfig").setup_handlers {
+		-- The first entry (without a key) will be the default handler
+		-- and will be called for each installed server that doesn't have
+		-- a dedicated handler.
+		function(server_name) -- default handler (optional)
+			-- Prevent some LSP servers from autostart
+			local no_autostart = { 'deno', 'denols' }
+			require("lspconfig")[server_name].setup {
+				autostart = not no_autostart[server_name],
+				single_file_support = true,
+				-- advertise capabilities to language servers.
+				capabilities = capabilities,
+			}
+		end,
+		-- Next, you can provide a dedicated handler for specific servers.
+		-- For example, a handler override for the `rust_analyzer`:
+		["denols"] = function()
+			require("rust-tools").setup {}
+		end
 	}
 	----------------------------- End editor tooling manager
 end)
