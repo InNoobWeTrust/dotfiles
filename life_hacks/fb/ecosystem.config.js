@@ -1,8 +1,8 @@
 module.exports = {
   apps: [{
     name: 'fb_auto_pressing',
-    script: 'deno',
-    args: 'run -A fb_auto_pressing.ts',
+    script: './run.sh',
+    //args: 'run -A fb_auto_pressing.ts',
     instances: 1,
     exec_mode: 'fork',
     autorestart: false,

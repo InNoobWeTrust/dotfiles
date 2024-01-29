@@ -1,4 +1,4 @@
-#!/usr/bin/env -S bun run
+#!/usr/bin/env -S npx tsx
 
 import { Builder, By } from "selenium-webdriver";
 import until from "selenium-webdriver/lib/until.js";
@@ -9,25 +9,28 @@ import { Duration } from "luxon";
 import yaml from "js-yaml";
 import winston from "winston";
 
+import fs from "node:fs/promises";
+
 const CONFIG = process.env.CONFIG || "./config.yml";
 const SCRIPT = process.env.SCRIPT || "./fb_auto_pressing.js";
 const LOGLEVEL = process.env.LOGLEVEL || "info";
 const CHECKPOINT = process.env.CHECKPOINT || "./checkpoint.txt";
 const CRON = process.env.CRON || false;
 
+const readFile = async (f: string) => await fs.readFile(f, "utf-8");
+const writeFile = async (f: string, content: string) =>
+  await fs.writeFile(f, content);
+const pathExists = async (p: string) => await fs.stat(p);
+
 const logger = winston.createLogger({
   level: LOGLEVEL,
   format: winston.format.combine(
     winston.format.colorize(),
     winston.format.timestamp(),
-    winston.format.printf(
-      ({ level, message, label, timestamp }) =>
-        [
-          `${timestamp}`,
-          label ? `[${label}]` : "",
-          `${level}:`,
-          message,
-        ].filter(Boolean).join(" "),
+    winston.format.printf(({ level, message, label, timestamp }) =>
+      [`${timestamp}`, label ? `[${label}]` : "", `${level}:`, message]
+        .filter(Boolean)
+        .join(" "),
     ),
   ),
   transports: [
@@ -40,12 +43,12 @@ const logger = winston.createLogger({
 
 const getConfig = async () => {
   logger.debug(`Loading config at path ${CONFIG}`);
-  return yaml.load(await Bun.file(CONFIG).text());
+  return yaml.load(await readFile(CONFIG));
 };
 
 const getScript = async () => {
   logger.debug(`Using script at ${SCRIPT}...`);
-  return await Bun.file(SCRIPT).text();
+  return await readFile(SCRIPT);
 };
 
 const choose = (...arr: unknown[]) => {
@@ -53,7 +56,7 @@ const choose = (...arr: unknown[]) => {
 };
 
 const permutate = (...arr: unknown[]) =>
-  function* (arr: unknown[]) {
+  function*(arr: unknown[]) {
     while (arr.length > 0) {
       const [picked, ..._] = arr.splice(
         Math.floor(Math.random() * arr.length),
@@ -78,7 +81,7 @@ const holdon = async () => {
 };
 
 const checkpoint = async () => {
-  await Bun.write(CHECKPOINT, new Date().toISOString());
+  await writeFile(CHECKPOINT, new Date().toISOString());
 };
 
 const getDriver = async () => {
@@ -118,19 +121,19 @@ const getRemoteDriver = async () => {
     .usingServer(remote.host)
     .forBrowser(remote.browser)
     .setChromeOptions(
-      new chrome.Options().headless().addArguments(
-        "--disable-blink-features=AutomationControlled",
-      ),
+      new chrome.Options()
+        .headless()
+        .addArguments("--disable-blink-features=AutomationControlled"),
     )
     .setEdgeOptions(
-      new edge.Options().headless().addArguments(
-        "--disable-blink-features=AutomationControlled",
-      ),
+      new edge.Options()
+        .headless()
+        .addArguments("--disable-blink-features=AutomationControlled"),
     )
     .setFirefoxOptions(
-      new firefox.Options().headless().addArguments(
-        "--disable-blink-features=AutomationControlled",
-      ),
+      new firefox.Options()
+        .headless()
+        .addArguments("--disable-blink-features=AutomationControlled"),
     )
     .build();
   driver.manage().setTimeouts(timeouts);
@@ -174,8 +177,8 @@ const pressingSingle = async (driver: any, target: string) => {
   logger.info(`Pressing asshole @ ${target}...`);
   await driver.executeAsyncScript(
     "const callback = arguments[arguments.length - 1];\n" +
-      script.trim().slice(0, -1) +
-      ".then(callback)",
+    script.trim().slice(0, -1) +
+    ".then(callback)",
   );
 };
 
@@ -212,11 +215,11 @@ const cronDelayCheck = async () => {
     return;
   }
 
-  if (!await Bun.file(CHECKPOINT).exists()) {
+  if (!(await pathExists(CHECKPOINT))) {
     return;
   }
 
-  const dateStr = await Bun.file(CHECKPOINT).text();
+  const dateStr = await readFile(CHECKPOINT);
   const mtimeMs = Date.parse(dateStr);
   const {
     sleep: { min, max },
@@ -258,4 +261,4 @@ const runner = async () => {
   }
 };
 
-await runner();
+runner();
