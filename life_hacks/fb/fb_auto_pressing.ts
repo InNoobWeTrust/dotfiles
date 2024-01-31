@@ -121,19 +121,21 @@ const getRemoteDriver = async () => {
     .usingServer(remote.host)
     .forBrowser(remote.browser)
     .setChromeOptions(
-      new chrome.Options()
-        .headless()
-        .addArguments("--disable-blink-features=AutomationControlled"),
+      new chrome.Options().addArguments(
+        "--headless=new",
+        "--disable-blink-features=AutomationControlled",
+      ),
     )
     .setEdgeOptions(
-      new edge.Options()
-        .headless()
-        .addArguments("--disable-blink-features=AutomationControlled"),
+      new edge.Options().addArguments(
+        "--disable-blink-features=AutomationControlled",
+      ),
     )
     .setFirefoxOptions(
-      new firefox.Options()
-        .headless()
-        .addArguments("--disable-blink-features=AutomationControlled"),
+      new firefox.Options().addArguments(
+        "--headless",
+        "--disable-blink-features=AutomationControlled",
+      ),
     )
     .build();
   driver.manage().setTimeouts(timeouts);
