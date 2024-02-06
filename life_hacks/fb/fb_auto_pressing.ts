@@ -178,9 +178,9 @@ const pressingSingle = async (driver: any, target: string) => {
   );
   logger.info(`Pressing asshole @ ${target}...`);
   await driver.executeAsyncScript(
-    "const callback = arguments[arguments.length - 1];\n" +
-    script.trim().slice(0, -1) +
-    ".then(callback)",
+    script.trim() +
+    ";const callback = arguments[arguments.length - 1];" +
+    "reportAll().then(callback)",
   );
 };
 
