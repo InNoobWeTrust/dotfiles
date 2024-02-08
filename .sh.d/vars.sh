@@ -28,3 +28,4 @@ elif [ -d "$HOME/.linuxbrew" ]; then
     export BREW_HOME="$HOME/.linuxbrew"
 fi
 [ -n "$BREW_HOME" ] && export BYOBU_PREFIX="$BREW_HOME"
+export BAT_THEME="gruvbox-dark"
