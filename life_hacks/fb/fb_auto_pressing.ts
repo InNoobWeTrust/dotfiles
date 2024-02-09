@@ -99,6 +99,7 @@ const getDriver = async () => {
     )
     .setEdgeOptions(
       new edge.Options().addArguments(
+        "--headless=new",
         "--disable-blink-features=AutomationControlled",
       ),
     )
@@ -128,6 +129,7 @@ const getRemoteDriver = async () => {
     )
     .setEdgeOptions(
       new edge.Options().addArguments(
+        "--headless=new",
         "--disable-blink-features=AutomationControlled",
       ),
     )
