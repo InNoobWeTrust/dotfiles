@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
 
-# Alias to manage dotfiles
-alias dotfiles='/usr/bin/env -S git --git-dir=$HOME/Developer/InNoobWeTrust/dotfiles/.git --work-tree=$HOME'
-
 # Config dir
 export CONF_SH_DIR="$HOME/.sh.d"
 
