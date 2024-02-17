@@ -40,5 +40,14 @@ for f in "$CONF_SH_DIR"/platform_*.sh; do
     [ -r "$f" ] && . "$f"
 done
 
+# Shell-aware definitions. Check current shell and source from corresponding shell config script.
+if [ -n "$ZSH_VERSION" ]; then
+    # shellcheck source=.sh.d/.zshrc
+    [ -r "$CONF_SH_DIR/.zshrc" ] && . "$CONF_SH_DIR/.zshrc"
+elif [ -n "$BASH_VERSION" ]; then
+    # shellcheck source=.sh.d/.bashrc
+    [ -r "$CONF_SH_DIR/.bashrc" ] && . "$CONF_SH_DIR/.bashrc"
+fi
+
 # Custom definitions
 [ -r "$HOME/.shrc.user" ] && . "$HOME/.shrc.user"
