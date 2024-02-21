@@ -32,13 +32,9 @@ if vim.g.neovide then
 	o.guifont = 'Iosevka Nerd Font:h14'
 	g.neovide_cursor_animation_length = 0
 	-- Helper function for transparency formatting
-	local alpha = function()
-		return string.format("%x", math.floor(255 * (vim.g.transparency or 0.8)))
-	end
 	-- g:neovide_transparency should be 0 if you want to unify transparency of content and title bar.
 	g.neovide_transparency = 0.0
 	g.transparency = 0.8
-	g.neovide_background_color = "#0f1117" .. alpha()
 	g.neovide_floating_blur_amount_x = 2.0
 	g.neovide_floating_blur_amount_y = 2.0
 	g.neovide_transparency = 0.8
