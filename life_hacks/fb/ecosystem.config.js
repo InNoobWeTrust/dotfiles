@@ -5,7 +5,7 @@ module.exports = {
       script: "./run.sh",
       exec_mode: "fork",
       instances: 1,
-      cron_restart: "48 */6 * * *", // Schedule job every 6 hours
+      cron_restart: "48 */4 * * *", // Schedule job every 4 hours
       watch: ["run.sh", "fb_auto_pressing.ts", "fb_auto_pressing.js"], // Restart on changes to source code
       max_memory_restart: "10M", // In case of bug, try restarting
       restart_delay: 3000, // Delay between restarts
