@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx tsx
+#!/usr/bin/env -S bun run
 
 import { Builder, By } from "selenium-webdriver";
 import until from "selenium-webdriver/lib/until.js";

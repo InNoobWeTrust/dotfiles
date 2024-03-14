@@ -1,7 +1,7 @@
-#!/usr/bin/env -S bash
+#!/usr/bin/env -S sh
+
+# Install pkgx to use bun
+command -v pkgx >/dev/null 2>&1 || eval "$(curl -Ssf https://pkgx.sh)"
 
 touch checkpoint.txt
-npm init -y
-npm add js-yaml luxon selenium-webdriver winston
-npm add -D tsx
-npx tsx fb_auto_pressing.ts
+pkgx fb_auto_pressing.ts
