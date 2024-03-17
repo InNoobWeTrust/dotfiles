@@ -194,6 +194,7 @@ async fn main() -> Result<(), fantoccini::error::CmdError> {
         .collect::<Vec<_>>();
     lines.shuffle(&mut rand::thread_rng());
     let start = time::Instant::now();
+    info!(target: "main", "Starting...");
     for target in lines {
         if target.trim().starts_with("https://www.tiktok.com/") {
             report(&client, target.trim()).await?;
@@ -203,6 +204,9 @@ async fn main() -> Result<(), fantoccini::error::CmdError> {
             )));
         }
     }
+    let end = time::Instant::now();
+    let total = end - start;
+    info!(target: "main", "Finished in {total:.2?}");
 
     client.close().await
 }
