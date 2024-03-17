@@ -2,6 +2,7 @@ use fantoccini::actions::InputSource;
 use fantoccini::cookies::Cookie;
 use fantoccini::{actions, Client, ClientBuilder, Locator};
 use futures::future;
+use log::{debug, info, warn};
 use rand::seq::SliceRandom;
 use serde::Deserialize;
 use std::io::{self, BufRead, BufReader};
@@ -35,7 +36,7 @@ fn rand_delay_duration() -> time::Duration {
 
 fn delay(duration: Option<time::Duration>) {
     let duration = duration.unwrap_or_else(|| rand_delay_duration());
-    println!("Sleeping for {:?}...", duration);
+    debug!("Sleeping for {duration:?}...");
     thread::sleep(duration);
 }
 
@@ -83,12 +84,12 @@ async fn login(
 }
 
 async fn report(client: &Client, target: &str) -> Result<(), fantoccini::error::CmdError> {
-    println!("Reporting {}...", target);
+    info!(target: target, "Reporting {target}...");
     client.goto(target).await?;
     delay(None);
 
     if let Ok(_) = client.find(Locator::Id(r#"tiktok-verify-ele"#)).await {
-        println!("Get caught by captcha. Be careful!");
+        warn!(target: target, "Get caught by captcha. Be careful!");
         // try to remove the captcha solver
         client
             .execute(
@@ -104,7 +105,7 @@ async fn report(client: &Client, target: &str) -> Result<(), fantoccini::error::
         ))
         .await;
     if let Err(_) = more_btn {
-        println!("User not found, skipping...");
+        warn!(target: target, "User not found, skipping...");
         return Ok(());
     }
     let mouse_move_to_more =
@@ -114,7 +115,7 @@ async fn report(client: &Client, target: &str) -> Result<(), fantoccini::error::
             x: 0,
             y: 0,
         });
-    println!("Clicking 'more' button...");
+    debug!(target: target, "Clicking 'more' button...");
     client.perform_actions(mouse_move_to_more).await?;
     delay(None);
 
@@ -122,20 +123,20 @@ async fn report(client: &Client, target: &str) -> Result<(), fantoccini::error::
         .find(Locator::Css(
             r#"div[data-e2e="user-report"] > div[role="button"][aria-label="Report"][tabindex="0"]"#,
         )).await?;
-    println!("Clicking 'report' button...");
+    debug!(target: target, "Clicking 'report' button...");
     report_btn.click().await?;
     delay(None);
 
     loop {
-        println!("Checking for report options...");
+        debug!(target: target, "Checking for report options...");
         match client
             .find_all(Locator::Css(r#"form[data-e2e="report-form"] > div:last-child > label[data-e2e="report-card-reason"] > div:first-child"#))
             .await {
             Ok(report_types) =>  {
                 let reason_str = future::join_all(report_types.clone().iter().map(|r| r.text())).await.into_iter().map(|r| r.unwrap()).collect::<Vec<_>>();
-                println!("Found: {:?}", reason_str);
+                debug!(target: target, "Found: {reason_str:?}");
                 if report_types.len() == 0 {
-                    println!("No report option, proceeding to submit...");
+                    debug!(target: target, "No report option, proceeding to submit...");
                     break;
                 }
                 // Picking reason
@@ -148,7 +149,7 @@ async fn report(client: &Client, target: &str) -> Result<(), fantoccini::error::
                     ].iter().any(|r| reason.trim().contains(r)) {
                         continue;
                     }
-                    println!("Choosing reason {:?}...", reason);
+                    info!(target: target, "Choosing reason {reason:?}...");
                     chosen_report.click().await?;
                     delay(None);
                     break;
@@ -157,7 +158,7 @@ async fn report(client: &Client, target: &str) -> Result<(), fantoccini::error::
             Err(_) => break,
         }
     }
-    println!("Submitting...");
+    debug!(target: target, "Submitting...");
     let submit_btn = client
         .find(Locator::Css(
             r#"form[data-e2e="report-form"] > div:last-child > div:last-child > button"#,
@@ -165,7 +166,7 @@ async fn report(client: &Client, target: &str) -> Result<(), fantoccini::error::
         .await?;
     submit_btn.click().await?;
     delay(None);
-    println!("Finishing...");
+    debug!(target: target, "Finishing...");
     let finish_btn = client
         .find(Locator::Css(
             r#"div[data-e2e="report-form"] > div > button:last-child"#,
@@ -179,6 +180,8 @@ async fn report(client: &Client, target: &str) -> Result<(), fantoccini::error::
 
 #[tokio::main]
 async fn main() -> Result<(), fantoccini::error::CmdError> {
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug")).init();
+
     let link_file = env::args().nth(1).expect("no link file provided");
     let cookie_file = env::args().nth(2).expect("no cookies file provided");
     let cookies_raw_json = fs::read_to_string(cookie_file).expect("failed to read cookies.json");
