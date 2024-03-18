@@ -9,6 +9,7 @@ edition = "2021"
 env_logger = "0.11.3"
 fantoccini = "0.19.3"
 futures = "0.3.30"
+human-duration = "0.1.0"
 log = "0.4.21"
 rand = "0.8.5"
 serde = { version = "1.0.197", features = ["derive"] }

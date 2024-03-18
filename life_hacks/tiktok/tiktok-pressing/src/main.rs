@@ -1,18 +1,18 @@
 use fantoccini::actions::InputSource;
-use fantoccini::cookies::Cookie;
+//use fantoccini::cookies::Cookie;
 use fantoccini::{actions, Client, ClientBuilder, Locator};
 use futures::future;
 use log::{debug, info, warn};
 use rand::seq::SliceRandom;
-use serde::Deserialize;
+//use serde::Deserialize;
 use std::io::{self, BufRead, BufReader};
 use std::{env, fs, thread, time};
 
-#[derive(Deserialize)]
-struct CookieJson {
-    name: String,
-    value: String,
-}
+//#[derive(Deserialize)]
+//struct CookieJson {
+//    name: String,
+//    value: String,
+//}
 
 fn read_lines(filename: String) -> io::Lines<BufReader<fs::File>> {
     // Open the file in read-only mode.
@@ -36,7 +36,8 @@ fn rand_delay_duration() -> time::Duration {
 
 fn delay(duration: Option<time::Duration>) {
     let duration = duration.unwrap_or_else(|| rand_delay_duration());
-    debug!("Sleeping for {duration:?}...");
+    let duration_str = human_duration::human_duration(&duration);
+    debug!("Sleeping for {duration_str}...");
     thread::sleep(duration);
 }
 
@@ -69,25 +70,35 @@ async fn get_client() -> Result<Client, fantoccini::error::CmdError> {
     Ok(client)
 }
 
-async fn login(
-    client: &Client,
-    cookies: Vec<CookieJson>,
-) -> Result<(), fantoccini::error::CmdError> {
-    client.goto("https://tiktok.com").await?;
-    for cookie in cookies {
-        client
-            .add_cookie(Cookie::new(cookie.name, cookie.value))
-            .await?;
-    }
-    delay(None);
-    Ok(())
-}
+//async fn login(
+//    client: &Client,
+//    cookies: Vec<CookieJson>,
+//) -> Result<(), fantoccini::error::CmdError> {
+//    client.goto("https://tiktok.com").await?;
+//    for cookie in cookies {
+//        client
+//            .add_cookie(Cookie::new(cookie.name, cookie.value))
+//            .await?;
+//    }
+//    delay(None);
+//    Ok(())
+//}
 
 async fn report(client: &Client, target: &str) -> Result<(), fantoccini::error::CmdError> {
     info!(target: target, "Reporting {target}...");
     client.goto(target).await?;
     delay(None);
 
+    if let Ok(_) = client.find(Locator::Id(r#"login-modal"#)).await {
+        debug!(target: target, "Dismissing login overlay...");
+        // try to remove the login overlay
+        client
+            .execute(
+                "document.getElementById('login-modal')?.parentElement?.parentElement?.parentElement?.remove()",
+                Vec::new(),
+            )
+            .await?;
+    }
     if let Ok(_) = client.find(Locator::Id(r#"tiktok-verify-ele"#)).await {
         warn!(target: target, "Get caught by captcha. Be careful!");
         // try to remove the captcha solver
@@ -183,12 +194,12 @@ async fn main() -> Result<(), fantoccini::error::CmdError> {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug")).init();
 
     let link_file = env::args().nth(1).expect("no link file provided");
-    let cookie_file = env::args().nth(2).expect("no cookies file provided");
-    let cookies_raw_json = fs::read_to_string(cookie_file).expect("failed to read cookies.json");
-    let cookies: Vec<CookieJson> = serde_json::from_str(&cookies_raw_json)?;
+    //let cookie_file = env::args().nth(2).expect("no cookies file provided");
+    //let cookies_raw_json = fs::read_to_string(cookie_file).expect("failed to read cookies.json");
+    //let cookies: Vec<CookieJson> = serde_json::from_str(&cookies_raw_json)?;
 
     let client = get_client().await?;
-    login(&client, cookies).await?;
+    //login(&client, cookies).await?;
     let mut lines: Vec<_> = read_lines(link_file)
         .map(|l| l.unwrap())
         .collect::<Vec<_>>();
@@ -206,7 +217,8 @@ async fn main() -> Result<(), fantoccini::error::CmdError> {
     }
     let end = time::Instant::now();
     let total = end - start;
-    info!(target: "main", "Finished in {total:.2?}");
+    let total = human_duration::human_duration(&total);
+    info!(target: "main", "Finished in {total}");
 
     client.close().await
 }
