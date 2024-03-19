@@ -1,18 +1,11 @@
 use fantoccini::actions::InputSource;
-//use fantoccini::cookies::Cookie;
+use fantoccini::error::CmdError;
 use fantoccini::{actions, Client, ClientBuilder, Locator};
 use futures::future;
 use log::{debug, info, warn};
 use rand::seq::SliceRandom;
-//use serde::Deserialize;
 use std::io::{self, BufRead, BufReader};
 use std::{env, fs, thread, time};
-
-//#[derive(Deserialize)]
-//struct CookieJson {
-//    name: String,
-//    value: String,
-//}
 
 fn read_lines(filename: String) -> io::Lines<BufReader<fs::File>> {
     // Open the file in read-only mode.
@@ -41,7 +34,7 @@ fn delay(duration: Option<time::Duration>) {
     thread::sleep(duration);
 }
 
-async fn get_client() -> Result<Client, fantoccini::error::CmdError> {
+async fn get_client() -> Result<Client, CmdError> {
     let capabilities = serde_json::json!({
         "browserName": "firefox",
         "moz:firefoxOptions": {
@@ -70,21 +63,7 @@ async fn get_client() -> Result<Client, fantoccini::error::CmdError> {
     Ok(client)
 }
 
-//async fn login(
-//    client: &Client,
-//    cookies: Vec<CookieJson>,
-//) -> Result<(), fantoccini::error::CmdError> {
-//    client.goto("https://tiktok.com").await?;
-//    for cookie in cookies {
-//        client
-//            .add_cookie(Cookie::new(cookie.name, cookie.value))
-//            .await?;
-//    }
-//    delay(None);
-//    Ok(())
-//}
-
-async fn report(client: &Client, target: &str) -> Result<(), fantoccini::error::CmdError> {
+async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
     info!(target: target, "Reporting {target}...");
     client.goto(target).await?;
     delay(None);
@@ -190,13 +169,10 @@ async fn report(client: &Client, target: &str) -> Result<(), fantoccini::error::
 }
 
 #[tokio::main]
-async fn main() -> Result<(), fantoccini::error::CmdError> {
+async fn main() -> Result<(), CmdError> {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug")).init();
 
     let link_file = env::args().nth(1).expect("no link file provided");
-    //let cookie_file = env::args().nth(2).expect("no cookies file provided");
-    //let cookies_raw_json = fs::read_to_string(cookie_file).expect("failed to read cookies.json");
-    //let cookies: Vec<CookieJson> = serde_json::from_str(&cookies_raw_json)?;
 
     let client = get_client().await?;
     //login(&client, cookies).await?;
@@ -208,11 +184,20 @@ async fn main() -> Result<(), fantoccini::error::CmdError> {
     info!(target: "main", "Starting...");
     for target in lines {
         if target.trim().starts_with("https://www.tiktok.com/") {
-            report(&client, target.trim()).await?;
-            // Ensure some long enough delays between targets
-            delay(Some(time::Duration::from_secs(
-                start.elapsed().as_secs() % 30,
-            )));
+            // Randomly report n times, max 3 times
+            for _ in 0..=(rand() / 1_000 % 3) {
+                match report(&client, target.trim()).await {
+                    Ok(_) => {
+                        // Ensure some long enough delays between targets
+                        delay(Some(time::Duration::from_secs(
+                            start.elapsed().as_secs() % 30,
+                        )));
+                    }
+                    Err(e) => {
+                        warn!(target: "main", "Reporting failed for {target}, error: {e:?}");
+                    }
+                }
+            }
         }
     }
     let end = time::Instant::now();
