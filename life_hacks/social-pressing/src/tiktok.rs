@@ -1,11 +1,11 @@
-use fantoccini::actions::InputSource;
 use fantoccini::error::CmdError;
-use fantoccini::{actions, Client, Locator};
+use fantoccini::{Client, Locator};
 use futures::future;
 use log::{debug, info, warn};
 use rand::seq::SliceRandom;
 
-use crate::utils::{delay, rand_delay_duration};
+use crate::driver::perform_click;
+use crate::utils::delay;
 
 pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
     client.goto(target).await?;
@@ -41,15 +41,8 @@ pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
         warn!(target: target, "User not found, skipping...");
         return Ok(());
     }
-    let mouse_move_to_more =
-        actions::MouseActions::new("mouse".into()).then(actions::PointerAction::MoveToElement {
-            element: more_btn?,
-            duration: Some(rand_delay_duration()),
-            x: 0,
-            y: 0,
-        });
     debug!(target: target, "Clicking 'more' button...");
-    client.perform_actions(mouse_move_to_more).await?;
+    perform_click(client, &more_btn?).await?;
     delay(None);
 
     let report_btn = client
@@ -57,7 +50,7 @@ pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
             r#"div[data-e2e="user-report"] > div[role="button"][aria-label="Report"][tabindex="0"]"#,
         )).await?;
     debug!(target: target, "Clicking 'report' button...");
-    report_btn.click().await?;
+    perform_click(client, &report_btn).await?;
     delay(None);
 
     loop {
@@ -76,14 +69,14 @@ pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
                 loop {
                     let chosen_report = report_types.choose(&mut rand::thread_rng()).unwrap();
                     let reason = chosen_report.text().await?;
-                    if vec![
+                    if [
                         "Counterfeits and intellectual property",
                         "Pretending to Be Someone",
                     ].iter().any(|r| reason.trim().contains(r)) {
                         continue;
                     }
                     info!(target: target, "Choosing reason {reason:?}...");
-                    chosen_report.click().await?;
+                    perform_click(client, &chosen_report).await?;
                     delay(None);
                     break;
                 }
@@ -97,7 +90,7 @@ pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
             r#"form[data-e2e="report-form"] > div:last-child > div:last-child > button"#,
         ))
         .await?;
-    submit_btn.click().await?;
+    perform_click(client, &submit_btn).await?;
     delay(None);
     debug!(target: target, "Finishing...");
     let finish_btn = client
@@ -105,7 +98,7 @@ pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
             r#"div[data-e2e="report-form"] > div > button:last-child"#,
         ))
         .await?;
-    finish_btn.click().await?;
+    perform_click(client, &finish_btn).await?;
     delay(None);
 
     Ok(())
