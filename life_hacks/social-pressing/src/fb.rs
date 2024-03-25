@@ -1,7 +1,5 @@
 use core::time::Duration;
-use fantoccini::elements::Element;
-use fantoccini::error::CmdError;
-use fantoccini::{Client, Locator};
+use fantoccini::{elements::Element, error::CmdError, Client, Locator};
 use log::{debug, error, info, warn};
 use rand::seq::SliceRandom;
 

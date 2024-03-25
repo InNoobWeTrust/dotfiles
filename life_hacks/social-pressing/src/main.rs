@@ -3,16 +3,18 @@ mod fb;
 mod tiktok;
 mod utils;
 
-use anyhow::{Error, Result};
 use core::time::Duration;
-use log::error;
-use log::info;
+use fantoccini::cookies::Cookie;
+use log::{error, info, warn};
 use rand::seq::SliceRandom;
+use serde::Deserialize;
 use std::collections::HashMap;
 use std::env;
+use std::error::Error;
 use std::fs;
 use std::io::{self, BufRead, BufReader};
 use std::time::Instant;
+use url::Url;
 
 use crate::driver::login;
 use crate::utils::delay;
@@ -24,11 +26,7 @@ fn read_lines(filename: &str) -> io::Lines<BufReader<fs::File>> {
     io::BufReader::new(file).lines()
 }
 
-async fn report(link_file: &str, cookie_file: &str) -> Result<(), Error> {
-    let mut links: Vec<_> = read_lines(link_file)
-        .map(|l| l.unwrap().trim().to_owned())
-        .collect::<Vec<_>>();
-    links.shuffle(&mut rand::thread_rng());
+async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn Error>> {
     info!("Getting webdriver...");
     let client = driver::get_client().await?;
     info!("Starting...");
@@ -49,61 +47,77 @@ async fn report(link_file: &str, cookie_file: &str) -> Result<(), Error> {
         let target = parts.next().unwrap_or_else(|| "");
         let comment = parts.collect::<Vec<_>>().join(" ");
 
-        if !["https://www.facebook.com/", "https://www.tiktok.com/"]
-            .iter()
-            .any(|domain| target.starts_with(domain))
+        let url = Url::parse(target).unwrap_or(Url::parse("https://example.com").unwrap());
+        let host_str = url.host_str().unwrap_or_default();
+
+        if ![
+            "www.facebook.com",
+            "facebook.com",
+            "www.tiktok.com",
+            "tiktok.com",
+        ]
+        .contains(&host_str)
         {
             continue;
         }
 
-        match login(&client, &cookie_file, &target).await {
+        match login(&client, &cookies, &target).await {
             Ok(_) => (),
             Err(e) => {
                 error!(target: "login", "Login failed before pressing {target} <{comment}>, error: {e:?}");
                 continue;
             }
         }
-
-        if target.starts_with("https://www.facebook.com/") {
-            if limitation_status["fb"] {
-                info!("Facebook is temporarily limited, skipping {target} <{comment}>");
+        match client.goto(&target).await {
+            Ok(_) => {
+                delay(None);
+            }
+            Err(e) => {
+                error!(target: "goto", "Failed to go to {target} <{comment}>, error: {e:?}");
                 continue;
             }
+        }
 
-            info!(target: "facebook", "Pressing on facebook for {target} <{comment}>...");
-
-            client.goto(&target).await?;
-            delay(None);
-
-            match fb::report(&client, &target).await {
-                Ok(is_temporary_limited) => {
-                    if is_temporary_limited {
-                        limitation_status.insert("fb", true);
-                    }
-                    // Ensure some long enough delays between targets
-                    delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
+        match &*host_str {
+            "www.facebook.com" | "facebook.com" => {
+                if limitation_status["fb"] {
+                    info!("Facebook is temporarily limited, skipping {target} <{comment}>");
+                    continue;
                 }
-                Err(e) => {
-                    error!(target: "fb_report", "Reporting failed for {target} <{comment}>, error: {e:?}");
-                }
-            }
-        } else if target.starts_with("https://www.tiktok.com/") {
-            info!(target: "tiktok", "Pressing on tiktok for {target} <{comment}>...");
 
-            client.goto(&target).await?;
-            delay(None);
+                info!(target: "facebook", "Pressing on facebook for {target} <{comment}>...");
 
-            // Randomly report n times, max 3 times
-            for _ in 0..=(rand::random::<usize>() % 3) {
-                match tiktok::report(&client, &target).await {
-                    Ok(_) => {
+                match fb::report(&client, &target).await {
+                    Ok(is_temporary_limited) => {
+                        if is_temporary_limited {
+                            limitation_status.insert("fb", true);
+                        }
                         // Ensure some long enough delays between targets
                         delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
                     }
                     Err(e) => {
-                        error!(target: "tiktok_report", "Reporting failed for {target} <{comment}>, error: {e:?}");
+                        error!(target: "fb_report", "Reporting failed for {target} <{comment}>, error: {e:?}");
                     }
                 }
+            }
+            "www.tiktok.com" | "tiktok.com" => {
+                info!(target: "tiktok", "Pressing on tiktok for {target} <{comment}>...");
+
+                // Randomly report n times, max 3 times
+                for _ in 0..=(rand::random::<usize>() % 3) {
+                    match tiktok::report(&client, &target).await {
+                        Ok(_) => {
+                            // Ensure some long enough delays between targets
+                            delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
+                        }
+                        Err(e) => {
+                            error!(target: "tiktok_report", "Reporting failed for {target} <{comment}>, error: {e:?}");
+                        }
+                    }
+                }
+            }
+            _ => {
+                warn!(target: "report", "Unrecognized url for {target} <{comment}>. Skipping...");
             }
         }
     }
@@ -115,13 +129,38 @@ async fn report(link_file: &str, cookie_file: &str) -> Result<(), Error> {
     Ok(())
 }
 
+#[derive(Deserialize)]
+struct CookieJson {
+    name: String,
+    value: String,
+    domain: String,
+}
+
 #[tokio::main]
-async fn main() -> Result<(), Error> {
+async fn main() -> Result<(), Box<dyn Error>> {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug")).init();
     let link_file = env::args()
         .nth(1)
         .expect("usage: social-pressing <links_file>");
     let cookie_file = env::args().nth(2).expect("no cookies file provided");
 
-    report(&link_file, &cookie_file).await
+    let mut links = read_lines(&link_file)
+        .map(|l| l.unwrap().trim().to_owned())
+        .filter(|l| !l.is_empty())
+        .collect::<Vec<_>>();
+    links.shuffle(&mut rand::thread_rng());
+
+    let cookies_raw_json = fs::read_to_string(cookie_file.to_owned())
+        .expect(&format!("failed to read {}", cookie_file));
+    let cookies: Vec<CookieJson> = serde_json::from_str(&cookies_raw_json)?;
+    let cookies = cookies
+        .iter()
+        .map(|c| {
+            let mut cookie = Cookie::new(c.name.to_owned(), c.value.to_owned());
+            cookie.set_domain(c.domain.to_owned());
+            cookie
+        })
+        .collect::<Vec<Cookie>>();
+
+    report(&links, &cookies).await
 }

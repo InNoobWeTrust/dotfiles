@@ -1,21 +1,20 @@
-use std::fs;
-
 use core::time::Duration;
 use fantoccini::{
     actions::{InputSource, MouseActions, PointerAction},
     cookies::Cookie,
     elements::Element,
-    error::{CmdError, NewSessionError},
+    error::CmdError,
     Client, ClientBuilder,
 };
 use log::error;
-use serde::Deserialize;
+use std::error::Error;
 
 use crate::utils::{delay, rand_delay_duration};
 
-pub async fn get_client() -> Result<Client, NewSessionError> {
+pub async fn get_client() -> Result<Client, Box<dyn Error>> {
     let capabilities = serde_json::json!({
         "browserName": "firefox",
+        "setWindowRect": true,
         "moz:firefoxOptions": {
             "prefs": {
                 "intl.accept_languages": "en-GB"
@@ -38,20 +37,14 @@ pub async fn get_client() -> Result<Client, NewSessionError> {
         .capabilities(capabilities)
         .connect("http://localhost:4444")
         .await?;
+    client.set_window_size(1024, 3840).await?;
 
     Ok(client)
 }
 
-#[derive(Deserialize)]
-struct CookieJson {
-    name: String,
-    value: String,
-    domain: String,
-}
-
 pub async fn login(
     client: &Client,
-    cookie_file: &str,
+    cookies: &[Cookie<'_>],
     target: &str,
 ) -> Result<&'static str, CmdError> {
     let domain: &str;
@@ -63,16 +56,13 @@ pub async fn login(
         domain = ".tiktok.com";
     }
 
-    let cookies_raw_json =
-        fs::read_to_string(cookie_file).expect(&format!("failed to read {}", cookie_file));
-    let cookies: Vec<CookieJson> = serde_json::from_str(&cookies_raw_json)?;
     for cookie in cookies {
-        if cookie.domain != domain {
-            continue;
+        if let Some(cookie_domain) = cookie.domain() {
+            if cookie_domain != domain {
+                continue;
+            }
         }
-        client
-            .add_cookie(Cookie::new(cookie.name, cookie.value))
-            .await?;
+        client.add_cookie(cookie.clone().into_owned()).await?;
     }
 
     Ok(domain)

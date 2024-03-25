@@ -1,5 +1,4 @@
-use fantoccini::error::CmdError;
-use fantoccini::{Client, Locator};
+use fantoccini::{error::CmdError, Client, Locator};
 use futures::future;
 use log::{debug, info, warn};
 use rand::seq::SliceRandom;
