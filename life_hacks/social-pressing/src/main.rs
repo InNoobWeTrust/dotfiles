@@ -45,6 +45,10 @@ async fn report(link_file: &str, cookie_file: &str) -> Result<(), Error> {
         ("vk", false),
     ]);
     for target in links {
+        let mut parts = target.trim().split_whitespace();
+        let target = parts.next().unwrap_or_else(|| "");
+        let comment = parts.collect::<Vec<_>>().join(" ");
+
         if !["https://www.facebook.com/", "https://www.tiktok.com/"]
             .iter()
             .any(|domain| target.starts_with(domain))
@@ -55,18 +59,18 @@ async fn report(link_file: &str, cookie_file: &str) -> Result<(), Error> {
         match login(&client, &cookie_file, &target).await {
             Ok(_) => (),
             Err(e) => {
-                error!(target: "login", "Login failed before pressing {target}, error: {e:?}");
+                error!(target: "login", "Login failed before pressing {target} <{comment}>, error: {e:?}");
                 continue;
             }
         }
 
         if target.starts_with("https://www.facebook.com/") {
             if limitation_status["fb"] {
-                info!("Facebook is temporarily limited, skipping {target}");
+                info!("Facebook is temporarily limited, skipping {target} <{comment}>");
                 continue;
             }
 
-            info!(target: "facebook", "Pressing on facebook for {target}...");
+            info!(target: "facebook", "Pressing on facebook for {target} <{comment}>...");
 
             client.goto(&target).await?;
             delay(None);
@@ -80,11 +84,11 @@ async fn report(link_file: &str, cookie_file: &str) -> Result<(), Error> {
                     delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
                 }
                 Err(e) => {
-                    error!(target: "fb_report", "Reporting failed for {target}, error: {e:?}");
+                    error!(target: "fb_report", "Reporting failed for {target} <{comment}>, error: {e:?}");
                 }
             }
         } else if target.starts_with("https://www.tiktok.com/") {
-            info!(target: "tiktok", "Pressing on tiktok for {target}...");
+            info!(target: "tiktok", "Pressing on tiktok for {target} <{comment}>...");
 
             client.goto(&target).await?;
             delay(None);
@@ -97,7 +101,7 @@ async fn report(link_file: &str, cookie_file: &str) -> Result<(), Error> {
                         delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
                     }
                     Err(e) => {
-                        error!(target: "tiktok_report", "Reporting failed for {target}, error: {e:?}");
+                        error!(target: "tiktok_report", "Reporting failed for {target} <{comment}>, error: {e:?}");
                     }
                 }
             }
