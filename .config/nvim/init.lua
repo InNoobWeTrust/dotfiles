@@ -288,8 +288,10 @@ require('packer').startup(function()
 			'hrsh7th/cmp-buffer',
 			'hrsh7th/cmp-nvim-lsp',
 			'hrsh7th/cmp-nvim-lsp-signature-help',
-			'FelipeLema/cmp-async-path',
 			'hrsh7th/cmp-emoji',
+			'hrsh7th/cmp-vsnip',
+			'hrsh7th/vim-vsnip',
+			'FelipeLema/cmp-async-path',
 		}
 	}
 	-- Add surrounding brackets, quotes, xml tags,...
@@ -567,6 +569,13 @@ require('packer').startup(function()
 
 	local cmp = require('cmp')
 	cmp.setup({
+		snippet = {
+			-- REQUIRED - you must specify a snippet engine
+			expand = function(args)
+				fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+				-- vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
+			end,
+		},
 		mapping = cmp.mapping.preset.insert({
 			--['<C-y>'] = cmp.mapping.confirm({ select = true }),
 			["<Tab>"] = cmp.mapping(function(fallback)

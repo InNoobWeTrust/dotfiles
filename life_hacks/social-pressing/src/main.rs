@@ -5,8 +5,8 @@ mod utils;
 
 use anyhow::{Error, Result};
 use core::time::Duration;
+use log::error;
 use log::info;
-use log::warn;
 use rand::seq::SliceRandom;
 use std::collections::HashMap;
 use std::env;
@@ -14,6 +14,7 @@ use std::fs;
 use std::io::{self, BufRead, BufReader};
 use std::time::Instant;
 
+use crate::driver::login;
 use crate::utils::delay;
 
 fn read_lines(filename: &str) -> io::Lines<BufReader<fs::File>> {
@@ -30,9 +31,19 @@ async fn report(link_file: &str, cookie_file: &str) -> Result<(), Error> {
     links.shuffle(&mut rand::thread_rng());
     info!("Getting webdriver...");
     let client = driver::get_client().await?;
-    let mut login_status = HashMap::from([("fb", false), ("tiktok", false)]);
     info!("Starting...");
     let start = Instant::now();
+    let mut limitation_status = HashMap::from([
+        ("fb", false),
+        ("tiktok", false),
+        ("instagram", false),
+        ("linkedin", false),
+        ("twitter", false),
+        ("pinterest", false),
+        ("reddit", false),
+        ("tumblr", false),
+        ("vk", false),
+    ]);
     for target in links {
         if !["https://www.facebook.com/", "https://www.tiktok.com/"]
             .iter()
@@ -41,31 +52,35 @@ async fn report(link_file: &str, cookie_file: &str) -> Result<(), Error> {
             continue;
         }
 
+        match login(&client, &cookie_file, &target).await {
+            Ok(_) => (),
+            Err(e) => {
+                error!(target: "login", "Login failed before pressing {target}, error: {e:?}");
+                continue;
+            }
+        }
+
         if target.starts_with("https://www.facebook.com/") {
+            if limitation_status["fb"] {
+                info!("Facebook is temporarily limited, skipping {target}");
+                continue;
+            }
+
             info!(target: "facebook", "Pressing on facebook for {target}...");
 
-            if !login_status["fb"] {
-                match driver::login(&client, &cookie_file).await {
-                    Ok(_) => {
-                        login_status.insert("fb", true);
+            client.goto(&target).await?;
+            delay(None);
+
+            match fb::report(&client, &target).await {
+                Ok(is_temporary_limited) => {
+                    if is_temporary_limited {
+                        limitation_status.insert("fb", true);
                     }
-                    Err(e) => {
-                        warn!(target: "fb_login", "Login to FB failed, error: {e:?}");
-                        continue;
-                    }
+                    // Ensure some long enough delays between targets
+                    delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
                 }
-
-                client.goto(&target).await?;
-                delay(None);
-
-                match fb::report(&client, &target).await {
-                    Ok(_) => {
-                        // Ensure some long enough delays between targets
-                        delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
-                    }
-                    Err(e) => {
-                        warn!(target: "fb_report", "Reporting failed for {target}, error: {e:?}");
-                    }
+                Err(e) => {
+                    error!(target: "fb_report", "Reporting failed for {target}, error: {e:?}");
                 }
             }
         } else if target.starts_with("https://www.tiktok.com/") {
@@ -82,7 +97,7 @@ async fn report(link_file: &str, cookie_file: &str) -> Result<(), Error> {
                         delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
                     }
                     Err(e) => {
-                        warn!(target: "tiktok_report", "Reporting failed for {target}, error: {e:?}");
+                        error!(target: "tiktok_report", "Reporting failed for {target}, error: {e:?}");
                     }
                 }
             }

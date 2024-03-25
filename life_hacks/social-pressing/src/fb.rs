@@ -2,7 +2,7 @@ use core::time::Duration;
 use fantoccini::elements::Element;
 use fantoccini::error::CmdError;
 use fantoccini::{Client, Locator};
-use log::{debug, info, warn};
+use log::{debug, error, info, warn};
 use rand::seq::SliceRandom;
 
 use crate::driver::perform_click;
@@ -22,7 +22,30 @@ async fn get_posts_report_btns(client: &Client) -> Result<Vec<Element>, CmdError
         .await
 }
 
-async fn report_process(client: &Client, target: &str, menu_btn: &Element) -> Result<(), CmdError> {
+async fn is_temporary_limited(client: &Client) -> Result<bool, CmdError> {
+    let dialog_title = client
+        .find(Locator::Css(r#"div[role=dialog] span[dir=auto]"#))
+        .await;
+    if let Ok(dialog_title) = dialog_title {
+        let title = dialog_title.text().await?;
+        if title
+            .trim()
+            .to_lowercase()
+            .contains(&"Temporarily Blocked".to_lowercase())
+        {
+            warn!(target: "fb", "Temporarily blocked from reporting. Aborting....");
+            return Ok(true);
+        }
+    }
+
+    Ok(false)
+}
+
+async fn report_process(
+    client: &Client,
+    target: &str,
+    menu_btn: &Element,
+) -> Result<bool, CmdError> {
     debug!(target: target, "Clicking 'menu' button...");
     perform_click(client, menu_btn).await?;
     delay(None);
@@ -40,6 +63,10 @@ async fn report_process(client: &Client, target: &str, menu_btn: &Element) -> Re
         }
     }
     delay(None);
+
+    if let Ok(true) = is_temporary_limited(client).await {
+        return Ok(true);
+    }
 
     loop {
         debug!(target: target, "Checking for report options...");
@@ -110,26 +137,43 @@ async fn report_process(client: &Client, target: &str, menu_btn: &Element) -> Re
         }
     }
 
-    Ok(())
+    Ok(false)
 }
 
-pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
+pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
     let account_report_btn = get_account_report_btn(client).await;
     if let Err(e) = account_report_btn {
         warn!(target: target, "User not found for {target}, error: {e}");
-        return Ok(());
+        return Ok(false);
     }
-    report_process(client, target, &account_report_btn?).await?;
+    match report_process(client, target, &account_report_btn?).await {
+        Ok(is_temporary_limited) => {
+            if is_temporary_limited {
+                return Ok(true);
+            }
+        }
+        Err(e) => {
+            error!(target: target, "{e}");
+        }
+    }
 
     let posts_report_btn = get_posts_report_btns(client).await;
     if let Err(e) = posts_report_btn {
         warn!(target: target, "Found no post to report for {target}, error: {e}");
-        return Ok(());
+        return Ok(false);
     }
     for menu_btn in posts_report_btn? {
-        let report_result = report_process(client, target, &menu_btn).await;
-        debug!(target: target, "{report_result:?}");
+        match report_process(client, target, &menu_btn).await {
+            Ok(is_temporary_limited) => {
+                if is_temporary_limited {
+                    return Ok(true);
+                }
+            }
+            Err(e) => {
+                error!(target: target, "{e}");
+            }
+        }
     }
 
-    Ok(())
+    Ok(false)
 }

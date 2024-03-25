@@ -50,7 +50,7 @@ pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
             r#"div[data-e2e="user-report"] > div[role="button"][aria-label="Report"][tabindex="0"]"#,
         )).await?;
     debug!(target: target, "Clicking 'report' button...");
-    perform_click(client, &report_btn).await?;
+    report_btn.click().await?;
     delay(None);
 
     loop {
