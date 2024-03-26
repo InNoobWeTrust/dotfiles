@@ -120,9 +120,17 @@ async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn 
                 warn!(target: "report", "Unrecognized url for {target} <{comment}>. Skipping...");
             }
         }
+        let elapsed = start.elapsed();
+        let elapsed_str = humantime::format_duration(elapsed);
+        if elapsed > Duration::from_secs(3600) {
+            warn!(target: "report", "{elapsed_str} exceeded 2 hours, stopping early...");
+            break;
+        } else {
+            info!(target: "report", "Took: {elapsed_str}");
+        }
     }
     let total = humantime::format_duration(start.elapsed());
-    info!(target: "main", "Finished in {total}");
+    info!(target: "report", "Finished in {total}");
 
     client.close().await?;
 
