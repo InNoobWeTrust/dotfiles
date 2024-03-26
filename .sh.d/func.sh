@@ -108,11 +108,12 @@ batch_open() {
     size=${2:-25}
     start=${3:-1}
     browser=${4:-firefox}
-    len=$(wc -l < "$f")
+    content=($(grep -o 'http[s]\?://[^ ]\+' "$f"))
+    len=${#content[@]}
 
     for s in $(seq "$start" "$size" "$len"); do
         echo "$s"+"$size":
-        links=$(tail -n +"$s" "$f" | head -n "$size")
+        links=$(printf '%s\n' "${content[@]}" | tail -n +"$s" | head -n "$size")
         echo "$links"
         read -n 1
         echo "$links" | xargs open -a "$browser"
