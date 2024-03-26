@@ -122,7 +122,7 @@ async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn 
         }
         let elapsed = start.elapsed();
         let elapsed_str = humantime::format_duration(elapsed);
-        if elapsed > Duration::from_secs(3600) {
+        if elapsed > Duration::from_secs(2 * 3600) {
             warn!(target: "report", "{elapsed_str} exceeded 2 hours, stopping early...");
             break;
         } else {
