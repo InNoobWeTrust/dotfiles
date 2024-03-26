@@ -1,1 +1,1 @@
-eval "$(pkgx --shellcode)
+eval "$(pkgx --shellcode)"
