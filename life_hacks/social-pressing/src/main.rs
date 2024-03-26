@@ -42,6 +42,9 @@ async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn 
         ("tumblr", false),
         ("vk", false),
     ]);
+    let mut success_lst = Vec::new();
+    let mut failure_lst = Vec::new();
+
     for target in links {
         let mut parts = target.trim().split_whitespace();
         let target = parts.next().unwrap_or_else(|| "");
@@ -65,6 +68,12 @@ async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn 
             Ok(_) => (),
             Err(e) => {
                 error!(target: "login", "Login failed before pressing {target} <{comment}>, error: {e:?}");
+                failure_lst.push((
+                    target.to_string(),
+                    comment.to_string(),
+                    "Login failed with error",
+                    e.to_string(),
+                ));
                 continue;
             }
         }
@@ -74,6 +83,12 @@ async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn 
             }
             Err(e) => {
                 error!(target: "goto", "Failed to go to {target} <{comment}>, error: {e:?}");
+                failure_lst.push((
+                    target.to_string(),
+                    comment.to_string(),
+                    "Go to links failed with error",
+                    e.to_string(),
+                ));
                 continue;
             }
         }
@@ -83,6 +98,12 @@ async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn 
             "www.facebook.com" | "facebook.com" => {
                 if limitation_status["fb"] {
                     info!("Facebook is temporarily limited, skipping {target} <{comment}>");
+                    failure_lst.push((
+                        target.to_string(),
+                        comment.to_string(),
+                        "FB is temporarily limited",
+                        "".to_string(),
+                    ));
                     continue;
                 }
 
@@ -93,11 +114,18 @@ async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn 
                         if is_temporary_limited {
                             limitation_status.insert("fb", true);
                         }
+                        success_lst.push((target.to_string(), comment.to_string()));
                         // Ensure some long enough delays between targets
                         delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
                     }
                     Err(e) => {
                         error!(target: "fb_report", "Reporting failed for {target} <{comment}>, error: {e:?}");
+                        failure_lst.push((
+                            target.to_string(),
+                            comment.to_string(),
+                            "Reporting failed with error",
+                            e.to_string(),
+                        ));
                     }
                 }
             }
@@ -108,11 +136,18 @@ async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn 
                 for _ in 0..=(rand::random::<usize>() % 3) {
                     match tiktok::report(&client, &target).await {
                         Ok(_) => {
+                            success_lst.push((target.to_string(), comment.to_string()));
                             // Ensure some long enough delays between targets
                             delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
                         }
                         Err(e) => {
                             error!(target: "tiktok_report", "Reporting failed for {target} <{comment}>, error: {e:?}");
+                            failure_lst.push((
+                                target.to_string(),
+                                comment.to_string(),
+                                "Reporting failed with error",
+                                e.to_string(),
+                            ));
                         }
                     }
                 }
@@ -126,9 +161,22 @@ async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn 
         info!(target: "report", "Took: {elapsed_str}");
 
         let elapsed_total = start.elapsed();
+        let elapsed_total_str = humantime::format_duration(elapsed_total);
         if elapsed_total > Duration::from_secs(2 * 3600) {
-            warn!(target: "report", "{elapsed_str} exceeded 2 hours, stopping early...");
+            warn!(target: "report", "{elapsed_total_str} exceeded 2 hours, stopping early...");
             break;
+        }
+    }
+    if !success_lst.is_empty() {
+        info!("Success:");
+        for (target, comment) in &success_lst {
+            info!("  - {target} <{comment}>");
+        }
+    }
+    if !failure_lst.is_empty() {
+        info!("Failure:");
+        for (target, comment, reason, detail) in &failure_lst {
+            info!("  - {target} <{comment}>: {reason}: {detail}");
         }
     }
     let total = humantime::format_duration(start.elapsed());
