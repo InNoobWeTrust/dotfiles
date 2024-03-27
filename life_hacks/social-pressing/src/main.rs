@@ -26,7 +26,11 @@ fn read_lines(filename: &str) -> io::Lines<BufReader<fs::File>> {
     io::BufReader::new(file).lines()
 }
 
-async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn Error>> {
+async fn report(
+    links: &[String],
+    cookies: &[Cookie<'_>],
+    time_limit: &Option<Duration>,
+) -> Result<(), Box<dyn Error>> {
     info!("Getting webdriver...");
     let client = driver::get_client().await?;
     info!("Starting...");
@@ -160,11 +164,14 @@ async fn report(links: &[String], cookies: &[Cookie<'_>]) -> Result<(), Box<dyn 
         let elapsed_str = humantime::format_duration(elapsed);
         info!(target: "report", "Took: {elapsed_str}");
 
-        let elapsed_total = start.elapsed();
-        let elapsed_total_str = humantime::format_duration(elapsed_total);
-        if elapsed_total > Duration::from_secs(2 * 3600) {
-            warn!(target: "report", "{elapsed_total_str} exceeded 2 hours, stopping early...");
-            break;
+        if let Some(limit) = time_limit {
+            let limit_str = humantime::format_duration(*limit);
+            let elapsed_total = start.elapsed();
+            let elapsed_total_str = humantime::format_duration(elapsed_total);
+            if elapsed_total > *limit {
+                warn!(target: "report", "<{elapsed_total_str}> exceeded <{limit_str}>, stopping early...");
+                break;
+            }
         }
     }
     if !success_lst.is_empty() {
@@ -201,6 +208,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .nth(1)
         .expect("usage: social-pressing <links_file>");
     let cookie_file = env::args().nth(2).expect("no cookies file provided");
+    let time_limit = env::args()
+        .nth(3)
+        .map(|s| humantime::parse_duration(&s).ok())
+        .flatten();
 
     let mut links = read_lines(&link_file)
         .map(|l| l.unwrap().trim().to_owned())
@@ -220,5 +231,5 @@ async fn main() -> Result<(), Box<dyn Error>> {
         })
         .collect::<Vec<Cookie>>();
 
-    report(&links, &cookies).await
+    report(&links, &cookies, &time_limit).await
 }
