@@ -7,6 +7,7 @@ use fantoccini::{
     Client, ClientBuilder,
 };
 use log::error;
+
 use std::error::Error;
 
 use crate::utils::{delay, rand_delay_duration};
@@ -69,6 +70,12 @@ pub async fn login(
 }
 
 pub async fn perform_click(client: &Client, el: &Element) -> Result<(), CmdError> {
+    client
+        .execute(
+            "arguments[0].scrollIntoView();",
+            vec![serde_json::to_value(el)?],
+        )
+        .await?;
     let mouse_move_to_element =
         MouseActions::new("mouse".into()).then(PointerAction::MoveToElement {
             element: el.clone(),
@@ -81,6 +88,18 @@ pub async fn perform_click(client: &Client, el: &Element) -> Result<(), CmdError
     }
     delay(Some(Duration::from_millis(250)));
     el.click().await?;
+
+    Ok(())
+}
+
+pub async fn mouse_scroll(client: &Client, page_offset: isize) -> Result<(), CmdError> {
+    client
+        .execute(
+            "scrollByPages(arguments[0]);",
+            vec![serde_json::to_value(page_offset)?],
+        )
+        .await?;
+    delay(Some(Duration::from_millis(250)));
 
     Ok(())
 }

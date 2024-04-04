@@ -3,7 +3,7 @@ use fantoccini::{elements::Element, error::CmdError, Client, Locator};
 use log::{debug, error, info, warn};
 use rand::seq::SliceRandom;
 
-use crate::driver::perform_click;
+use crate::driver::{mouse_scroll, perform_click};
 use crate::utils::delay;
 
 async fn get_account_report_btn(client: &Client) -> Result<Element, CmdError> {
@@ -15,6 +15,10 @@ async fn get_account_report_btn(client: &Client) -> Result<Element, CmdError> {
 }
 
 async fn get_posts_report_btns(client: &Client) -> Result<Vec<Element>, CmdError> {
+    // Scroll 3 pages to get recent posts
+    for _ in 1..=3 {
+        mouse_scroll(client, 1).await?;
+    }
     client
         .find_all(Locator::Css(r#"div[aria-expanded="false"][aria-haspopup="menu"][aria-label="Actions for this post"]"#))
         .await
