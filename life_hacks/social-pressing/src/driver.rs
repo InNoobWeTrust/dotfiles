@@ -72,7 +72,7 @@ pub async fn login(
 pub async fn perform_click(client: &Client, el: &Element) -> Result<(), CmdError> {
     client
         .execute(
-            "arguments[0].scrollIntoView();",
+            "arguments[0].scrollIntoView();scrollBy(0, -96)",
             vec![serde_json::to_value(el)?],
         )
         .await?;
@@ -84,7 +84,7 @@ pub async fn perform_click(client: &Client, el: &Element) -> Result<(), CmdError
             y: 0,
         });
     if let Err(e) = client.perform_actions(mouse_move_to_element).await {
-        error!("failed to move to element: {}", e);
+        error!("failed to move to element: {e}");
     }
     delay(Some(Duration::from_millis(250)));
     el.click().await?;

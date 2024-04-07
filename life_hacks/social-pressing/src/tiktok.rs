@@ -1,3 +1,4 @@
+use core::time::Duration;
 use fantoccini::{error::CmdError, Client, Locator};
 use futures::future;
 use log::{debug, info, warn};
@@ -8,7 +9,7 @@ use crate::utils::delay;
 
 pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
     client.goto(target).await?;
-    delay(None);
+    delay(Some(Duration::from_secs(2)));
 
     if let Ok(_) = client.find(Locator::Id(r#"login-modal"#)).await {
         debug!(target: target, "Dismissing login overlay...");
