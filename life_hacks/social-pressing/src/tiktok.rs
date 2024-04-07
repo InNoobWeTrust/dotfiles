@@ -30,6 +30,16 @@ pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
             )
             .await?;
     }
+    if let Ok(_) = client.find(Locator::Id(r#"#app-header"#)).await {
+        debug!(target: target, "Dismissing header overlay...");
+        // try to remove the header overlay
+        client
+            .execute(
+                "document.getElementById('app-header')?.remove()",
+                Vec::new(),
+            )
+            .await?;
+    }
 
     let more_btn = client
         .find(Locator::Css(

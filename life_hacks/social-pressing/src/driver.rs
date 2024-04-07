@@ -99,7 +99,7 @@ pub async fn mouse_scroll(client: &Client, page_offset: isize) -> Result<(), Cmd
             vec![serde_json::to_value(page_offset)?],
         )
         .await?;
-    delay(Some(Duration::from_millis(250)));
+    delay(Some(Duration::from_secs(2)));
 
     Ok(())
 }
