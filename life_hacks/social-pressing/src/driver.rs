@@ -6,13 +6,14 @@ use fantoccini::{
     error::CmdError,
     Client, ClientBuilder,
 };
-use log::error;
+use log::warn;
 
-use std::error::Error;
+use std::{env, error::Error};
 
 use crate::utils::{delay, rand_delay_duration};
 
 pub async fn get_client() -> Result<Client, Box<dyn Error>> {
+    let is_headless = !env::var("HEADFUL").is_ok();
     let capabilities = serde_json::json!({
         "browserName": "firefox",
         "setWindowRect": true,
@@ -21,7 +22,7 @@ pub async fn get_client() -> Result<Client, Box<dyn Error>> {
                 "intl.accept_languages": "en-GB"
             },
             "args": [
-                "-headless",
+                if is_headless { "--headless" } else { "" },
                 "--enable-automation=False",
                 "--disable-blink-features=AutomationControlled"
             ]
@@ -69,13 +70,7 @@ pub async fn login(
     Ok(domain)
 }
 
-pub async fn perform_click(client: &Client, el: &Element) -> Result<(), CmdError> {
-    client
-        .execute(
-            "arguments[0].scrollIntoView();scrollBy(0, -96)",
-            vec![serde_json::to_value(el)?],
-        )
-        .await?;
+pub async fn mouse_move_to_element(client: &Client, el: &Element) -> Result<(), CmdError> {
     let mouse_move_to_element =
         MouseActions::new("mouse".into()).then(PointerAction::MoveToElement {
             element: el.clone(),
@@ -84,19 +79,35 @@ pub async fn perform_click(client: &Client, el: &Element) -> Result<(), CmdError
             y: 0,
         });
     if let Err(e) = client.perform_actions(mouse_move_to_element).await {
-        error!("failed to move to element: {e}");
+        warn!("failed to move to element: {e}");
     }
+
     delay(Some(Duration::from_millis(250)));
-    el.click().await?;
 
     Ok(())
 }
 
-pub async fn mouse_scroll(client: &Client, page_offset: isize) -> Result<(), CmdError> {
+pub async fn perform_click(client: &Client, el: &Element) -> Result<(), CmdError> {
+    //el.click().await?;
+    client
+        .execute("arguments[0].click()", vec![serde_json::to_value(el)?])
+        .await?;
+
+    Ok(())
+}
+
+pub async fn mouse_scroll(
+    client: &Client,
+    x_offset: isize,
+    y_offset: isize,
+) -> Result<(), CmdError> {
     client
         .execute(
-            "scrollByPages(arguments[0]);",
-            vec![serde_json::to_value(page_offset)?],
+            "scrollBy(arguments[0], arguments[1]);",
+            vec![
+                serde_json::to_value(x_offset)?,
+                serde_json::to_value(y_offset)?,
+            ],
         )
         .await?;
     delay(Some(Duration::from_secs(2)));

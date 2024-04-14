@@ -3,24 +3,26 @@ use fantoccini::{elements::Element, error::CmdError, Client, Locator};
 use log::{debug, error, info, warn};
 use rand::seq::SliceRandom;
 
-use crate::driver::{mouse_scroll, perform_click};
+use crate::driver::{mouse_move_to_element, mouse_scroll, perform_click};
 use crate::utils::delay;
 
 async fn get_account_report_btn(client: &Client) -> Result<Element, CmdError> {
     client
         .wait()
         .at_most(Duration::from_secs(10))
-        .for_element(Locator::Css(r#"div[aria-haspopup="menu"][role="button"]"#))
+        .for_element(Locator::Css(r#"div[aria-expanded="false"][aria-haspopup="menu"][role="button"][aria-label="See Options"]"#))
         .await
 }
 
 async fn get_posts_report_btns(client: &Client) -> Result<Vec<Element>, CmdError> {
     // Scroll 3 pages to get recent posts
     for _ in 1..=3 {
-        mouse_scroll(client, 1).await?;
+        mouse_scroll(client, 0, 720).await?;
     }
+    // Scroll back to top
+    mouse_scroll(client, 0, -720 * 3).await?;
     client
-        .find_all(Locator::Css(r#"div[aria-expanded="false"][aria-haspopup="menu"][aria-label="Actions for this post"]"#))
+        .find_all(Locator::Css(r#"div[aria-expanded="false"][aria-haspopup="menu"][role="button"][aria-label="Actions for this post"]"#))
         .await
 }
 
@@ -110,6 +112,7 @@ async fn report_process(
                 let chosen_report = filtered_reasons.choose(&mut rand::thread_rng()).unwrap();
                 let reason = chosen_report.text().await?;
                 info!(target: target, "Choosing reason {reason:?}...");
+                mouse_move_to_element(client, chosen_report).await?;
                 match perform_click(client, chosen_report).await {
                     Ok(()) => (),
                     Err(_) => {
@@ -132,6 +135,7 @@ async fn report_process(
             Ok(btn) => {
                 let btn_text = btn.text().await?;
                 debug!(target: target, "Clicking {btn_text}");
+                mouse_move_to_element(client, &btn).await?;
                 perform_click(client, &btn).await?;
                 delay(None);
             }
