@@ -113,33 +113,33 @@ async fn report_process(
                 let reason = chosen_report.text().await?;
                 info!(target: target, "Choosing reason {reason:?}...");
                 mouse_move_to_element(client, chosen_report).await?;
-                match perform_click(client, chosen_report).await {
-                    Ok(()) => (),
-                    Err(_) => {
-                        // Until items are not clickable, proceed to submit
-                        break;
+                perform_click(client, chosen_report).await?;
+                delay(None);
+
+                let mut is_done = false;
+                for btn_css in [
+                    r#"div[role="dialog"] div[aria-label="Submit"][role="button"]"#,
+                    r#"div[role="dialog"] div[aria-label="Next"][role="button"]"#,
+                    r#"div[role="dialog"] div[aria-label="Done"][role="button"]"#,
+                ] {
+                    match client.find(Locator::Css(btn_css)).await {
+                        Ok(btn) => {
+                            let btn_text = btn.text().await?;
+                            debug!(target: target, "Clicking {btn_text}");
+                            mouse_move_to_element(client, &btn).await?;
+                            perform_click(client, &btn).await?;
+                            delay(None);
+                            is_done = true;
+                        }
+                        _ => (),
                     }
                 }
-                delay(None);
+
+                if is_done {
+                    break;
+                }
             }
             Err(_) => break,
-        }
-    }
-
-    for btn_css in [
-        r#"div[role="dialog"] div[aria-label="Submit"][role="button"]"#,
-        r#"div[role="dialog"] div[aria-label="Next"][role="button"]"#,
-        r#"div[role="dialog"] div[aria-label="Done"][role="button"]"#,
-    ] {
-        match client.find(Locator::Css(btn_css)).await {
-            Ok(btn) => {
-                let btn_text = btn.text().await?;
-                debug!(target: target, "Clicking {btn_text}");
-                mouse_move_to_element(client, &btn).await?;
-                perform_click(client, &btn).await?;
-                delay(None);
-            }
-            _ => (),
         }
     }
 
