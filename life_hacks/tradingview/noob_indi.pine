@@ -1,0 +1,240 @@
+//@version=5
+indicator("Noob's Indicators", overlay = true, max_lines_count = 500, max_bars_back = 500)
+
+//=============================================================================
+// Bollinger band
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+bollinger_grp = '► Bollinger Band'
+h = input.float(5.,'Bollinger bandwidth', group = bollinger_grp, minval = 0)
+mult = input.float(3., group = bollinger_grp, minval = 0)
+src = input(close, 'Source', group = bollinger_grp)
+repaint = input(false, 'Repainting Smoothing', group = bollinger_grp, tooltip = 'Repainting is an effect where the indicators historical output is subject to change over time. Disabling repainting will cause the indicator to output the endpoints of the calculations')
+//-----------------------------------------------------------------------------}
+
+// Style
+//-----------------------------------------------------------------------------{
+upCss = input.color(color.teal, 'Upper Band', inline = 'inline1', group = bollinger_grp)
+dnCss = input.color(color.red, 'Lower Band', inline = 'inline1', group = bollinger_grp)
+//-----------------------------------------------------------------------------}
+
+// Functions
+//-----------------------------------------------------------------------------{
+// Gaussian window
+gauss(x, h) => math.exp(-(math.pow(x, 2)/(h * h * 2)))
+
+// Append lines
+n = bar_index
+
+var ln = array.new_line(0)
+
+if barstate.isfirst and repaint
+    for i = 0 to 499
+        array.push(ln,line.new(na,na,na,na))
+//-----------------------------------------------------------------------------}
+
+// End point method
+//-----------------------------------------------------------------------------{
+var coefs = array.new_float(0)
+var den = 0.
+
+if barstate.isfirst and not repaint
+    for i = 0 to 499
+        w = gauss(i, h)
+        coefs.push(w)
+
+    den := coefs.sum()
+
+out = 0.
+if not repaint
+    for i = 0 to 499
+        out += src[i] * coefs.get(i)
+out /= den
+mae = ta.sma(math.abs(src - out), 499) * mult
+
+upper = out + mae
+lower = out - mae
+//-----------------------------------------------------------------------------}
+
+// Compute and display NWE
+//-----------------------------------------------------------------------------{
+float y2 = na
+float y1 = na
+
+nwe = array.new<float>(0)
+if barstate.islast and repaint
+    sae = 0.
+    //Compute and set NWE point
+    for i = 0 to math.min(499,n - 1)
+        sum = 0.
+        sumw = 0.
+        //Compute weighted mean
+        for j = 0 to math.min(499,n - 1)
+            w = gauss(i - j, h)
+            sum += src[j] * w
+            sumw += w
+
+        y2 := sum / sumw
+        sae += math.abs(src[i] - y2)
+        nwe.push(y2)
+
+    sae := sae / math.min(499,n - 1) * mult
+    for i = 0 to math.min(499,n - 1)
+        if i%2
+            line.new(n-i+1, y1 + sae, n-i, nwe.get(i) + sae, color = upCss)
+            line.new(n-i+1, y1 - sae, n-i, nwe.get(i) - sae, color = dnCss)
+
+        if src[i] > nwe.get(i) + sae and src[i+1] < nwe.get(i) + sae
+            label.new(n-i, src[i], '▼', color = color(na), style = label.style_label_down, textcolor = dnCss, textalign = text.align_center)
+        if src[i] < nwe.get(i) - sae and src[i+1] > nwe.get(i) - sae
+            label.new(n-i, src[i], '▲', color = color(na), style = label.style_label_up, textcolor = upCss, textalign = text.align_center)
+
+        y1 := nwe.get(i)
+//-----------------------------------------------------------------------------}
+
+// Dashboard
+//-----------------------------------------------------------------------------{
+var tb = table.new(position.top_right, 1, 1
+  , bgcolor = #1e222d
+  , border_color = #373a46
+  , border_width = 1
+  , frame_color = #373a46
+  , frame_width = 1)
+
+if repaint
+    tb.cell(0, 0, 'Repainting Mode Enabled', text_color = color.white, text_size = size.small)
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+plot(repaint ? na : out + mae, 'Upper', upCss)
+plot(repaint ? na : out - mae, 'Lower', dnCss)
+
+// Crossing Arrows
+plotshape(ta.crossunder(close, out - mae) ? low : na, "Crossunder", shape.labelup, location.absolute, color(na), 0 , text = '▲', textcolor = upCss, size = size.tiny)
+plotshape(ta.crossover(close, out + mae) ? high : na, "Crossover", shape.labeldown, location.absolute, color(na), 0 , text = '▼', textcolor = dnCss, size = size.tiny)
+//-----------------------------------------------------------------------------}
+
+
+//=============================================================================
+// EMA Pythagorean
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+pythagorean_grp = '► EMA Pythagorean'
+show_pythagorean = input.bool(true, inline = "Enable Pythagorean cloud", group = pythagorean_grp, title = "Show Pythagorean cloud", tooltip = "Pythagorean cloud is a trend indicator. Green is uptrend and red is downtrend")
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+ema147 = show_pythagorean ? ta.ema(close, 147) : na
+ema258 = show_pythagorean ? ta.ema(close, 258) : na
+ema369 = show_pythagorean ? ta.ema(close, 369) : na
+ema147_color = input.color(color.new(color.navy, transp = 20), title = "EMA147 color", inline = "Pythagorean", group = pythagorean_grp)
+ema258_color = input.color(color.new(color.red, transp = 20), title = "EMA258 color", inline = "Pythagorean", group = pythagorean_grp)
+ema369_color = input.color(color.new(color.maroon, transp = 20), title = "EMA369 color", inline = "Pythagorean", group = pythagorean_grp)
+pythagorean_up_color = input.color(color.new(color.green, transp = 85), title = "Pythagorean Cloud Up color", inline = "Pythagorean", group = pythagorean_grp)
+pythagorean_down_color = input.color(color.new(color.red, transp = 85), title = "Pythagorean Cloud Down color", inline = "Pythagorean", group = pythagorean_grp)
+
+pythagorean_body = plot(ema147, title = "EMA147 - material stage", color = ema147_color, linewidth = 1, style = plot.style_line)
+pythagorean_heart = plot(ema258, title = "EMA258 - mind state", color = ema258_color, linewidth = 2, style = plot.style_line)
+pythagorean_mind = plot(ema369, title = "EMA369 - brain state", color = ema369_color, linewidth = 1, style = plot.style_line)
+up_down_color = ema147 > ema369 ? pythagorean_up_color : pythagorean_down_color
+fill(pythagorean_body, pythagorean_mind, up_down_color)
+//-----------------------------------------------------------------------------}
+
+//=============================================================================
+// Sonic R
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+sonic_r_grp = '► Sonic R'
+show_sonic_r = input.bool(true, inline = "Enable Sonic R", group = sonic_r_grp, title = "Show Sonic R", tooltip = "Sonic R indicate dynamic support/resistant levels for price action")
+//-----------------------------------------------------------------------------{
+
+// Plot
+//-----------------------------------------------------------------------------{
+ema34_low = show_sonic_r ? ta.ema(low, 34) : na
+ema34 = show_sonic_r ? ta.ema(close, 34) : na
+ema34_high = show_sonic_r ? ta.ema(high, 34) : na
+
+ema_signal = show_sonic_r ? ta.ema(close, 89) : na
+ema200 = show_sonic_r ? ta.ema(close, 200) : na
+ema610 = show_sonic_r ? ta.ema(close, 610) : na
+
+ema34_color = input.color(color.blue, title = "EMA34", inline = "EMA34" , group = sonic_r_grp)
+ema34_fill_color = input.color(color.new(color.blue, transp = 85), title = "EMA34 fill color", inline = 'EMA34', group = sonic_r_grp)
+ema89_color = input.color(color.orange, title = "EMA89", inline = "EMA89" , group = sonic_r_grp)
+ema200_color = input.color(color.purple, title = "EMA200", inline = "EMA200" , group = sonic_r_grp)
+ema610_color = input.color(color.white, title = "EMA610", inline = "EMA610" , group = sonic_r_grp)
+
+sonic_r_low = plot(ema34_low, title = "EMA34 low", color = ema34_fill_color, linewidth = 1, style = plot.style_line)
+sonic_r_34 = plot(ema34, title = "EMA34", color = ema34_color, linewidth = 1, style = plot.style_line)
+sonic_r_high = plot(ema34_high, title = "EMA 369 high", color = ema34_fill_color, linewidth = 1, style = plot.style_line)
+fill(sonic_r_low, sonic_r_high, ema34_fill_color)
+plot(ema_signal, title = "EMA89 signal", color = ema89_color, linewidth = 2, style = plot.style_line)
+plot(ema200, title = "EMA200", color = ema200_color, linewidth = 2, style = plot.style_line)
+plot(ema610, title = "EMA610", color = ema610_color, linewidth = 2, style = plot.style_line)
+
+
+//=============================================================================
+// Abnormal volume candle color
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+volume_bar_grp = '► Volume Weighted Colored Bars'
+vbcb = input(true, title='Enable', group = volume_bar_grp, tooltip='Colors bars based on the bar\'s volume relative to volume moving average')
+length = input.int(13, group = volume_bar_grp, minval=1, title='Volume SMA Length')
+//-----------------------------------------------------------------------------}
+
+// Calculation
+//-----------------------------------------------------------------------------{
+nzVolume = nz(volume)
+O = open, H = high, L = low, C = close
+
+// Volume Histogram
+vAvg  = ta.sma(nzVolume, length)
+rsi = ta.rsi(close, length)
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+// Volume Based Colored Bars by KIVANÇ ÖZBİLGİÇ
+color b_color = na
+if vbcb
+    if nzVolume > vAvg * 1.618
+        b_color := C > O ? #006400 : #910000
+    else if nzVolume < vAvg * 0.618
+        b_color := C > O ? #7FFFD4 : #FF9800
+    else
+        b_color := C > O ? color.green : color.red
+
+barcolor(b_color, title='Volume Weighted Colored Bars', editable=false)
+//-----------------------------------------------------------------------------}
+
+//=============================================================================
+// RSI overbought and oversold
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+rsi_outlier_grp = '► RSI overbought and oversold indicator'
+overbought = input.int(70, group = rsi_outlier_grp, minval=50, title = 'Overbought threshold')
+oversold = input.int(30, group = rsi_outlier_grp, maxval=50, title = 'Oversold threshold')
+rsi_enable = input(true, title='Enable', group = rsi_outlier_grp, tooltip='Show indicator on overbought and oversold based on RSI value')
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+// Overbought and oversold labels
+plotshape(ta.crossunder(rsi, oversold) ? low : na, "RSI Crossunder Oversold", shape.labelup, location.absolute, color(na), 0 , text = '🚨', textcolor = color.green, size = size.tiny)
+plotshape(ta.crossover(rsi, oversold) ? low : na, "RSI Crossover Oversold", shape.labelup, location.absolute, color(na), 0 , text = '⬆', textcolor = color.green, size = size.tiny)
+
+plotshape(ta.crossover(rsi, overbought) ? high : na, "RSI Crossover Overbought", shape.labeldown, location.absolute, color(na), 0 , text = '🚨', textcolor = color.red, size = size.tiny)
+plotshape(ta.crossunder(rsi, overbought) ? high : na, "RSI Crossunder Overbought", shape.labeldown, location.absolute, color(na), 0 , text = '⬇', textcolor = color.red, size = size.tiny)
+//-----------------------------------------------------------------------------}
