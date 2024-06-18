@@ -1,15 +1,16 @@
 mod driver;
 mod fb;
+mod instagram;
 mod tiktok;
 mod utils;
 
+use clap::Parser;
 use core::time::Duration;
 use fantoccini::cookies::Cookie;
 use log::{error, info, warn};
 use rand::seq::SliceRandom;
 use serde::Deserialize;
 use std::collections::HashMap;
-use std::env;
 use std::error::Error;
 use std::fs;
 use std::io::{self, BufRead, BufReader};
@@ -60,6 +61,20 @@ async fn report(
         if ![
             "www.facebook.com",
             "facebook.com",
+            "www.instagram.com",
+            "instagram.com",
+            "www.linkedin.com",
+            "linkedin.com",
+            "www.twitter.com",
+            "twitter.com",
+            "www.pinterest.com",
+            "pinterest.com",
+            "www.reddit.com",
+            "reddit.com",
+            "www.tumblr.com",
+            "tumblr.com",
+            "www.vk.com",
+            "vk.com",
             "www.tiktok.com",
             "tiktok.com",
         ]
@@ -124,6 +139,40 @@ async fn report(
                     }
                     Err(e) => {
                         error!(target: "fb_report", "Reporting failed for {target} <{comment}>, error: {e:?}");
+                        failure_lst.push((
+                            target.to_string(),
+                            comment.to_string(),
+                            "Reporting failed with error",
+                            e.to_string(),
+                        ));
+                    }
+                }
+            }
+            "www.instagram.com" | "instagram.com" => {
+                if limitation_status["instagram"] {
+                    info!("Instagram is temporarily limited, skipping {target} <{comment}>");
+                    failure_lst.push((
+                        target.to_string(),
+                        comment.to_string(),
+                        "Instagram is temporarily limited",
+                        "".to_string(),
+                    ));
+                    continue;
+                }
+
+                info!(target: "instagram", "Pressing on instagram for {target} <{comment}>...");
+
+                match instagram::report(&client, &target).await {
+                    Ok(is_temporary_limited) => {
+                        if is_temporary_limited {
+                            limitation_status.insert("instagram", true);
+                        }
+                        success_lst.push((target.to_string(), comment.to_string()));
+                        // Ensure some long enough delays between targets
+                        delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
+                    }
+                    Err(e) => {
+                        error!(target: "instagram_report", "Reporting failed for {target} <{comment}>, error: {e:?}");
                         failure_lst.push((
                             target.to_string(),
                             comment.to_string(),
@@ -201,15 +250,30 @@ struct CookieJson {
     domain: String,
 }
 
+#[derive(Parser, Debug)]
+#[command(version, about = "All-in-one reporting tool for social networks", long_about = None)]
+struct Args {
+    /// File contains links to report
+    #[arg(short, long)]
+    file: String,
+
+    /// Cookie json file
+    #[arg(short, long)]
+    cookies: String,
+
+    /// Time limit
+    #[arg(short, long)]
+    time_limit: Option<String>,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug")).init();
-    let link_file = env::args()
-        .nth(1)
-        .expect("usage: social-pressing <links_file>");
-    let cookie_file = env::args().nth(2).expect("no cookies file provided");
-    let time_limit = env::args()
-        .nth(3)
+    let args = Args::parse();
+    let link_file = args.file;
+    let cookie_file = args.cookies;
+    let time_limit = args
+        .time_limit
         .map(|s| humantime::parse_duration(&s).ok())
         .flatten();
 

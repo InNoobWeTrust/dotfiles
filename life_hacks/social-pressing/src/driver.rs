@@ -53,6 +53,9 @@ pub async fn login(
     if target.starts_with("https://www.facebook.com/") {
         client.goto("https://www.facebook.com/login/").await?;
         domain = ".facebook.com";
+    } else if target.starts_with("https://www.instagram.com/") {
+        client.goto("https://www.instagram.com").await?;
+        domain = ".instagram.com";
     } else {
         client.goto("https://www.tiktok.com/explore").await?;
         domain = ".tiktok.com";
