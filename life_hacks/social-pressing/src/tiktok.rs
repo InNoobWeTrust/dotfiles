@@ -7,7 +7,7 @@ use rand::seq::SliceRandom;
 use crate::driver::{mouse_move_to_element, perform_click};
 use crate::utils::delay;
 
-pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
+pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
     client.goto(target).await?;
     delay(Some(Duration::from_secs(2)));
 
@@ -49,7 +49,7 @@ pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
         .await;
     if let Err(_) = more_btn {
         warn!(target: target, "User not found, skipping...");
-        return Ok(());
+        return Ok(false);
     }
     let more_btn = more_btn?;
     debug!(target: target, "Clicking 'more' button...");
@@ -116,5 +116,5 @@ pub async fn report(client: &Client, target: &str) -> Result<(), CmdError> {
     perform_click(client, &finish_btn).await?;
     delay(None);
 
-    Ok(())
+    Ok(false)
 }

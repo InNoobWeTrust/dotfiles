@@ -8,9 +8,12 @@ use fantoccini::{
 };
 use log::warn;
 
-use std::{env, error::Error};
+use std::{collections::HashSet, env, error::Error};
 
-use crate::utils::{delay, rand_delay_duration};
+use crate::{
+    constants::Domain,
+    utils::{delay, rand_delay_duration},
+};
 
 pub async fn get_client() -> Result<Client, Box<dyn Error>> {
     let is_headless = !env::var("HEADFUL").is_ok();
@@ -48,26 +51,42 @@ pub async fn login(
     client: &Client,
     cookies: &[Cookie<'_>],
     target: &str,
-) -> Result<&'static str, CmdError> {
-    let domain: &str;
+    login_status: &mut HashSet<Domain>,
+) -> Result<Option<Domain>, CmdError> {
+    let domain: Option<Domain>;
+    let mut first_login = false;
     if target.starts_with("https://www.facebook.com/") {
-        client.goto("https://www.facebook.com/login/").await?;
-        domain = ".facebook.com";
+        domain = Some(Domain::Facebook);
+        first_login = login_status.insert(Domain::Facebook);
+        if first_login {
+            client.goto("https://www.facebook.com/login/").await?;
+        }
     } else if target.starts_with("https://www.instagram.com/") {
-        client.goto("https://www.instagram.com").await?;
-        domain = ".instagram.com";
+        domain = Some(Domain::Instagram);
+        first_login = login_status.insert(Domain::Instagram);
+        if first_login {
+            client.goto("https://www.instagram.com").await?;
+        }
+    } else if target.starts_with("https://www.tiktok.com/")
+        && !login_status.contains(&Domain::TikTok)
+    {
+        domain = Some(Domain::TikTok);
+        first_login = login_status.insert(Domain::TikTok);
+        if first_login {
+            client.goto("https://www.tiktok.com/explore").await?;
+        }
     } else {
-        client.goto("https://www.tiktok.com/explore").await?;
-        domain = ".tiktok.com";
+        domain = None;
     }
 
-    for cookie in cookies {
-        if let Some(cookie_domain) = cookie.domain() {
-            if cookie_domain != domain {
-                continue;
-            }
+    if first_login && domain.is_some() {
+        let d = domain.unwrap().to_string();
+        for cookie in cookies
+            .iter()
+            .filter(|c| c.domain().unwrap_or_default() == d)
+        {
+            client.add_cookie(cookie.clone().into_owned()).await?;
         }
-        client.add_cookie(cookie.clone().into_owned()).await?;
     }
 
     Ok(domain)
