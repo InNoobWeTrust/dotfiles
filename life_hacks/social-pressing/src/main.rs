@@ -16,7 +16,7 @@ use serde::Deserialize;
 use std::collections::HashSet;
 use std::error::Error;
 use std::fs;
-use std::io::{self, BufRead, BufReader};
+use std::io::{self, BufRead};
 use std::time::Instant;
 use tokio::time::timeout;
 use url::Url;
@@ -24,11 +24,16 @@ use url::Url;
 use crate::driver::login;
 use crate::utils::delay;
 
-fn read_lines(filename: &str) -> io::Lines<BufReader<fs::File>> {
+fn read_lines(filename: &str) -> Vec<String> {
     // Open the file in read-only mode.
     let file = fs::File::open(filename).unwrap();
     // Read the file line by line, and return an iterator of the lines of the file.
-    io::BufReader::new(file).lines()
+    io::BufReader::new(file)
+        .lines()
+        .filter(|l| l.is_ok())
+        .map(|l| l.unwrap().to_owned())
+        .filter(|l| !l.trim().is_empty())
+        .collect::<Vec<_>>()
 }
 
 async fn report_step(
@@ -269,8 +274,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .flatten();
 
     let mut links = read_lines(&link_file)
-        .map(|l| l.unwrap().trim().to_owned())
-        .filter(|l| !l.is_empty())
+        .into_iter()
         .filter(|l| Url::parse(l).is_ok())
         .collect::<Vec<_>>();
     links.shuffle(&mut rand::thread_rng());
