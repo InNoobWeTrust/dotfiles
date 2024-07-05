@@ -2,123 +2,6 @@
 indicator("Noob's Indicators", overlay = true, max_lines_count = 500, max_bars_back = 500)
 
 //=============================================================================
-// Bollinger band
-//=============================================================================
-
-// Input
-//-----------------------------------------------------------------------------{
-bollinger_grp = '► Bollinger Band'
-h = input.float(5.,'Bollinger bandwidth', group = bollinger_grp, minval = 0)
-mult = input.float(3., group = bollinger_grp, minval = 0)
-src = input(close, 'Source', group = bollinger_grp)
-repaint = input(false, 'Repainting Smoothing', group = bollinger_grp, tooltip = 'Repainting is an effect where the indicators historical output is subject to change over time. Disabling repainting will cause the indicator to output the endpoints of the calculations')
-//-----------------------------------------------------------------------------}
-
-// Style
-//-----------------------------------------------------------------------------{
-upCss = input.color(color.teal, 'Upper Band', inline = 'inline1', group = bollinger_grp)
-dnCss = input.color(color.red, 'Lower Band', inline = 'inline1', group = bollinger_grp)
-//-----------------------------------------------------------------------------}
-
-// Functions
-//-----------------------------------------------------------------------------{
-// Gaussian window
-gauss(x, h) => math.exp(-(math.pow(x, 2)/(h * h * 2)))
-
-// Append lines
-n = bar_index
-
-var ln = array.new_line(0)
-
-if barstate.isfirst and repaint
-    for i = 0 to 499
-        array.push(ln,line.new(na,na,na,na))
-//-----------------------------------------------------------------------------}
-
-// End point method
-//-----------------------------------------------------------------------------{
-var coefs = array.new_float(0)
-var den = 0.
-
-if barstate.isfirst and not repaint
-    for i = 0 to 499
-        w = gauss(i, h)
-        coefs.push(w)
-
-    den := coefs.sum()
-
-out = 0.
-if not repaint
-    for i = 0 to 499
-        out += src[i] * coefs.get(i)
-out /= den
-mae = ta.sma(math.abs(src - out), 499) * mult
-
-upper = out + mae
-lower = out - mae
-//-----------------------------------------------------------------------------}
-
-// Compute and display NWE
-//-----------------------------------------------------------------------------{
-float y2 = na
-float y1 = na
-
-nwe = array.new<float>(0)
-if barstate.islast and repaint
-    sae = 0.
-    //Compute and set NWE point
-    for i = 0 to math.min(499,n - 1)
-        sum = 0.
-        sumw = 0.
-        //Compute weighted mean
-        for j = 0 to math.min(499,n - 1)
-            w = gauss(i - j, h)
-            sum += src[j] * w
-            sumw += w
-
-        y2 := sum / sumw
-        sae += math.abs(src[i] - y2)
-        nwe.push(y2)
-
-    sae := sae / math.min(499,n - 1) * mult
-    for i = 0 to math.min(499,n - 1)
-        if i%2
-            line.new(n-i+1, y1 + sae, n-i, nwe.get(i) + sae, color = upCss)
-            line.new(n-i+1, y1 - sae, n-i, nwe.get(i) - sae, color = dnCss)
-
-        if src[i] > nwe.get(i) + sae and src[i+1] < nwe.get(i) + sae
-            label.new(n-i, src[i], '▼', color = color(na), style = label.style_label_down, textcolor = dnCss, textalign = text.align_center)
-        if src[i] < nwe.get(i) - sae and src[i+1] > nwe.get(i) - sae
-            label.new(n-i, src[i], '▲', color = color(na), style = label.style_label_up, textcolor = upCss, textalign = text.align_center)
-
-        y1 := nwe.get(i)
-//-----------------------------------------------------------------------------}
-
-// Dashboard
-//-----------------------------------------------------------------------------{
-var tb = table.new(position.top_right, 1, 1
-  , bgcolor = #1e222d
-  , border_color = #373a46
-  , border_width = 1
-  , frame_color = #373a46
-  , frame_width = 1)
-
-if repaint
-    tb.cell(0, 0, 'Repainting Mode Enabled', text_color = color.white, text_size = size.small)
-//-----------------------------------------------------------------------------}
-
-// Plot
-//-----------------------------------------------------------------------------{
-plot(repaint ? na : out + mae, 'Upper', upCss)
-plot(repaint ? na : out - mae, 'Lower', dnCss)
-
-// Crossing Arrows
-plotshape(ta.crossunder(close, out - mae) ? low : na, "Crossunder", shape.labelup, location.absolute, color(na), 0 , text = '▲', textcolor = upCss, size = size.tiny)
-plotshape(ta.crossover(close, out + mae) ? high : na, "Crossover", shape.labeldown, location.absolute, color(na), 0 , text = '▼', textcolor = dnCss, size = size.tiny)
-//-----------------------------------------------------------------------------}
-
-
-//=============================================================================
 // EMA Pythagorean
 //=============================================================================
 
@@ -126,6 +9,11 @@ plotshape(ta.crossover(close, out + mae) ? high : na, "Crossover", shape.labeldo
 //-----------------------------------------------------------------------------{
 pythagorean_grp = '► EMA Pythagorean'
 show_pythagorean = input.bool(true, inline = "Enable Pythagorean cloud", group = pythagorean_grp, title = "Show Pythagorean cloud", tooltip = "Pythagorean cloud is a trend indicator. Green is uptrend and red is downtrend")
+ema147_color = input.color(color.new(color.navy, transp = 20), title = "EMA147", group = pythagorean_grp)
+ema258_color = input.color(color.new(color.red, transp = 20), title = "EMA258", group = pythagorean_grp)
+ema369_color = input.color(color.new(color.maroon, transp = 20), title = "EMA369", group = pythagorean_grp)
+pythagorean_up_color = input.color(color.new(color.green, transp = 85), title = "Pythagorean Cloud", inline = "Pythagorean", group = pythagorean_grp)
+pythagorean_down_color = input.color(color.new(color.red, transp = 85), title = "", inline = "Pythagorean", group = pythagorean_grp)
 //-----------------------------------------------------------------------------}
 
 // Plot
@@ -133,11 +21,6 @@ show_pythagorean = input.bool(true, inline = "Enable Pythagorean cloud", group =
 ema147 = show_pythagorean ? ta.ema(close, 147) : na
 ema258 = show_pythagorean ? ta.ema(close, 258) : na
 ema369 = show_pythagorean ? ta.ema(close, 369) : na
-ema147_color = input.color(color.new(color.navy, transp = 20), title = "EMA147 color", inline = "Pythagorean", group = pythagorean_grp)
-ema258_color = input.color(color.new(color.red, transp = 20), title = "EMA258 color", inline = "Pythagorean", group = pythagorean_grp)
-ema369_color = input.color(color.new(color.maroon, transp = 20), title = "EMA369 color", inline = "Pythagorean", group = pythagorean_grp)
-pythagorean_up_color = input.color(color.new(color.green, transp = 85), title = "Pythagorean Cloud Up color", inline = "Pythagorean", group = pythagorean_grp)
-pythagorean_down_color = input.color(color.new(color.red, transp = 85), title = "Pythagorean Cloud Down color", inline = "Pythagorean", group = pythagorean_grp)
 
 pythagorean_body = plot(ema147, title = "EMA147 - material stage", color = ema147_color, linewidth = 1, style = plot.style_line)
 pythagorean_heart = plot(ema258, title = "EMA258 - mind state", color = ema258_color, linewidth = 2, style = plot.style_line)
@@ -188,8 +71,28 @@ plot(ema610, title = "EMA610", color = ema610_color, linewidth = 2, style = plot
 // Input
 //-----------------------------------------------------------------------------{
 volume_bar_grp = '► Volume Weighted Colored Bars'
+
 vbcb = input(true, title='Enable', group = volume_bar_grp, tooltip='Colors bars based on the bar\'s volume relative to volume moving average')
 length = input.int(13, group = volume_bar_grp, minval=1, title='Volume SMA Length')
+
+low_rel_inline = 'Low Relative Volume'
+low_relative_vol = input.float(0.618, title = 'Low Relative Volume Threshold', inline = low_rel_inline, group = volume_bar_grp)
+low_relative_color_up = input.color(color.aqua, title = '', inline = low_rel_inline, group = volume_bar_grp)
+low_relative_color_down = input.color(color.yellow, title = '', inline = low_rel_inline, group = volume_bar_grp)
+
+normal_rel_inline = 'Normal Relative Volume'
+normal_relative_color_up = input.color(color.teal, title = 'Normal Relative Volume', inline = normal_rel_inline, group = volume_bar_grp)
+normal_relative_color_down = input.color(color.orange, title = '', inline = normal_rel_inline, group = volume_bar_grp)
+
+high_rel_inline = 'High Relative Volume'
+high_relative_vol = input.float(1.618, title = 'High Relative Volume Threshold', inline = high_rel_inline, group = volume_bar_grp)
+high_relative_color_up = input.color(color.green, title = '', inline = high_rel_inline, group = volume_bar_grp)
+high_relative_color_down = input.color(color.red, title = '', inline = high_rel_inline, group = volume_bar_grp)
+
+extreme_rel_inline = 'Extreme Relative Volume'
+extreme_relative_vol = input.float(2.618, title = 'Extreme Relative Volume Threshold', inline = extreme_rel_inline, group = volume_bar_grp)
+extreme_relative_color_up = input.color(color.navy, title = '', inline = extreme_rel_inline, group = volume_bar_grp)
+extreme_relative_color_down = input.color(color.maroon, title = '', inline = extreme_rel_inline, group = volume_bar_grp)
 //-----------------------------------------------------------------------------}
 
 // Calculation
@@ -207,12 +110,14 @@ rsi = ta.rsi(close, length)
 // Volume Based Colored Bars by KIVANÇ ÖZBİLGİÇ
 color b_color = na
 if vbcb
-    if nzVolume > vAvg * 1.618
-        b_color := C > O ? #006400 : #910000
-    else if nzVolume < vAvg * 0.618
-        b_color := C > O ? #7FFFD4 : #FF9800
+    if nzVolume >= vAvg * extreme_relative_vol
+        b_color := C > O ? extreme_relative_color_up : extreme_relative_color_down
+    else if nzVolume >= vAvg * high_relative_vol
+        b_color := C > O ? high_relative_color_up : high_relative_color_down
+    else if nzVolume <= vAvg * low_relative_vol
+        b_color := C > O ? low_relative_color_up: low_relative_color_down
     else
-        b_color := C > O ? color.green : color.red
+        b_color := C > O ? normal_relative_color_up : normal_relative_color_down
 
 barcolor(b_color, title='Volume Weighted Colored Bars', editable=false)
 //-----------------------------------------------------------------------------}
@@ -224,17 +129,17 @@ barcolor(b_color, title='Volume Weighted Colored Bars', editable=false)
 // Input
 //-----------------------------------------------------------------------------{
 rsi_outlier_grp = '► RSI overbought and oversold indicator'
+rsi_enable = input(true, title='Enable', group = rsi_outlier_grp, tooltip='Show indicator on overbought and oversold based on RSI value')
 overbought = input.int(70, group = rsi_outlier_grp, minval=50, title = 'Overbought threshold')
 oversold = input.int(30, group = rsi_outlier_grp, maxval=50, title = 'Oversold threshold')
-rsi_enable = input(true, title='Enable', group = rsi_outlier_grp, tooltip='Show indicator on overbought and oversold based on RSI value')
 //-----------------------------------------------------------------------------}
 
 // Plot
 //-----------------------------------------------------------------------------{
 // Overbought and oversold labels
-plotshape(ta.crossunder(rsi, oversold) ? low : na, "RSI Crossunder Oversold", shape.labelup, location.absolute, color(na), 0 , text = '🚨', textcolor = color.green, size = size.tiny)
-plotshape(ta.crossover(rsi, oversold) ? low : na, "RSI Crossover Oversold", shape.labelup, location.absolute, color(na), 0 , text = '⬆', textcolor = color.green, size = size.tiny)
+plotshape(ta.crossunder(rsi, oversold) ? low : na, "RSI Crossunder Oversold", shape.labelup, location.belowbar, color(na), 0 , text = '🚨', textcolor = color.green, size = size.tiny)
+plotshape(ta.crossover(rsi, oversold) ? low : na, "RSI Crossover Oversold", shape.arrowup, location.belowbar, color(na), 0 , text = '⬆', textcolor = color.green, size = size.tiny)
 
-plotshape(ta.crossover(rsi, overbought) ? high : na, "RSI Crossover Overbought", shape.labeldown, location.absolute, color(na), 0 , text = '🚨', textcolor = color.red, size = size.tiny)
-plotshape(ta.crossunder(rsi, overbought) ? high : na, "RSI Crossunder Overbought", shape.labeldown, location.absolute, color(na), 0 , text = '⬇', textcolor = color.red, size = size.tiny)
+plotshape(ta.crossover(rsi, overbought) ? high : na, "RSI Crossover Overbought", shape.labeldown, location.abovebar, color(na), 0 , text = '🚨', textcolor = color.red, size = size.tiny)
+plotshape(ta.crossunder(rsi, overbought) ? high : na, "RSI Crossunder Overbought", shape.arrowdown, location.abovebar, color(na), 0 , text = '⬇', textcolor = color.red, size = size.tiny)
 //-----------------------------------------------------------------------------}
