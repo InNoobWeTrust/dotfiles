@@ -30,3 +30,5 @@ elif [ -d "$HOME/.linuxbrew" ]; then
 fi
 [ -n "$BREW_HOME" ] && export BYOBU_PREFIX="$BREW_HOME"
 export BAT_THEME="gruvbox-dark"
+# Set huggingface token
+[ -e "$HOME/.cache/huggingface/token" ] && export HF_TOKEN="$(head -n 1 "$HOME/.cache/huggingface/token")"
