@@ -16,7 +16,6 @@ use serde::Deserialize;
 use std::collections::HashSet;
 use std::error::Error;
 use std::fs;
-use std::io::{self, BufRead};
 use std::time::Instant;
 use tokio::time::timeout;
 use url::Url;
@@ -25,13 +24,11 @@ use crate::driver::login;
 use crate::utils::delay;
 
 fn read_lines(filename: &str) -> Vec<String> {
-    // Open the file in read-only mode.
-    let file = fs::File::open(filename).unwrap();
     // Read the file line by line, and return an iterator of the lines of the file.
-    io::BufReader::new(file)
+    fs::read_to_string(filename)
+        .unwrap()
         .lines()
-        .filter(|l| l.is_ok())
-        .map(|l| l.unwrap().to_owned())
+        .map(|l| l.to_owned())
         .filter(|l| !l.trim().is_empty())
         .collect::<Vec<_>>()
 }
@@ -79,7 +76,7 @@ async fn report_step(
             ));
         }
         Err(e) => {
-            error!(target: domain.to_string().as_str(), "Reporting timeout for {target} <{comment}>, error: {e:?}");
+            error!(target: domain.to_string().as_str(), "Reporting timeout for {target} <{comment}>, allowed duration: {wait:?}");
             failure_lst.push((
                 target.to_string(),
                 comment.to_string(),
