@@ -1,5 +1,49 @@
 //@version=5
-indicator("Noob's Indicators", overlay = true, max_lines_count = 500, max_bars_back = 500)
+indicator("Noob's Indicators", overlay = true, max_lines_count = 500, max_bars_back = 3600)
+
+//=============================================================================
+// const
+//=============================================================================
+elliott_all_waves = 144
+elliott_decisive_wave = 89
+elliott_secondary_wave = 34
+
+forex = 200
+
+golden_ratio = 610
+
+pythagorean_material = 147
+pythagorean_mind = 258
+pythagorean_wisdom = 369
+
+banker_short_term = 257
+banker_medium_term = 458
+banker_long_term = 630
+
+//=============================================================================
+// EMA lines const
+//=============================================================================
+
+// Sonic R
+ema_elliott_secondary_wave = ta.ema(close, elliott_secondary_wave)
+ema_elliott_secondary_wave_low = ta.ema(low, elliott_secondary_wave)
+ema_elliott_secondary_wave_high = ta.ema(high, elliott_secondary_wave)
+ema_elliott_decisive_wave = ta.ema(close, elliott_decisive_wave)
+
+ema_forex = ta.ema(close, forex)
+ema_golden_ratio = ta.ema(close, golden_ratio)
+
+// Pythagorean
+ema_pythagorean_material = ta.ema(close, pythagorean_material)
+ema_pythagorean_mind = ta.ema(close, pythagorean_mind)
+ema_pythagorean_wisdom = ta.ema(close, pythagorean_wisdom)
+
+// Banker
+ema_elliott_all_waves = ta.ema(close, elliott_all_waves)
+ema_banker_short_term = ta.ema(close, banker_short_term)
+ema_banker_medium_term = ta.ema(close, banker_medium_term)
+ema_banker_long_term = ta.ema(close, banker_long_term)
+
 
 //=============================================================================
 // EMA Pythagorean
@@ -8,25 +52,21 @@ indicator("Noob's Indicators", overlay = true, max_lines_count = 500, max_bars_b
 // Input
 //-----------------------------------------------------------------------------{
 pythagorean_grp = '► EMA Pythagorean'
-show_pythagorean = input.bool(true, inline = "Enable Pythagorean cloud", group = pythagorean_grp, title = "Show Pythagorean cloud", tooltip = "Pythagorean cloud is a trend indicator. Green is uptrend and red is downtrend")
-ema147_color = input.color(color.new(color.navy, transp = 20), title = "EMA147", group = pythagorean_grp)
-ema258_color = input.color(color.new(color.red, transp = 20), title = "EMA258", group = pythagorean_grp)
-ema369_color = input.color(color.new(color.maroon, transp = 20), title = "EMA369", group = pythagorean_grp)
+show_pythagorean = input.bool(true, inline = "Enable Pythagorean cloud", group = pythagorean_grp, title = "Show Pythagorean cloud", tooltip = "Pythagorean cloud is a long-term trend reversing indicator. Green is uptrend and red is downtrend")
+ema_material_color = input.color(color.new(color.navy, transp = 20), title = "Material stage", group = pythagorean_grp)
+ema_mind_color = input.color(color.new(color.red, transp = 20), title = "Mind stage", group = pythagorean_grp)
+ema_wisdom_color = input.color(color.new(color.maroon, transp = 20), title = "Wisdom stage", group = pythagorean_grp)
 pythagorean_up_color = input.color(color.new(color.green, transp = 85), title = "Pythagorean Cloud", inline = "Pythagorean", group = pythagorean_grp)
 pythagorean_down_color = input.color(color.new(color.red, transp = 85), title = "", inline = "Pythagorean", group = pythagorean_grp)
 //-----------------------------------------------------------------------------}
 
 // Plot
 //-----------------------------------------------------------------------------{
-ema147 = show_pythagorean ? ta.ema(close, 147) : na
-ema258 = show_pythagorean ? ta.ema(close, 258) : na
-ema369 = show_pythagorean ? ta.ema(close, 369) : na
-
-pythagorean_body = plot(ema147, title = "EMA147 - material stage", color = ema147_color, linewidth = 1, style = plot.style_line)
-pythagorean_heart = plot(ema258, title = "EMA258 - mind state", color = ema258_color, linewidth = 2, style = plot.style_line)
-pythagorean_mind = plot(ema369, title = "EMA369 - brain state", color = ema369_color, linewidth = 1, style = plot.style_line)
-up_down_color = ema147 > ema369 ? pythagorean_up_color : pythagorean_down_color
-fill(pythagorean_body, pythagorean_mind, up_down_color)
+pythagorean_material_plot = plot(show_pythagorean ? ema_pythagorean_material : na, title = "Pythagorean material stage", color = ema_material_color, linewidth = 1, style = plot.style_line)
+pythagorean_mind_plot = plot(show_pythagorean ? ema_pythagorean_mind : na, title = "Pythagorean mind state", color = ema_mind_color, linewidth = 2, style = plot.style_line)
+pythagorean_wisdom_plot = plot(show_pythagorean ? ema_pythagorean_wisdom : na, title = "Pythagorean wisdom state", color = ema_wisdom_color, linewidth = 1, style = plot.style_line)
+up_down_color = ema_pythagorean_material > ema_pythagorean_wisdom ? pythagorean_up_color : pythagorean_down_color
+fill(pythagorean_material_plot, pythagorean_wisdom_plot, up_down_color)
 //-----------------------------------------------------------------------------}
 
 //=============================================================================
@@ -37,31 +77,46 @@ fill(pythagorean_body, pythagorean_mind, up_down_color)
 //-----------------------------------------------------------------------------{
 sonic_r_grp = '► Sonic R'
 show_sonic_r = input.bool(true, inline = "Enable Sonic R", group = sonic_r_grp, title = "Show Sonic R", tooltip = "Sonic R indicate dynamic support/resistant levels for price action")
-//-----------------------------------------------------------------------------{
+ema_elliott_secondary_wave_color = input.color(color.blue, title = "Elliott secondary wave (main line)", inline = "Elliott secondary wave" , group = sonic_r_grp)
+ema_elliott_secondary_wave_fill_color = input.color(color.new(color.blue, transp = 85), title = "Elliott secondary wave (fill color)", inline = 'Elliott secondary wave', group = sonic_r_grp)
+ema_elliott_decisive_wave_color = input.color(color.orange, title = "Elliott decisive wave", inline = "Elliott decisive wave" , group = sonic_r_grp)
+ema_forex_color = input.color(color.purple, title = "Forex 200 sessions", inline = "Forex 200 sessions" , group = sonic_r_grp)
+ema_golden_ratio_color = input.color(color.white, title = "Golden ratio", inline = "Golden ratio" , group = sonic_r_grp)
+//-----------------------------------------------------------------------------}
 
 // Plot
 //-----------------------------------------------------------------------------{
-ema34_low = show_sonic_r ? ta.ema(low, 34) : na
-ema34 = show_sonic_r ? ta.ema(close, 34) : na
-ema34_high = show_sonic_r ? ta.ema(high, 34) : na
+plot(show_sonic_r ? ema_elliott_secondary_wave : na, title = "Elliott secondary wave", color = ema_elliott_secondary_wave_color, linewidth = 1, style = plot.style_line)
+sonic_r_low = plot(show_sonic_r ? ema_elliott_secondary_wave_low : na, title = "Elliott secondary wave lower bound", color = ema_elliott_secondary_wave_fill_color, linewidth = 1, style = plot.style_line)
+sonic_r_high = plot(show_sonic_r ? ema_elliott_secondary_wave_high : na, title = "Elliott secondary wave higher bound", color = ema_elliott_secondary_wave_fill_color, linewidth = 1, style = plot.style_line)
+fill(sonic_r_low, sonic_r_high, ema_elliott_secondary_wave_fill_color)
+plot(show_sonic_r ? ema_elliott_decisive_wave : na, title = "Elliott decisive wave", color = ema_elliott_decisive_wave_color, linewidth = 2, style = plot.style_line)
+plot(show_sonic_r ? ema_forex : na, title = "Forex 200 sessions", color = ema_forex_color, linewidth = 2, style = plot.style_line)
+plot(show_sonic_r ? ema_golden_ratio : na, title = "Golden ratio", color = ema_golden_ratio_color, linewidth = 2, style = plot.style_line)
+//-----------------------------------------------------------------------------}
 
-ema_signal = show_sonic_r ? ta.ema(close, 89) : na
-ema200 = show_sonic_r ? ta.ema(close, 200) : na
-ema610 = show_sonic_r ? ta.ema(close, 610) : na
 
-ema34_color = input.color(color.blue, title = "EMA34", inline = "EMA34" , group = sonic_r_grp)
-ema34_fill_color = input.color(color.new(color.blue, transp = 85), title = "EMA34 fill color", inline = 'EMA34', group = sonic_r_grp)
-ema89_color = input.color(color.orange, title = "EMA89", inline = "EMA89" , group = sonic_r_grp)
-ema200_color = input.color(color.purple, title = "EMA200", inline = "EMA200" , group = sonic_r_grp)
-ema610_color = input.color(color.white, title = "EMA610", inline = "EMA610" , group = sonic_r_grp)
+//=============================================================================
+// Banker
+//=============================================================================
 
-sonic_r_low = plot(ema34_low, title = "EMA34 low", color = ema34_fill_color, linewidth = 1, style = plot.style_line)
-sonic_r_34 = plot(ema34, title = "EMA34", color = ema34_color, linewidth = 1, style = plot.style_line)
-sonic_r_high = plot(ema34_high, title = "EMA 369 high", color = ema34_fill_color, linewidth = 1, style = plot.style_line)
-fill(sonic_r_low, sonic_r_high, ema34_fill_color)
-plot(ema_signal, title = "EMA89 signal", color = ema89_color, linewidth = 2, style = plot.style_line)
-plot(ema200, title = "EMA200", color = ema200_color, linewidth = 2, style = plot.style_line)
-plot(ema610, title = "EMA610", color = ema610_color, linewidth = 2, style = plot.style_line)
+// Input
+//-----------------------------------------------------------------------------{
+banker_grp = '► Banker'
+show_banker = input.bool(true, inline = "Enable EMA Banker", group = banker_grp, title = "Show EMA Banker", tooltip = "EMA banker indicate strong dynamic support/resistant levels for price action in long-term trade")
+ema_banker_elliott_color = color.from_gradient(elliott_all_waves, elliott_all_waves, banker_long_term, color.aqua, color.maroon)
+ema_banker_short_term_color = color.from_gradient(banker_short_term, elliott_all_waves, banker_long_term, color.aqua, color.maroon)
+ema_banker_medium_term_color = color.from_gradient(banker_medium_term, elliott_all_waves, banker_long_term, color.aqua, color.maroon)
+ema_banker_long_term_color = color.from_gradient(banker_long_term, elliott_all_waves, banker_long_term, color.aqua, color.maroon)
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+plot(show_banker ? ema_elliott_all_waves : na, title = "Elliott all waves", color = ema_banker_elliott_color, linewidth = 1, style = plot.style_circles)
+plot(show_banker ? ema_banker_short_term : na, title = "Banker short term", color = ema_banker_short_term_color, linewidth = 1, style = plot.style_circles)
+plot(show_banker ? ema_banker_medium_term : na, title = "Banker medium term", color = ema_banker_medium_term_color, linewidth = 1, style = plot.style_circles)
+plot(show_banker ? ema_banker_long_term : na, title = "Banker long term", color = ema_banker_long_term_color, linewidth = 1, style = plot.style_circles)
+//-----------------------------------------------------------------------------}
 
 
 //=============================================================================
@@ -81,12 +136,12 @@ low_relative_color_up = input.color(color.aqua, title = '', inline = low_rel_inl
 low_relative_color_down = input.color(color.yellow, title = '', inline = low_rel_inline, group = volume_bar_grp)
 
 normal_rel_inline = 'Normal Relative Volume'
-normal_relative_color_up = input.color(color.teal, title = 'Normal Relative Volume', inline = normal_rel_inline, group = volume_bar_grp)
+normal_relative_color_up = input.color(color.green, title = 'Normal Relative Volume', inline = normal_rel_inline, group = volume_bar_grp)
 normal_relative_color_down = input.color(color.orange, title = '', inline = normal_rel_inline, group = volume_bar_grp)
 
 high_rel_inline = 'High Relative Volume'
 high_relative_vol = input.float(1.618, title = 'High Relative Volume Threshold', inline = high_rel_inline, group = volume_bar_grp)
-high_relative_color_up = input.color(color.green, title = '', inline = high_rel_inline, group = volume_bar_grp)
+high_relative_color_up = input.color(color.teal, title = '', inline = high_rel_inline, group = volume_bar_grp)
 high_relative_color_down = input.color(color.red, title = '', inline = high_rel_inline, group = volume_bar_grp)
 
 extreme_rel_inline = 'Extreme Relative Volume'
@@ -102,7 +157,6 @@ O = open, H = high, L = low, C = close
 
 // Volume Histogram
 vAvg  = ta.sma(nzVolume, length)
-rsi = ta.rsi(close, length)
 //-----------------------------------------------------------------------------}
 
 // Plot
@@ -132,6 +186,11 @@ rsi_outlier_grp = '► RSI overbought and oversold indicator'
 rsi_enable = input(true, title='Enable', group = rsi_outlier_grp, tooltip='Show indicator on overbought and oversold based on RSI value')
 overbought = input.int(70, group = rsi_outlier_grp, minval=50, title = 'Overbought threshold')
 oversold = input.int(30, group = rsi_outlier_grp, maxval=50, title = 'Oversold threshold')
+//-----------------------------------------------------------------------------}
+
+// Calculation
+//-----------------------------------------------------------------------------{
+rsi = ta.rsi(close, length)
 //-----------------------------------------------------------------------------}
 
 // Plot

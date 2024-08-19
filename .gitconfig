@@ -12,8 +12,8 @@
   prompt = false
 [diff]
   tool = nvim
-[url "git@github.com:"]
-  insteadOf = https://github.com/
+;[url "git@github.com:"]
+;  insteadOf = https://github.com/
 
 [includeIf "gitdir:~/Developer/"]
   path = ~/.weeaboo.gitconfig
