@@ -7,11 +7,21 @@ use crate::driver::{mouse_move_to_element, mouse_scroll, perform_click};
 use crate::utils::delay;
 
 async fn get_account_report_btn(client: &Client) -> Result<Element, CmdError> {
-    client
+    let old_btn = client
         .wait()
         .at_most(Duration::from_secs(10))
         .for_element(Locator::Css(r#"div[aria-expanded="false"][aria-haspopup="menu"][role="button"][aria-label="See Options"]"#))
-        .await
+        .await;
+
+    if let Err(_) = old_btn {
+        return client
+        .wait()
+        .at_most(Duration::from_secs(10))
+        .for_element(Locator::Css(r#"div[aria-expanded="false"][aria-haspopup="menu"][role="button"][aria-label="See options"]"#))
+        .await;
+    }
+
+    old_btn
 }
 
 async fn get_posts_report_btns(client: &Client) -> Result<Vec<Element>, CmdError> {
