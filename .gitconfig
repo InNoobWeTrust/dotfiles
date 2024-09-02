@@ -23,5 +23,3 @@
   path = ~/.work.gitconfig
 [includeIf "gitdir:~/Developer/rex/"]
   path = ~/.work.collab.gitconfig
-[url "git@github.com"]
-	insteadOf = https://github.com
