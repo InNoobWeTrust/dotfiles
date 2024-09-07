@@ -535,26 +535,40 @@ require('packer').startup({
 		local ft = require('guard.filetype')
 
 		-- Format c, cpp, cs, java, cuda, proto
-		ft('c,cpp,cs,java,cuda,proto'):fmt('clang-format')
+		if fn.executable('clang-format') == 1 then
+			ft('c,cpp,cs,java,cuda,proto'):fmt('clang-format')
+		end
 		-- Eslint for js, jsx, ts, tsx, vue
-		ft('js,jsx,ts,tsx,vue'):fmt({
-			cmd = 'eslint',
-			args = { '--fix' },
-		}):lint('eslint')
+		if fn.executable('eslint') == 1 then
+			ft('js,jsx,ts,tsx,vue'):fmt({
+				cmd = 'eslint',
+				args = { '--fix' },
+			}):lint('eslint')
+		end
 		-- Prettier format html, css, json, etc..
-		ft('typescript,javascript,typescriptreact,html,css,scss,json,yaml,markdown,graphql,md,txt'):fmt(
-			'prettier')
+		if fn.executable('prettier') == 1 then
+			ft('typescript,javascript,typescriptreact,html,css,scss,json,yaml,markdown,graphql,md,txt'):fmt(
+				'prettier')
+		end
 		-- Golang
-		ft('go'):fmt('gofmt')
+		if fn.executable('gofmt') == 1 then
+			ft('go'):fmt('gofmt')
+		end
 		-- Rust
-		ft('rust'):fmt('rustfmt')
+		if fn.executable('rustfmt') == 1 then
+			ft('rust'):fmt('rustfmt')
+		end
 		-- Python
-		ft('python'):fmt('ruff')
+		if fn.executable('ruff') == 1 then
+			ft('python'):fmt('ruff')
+		end
 		-- Lint protobuf
-		ft('proto'):lint({
-			cmd = 'buf',
-			args = { 'lint' },
-		})
+		if fn.executable('buf') == 1 then
+			ft('proto'):lint({
+				cmd = 'buf',
+				args = { 'lint' },
+			})
+		end
 
 		-- Call setup() LAST!
 		require('guard').setup({

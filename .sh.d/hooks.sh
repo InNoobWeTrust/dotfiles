@@ -13,4 +13,4 @@ usable direnv && eval "$(direnv hook "${SHELL##*/}")"
 [ -n "$with_starship" ] && usable starship && eval "$(starship init "${SHELL##*/}")"
 
 # If not running in CodeSpace, use git protocol instead of https
-[ -z "$CODESPACES" ] && git config --global url."git@github.com".insteadOf "https://github.com"
+#[ -z "$CODESPACES" ] && git config --global url."git@github.com".insteadOf "https://github.com"
