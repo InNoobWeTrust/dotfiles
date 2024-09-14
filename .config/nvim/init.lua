@@ -655,7 +655,7 @@ require('packer').startup({
 				'grammarly',
 				'html',
 				'jsonls',
-				'tsserver',
+				'ts_ls',
 				'lua_ls',
 				'pyright',
 				'rust_analyzer',
