@@ -6,6 +6,16 @@ use rand::seq::SliceRandom;
 use crate::driver::{mouse_move_to_element, mouse_scroll, perform_click};
 use crate::utils::delay;
 
+async fn check_availability(client: &Client) -> Result<Element, CmdError> {
+    client
+        .wait()
+        .at_most(Duration::from_secs(10))
+        .for_element(Locator::Css(
+            r#"a[href="/"][role="link"][tabindex="0"][aria-label="Go to News Feed"]"#,
+        ))
+        .await
+}
+
 async fn get_account_report_btn(client: &Client) -> Result<Element, CmdError> {
     let old_btn = client
         .wait()
@@ -157,12 +167,12 @@ async fn report_process(
 }
 
 pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
-    let account_report_btn = get_account_report_btn(client).await;
-    if let Err(e) = account_report_btn {
-        warn!(target: target, "User not found for {target}, error: {e}");
+    if let Ok(_) = check_availability(client).await {
+        warn!(target: target, "User not found for {target}");
         return Ok(false);
     }
-    match report_process(client, target, &account_report_btn?).await {
+    let account_report_btn = get_account_report_btn(client).await?;
+    match report_process(client, target, &account_report_btn).await {
         Ok(is_temporary_limited) => {
             if is_temporary_limited {
                 return Ok(true);
