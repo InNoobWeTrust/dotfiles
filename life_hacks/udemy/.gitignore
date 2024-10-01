@@ -1,5 +1,12 @@
+# Poetry project
 config.ini
 poetry.lock
 links.txt
 *.txt
 __pycache__/
+
+# Rust project
+.env
+.session
+Cargo.lock
+target/
