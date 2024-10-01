@@ -1,5 +1,5 @@
 //@version=5
-indicator("Noob's Indicators", overlay = true, max_lines_count = 500, max_bars_back = 3600)
+indicator("Noob's Indicators", overlay = false, max_lines_count = 500, max_bars_back = 3600)
 
 //=============================================================================
 // const
@@ -56,17 +56,23 @@ show_pythagorean = input.bool(true, inline = "Enable Pythagorean cloud", group =
 ema_material_color = input.color(color.new(color.navy, transp = 20), title = "Material stage", group = pythagorean_grp)
 ema_mind_color = input.color(color.new(color.red, transp = 20), title = "Mind stage", group = pythagorean_grp)
 ema_wisdom_color = input.color(color.new(color.maroon, transp = 20), title = "Wisdom stage", group = pythagorean_grp)
-pythagorean_up_color = input.color(color.new(color.green, transp = 85), title = "Pythagorean Cloud", inline = "Pythagorean", group = pythagorean_grp)
-pythagorean_down_color = input.color(color.new(color.red, transp = 85), title = "", inline = "Pythagorean", group = pythagorean_grp)
+pythagorean_up_color = input.color(color.new(color.aqua, transp = 95), title = "Pythagorean Cloud", inline = "Pythagorean", group = pythagorean_grp)
+pythagorean_down_color = input.color(color.new(color.orange, transp = 95), title = "", inline = "Pythagorean", group = pythagorean_grp)
 //-----------------------------------------------------------------------------}
 
 // Plot
 //-----------------------------------------------------------------------------{
-pythagorean_material_plot = plot(show_pythagorean ? ema_pythagorean_material : na, title = "Pythagorean material stage", color = ema_material_color, linewidth = 1, style = plot.style_line)
-pythagorean_mind_plot = plot(show_pythagorean ? ema_pythagorean_mind : na, title = "Pythagorean mind state", color = ema_mind_color, linewidth = 2, style = plot.style_line)
-pythagorean_wisdom_plot = plot(show_pythagorean ? ema_pythagorean_wisdom : na, title = "Pythagorean wisdom state", color = ema_wisdom_color, linewidth = 1, style = plot.style_line)
-up_down_color = ema_pythagorean_material > ema_pythagorean_wisdom ? pythagorean_up_color : pythagorean_down_color
-fill(pythagorean_material_plot, pythagorean_wisdom_plot, up_down_color)
+pythagorean_material_plot = plot(show_pythagorean ? ema_pythagorean_material : na, title = "Pythagorean material stage", color = ema_material_color, linewidth = 1, style = plot.style_line, force_overlay = true)
+pythagorean_mind_plot = plot(show_pythagorean ? ema_pythagorean_mind : na, title = "Pythagorean mind state", color = ema_mind_color, linewidth = 2, style = plot.style_line, force_overlay = true)
+pythagorean_wisdom_plot = plot(show_pythagorean ? ema_pythagorean_wisdom : na, title = "Pythagorean wisdom state", color = ema_wisdom_color, linewidth = 1, style = plot.style_line, force_overlay = true)
+pythagorean_up_down_state = ema_pythagorean_material > ema_pythagorean_wisdom
+pythagorean_up_down_color = pythagorean_up_down_state ? pythagorean_up_color : pythagorean_down_color
+fill(pythagorean_material_plot, pythagorean_wisdom_plot, pythagorean_up_down_color)
+
+var pythagorean_tb = table.new(position.bottom_right,1,2)
+if barstate.islast
+    table.cell(pythagorean_tb,0,0,'Pythagorean Trend',text_color=color.gray,bgcolor=na)
+    table.cell(pythagorean_tb,0,1, pythagorean_up_down_state ? 'Upward' : 'Downward',text_color=#26a69a,bgcolor=color.new(pythagorean_up_down_color,80))
 //-----------------------------------------------------------------------------}
 
 //=============================================================================
@@ -86,13 +92,33 @@ ema_golden_ratio_color = input.color(color.white, title = "Golden ratio", inline
 
 // Plot
 //-----------------------------------------------------------------------------{
-plot(show_sonic_r ? ema_elliott_secondary_wave : na, title = "Elliott secondary wave", color = ema_elliott_secondary_wave_color, linewidth = 1, style = plot.style_line)
-sonic_r_low = plot(show_sonic_r ? ema_elliott_secondary_wave_low : na, title = "Elliott secondary wave lower bound", color = ema_elliott_secondary_wave_fill_color, linewidth = 1, style = plot.style_line)
-sonic_r_high = plot(show_sonic_r ? ema_elliott_secondary_wave_high : na, title = "Elliott secondary wave higher bound", color = ema_elliott_secondary_wave_fill_color, linewidth = 1, style = plot.style_line)
+sonic_r_secondary_plot = plot(show_sonic_r ? ema_elliott_secondary_wave : na, title = "Elliott secondary wave", color = ema_elliott_secondary_wave_color, linewidth = 1, style = plot.style_line, force_overlay = true)
+sonic_r_low = plot(show_sonic_r ? ema_elliott_secondary_wave_low : na, title = "Elliott secondary wave lower bound", color = ema_elliott_secondary_wave_fill_color, linewidth = 1, style = plot.style_line, force_overlay = true)
+sonic_r_high = plot(show_sonic_r ? ema_elliott_secondary_wave_high : na, title = "Elliott secondary wave higher bound", color = ema_elliott_secondary_wave_fill_color, linewidth = 1, style = plot.style_line, force_overlay = true)
 fill(sonic_r_low, sonic_r_high, ema_elliott_secondary_wave_fill_color)
-plot(show_sonic_r ? ema_elliott_decisive_wave : na, title = "Elliott decisive wave", color = ema_elliott_decisive_wave_color, linewidth = 2, style = plot.style_line)
-plot(show_sonic_r ? ema_forex : na, title = "Forex 200 sessions", color = ema_forex_color, linewidth = 2, style = plot.style_line)
-plot(show_sonic_r ? ema_golden_ratio : na, title = "Golden ratio", color = ema_golden_ratio_color, linewidth = 2, style = plot.style_line)
+sonic_r_decisive_plot = plot(show_sonic_r ? ema_elliott_decisive_wave : na, title = "Elliott decisive wave", color = ema_elliott_decisive_wave_color, linewidth = 2, style = plot.style_line, force_overlay = true)
+plot(show_sonic_r ? ema_forex : na, title = "Forex 200 sessions", color = ema_forex_color, linewidth = 2, style = plot.style_line, force_overlay = true)
+plot(show_sonic_r ? ema_golden_ratio : na, title = "Golden ratio", color = ema_golden_ratio_color, linewidth = 2, style = plot.style_line, force_overlay = true)
+
+sonic_r_state() =>
+    up = ema_elliott_secondary_wave_low > ema_elliott_decisive_wave
+    down = ema_elliott_secondary_wave_high < ema_elliott_decisive_wave
+    if up
+        "Up"
+    else if down
+        "Down"
+    else
+        "Undecisive"
+
+sonic_r_up_down_color = switch sonic_r_state()
+    'Up' => color.new(color.green, transp = 80)
+    'Down' => color.new(color.red, transp = 80)
+    'Undecisive' => na
+
+var sonic_r_tb = table.new(position.middle_right,1,2)
+if barstate.islast
+    table.cell(sonic_r_tb,0,0,'Sonic R Trend',text_color=color.gray,bgcolor=na)
+    table.cell(sonic_r_tb,0,1, sonic_r_state(), text_color=#26a69a, bgcolor=color.new(sonic_r_up_down_color, 80))
 //-----------------------------------------------------------------------------}
 
 
@@ -112,10 +138,10 @@ ema_banker_long_term_color = color.from_gradient(banker_long_term, elliott_all_w
 
 // Plot
 //-----------------------------------------------------------------------------{
-plot(show_banker ? ema_elliott_all_waves : na, title = "Elliott all waves", color = ema_banker_elliott_color, linewidth = 1, style = plot.style_circles)
-plot(show_banker ? ema_banker_short_term : na, title = "Banker short term", color = ema_banker_short_term_color, linewidth = 1, style = plot.style_circles)
-plot(show_banker ? ema_banker_medium_term : na, title = "Banker medium term", color = ema_banker_medium_term_color, linewidth = 1, style = plot.style_circles)
-plot(show_banker ? ema_banker_long_term : na, title = "Banker long term", color = ema_banker_long_term_color, linewidth = 1, style = plot.style_circles)
+plot(show_banker ? ema_elliott_all_waves : na, title = "Elliott all waves", color = ema_banker_elliott_color, linewidth = 1, style = plot.style_circles, force_overlay = true)
+plot(show_banker ? ema_banker_short_term : na, title = "Banker short term", color = ema_banker_short_term_color, linewidth = 1, style = plot.style_circles, force_overlay = true)
+plot(show_banker ? ema_banker_medium_term : na, title = "Banker medium term", color = ema_banker_medium_term_color, linewidth = 1, style = plot.style_circles, force_overlay = true)
+plot(show_banker ? ema_banker_long_term : na, title = "Banker long term", color = ema_banker_long_term_color, linewidth = 1, style = plot.style_circles, force_overlay = true)
 //-----------------------------------------------------------------------------}
 
 
@@ -128,7 +154,7 @@ plot(show_banker ? ema_banker_long_term : na, title = "Banker long term", color 
 volume_bar_grp = '► Volume Weighted Colored Bars'
 
 vbcb = input(true, title='Enable', group = volume_bar_grp, tooltip='Colors bars based on the bar\'s volume relative to volume moving average')
-length = input.int(13, group = volume_bar_grp, minval=1, title='Volume SMA Length')
+vol_length = input.int(20, group = volume_bar_grp, minval=1, title='Volume SMA Length')
 
 low_rel_inline = 'Low Relative Volume'
 low_relative_vol = input.float(0.618, title = 'Low Relative Volume Threshold', inline = low_rel_inline, group = volume_bar_grp)
@@ -156,7 +182,7 @@ nzVolume = nz(volume)
 O = open, H = high, L = low, C = close
 
 // Volume Histogram
-vAvg  = ta.sma(nzVolume, length)
+vAvg  = ta.sma(nzVolume, vol_length)
 //-----------------------------------------------------------------------------}
 
 // Plot
@@ -165,13 +191,13 @@ vAvg  = ta.sma(nzVolume, length)
 color b_color = na
 if vbcb
     if nzVolume >= vAvg * extreme_relative_vol
-        b_color := C > O ? extreme_relative_color_up : extreme_relative_color_down
+        b_color := close > open ? extreme_relative_color_up : extreme_relative_color_down
     else if nzVolume >= vAvg * high_relative_vol
-        b_color := C > O ? high_relative_color_up : high_relative_color_down
+        b_color := close > open ? high_relative_color_up : high_relative_color_down
     else if nzVolume <= vAvg * low_relative_vol
-        b_color := C > O ? low_relative_color_up: low_relative_color_down
+        b_color := close > open ? low_relative_color_up: low_relative_color_down
     else
-        b_color := C > O ? normal_relative_color_up : normal_relative_color_down
+        b_color := close > open ? normal_relative_color_up : normal_relative_color_down
 
 barcolor(b_color, title='Volume Weighted Colored Bars', editable=false)
 //-----------------------------------------------------------------------------}
@@ -184,21 +210,100 @@ barcolor(b_color, title='Volume Weighted Colored Bars', editable=false)
 //-----------------------------------------------------------------------------{
 rsi_outlier_grp = '► RSI overbought and oversold indicator'
 rsi_enable = input(true, title='Enable', group = rsi_outlier_grp, tooltip='Show indicator on overbought and oversold based on RSI value')
-overbought = input.int(70, group = rsi_outlier_grp, minval=50, title = 'Overbought threshold')
-oversold = input.int(30, group = rsi_outlier_grp, maxval=50, title = 'Oversold threshold')
+rsi_src = input(close, title="RSI Source", group = rsi_outlier_grp)
+rsi_sma_length = input.int(14, minval=1, title="RSI SMA length", group = rsi_outlier_grp)
+rsi_min_length = input(6, group = rsi_outlier_grp, title='RSI Minimum Length')
+rsi_max_length = input(48, group = rsi_outlier_grp, title='RSI Maximum Length')
+rsi_avg_inline = "RSI Average Inline"
+rsi_avg_dn_color = input(#ff5d00, title = 'Average RSI Gradient', group=rsi_outlier_grp,inline=rsi_avg_inline)
+rsi_avg_up_color = input(#2157f3,title='',group=rsi_outlier_grp,inline=rsi_avg_inline)
+rsi_upper_color = input(#0cb51a,'RSI Upper Level', group=rsi_outlier_grp)
+rsi_lower_color = input(#ff1100,'RSI Lower Level', group=rsi_outlier_grp)
+rsi_overbought_inline = "RSI Overbought Inline"
+rsi_overbought_limit = input.float(70, group = rsi_outlier_grp, minval=50, step=10, title = 'Overbought threshold', inline = rsi_overbought_inline)
+rsi_ob_area = input(color.new(#0cb51a,70),'Overbought Area',group=rsi_outlier_grp, inline = rsi_overbought_inline)
+rsi_oversold_inline = "RSI Oversold Inline"
+rsi_oversold_limit = input.float(30, group = rsi_outlier_grp, maxval=50, step=10, title = 'Oversold threshold', inline = rsi_oversold_inline)
+rsi_os_area = input(color.new(#ff1100,70),'Oversold Area',group=rsi_outlier_grp,inline = rsi_oversold_inline)
 //-----------------------------------------------------------------------------}
 
 // Calculation
 //-----------------------------------------------------------------------------{
-rsi = ta.rsi(close, length)
+rsi_range = rsi_max_length - rsi_min_length + 1
+rsi_diff = nz(rsi_src - rsi_src[1])
+
+var rsi_num = array.new_float(rsi_range,0)
+var rsi_den = array.new_float(rsi_range,0)
+//----
+k = 0
+overbuy = 0
+oversell = 0
+avg = 0.
+for i = rsi_min_length to rsi_max_length
+    alpha = 1/i
+
+    num_rma = alpha * rsi_diff + (1 - alpha) * array.get(rsi_num, k)
+    den_rma = alpha * math.abs(rsi_diff) + (1 - alpha) * array.get(rsi_den, k)
+    rsi = 50 * num_rma / den_rma + 50
+    avg += rsi
+
+    overbuy := rsi > rsi_overbought_limit ? overbuy + 1 : overbuy
+    oversell := rsi < rsi_oversold_limit ? oversell + 1 : oversell
+
+    array.set(rsi_num,k,num_rma)
+    array.set(rsi_den,k,den_rma)
+    k += 1
+//----
+avg_rsi = avg / rsi_range
+buy_rsi_ma = 0.
+sell_rsi_ma = 0.
+
+buy_rsi_ma := nz(buy_rsi_ma[1] + overbuy / rsi_range * (avg_rsi - buy_rsi_ma[1]), avg_rsi)
+sell_rsi_ma := nz(sell_rsi_ma[1] + oversell / rsi_range * (avg_rsi - sell_rsi_ma[1]), avg_rsi)
+
+// RSI SMA
+rsi_sma_up = ta.rma(math.max(ta.change(rsi_src), 0), rsi_sma_length)
+rsi_sma_down = ta.rma(-math.min(ta.change(rsi_src), 0), rsi_sma_length)
+rsi_sma_tmp = rsi_sma_down == 0 ? 100 : rsi_sma_up == 0 ? 0 : 100 - (100 / (1 + rsi_sma_up / rsi_sma_down))
+rsi_sma = ta.sma(rsi_sma_tmp, rsi_sma_length)
 //-----------------------------------------------------------------------------}
 
 // Plot
 //-----------------------------------------------------------------------------{
-// Overbought and oversold labels
-plotshape(ta.crossunder(rsi, oversold) ? low : na, "RSI Crossunder Oversold", shape.labelup, location.belowbar, color(na), 0 , text = '🚨', textcolor = color.green, size = size.tiny)
-plotshape(ta.crossover(rsi, oversold) ? low : na, "RSI Crossover Oversold", shape.arrowup, location.belowbar, color(na), 0 , text = '⬆', textcolor = color.green, size = size.tiny)
 
-plotshape(ta.crossover(rsi, overbought) ? high : na, "RSI Crossover Overbought", shape.labeldown, location.abovebar, color(na), 0 , text = '🚨', textcolor = color.red, size = size.tiny)
-plotshape(ta.crossunder(rsi, overbought) ? high : na, "RSI Crossunder Overbought", shape.arrowdown, location.abovebar, color(na), 0 , text = '⬇', textcolor = color.red, size = size.tiny)
+// MTF RSI
+var tb = table.new(position.top_right,2,2)
+if barstate.islast
+    table.cell(tb,0,0,'Overbought',text_color=color.gray,bgcolor=na)
+    table.cell(tb,1,0,'Oversold',text_color=color.gray,bgcolor=na)
+
+    table.cell(tb,0,1, str.tostring(overbuy / rsi_range * 100,'#.##')+' %',text_color=#26a69a,bgcolor=color.new(#26a69a,80))
+    table.cell(tb,1,1, str.tostring(oversell / rsi_range * 100,'#.##')+' %',text_color=#ef5350,bgcolor=color.new(#ef5350,80))
+//----
+css = color.from_gradient(avg_rsi,sell_rsi_ma,buy_rsi_ma,rsi_avg_dn_color,rsi_avg_up_color)
+plot(avg_rsi,'Average Multi Length RSI',color=css, force_overlay = false)
+up = plot(buy_rsi_ma,'Upper Channel',color=rsi_upper_color, force_overlay = false)
+dn = plot(sell_rsi_ma,'Lower Channel',color=rsi_lower_color, force_overlay = false)
+
+per_over = plot(overbuy / rsi_range * 100,'Overbought Area',color=color.new(rsi_ob_area,100),editable=false, force_overlay = false)
+per_under = plot(100 - oversell / rsi_range * 100,'Oversold Area',color=color.new(rsi_os_area,100),editable=false, force_overlay = false)
+upper = plot(100,color=na,editable=false,display=display.none, force_overlay = false)
+lower = plot(0,color=na,editable=false,display=display.none, force_overlay = false)
+
+fill(per_over,lower,rsi_ob_area)
+fill(upper,per_under,rsi_os_area)
+fill(up,dn,color.new(css,90))
+
+hline(rsi_overbought_limit,color=color.new(color.gray, 70))
+hline(50,color=color.new(color.gray, 70))
+hline(rsi_oversold_limit,color=color.new(color.gray, 70))
+
+plot(rsi_sma, "RSI-based MA", color=color.yellow, force_overlay = false)
+
+// Overbought and oversold labels
+plotshape(ta.crossunder(avg_rsi, rsi_oversold_limit) ? low : na, "RSI Crossunder Oversold", shape.labelup, location.belowbar, color(na), 0 , text = '🚨', textcolor = color.green, size = size.tiny, force_overlay = true)
+plotshape(ta.crossover(avg_rsi, rsi_oversold_limit) ? low : na, "RSI Crossover Oversold", shape.arrowup, location.belowbar, color(na), 0 , text = '⬆', textcolor = color.green, size = size.tiny, force_overlay = true)
+
+plotshape(ta.crossover(avg_rsi, rsi_overbought_limit) ? high : na, "RSI Crossover Overbought", shape.labeldown, location.abovebar, color(na), 0 , text = '🚨', textcolor = color.red, size = size.tiny, force_overlay = true)
+plotshape(ta.crossunder(avg_rsi, rsi_overbought_limit) ? high : na, "RSI Crossunder Overbought", shape.arrowdown, location.abovebar, color(na), 0 , text = '⬇', textcolor = color.red, size = size.tiny, force_overlay = true)
 //-----------------------------------------------------------------------------}
