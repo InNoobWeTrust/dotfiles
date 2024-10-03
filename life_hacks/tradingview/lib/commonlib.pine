@@ -1,0 +1,31 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © InNoobWeTrust
+
+//@version=5
+
+// @description InNoobWeTrust's commonlib
+library("commonlib")
+
+// @function calculate percentage of candle's wick
+// @returns the wick's percentage
+export bar_wick_percent() =>
+	spread = high - low
+    upper_wick = open < close ? high - close : high - open
+    lower_wick = open < close ? open - low : close - low
+    max_wick = math.max(upper_wick, lower_wick)
+    bias = max_wick / spread
+    bias * (max_wick == lower_wick ? 1.0 : -1.0)
+
+// @function calculate percentage of candle's body
+// @returns the body's percentage
+export bar_body_percent() =>
+    spread = high - low
+    body = (close - open) / spread
+    body
+
+export bar_skewness_percent() =>
+    wick = bar_wick_percent()
+    body = bar_body_percent()
+    switch math.sign(wick * body)
+        1. => wick + body
+        -1. => wick

@@ -2,6 +2,11 @@
 indicator("Noob's Indicators", overlay = false, max_lines_count = 500, max_bars_back = 3600)
 
 //=============================================================================
+// Imports
+//=============================================================================
+import forbidden_gun/commonlib/4
+
+//=============================================================================
 // const
 //=============================================================================
 elliott_all_waves = 144
@@ -101,8 +106,8 @@ plot(show_sonic_r ? ema_forex : na, title = "Forex 200 sessions", color = ema_fo
 plot(show_sonic_r ? ema_golden_ratio : na, title = "Golden ratio", color = ema_golden_ratio_color, linewidth = 2, style = plot.style_line, force_overlay = true)
 
 sonic_r_state() =>
-    up = ema_elliott_secondary_wave_low > ema_elliott_decisive_wave
-    down = ema_elliott_secondary_wave_high < ema_elliott_decisive_wave
+    up = close > ema_elliott_secondary_wave_low and  ema_elliott_secondary_wave_low > ema_elliott_decisive_wave
+    down = close < ema_elliott_secondary_wave_high and  ema_elliott_secondary_wave_high < ema_elliott_decisive_wave
     if up
         "Up"
     else if down
@@ -179,10 +184,18 @@ extreme_relative_color_down = input.color(color.maroon, title = '', inline = ext
 // Calculation
 //-----------------------------------------------------------------------------{
 nzVolume = nz(volume)
-O = open, H = high, L = low, C = close
 
 // Volume Histogram
 vAvg  = ta.sma(nzVolume, vol_length)
+vol_category() =>
+    if nzVolume >= vAvg * extreme_relative_vol
+        'Extreme'
+    else if nzVolume >= vAvg * high_relative_vol
+        'High'
+    else if nzVolume <= vAvg * low_relative_vol
+        'Low'
+    else
+        'Normal'
 //-----------------------------------------------------------------------------}
 
 // Plot
@@ -190,14 +203,11 @@ vAvg  = ta.sma(nzVolume, vol_length)
 // Volume Based Colored Bars by KIVANÇ ÖZBİLGİÇ
 color b_color = na
 if vbcb
-    if nzVolume >= vAvg * extreme_relative_vol
-        b_color := close > open ? extreme_relative_color_up : extreme_relative_color_down
-    else if nzVolume >= vAvg * high_relative_vol
-        b_color := close > open ? high_relative_color_up : high_relative_color_down
-    else if nzVolume <= vAvg * low_relative_vol
-        b_color := close > open ? low_relative_color_up: low_relative_color_down
-    else
-        b_color := close > open ? normal_relative_color_up : normal_relative_color_down
+    b_color := switch vol_category()
+        "Extreme" => close > open ? extreme_relative_color_up : extreme_relative_color_down
+        "High" => close > open ? high_relative_color_up : high_relative_color_down
+        "Normal" => close > open ? normal_relative_color_up : normal_relative_color_down
+        "Low" => close > open ? low_relative_color_up: low_relative_color_down
 
 barcolor(b_color, title='Volume Weighted Colored Bars', editable=false)
 //-----------------------------------------------------------------------------}
@@ -208,8 +218,8 @@ barcolor(b_color, title='Volume Weighted Colored Bars', editable=false)
 
 // Input
 //-----------------------------------------------------------------------------{
-rsi_outlier_grp = '► RSI overbought and oversold indicator'
-rsi_enable = input(true, title='Enable', group = rsi_outlier_grp, tooltip='Show indicator on overbought and oversold based on RSI value')
+rsi_outlier_grp = '► RSI overbought and oversold'
+rsi_show_label = input(true, title='Show labels', group = rsi_outlier_grp, tooltip='Show labels at candle when RSI crossing overbought/oversold threshold')
 rsi_src = input(close, title="RSI Source", group = rsi_outlier_grp)
 rsi_sma_length = input.int(14, minval=1, title="RSI SMA length", group = rsi_outlier_grp)
 rsi_min_length = input(6, group = rsi_outlier_grp, title='RSI Minimum Length')
@@ -301,9 +311,52 @@ hline(rsi_oversold_limit,color=color.new(color.gray, 70))
 plot(rsi_sma, "RSI-based MA", color=color.yellow, force_overlay = false)
 
 // Overbought and oversold labels
-plotshape(ta.crossunder(avg_rsi, rsi_oversold_limit) ? low : na, "RSI Crossunder Oversold", shape.labelup, location.belowbar, color(na), 0 , text = '🚨', textcolor = color.green, size = size.tiny, force_overlay = true)
-plotshape(ta.crossover(avg_rsi, rsi_oversold_limit) ? low : na, "RSI Crossover Oversold", shape.arrowup, location.belowbar, color(na), 0 , text = '⬆', textcolor = color.green, size = size.tiny, force_overlay = true)
+plotshape(rsi_show_label and ta.crossunder(avg_rsi, rsi_oversold_limit) ? low : na, "RSI Crossunder Oversold", shape.labelup, location.belowbar, color(na), 0 , text = '🚨', textcolor = color.green, size = size.tiny, force_overlay = true)
+plotshape(rsi_show_label and ta.crossover(avg_rsi, rsi_oversold_limit) ? low : na, "RSI Crossover Oversold", shape.arrowup, location.belowbar, color(na), 0 , text = '⬆', textcolor = color.green, size = size.tiny, force_overlay = true)
 
-plotshape(ta.crossover(avg_rsi, rsi_overbought_limit) ? high : na, "RSI Crossover Overbought", shape.labeldown, location.abovebar, color(na), 0 , text = '🚨', textcolor = color.red, size = size.tiny, force_overlay = true)
-plotshape(ta.crossunder(avg_rsi, rsi_overbought_limit) ? high : na, "RSI Crossunder Overbought", shape.arrowdown, location.abovebar, color(na), 0 , text = '⬇', textcolor = color.red, size = size.tiny, force_overlay = true)
+plotshape(rsi_show_label and ta.crossover(avg_rsi, rsi_overbought_limit) ? high : na, "RSI Crossover Overbought", shape.labeldown, location.abovebar, color(na), 0 , text = '🚨', textcolor = color.red, size = size.tiny, force_overlay = true)
+plotshape(rsi_show_label and ta.crossunder(avg_rsi, rsi_overbought_limit) ? high : na, "RSI Crossunder Overbought", shape.arrowdown, location.abovebar, color(na), 0 , text = '⬇', textcolor = color.red, size = size.tiny, force_overlay = true)
+//-----------------------------------------------------------------------------}
+
+//=============================================================================
+// Biased candle
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+biased_candle_grp = "► Biased candle"
+biased_candle_enabled = input.bool(true, title = "Enable", group = biased_candle_grp)
+biased_candle_wick_percent = input.float(0.382, minval = 0., maxval = 1., title = "Min wick to consider biased candle", group = biased_candle_grp)
+biased_candle_body_percent = input.float(0.0236, minval = 0., maxval = 1., title = "Min candle body to consider biased candle", group = biased_candle_grp)
+biased_candle_skew_percent = input.float(0.5, minval=0.5, maxval=1, title = "Min skew threshold to consider biased candle", group = biased_candle_grp)
+biased_candle_vol_threshold = input.float(1.05, minval=1., title = "Volume threshold", group = biased_candle_grp)
+biased_candle_filter_rsi = input.bool(true, title = "Filtering overbought/oversold zone", group = biased_candle_grp)
+
+// Calculation
+//-----------------------------------------------------------------------------{
+bar_wick = commonlib.bar_wick_percent()
+bar_body = commonlib.bar_body_percent()
+bar_skewness = commonlib.bar_skewness_percent()
+
+is_wick_exceeded = math.abs(bar_wick) > biased_candle_wick_percent
+is_body_exceeded = math.abs(bar_body) > biased_candle_body_percent
+is_skewness_exceeded = math.abs(bar_skewness) > biased_candle_skew_percent
+
+is_abnormal_vol = nzVolume > vAvg * biased_candle_vol_threshold
+
+is_likely_oversold_reversal = biased_candle_filter_rsi ? (oversell / rsi_range) > 0. and bar_wick > 0. : true
+is_likely_overbougth_reversal = biased_candle_filter_rsi ? (overbuy / rsi_range) > 0. and bar_wick < 0. : true
+is_rsi_exhausted = is_likely_oversold_reversal or is_likely_overbougth_reversal
+
+is_biased_candle = is_wick_exceeded and is_body_exceeded and is_skewness_exceeded and is_abnormal_vol and is_rsi_exhausted
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+offset = math.abs(ta.change(close))
+label_y = bar_wick > 0. ? low - offset : high + offset
+
+if barstate.isconfirmed and biased_candle_enabled and is_biased_candle
+    label.new(bar_index, label_y, str.tostring(math.round(bar_wick * 100.)) + '%,' + str.tostring(math.round(bar_body * 100.)) + '%', style = label.style_text_outline, size = size.tiny, color = bar_wick > 0. ? color.green : color.red, force_overlay =  true)
+    alert("[{{ticker}} - {{interval}}][{{timenow}}] Biased candle <{{close}},{{volume}}>, wick " + str.tostring(math.round(bar_wick * 100.)) + '%, body ' + str.tostring(math.round(bar_body * 100.)) + '%', alert.freq_once_per_bar_close)
 //-----------------------------------------------------------------------------}
