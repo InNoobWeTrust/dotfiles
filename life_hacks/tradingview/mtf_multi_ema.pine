@@ -1,0 +1,168 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © InNoobWeTrust
+
+//@version=5
+indicator("Noob's MTF multi-EMA", overlay=true)
+import TradingView/ta/8
+
+//=============================================================================
+// MTF multi-emas
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+ema1_grp = "► EMA #1"
+ema1_inline = "EMA #1"
+ema1_enable = input.bool(true, '', group = ema1_grp, inline = ema1_inline)
+ema1_len = input.int(34, '', group = ema1_grp, inline = ema1_inline)
+ema1_tf1 = input.timeframe('1', '', group = ema1_grp, inline = ema1_inline)
+ema1_tf2 = input.timeframe('5', '', group = ema1_grp, inline = ema1_inline)
+ema1_tf3 = input.timeframe('30', '', group = ema1_grp, inline = ema1_inline)
+ema1_tf4 = input.timeframe('240', '', group = ema1_grp, inline = ema1_inline)
+ema1_max_tf = input.int(4, 'Max timeframes to show', minval=1,maxval=4, group = ema1_grp)
+
+ema2_grp = "► EMA #2"
+ema2_inline = "EMA #2"
+ema2_enable = input.bool(true, '', group = ema2_grp, inline = ema2_inline)
+ema2_len = input.int(89, '', group = ema2_grp, inline = ema2_inline)
+ema2_tf1 = input.timeframe('1', '', group = ema2_grp, inline = ema2_inline)
+ema2_tf2 = input.timeframe('5', '', group = ema2_grp, inline = ema2_inline)
+ema2_tf3 = input.timeframe('30', '', group = ema2_grp, inline = ema2_inline)
+ema2_tf4 = input.timeframe('240', '', group = ema2_grp, inline = ema2_inline)
+ema2_max_tf = input.int(4, 'Max timeframes to show', minval=1,maxval=4, group = ema2_grp)
+
+ema3_grp = "► EMA #3"
+ema3_inline = "EMA #3"
+ema3_enable = input.bool(true, '', group = ema3_grp, inline = ema3_inline)
+ema3_len = input.int(200, '', group = ema3_grp, inline = ema3_inline)
+ema3_tf1 = input.timeframe('1', '', group = ema3_grp, inline = ema3_inline)
+ema3_tf2 = input.timeframe('5', '', group = ema3_grp, inline = ema3_inline)
+ema3_tf3 = input.timeframe('30', '', group = ema3_grp, inline = ema3_inline)
+ema3_tf4 = input.timeframe('240', '', group = ema3_grp, inline = ema3_inline)
+ema3_max_tf = input.int(4, 'Max timeframes to show', minval=1,maxval=4, group = ema3_grp)
+
+ema4_grp = "► EMA #4"
+ema4_inline = "EMA #4"
+ema4_enable = input.bool(true, '', group = ema4_grp, inline = ema4_inline)
+ema4_len = input.int(257, '', group = ema4_grp, inline = ema4_inline)
+ema4_tf1 = input.timeframe('1', '', group = ema4_grp, inline = ema4_inline)
+ema4_tf2 = input.timeframe('5', '', group = ema4_grp, inline = ema4_inline)
+ema4_tf3 = input.timeframe('30', '', group = ema4_grp, inline = ema4_inline)
+ema4_tf4 = input.timeframe('240', '', group = ema4_grp, inline = ema4_inline)
+ema4_max_tf = input.int(4, 'Max timeframes to show', minval=1,maxval=4, group = ema4_grp)
+
+ema5_grp = "► EMA #5"
+ema5_inline = "EMA #5"
+ema5_enable = input.bool(true, '', group = ema5_grp, inline = ema5_inline)
+ema5_len = input.int(458, '', inline = ema5_inline)
+ema5_tf1 = input.timeframe('1', '', group = ema5_grp, inline = ema5_inline)
+ema5_tf2 = input.timeframe('5', '', group = ema5_grp, inline = ema5_inline)
+ema5_tf3 = input.timeframe('30', '', group = ema5_grp, inline = ema5_inline)
+ema5_tf4 = input.timeframe('240', '', group = ema5_grp, inline = ema5_inline)
+ema5_max_tf = input.int(4, 'Max timeframes to show', minval=1,maxval=4, group = ema5_grp)
+
+ema6_grp = "► EMA #6"
+ema6_inline = "EMA #6"
+ema6_enable = input.bool(true, '', group = ema6_grp, inline = ema6_inline)
+ema6_len = input.int(630, '', group = ema6_grp, inline = ema6_inline)
+ema6_tf1 = input.timeframe('1', '', group = ema6_grp, inline = ema6_inline)
+ema6_tf2 = input.timeframe('5', '', group = ema6_grp, inline = ema6_inline)
+ema6_tf3 = input.timeframe('30', '', group = ema6_grp, inline = ema6_inline)
+ema6_tf4 = input.timeframe('240', '', group = ema6_grp, inline = ema6_inline)
+ema6_max_tf = input.int(4, 'Max timeframes to show', minval=1,maxval=4, group = ema6_grp)
+
+ema_gradients_inline = "EMAs gradient"
+ema_gradients_start = input.color(color.new(color.blue, transp = 70), title = "EMA gradient", inline = ema_gradients_inline)
+ema_gradients_end = input.color(color.new(color.maroon, transp = 70), title = "", inline = ema_gradients_inline)
+//-----------------------------------------------------------------------------}
+
+// Calculation
+//-----------------------------------------------------------------------------{
+type Ema
+    float ema
+    color clr
+
+ema_tf(string tf, simple int len) =>
+    request.security(syminfo.tickerid, tf, ta.ema(close, len), barmerge.gaps_on)
+
+ema_color(simple int ema_idx) =>
+    color.from_gradient(ema_idx, 0, 5, ema_gradients_start, ema_gradients_end)
+
+newEma(int idx, string tf, simple int len, bool render) =>
+    if render
+        Ema.new(ema_tf(tf,len), ema_color(idx))
+    else
+        Ema.new(na, color(na))
+
+// EMA data
+Ema[] ema1 = array.new<Ema>()
+ema1.push(newEma(0, ema1_tf1, ema1_len, 1 <= ema1_max_tf))
+ema1.push(newEma(0, ema1_tf2, ema1_len, 2 <= ema1_max_tf))
+ema1.push(newEma(0, ema1_tf3, ema1_len, 3 <= ema1_max_tf))
+ema1.push(newEma(0, ema1_tf4, ema1_len, 4 <= ema1_max_tf))
+
+Ema[] ema2 = array.new<Ema>()
+ema2.push(newEma(1, ema2_tf1, ema2_len, 1 <= ema2_max_tf))
+ema2.push(newEma(1, ema2_tf2, ema2_len, 2 <= ema2_max_tf))
+ema2.push(newEma(1, ema2_tf3, ema2_len, 3 <= ema2_max_tf))
+ema2.push(newEma(1, ema2_tf4, ema2_len, 4 <= ema2_max_tf))
+
+Ema[] ema3 = array.new<Ema>()
+ema3.push(newEma(2, ema3_tf1, ema3_len, 1 <= ema3_max_tf))
+ema3.push(newEma(2, ema3_tf2, ema3_len, 2 <= ema3_max_tf))
+ema3.push(newEma(2, ema3_tf3, ema3_len, 3 <= ema3_max_tf))
+ema3.push(newEma(2, ema3_tf4, ema3_len, 4 <= ema3_max_tf))
+
+Ema[] ema4 = array.new<Ema>()
+ema4.push(newEma(3, ema4_tf1, ema4_len, 1 <= ema4_max_tf))
+ema4.push(newEma(3, ema4_tf2, ema4_len, 2 <= ema4_max_tf))
+ema4.push(newEma(3, ema4_tf3, ema4_len, 3 <= ema4_max_tf))
+ema4.push(newEma(3, ema4_tf4, ema4_len, 4 <= ema4_max_tf))
+
+Ema[] ema5 = array.new<Ema>()
+ema5.push(newEma(4, ema5_tf1, ema5_len, 1 <= ema5_max_tf))
+ema5.push(newEma(4, ema5_tf2, ema5_len, 2 <= ema5_max_tf))
+ema5.push(newEma(4, ema5_tf3, ema5_len, 3 <= ema5_max_tf))
+ema5.push(newEma(4, ema5_tf4, ema5_len, 4 <= ema5_max_tf))
+
+Ema[] ema6 = array.new<Ema>()
+ema6.push(newEma(5, ema6_tf1, ema6_len, 1 <= ema6_max_tf))
+ema6.push(newEma(5, ema6_tf2, ema6_len, 2 <= ema6_max_tf))
+ema6.push(newEma(5, ema6_tf3, ema6_len, 3 <= ema6_max_tf))
+ema6.push(newEma(5, ema6_tf4, ema6_len, 4 <= ema6_max_tf))
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+
+// ema1
+ema1_tf1_plt = plot(ema1.get(0).ema, '', ema1.get(0).clr, linewidth = 1)
+ema1_tf2_plt = plot(ema1.get(1).ema, '', ema1.get(1).clr, linewidth = 2)
+ema1_tf3_plt = plot(ema1.get(2).ema, '', ema1.get(2).clr, linewidth = 3)
+ema1_tf4_plt = plot(ema1.get(3).ema, '', ema1.get(3).clr, linewidth = 4)
+// ema2
+ema2_tf1_plt = plot(ema2.get(0).ema, '', ema2.get(0).clr, linewidth = 1)
+ema2_tf2_plt = plot(ema2.get(1).ema, '', ema2.get(1).clr, linewidth = 2)
+ema2_tf3_plt = plot(ema2.get(2).ema, '', ema2.get(2).clr, linewidth = 3)
+ema2_tf4_plt = plot(ema2.get(3).ema, '', ema2.get(3).clr, linewidth = 4)
+// ema3
+ema3_tf1_plt = plot(ema3.get(0).ema, '', ema3.get(0).clr, linewidth = 1)
+ema3_tf2_plt = plot(ema3.get(1).ema, '', ema3.get(1).clr, linewidth = 2)
+ema3_tf3_plt = plot(ema3.get(2).ema, '', ema3.get(2).clr, linewidth = 3)
+ema3_tf4_plt = plot(ema3.get(3).ema, '', ema3.get(3).clr, linewidth = 4)
+// ema4
+ema4_tf1_plt = plot(ema4.get(0).ema, '', ema4.get(0).clr, linewidth = 1)
+ema4_tf2_plt = plot(ema4.get(1).ema, '', ema4.get(1).clr, linewidth = 2)
+ema4_tf3_plt = plot(ema4.get(2).ema, '', ema4.get(2).clr, linewidth = 3)
+ema4_tf4_plt = plot(ema4.get(3).ema, '', ema4.get(3).clr, linewidth = 4)
+// ema5
+ema5_tf1_plt = plot(ema5.get(0).ema, '', ema5.get(0).clr, linewidth = 1)
+ema5_tf2_plt = plot(ema5.get(1).ema, '', ema5.get(1).clr, linewidth = 2)
+ema5_tf3_plt = plot(ema5.get(2).ema, '', ema5.get(2).clr, linewidth = 3)
+ema5_tf4_plt = plot(ema5.get(3).ema, '', ema5.get(3).clr, linewidth = 4)
+// ema6
+ema6_tf1_plt = plot(ema6.get(0).ema, '', ema6.get(0).clr, linewidth = 1)
+ema6_tf2_plt = plot(ema6.get(1).ema, '', ema6.get(1).clr, linewidth = 2)
+ema6_tf3_plt = plot(ema6.get(2).ema, '', ema6.get(2).clr, linewidth = 3)
+ema6_tf4_plt = plot(ema6.get(3).ema, '', ema6.get(3).clr, linewidth = 4)
+//-----------------------------------------------------------------------------}

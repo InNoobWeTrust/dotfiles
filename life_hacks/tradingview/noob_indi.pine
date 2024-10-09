@@ -4,6 +4,7 @@ indicator("Noob's Indicators", overlay = false, max_lines_count = 500, max_bars_
 //=============================================================================
 // Imports
 //=============================================================================
+import TradingView/ta/8
 import forbidden_gun/commonlib/4
 
 //=============================================================================
@@ -24,6 +25,12 @@ pythagorean_wisdom = 369
 banker_short_term = 257
 banker_medium_term = 458
 banker_long_term = 630
+
+fibo_236 = 0.236
+fibo_382 = 0.382
+fibo_50 = 0.5
+fibo_618 = 0.618
+fibo_786 = 0.786
 
 //=============================================================================
 // EMA lines const
@@ -57,7 +64,7 @@ ema_banker_long_term = ta.ema(close, banker_long_term)
 // Input
 //-----------------------------------------------------------------------------{
 pythagorean_grp = '► EMA Pythagorean'
-show_pythagorean = input.bool(true, inline = "Enable Pythagorean cloud", group = pythagorean_grp, title = "Show Pythagorean cloud", tooltip = "Pythagorean cloud is a long-term trend reversing indicator. Green is uptrend and red is downtrend")
+show_pythagorean = input.bool(false, inline = "Enable Pythagorean cloud", group = pythagorean_grp, title = "Show Pythagorean cloud", tooltip = "Pythagorean cloud is a long-term trend reversing indicator. Green is uptrend and red is downtrend")
 ema_material_color = input.color(color.new(color.navy, transp = 20), title = "Material stage", group = pythagorean_grp)
 ema_mind_color = input.color(color.new(color.red, transp = 20), title = "Mind stage", group = pythagorean_grp)
 ema_wisdom_color = input.color(color.new(color.maroon, transp = 20), title = "Wisdom stage", group = pythagorean_grp)
@@ -114,7 +121,7 @@ sonic_r_state() =>
         "Down"
     else
         "Undecisive"
-
+    
 sonic_r_up_down_color = switch sonic_r_state()
     'Up' => color.new(color.green, transp = 80)
     'Down' => color.new(color.red, transp = 80)
@@ -162,7 +169,7 @@ vbcb = input(true, title='Enable', group = volume_bar_grp, tooltip='Colors bars 
 vol_length = input.int(20, group = volume_bar_grp, minval=1, title='Volume SMA Length')
 
 low_rel_inline = 'Low Relative Volume'
-low_relative_vol = input.float(0.618, title = 'Low Relative Volume Threshold', inline = low_rel_inline, group = volume_bar_grp)
+low_relative_vol = input.float(fibo_618, title = 'Low Relative Volume Threshold', inline = low_rel_inline, group = volume_bar_grp)
 low_relative_color_up = input.color(color.aqua, title = '', inline = low_rel_inline, group = volume_bar_grp)
 low_relative_color_down = input.color(color.yellow, title = '', inline = low_rel_inline, group = volume_bar_grp)
 
@@ -171,12 +178,12 @@ normal_relative_color_up = input.color(color.green, title = 'Normal Relative Vol
 normal_relative_color_down = input.color(color.orange, title = '', inline = normal_rel_inline, group = volume_bar_grp)
 
 high_rel_inline = 'High Relative Volume'
-high_relative_vol = input.float(1.618, title = 'High Relative Volume Threshold', inline = high_rel_inline, group = volume_bar_grp)
+high_relative_vol = input.float(1. + fibo_618, title = 'High Relative Volume Threshold', inline = high_rel_inline, group = volume_bar_grp)
 high_relative_color_up = input.color(color.teal, title = '', inline = high_rel_inline, group = volume_bar_grp)
 high_relative_color_down = input.color(color.red, title = '', inline = high_rel_inline, group = volume_bar_grp)
 
 extreme_rel_inline = 'Extreme Relative Volume'
-extreme_relative_vol = input.float(2.618, title = 'Extreme Relative Volume Threshold', inline = extreme_rel_inline, group = volume_bar_grp)
+extreme_relative_vol = input.float(2. + fibo_618, title = 'Extreme Relative Volume Threshold', inline = extreme_rel_inline, group = volume_bar_grp)
 extreme_relative_color_up = input.color(color.navy, title = '', inline = extreme_rel_inline, group = volume_bar_grp)
 extreme_relative_color_down = input.color(color.maroon, title = '', inline = extreme_rel_inline, group = volume_bar_grp)
 //-----------------------------------------------------------------------------}
@@ -222,6 +229,10 @@ rsi_outlier_grp = '► RSI overbought and oversold'
 rsi_show_label = input(true, title='Show labels', group = rsi_outlier_grp, tooltip='Show labels at candle when RSI crossing overbought/oversold threshold')
 rsi_src = input(close, title="RSI Source", group = rsi_outlier_grp)
 rsi_sma_length = input.int(14, minval=1, title="RSI SMA length", group = rsi_outlier_grp)
+rsi_thrust_signal = input.string('average', options = ['average', 'sma'], title = 'Upthrust/Downthrust signal source', tooltip = 'RSI source for calculating upthrust/downthrust signal', group = rsi_outlier_grp)
+rsi_thrust_suppress_extreme_percent = input.float(5, minval=0, maxval=100, title = 'Thrust suppression percent', tooltip = 'Suppress extreme overbought/oversold percentage for calculating thrust/reversal signal', group = rsi_outlier_grp)
+rsi_thrust_suppress_window = input.int(1, minval=1, title = 'Thrust suppression window', tooltip = 'Window size to check and suppress extreme overbought/oversold percentage', group = rsi_outlier_grp)
+rsi_reversal_signal = input.string('sma', options = ['average', 'sma'], title = 'Reversal signal source', tooltip = 'RSI source for calculating reversal signal', group = rsi_outlier_grp)
 rsi_min_length = input(6, group = rsi_outlier_grp, title='RSI Minimum Length')
 rsi_max_length = input(48, group = rsi_outlier_grp, title='RSI Maximum Length')
 rsi_avg_inline = "RSI Average Inline"
@@ -251,15 +262,15 @@ oversell = 0
 avg = 0.
 for i = rsi_min_length to rsi_max_length
     alpha = 1/i
-
+    
     num_rma = alpha * rsi_diff + (1 - alpha) * array.get(rsi_num, k)
     den_rma = alpha * math.abs(rsi_diff) + (1 - alpha) * array.get(rsi_den, k)
     rsi = 50 * num_rma / den_rma + 50
     avg += rsi
-
+    
     overbuy := rsi > rsi_overbought_limit ? overbuy + 1 : overbuy
     oversell := rsi < rsi_oversold_limit ? oversell + 1 : oversell
-
+    
     array.set(rsi_num,k,num_rma)
     array.set(rsi_den,k,den_rma)
     k += 1
@@ -268,7 +279,7 @@ avg_rsi = avg / rsi_range
 buy_rsi_ma = 0.
 sell_rsi_ma = 0.
 
-buy_rsi_ma := nz(buy_rsi_ma[1] + overbuy / rsi_range * (avg_rsi - buy_rsi_ma[1]), avg_rsi)
+buy_rsi_ma := nz(buy_rsi_ma[1] + overbuy / rsi_range * (avg_rsi - buy_rsi_ma[1]), avg_rsi) 
 sell_rsi_ma := nz(sell_rsi_ma[1] + oversell / rsi_range * (avg_rsi - sell_rsi_ma[1]), avg_rsi)
 
 // RSI SMA
@@ -276,19 +287,38 @@ rsi_sma_up = ta.rma(math.max(ta.change(rsi_src), 0), rsi_sma_length)
 rsi_sma_down = ta.rma(-math.min(ta.change(rsi_src), 0), rsi_sma_length)
 rsi_sma_tmp = rsi_sma_down == 0 ? 100 : rsi_sma_up == 0 ? 0 : 100 - (100 / (1 + rsi_sma_up / rsi_sma_down))
 rsi_sma = ta.sma(rsi_sma_tmp, rsi_sma_length)
+
+// Suppression extreme momentum of RSI
+rsi_percent_exceed(source, len, limit) =>
+    ta.highest(source, len) > limit
+thrust_suppression = rsi_percent_exceed(overbuy / rsi_range * 100, rsi_thrust_suppress_window, rsi_thrust_suppress_extreme_percent)
+     or rsi_percent_exceed(oversell / rsi_range * 100, rsi_thrust_suppress_window, rsi_thrust_suppress_extreme_percent)
+// Upthrust
+thrust_signal = switch rsi_thrust_signal
+    "average" => avg_rsi
+    "sma" => rsi_sma
+// Reversal
+reversal_signal = switch rsi_reversal_signal
+    "average" => avg_rsi
+    "sma" => rsi_sma
+
+up_thrust = ta.crossover(thrust_signal, sell_rsi_ma)
+test_supply = ta.crossover(reversal_signal, rsi_oversold_limit)
+down_thrust = ta.crossunder(thrust_signal, buy_rsi_ma)
+test_demand = ta.crossunder(reversal_signal, rsi_overbought_limit)
 //-----------------------------------------------------------------------------}
 
 // Plot
 //-----------------------------------------------------------------------------{
 
 // MTF RSI
-var tb = table.new(position.top_right,2,2)
+var rsi_tb = table.new(position.top_right,2,2)
 if barstate.islast
-    table.cell(tb,0,0,'Overbought',text_color=color.gray,bgcolor=na)
-    table.cell(tb,1,0,'Oversold',text_color=color.gray,bgcolor=na)
+    table.cell(rsi_tb,0,0,'Overbought',text_color=color.gray,bgcolor=na)
+    table.cell(rsi_tb,1,0,'Oversold',text_color=color.gray,bgcolor=na)
 
-    table.cell(tb,0,1, str.tostring(overbuy / rsi_range * 100,'#.##')+' %',text_color=#26a69a,bgcolor=color.new(#26a69a,80))
-    table.cell(tb,1,1, str.tostring(oversell / rsi_range * 100,'#.##')+' %',text_color=#ef5350,bgcolor=color.new(#ef5350,80))
+    table.cell(rsi_tb,0,1, str.tostring(overbuy / rsi_range * 100,'#.##')+' %',text_color=#26a69a,bgcolor=color.new(#26a69a,80))
+    table.cell(rsi_tb,1,1, str.tostring(oversell / rsi_range * 100,'#.##')+' %',text_color=#ef5350,bgcolor=color.new(#ef5350,80))
 //----
 css = color.from_gradient(avg_rsi,sell_rsi_ma,buy_rsi_ma,rsi_avg_dn_color,rsi_avg_up_color)
 plot(avg_rsi,'Average Multi Length RSI',color=css, force_overlay = false)
@@ -310,12 +340,18 @@ hline(rsi_oversold_limit,color=color.new(color.gray, 70))
 
 plot(rsi_sma, "RSI-based MA", color=color.yellow, force_overlay = false)
 
-// Overbought and oversold labels
+// Upthrust labels
+plotshape(rsi_show_label and not thrust_suppression and up_thrust and not test_supply ? low : na, "RSI upthrust", shape.labelup, location.belowbar, color(na), text = '🛍️', textcolor = color.green, size = size.tiny, force_overlay = true)
+// Downthrust labels 
+plotshape(rsi_show_label and not thrust_suppression and down_thrust and not test_demand ? high : na, "RSI downthrust", shape.labeldown, location.abovebar, color(na), text = '💣', textcolor = color.red, size = size.tiny, force_overlay = true)
+// Test supply (oversold) labels
+plotshape(rsi_show_label and test_supply ? low : na, "RSI test supply", shape.labelup, location.belowbar, color(na), text = '🚀', textcolor = color.green, size = size.tiny, force_overlay = true)
+// Test demand (overbought) labels
+plotshape(rsi_show_label and test_demand ? high : na, "RSI test demand", shape.labeldown, location.abovebar, color(na), text = '💥', textcolor = color.red, size = size.tiny, force_overlay = true)
+// Overbought labels
 plotshape(rsi_show_label and ta.crossunder(avg_rsi, rsi_oversold_limit) ? low : na, "RSI Crossunder Oversold", shape.labelup, location.belowbar, color(na), 0 , text = '🚨', textcolor = color.green, size = size.tiny, force_overlay = true)
-plotshape(rsi_show_label and ta.crossover(avg_rsi, rsi_oversold_limit) ? low : na, "RSI Crossover Oversold", shape.arrowup, location.belowbar, color(na), 0 , text = '⬆', textcolor = color.green, size = size.tiny, force_overlay = true)
-
+// Oversold labels
 plotshape(rsi_show_label and ta.crossover(avg_rsi, rsi_overbought_limit) ? high : na, "RSI Crossover Overbought", shape.labeldown, location.abovebar, color(na), 0 , text = '🚨', textcolor = color.red, size = size.tiny, force_overlay = true)
-plotshape(rsi_show_label and ta.crossunder(avg_rsi, rsi_overbought_limit) ? high : na, "RSI Crossunder Overbought", shape.arrowdown, location.abovebar, color(na), 0 , text = '⬇', textcolor = color.red, size = size.tiny, force_overlay = true)
 //-----------------------------------------------------------------------------}
 
 //=============================================================================
@@ -326,9 +362,10 @@ plotshape(rsi_show_label and ta.crossunder(avg_rsi, rsi_overbought_limit) ? high
 //-----------------------------------------------------------------------------{
 biased_candle_grp = "► Biased candle"
 biased_candle_enabled = input.bool(true, title = "Enable", group = biased_candle_grp)
-biased_candle_wick_percent = input.float(0.382, minval = 0., maxval = 1., title = "Min wick to consider biased candle", group = biased_candle_grp)
-biased_candle_body_percent = input.float(0.0236, minval = 0., maxval = 1., title = "Min candle body to consider biased candle", group = biased_candle_grp)
-biased_candle_skew_percent = input.float(0.5, minval=0.5, maxval=1, title = "Min skew threshold to consider biased candle", group = biased_candle_grp)
+biased_candle_label_size = input.string("small", options = ["auto","huge","large", "normal", "small", "tiny"], group = biased_candle_grp)
+biased_candle_wick_percent = input.float(fibo_382, minval = 0., maxval = 1., title = "Min wick to consider biased candle", group = biased_candle_grp)
+biased_candle_body_percent = input.float(fibo_236 / 10., minval = 0., maxval = 1., title = "Min candle body to consider biased candle", group = biased_candle_grp)
+biased_candle_skew_percent = input.float(fibo_618, minval=0.5, maxval=1, title = "Min skew threshold to consider biased candle", group = biased_candle_grp)
 biased_candle_vol_threshold = input.float(1.05, minval=1., title = "Volume threshold", group = biased_candle_grp)
 biased_candle_filter_rsi = input.bool(true, title = "Filtering overbought/oversold zone", group = biased_candle_grp)
 
@@ -356,7 +393,57 @@ is_biased_candle = is_wick_exceeded and is_body_exceeded and is_skewness_exceede
 offset = math.abs(ta.change(close))
 label_y = bar_wick > 0. ? low - offset : high + offset
 
-if barstate.isconfirmed and biased_candle_enabled and is_biased_candle
-    label.new(bar_index, label_y, str.tostring(math.round(bar_wick * 100.)) + '%,' + str.tostring(math.round(bar_body * 100.)) + '%', style = label.style_text_outline, size = size.tiny, color = bar_wick > 0. ? color.green : color.red, force_overlay =  true)
-    alert("[{{ticker}} - {{interval}}][{{timenow}}] Biased candle <{{close}},{{volume}}>, wick " + str.tostring(math.round(bar_wick * 100.)) + '%, body ' + str.tostring(math.round(bar_body * 100.)) + '%', alert.freq_once_per_bar_close)
+fmt_bias_percent(bool label = false) =>
+    if label
+        'wick: ' + str.tostring(bar_wick * 100., "#.#") + '%, body: ' + str.tostring(bar_body * 100., "#.#") + '%, skewness: ' + str.tostring(bar_skewness * 100., "#.#") + "%"
+    else
+        str.tostring(bar_skewness * 100., "#.#") + '%,'
+
+if biased_candle_enabled and is_biased_candle
+    label_size = switch biased_candle_label_size
+        "auto" => size.auto
+        "huge" => size.huge
+        "large" => size.large
+        "normal" => size.normal
+        "small" => size.small
+        "tiny" => size.tiny
+    label.new(bar_index, label_y, fmt_bias_percent(), style = label.style_text_outline, size = label_size, color = bar_skewness > 0. ? color.green : color.red, force_overlay =  true)
+    fmt_alert_msg = str.format("[{0} - {1}][{2}] Biased candle <{3},{4}> {5}", syminfo.ticker, timeframe.period, timenow, close, volume, fmt_bias_percent(true))
+    
+    if barstate.islast and barstate.isconfirmed
+        alert(fmt_alert_msg)
+        log.info(fmt_alert_msg)
+//-----------------------------------------------------------------------------}
+
+//=============================================================================
+// ATR window
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+atr_window_grp = "► ATR window"
+atr_window_enabled = input.bool(false, title = "Enable", group = atr_window_grp)
+atr_length = input.int(elliott_decisive_wave, minval=1, title = "ATR length", group = atr_window_grp)
+atr_window_size = input.int(5, minval=2, title = "Window size in bars", group = atr_window_grp)
+atr_window_gradient_inline = "ATR gradients"
+atr_window_gradient_start = input.color(color.new(color.green, transp = 80), title = "ATR gradients", group = atr_window_grp, inline = atr_window_gradient_inline)
+atr_window_gradient_end = input.color(color.new(color.red, transp = 80), title = "", group = atr_window_grp, inline = atr_window_gradient_inline)
+//-----------------------------------------------------------------------------}
+
+// Calculation
+//-----------------------------------------------------------------------------{
+atr_val = ta.atr(atr_length)
+atr_lower = close - atr_val
+atr_upper = close + atr_val
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+if atr_window_enabled and not barstate.isconfirmed
+    extend_time = time + (time - time[1]) * atr_window_size
+    atr_lower_plt = line.new(time, atr_lower[1], extend_time, atr_lower[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_start, force_overlay = true)
+    prev_close_plt = line.new(time, close[1], extend_time, close[1], xloc = xloc.bar_time, style = line.style_dashed, color = color(na), force_overlay = true)
+    atr_upper_plt = line.new(time, atr_upper[1], extend_time, atr_upper[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_end, force_overlay = true)
+    linefill.new(atr_lower_plt, prev_close_plt, atr_window_gradient_start)
+    linefill.new(atr_upper_plt, prev_close_plt, atr_window_gradient_end)
 //-----------------------------------------------------------------------------}

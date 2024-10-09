@@ -1,0 +1,97 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © InNoobWeTrust
+
+//@version=5
+indicator("Noob's MTF EMA clouds", overlay=true)
+import TradingView/ta/8
+
+//=============================================================================
+// EMA clouds indicator
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+ema_src = input.source(close, title = "EMA source")
+
+ema_fast_length = input.int(34, title = "EMA fast")
+ema_slow_length = input.int(89, title = "EMA slow")
+
+tf_inline = "Timeframes"
+tf1 = input.timeframe("1", title = "Timeframes", inline = tf_inline)
+tf2 = input.timeframe("5", title = "", inline = tf_inline)
+tf3 = input.timeframe("30", title = "", inline = tf_inline)
+
+ema_gradients_inline = "EMA gradient"
+ema_gradients_start = input.color(color.blue, title = "EMA gradient", inline = ema_gradients_inline)
+ema_gradients_end = input.color(color.orange, title = "", inline = ema_gradients_inline)
+
+cloud_up_gradients_inline = "Cloud upward gradient"
+cloud_up_gradients_start = input.color(color.aqua, title = "Cloud upward gradient", inline = cloud_up_gradients_inline)
+cloud_up_gradients_end = input.color(color.teal, title = "", inline = cloud_up_gradients_inline)
+cloud_down_gradients_inline = "Cloud downward gradient"
+cloud_down_gradients_start = input.color(color.orange, title = "Cloud downward gradient", inline = cloud_down_gradients_inline)
+cloud_down_gradients_end = input.color(color.maroon, title = "", inline = cloud_down_gradients_inline)
+cloud_transp = input.int(50, minval=0, maxval=100, title = "Cloud's tranparency")
+//-----------------------------------------------------------------------------}
+
+// Calculation
+//-----------------------------------------------------------------------------{
+type EmaCloud
+    float ema_fast
+    float ema_slow
+    color fast_clr
+    color slow_clr
+
+ema_tf(string tf, int len) =>
+    request.security(syminfo.tickerid, tf, ta.ema(ema_src, len), barmerge.gaps_on)
+
+calc_cloud(int gradient_value, string tf, simple int len_fast, simple int len_slow) =>
+    ema_fast = ema_tf(tf, len_fast)
+    ema_slow = ema_tf(tf, len_slow)
+    diff = ema_fast - ema_slow
+    fast_clr = color.new(color.from_gradient(0, 0, 1, ema_gradients_start, ema_gradients_end), transp = cloud_transp)
+    slow_clr = color.new(color.from_gradient(1, 0, 1, ema_gradients_start, ema_gradients_end), transp = cloud_transp)
+    EmaCloud.new(ema_fast, ema_slow, fast_clr, slow_clr)
+
+// clouds
+EmaCloud[] clouds = array.new<EmaCloud>()
+clouds.push(calc_cloud(0, tf1, ema_fast_length, ema_slow_length))
+clouds.push(calc_cloud(1, tf2, ema_fast_length, ema_slow_length))
+clouds.push(calc_cloud(2, tf3, ema_fast_length, ema_slow_length))
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+// c1plt1 = plot(clouds.get(0).ema_fast, color = clouds.get(0).fast_clr, style = plot.style_line, force_overlay =  true)
+c1plt2 = plot(clouds.get(0).ema_slow, color = clouds.get(0).slow_clr, style = plot.style_line, force_overlay =  true)
+
+// c2plt1 = plot(clouds.get(1).ema_fast, color = clouds.get(1).fast_clr, style = plot.style_line, force_overlay =  true)
+c2plt2 = plot(clouds.get(1).ema_slow, color = clouds.get(1).slow_clr, style = plot.style_line, force_overlay =  true)
+
+// c3plt1 = plot(clouds.get(2).ema_fast, color = clouds.get(2).fast_clr, style = plot.style_line, force_overlay =  true)
+c3plt2 = plot(clouds.get(2).ema_slow, color = clouds.get(2).slow_clr, style = plot.style_line, force_overlay =  true)
+
+// Clouds over clouds
+string[] cloud_phases = array.new<string>()
+color[] cloud_clrs = array.new<color>()
+phase(int idx) =>
+    if close > clouds.get(idx).ema_fast and clouds.get(idx).ema_fast > clouds.get(idx).ema_slow and clouds.get(idx + 1).ema_fast > clouds.get(idx + 1).ema_slow and clouds.get(idx).ema_slow > clouds.get(idx + 1).ema_slow
+        'Up'
+    else if close < clouds.get(idx).ema_fast and clouds.get(idx).ema_fast < clouds.get(idx).ema_slow and clouds.get(idx + 1).ema_fast < clouds.get(idx + 1).ema_slow and clouds.get(idx).ema_slow < clouds.get(idx + 1).ema_slow
+        'Down'
+    else
+        'Tangled'
+
+cloud_clr(int idx) =>
+    switch phase(idx)
+        "Up" => color.new(color.from_gradient(idx, 0, 1, cloud_up_gradients_start, cloud_up_gradients_end), transp = cloud_transp)
+        "Down" => color.new(color.from_gradient(idx, 0, 1, cloud_down_gradients_start, cloud_down_gradients_end), transp = cloud_transp)
+        "Tangled" => na
+
+cloud_phases.push(phase(0))
+cloud_clrs.push(cloud_clr(0))
+cloud_phases.push(phase(1))
+cloud_clrs.push(cloud_clr(1))
+fill(c1plt2, c2plt2, color = cloud_clrs.get(0))
+fill(c2plt2, c3plt2, color = cloud_clrs.get(1))
+//-----------------------------------------------------------------------------}
