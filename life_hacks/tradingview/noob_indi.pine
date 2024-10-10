@@ -368,6 +368,11 @@ biased_candle_body_percent = input.float(fibo_236 / 10., minval = 0., maxval = 1
 biased_candle_skew_percent = input.float(fibo_618, minval=0.5, maxval=1, title = "Min skew threshold to consider biased candle", group = biased_candle_grp)
 biased_candle_vol_threshold = input.float(1.05, minval=1., title = "Volume threshold", group = biased_candle_grp)
 biased_candle_filter_rsi = input.bool(true, title = "Filtering overbought/oversold zone", group = biased_candle_grp)
+biased_candle_gap_inline = "Biased candle gap"
+biased_candle_show_gap = input.bool(true, 'Show value gap', group = biased_candle_grp, inline = biased_candle_gap_inline)
+biased_candle_gap_len = input.int(elliott_secondary_wave, '', group = biased_candle_grp, inline = biased_candle_gap_inline)
+biased_candle_gap_up_color = input.color(color.new(color.green, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_inline)
+biased_candle_gap_down_color = input.color(color.new(color.red, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_inline)
 
 // Calculation
 //-----------------------------------------------------------------------------{
@@ -410,9 +415,20 @@ if biased_candle_enabled and is_biased_candle
     label.new(bar_index, label_y, fmt_bias_percent(), style = label.style_text_outline, size = label_size, color = bar_skewness > 0. ? color.green : color.red, force_overlay =  true)
     fmt_alert_msg = str.format("[{0} - {1}][{2}] Biased candle <{3},{4}> {5}", syminfo.ticker, timeframe.period, timenow, close, volume, fmt_bias_percent(true))
     
+    if biased_candle_show_gap
+        gap_color = bar_skewness > 0 ? biased_candle_gap_up_color : biased_candle_gap_down_color
+        time_extend = time + (time - time[1]) * biased_candle_gap_len
+        l1_price = bar_skewness > 0 ? low : high
+        l2_price = bar_wick > 0 ? low + bar_wick * (high - low) : high + bar_wick * (high - low)
+        l1 = line.new(time, l1_price, time_extend, l1_price, xloc = xloc.bar_time, style = line.style_dotted, color = gap_color, force_overlay = true)
+        l2 = line.new(time, l2_price, time_extend, l2_price, xloc = xloc.bar_time, style = line.style_dotted, color = gap_color, force_overlay = true)
+        linefill.new(l1, l2, gap_color)
+        log.info('plotted value gap')
+
     if barstate.islast and barstate.isconfirmed
         alert(fmt_alert_msg)
         log.info(fmt_alert_msg)
+
 //-----------------------------------------------------------------------------}
 
 //=============================================================================
@@ -426,8 +442,8 @@ atr_window_enabled = input.bool(false, title = "Enable", group = atr_window_grp)
 atr_length = input.int(elliott_decisive_wave, minval=1, title = "ATR length", group = atr_window_grp)
 atr_window_size = input.int(5, minval=2, title = "Window size in bars", group = atr_window_grp)
 atr_window_gradient_inline = "ATR gradients"
-atr_window_gradient_start = input.color(color.new(color.green, transp = 80), title = "ATR gradients", group = atr_window_grp, inline = atr_window_gradient_inline)
-atr_window_gradient_end = input.color(color.new(color.red, transp = 80), title = "", group = atr_window_grp, inline = atr_window_gradient_inline)
+atr_window_gradient_start = input.color(color.new(color.green, transp = 70), title = "ATR gradients", group = atr_window_grp, inline = atr_window_gradient_inline)
+atr_window_gradient_end = input.color(color.new(color.red, transp = 70), title = "", group = atr_window_grp, inline = atr_window_gradient_inline)
 //-----------------------------------------------------------------------------}
 
 // Calculation
