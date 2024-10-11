@@ -56,37 +56,6 @@ ema_banker_short_term = ta.ema(close, banker_short_term)
 ema_banker_medium_term = ta.ema(close, banker_medium_term)
 ema_banker_long_term = ta.ema(close, banker_long_term)
 
-
-//=============================================================================
-// EMA Pythagorean
-//=============================================================================
-
-// Input
-//-----------------------------------------------------------------------------{
-pythagorean_grp = '► EMA Pythagorean'
-show_pythagorean = input.bool(false, inline = "Enable Pythagorean cloud", group = pythagorean_grp, title = "Show Pythagorean cloud", tooltip = "Pythagorean cloud is a long-term trend reversing indicator. Green is uptrend and red is downtrend")
-ema_material_color = input.color(color.new(color.navy, transp = 20), title = "Material stage", group = pythagorean_grp)
-ema_mind_color = input.color(color.new(color.red, transp = 20), title = "Mind stage", group = pythagorean_grp)
-ema_wisdom_color = input.color(color.new(color.maroon, transp = 20), title = "Wisdom stage", group = pythagorean_grp)
-pythagorean_up_color = input.color(color.new(color.aqua, transp = 95), title = "Pythagorean Cloud", inline = "Pythagorean", group = pythagorean_grp)
-pythagorean_down_color = input.color(color.new(color.orange, transp = 95), title = "", inline = "Pythagorean", group = pythagorean_grp)
-//-----------------------------------------------------------------------------}
-
-// Plot
-//-----------------------------------------------------------------------------{
-pythagorean_material_plot = plot(show_pythagorean ? ema_pythagorean_material : na, title = "Pythagorean material stage", color = ema_material_color, linewidth = 1, style = plot.style_line, force_overlay = true)
-pythagorean_mind_plot = plot(show_pythagorean ? ema_pythagorean_mind : na, title = "Pythagorean mind state", color = ema_mind_color, linewidth = 2, style = plot.style_line, force_overlay = true)
-pythagorean_wisdom_plot = plot(show_pythagorean ? ema_pythagorean_wisdom : na, title = "Pythagorean wisdom state", color = ema_wisdom_color, linewidth = 1, style = plot.style_line, force_overlay = true)
-pythagorean_up_down_state = ema_pythagorean_material > ema_pythagorean_wisdom
-pythagorean_up_down_color = pythagorean_up_down_state ? pythagorean_up_color : pythagorean_down_color
-fill(pythagorean_material_plot, pythagorean_wisdom_plot, pythagorean_up_down_color)
-
-var pythagorean_tb = table.new(position.bottom_right,1,2)
-if barstate.islast
-    table.cell(pythagorean_tb,0,0,'Pythagorean Trend',text_color=color.gray,bgcolor=na)
-    table.cell(pythagorean_tb,0,1, pythagorean_up_down_state ? 'Upward' : 'Downward',text_color=#26a69a,bgcolor=color.new(pythagorean_up_down_color,80))
-//-----------------------------------------------------------------------------}
-
 //=============================================================================
 // Sonic R
 //=============================================================================
@@ -133,7 +102,6 @@ if barstate.islast
     table.cell(sonic_r_tb,0,1, sonic_r_state(), text_color=#26a69a, bgcolor=color.new(sonic_r_up_down_color, 80))
 //-----------------------------------------------------------------------------}
 
-
 //=============================================================================
 // Banker
 //=============================================================================
@@ -156,6 +124,35 @@ plot(show_banker ? ema_banker_medium_term : na, title = "Banker medium term", co
 plot(show_banker ? ema_banker_long_term : na, title = "Banker long term", color = ema_banker_long_term_color, linewidth = 1, style = plot.style_circles, force_overlay = true)
 //-----------------------------------------------------------------------------}
 
+//=============================================================================
+// EMA Pythagorean
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+pythagorean_grp = '► EMA Pythagorean'
+show_pythagorean = input.bool(false, inline = "Enable Pythagorean cloud", group = pythagorean_grp, title = "Show Pythagorean cloud", tooltip = "Pythagorean cloud is a long-term trend reversing indicator. Green is uptrend and red is downtrend")
+ema_material_color = input.color(color.new(color.navy, transp = 20), title = "Material stage", group = pythagorean_grp)
+ema_mind_color = input.color(color.new(color.red, transp = 20), title = "Mind stage", group = pythagorean_grp)
+ema_wisdom_color = input.color(color.new(color.maroon, transp = 20), title = "Wisdom stage", group = pythagorean_grp)
+pythagorean_up_color = input.color(color.new(color.aqua, transp = 95), title = "Pythagorean Cloud", inline = "Pythagorean", group = pythagorean_grp)
+pythagorean_down_color = input.color(color.new(color.orange, transp = 95), title = "", inline = "Pythagorean", group = pythagorean_grp)
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+pythagorean_material_plot = plot(show_pythagorean ? ema_pythagorean_material : na, title = "Pythagorean material stage", color = ema_material_color, linewidth = 1, style = plot.style_line, force_overlay = true)
+pythagorean_mind_plot = plot(show_pythagorean ? ema_pythagorean_mind : na, title = "Pythagorean mind state", color = ema_mind_color, linewidth = 2, style = plot.style_line, force_overlay = true)
+pythagorean_wisdom_plot = plot(show_pythagorean ? ema_pythagorean_wisdom : na, title = "Pythagorean wisdom state", color = ema_wisdom_color, linewidth = 1, style = plot.style_line, force_overlay = true)
+pythagorean_up_down_state = ema_pythagorean_material > ema_pythagorean_wisdom
+pythagorean_up_down_color = pythagorean_up_down_state ? pythagorean_up_color : pythagorean_down_color
+fill(pythagorean_material_plot, pythagorean_wisdom_plot, pythagorean_up_down_color)
+
+var pythagorean_tb = table.new(position.bottom_right,1,2)
+if barstate.islast
+    table.cell(pythagorean_tb,0,0,'Pythagorean Trend',text_color=color.gray,bgcolor=na)
+    table.cell(pythagorean_tb,0,1, pythagorean_up_down_state ? 'Upward' : 'Downward',text_color=#26a69a,bgcolor=color.new(pythagorean_up_down_color,80))
+//-----------------------------------------------------------------------------}
 
 //=============================================================================
 // Abnormal volume candle color
@@ -165,27 +162,20 @@ plot(show_banker ? ema_banker_long_term : na, title = "Banker long term", color 
 //-----------------------------------------------------------------------------{
 volume_bar_grp = '► Volume Weighted Colored Bars'
 
-vbcb = input(true, title='Enable', group = volume_bar_grp, tooltip='Colors bars based on the bar\'s volume relative to volume moving average')
-vol_length = input.int(20, group = volume_bar_grp, minval=1, title='Volume SMA Length')
+volume_bar_enable = input(true, title='Enable', group = volume_bar_grp, tooltip='Colors bars based on the bar\'s volume relative to volume moving average')
+volume_bar_length = input.int(20, title='Volume SMA Length', group = volume_bar_grp, minval=1)
 
-low_rel_inline = 'Low Relative Volume'
-low_relative_vol = input.float(fibo_618, title = 'Low Relative Volume Threshold', inline = low_rel_inline, group = volume_bar_grp)
-low_relative_color_up = input.color(color.aqua, title = '', inline = low_rel_inline, group = volume_bar_grp)
-low_relative_color_down = input.color(color.yellow, title = '', inline = low_rel_inline, group = volume_bar_grp)
+volume_bar_theshold_inline = "Relative thresholds"
+volume_bar_theshold_low = input.float(fibo_618, volume_bar_theshold_inline, group = volume_bar_grp, inline = volume_bar_theshold_inline)
+volume_bar_theshold_extreme = input.float(2. + fibo_618, '', group = volume_bar_grp, inline = volume_bar_theshold_inline)
 
-normal_rel_inline = 'Normal Relative Volume'
-normal_relative_color_up = input.color(color.green, title = 'Normal Relative Volume', inline = normal_rel_inline, group = volume_bar_grp)
-normal_relative_color_down = input.color(color.orange, title = '', inline = normal_rel_inline, group = volume_bar_grp)
+volume_bar_up_gradient_inline = "Volume up gradient color"
+volume_bar_up_gradient_start = input.color(color.aqua, volume_bar_up_gradient_inline, volume_bar_up_gradient_inline, group = volume_bar_grp, inline = volume_bar_up_gradient_inline)
+volume_bar_up_gradient_end = input.color(color.navy, '', volume_bar_up_gradient_inline, group = volume_bar_grp, inline = volume_bar_up_gradient_inline)
 
-high_rel_inline = 'High Relative Volume'
-high_relative_vol = input.float(1. + fibo_618, title = 'High Relative Volume Threshold', inline = high_rel_inline, group = volume_bar_grp)
-high_relative_color_up = input.color(color.teal, title = '', inline = high_rel_inline, group = volume_bar_grp)
-high_relative_color_down = input.color(color.red, title = '', inline = high_rel_inline, group = volume_bar_grp)
-
-extreme_rel_inline = 'Extreme Relative Volume'
-extreme_relative_vol = input.float(2. + fibo_618, title = 'Extreme Relative Volume Threshold', inline = extreme_rel_inline, group = volume_bar_grp)
-extreme_relative_color_up = input.color(color.navy, title = '', inline = extreme_rel_inline, group = volume_bar_grp)
-extreme_relative_color_down = input.color(color.maroon, title = '', inline = extreme_rel_inline, group = volume_bar_grp)
+volume_bar_down_gradient_inline = "Volume down gradient color"
+volume_bar_down_gradient_start = input.color(color.yellow, volume_bar_down_gradient_inline, volume_bar_down_gradient_inline, group = volume_bar_grp, inline = volume_bar_down_gradient_inline)
+volume_bar_down_gradient_end = input.color(color.maroon, '', volume_bar_down_gradient_inline, group = volume_bar_grp, inline = volume_bar_down_gradient_inline)
 //-----------------------------------------------------------------------------}
 
 // Calculation
@@ -193,30 +183,18 @@ extreme_relative_color_down = input.color(color.maroon, title = '', inline = ext
 nzVolume = nz(volume)
 
 // Volume Histogram
-vAvg  = ta.sma(nzVolume, vol_length)
-vol_category() =>
-    if nzVolume >= vAvg * extreme_relative_vol
-        'Extreme'
-    else if nzVolume >= vAvg * high_relative_vol
-        'High'
-    else if nzVolume <= vAvg * low_relative_vol
-        'Low'
-    else
-        'Normal'
+vol_sma  = ta.sma(nzVolume, volume_bar_length)
+
+vol_color() =>
+    color_gradient_start = close > open ? volume_bar_up_gradient_start : volume_bar_down_gradient_start
+    color_gradient_end = close > open ? volume_bar_up_gradient_end : volume_bar_down_gradient_end
+    color.from_gradient(nzVolume, vol_sma * volume_bar_theshold_low, vol_sma * volume_bar_theshold_extreme, color_gradient_start, color_gradient_end)
 //-----------------------------------------------------------------------------}
 
 // Plot
 //-----------------------------------------------------------------------------{
-// Volume Based Colored Bars by KIVANÇ ÖZBİLGİÇ
-color b_color = na
-if vbcb
-    b_color := switch vol_category()
-        "Extreme" => close > open ? extreme_relative_color_up : extreme_relative_color_down
-        "High" => close > open ? high_relative_color_up : high_relative_color_down
-        "Normal" => close > open ? normal_relative_color_up : normal_relative_color_down
-        "Low" => close > open ? low_relative_color_up: low_relative_color_down
-
-barcolor(b_color, title='Volume Weighted Colored Bars', editable=false)
+// Volume Based Colored Bars
+barcolor(volume_bar_enable ? vol_color() : na, title='Volume Weighted Colored Bars', editable=false)
 //-----------------------------------------------------------------------------}
 
 //=============================================================================
@@ -362,17 +340,26 @@ plotshape(rsi_show_label and ta.crossover(avg_rsi, rsi_overbought_limit) ? high 
 //-----------------------------------------------------------------------------{
 biased_candle_grp = "► Biased candle"
 biased_candle_enabled = input.bool(true, title = "Enable", group = biased_candle_grp)
-biased_candle_label_size = input.string("small", options = ["auto","huge","large", "normal", "small", "tiny"], group = biased_candle_grp)
-biased_candle_wick_percent = input.float(fibo_382, minval = 0., maxval = 1., title = "Min wick to consider biased candle", group = biased_candle_grp)
-biased_candle_body_percent = input.float(fibo_236 / 10., minval = 0., maxval = 1., title = "Min candle body to consider biased candle", group = biased_candle_grp)
-biased_candle_skew_percent = input.float(fibo_618, minval=0.5, maxval=1, title = "Min skew threshold to consider biased candle", group = biased_candle_grp)
-biased_candle_vol_threshold = input.float(1.05, minval=1., title = "Volume threshold", group = biased_candle_grp)
-biased_candle_filter_rsi = input.bool(true, title = "Filtering overbought/oversold zone", group = biased_candle_grp)
-biased_candle_gap_inline = "Biased candle gap"
-biased_candle_show_gap = input.bool(true, 'Show value gap', group = biased_candle_grp, inline = biased_candle_gap_inline)
+biased_candle_label_size = input.string("small", options = ["auto","huge","large", "normal", "small", "tiny"], title='Label size', group = biased_candle_grp)
+
+biased_candle_wick_percent = input.float(fibo_382, minval = 0., maxval = 1., title = "Min wick %", group = biased_candle_grp)
+biased_candle_body_percent = input.float(fibo_236 / 10., minval = 0., maxval = 1., title = "Min body %", group = biased_candle_grp)
+biased_candle_skew_percent = input.float(fibo_618, minval=0.5, maxval=1, title = "Min skew % (close price to wick's end)", group = biased_candle_grp)
+
+biased_candle_vol_threshold = input.float(1.05, minval=1., title = "Relative volume threshold % (0 to disable)", group = biased_candle_grp)
+biased_candle_filter_rsi = input.bool(true, title = "Only overbought/oversold zone", group = biased_candle_grp)
+
+biased_candle_gap_inline = "Show value gap"
+biased_candle_show_gap = input.bool(true, biased_candle_gap_inline, group = biased_candle_grp, inline = biased_candle_gap_inline)
 biased_candle_gap_len = input.int(elliott_secondary_wave, '', group = biased_candle_grp, inline = biased_candle_gap_inline)
 biased_candle_gap_up_color = input.color(color.new(color.green, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_inline)
 biased_candle_gap_down_color = input.color(color.new(color.red, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_inline)
+
+biased_candle_tp_inline = "Show TP estimation"
+biased_candle_show_tp = input.bool(true, biased_candle_tp_inline, group = biased_candle_grp, inline = biased_candle_tp_inline)
+biased_candle_tp_len = input.int(elliott_decisive_wave, '', minval=1, group = biased_candle_grp, inline = biased_candle_tp_inline)
+biased_candle_tp_color = input.color(color.new(color.silver, transp = 50), '', group = biased_candle_grp, inline=biased_candle_tp_inline)
+biased_candle_tp_rr = input.float(1. + fibo_618, 'Spread multiplier (TP)', group = biased_candle_grp, inline=biased_candle_tp_inline)
 
 // Calculation
 //-----------------------------------------------------------------------------{
@@ -384,7 +371,7 @@ is_wick_exceeded = math.abs(bar_wick) > biased_candle_wick_percent
 is_body_exceeded = math.abs(bar_body) > biased_candle_body_percent
 is_skewness_exceeded = math.abs(bar_skewness) > biased_candle_skew_percent
 
-is_abnormal_vol = nzVolume > vAvg * biased_candle_vol_threshold
+is_abnormal_vol = nzVolume > vol_sma * biased_candle_vol_threshold
 
 is_likely_oversold_reversal = biased_candle_filter_rsi ? (oversell / rsi_range) > 0. and bar_wick > 0. : true
 is_likely_overbougth_reversal = biased_candle_filter_rsi ? (overbuy / rsi_range) > 0. and bar_wick < 0. : true
@@ -414,16 +401,20 @@ if biased_candle_enabled and is_biased_candle
         "tiny" => size.tiny
     label.new(bar_index, label_y, fmt_bias_percent(), style = label.style_text_outline, size = label_size, color = bar_skewness > 0. ? color.green : color.red, force_overlay =  true)
     fmt_alert_msg = str.format("[{0} - {1}][{2}] Biased candle <{3},{4}> {5}", syminfo.ticker, timeframe.period, timenow, close, volume, fmt_bias_percent(true))
-    
+
     if biased_candle_show_gap
-        gap_color = bar_skewness > 0 ? biased_candle_gap_up_color : biased_candle_gap_down_color
         time_extend = time + (time - time[1]) * biased_candle_gap_len
+        gap_color = bar_skewness > 0 ? biased_candle_gap_up_color : biased_candle_gap_down_color
         l1_price = bar_skewness > 0 ? low : high
         l2_price = bar_wick > 0 ? low + bar_wick * (high - low) : high + bar_wick * (high - low)
         l1 = line.new(time, l1_price, time_extend, l1_price, xloc = xloc.bar_time, style = line.style_dotted, color = gap_color, force_overlay = true)
         l2 = line.new(time, l2_price, time_extend, l2_price, xloc = xloc.bar_time, style = line.style_dotted, color = gap_color, force_overlay = true)
         linefill.new(l1, l2, gap_color)
-        log.info('plotted value gap')
+
+    if biased_candle_show_tp
+        time_extend = time + (time - time[1]) * biased_candle_tp_len
+        tp_price = bar_skewness > 0 ? close + (high - low) * biased_candle_tp_rr : close - (high - low) * biased_candle_tp_rr
+        tp = line.new(time, tp_price, time_extend, tp_price, xloc = xloc.bar_time, style = line.style_solid, color = biased_candle_tp_color, width = 2, force_overlay = true)
 
     if barstate.islast and barstate.isconfirmed
         alert(fmt_alert_msg)
@@ -438,7 +429,7 @@ if biased_candle_enabled and is_biased_candle
 // Input
 //-----------------------------------------------------------------------------{
 atr_window_grp = "► ATR window"
-atr_window_enabled = input.bool(false, title = "Enable", group = atr_window_grp)
+atr_window_enabled = input.bool(true, title = "Enable", group = atr_window_grp)
 atr_length = input.int(elliott_decisive_wave, minval=1, title = "ATR length", group = atr_window_grp)
 atr_window_size = input.int(5, minval=2, title = "Window size in bars", group = atr_window_grp)
 atr_window_gradient_inline = "ATR gradients"
