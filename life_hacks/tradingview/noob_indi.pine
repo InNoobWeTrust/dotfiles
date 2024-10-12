@@ -358,8 +358,10 @@ biased_candle_gap_down_color = input.color(color.new(color.red, transp = 80), ''
 biased_candle_tp_inline = "Show TP estimation"
 biased_candle_show_tp = input.bool(true, biased_candle_tp_inline, group = biased_candle_grp, inline = biased_candle_tp_inline)
 biased_candle_tp_len = input.int(elliott_decisive_wave, '', minval=1, group = biased_candle_grp, inline = biased_candle_tp_inline)
-biased_candle_tp_color = input.color(color.new(color.silver, transp = 50), '', group = biased_candle_grp, inline=biased_candle_tp_inline)
-biased_candle_tp_rr = input.float(1. + fibo_618, 'Spread multiplier (TP)', group = biased_candle_grp, inline=biased_candle_tp_inline)
+biased_candle_tp_color = input.color(color.new(color.silver, transp = 80), '', group = biased_candle_grp, inline=biased_candle_tp_inline)
+biased_candle_tp_mult_inline = "Spread multipliers (TP)"
+biased_candle_tp_mul1 = input.float(1., biased_candle_tp_mult_inline, group = biased_candle_grp, inline=biased_candle_tp_mult_inline)
+biased_candle_tp_mul2 = input.float(1. + fibo_618, '', group = biased_candle_grp, inline=biased_candle_tp_mult_inline)
 
 // Calculation
 //-----------------------------------------------------------------------------{
@@ -413,8 +415,9 @@ if biased_candle_enabled and is_biased_candle
 
     if biased_candle_show_tp
         time_extend = time + (time - time[1]) * biased_candle_tp_len
-        tp_price = bar_skewness > 0 ? close + (high - low) * biased_candle_tp_rr : close - (high - low) * biased_candle_tp_rr
-        tp = line.new(time, tp_price, time_extend, tp_price, xloc = xloc.bar_time, style = line.style_solid, color = biased_candle_tp_color, width = 2, force_overlay = true)
+        tp1_price = bar_skewness > 0 ? close + (high - low) * biased_candle_tp_mul1 : close - (high - low) * biased_candle_tp_mul1
+        tp2_price = bar_skewness > 0 ? close + (high - low) * biased_candle_tp_mul2 : close - (high - low) * biased_candle_tp_mul2
+        tp_box = box.new(time, tp1_price, time_extend, tp2_price, xloc = xloc.bar_time, border_width = 0, bgcolor = biased_candle_tp_color, force_overlay = true)
 
     if barstate.islast and barstate.isconfirmed
         alert(fmt_alert_msg)
