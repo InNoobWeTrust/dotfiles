@@ -11,8 +11,9 @@ import forbidden_gun/commonlib/4
 // const
 //=============================================================================
 elliott_all_waves = 144
-elliott_decisive_wave = 89
-elliott_secondary_wave = 34
+elliott_decisive_waves = 89
+elliott_secondary_waves = 34
+elliott_corrective_waves = 21
 
 forex = 200
 
@@ -37,10 +38,10 @@ fibo_786 = 0.786
 //=============================================================================
 
 // Sonic R
-ema_elliott_secondary_wave = ta.ema(close, elliott_secondary_wave)
-ema_elliott_secondary_wave_low = ta.ema(low, elliott_secondary_wave)
-ema_elliott_secondary_wave_high = ta.ema(high, elliott_secondary_wave)
-ema_elliott_decisive_wave = ta.ema(close, elliott_decisive_wave)
+ema_elliott_secondary_wave = ta.ema(close, elliott_secondary_waves)
+ema_elliott_secondary_wave_low = ta.ema(low, elliott_secondary_waves)
+ema_elliott_secondary_wave_high = ta.ema(high, elliott_secondary_waves)
+ema_elliott_decisive_wave = ta.ema(close, elliott_decisive_waves)
 
 ema_forex = ta.ema(close, forex)
 ema_golden_ratio = ta.ema(close, golden_ratio)
@@ -351,13 +352,13 @@ biased_candle_filter_rsi = input.bool(true, title = "Only overbought/oversold zo
 
 biased_candle_gap_inline = "Show value gap"
 biased_candle_show_gap = input.bool(true, biased_candle_gap_inline, group = biased_candle_grp, inline = biased_candle_gap_inline)
-biased_candle_gap_len = input.int(elliott_secondary_wave, '', group = biased_candle_grp, inline = biased_candle_gap_inline)
+biased_candle_gap_len = input.int(elliott_secondary_waves, '', group = biased_candle_grp, inline = biased_candle_gap_inline)
 biased_candle_gap_up_color = input.color(color.new(color.green, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_inline)
 biased_candle_gap_down_color = input.color(color.new(color.red, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_inline)
 
 biased_candle_tp_inline = "Show TP estimation"
 biased_candle_show_tp = input.bool(true, biased_candle_tp_inline, group = biased_candle_grp, inline = biased_candle_tp_inline)
-biased_candle_tp_len = input.int(elliott_decisive_wave, '', minval=1, group = biased_candle_grp, inline = biased_candle_tp_inline)
+biased_candle_tp_len = input.int(elliott_decisive_waves, '', minval=1, group = biased_candle_grp, inline = biased_candle_tp_inline)
 biased_candle_tp_color = input.color(color.new(color.silver, transp = 80), '', group = biased_candle_grp, inline=biased_candle_tp_inline)
 biased_candle_tp_mult_inline = "Spread multipliers (TP)"
 biased_candle_tp_mul1 = input.float(1., biased_candle_tp_mult_inline, group = biased_candle_grp, inline=biased_candle_tp_mult_inline)
@@ -404,8 +405,10 @@ if biased_candle_enabled and is_biased_candle
     label.new(bar_index, label_y, fmt_bias_percent(), style = label.style_text_outline, size = label_size, color = bar_skewness > 0. ? color.green : color.red, force_overlay =  true)
     fmt_alert_msg = str.format("[{0} - {1}][{2}] Biased candle <{3},{4}> {5}", syminfo.ticker, timeframe.period, timenow, close, volume, fmt_bias_percent(true))
 
+    time_diff = time - time[1]
+
     if biased_candle_show_gap
-        time_extend = time + (time - time[1]) * biased_candle_gap_len
+        time_extend = time + time_diff * biased_candle_gap_len
         gap_color = bar_skewness > 0 ? biased_candle_gap_up_color : biased_candle_gap_down_color
         l1_price = bar_skewness > 0 ? low : high
         l2_price = bar_wick > 0 ? low + bar_wick * (high - low) : high + bar_wick * (high - low)
@@ -414,7 +417,7 @@ if biased_candle_enabled and is_biased_candle
         linefill.new(l1, l2, gap_color)
 
     if biased_candle_show_tp
-        time_extend = time + (time - time[1]) * biased_candle_tp_len
+        time_extend = time + time_diff * biased_candle_tp_len
         tp1_price = bar_skewness > 0 ? close + (high - low) * biased_candle_tp_mul1 : close - (high - low) * biased_candle_tp_mul1
         tp2_price = bar_skewness > 0 ? close + (high - low) * biased_candle_tp_mul2 : close - (high - low) * biased_candle_tp_mul2
         tp_box = box.new(time, tp1_price, time_extend, tp2_price, xloc = xloc.bar_time, border_width = 0, bgcolor = biased_candle_tp_color, force_overlay = true)
@@ -433,27 +436,42 @@ if biased_candle_enabled and is_biased_candle
 //-----------------------------------------------------------------------------{
 atr_window_grp = "► ATR window"
 atr_window_enabled = input.bool(true, title = "Enable", group = atr_window_grp)
-atr_length = input.int(elliott_decisive_wave, minval=1, title = "ATR length", group = atr_window_grp)
+atr_primary_length = input.int(elliott_decisive_waves, minval=1, title = "ATR decisive length", group = atr_window_grp)
+atr_secondary_length = input.int(elliott_corrective_waves, minval=1, title = "ATR secondary length", group = atr_window_grp)
 atr_window_size = input.int(5, minval=2, title = "Window size in bars", group = atr_window_grp)
 atr_window_gradient_inline = "ATR gradients"
-atr_window_gradient_start = input.color(color.new(color.green, transp = 70), title = "ATR gradients", group = atr_window_grp, inline = atr_window_gradient_inline)
-atr_window_gradient_end = input.color(color.new(color.red, transp = 70), title = "", group = atr_window_grp, inline = atr_window_gradient_inline)
+atr_window_gradient_start = input.color(color.new(color.green, transp = 80), title = "ATR gradients", group = atr_window_grp, inline = atr_window_gradient_inline)
+atr_window_gradient_end = input.color(color.new(color.red, transp = 80), title = "", group = atr_window_grp, inline = atr_window_gradient_inline)
 //-----------------------------------------------------------------------------}
 
 // Calculation
 //-----------------------------------------------------------------------------{
-atr_val = ta.atr(atr_length)
-atr_lower = close - atr_val
-atr_upper = close + atr_val
+atr_primary_val = ta.atr(atr_primary_length)
+atr_lower = close - atr_primary_val
+atr_upper = close + atr_primary_val
+atr_secondary_val = ta.atr(atr_secondary_length)
+sub_atr_lower = close - atr_secondary_val
+sub_atr_upper = close + atr_secondary_val
 //-----------------------------------------------------------------------------}
 
 // Plot
 //-----------------------------------------------------------------------------{
 if atr_window_enabled and not barstate.isconfirmed
-    extend_time = time + (time - time[1]) * atr_window_size
+    time_diff = time - time[1]
+    extend_time = time + time_diff * atr_window_size
     atr_lower_plt = line.new(time, atr_lower[1], extend_time, atr_lower[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_start, force_overlay = true)
-    prev_close_plt = line.new(time, close[1], extend_time, close[1], xloc = xloc.bar_time, style = line.style_dashed, color = color(na), force_overlay = true)
     atr_upper_plt = line.new(time, atr_upper[1], extend_time, atr_upper[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_end, force_overlay = true)
-    linefill.new(atr_lower_plt, prev_close_plt, atr_window_gradient_start)
-    linefill.new(atr_upper_plt, prev_close_plt, atr_window_gradient_end)
+
+    sub_atr_lower_plt = line.new(time, sub_atr_lower[1], extend_time, sub_atr_lower[1], xloc = xloc.bar_time, style = line.style_solid, width = 2, color = atr_window_gradient_start, force_overlay = true)
+    sub_atr_upper_plt = line.new(time, sub_atr_upper[1], extend_time, sub_atr_upper[1], xloc = xloc.bar_time, style = line.style_solid, width = 2, color = atr_window_gradient_end, force_overlay = true)
+
+    prev_close_plt = line.new(time, close[1], extend_time, close[1], xloc = xloc.bar_time, style = line.style_dashed, color = color(na), force_overlay = true)
+
+    // Corrective range, weak force, aim for reversal
+    linefill.new(sub_atr_lower_plt, prev_close_plt, atr_window_gradient_start)
+    linefill.new(sub_atr_upper_plt, prev_close_plt, atr_window_gradient_end)
+    // Dangerous zone, strong force, follow break side
+    linefill.new(sub_atr_lower_plt, atr_lower_plt, atr_window_gradient_end)
+    linefill.new(sub_atr_upper_plt, atr_upper_plt, atr_window_gradient_start)
+    box.new(time, sub_atr_lower[1], extend_time, sub_atr_upper[1], xloc = xloc.bar_time, border_width = 0, bgcolor = color.new(color.white, transp = 90), force_overlay = true)
 //-----------------------------------------------------------------------------}
