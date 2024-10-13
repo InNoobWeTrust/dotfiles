@@ -353,8 +353,12 @@ biased_candle_filter_rsi = input.bool(true, title = "Only overbought/oversold zo
 biased_candle_gap_inline = "Show value gap"
 biased_candle_show_gap = input.bool(true, biased_candle_gap_inline, group = biased_candle_grp, inline = biased_candle_gap_inline)
 biased_candle_gap_len = input.int(elliott_secondary_waves, '', group = biased_candle_grp, inline = biased_candle_gap_inline)
-biased_candle_gap_up_color = input.color(color.new(color.green, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_inline)
-biased_candle_gap_down_color = input.color(color.new(color.red, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_inline)
+biased_candle_gap_up_gradient_inline = 'Supply gap gradient colors'
+biased_candle_gap_up_gradient_start = input.color(color.new(#76c07a, transp = 80), biased_candle_gap_up_gradient_inline, group = biased_candle_grp, inline = biased_candle_gap_up_gradient_inline)
+biased_candle_gap_up_gradient_end = input.color(color.new(#3f1380, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_up_gradient_inline)
+biased_candle_gap_down_gradient_inline = 'Demand gap gradient colors'
+biased_candle_gap_down_gradient_start = input.color(color.new(#fff494, transp = 80), biased_candle_gap_down_gradient_inline, group = biased_candle_grp, inline = biased_candle_gap_down_gradient_inline)
+biased_candle_gap_down_gradient_end = input.color(color.new(#751820, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_down_gradient_inline)
 
 biased_candle_tp_inline = "Show TP estimation"
 biased_candle_show_tp = input.bool(true, biased_candle_tp_inline, group = biased_candle_grp, inline = biased_candle_tp_inline)
@@ -392,7 +396,7 @@ fmt_bias_percent(bool label = false) =>
     if label
         'wick: ' + str.tostring(bar_wick * 100., "#.#") + '%, body: ' + str.tostring(bar_body * 100., "#.#") + '%, skewness: ' + str.tostring(bar_skewness * 100., "#.#") + "%"
     else
-        str.tostring(bar_skewness * 100., "#.#") + '%,'
+        str.tostring(bar_skewness * 100., "#.#") + '%'
 
 if biased_candle_enabled and is_biased_candle
     label_size = switch biased_candle_label_size
@@ -409,7 +413,9 @@ if biased_candle_enabled and is_biased_candle
 
     if biased_candle_show_gap
         time_extend = time + time_diff * biased_candle_gap_len
-        gap_color = bar_skewness > 0 ? biased_candle_gap_up_color : biased_candle_gap_down_color
+        gap_color = switch bar_skewness > 0
+            true => color.from_gradient(nzVolume, vol_sma * volume_bar_theshold_low, vol_sma * volume_bar_theshold_extreme, biased_candle_gap_up_gradient_start, biased_candle_gap_up_gradient_end)
+            false => color.from_gradient(nzVolume, vol_sma * volume_bar_theshold_low, vol_sma * volume_bar_theshold_extreme, biased_candle_gap_down_gradient_start, biased_candle_gap_down_gradient_end)
         l1_price = bar_skewness > 0 ? low : high
         l2_price = bar_wick > 0 ? low + bar_wick * (high - low) : high + bar_wick * (high - low)
         l1 = line.new(time, l1_price, time_extend, l1_price, xloc = xloc.bar_time, style = line.style_dotted, color = gap_color, force_overlay = true)
@@ -439,6 +445,8 @@ atr_window_enabled = input.bool(true, title = "Enable", group = atr_window_grp)
 atr_primary_length = input.int(elliott_decisive_waves, minval=1, title = "ATR decisive length", group = atr_window_grp)
 atr_secondary_length = input.int(elliott_corrective_waves, minval=1, title = "ATR secondary length", group = atr_window_grp)
 atr_window_size = input.int(5, minval=2, title = "Window size in bars", group = atr_window_grp)
+atr_sl_leverage_est = input.float(0.2, 'SL %', minval=0.05, maxval=0.5,group = atr_window_grp)
+atr_sl_multiplier = input.int(2, 'SL spread multiplier (num bars)', minval=1, group = atr_window_grp)
 atr_window_gradient_inline = "ATR gradients"
 atr_window_gradient_start = input.color(color.new(color.green, transp = 80), title = "ATR gradients", group = atr_window_grp, inline = atr_window_gradient_inline)
 atr_window_gradient_end = input.color(color.new(color.red, transp = 80), title = "", group = atr_window_grp, inline = atr_window_gradient_inline)
@@ -452,24 +460,36 @@ atr_upper = close + atr_primary_val
 atr_secondary_val = ta.atr(atr_secondary_length)
 sub_atr_lower = close - atr_secondary_val
 sub_atr_upper = close + atr_secondary_val
+
+max_atr = math.max(atr_primary_val, atr_secondary_val)
+atr_based_leverage = atr_sl_leverage_est * close[1] / max_atr[1] / atr_sl_multiplier
 //-----------------------------------------------------------------------------}
 
 // Plot
 //-----------------------------------------------------------------------------{
+var leverage_tb = table.new(position.bottom_right,2,3,force_overlay = true)
 if atr_window_enabled and not barstate.isconfirmed
     time_diff = time - time[1]
-    extend_time = time + time_diff * atr_window_size
-    atr_upper_plt = line.new(time, atr_upper[1], extend_time, atr_upper[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_start, force_overlay = true)
-    atr_lower_plt = line.new(time, atr_lower[1], extend_time, atr_lower[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_end, force_overlay = true)
+    extend_time = time + time_diff * (atr_window_size - 1)
+    atr_upper_plt = line.new(time[1], atr_upper[1], extend_time, atr_upper[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_start, force_overlay = true)
+    atr_lower_plt = line.new(time[1], atr_lower[1], extend_time, atr_lower[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_end, force_overlay = true)
 
-    sub_atr_upper_plt = line.new(time, sub_atr_upper[1], extend_time, sub_atr_upper[1], xloc = xloc.bar_time, style = line.style_solid, width = 2, color = atr_window_gradient_start, force_overlay = true)
-    sub_atr_lower_plt = line.new(time, sub_atr_lower[1], extend_time, sub_atr_lower[1], xloc = xloc.bar_time, style = line.style_solid, width = 2, color = atr_window_gradient_end, force_overlay = true)
+    sub_atr_upper_plt = line.new(time[1], sub_atr_upper[1], extend_time, sub_atr_upper[1], xloc = xloc.bar_time, style = line.style_solid, width = 2, color = atr_window_gradient_start, force_overlay = true)
+    sub_atr_lower_plt = line.new(time[1], sub_atr_lower[1], extend_time, sub_atr_lower[1], xloc = xloc.bar_time, style = line.style_solid, width = 2, color = atr_window_gradient_end, force_overlay = true)
 
-    prev_close_plt = line.new(time, close[1], extend_time, close[1], xloc = xloc.bar_time, style = line.style_solid, color = color.new(color.silver, transp = 80), force_overlay = true)
+    prev_close_plt = line.new(time[1], close[1], extend_time, close[1], xloc = xloc.bar_time, style = line.style_solid, color = color.new(color.silver, transp = 80), force_overlay = true)
 
     // Corrective range, weakened force, aim for reversal signals
-    box.new(time, sub_atr_lower[1], extend_time, sub_atr_upper[1], xloc = xloc.bar_time, border_width = 0, bgcolor = color.new(color.white, transp = 90), force_overlay = true)
+    box.new(time[1], sub_atr_lower[1], extend_time, sub_atr_upper[1], xloc = xloc.bar_time, border_width = 0, bgcolor = color.new(color.white, transp = 90), force_overlay = true)
     // Dangerous zone, strong force, follow break side
     linefill.new(sub_atr_lower_plt, atr_lower_plt, atr_window_gradient_end)
     linefill.new(sub_atr_upper_plt, atr_upper_plt, atr_window_gradient_start)
+
+    // Leverage estimation
+    table.cell(leverage_tb,0,0,'SL %',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+    table.cell(leverage_tb,1,0,str.format('{0,number,integer}%', atr_sl_leverage_est * 100.),text_color=color.red,bgcolor=color.new(color.gray, transp = 80))
+    table.cell(leverage_tb,0,1,'Multiplier',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+    table.cell(leverage_tb,1,1,str.format('{0,number,integer} bars', atr_sl_multiplier),text_color=color.silver,bgcolor=color.new(color.gray, transp = 80))
+    table.cell(leverage_tb,0,2,'Leverage',text_color=color.gray,bgcolor=color.new(color.silver, transp = 80))
+    table.cell(leverage_tb,1,2,str.format('x{0,number,integer}', atr_based_leverage),text_color=color.aqua,bgcolor=color.new(color.silver, transp = 80))
 //-----------------------------------------------------------------------------}
