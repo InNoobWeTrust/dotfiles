@@ -459,19 +459,17 @@ sub_atr_upper = close + atr_secondary_val
 if atr_window_enabled and not barstate.isconfirmed
     time_diff = time - time[1]
     extend_time = time + time_diff * atr_window_size
-    atr_lower_plt = line.new(time, atr_lower[1], extend_time, atr_lower[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_start, force_overlay = true)
-    atr_upper_plt = line.new(time, atr_upper[1], extend_time, atr_upper[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_end, force_overlay = true)
+    atr_upper_plt = line.new(time, atr_upper[1], extend_time, atr_upper[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_start, force_overlay = true)
+    atr_lower_plt = line.new(time, atr_lower[1], extend_time, atr_lower[1], xloc = xloc.bar_time, style = line.style_dotted, color = atr_window_gradient_end, force_overlay = true)
 
-    sub_atr_lower_plt = line.new(time, sub_atr_lower[1], extend_time, sub_atr_lower[1], xloc = xloc.bar_time, style = line.style_solid, width = 2, color = atr_window_gradient_start, force_overlay = true)
-    sub_atr_upper_plt = line.new(time, sub_atr_upper[1], extend_time, sub_atr_upper[1], xloc = xloc.bar_time, style = line.style_solid, width = 2, color = atr_window_gradient_end, force_overlay = true)
+    sub_atr_upper_plt = line.new(time, sub_atr_upper[1], extend_time, sub_atr_upper[1], xloc = xloc.bar_time, style = line.style_solid, width = 2, color = atr_window_gradient_start, force_overlay = true)
+    sub_atr_lower_plt = line.new(time, sub_atr_lower[1], extend_time, sub_atr_lower[1], xloc = xloc.bar_time, style = line.style_solid, width = 2, color = atr_window_gradient_end, force_overlay = true)
 
-    prev_close_plt = line.new(time, close[1], extend_time, close[1], xloc = xloc.bar_time, style = line.style_dashed, color = color(na), force_overlay = true)
+    prev_close_plt = line.new(time, close[1], extend_time, close[1], xloc = xloc.bar_time, style = line.style_solid, color = color.new(color.silver, transp = 80), force_overlay = true)
 
-    // Corrective range, weak force, aim for reversal
-    linefill.new(sub_atr_lower_plt, prev_close_plt, atr_window_gradient_start)
-    linefill.new(sub_atr_upper_plt, prev_close_plt, atr_window_gradient_end)
+    // Corrective range, weakened force, aim for reversal signals
+    box.new(time, sub_atr_lower[1], extend_time, sub_atr_upper[1], xloc = xloc.bar_time, border_width = 0, bgcolor = color.new(color.white, transp = 90), force_overlay = true)
     // Dangerous zone, strong force, follow break side
     linefill.new(sub_atr_lower_plt, atr_lower_plt, atr_window_gradient_end)
     linefill.new(sub_atr_upper_plt, atr_upper_plt, atr_window_gradient_start)
-    box.new(time, sub_atr_lower[1], extend_time, sub_atr_upper[1], xloc = xloc.bar_time, border_width = 0, bgcolor = color.new(color.white, transp = 90), force_overlay = true)
 //-----------------------------------------------------------------------------}
