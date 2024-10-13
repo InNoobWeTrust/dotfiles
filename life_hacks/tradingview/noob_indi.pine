@@ -170,12 +170,12 @@ volume_bar_theshold_low = input.float(fibo_618, volume_bar_theshold_inline, grou
 volume_bar_theshold_extreme = input.float(2. + fibo_618, '', group = volume_bar_grp, inline = volume_bar_theshold_inline)
 
 volume_bar_up_gradient_inline = "Volume up gradient color"
-volume_bar_up_gradient_start = input.color(color.aqua, volume_bar_up_gradient_inline, volume_bar_up_gradient_inline, group = volume_bar_grp, inline = volume_bar_up_gradient_inline)
-volume_bar_up_gradient_end = input.color(color.navy, '', volume_bar_up_gradient_inline, group = volume_bar_grp, inline = volume_bar_up_gradient_inline)
+volume_bar_up_gradient_start = input.color(#76c07a, volume_bar_up_gradient_inline, volume_bar_up_gradient_inline, group = volume_bar_grp, inline = volume_bar_up_gradient_inline)
+volume_bar_up_gradient_end = input.color(#3f1380, '', volume_bar_up_gradient_inline, group = volume_bar_grp, inline = volume_bar_up_gradient_inline)
 
 volume_bar_down_gradient_inline = "Volume down gradient color"
-volume_bar_down_gradient_start = input.color(color.yellow, volume_bar_down_gradient_inline, volume_bar_down_gradient_inline, group = volume_bar_grp, inline = volume_bar_down_gradient_inline)
-volume_bar_down_gradient_end = input.color(color.maroon, '', volume_bar_down_gradient_inline, group = volume_bar_grp, inline = volume_bar_down_gradient_inline)
+volume_bar_down_gradient_start = input.color(#fff494, volume_bar_down_gradient_inline, volume_bar_down_gradient_inline, group = volume_bar_grp, inline = volume_bar_down_gradient_inline)
+volume_bar_down_gradient_end = input.color(#751820, '', volume_bar_down_gradient_inline, group = volume_bar_grp, inline = volume_bar_down_gradient_inline)
 //-----------------------------------------------------------------------------}
 
 // Calculation
