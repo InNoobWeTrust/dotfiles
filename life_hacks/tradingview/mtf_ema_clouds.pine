@@ -39,16 +39,21 @@ cloud_transp = input.int(80, minval=0, maxval=100, title = "Cloud's tranparency"
 
 // Calculation
 //-----------------------------------------------------------------------------{
-type EmaCloud
+type EmaTf
     float ema_fast
     float ema_fast_merged
     float ema_slow
     float ema_slow_merged
+    int trend
     color fast_clr
     color slow_clr
 
 ema_tf(string tf, int len, simple bool merge = false) =>
     request.security(syminfo.tickerid, tf, ta.ema(ema_src, len), gaps = merge ? barmerge.gaps_on : barmerge.gaps_off)
+
+up_down_structure(src1, src2, src3) =>
+    // Return 1 if up, -1 if down, 0 otherwise
+    math.sign(src1 - src2) * (math.sign(src1 - src2) * math.sign(src2 - src3) + 1) / 2
 
 calc_cloud(int idx, string tf, simple int len_fast, simple int len_slow) =>
     ema_fast = ema_tf(tf, len_fast)
@@ -57,84 +62,48 @@ calc_cloud(int idx, string tf, simple int len_fast, simple int len_slow) =>
     ema_slow_merged = ema_tf(tf, len_slow, true)
     fast_clr = color.new(color.from_gradient(0, 0, 1, ema_gradients_start, ema_gradients_end), transp = cloud_transp)
     slow_clr = color.new(color.from_gradient(1, 0, 1, ema_gradients_start, ema_gradients_end), transp = cloud_transp)
+    up_down_at_cross = ta.valuewhen(ta.cross(ema_fast, ema_slow), up_down_structure(close, ema_fast, ema_slow), 0)
+    close_vs_ema_fast = ta.valuewhen(ta.cross(close, ema_fast), math.sign(close - ema_fast), 0)
+    trend = switch
+        up_down_at_cross > 0 and close_vs_ema_fast > 0 => 1
+        up_down_at_cross < 0 and close_vs_ema_fast < 0 => -1
+        => 0
     if idx < max_tf
-        EmaCloud.new(ema_fast, ema_fast_merged, ema_slow, ema_slow_merged, fast_clr, slow_clr)
+        EmaTf.new(ema_fast, ema_fast_merged, ema_slow, ema_slow_merged, trend, fast_clr, slow_clr)
     else
-        EmaCloud.new(na, na, na, na, color(na), color(na))
+        EmaTf.new(na, na, na, na, na, color(na), color(na))
 
 // clouds
-EmaCloud[] clouds = array.new<EmaCloud>()
-clouds.push(calc_cloud(0, tf1, ema_fast_length, ema_slow_length))
-clouds.push(calc_cloud(1, tf2, ema_fast_length, ema_slow_length))
-clouds.push(calc_cloud(2, tf3, ema_fast_length, ema_slow_length))
-clouds.push(calc_cloud(3, tf4, ema_fast_length, ema_slow_length))
-clouds.push(calc_cloud(4, tf5, ema_fast_length, ema_slow_length))
+EmaTf[] mtf_emas = array.new<EmaTf>()
+mtf_emas.push(calc_cloud(0, tf1, ema_fast_length, ema_slow_length))
+mtf_emas.push(calc_cloud(1, tf2, ema_fast_length, ema_slow_length))
+mtf_emas.push(calc_cloud(2, tf3, ema_fast_length, ema_slow_length))
+mtf_emas.push(calc_cloud(3, tf4, ema_fast_length, ema_slow_length))
+mtf_emas.push(calc_cloud(4, tf5, ema_fast_length, ema_slow_length))
 
-
-// Clouds over clouds
-string[] cloud_phases = array.new<string>()
-color[] cloud_clrs = array.new<color>()
-
-up_down_structure(src1, src2, src3) =>
-    // Return 1 if up, -1 if down, 0 otherwise
-    math.sign(src1 - src2) * (math.sign(src1 - src2) * math.sign(src2 - src3) + 1) / 2
+pair_tf_structure(ema_fast, ema_slow, higher_ema_fast, higher_ema_slow) =>
+    ta.valuewhen(ta.cross(ema_slow, higher_ema_slow), math.sign(ema_slow - higher_ema_slow), 0)
 
 phase(int idx) =>
-    ema_fast = clouds.get(idx).ema_fast
-    ema_slow = clouds.get(idx).ema_slow
-    higher_ema_fast = clouds.get(idx + 1).ema_fast
-    higher_ema_slow = clouds.get(idx + 1).ema_slow
-    up_down_at_cross = ta.valuewhen(ta.cross(ema_fast, ema_slow), up_down_structure(close, ema_fast, ema_slow), 0)
-    higher_up_down_at_cross = ta.valuewhen(ta.cross(higher_ema_fast, higher_ema_slow), up_down_structure(close, higher_ema_fast, higher_ema_slow), 0)
-    low_high_structure_at_cross = ta.valuewhen(ta.cross(ema_slow, higher_ema_slow), math.sign(ema_slow - higher_ema_slow), 0)
+    ema_fast = mtf_emas.get(idx).ema_fast
+    ema_slow = mtf_emas.get(idx).ema_slow
+    trend = mtf_emas.get(idx).trend
+    higher_ema_fast = mtf_emas.get(idx + 1).ema_fast
+    higher_ema_slow = mtf_emas.get(idx + 1).ema_slow
+    higher_trend = mtf_emas.get(idx + 1).trend
 
-    close_vs_ema_fast = ta.valuewhen(ta.cross(close, ema_fast), math.sign(close - ema_fast), 0)
-    close_vs_higher_ema_fast = ta.valuewhen(ta.cross(close, higher_ema_fast), math.sign(close - higher_ema_fast), 0)
-
-    if up_down_at_cross > 0 and higher_up_down_at_cross > 0 and low_high_structure_at_cross > 0 and close_vs_ema_fast > 0 and close_vs_higher_ema_fast > 0
-        '⬆︎' // Up
-    else if up_down_at_cross < 0 and higher_up_down_at_cross < 0 and low_high_structure_at_cross < 0 and close_vs_ema_fast < 0 and close_vs_higher_ema_fast < 0
-        '⬇︎' // Down
+    if trend > 0 and higher_trend > 0 and pair_tf_structure(ema_fast, ema_slow, higher_ema_fast, higher_ema_slow) > 0
+        1
+    else if trend < 0 and higher_trend < 0 and pair_tf_structure(ema_fast, ema_slow, higher_ema_fast, higher_ema_slow) < 0
+        -1
     else
-        '〰︎' // Tangled
+        0
 
-cloud_clr(int idx) =>
-    switch phase(idx)
-        "⬆︎" => color.new(color.from_gradient(idx, 0, max_tf - 1, cloud_up_gradients_start, cloud_up_gradients_end), transp = cloud_transp)
-        "⬇︎" => color.new(color.from_gradient(idx, 0, max_tf - 1, cloud_down_gradients_start, cloud_down_gradients_end), transp = cloud_transp)
-        "〰︎" => na
-
-cloud_phases.push(phase(0))
-cloud_clrs.push(cloud_clr(0))
-cloud_phases.push(phase(1))
-cloud_clrs.push(cloud_clr(1))
-cloud_phases.push(phase(2))
-cloud_clrs.push(cloud_clr(2))
-cloud_phases.push(phase(3))
-cloud_clrs.push(cloud_clr(3))
-//-----------------------------------------------------------------------------}
-
-// Plot
-//-----------------------------------------------------------------------------{
-c1plt2 = plot(clouds.get(0).ema_slow, color = color(na), style = plot.style_line, force_overlay =  true)
-plot(clouds.get(0).ema_slow_merged, color = clouds.get(0).slow_clr, style = plot.style_line, force_overlay =  true)
-
-c2plt2 = plot(clouds.get(1).ema_slow, color = color(na), style = plot.style_line, force_overlay =  true)
-plot(clouds.get(1).ema_slow_merged, color = clouds.get(1).slow_clr, style = plot.style_line, force_overlay =  true)
-
-c3plt2 = plot(clouds.get(2).ema_slow, color = color(na), style = plot.style_line, force_overlay =  true)
-plot(clouds.get(2).ema_slow_merged, color = clouds.get(2).slow_clr, style = plot.style_line, force_overlay =  true)
-
-c4plt2 = plot(clouds.get(3).ema_slow, color = color(na), style = plot.style_line, force_overlay =  true)
-plot(clouds.get(3).ema_slow_merged, color = clouds.get(3).slow_clr, style = plot.style_line, force_overlay =  true)
-
-c5plt2 = plot(clouds.get(4).ema_slow, color = color(na), style = plot.style_line, force_overlay =  true)
-plot(clouds.get(4).ema_slow_merged, color = clouds.get(4).slow_clr, style = plot.style_line, force_overlay =  true)
-
-fill(c1plt2, c2plt2, color = cloud_clrs.get(0))
-fill(c2plt2, c3plt2, color = cloud_clrs.get(1))
-fill(c3plt2, c4plt2, color = cloud_clrs.get(2))
-fill(c4plt2, c5plt2, color = cloud_clrs.get(3))
+phase_color(int trend, simple int idx) =>
+    switch trend
+        1 => color.new(color.from_gradient(idx, 0, max_tf - 1, cloud_up_gradients_start, cloud_up_gradients_end), transp = cloud_transp)
+        -1 => color.new(color.from_gradient(idx, 0, max_tf - 1, cloud_down_gradients_start, cloud_down_gradients_end), transp = cloud_transp)
+        0 => na
 
 fmt_countdown(simple string tf) =>
     if barstate.isrealtime and timeframe.in_seconds(timeframe.period) < timeframe.in_seconds(tf)
@@ -145,21 +114,67 @@ fmt_countdown(simple string tf) =>
         str.format('ETA: {0,number,00}:{1,number,00}:{2,number,00}', hh,mm,ss)
     else
         'ETA: -- : -- : --'
-tb_txt_color(int phase_idx) =>
-    switch cloud_phases.get(phase_idx)
-        '⬆︎' => #26a69a
-        '⬇︎' => #ef5350
-        '〰︎' => color.gray
-tb_bg_color(int phase_idx) =>
-    switch cloud_phases.get(phase_idx)
-        '⬆︎' => color.new(#26a69a,80)
-        '⬇︎' => color.new(#ef5350,80)
-        '〰︎' => color.new(color.gray,80)
 
-trend_tb = table.new(position.top_right, 2, max_tf - 1, force_overlay = true)
+trend_txt(int trend) =>
+    switch trend
+        1 => '⬆︎' // Up
+        -1 => '⬇︎' // Down
+        0 => '〰︎' // Tangled
+
+tb_txt_color(int trend) =>
+    switch trend
+        1 => #26a69a
+        -1 => #ef5350
+        0 => color.gray
+tb_bg_color(int trend) =>
+    switch trend
+        1 => color.new(#26a69a,80)
+        -1 => color.new(#ef5350,80)
+        0 => color.new(color.gray,80)
+
+// Clouds over clouds
+int[] mtf_phases = array.new<int>()
+int[] cloud_phases = array.new<int>()
+color[] cloud_clrs = array.new<color>()
+cloud_phases.push(phase(0))
+cloud_clrs.push(phase_color(cloud_phases.get(0), 0))
+cloud_phases.push(phase(1))
+cloud_clrs.push(phase_color(cloud_phases.get(1), 1))
+cloud_phases.push(phase(2))
+cloud_clrs.push(phase_color(cloud_phases.get(2), 2))
+cloud_phases.push(phase(3))
+cloud_clrs.push(phase_color(cloud_phases.get(3), 3))
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+c1plt2 = plot(mtf_emas.get(0).ema_slow, color = color(na), style = plot.style_line, force_overlay =  true)
+plot(mtf_emas.get(0).ema_slow_merged, color = mtf_emas.get(0).slow_clr, style = plot.style_line, force_overlay =  true)
+
+c2plt2 = plot(mtf_emas.get(1).ema_slow, color = color(na), style = plot.style_line, force_overlay =  true)
+plot(mtf_emas.get(1).ema_slow_merged, color = mtf_emas.get(1).slow_clr, style = plot.style_line, force_overlay =  true)
+
+c3plt2 = plot(mtf_emas.get(2).ema_slow, color = color(na), style = plot.style_line, force_overlay =  true)
+plot(mtf_emas.get(2).ema_slow_merged, color = mtf_emas.get(2).slow_clr, style = plot.style_line, force_overlay =  true)
+
+c4plt2 = plot(mtf_emas.get(3).ema_slow, color = color(na), style = plot.style_line, force_overlay =  true)
+plot(mtf_emas.get(3).ema_slow_merged, color = mtf_emas.get(3).slow_clr, style = plot.style_line, force_overlay =  true)
+
+c5plt2 = plot(mtf_emas.get(4).ema_slow, color = color(na), style = plot.style_line, force_overlay =  true)
+plot(mtf_emas.get(4).ema_slow_merged, color = mtf_emas.get(4).slow_clr, style = plot.style_line, force_overlay =  true)
+
+fill(c1plt2, c2plt2, color = cloud_clrs.get(0))
+fill(c2plt2, c3plt2, color = cloud_clrs.get(1))
+fill(c3plt2, c4plt2, color = cloud_clrs.get(2))
+fill(c4plt2, c5plt2, color = cloud_clrs.get(3))
+
+trend_tb = table.new(position.top_right, 3, max_tf, force_overlay = true)
 if barstate.islast
-    countdowns = array.from(fmt_countdown(tf2),fmt_countdown(tf3),fmt_countdown(tf4),fmt_countdown(tf5))
-    for idx = 0 to max_tf - 2
-        table.cell(trend_tb,0,idx,cloud_phases.get(idx),text_color = tb_txt_color(idx),bgcolor = tb_bg_color(idx))
-        table.cell(trend_tb,1,idx,countdowns.get(idx),text_color = color.gray,bgcolor = na)
+    mtf = array.from(tf1,tf2,tf3,tf4,tf5)
+    countdowns = array.from(fmt_countdown(tf1),fmt_countdown(tf2),fmt_countdown(tf3),fmt_countdown(tf4),fmt_countdown(tf5))
+    for idx = 0 to max_tf - 1
+        trend = mtf_emas.get(idx).trend
+        table.cell(trend_tb,0,idx,mtf.get(idx),text_color = color.gray,bgcolor = na)
+        table.cell(trend_tb,1,idx,trend_txt(trend),text_color = tb_txt_color(trend),bgcolor = tb_bg_color(trend))
+        table.cell(trend_tb,2,idx,countdowns.get(idx),text_color = color.gray,bgcolor = na)
 //-----------------------------------------------------------------------------}
