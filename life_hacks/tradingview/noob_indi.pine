@@ -344,8 +344,9 @@ biased_candle_enabled = input.bool(true, title = "Enable", group = biased_candle
 biased_candle_label_size = input.string("small", options = ["auto","huge","large", "normal", "small", "tiny"], title='Label size', group = biased_candle_grp)
 
 biased_candle_wick_percent = input.float(fibo_382, minval = 0., maxval = 1., title = "Min wick %", group = biased_candle_grp)
-biased_candle_body_percent = input.float(fibo_236 / 10., minval = 0., maxval = 1., title = "Min body %", group = biased_candle_grp)
 biased_candle_skew_percent = input.float(fibo_618, minval=0.5, maxval=1, title = "Min skew % (close price to wick's end)", group = biased_candle_grp)
+biased_candle_body_percent = input.float(fibo_236 / 10., minval = 0., maxval = 1., title = "Min body %", group = biased_candle_grp)
+biased_candle_strict_reversal = input.bool(true, 'Strictly reversed candle', tooltip = 'Close price must be in the same direction of reversal', group = biased_candle_grp)
 
 biased_candle_vol_threshold = input.float(1.05, minval=1., title = "Relative volume threshold % (0 to disable)", group = biased_candle_grp)
 biased_candle_filter_rsi = input.bool(true, title = "Only overbought/oversold zone", group = biased_candle_grp)
@@ -354,11 +355,11 @@ biased_candle_gap_inline = "Show value gap"
 biased_candle_show_gap = input.bool(true, biased_candle_gap_inline, group = biased_candle_grp, inline = biased_candle_gap_inline)
 biased_candle_gap_len = input.int(elliott_secondary_waves, '', group = biased_candle_grp, inline = biased_candle_gap_inline)
 biased_candle_gap_up_gradient_inline = 'Supply gap gradient colors'
-biased_candle_gap_up_gradient_start = input.color(color.new(#76c07a, transp = 80), biased_candle_gap_up_gradient_inline, group = biased_candle_grp, inline = biased_candle_gap_up_gradient_inline)
-biased_candle_gap_up_gradient_end = input.color(color.new(#3f1380, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_up_gradient_inline)
+biased_candle_gap_up_gradient_start = input.color(color.new(#76c07a, transp = 55), biased_candle_gap_up_gradient_inline, group = biased_candle_grp, inline = biased_candle_gap_up_gradient_inline)
+biased_candle_gap_up_gradient_end = input.color(color.new(#3f1380, transp = 55), '', group = biased_candle_grp, inline = biased_candle_gap_up_gradient_inline)
 biased_candle_gap_down_gradient_inline = 'Demand gap gradient colors'
-biased_candle_gap_down_gradient_start = input.color(color.new(#fff494, transp = 80), biased_candle_gap_down_gradient_inline, group = biased_candle_grp, inline = biased_candle_gap_down_gradient_inline)
-biased_candle_gap_down_gradient_end = input.color(color.new(#751820, transp = 80), '', group = biased_candle_grp, inline = biased_candle_gap_down_gradient_inline)
+biased_candle_gap_down_gradient_start = input.color(color.new(#fff494, transp = 55), biased_candle_gap_down_gradient_inline, group = biased_candle_grp, inline = biased_candle_gap_down_gradient_inline)
+biased_candle_gap_down_gradient_end = input.color(color.new(#751820, transp = 55), '', group = biased_candle_grp, inline = biased_candle_gap_down_gradient_inline)
 
 biased_candle_tp_inline = "Show TP estimation"
 biased_candle_show_tp = input.bool(true, biased_candle_tp_inline, group = biased_candle_grp, inline = biased_candle_tp_inline)
@@ -377,14 +378,14 @@ bar_skewness = commonlib.bar_skewness_percent()
 is_wick_exceeded = math.abs(bar_wick) > biased_candle_wick_percent
 is_body_exceeded = math.abs(bar_body) > biased_candle_body_percent
 is_skewness_exceeded = math.abs(bar_skewness) > biased_candle_skew_percent
-
+is_strict_reversal = not biased_candle_strict_reversal or math.sign(bar_wick * bar_body) > 0.
 is_abnormal_vol = nzVolume > vol_sma * biased_candle_vol_threshold
 
 is_likely_oversold_reversal = biased_candle_filter_rsi ? (oversell / rsi_range) > 0. and bar_wick > 0. : true
 is_likely_overbougth_reversal = biased_candle_filter_rsi ? (overbuy / rsi_range) > 0. and bar_wick < 0. : true
 is_rsi_exhausted = is_likely_oversold_reversal or is_likely_overbougth_reversal
 
-is_biased_candle = is_wick_exceeded and is_body_exceeded and is_skewness_exceeded and is_abnormal_vol and is_rsi_exhausted
+is_biased_candle = is_wick_exceeded and is_body_exceeded and is_skewness_exceeded and is_strict_reversal and is_abnormal_vol and is_rsi_exhausted
 //-----------------------------------------------------------------------------}
 
 // Plot
@@ -418,8 +419,8 @@ if biased_candle_enabled and is_biased_candle
             false => color.from_gradient(nzVolume, vol_sma * volume_bar_theshold_low, vol_sma * volume_bar_theshold_extreme, biased_candle_gap_down_gradient_start, biased_candle_gap_down_gradient_end)
         l1_price = bar_skewness > 0 ? low : high
         l2_price = bar_wick > 0 ? low + bar_wick * (high - low) : high + bar_wick * (high - low)
-        l1 = line.new(time, l1_price, time_extend, l1_price, xloc = xloc.bar_time, style = line.style_dotted, color = gap_color, force_overlay = true)
-        l2 = line.new(time, l2_price, time_extend, l2_price, xloc = xloc.bar_time, style = line.style_dotted, color = gap_color, force_overlay = true)
+        l1 = line.new(time, l1_price, time_extend, l1_price, xloc = xloc.bar_time, style = line.style_solid, color = gap_color, force_overlay = true)
+        l2 = line.new(time, l2_price, time_extend, l2_price, xloc = xloc.bar_time, style = line.style_solid, color = gap_color, force_overlay = true)
         linefill.new(l1, l2, gap_color)
 
     if biased_candle_show_tp
