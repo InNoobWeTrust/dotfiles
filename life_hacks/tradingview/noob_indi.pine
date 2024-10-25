@@ -6,6 +6,7 @@ indicator("Noob's Indicators", overlay = false, max_lines_count = 500, max_bars_
 //=============================================================================
 import TradingView/ta/8
 import forbidden_gun/commonlib/4
+import forbidden_gun/ma_lib/2
 
 //=============================================================================
 // const
@@ -81,26 +82,6 @@ fill(sonic_r_low, sonic_r_high, ema_elliott_secondary_wave_fill_color)
 sonic_r_decisive_plot = plot(show_sonic_r ? ema_elliott_decisive_wave : na, title = "Elliott decisive wave", color = ema_elliott_decisive_wave_color, linewidth = 2, style = plot.style_line, force_overlay = true)
 plot(show_sonic_r ? ema_forex : na, title = "Forex 200 sessions", color = ema_forex_color, linewidth = 2, style = plot.style_line, force_overlay = true)
 plot(show_sonic_r ? ema_golden_ratio : na, title = "Golden ratio", color = ema_golden_ratio_color, linewidth = 2, style = plot.style_line, force_overlay = true)
-
-sonic_r_state() =>
-    up = close > ema_elliott_secondary_wave_low and  ema_elliott_secondary_wave_low > ema_elliott_decisive_wave
-    down = close < ema_elliott_secondary_wave_high and  ema_elliott_secondary_wave_high < ema_elliott_decisive_wave
-    if up
-        "Up"
-    else if down
-        "Down"
-    else
-        "Undecisive"
-    
-sonic_r_up_down_color = switch sonic_r_state()
-    'Up' => color.new(color.green, transp = 80)
-    'Down' => color.new(color.red, transp = 80)
-    'Undecisive' => na
-
-var sonic_r_tb = table.new(position.middle_right,1,2)
-if barstate.islast
-    table.cell(sonic_r_tb,0,0,'Sonic R Trend',text_color=color.gray,bgcolor=na)
-    table.cell(sonic_r_tb,0,1, sonic_r_state(), text_color=#26a69a, bgcolor=color.new(sonic_r_up_down_color, 80))
 //-----------------------------------------------------------------------------}
 
 //=============================================================================
@@ -148,11 +129,56 @@ pythagorean_wisdom_plot = plot(show_pythagorean ? ema_pythagorean_wisdom : na, t
 pythagorean_up_down_state = ema_pythagorean_material > ema_pythagorean_wisdom
 pythagorean_up_down_color = pythagorean_up_down_state ? pythagorean_up_color : pythagorean_down_color
 fill(pythagorean_material_plot, pythagorean_wisdom_plot, pythagorean_up_down_color)
+//-----------------------------------------------------------------------------}
 
-var pythagorean_tb = table.new(position.bottom_right,1,2)
-if barstate.islast
-    table.cell(pythagorean_tb,0,0,'Pythagorean Trend',text_color=color.gray,bgcolor=na)
-    table.cell(pythagorean_tb,0,1, pythagorean_up_down_state ? 'Upward' : 'Downward',text_color=#26a69a,bgcolor=color.new(pythagorean_up_down_color,80))
+//=============================================================================
+// Trend summary table
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+trend_tb_grp = '► Trend summary table'
+trend_tb_enable = input.bool(true, 'Enable', group = trend_tb_grp)
+//-----------------------------------------------------------------------------}
+
+// Calculation
+//-----------------------------------------------------------------------------{
+snr_trend = ma_lib.market_structure(ma_lib.MaStructure.new(close, ema_elliott_secondary_wave, ema_elliott_decisive_wave))
+banker_trend = ma_lib.market_structure(ma_lib.MaStructure.new(ema_banker_short_term,ema_banker_medium_term,ema_banker_long_term))
+ptg_trend = ma_lib.market_structure(ma_lib.MaStructure.new(ema_pythagorean_material,ema_pythagorean_mind,ema_pythagorean_wisdom))
+
+trend_ico(trend) =>
+    switch trend
+        1 => '⬆︎' // Up
+        -1 => '⬇︎' // Down
+        0 => '〰︎' // Tangled
+        => '?' // Unknown, data not available for calculation
+
+trend_txt_color(trend) =>
+    switch trend
+        1 => #26a69a
+        -1 => #ef5350
+        0 => color.gray
+        => color.silver
+
+trend_bg_color(trend) =>
+    switch trend
+        1 => color.new(#26a69a,80)
+        -1 => color.new(#ef5350,80)
+        0 => color.new(color.gray,80)
+        => color.new(color.silver,80)
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+var trend_tb = table.new(position.bottom_right,2,3)
+if barstate.islast and trend_tb_enable
+    table.cell(trend_tb,0,0,'SonicR',text_color=color.gray,bgcolor=na)
+    table.cell(trend_tb,1,0, trend_ico(snr_trend), text_color=trend_txt_color(snr_trend), bgcolor=trend_bg_color(snr_trend))
+    table.cell(trend_tb,0,1,'Banker',text_color=color.gray,bgcolor=na)
+    table.cell(trend_tb,1,1, trend_ico(banker_trend),text_color=trend_txt_color(banker_trend),bgcolor=trend_bg_color(banker_trend))
+    table.cell(trend_tb,0,2,'Pythagorean',text_color=color.gray,bgcolor=na)
+    table.cell(trend_tb,1,2, trend_ico(ptg_trend),text_color=trend_txt_color(ptg_trend),bgcolor=trend_bg_color(ptg_trend))
 //-----------------------------------------------------------------------------}
 
 //=============================================================================
