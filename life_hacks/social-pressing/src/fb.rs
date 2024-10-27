@@ -111,6 +111,7 @@ async fn report_process(
                     if [
                         "Pretending to be someone".to_lowercase(),
                         "I want to help".to_lowercase(),
+                        "A specific post".to_lowercase(),
                         "Block".to_lowercase(),
                         "Hide".to_lowercase(),
                         "Cancel".to_lowercase(),
