@@ -31,6 +31,16 @@ pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
             )
             .await?;
     }
+    if let Ok(_) = client.find(Locator::Css(r#"div.TUXModal-overlay"#)).await {
+        debug!(target: target, "Dismissing modal overlay...");
+        // try to remove the overlay
+        client
+            .execute(
+                "document.querySelector('div.TUXModal-overlay')?.remove()",
+                Vec::new(),
+            )
+            .await?;
+    }
     if let Ok(_) = client.find(Locator::Id(r#"#app-header"#)).await {
         debug!(target: target, "Dismissing header overlay...");
         // try to remove the header overlay
@@ -44,7 +54,7 @@ pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
 
     let more_btn = client
         .find(Locator::Css(
-            r#"div[role="button"][aria-label="Actions"][tabindex="0"][data-e2e="user-more"]"#,
+            r#"button[type="button"][role="button"][aria-label="Actions"][tabindex="0"][data-e2e="user-more"][aria-haspopup="dialog"]"#,
         ))
         .await;
     if let Err(_) = more_btn {
