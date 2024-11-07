@@ -51,17 +51,14 @@ tf5 = input.timeframe('D', '', group = tf_grp, inline = tf_inline)
 smooth = input.bool(false, 'Smooth lines', tooltip = 'Enable this option will make ema lines in higher timeframes lag behind current bar')
 variable_width = input.bool(false, 'Variable line width', tooltip = 'Increase line width for higher timeframes')
 
-cross_grp = "► MTF crossing background"
+cross_grp = "► MTF crossing background (distribution/accumulation zones)"
 cross_enable = input.bool(true, 'Enable',group = cross_grp)
-crossover_inline = 'Crossover'
-crossover_gradient_start = input.color(color.new(color.teal,95), crossover_inline, group = cross_grp, inline = crossover_inline)
-crossover_gradient_end = input.color(color.new(color.green,95), '', group = cross_grp, inline = crossover_inline)
-crossunder_inline = 'Crossunder'
-crossunder_gradient_start = input.color(color.new(color.yellow,95), crossunder_inline, group = cross_grp, inline = crossunder_inline)
-crossunder_gradient_end = input.color(color.new(color.maroon,95), '', group = cross_grp, inline = crossunder_inline)
+cross_gradient_inline = 'Cross background gradient'
+cross_gradient_start = input.color(color.new(color.maroon,80), '', group = cross_grp, inline = cross_gradient_inline)
+cross_gradient_end = input.color(color.new(color.teal,80), '', group = cross_grp, inline = cross_gradient_inline)
 cross_tf_inline = 'Limit min/max timeframes'
-cross_tf_min = input.int(2, cross_tf_inline, minval=1,maxval=4,group = cross_grp,inline = cross_tf_inline)
-cross_tf_max = input.int(5, '', minval=2,maxval=5,group = cross_grp,inline = cross_tf_inline)
+cross_tf_min = input.int(1, cross_tf_inline, minval=1,maxval=4,group = cross_grp,inline = cross_tf_inline)
+cross_tf_max = input.int(3, '', minval=2,maxval=5,group = cross_grp,inline = cross_tf_inline)
 //-----------------------------------------------------------------------------}
 
 // Calculation
@@ -152,6 +149,7 @@ for idx = 0 to 4
 
 // MTF crossing of EMA slow
 float[] crossing = array.new<float>()
+float cross_val = 0
 for idx = 0 to 4
     if cross_tf_min > idx + 1 or cross_tf_max < idx + 2
         crossing.push(0)
@@ -161,6 +159,7 @@ for idx = 0 to 4
         trend = ma_lib.pair_structure(ema_slow, higher_ema_slow)
         is_crossing = ta.cross(ema_slow, higher_ema_slow)
         crossing.push(is_crossing ? trend : 0)
+        cross_val += trend * math.pow(2,idx)
 
 trend_ico(trend) =>
     switch trend
@@ -183,10 +182,9 @@ trend_bg_color(trend) =>
         0 => color.new(color.gray,80)
         => color.new(color.silver,80)
 
-mtf_cross_bgcolor(idx) =>
-    switch crossing.get(idx)
-        -1 => color.from_gradient(idx,0,4,crossunder_gradient_start,crossunder_gradient_end)
-        1 => color.from_gradient(idx,0,4,crossover_gradient_start,crossover_gradient_end)
+mtf_cross_bgcolor() =>
+    switch cross_val != 0
+        true => color.from_gradient(cross_val,1 - math.pow(2,cross_tf_max),math.pow(2,cross_tf_max) - 1,cross_gradient_start,cross_gradient_end)
         => color(na)
 //-----------------------------------------------------------------------------}
 
@@ -232,11 +230,7 @@ ema3_tf4_plt = plot(ema3.get(3).ema, '', ema3.get(3).clr, linewidth = variable_w
 ema3_tf5_plt = plot(ema3.get(4).ema, '', ema3.get(4).clr, linewidth = variable_width ? 5 : 3)
 
 // MTF crossing bg
-bgcolor(mtf_cross_bgcolor(0), force_overlay = true)
-bgcolor(mtf_cross_bgcolor(1), force_overlay = true)
-bgcolor(mtf_cross_bgcolor(2), force_overlay = true)
-bgcolor(mtf_cross_bgcolor(3), force_overlay = true)
-bgcolor(mtf_cross_bgcolor(4), force_overlay = true)
+bgcolor(mtf_cross_bgcolor(), force_overlay = true)
 
 // Trend summary and countdown to bar close
 cntdwn_tb = table.new(position.top_right, 3, 5, force_overlay = true)
