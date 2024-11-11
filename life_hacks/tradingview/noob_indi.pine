@@ -360,6 +360,62 @@ plotshape(rsi_show_label and ta.crossover(avg_rsi, rsi_overbought_limit) ? high 
 //-----------------------------------------------------------------------------}
 
 //=============================================================================
+// MTF RSI
+//=============================================================================
+
+// Input
+//-----------------------------------------------------------------------------{
+mtf_rsi_grp = "► MTF RSI"
+mtf_rsi_enable = input.bool(true, 'Show', group = mtf_rsi_grp)
+mtf_rsi_length = input.int(14, 'MTF RSI length', group = mtf_rsi_grp)
+mtf_rsi1_inline = "MTF RSI 1st"
+mtf_rsi2_inline = "MTF RSI 2nd"
+mtf_rsi3_inline = "MTF RSI 3rd"
+mtf_rsi4_inline = "MTF RSI "
+mtf_rsi1_tf = input.timeframe('1','',group = mtf_rsi_grp,inline = mtf_rsi1_inline)
+mtf_rsi1_color = input.color(color.new(color.gray,65),'',group = mtf_rsi_grp,inline = mtf_rsi1_inline)
+mtf_rsi2_tf = input.timeframe('5','',group = mtf_rsi_grp,inline = mtf_rsi2_inline)
+mtf_rsi2_color = input.color(color.new(color.gray,60),'',group = mtf_rsi_grp,inline = mtf_rsi2_inline)
+mtf_rsi3_tf = input.timeframe('30','',group = mtf_rsi_grp,inline = mtf_rsi3_inline)
+mtf_rsi3_color = input.color(color.new(color.gray,55),'',group = mtf_rsi_grp,inline = mtf_rsi3_inline)
+mtf_rsi4_tf = input.timeframe('240','',group = mtf_rsi_grp,inline = mtf_rsi4_inline)
+mtf_rsi4_color = input.color(color.new(color.gray,50),'',group = mtf_rsi_grp,inline = mtf_rsi4_inline)
+//-----------------------------------------------------------------------------}
+
+// Calculation
+//-----------------------------------------------------------------------------{
+mtf_rsi1 = request.security(syminfo.tickerid,mtf_rsi1_tf, ta.rsi(close, mtf_rsi_length))
+mtf_rsi2 = request.security(syminfo.tickerid,mtf_rsi2_tf, ta.rsi(close, mtf_rsi_length))
+mtf_rsi3 = request.security(syminfo.tickerid,mtf_rsi3_tf, ta.rsi(close, mtf_rsi_length))
+mtf_rsi4 = request.security(syminfo.tickerid,mtf_rsi4_tf, ta.rsi(close, mtf_rsi_length))
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+plot(mtf_rsi_enable ? mtf_rsi1 : na, 'MTF RSI #1', color=mtf_rsi1_color)
+plot(mtf_rsi_enable ? mtf_rsi2 : na, 'MTF RSI #2', color=mtf_rsi2_color)
+plot(mtf_rsi_enable ? mtf_rsi3 : na, 'MTF RSI #3', color=mtf_rsi3_color)
+plot(mtf_rsi_enable ? mtf_rsi4 : na, 'MTF RSI #4', color=mtf_rsi4_color)
+
+var label mtf_rsi1_lbl = na
+var label mtf_rsi2_lbl = na
+var label mtf_rsi3_lbl = na
+var label mtf_rsi4_lbl = na
+if barstate.islast and mtf_rsi_enable
+    label.delete(mtf_rsi1_lbl)
+    label.delete(mtf_rsi2_lbl)
+    label.delete(mtf_rsi3_lbl)
+    label.delete(mtf_rsi4_lbl)
+
+    mtf_rsi1_lbl := label.new(bar_index + 1, mtf_rsi1, mtf_rsi1_tf,xloc.bar_index, style=label.style_text_outline, size = size.tiny,color = mtf_rsi1_color)
+    mtf_rsi2_lbl := label.new(bar_index + 1, mtf_rsi2, mtf_rsi2_tf,xloc.bar_index, style=label.style_text_outline, size = size.tiny,color = mtf_rsi2_color)
+    mtf_rsi3_lbl := label.new(bar_index + 1, mtf_rsi3, mtf_rsi3_tf,xloc.bar_index, style=label.style_text_outline, size = size.tiny,color = mtf_rsi3_color)
+    mtf_rsi4_lbl := label.new(bar_index + 1, mtf_rsi4, mtf_rsi4_tf,xloc.bar_index, style=label.style_text_outline, size = size.tiny,color = mtf_rsi4_color)
+
+//-----------------------------------------------------------------------------}
+
+
+//=============================================================================
 // Biased candle
 //=============================================================================
 
