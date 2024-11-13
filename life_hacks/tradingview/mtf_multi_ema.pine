@@ -53,12 +53,17 @@ variable_width = input.bool(false, 'Variable line width', tooltip = 'Increase li
 
 cross_grp = "► MTF crossing background (distribution/accumulation zones)"
 cross_enable = input.bool(true, 'Enable',group = cross_grp)
-cross_gradient_inline = 'Cross background gradient'
-cross_gradient_start = input.color(color.new(color.maroon,50), '', group = cross_grp, inline = cross_gradient_inline)
-cross_gradient_end = input.color(color.new(color.teal,50), '', group = cross_grp, inline = cross_gradient_inline)
+crossunder_gradient_inline = 'Crossunder gradient color'
+crossunder_gradient_start = input.color(color.new(color.orange,95), crossunder_gradient_inline, group = cross_grp, inline = crossunder_gradient_inline)
+crossunder_gradient_end = input.color(color.new(color.maroon,20), '', group = cross_grp, inline = crossunder_gradient_inline)
+crossover_gradient_inline = 'Crossover gradient color'
+crossover_gradient_start = input.color(color.new(color.aqua,95), crossover_gradient_inline, group = cross_grp, inline = crossover_gradient_inline)
+crossover_gradient_end = input.color(color.new(color.teal,20), '', group = cross_grp, inline = crossover_gradient_inline)
+cross_cvd_window = input.int(9,'CVD sliding window')
 cross_tf_inline = 'Limit min/max timeframes'
 cross_tf_min = input.int(1, cross_tf_inline, minval=1,maxval=4,group = cross_grp,inline = cross_tf_inline)
-cross_tf_max = input.int(4, '', minval=2,maxval=5,group = cross_grp,inline = cross_tf_inline)
+cross_tf_max = input.int(5, '', minval=2,maxval=5,group = cross_grp,inline = cross_tf_inline)
+cross_suppress_higher_tf = input.bool(true, 'Suppress higher timeframe?')
 //-----------------------------------------------------------------------------}
 
 // Calculation
@@ -147,25 +152,41 @@ for idx = 0 to 4
     s = ma_lib.MaStructure.new(close, fast, slow)
     ema_trends.push(ma_lib.market_structure(s))
 
-// MTF supertrend of EMA slow
+// MTF supertrend of EMA slow of lower timeframe crossing EMA fast of higher timeframe
 float[] supertrend = array.new<float>()
-min_tf_m = timeframe.in_seconds(tfs.get(0))
+min_tf_secs = timeframe.in_seconds(tfs.get(0))
 float bias_val = 0.
 float max_abs_bias = 0.
+
+pstrct_at_cross(src1,src2) =>
+    pstrct = ma_lib.pair_structure(src1,src2)
+    cross = ta.cross(src1,src2)
+    cross ? pstrct : 0
+
 for idx = 0 to 4
-    if cross_tf_min > idx + 1 or cross_tf_max < idx + 2
+    tf_secs = timeframe.in_seconds(tfs.get(idx))
+    chart_tf_secs = timeframe.in_seconds('')
+    if cross_suppress_higher_tf and tf_secs > chart_tf_secs
+        supertrend.push(0)
+    else if cross_tf_min > idx + 1 or cross_tf_max < idx + 2
         supertrend.push(0)
     else
-        multiplier = timeframe.in_seconds(tfs.get(idx)) / min_tf_m
-        max_abs_bias += multiplier
+        multiplier = tf_secs / min_tf_secs
+        max_abs_bias += 8 * multiplier
+        ema_fast = ema1.get(idx).ema_filled
         ema_slow = ema2.get(idx).ema_filled
+        higher_ema_fast = ema1.get(idx + 1).ema_filled
         higher_ema_slow = ema2.get(idx + 1).ema_filled
-        trend = ma_lib.pair_structure(ema_slow, higher_ema_slow)
-        is_crossing = ta.cross(ema_slow,higher_ema_slow)
-        supertrend.push(is_crossing ? trend : 0)
+        fast_cross = pstrct_at_cross(ema_fast,higher_ema_fast)
+        mixed_cross = pstrct_at_cross(ema_fast,higher_ema_slow)
+        slow_cross = pstrct_at_cross(ema_slow,higher_ema_slow)
+        trend = fast_cross + 2 * mixed_cross + 4 * slow_cross
+        supertrend.push(trend)
 
-        if is_crossing
-            bias_val += trend * multiplier
+        bias_val += trend * multiplier
+
+bias_cvd = math.sum(bias_val,cross_cvd_window)
+bias_ma = ta.sma(bias_val,cross_cvd_window)
 
 trend_ico(trend) =>
     switch trend
@@ -189,8 +210,9 @@ trend_bg_color(trend) =>
         => color.new(color.silver,80)
 
 mtf_bias_bgcolor() =>
-    switch bias_val != 0.
-        true => color.from_gradient(bias_val,-max_abs_bias,max_abs_bias,cross_gradient_start,cross_gradient_end)
+    switch
+        bias_val > 0 => color.from_gradient(bias_val,0,max_abs_bias,crossover_gradient_start,crossover_gradient_end)
+        bias_val < 0 => color.from_gradient(bias_val,-max_abs_bias,0,crossunder_gradient_end,crossunder_gradient_start)
         => color(na)
 //-----------------------------------------------------------------------------}
 
@@ -242,8 +264,12 @@ bias_color = switch
     bias_val < 0 => color.maroon
     => color(na)
 plot(bias_val, 'MTF bias', style = plot.style_columns, histbase = 0, color = bias_color)
-plot(-max_abs_bias, 'Min bias', color = color.red, style = plot.style_linebr)
-plot(max_abs_bias, 'Max bias', color = color.green, style = plot.style_linebr)
+bias_cvd_color = switch
+    bias_cvd > 0 => color.aqua
+    bias_cvd < 0 => color.orange
+    => color(na)
+plot(bias_cvd, 'MTF bias CVD', color = bias_cvd_color)
+plot(bias_ma,'MTF bias SMA', color=color.gray)
 
 // Trend summary and countdown to bar close
 cntdwn_tb = table.new(position.top_right, 3, 5, force_overlay = true)
