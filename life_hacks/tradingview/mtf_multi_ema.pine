@@ -2,7 +2,7 @@
 // © InNoobWeTrust
 
 //@version=5
-indicator("Noob's MTF multi-EMA", overlay=false)
+indicator("Noob's MTF multi-EMA", max_bars_back = 3600, overlay=false)
 import TradingView/ta/8
 import forbidden_gun/ma_lib/2
 
@@ -188,6 +188,22 @@ for idx = 0 to 4
 bias_cvd = math.sum(bias_val,cross_cvd_window)
 bias_ma = ta.sma(bias_val,cross_cvd_window)
 
+position = 0
+
+// Long/Short entry
+max_cvd = math.max(bias_cvd[1],bias_cvd[2],bias_cvd[3],bias_cvd[4],bias_cvd[5],bias_cvd[6],bias_cvd[7],bias_cvd[8],bias_cvd[9])
+min_cvd = math.min(bias_cvd[1],bias_cvd[2],bias_cvd[3],bias_cvd[4],bias_cvd[5],bias_cvd[6],bias_cvd[7],bias_cvd[8],bias_cvd[9])
+if bias_ma[1] < bias_val[1] and min_cvd + bias_cvd[1] < 0 and bias_cvd[1] > min_cvd
+    position := switch position[1]
+        0 => 1
+        -1 => 0
+        1 => 1
+if bias_ma[1] > bias_val[1] and max_cvd - bias_cvd[1] > 0 and bias_cvd[1] < max_cvd
+    position := switch position[1]
+        0 => -1
+        -1 => -1
+        1 => 0
+
 trend_ico(trend) =>
     switch trend
         1 => '⬆︎' // Up
@@ -270,6 +286,12 @@ bias_cvd_color = switch
     => color(na)
 plot(bias_cvd, 'MTF bias CVD', color = bias_cvd_color)
 plot(bias_ma,'MTF bias SMA', color=color.gray)
+
+// Order entries
+if position * position[1] == 0 and position + position[1] != 0
+    switch position
+        1 => label.new(bar_index,low - close*0.01,text='L',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.green,force_overlay = true)
+        -1 => label.new(bar_index,high + close*0.01,text='S',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.red,force_overlay = true)
 
 // Trend summary and countdown to bar close
 cntdwn_tb = table.new(position.top_right, 3, 5, force_overlay = true)
