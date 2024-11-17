@@ -2,13 +2,84 @@
 // © InNoobWeTrust
 
 //@version=5
-strategy("Noob's MTF multi-EMA", max_bars_back = 3600, overlay=false)
+strategy("Noob's MTF multi-EMA", max_bars_back = 3600, overlay=false, initial_capital = 100,default_qty_value = 100,default_qty_type = strategy.cash,margin_long = 5,margin_short = 5)
 import TradingView/ta/8
 import forbidden_gun/ma_lib/2
 
 //=============================================================================
 // MTF multi-emas
 //=============================================================================
+
+// Types
+//-----------------------------------------------------------------------------{
+type EmaTf
+    string tf
+    int len
+    float ema
+    float ema_filled
+    color clr
+//-----------------------------------------------------------------------------}
+
+// Helper functions
+//-----------------------------------------------------------------------------{
+ema_tf(simple string tf, simple int len, src, simple bool smooth = false) =>
+    request.security(syminfo.tickerid, tf, ta.ema(src, len), smooth ? barmerge.gaps_on : barmerge.gaps_off, smooth ? barmerge.lookahead_on : barmerge.lookahead_off)
+
+ema_color(simple int tf_lvl, simple int max, simple color gradient_start, simple color gradient_end) =>
+    color.from_gradient(tf_lvl,1,max,gradient_start,gradient_end)
+
+newEma(string tf, simple int len, color clr, simple bool render, smooth = false) =>
+    if render
+        ema = ema_tf(tf,len, close, smooth)
+        ema_filled = ta.valuewhen(not na(ema), ema, 0)
+        EmaTf.new(tf, len, ema, ema_filled, clr)
+    else
+        EmaTf.new(na, na, na, na, color(na))
+
+countdown(simple string tf) =>
+    if timeframe.in_seconds(timeframe.period) < timeframe.in_seconds(tf)
+        time_left = int(time_close(tf) - timenow)
+    else
+        na
+
+fmt_countdown(simple string tf) =>
+    cntdwn = countdown(tf)
+    if not na(cntdwn)
+        cntdwn := cntdwn / 1000
+        hh = int(cntdwn / 3600)
+        mm = int((cntdwn % 3600) / 60)
+        ss = int(cntdwn % 60)
+        str.format('ETA: {0,number,00}:{1,number,00}:{2,number,00}', hh,mm,ss)
+    else
+        'ETA: -- : -- : --'
+
+trend_ico(trend) =>
+    switch trend
+        1 => '⬆︎' // Up
+        -1 => '⬇︎' // Down
+        0 => '〰︎' // Tangled
+        => '?' // Unknown, data not available for calculation
+
+trend_txt_color(trend) =>
+    switch trend
+        1 => #26a69a
+        -1 => #ef5350
+        0 => color.gray
+        => color.silver
+
+trend_bg_color(trend) =>
+    switch trend
+        1 => color.new(#26a69a,80)
+        -1 => color.new(#ef5350,80)
+        0 => color.new(color.gray,80)
+        => color.new(color.silver,80)
+
+mtf_bias_bgcolor(bias,max_bias,crossover_gradient_start,crossover_gradient_end,crossunder_gradient_end,crossunder_gradient_start) =>
+    switch
+        bias > 0 => color.from_gradient(bias,0,max_bias,crossover_gradient_start,crossover_gradient_end)
+        bias < 0 => color.from_gradient(bias,-max_bias,0,crossunder_gradient_end,crossunder_gradient_start)
+        => color(na)
+//-----------------------------------------------------------------------------}
 
 // Input
 //-----------------------------------------------------------------------------{
@@ -65,66 +136,35 @@ cross_tf_max = input.int(5, '', minval=2,maxval=5,group = cross_grp,inline = cro
 
 bias_cvd_grp = "► Bias CVD"
 bias_cvd_window = input.int(9,'CVD sliding window',group = bias_cvd_grp)
-bias_cvd_fast_len = input.int(6,'CVD fast length',group = bias_cvd_grp)
-bias_cvd_slow_len = input.int(34,'CVD slow length',group = bias_cvd_grp)
+bias_cvd_trend_detect_length = input.int(4,'CVD trend detection length',group = bias_cvd_grp)
 bias_suppress_higher_tf = input.bool(true, 'Suppress higher timeframe',group = bias_cvd_grp)
 
 strategy_grp = "► Strategy"
 strategy_position_label = input.bool(true,"Show position label",group = strategy_grp)
-strategy_position_bg = input.bool(true,"Show position holding background",group = strategy_grp)
-strategy_sl_percent = input.float(0.2, "SL percentage", minval=0.005,maxval=0.995)
-strategy_enabled = input.bool(false, "Enable strategy actions")
+strategy_position_bg = input.bool(true,"Show background on ideal long/short entry",group = strategy_grp)
+strategy_sl_percent = input.float(0.01, "SL percentage", minval=0.005,maxval=0.995,group = strategy_grp)
+strategy_rsi_enable = input.bool(true, 'Follow RSI trend',group = strategy_grp)
+strategy_rsi_length = input.int(20,"RSI length",group = strategy_grp)
+strategy_rsi_trend_detect_entry_length = input.int(9,'RSI trend detection length for entry',group = strategy_grp)
+strategy_rsi_trend_detect_exit_length = input.int(6,'RSI trend detection length for exit',group = strategy_grp)
+strategy_long_enabled = input.bool(true, "Long action",group = strategy_grp)
+strategy_long_rsi_threshold = input.int(30, 'Long RSI threshold', group = strategy_grp)
+strategy_short_enabled = input.bool(true, "Short action",group = strategy_grp)
+strategy_short_rsi_threshold = input.int(70, 'Short RSI threshold', group = strategy_grp)
 //-----------------------------------------------------------------------------}
 
 // Calculation
 //-----------------------------------------------------------------------------{
-type EmaTf
-    string tf
-    int len
-    float ema
-    float ema_filled
-    color clr
-
-ema_tf(simple string tf, simple int len, src, simple bool smooth = false) =>
-    request.security(syminfo.tickerid, tf, ta.ema(src, len), smooth ? barmerge.gaps_on : barmerge.gaps_off, smooth ? barmerge.lookahead_on : barmerge.lookahead_off)
-
-ema_color(simple int tf_lvl, simple int max, simple color gradient_start, simple color gradient_end) =>
-    color.from_gradient(tf_lvl,1,max,gradient_start,gradient_end)
-
-newEma(string tf, simple int len, color clr, simple bool render) =>
-    if render
-        ema = ema_tf(tf,len, close, smooth)
-        ema_filled = ta.valuewhen(not na(ema), ema, 0)
-        EmaTf.new(tf, len, ema, ema_filled, clr)
-    else
-        EmaTf.new(na, na, na, na, color(na))
-
-countdown(simple string tf) =>
-    if timeframe.in_seconds(timeframe.period) < timeframe.in_seconds(tf)
-        time_left = int(time_close(tf) - timenow)
-    else
-        na
-
-fmt_countdown(simple string tf) =>
-    cntdwn = countdown(tf)
-    if not na(cntdwn)
-        cntdwn := cntdwn / 1000
-        hh = int(cntdwn / 3600)
-        mm = int((cntdwn % 3600) / 60)
-        ss = int(cntdwn % 60)
-        str.format('ETA: {0,number,00}:{1,number,00}:{2,number,00}', hh,mm,ss)
-    else
-        'ETA: -- : -- : --'
 
 // Timeframes
 string[] tfs = array.from(tf1,tf2,tf3,tf4,tf5)
 // EMA data
 EmaTf[] ema1 = array.new<EmaTf>()
-ema1.push(newEma(tf1, ema1_len, ema_color(1,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 1 <= ema1_max_tf))
-ema1.push(newEma(tf2, ema1_len, ema_color(2,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 2 <= ema1_max_tf))
-ema1.push(newEma(tf3, ema1_len, ema_color(3,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 3 <= ema1_max_tf))
-ema1.push(newEma(tf4, ema1_len, ema_color(4,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 4 <= ema1_max_tf))
-ema1.push(newEma(tf5, ema1_len, ema_color(5,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 5 <= ema1_max_tf))
+ema1.push(newEma(tf1, ema1_len, ema_color(1,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 1 <= ema1_max_tf,smooth))
+ema1.push(newEma(tf2, ema1_len, ema_color(2,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 2 <= ema1_max_tf,smooth))
+ema1.push(newEma(tf3, ema1_len, ema_color(3,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 3 <= ema1_max_tf,smooth))
+ema1.push(newEma(tf4, ema1_len, ema_color(4,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 4 <= ema1_max_tf,smooth))
+ema1.push(newEma(tf5, ema1_len, ema_color(5,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 5 <= ema1_max_tf,smooth))
 
 float[] ema1_h = array.new<float>()
 ema1_h.push(ema1_enable and ema1_band_enable and 1 <= ema1_max_tf ? ema_tf(tf1, ema1_len, high, smooth) : na)
@@ -141,18 +181,18 @@ ema1_l.push(ema1_enable and ema1_band_enable and 4 <= ema1_max_tf ? ema_tf(tf4, 
 ema1_l.push(ema1_enable and ema1_band_enable and 5 <= ema1_max_tf ? ema_tf(tf5, ema1_len, low, smooth) : na)
 
 EmaTf[] ema2 = array.new<EmaTf>()
-ema2.push(newEma(tf1, ema2_len, ema_color(1,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 1 <= ema2_max_tf))
-ema2.push(newEma(tf2, ema2_len, ema_color(2,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 2 <= ema2_max_tf))
-ema2.push(newEma(tf3, ema2_len, ema_color(3,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 3 <= ema2_max_tf))
-ema2.push(newEma(tf4, ema2_len, ema_color(4,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 4 <= ema2_max_tf))
-ema2.push(newEma(tf5, ema2_len, ema_color(5,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 5 <= ema2_max_tf))
+ema2.push(newEma(tf1, ema2_len, ema_color(1,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 1 <= ema2_max_tf,smooth))
+ema2.push(newEma(tf2, ema2_len, ema_color(2,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 2 <= ema2_max_tf,smooth))
+ema2.push(newEma(tf3, ema2_len, ema_color(3,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 3 <= ema2_max_tf,smooth))
+ema2.push(newEma(tf4, ema2_len, ema_color(4,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 4 <= ema2_max_tf,smooth))
+ema2.push(newEma(tf5, ema2_len, ema_color(5,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 5 <= ema2_max_tf,smooth))
 
 EmaTf[] ema3 = array.new<EmaTf>()
-ema3.push(newEma(tf1, ema3_len, ema_color(1,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 1 <= ema3_max_tf))
-ema3.push(newEma(tf2, ema3_len, ema_color(2,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 2 <= ema3_max_tf))
-ema3.push(newEma(tf3, ema3_len, ema_color(3,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 3 <= ema3_max_tf))
-ema3.push(newEma(tf4, ema3_len, ema_color(4,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 4 <= ema3_max_tf))
-ema3.push(newEma(tf5, ema3_len, ema_color(5,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 5 <= ema3_max_tf))
+ema3.push(newEma(tf1, ema3_len, ema_color(1,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 1 <= ema3_max_tf,smooth))
+ema3.push(newEma(tf2, ema3_len, ema_color(2,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 2 <= ema3_max_tf,smooth))
+ema3.push(newEma(tf3, ema3_len, ema_color(3,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 3 <= ema3_max_tf,smooth))
+ema3.push(newEma(tf4, ema3_len, ema_color(4,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 4 <= ema3_max_tf,smooth))
+ema3.push(newEma(tf5, ema3_len, ema_color(5,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 5 <= ema3_max_tf,smooth))
 
 // Market structure data
 float[] ema_trends = array.new<float>()
@@ -196,55 +236,40 @@ for idx = 0 to 4
         bias_val += trend * multiplier
 
 bias_cvd = math.sum(bias_val, bias_cvd_window)
-bias_cvd_fast = ta.wma(bias_cvd,bias_cvd_fast_len)
-bias_cvd_slow = ta.wma(bias_cvd,bias_cvd_slow_len)
 
-position = 0
-// Long entry
-if ta.crossover(bias_cvd_fast,bias_cvd_slow)
-    position := switch position[1]
-        -1 => 0
-        => 1
-// Short entry
-else if ta.crossunder(bias_cvd_fast,bias_cvd_slow)
-    position := switch position[1]
-        1 => 0
-        => -1
+rsi = ta.rsi(close, strategy_rsi_length)
 
-// Order entries
 position_entry = 0
-if position * position[1] == 0 and position + position[1] != 0
-    position_entry := switch position
-        1 => 2 // Long entry
-        -1 => -2 //Short entry
-        0 => position[1] == 1 ? 1 : -1 // Close long/short
+// Long entry
+if ta.rising(bias_cvd,bias_cvd_trend_detect_length)
+    position_entry := 1
+// Short entry
+else if ta.falling(bias_cvd,bias_cvd_trend_detect_length)
+    position_entry := -1
 
-trend_ico(trend) =>
-    switch trend
-        1 => '⬆︎' // Up
-        -1 => '⬇︎' // Down
-        0 => '〰︎' // Tangled
-        => '?' // Unknown, data not available for calculation
-
-trend_txt_color(trend) =>
-    switch trend
-        1 => #26a69a
-        -1 => #ef5350
-        0 => color.gray
-        => color.silver
-
-trend_bg_color(trend) =>
-    switch trend
-        1 => color.new(#26a69a,80)
-        -1 => color.new(#ef5350,80)
-        0 => color.new(color.gray,80)
-        => color.new(color.silver,80)
-
-mtf_bias_bgcolor() =>
+// Suppress entries that are not following rsi trend
+if strategy_rsi_enable
     switch
-        bias_val > 0 => color.from_gradient(bias_val,0,max_abs_bias,crossover_gradient_start,crossover_gradient_end)
-        bias_val < 0 => color.from_gradient(bias_val,-max_abs_bias,0,crossunder_gradient_end,crossunder_gradient_start)
-        => color(na)
+        position_entry == 1 and ta.falling(rsi,strategy_rsi_trend_detect_entry_length) and rsi > strategy_long_rsi_threshold => position_entry := 0
+        position_entry == -1 and ta.rising(rsi,strategy_rsi_trend_detect_entry_length) and rsi < strategy_short_rsi_threshold => position_entry := 0
+
+position = position_entry * 2 // 2 for long and -2 for short
+// Early close if rsi is going opposite direction
+if strategy_rsi_enable
+    position := switch position
+        2 => ta.falling(rsi,strategy_rsi_trend_detect_exit_length) ? 1 : 2
+        -2 => ta.rising(rsi,strategy_rsi_trend_detect_exit_length) ? -1 : -2
+// Persistent variables to manage positions
+var float entry_price = 0
+var float sl_price  = 0
+// Update entry price
+entry_price := position * position[1] != 0 ? close : entry_price
+tick_size = syminfo.mintick * syminfo.pointvalue
+sl_change = strategy_sl_percent * close
+sl_ticks = sl_change / tick_size
+sl_price := switch position
+    2 => close > entry_price and close - sl_change > sl_price? close - sl_change : sl_price
+    -2 => close < entry_price and close + sl_change < sl_price? close + sl_change : sl_price
 //-----------------------------------------------------------------------------}
 
 // Plot
@@ -289,7 +314,7 @@ ema3_tf4_plt = plot(ema3.get(3).ema, '', ema3.get(3).clr, force_overlay = true, 
 ema3_tf5_plt = plot(ema3.get(4).ema, '', ema3.get(4).clr, force_overlay = true, linewidth = variable_width ? 5 : 1)
 
 // MTF bias bg and plot
-bgcolor(mtf_bias_bgcolor(), force_overlay = true)
+bgcolor(mtf_bias_bgcolor(bias_val,max_abs_bias,crossover_gradient_start,crossover_gradient_end,crossunder_gradient_end,crossunder_gradient_start), force_overlay = true)
 bias_color = switch
     bias_val > 0 => color.teal
     bias_val < 0 => color.maroon
@@ -299,21 +324,17 @@ bias_cvd_color = switch
     bias_cvd > 0 => color.aqua
     bias_cvd < 0 => color.orange
     => color(na)
-plot(bias_cvd, 'MTF bias CVD', color = bias_cvd_color)
-plot(bias_cvd_fast, 'MTF bias CVD fast', color = color.blue)
-plot(bias_cvd_slow, 'MTF bias CVD slow', color = color.yellow)
+cvd_plt = plot(bias_cvd, 'MTF bias CVD', color = bias_cvd_color)
+
+// RSI
+plot(rsi,color=color.silver)
+
+// Ideal entry for long/short
 position_color = switch
-    position > 0 => strategy_position_bg ? color.new(color.green,90) : color(na)
-    position < 0 => strategy_position_bg ? color.new(color.red,90) : color(na)
+    strategy_position_bg and position_entry > 0 => strategy_position_bg ? color.new(color.green,90) : color(na)
+    strategy_position_bg and position_entry < 0 => strategy_position_bg ? color.new(color.red,90) : color(na)
     => color(na)
 bgcolor(position_color)
-
-if strategy_position_label
-    switch position_entry
-        2 => label.new(bar_index - 1,low - close*0.01,text='L',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.green,force_overlay = true)
-        -2 => label.new(bar_index - 1,high + close*0.01,text='S',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.red,force_overlay = true)
-        // 1 => label.new(bar_index - 1, low - close*0.01,text='C',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.gray,force_overlay = true)
-        // -1 => label.new(bar_index - 1, high + close*0.01,text='C',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.gray,force_overlay = true)
 
 // Trend summary and countdown to bar close
 cntdwn_tb = table.new(position.top_right, 3, 5, force_overlay = true)
@@ -331,14 +352,29 @@ for idx = 0 to 4
 
 // Strategic actions
 //-----------------------------------------------------------------------------{
-tick_size = syminfo.mintick * syminfo.pointvalue
-sl_change = strategy_sl_percent * close
-sl_ticks = sl_change / tick_size
-if strategy_enabled
-    switch position_entry
-        2 => strategy.close('Short'),strategy.entry('Long',strategy.long)
-        -2 => strategy.close('Long'),strategy.entry('Short',strategy.short)
-    // Trailing stop
-    strategy.exit('SL Long','Long',stop = close - sl_change, loss = sl_ticks)
-    strategy.exit('SL Short','Short',stop = close + sl_change, loss = sl_ticks)
+close_long() =>
+    if strategy_long_enabled and strategy.opentrades.size(strategy.opentrades - 1) > 0
+        label.new(bar_index - 1,high + close*0.01,text='C',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.gray,force_overlay = true)
+        strategy.close('Long')
+close_short() =>
+    if strategy_short_enabled and strategy.opentrades.size(strategy.opentrades - 1) < 0
+        label.new(bar_index - 1,low - close*0.01,text='C',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.gray,force_overlay = true)
+        strategy.close('Short')
+order_long() =>
+    close_short()
+    if strategy_long_enabled
+        if strategy.opentrades.size(strategy.opentrades - 1) <= 0
+            label.new(bar_index - 1,low - close*0.01,text='L',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.green,force_overlay = true)
+        strategy.entry('Long',strategy.long)
+order_short() =>
+    close_long()
+    if strategy_short_enabled
+        if strategy.opentrades.size(strategy.opentrades - 1) >= 0
+            label.new(bar_index - 1,high + close*0.01,text='S',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.red,force_overlay = true)
+        strategy.entry('Short',strategy.short)
+switch position
+    2 => order_long(),strategy.exit('SL Long','Long',stop = sl_price)
+    -2 => order_short(),strategy.exit('SL Short', 'Short',stop = sl_price)
+    1 => close_long()
+    -1 => close_short()
 //-----------------------------------------------------------------------------}

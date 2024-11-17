@@ -197,12 +197,12 @@ volume_bar_theshold_low = input.float(fibo_618, volume_bar_theshold_inline, grou
 volume_bar_theshold_extreme = input.float(2. + fibo_618, '', group = volume_bar_grp, inline = volume_bar_theshold_inline)
 
 volume_bar_up_gradient_inline = "Volume up gradient color"
-volume_bar_up_gradient_start = input.color(#76c07a, volume_bar_up_gradient_inline, volume_bar_up_gradient_inline, group = volume_bar_grp, inline = volume_bar_up_gradient_inline)
-volume_bar_up_gradient_end = input.color(#3f1380, '', volume_bar_up_gradient_inline, group = volume_bar_grp, inline = volume_bar_up_gradient_inline)
+volume_bar_up_gradient_start = input.color(color.new(#76c07a,10), volume_bar_up_gradient_inline, volume_bar_up_gradient_inline, group = volume_bar_grp, inline = volume_bar_up_gradient_inline)
+volume_bar_up_gradient_end = input.color(color.new(#3f1380,10), '', volume_bar_up_gradient_inline, group = volume_bar_grp, inline = volume_bar_up_gradient_inline)
 
 volume_bar_down_gradient_inline = "Volume down gradient color"
-volume_bar_down_gradient_start = input.color(#fff494, volume_bar_down_gradient_inline, volume_bar_down_gradient_inline, group = volume_bar_grp, inline = volume_bar_down_gradient_inline)
-volume_bar_down_gradient_end = input.color(#751820, '', volume_bar_down_gradient_inline, group = volume_bar_grp, inline = volume_bar_down_gradient_inline)
+volume_bar_down_gradient_start = input.color(color.new(#fff494,10), volume_bar_down_gradient_inline, volume_bar_down_gradient_inline, group = volume_bar_grp, inline = volume_bar_down_gradient_inline)
+volume_bar_down_gradient_end = input.color(color.new(#751820,10), '', volume_bar_down_gradient_inline, group = volume_bar_grp, inline = volume_bar_down_gradient_inline)
 //-----------------------------------------------------------------------------}
 
 // Calculation
@@ -316,7 +316,7 @@ test_demand = ta.crossunder(reversal_signal, rsi_overbought_limit)
 // Plot
 //-----------------------------------------------------------------------------{
 
-// MTF RSI
+// RSI overbought/oversold percentage
 var rsi_tb = table.new(position.top_right,2,2)
 if barstate.islast
     table.cell(rsi_tb,0,0,'OB',text_color=color.gray,bgcolor=na)
@@ -366,20 +366,28 @@ plotshape(rsi_show_label and ta.crossover(avg_rsi, rsi_overbought_limit) ? high 
 // Input
 //-----------------------------------------------------------------------------{
 mtf_rsi_grp = "► MTF RSI"
-mtf_rsi_enable = input.bool(true, 'Show', group = mtf_rsi_grp)
-mtf_rsi_length = input.int(14, 'MTF RSI length', group = mtf_rsi_grp)
+mtf_rsi_length = input.int(14, 'RSI length', group = mtf_rsi_grp)
 mtf_rsi1_inline = "MTF RSI 1st"
 mtf_rsi2_inline = "MTF RSI 2nd"
 mtf_rsi3_inline = "MTF RSI 3rd"
-mtf_rsi4_inline = "MTF RSI "
+mtf_rsi4_inline = "MTF RSI 4th"
 mtf_rsi1_tf = input.timeframe('1','',group = mtf_rsi_grp,inline = mtf_rsi1_inline)
-mtf_rsi1_color = input.color(color.new(color.gray,65),'',group = mtf_rsi_grp,inline = mtf_rsi1_inline)
+mtf_rsi1_color = input.color(color.new(color.gray,80),'',group = mtf_rsi_grp,inline = mtf_rsi1_inline)
 mtf_rsi2_tf = input.timeframe('5','',group = mtf_rsi_grp,inline = mtf_rsi2_inline)
-mtf_rsi2_color = input.color(color.new(color.gray,60),'',group = mtf_rsi_grp,inline = mtf_rsi2_inline)
+mtf_rsi2_color = input.color(color.new(color.gray,80),'',group = mtf_rsi_grp,inline = mtf_rsi2_inline)
 mtf_rsi3_tf = input.timeframe('30','',group = mtf_rsi_grp,inline = mtf_rsi3_inline)
-mtf_rsi3_color = input.color(color.new(color.gray,55),'',group = mtf_rsi_grp,inline = mtf_rsi3_inline)
+mtf_rsi3_color = input.color(color.new(color.gray,80),'',group = mtf_rsi_grp,inline = mtf_rsi3_inline)
 mtf_rsi4_tf = input.timeframe('240','',group = mtf_rsi_grp,inline = mtf_rsi4_inline)
-mtf_rsi4_color = input.color(color.new(color.gray,50),'',group = mtf_rsi_grp,inline = mtf_rsi4_inline)
+mtf_rsi4_color = input.color(color.new(color.gray,80),'',group = mtf_rsi_grp,inline = mtf_rsi4_inline)
+mtf_rsi_individual_enable = input.bool(true, 'Show individual MTF RSI lines', group = mtf_rsi_grp)
+mtf_rsi_avg_inline = 'MTF average RSI'
+mtf_rsi_avg_enable = input.bool(true, mtf_rsi_avg_inline, group = mtf_rsi_grp,inline = mtf_rsi_avg_inline)
+mtf_rsi_avg_color = input.color(color.new(color.gray,25),'',group = mtf_rsi_grp,inline = mtf_rsi_avg_inline)
+mtf_rsi_bg_inline = 'MTF rising/falling'
+mtf_rsi_bg_enable = input.bool(true,mtf_rsi_bg_inline,group = mtf_rsi_grp,inline = mtf_rsi_bg_inline)
+mtf_rsi_edge_detect_length = input.int(3,'',group = mtf_rsi_grp,inline = mtf_rsi_bg_inline)
+mtf_rsi_rising_color = input.color(color.new(color.teal,80),'',group = mtf_rsi_grp,inline = mtf_rsi_bg_inline)
+mtf_rsi_falling_color = input.color(color.new(color.orange,80),'',group = mtf_rsi_grp,inline = mtf_rsi_bg_inline)
 //-----------------------------------------------------------------------------}
 
 // Calculation
@@ -388,30 +396,44 @@ mtf_rsi1 = request.security(syminfo.tickerid,mtf_rsi1_tf, ta.rsi(close, mtf_rsi_
 mtf_rsi2 = request.security(syminfo.tickerid,mtf_rsi2_tf, ta.rsi(close, mtf_rsi_length))
 mtf_rsi3 = request.security(syminfo.tickerid,mtf_rsi3_tf, ta.rsi(close, mtf_rsi_length))
 mtf_rsi4 = request.security(syminfo.tickerid,mtf_rsi4_tf, ta.rsi(close, mtf_rsi_length))
+
+mtf_rsi = array.from(mtf_rsi1,mtf_rsi2,mtf_rsi3,mtf_rsi4)
+mtf_avg_rsi = array.avg(mtf_rsi)
 //-----------------------------------------------------------------------------}
 
 // Plot
 //-----------------------------------------------------------------------------{
-plot(mtf_rsi_enable ? mtf_rsi1 : na, 'MTF RSI #1', color=mtf_rsi1_color)
-plot(mtf_rsi_enable ? mtf_rsi2 : na, 'MTF RSI #2', color=mtf_rsi2_color)
-plot(mtf_rsi_enable ? mtf_rsi3 : na, 'MTF RSI #3', color=mtf_rsi3_color)
-plot(mtf_rsi_enable ? mtf_rsi4 : na, 'MTF RSI #4', color=mtf_rsi4_color)
+plot(mtf_rsi_individual_enable ? mtf_rsi1 : na, 'MTF RSI #1', color=mtf_rsi1_color)
+plot(mtf_rsi_individual_enable ? mtf_rsi2 : na, 'MTF RSI #2', color=mtf_rsi2_color)
+plot(mtf_rsi_individual_enable ? mtf_rsi3 : na, 'MTF RSI #3', color=mtf_rsi3_color)
+plot(mtf_rsi_individual_enable ? mtf_rsi4 : na, 'MTF RSI #4', color=mtf_rsi4_color)
+plot(mtf_rsi_avg_enable ? mtf_avg_rsi : na, 'MTF RSI average', color = mtf_rsi_avg_color)
 
 var label mtf_rsi1_lbl = na
 var label mtf_rsi2_lbl = na
 var label mtf_rsi3_lbl = na
 var label mtf_rsi4_lbl = na
-if barstate.islast and mtf_rsi_enable
+var label mtf_rsi_avg_lbl = na
+if barstate.islast and mtf_rsi_individual_enable
     label.delete(mtf_rsi1_lbl)
     label.delete(mtf_rsi2_lbl)
     label.delete(mtf_rsi3_lbl)
     label.delete(mtf_rsi4_lbl)
+    label.delete(mtf_rsi_avg_lbl)
 
     mtf_rsi1_lbl := label.new(bar_index + 1, mtf_rsi1, mtf_rsi1_tf,xloc.bar_index, style=label.style_text_outline, size = size.tiny,color = mtf_rsi1_color)
     mtf_rsi2_lbl := label.new(bar_index + 1, mtf_rsi2, mtf_rsi2_tf,xloc.bar_index, style=label.style_text_outline, size = size.tiny,color = mtf_rsi2_color)
     mtf_rsi3_lbl := label.new(bar_index + 1, mtf_rsi3, mtf_rsi3_tf,xloc.bar_index, style=label.style_text_outline, size = size.tiny,color = mtf_rsi3_color)
     mtf_rsi4_lbl := label.new(bar_index + 1, mtf_rsi4, mtf_rsi4_tf,xloc.bar_index, style=label.style_text_outline, size = size.tiny,color = mtf_rsi4_color)
+    mtf_rsi_avg_lbl := label.new(bar_index + 1, mtf_avg_rsi, 'MTF',xloc.bar_index, style=label.style_text_outline, size = size.tiny,color = mtf_rsi_avg_color)
 
+rsi_bg = color(na)
+if mtf_rsi_bg_enable
+    rsi_bg := switch
+        ta.rising(mtf_avg_rsi,mtf_rsi_edge_detect_length) => mtf_rsi_rising_color
+        ta.falling(mtf_avg_rsi,mtf_rsi_edge_detect_length) => mtf_rsi_falling_color
+        => color(na)
+bgcolor(rsi_bg)
 //-----------------------------------------------------------------------------}
 
 
