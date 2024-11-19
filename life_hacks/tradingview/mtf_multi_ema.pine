@@ -142,15 +142,9 @@ bias_suppress_higher_tf = input.bool(true, 'Suppress higher timeframe',group = b
 strategy_grp = "► Strategy"
 strategy_position_label = input.bool(true,"Show position label",group = strategy_grp)
 strategy_position_bg = input.bool(true,"Show background on ideal long/short entry",group = strategy_grp)
-strategy_sl_percent = input.float(0.01, "SL percentage", minval=0.005,maxval=0.995,group = strategy_grp)
-strategy_rsi_enable = input.bool(true, 'Follow RSI trend',group = strategy_grp)
-strategy_rsi_length = input.int(20,"RSI length",group = strategy_grp)
-strategy_rsi_trend_detect_entry_length = input.int(9,'RSI trend detection length for entry',group = strategy_grp)
-strategy_rsi_trend_detect_exit_length = input.int(6,'RSI trend detection length for exit',group = strategy_grp)
+strategy_sl_percent = input.float(0.05, "SL percentage", minval=0.005,maxval=0.995,group = strategy_grp)
 strategy_long_enabled = input.bool(true, "Long action",group = strategy_grp)
-strategy_long_rsi_threshold = input.int(30, 'Long RSI threshold', group = strategy_grp)
 strategy_short_enabled = input.bool(true, "Short action",group = strategy_grp)
-strategy_short_rsi_threshold = input.int(70, 'Short RSI threshold', group = strategy_grp)
 //-----------------------------------------------------------------------------}
 
 // Calculation
@@ -237,39 +231,31 @@ for idx = 0 to 4
 
 bias_cvd = math.sum(bias_val, bias_cvd_window)
 
-rsi = ta.rsi(close, strategy_rsi_length)
-
 position_entry = 0
 // Long entry
-if ta.rising(bias_cvd,bias_cvd_trend_detect_length)
+bias_cvd_rising = ta.rising(bias_cvd,bias_cvd_trend_detect_length)
+bias_cvd_falling = ta.falling(bias_cvd,bias_cvd_trend_detect_length)
+if bias_cvd_rising
     position_entry := 1
 // Short entry
-else if ta.falling(bias_cvd,bias_cvd_trend_detect_length)
+else if bias_cvd_falling
     position_entry := -1
 
-// Suppress entries that are not following rsi trend
-if strategy_rsi_enable
-    switch
-        position_entry == 1 and ta.falling(rsi,strategy_rsi_trend_detect_entry_length) and rsi > strategy_long_rsi_threshold => position_entry := 0
-        position_entry == -1 and ta.rising(rsi,strategy_rsi_trend_detect_entry_length) and rsi < strategy_short_rsi_threshold => position_entry := 0
+position = position_entry * 2 // 2 for long and -2 for short 
 
-position = position_entry * 2 // 2 for long and -2 for short
-// Early close if rsi is going opposite direction
-if strategy_rsi_enable
-    position := switch position
-        2 => ta.falling(rsi,strategy_rsi_trend_detect_exit_length) ? 1 : 2
-        -2 => ta.rising(rsi,strategy_rsi_trend_detect_exit_length) ? -1 : -2
 // Persistent variables to manage positions
 var float entry_price = 0
+var int entry_index = bar_index
 var float sl_price  = 0
 // Update entry price
+entry_index := position * position[1] != 0 ? bar_index : entry_index
 entry_price := position * position[1] != 0 ? close : entry_price
 tick_size = syminfo.mintick * syminfo.pointvalue
 sl_change = strategy_sl_percent * close
 sl_ticks = sl_change / tick_size
 sl_price := switch position
-    2 => close > entry_price and close - sl_change > sl_price? close - sl_change : sl_price
-    -2 => close < entry_price and close + sl_change < sl_price? close + sl_change : sl_price
+    2 => ta.highest(bar_index - entry_index + 1) - sl_change
+    -2 => ta.lowest(bar_index - entry_index + 1) + sl_change
 //-----------------------------------------------------------------------------}
 
 // Plot
@@ -326,9 +312,6 @@ bias_cvd_color = switch
     => color(na)
 cvd_plt = plot(bias_cvd, 'MTF bias CVD', color = bias_cvd_color)
 
-// RSI
-plot(rsi,color=color.silver)
-
 // Ideal entry for long/short
 position_color = switch
     strategy_position_bg and position_entry > 0 => strategy_position_bg ? color.new(color.green,90) : color(na)
@@ -377,4 +360,9 @@ switch position
     -2 => order_short(),strategy.exit('SL Short', 'Short',stop = sl_price)
     1 => close_long()
     -1 => close_short()
+// Trailing stop (sl_price is updated every bar to reduce risk)
+if strategy.opentrades.size(strategy.opentrades - 1) > 0
+    strategy.exit('SL Long','Long',stop = sl_price)
+else if strategy.opentrades.size(strategy.opentrades - 1) < 0
+    strategy.exit('SL Short', 'Short',stop = sl_price)
 //-----------------------------------------------------------------------------}
