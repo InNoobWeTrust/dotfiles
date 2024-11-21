@@ -325,8 +325,12 @@ if barstate.islast
     table.cell(rsi_tb,1,0, str.tostring(overbuy / rsi_range * 100,'#.##')+' %',text_color=#26a69a,bgcolor=color.new(#26a69a,80))
     table.cell(rsi_tb,1,1, str.tostring(oversell / rsi_range * 100,'#.##')+' %',text_color=#ef5350,bgcolor=color.new(#ef5350,80))
 //----
+var label rsi_lbl = na
 css = color.from_gradient(avg_rsi,sell_rsi_ma,buy_rsi_ma,rsi_avg_dn_color,rsi_avg_up_color)
 plot(avg_rsi,'Average Multi Length RSI',color=css, force_overlay = false)
+if barstate.islast
+    label.delete(rsi_lbl)
+    rsi_lbl := label.new(bar_index + 1, avg_rsi, timeframe.period,xloc.bar_index, style=label.style_text_outline, size = size.small,color = css)
 up = plot(buy_rsi_ma,'Upper Channel',color=rsi_upper_color, force_overlay = false)
 dn = plot(sell_rsi_ma,'Lower Channel',color=rsi_lower_color, force_overlay = false)
 

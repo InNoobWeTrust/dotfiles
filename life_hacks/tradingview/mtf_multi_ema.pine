@@ -2,7 +2,7 @@
 // © InNoobWeTrust
 
 //@version=5
-strategy("Noob's MTF multi-EMA", max_bars_back = 3600, overlay=false, initial_capital = 100,default_qty_value = 100,default_qty_type = strategy.cash,margin_long = 5,margin_short = 5)
+strategy("Noob's MTF multi-EMA", max_bars_back = 3600, overlay=false, initial_capital = 100,default_qty_value = 100,default_qty_type = strategy.cash,margin_long = 5,margin_short = 5, process_orders_on_close = true)
 import TradingView/ta/8
 import forbidden_gun/ma_lib/2
 
@@ -136,15 +136,19 @@ cross_tf_max = input.int(5, '', minval=2,maxval=5,group = cross_grp,inline = cro
 
 bias_cvd_grp = "► Bias CVD"
 bias_cvd_window = input.int(9,'CVD sliding window',group = bias_cvd_grp)
-bias_cvd_trend_detect_length = input.int(4,'CVD trend detection length',group = bias_cvd_grp)
+bias_cvd_trend_detect_length = input.int(2,'CVD trend detection length',group = bias_cvd_grp)
 bias_suppress_higher_tf = input.bool(true, 'Suppress higher timeframe',group = bias_cvd_grp)
 
 strategy_grp = "► Strategy"
 strategy_position_label = input.bool(true,"Show position label",group = strategy_grp)
 strategy_position_bg = input.bool(true,"Show background on ideal long/short entry",group = strategy_grp)
 strategy_sl_percent = input.float(0.05, "SL percentage", minval=0.005,maxval=0.995,group = strategy_grp)
+strategy_trailing_stop = input.bool(false, 'Enable trailing stop', tooltip = 'Using SL percentage as trailing stop percentage',group = strategy_grp)
+strategy_cross_ema_inline = 'Only when price crossing EMA slow'
+strategy_wait_ema = input.bool(true, strategy_cross_ema_inline,tooltip = 'EMA slow of nearest lower timeframe or chart timeframe. Enable this to trade-off  for less risk, higher chance to win and with more profit',group = strategy_grp,inline=strategy_cross_ema_inline)
+strategy_cross_ema_window = input.int(9,'',group = strategy_grp,inline=strategy_cross_ema_inline)
 strategy_long_enabled = input.bool(true, "Long action",group = strategy_grp)
-strategy_short_enabled = input.bool(true, "Short action",group = strategy_grp)
+strategy_short_enabled = input.bool(false, "Short action",group = strategy_grp)
 //-----------------------------------------------------------------------------}
 
 // Calculation
@@ -243,19 +247,21 @@ else if bias_cvd_falling
 
 position = position_entry * 2 // 2 for long and -2 for short 
 
-// Persistent variables to manage positions
-var float entry_price = 0
-var int entry_index = bar_index
-var float sl_price  = 0
-// Update entry price
-entry_index := position * position[1] != 0 ? bar_index : entry_index
-entry_price := position * position[1] != 0 ? close : entry_price
-tick_size = syminfo.mintick * syminfo.pointvalue
-sl_change = strategy_sl_percent * close
-sl_ticks = sl_change / tick_size
-sl_price := switch position
-    2 => ta.highest(bar_index - entry_index + 1) - sl_change
-    -2 => ta.lowest(bar_index - entry_index + 1) + sl_change
+// Wait for price to cross EMA slow
+float ema_slow = na
+for idx = 0 to 4
+    tf_secs = timeframe.in_seconds(tfs.get(idx))
+    chart_tf_secs = timeframe.in_seconds('')
+    if tf_secs <= chart_tf_secs
+        ema_slow := ema2.get(idx).ema_filled
+// Suppress if price does not cross EMA slow
+highest_in_window = ta.highest(high,strategy_cross_ema_window)
+lowest_in_window = ta.lowest(low,strategy_cross_ema_window)
+cross_ema = lowest_in_window <= ema_slow and ema_slow <= highest_in_window
+if strategy_wait_ema
+    if math.abs(position) == 2 and not cross_ema
+        position := 0
+    
 //-----------------------------------------------------------------------------}
 
 // Plot
@@ -335,34 +341,55 @@ for idx = 0 to 4
 
 // Strategic actions
 //-----------------------------------------------------------------------------{
-close_long() =>
-    if strategy_long_enabled and strategy.opentrades.size(strategy.opentrades - 1) > 0
+
+entry_price() =>
+    strategy.opentrades.entry_price(strategy.opentrades - 1)
+entry_index() =>
+    strategy.opentrades.entry_bar_index(strategy.opentrades - 1)
+close_long(simple float position_val) =>
+    if not strategy_trailing_stop and position_val == 1
+        na
+    else if strategy_long_enabled and strategy.opentrades.size(strategy.opentrades - 1) > 0
         label.new(bar_index - 1,high + close*0.01,text='C',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.gray,force_overlay = true)
         strategy.close('Long')
-close_short() =>
-    if strategy_short_enabled and strategy.opentrades.size(strategy.opentrades - 1) < 0
+close_short(simple float position_val) =>
+    if not strategy_trailing_stop and position_val == -1
+        na
+    else if strategy_short_enabled and strategy.opentrades.size(strategy.opentrades - 1) < 0
         label.new(bar_index - 1,low - close*0.01,text='C',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.gray,force_overlay = true)
         strategy.close('Short')
 order_long() =>
-    close_short()
+    close_short(2)
     if strategy_long_enabled
         if strategy.opentrades.size(strategy.opentrades - 1) <= 0
             label.new(bar_index - 1,low - close*0.01,text='L',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.green,force_overlay = true)
         strategy.entry('Long',strategy.long)
 order_short() =>
-    close_long()
+    close_long(-2)
     if strategy_short_enabled
         if strategy.opentrades.size(strategy.opentrades - 1) >= 0
             label.new(bar_index - 1,high + close*0.01,text='S',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.red,force_overlay = true)
         strategy.entry('Short',strategy.short)
+
+// Update entry price
+tick_size = syminfo.mintick * syminfo.pointvalue
+sl_change = strategy_sl_percent * close
+sl_ticks = sl_change / tick_size
+highest_from_entry = entry_index() != 0 ? ta.highest(high, bar_index - entry_index() + 1) : high
+lowest_from_entry = entry_index() != 0 ? ta.lowest(low, bar_index - entry_index() + 1) : low
+sl_price = switch math.sign(strategy.opentrades.size(strategy.opentrades - 1))
+    1 => highest_from_entry - sl_change > entry_price() ? highest_from_entry - sl_change : entry_price() - sl_change
+    -1 => lowest_from_entry + sl_change < entry_price() ? lowest_from_entry + sl_change : entry_price() + sl_change
+    => close
 switch position
-    2 => order_long(),strategy.exit('SL Long','Long',stop = sl_price)
-    -2 => order_short(),strategy.exit('SL Short', 'Short',stop = sl_price)
-    1 => close_long()
-    -1 => close_short()
+    2 => order_long()
+    -2 => order_short()
+    1 => close_long(1)
+    -1 => close_short(-1)
 // Trailing stop (sl_price is updated every bar to reduce risk)
-if strategy.opentrades.size(strategy.opentrades - 1) > 0
-    strategy.exit('SL Long','Long',stop = sl_price)
-else if strategy.opentrades.size(strategy.opentrades - 1) < 0
-    strategy.exit('SL Short', 'Short',stop = sl_price)
+if strategy_trailing_stop
+    if strategy.opentrades.size(strategy.opentrades - 1) > 0
+        strategy.exit('SL Long','Long',stop = sl_price)
+    else if strategy.opentrades.size(strategy.opentrades - 1) < 0
+        strategy.exit('SL Short', 'Short',stop = sl_price)
 //-----------------------------------------------------------------------------}
