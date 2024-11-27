@@ -1,0 +1,174 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © InNoobWeTrust
+
+//@version=6
+indicator("Gann cycle support/resistance zones", overlay = true)
+
+//=============================================================================
+// Input
+//=============================================================================
+
+tf = input.timeframe('', 'Highest timeframe', tooltip = 'The highest timeframe to get bar value, capped to chart timeframe')
+clr = input.color(color.new(color.blue, 70), 'Zone color')
+max_zones = input.int(10, 'Max zones', tooltip = 'Maximum number of latest zones to check for breakout')
+
+//=============================================================================
+// Preset-data
+//=============================================================================
+
+var array<int> timings = array.from(1732526652, 1732620252)
+// Sort the array inplace
+array.sort(timings, order = order.ascending)
+
+//=============================================================================
+// Structs
+//=============================================================================
+
+type TfBar
+    float o
+    float h
+    float l
+    float c
+    int t_o
+    int t_c
+
+type Zone
+    int period_seconds
+    TfBar bar
+
+type ZonePlot
+    line h
+    line l
+    linefill f
+
+//=============================================================================
+// Pre-calculated data
+//=============================================================================
+
+tf_secs = timeframe.in_seconds(tf)
+chart_tf_secs = timeframe.in_seconds()
+
+//=============================================================================
+// Helper functions
+//=============================================================================
+
+// @function fill na value from a source with its last non-na
+fill_na(src) =>
+    ta.valuewhen(not na(src), src, 0)
+
+// @function get value from timeframe
+// @returns array of values for requested timeframe
+request_tf(src) =>
+    request.security_lower_tf(syminfo.tickerid, tf_secs > chart_tf_secs ? timeframe.main_period : tf,src)
+
+// @function check if the bar is in right timing as specified
+// @param bar_time the bar's time in UNIX format
+// @param period_seconds the period of bar's timeframe, in seconds
+// @param timing the timing, in seconds
+right_timing(bar_open_time, bar_close_time, int timing) =>
+    bar_open_time <= timing and timing < bar_close_time
+
+// @function checking if any timing is within the bar's time using binary search
+// @param bar_time the bar's time in UNIX format
+// @param period_seconds the period of bar's timeframe, in seconds
+is_recycling(TfBar bar) =>
+    found = false
+    for timing in timings
+        if right_timing(bar.t_o / 1000, bar.t_c / 1000, timing)
+            found := true
+            break
+    found
+
+resistance_breakout(Zone z) =>
+    // Breakout if previous bar touches the zone but current bar is higher than zone
+    low > z.bar.h and low[1] <= z.bar.h
+
+support_breakout(Zone z) =>
+    // Breakout if previous bar touches the zone but current bar is lower than zone
+    high < z.bar.l and high[1] >= z.bar.l
+
+plot_zone(Zone b, color clr) =>
+    // Line for high value
+    h = line.new(time, b.bar.h, time_close, b.bar.h, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
+    l = line.new(time, b.bar.l, time_close, b.bar.l, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
+    f = linefill.new(h,l,clr)
+    ZonePlot.new(h,l,f)
+
+//=============================================================================
+// Calculation
+//=============================================================================
+
+// Fetch bar data from timeframe
+tf_o = request_tf(open)
+tf_h = request_tf(high)
+tf_l = request_tf(low)
+tf_c = request_tf(close)
+tf_t_o = request_tf(time)
+tf_t_c = request_tf(time_close)
+array<TfBar> bars = array.new<TfBar>()
+
+if tf_o.size() > 0
+    for idx = 0 to tf_o.size() - 1
+        o = tf_o.get(idx)
+        h = tf_h.get(idx)
+        l = tf_l.get(idx)
+        c = tf_c.get(idx)
+        t_o = tf_t_o.get(idx)
+        t_c = tf_t_c.get(idx)
+        array.push(bars, TfBar.new(o,h,l,c,t_o,t_c))
+
+var persistent_zones = array.new<Zone>()
+zones = array.new<Zone>()
+// Each time there is a bar that is within the timings, add it to the array
+for bar in bars
+    if is_recycling(bar)
+        zone = Zone.new(tf_secs, bar)
+        array.push(zones, zone)
+        log_msg = str.format('[Gann cycle] time: {0}, time_close: {1}, low: {2}, high: {3}', str.format_time(bar.t_o),str.format_time(bar.t_c), zone.bar.l, zone.bar.h)
+        log.info(log_msg)
+        if barstate.islast
+            alert(log_msg)
+
+// Add the newly added zones after bar close
+if barstate.isconfirmed
+    array.concat(persistent_zones, zones)
+// Limit number of persistent zones to check for breakout
+while persistent_zones.size() > max_zones
+    array.shift(persistent_zones)
+
+breakout_up = false
+breakout_down = false
+for zone in persistent_zones
+    if resistance_breakout(zone)
+        breakout_up := true
+        break
+    if support_breakout(zone)
+        breakout_down := true
+        break
+
+
+//=============================================================================
+// Plot
+//=============================================================================
+
+// Cleanup stale zones
+while linefill.all.size() > max_zones
+    linefill.delete(linefill.all.first())
+while line.all.size() > max_zones * 2
+    line.delete(line.all.first())
+    line.delete(line.all.first())
+
+// Plot zones for current bar (can be multiple if timeframe requested is lower)
+for zone in zones
+    plot_zone(zone, clr)
+
+// Breakout notifications
+if barstate.islast and barstate.isconfirmed
+    if breakout_up
+        alert(str.format('[Gann cycle][Resistance breakout] time: {0}, price: {1}', str.format_time(time), close))
+    if breakout_down
+        alert(str.format('[Gann cycle][Support breakout] time: {0}, price: {1}', str.format_time(time), close))
+
+// Breakouts indication
+plotshape(breakout_up,'Resistance breakout',shape.triangleup,location.belowbar,color.green, size = size.tiny,force_overlay = true)
+plotshape(breakout_down,'Support breakout',shape.triangledown,location.abovebar,color.red, size = size.tiny,force_overlay = true)
