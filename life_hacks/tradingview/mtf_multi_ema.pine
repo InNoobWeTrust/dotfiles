@@ -2,7 +2,7 @@
 // © InNoobWeTrust
 
 //@version=5
-strategy("Noob's MTF multi-EMA", max_bars_back = 3600, overlay=false, initial_capital = 100,default_qty_value = 100,default_qty_type = strategy.cash,margin_long = 5,margin_short = 5, process_orders_on_close = true)
+strategy("Noob's MTF multi-EMA", max_bars_back = 3600, overlay=false, dynamic_requests=true, initial_capital = 100,default_qty_value = 100,default_qty_type = strategy.cash,margin_long = 5,margin_short = 5, process_orders_on_close = true)
 import TradingView/ta/8
 import forbidden_gun/ma_lib/2
 
@@ -20,29 +20,31 @@ type EmaTf
     color clr
 //-----------------------------------------------------------------------------}
 
+// Const
+//-----------------------------------------------------------------------------{
+const int TF_SIZE = 7
+//-----------------------------------------------------------------------------{
+
 // Helper functions
 //-----------------------------------------------------------------------------{
-ema_tf(simple string tf, simple int len, src, simple bool smooth = false) =>
+ema_tf(series string tf, int len, src, simple bool smooth = false) =>
     request.security(syminfo.tickerid, tf, ta.ema(src, len), smooth ? barmerge.gaps_on : barmerge.gaps_off, smooth ? barmerge.lookahead_on : barmerge.lookahead_off)
 
-ema_color(simple int tf_lvl, simple int max, simple color gradient_start, simple color gradient_end) =>
+ema_color(int tf_lvl, int max, color gradient_start, color gradient_end) =>
     color.from_gradient(tf_lvl,1,max,gradient_start,gradient_end)
 
-newEma(string tf, simple int len, color clr, simple bool render, smooth = false) =>
-    if render
-        ema = ema_tf(tf,len, close, smooth)
-        ema_filled = ta.valuewhen(not na(ema), ema, 0)
-        EmaTf.new(tf, len, ema, ema_filled, clr)
-    else
-        EmaTf.new(na, na, na, na, color(na))
+pstrct_at_cross(src1,src2) =>
+    pstrct = ma_lib.pair_structure(src1,src2)
+    cross = ta.cross(src1,src2)
+    cross ? pstrct : 0
 
-countdown(simple string tf) =>
+countdown(string tf) =>
     if timeframe.in_seconds(timeframe.period) < timeframe.in_seconds(tf)
         time_left = int(time_close(tf) - timenow)
     else
         na
 
-fmt_countdown(simple string tf) =>
+fmt_countdown(string tf) =>
     cntdwn = countdown(tf)
     if not na(cntdwn)
         cntdwn := cntdwn / 1000
@@ -89,11 +91,7 @@ ema1_enable = input.bool(true, '', group = ema1_grp, inline = ema1_inline)
 ema1_len = input.int(34, '', group = ema1_grp, inline = ema1_inline)
 ema1_gradient_start = input.color(color.new(color.aqua,80), '', group = ema1_grp, inline = ema1_inline)
 ema1_gradient_end = input.color(color.new(color.purple,50), '', group = ema1_grp, inline = ema1_inline)
-ema1_max_tf = input.int(5, 'Max timeframes to show', minval=1,maxval=5, group = ema1_grp)
-ema1_band_inline = 'HL bands'
-ema1_band_enable = input.bool(true, ema1_band_inline, ema1_band_inline, group = ema1_grp, inline = ema1_band_inline)
-ema1_band_gradient_start = input.color(color.new(color.aqua, transp = 80), '', group = ema1_grp, inline = ema1_band_inline)
-ema1_band_gradient_end = input.color(color.new(color.purple, transp = 80), '', group = ema1_grp, inline = ema1_band_inline)
+ema1_max_tf = input.int(TF_SIZE, 'Max timeframes to show', minval=1,maxval=TF_SIZE, group = ema1_grp)
 
 ema2_grp = "► EMA slow"
 ema2_inline = "EMA slow"
@@ -101,15 +99,15 @@ ema2_enable = input.bool(true, '', group = ema2_grp, inline = ema2_inline)
 ema2_len = input.int(89, '', group = ema2_grp, inline = ema2_inline)
 ema2_gradient_start = input.color(color.new(color.yellow,80), '', group = ema2_grp, inline = ema2_inline)
 ema2_gradient_end = input.color(color.new(color.maroon,50), '', group = ema2_grp, inline = ema2_inline)
-ema2_max_tf = input.int(5, 'Max timeframes to show', minval=1,maxval=5, group = ema2_grp)
+ema2_max_tf = input.int(TF_SIZE, 'Max timeframes to show', minval=1,maxval=TF_SIZE, group = ema2_grp)
 
 ema3_grp = "► EMA auxiliary"
 ema3_inline = "EMA auxiliary"
-ema3_enable = input.bool(false, '', group = ema3_grp, inline = ema3_inline)
+ema3_enable = input.bool(true, '', group = ema3_grp, inline = ema3_inline)
 ema3_len = input.int(610, '', group = ema3_grp, inline = ema3_inline)
 ema3_gradient_start = input.color(color.new(color.white,80), '', group = ema3_grp, inline = ema3_inline)
 ema3_gradient_end = input.color(color.new(color.gray,50), '', group = ema3_grp, inline = ema3_inline)
-ema3_max_tf = input.int(5, 'Max timeframes to show', minval=1,maxval=5, group = ema3_grp)
+ema3_max_tf = input.int(TF_SIZE, 'Max timeframes to show', minval=1,maxval=TF_SIZE, group = ema3_grp)
 
 tf_grp = "► Timeframes"
 tf_inline = "Timeframes cfg"
@@ -118,6 +116,8 @@ tf2 = input.timeframe('5', '', group = tf_grp, inline = tf_inline)
 tf3 = input.timeframe('30', '', group = tf_grp, inline = tf_inline)
 tf4 = input.timeframe('240', '', group = tf_grp, inline = tf_inline)
 tf5 = input.timeframe('D', '', group = tf_grp, inline = tf_inline)
+tf6 = input.timeframe('W', '', group = tf_grp, inline = tf_inline)
+tf7 = input.timeframe('M', '', group = tf_grp, inline = tf_inline)
 
 smooth = input.bool(false, 'Smooth lines', tooltip = 'Enable this option will make ema lines in higher timeframes lag behind current bar')
 variable_width = input.bool(false, 'Variable line width', tooltip = 'Increase line width for higher timeframes')
@@ -131,19 +131,19 @@ crossover_gradient_inline = 'Crossover gradient color'
 crossover_gradient_start = input.color(color.new(color.aqua,95), crossover_gradient_inline, group = cross_grp, inline = crossover_gradient_inline)
 crossover_gradient_end = input.color(color.new(color.teal,20), '', group = cross_grp, inline = crossover_gradient_inline)
 cross_tf_inline = 'Limit min/max timeframes'
-cross_tf_min = input.int(1, cross_tf_inline, minval=1,maxval=4,group = cross_grp,inline = cross_tf_inline)
-cross_tf_max = input.int(5, '', minval=2,maxval=5,group = cross_grp,inline = cross_tf_inline)
+cross_tf_min = input.int(1, cross_tf_inline, minval=1,maxval=TF_SIZE - 1,group = cross_grp,inline = cross_tf_inline)
+cross_tf_max = input.int(TF_SIZE, '', minval=2,maxval=TF_SIZE,group = cross_grp,inline = cross_tf_inline)
 
-bias_cvd_grp = "► Bias CVD"
-bias_cvd_window = input.int(9,'CVD sliding window',group = bias_cvd_grp)
-bias_cvd_trend_detect_length = input.int(2,'CVD trend detection length',group = bias_cvd_grp)
-bias_suppress_higher_tf = input.bool(true, 'Suppress higher timeframe',group = bias_cvd_grp)
+bias_cum_win_grp = "► Bias cumulative rolling window"
+bias_cum_win_len = input.int(9,'Window',group = bias_cum_win_grp)
+bias_cum_win_trend_detect_length = input.int(2,'Trend detection length',group = bias_cum_win_grp)
+bias_suppress_higher_tf = input.bool(true, 'Suppress higher timeframe',group = bias_cum_win_grp)
 
 strategy_grp = "► Strategy"
 strategy_position_label = input.bool(true,"Show position label",group = strategy_grp)
 strategy_position_bg = input.bool(true,"Show background on ideal long/short entry",group = strategy_grp)
 strategy_sl_percent = input.float(0.05, "SL percentage", minval=0.005,maxval=0.995,group = strategy_grp)
-strategy_trailing_stop = input.bool(false, 'Enable trailing stop', tooltip = 'Using SL percentage as trailing stop percentage',group = strategy_grp)
+strategy_trailing_stop = input.bool(true, 'Enable trailing stop', tooltip = 'Using SL percentage as trailing stop percentage',group = strategy_grp)
 strategy_cross_ema_inline = 'Only when price crossing EMA slow'
 strategy_wait_ema = input.bool(true, strategy_cross_ema_inline,tooltip = 'EMA slow of nearest lower timeframe or chart timeframe. Enable this to trade-off  for less risk, higher chance to win and with more profit',group = strategy_grp,inline=strategy_cross_ema_inline)
 strategy_cross_ema_window = input.int(9,'',group = strategy_grp,inline=strategy_cross_ema_inline)
@@ -155,46 +155,68 @@ strategy_short_enabled = input.bool(false, "Short action",group = strategy_grp)
 //-----------------------------------------------------------------------------{
 
 // Timeframes
-string[] tfs = array.from(tf1,tf2,tf3,tf4,tf5)
+simple string[] tfs = array.from(tf1,tf2,tf3,tf4,tf5,tf6,tf7)
+int[] lengths = array.from(ema1_len,ema2_len,ema3_len)
+int[] max_tfs = array.from(ema1_max_tf,ema2_max_tf,ema3_max_tf)
+color[] start_gradients = array.from(ema1_gradient_start,ema2_gradient_start,ema3_gradient_start)
+color[] end_gradients = array.from(ema1_gradient_end,ema2_gradient_end,ema3_gradient_end)
+
+newEma(int tf_idx, int ema_idx) =>
+    tf = switch tf_idx
+        0 => tf1
+        1 => tf2
+        2 => tf3
+        3 => tf4
+        4 => tf5
+        5 => tf6
+        6 => tf7
+    len = switch ema_idx
+        0 => ema1_len
+        1 => ema2_len
+        2 => ema3_len
+    s_grad = start_gradients.get(ema_idx)
+    e_grad = end_gradients.get(ema_idx)
+    max = max_tfs.get(0)
+    // F**king stupid workaround, thanks pinescript for f**king language design
+    ema = switch ema_idx
+        0 => ema_tf(tf,ema1_len, close, smooth)
+        1 => ema_tf(tf,ema2_len, close, smooth)
+        2 => ema_tf(tf,ema3_len, close, smooth)
+    ema_filled = ta.valuewhen(not na(ema), ema, 0)
+    ema_clr = ema_color(tf_idx + 1,max,s_grad,e_grad)
+    EmaTf.new(tf, len, ema, ema_filled, ema_clr)
+
 // EMA data
 EmaTf[] ema1 = array.new<EmaTf>()
-ema1.push(newEma(tf1, ema1_len, ema_color(1,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 1 <= ema1_max_tf,smooth))
-ema1.push(newEma(tf2, ema1_len, ema_color(2,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 2 <= ema1_max_tf,smooth))
-ema1.push(newEma(tf3, ema1_len, ema_color(3,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 3 <= ema1_max_tf,smooth))
-ema1.push(newEma(tf4, ema1_len, ema_color(4,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 4 <= ema1_max_tf,smooth))
-ema1.push(newEma(tf5, ema1_len, ema_color(5,ema1_max_tf,ema1_gradient_start,ema1_gradient_end), ema1_enable and 5 <= ema1_max_tf,smooth))
-
-float[] ema1_h = array.new<float>()
-ema1_h.push(ema1_enable and ema1_band_enable and 1 <= ema1_max_tf ? ema_tf(tf1, ema1_len, high, smooth) : na)
-ema1_h.push(ema1_enable and ema1_band_enable and 2 <= ema1_max_tf ? ema_tf(tf2, ema1_len, high, smooth) : na)
-ema1_h.push(ema1_enable and ema1_band_enable and 3 <= ema1_max_tf ? ema_tf(tf3, ema1_len, high, smooth) : na)
-ema1_h.push(ema1_enable and ema1_band_enable and 4 <= ema1_max_tf ? ema_tf(tf4, ema1_len, high, smooth) : na)
-ema1_h.push(ema1_enable and ema1_band_enable and 5 <= ema1_max_tf ? ema_tf(tf5, ema1_len, high, smooth) : na)
-
-float[] ema1_l = array.new<float>()
-ema1_l.push(ema1_enable and ema1_band_enable and 1 <= ema1_max_tf ? ema_tf(tf1, ema1_len, low, smooth) : na)
-ema1_l.push(ema1_enable and ema1_band_enable and 2 <= ema1_max_tf ? ema_tf(tf2, ema1_len, low, smooth) : na)
-ema1_l.push(ema1_enable and ema1_band_enable and 3 <= ema1_max_tf ? ema_tf(tf3, ema1_len, low, smooth) : na)
-ema1_l.push(ema1_enable and ema1_band_enable and 4 <= ema1_max_tf ? ema_tf(tf4, ema1_len, low, smooth) : na)
-ema1_l.push(ema1_enable and ema1_band_enable and 5 <= ema1_max_tf ? ema_tf(tf5, ema1_len, low, smooth) : na)
+ema1.push(newEma(0,0))
+ema1.push(newEma(1,0))
+ema1.push(newEma(2,0))
+ema1.push(newEma(3,0))
+ema1.push(newEma(4,0))
+ema1.push(newEma(5,0))
+ema1.push(newEma(6,0))
 
 EmaTf[] ema2 = array.new<EmaTf>()
-ema2.push(newEma(tf1, ema2_len, ema_color(1,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 1 <= ema2_max_tf,smooth))
-ema2.push(newEma(tf2, ema2_len, ema_color(2,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 2 <= ema2_max_tf,smooth))
-ema2.push(newEma(tf3, ema2_len, ema_color(3,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 3 <= ema2_max_tf,smooth))
-ema2.push(newEma(tf4, ema2_len, ema_color(4,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 4 <= ema2_max_tf,smooth))
-ema2.push(newEma(tf5, ema2_len, ema_color(5,ema2_max_tf,ema2_gradient_start,ema2_gradient_end), ema2_enable and 5 <= ema2_max_tf,smooth))
+ema2.push(newEma(0,1))
+ema2.push(newEma(1,1))
+ema2.push(newEma(2,1))
+ema2.push(newEma(3,1))
+ema2.push(newEma(4,1))
+ema2.push(newEma(5,1))
+ema2.push(newEma(6,1))
 
 EmaTf[] ema3 = array.new<EmaTf>()
-ema3.push(newEma(tf1, ema3_len, ema_color(1,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 1 <= ema3_max_tf,smooth))
-ema3.push(newEma(tf2, ema3_len, ema_color(2,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 2 <= ema3_max_tf,smooth))
-ema3.push(newEma(tf3, ema3_len, ema_color(3,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 3 <= ema3_max_tf,smooth))
-ema3.push(newEma(tf4, ema3_len, ema_color(4,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 4 <= ema3_max_tf,smooth))
-ema3.push(newEma(tf5, ema3_len, ema_color(5,ema3_max_tf,ema3_gradient_start,ema3_gradient_end), ema3_enable and 5 <= ema3_max_tf,smooth))
+ema3.push(newEma(0,2))
+ema3.push(newEma(1,2))
+ema3.push(newEma(2,2))
+ema3.push(newEma(3,2))
+ema3.push(newEma(4,2))
+ema3.push(newEma(5,2))
+ema3.push(newEma(6,2))
 
 // Market structure data
 float[] ema_trends = array.new<float>()
-for idx = 0 to 4
+for idx = 0 to TF_SIZE - 1
     fast = ema1.get(idx).ema_filled
     slow = ema2.get(idx).ema_filled
     s = ma_lib.MaStructure.new(close, fast, slow)
@@ -202,16 +224,11 @@ for idx = 0 to 4
 
 // MTF supertrend of EMA slow of lower timeframe crossing EMA fast of higher timeframe
 float[] supertrend = array.new<float>()
-min_tf_secs = timeframe.in_seconds(tfs.get(0))
+var min_tf_secs = timeframe.in_seconds(tfs.get(0))
 float bias_val = 0.
 float max_abs_bias = 0.
 
-pstrct_at_cross(src1,src2) =>
-    pstrct = ma_lib.pair_structure(src1,src2)
-    cross = ta.cross(src1,src2)
-    cross ? pstrct : 0
-
-for idx = 0 to 4
+for idx = 0 to TF_SIZE - 1
     tf_secs = timeframe.in_seconds(tfs.get(idx))
     chart_tf_secs = timeframe.in_seconds('')
     if bias_suppress_higher_tf and tf_secs > chart_tf_secs
@@ -220,7 +237,7 @@ for idx = 0 to 4
         supertrend.push(0)
     else
         multiplier = tf_secs / min_tf_secs
-        max_abs_bias += 8 * multiplier
+        max_abs_bias += 8 * multiplier // 2^3, as we have 3 kinds of crossing
         ema_fast = ema1.get(idx).ema_filled
         ema_slow = ema2.get(idx).ema_filled
         higher_ema_fast = ema1.get(idx + 1).ema_filled
@@ -233,23 +250,23 @@ for idx = 0 to 4
 
         bias_val += trend * multiplier
 
-bias_cvd = math.sum(bias_val, bias_cvd_window)
+bias_cum = math.sum(bias_val, bias_cum_win_len)
 
 position_entry = 0
 // Long entry
-bias_cvd_rising = ta.rising(bias_cvd,bias_cvd_trend_detect_length)
-bias_cvd_falling = ta.falling(bias_cvd,bias_cvd_trend_detect_length)
-if bias_cvd_rising
+bias_cum_rising = ta.rising(bias_cum,bias_cum_win_trend_detect_length)
+bias_cum_falling = ta.falling(bias_cum,bias_cum_win_trend_detect_length)
+if bias_cum_rising
     position_entry := 1
 // Short entry
-else if bias_cvd_falling
+else if bias_cum_falling
     position_entry := -1
 
 position = position_entry * 2 // 2 for long and -2 for short 
 
 // Wait for price to cross EMA slow
 float ema_slow = na
-for idx = 0 to 4
+for idx = 0 to TF_SIZE - 1
     tf_secs = timeframe.in_seconds(tfs.get(idx))
     chart_tf_secs = timeframe.in_seconds('')
     if tf_secs <= chart_tf_secs
@@ -268,42 +285,29 @@ if strategy_wait_ema
 //-----------------------------------------------------------------------------{
 
 // ema1
-ema1_tf1_plt = plot(ema1.get(0).ema, '', ema1.get(0).clr, force_overlay = true, linewidth = variable_width ? 1 : 1)
-ema1_tf2_plt = plot(ema1.get(1).ema, '', ema1.get(1).clr, force_overlay = true, linewidth = variable_width ? 2 : 1)
-ema1_tf3_plt = plot(ema1.get(2).ema, '', ema1.get(2).clr, force_overlay = true, linewidth = variable_width ? 3 : 1)
-ema1_tf4_plt = plot(ema1.get(3).ema, '', ema1.get(3).clr, force_overlay = true, linewidth = variable_width ? 4 : 1)
-ema1_tf5_plt = plot(ema1.get(4).ema, '', ema1.get(4).clr, force_overlay = true, linewidth = variable_width ? 5 : 1)
-
-ema1_tf1_h_plt = plot(ema1_h.get(0), '', ema_color(1,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), force_overlay = true, linewidth = 1)
-ema1_tf2_h_plt = plot(ema1_h.get(1), '', ema_color(2,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), force_overlay = true, linewidth = 1)
-ema1_tf3_h_plt = plot(ema1_h.get(2), '', ema_color(3,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), force_overlay = true, linewidth = 1)
-ema1_tf4_h_plt = plot(ema1_h.get(3), '', ema_color(4,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), force_overlay = true, linewidth = 1)
-ema1_tf5_h_plt = plot(ema1_h.get(4), '', ema_color(5,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), force_overlay = true, linewidth = 1)
-
-ema1_tf1_l_plt = plot(ema1_l.get(0), '', ema_color(1,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), force_overlay = true, linewidth = 1)
-ema1_tf2_l_plt = plot(ema1_l.get(1), '', ema_color(2,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), force_overlay = true, linewidth = 1)
-ema1_tf3_l_plt = plot(ema1_l.get(2), '', ema_color(3,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), force_overlay = true, linewidth = 1)
-ema1_tf4_l_plt = plot(ema1_l.get(3), '', ema_color(4,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), force_overlay = true, linewidth = 1)
-ema1_tf5_l_plt = plot(ema1_l.get(4), '', ema_color(5,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), force_overlay = true, linewidth = 1)
-
-fill(ema1_tf1_h_plt, ema1_tf1_l_plt, ema_color(1,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), fillgaps = true)
-fill(ema1_tf2_h_plt, ema1_tf2_l_plt, ema_color(2,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), fillgaps = true)
-fill(ema1_tf3_h_plt, ema1_tf3_l_plt, ema_color(3,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), fillgaps = true)
-fill(ema1_tf4_h_plt, ema1_tf4_l_plt, ema_color(4,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), fillgaps = true)
-fill(ema1_tf5_h_plt, ema1_tf5_l_plt, ema_color(5,ema1_max_tf,ema1_band_gradient_start,ema1_band_gradient_end), fillgaps = true)
-
+ema1_tf1_plt = plot(ema1_enable and 1 < ema1_max_tf ? ema1.get(0).ema : na, 'EMA#1 TF1', ema1.get(0).clr, force_overlay = true, linewidth = variable_width ? 1 : 1)
+ema1_tf2_plt = plot(ema1_enable and 2 < ema1_max_tf ? ema1.get(1).ema : na, 'EMA#1 TF2', ema1.get(1).clr, force_overlay = true, linewidth = variable_width ? 2 : 1)
+ema1_tf3_plt = plot(ema1_enable and 3 < ema1_max_tf ? ema1.get(2).ema : na, 'EMA#1 TF3', ema1.get(2).clr, force_overlay = true, linewidth = variable_width ? 3 : 1)
+ema1_tf4_plt = plot(ema1_enable and 4 < ema1_max_tf ? ema1.get(3).ema : na, 'EMA#1 TF4', ema1.get(3).clr, force_overlay = true, linewidth = variable_width ? 4 : 1)
+ema1_tf5_plt = plot(ema1_enable and 5 < ema1_max_tf ? ema1.get(4).ema : na, 'EMA#1 TF5', ema1.get(4).clr, force_overlay = true, linewidth = variable_width ? 5 : 1)
+ema1_tf6_plt = plot(ema1_enable and 6 < ema1_max_tf ? ema1.get(5).ema : na, 'EMA#1 TF6', ema1.get(5).clr, force_overlay = true, linewidth = variable_width ? 6 : 1)
+ema1_tf7_plt = plot(ema1_enable and 7 < ema1_max_tf ? ema1.get(6).ema : na, 'EMA#1 TF7', ema1.get(6).clr, force_overlay = true, linewidth = variable_width ? 7 : 1)
 // ema2
-ema2_tf1_plt = plot(ema2.get(0).ema, '', ema2.get(0).clr, force_overlay = true, linewidth = variable_width ? 1 : 2)
-ema2_tf2_plt = plot(ema2.get(1).ema, '', ema2.get(1).clr, force_overlay = true, linewidth = variable_width ? 2 : 2)
-ema2_tf3_plt = plot(ema2.get(2).ema, '', ema2.get(2).clr, force_overlay = true, linewidth = variable_width ? 3 : 2)
-ema2_tf4_plt = plot(ema2.get(3).ema, '', ema2.get(3).clr, force_overlay = true, linewidth = variable_width ? 4 : 2)
-ema2_tf5_plt = plot(ema2.get(4).ema, '', ema2.get(4).clr, force_overlay = true, linewidth = variable_width ? 5 : 2)
+ema2_tf1_plt = plot(ema2_enable and 1 < ema2_max_tf ? ema2.get(0).ema : na, 'EMA#2 TF1', ema2.get(0).clr, force_overlay = true, linewidth = variable_width ? 1 : 2)
+ema2_tf2_plt = plot(ema2_enable and 2 < ema2_max_tf ? ema2.get(1).ema : na, 'EMA#2 TF2', ema2.get(1).clr, force_overlay = true, linewidth = variable_width ? 2 : 2)
+ema2_tf3_plt = plot(ema2_enable and 3 < ema2_max_tf ? ema2.get(2).ema : na, 'EMA#2 TF3', ema2.get(2).clr, force_overlay = true, linewidth = variable_width ? 3 : 2)
+ema2_tf4_plt = plot(ema2_enable and 4 < ema2_max_tf ? ema2.get(3).ema : na, 'EMA#2 TF4', ema2.get(3).clr, force_overlay = true, linewidth = variable_width ? 4 : 2)
+ema2_tf5_plt = plot(ema2_enable and 5 < ema2_max_tf ? ema2.get(4).ema : na, 'EMA#2 TF5', ema2.get(4).clr, force_overlay = true, linewidth = variable_width ? 5 : 2)
+ema2_tf6_plt = plot(ema2_enable and 6 < ema2_max_tf ? ema2.get(5).ema : na, 'EMA#2 TF6', ema2.get(5).clr, force_overlay = true, linewidth = variable_width ? 6 : 2)
+ema2_tf7_plt = plot(ema2_enable and 7 < ema2_max_tf ? ema2.get(6).ema : na, 'EMA#2 TF7', ema2.get(6).clr, force_overlay = true, linewidth = variable_width ? 7 : 2)
 // ema3
-ema3_tf1_plt = plot(ema3.get(0).ema, '', ema3.get(0).clr, force_overlay = true, linewidth = variable_width ? 1 : 1)
-ema3_tf2_plt = plot(ema3.get(1).ema, '', ema3.get(1).clr, force_overlay = true, linewidth = variable_width ? 2 : 1)
-ema3_tf3_plt = plot(ema3.get(2).ema, '', ema3.get(2).clr, force_overlay = true, linewidth = variable_width ? 3 : 1)
-ema3_tf4_plt = plot(ema3.get(3).ema, '', ema3.get(3).clr, force_overlay = true, linewidth = variable_width ? 4 : 1)
-ema3_tf5_plt = plot(ema3.get(4).ema, '', ema3.get(4).clr, force_overlay = true, linewidth = variable_width ? 5 : 1)
+ema3_tf1_plt = plot(ema3_enable and 1 < ema3_max_tf ? ema3.get(0).ema : na, 'EMA#3 TF1', ema3.get(0).clr, force_overlay = true, linewidth = variable_width ? 1 : 1)
+ema3_tf2_plt = plot(ema3_enable and 2 < ema3_max_tf ? ema3.get(1).ema : na, 'EMA#3 TF2', ema3.get(1).clr, force_overlay = true, linewidth = variable_width ? 2 : 1)
+ema3_tf3_plt = plot(ema3_enable and 3 < ema3_max_tf ? ema3.get(2).ema : na, 'EMA#3 TF3', ema3.get(2).clr, force_overlay = true, linewidth = variable_width ? 3 : 1)
+ema3_tf4_plt = plot(ema3_enable and 4 < ema3_max_tf ? ema3.get(3).ema : na, 'EMA#3 TF4', ema3.get(3).clr, force_overlay = true, linewidth = variable_width ? 4 : 1)
+ema3_tf5_plt = plot(ema3_enable and 5 < ema3_max_tf ? ema3.get(4).ema : na, 'EMA#3 TF5', ema3.get(4).clr, force_overlay = true, linewidth = variable_width ? 5 : 1)
+ema3_tf6_plt = plot(ema3_enable and 6 < ema3_max_tf ? ema3.get(5).ema : na, 'EMA#3 TF6', ema3.get(5).clr, force_overlay = true, linewidth = variable_width ? 6 : 1)
+ema3_tf7_plt = plot(ema3_enable and 7 < ema3_max_tf ? ema3.get(6).ema : na, 'EMA#3 TF7', ema3.get(6).clr, force_overlay = true, linewidth = variable_width ? 7 : 1)
 
 // MTF bias bg and plot
 bgcolor(mtf_bias_bgcolor(bias_val,max_abs_bias,crossover_gradient_start,crossover_gradient_end,crossunder_gradient_end,crossunder_gradient_start), force_overlay = true)
@@ -312,11 +316,11 @@ bias_color = switch
     bias_val < 0 => color.maroon
     => color(na)
 plot(bias_val, 'MTF bias', style = plot.style_columns, histbase = 0, color = bias_color)
-bias_cvd_color = switch
-    bias_cvd > 0 => color.aqua
-    bias_cvd < 0 => color.orange
+bias_cum_color = switch
+    bias_cum > 0 => color.aqua
+    bias_cum < 0 => color.orange
     => color(na)
-cvd_plt = plot(bias_cvd, 'MTF bias CVD', color = bias_cvd_color)
+cum_plt = plot(bias_cum, 'MTF bias rolling cumulative', color = bias_cum_color)
 
 // Ideal entry for long/short
 position_color = switch
@@ -326,10 +330,10 @@ position_color = switch
 bgcolor(position_color)
 
 // Trend summary and countdown to bar close
-cntdwn_tb = table.new(position.top_right, 3, 5, force_overlay = true)
-countdowns = array.from(fmt_countdown(tf1),fmt_countdown(tf2),fmt_countdown(tf3),fmt_countdown(tf4),fmt_countdown(tf5))
+cntdwn_tb = table.new(position.top_right, 3, TF_SIZE, force_overlay = true)
+countdowns = array.from(fmt_countdown(tf1),fmt_countdown(tf2),fmt_countdown(tf3),fmt_countdown(tf4),fmt_countdown(tf5),fmt_countdown(tf6),fmt_countdown(tf7))
 
-for idx = 0 to 4
+for idx = 0 to TF_SIZE - 1
     trend = ema_trends.get(idx)
     ico = trend_ico(trend)
     txt_color = trend_txt_color(trend)
@@ -364,12 +368,14 @@ order_long() =>
         if strategy.opentrades.size(strategy.opentrades - 1) <= 0
             label.new(bar_index - 1,low - close*0.01,text='L',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.green,force_overlay = true)
         strategy.entry('Long',strategy.long)
+        alert('Long entry!', alert.freq_once_per_bar_close)
 order_short() =>
     close_long(-2)
     if strategy_short_enabled
         if strategy.opentrades.size(strategy.opentrades - 1) >= 0
             label.new(bar_index - 1,high + close*0.01,text='S',xloc=xloc.bar_index,style = label.style_text_outline,size = size.tiny,color=color.red,force_overlay = true)
         strategy.entry('Short',strategy.short)
+        alert('Short entry!', alert.freq_once_per_bar_close)
 
 // Update entry price
 tick_size = syminfo.mintick * syminfo.pointvalue
