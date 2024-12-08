@@ -1,0 +1,155 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © InNoobWeTrust
+
+//@version=6
+indicator("MTF abnormal price zones",overlay = false)
+
+//=============================================================================
+// MTF High volume price zones
+//=============================================================================
+
+// Types
+//-----------------------------------------------------------------------------{
+enum MaType
+    sma = 'SMA'
+    wma = 'WMA'
+    ema = 'EMA'
+
+type Zone
+    int t // time
+    float o // open
+    float h // high
+    float l // low
+    float c // close
+//-----------------------------------------------------------------------------}
+
+// Helpers
+//-----------------------------------------------------------------------------{
+ta_ma(MaType T,float src,simple int len) =>
+    switch T
+        MaType.sma => ta.sma(src,len)
+        MaType.wma => ta.wma(src,len)
+        MaType.ema => ta.ema(src,len)
+//-----------------------------------------------------------------------------}
+
+// Input
+//-----------------------------------------------------------------------------{
+vol_threshold_grp = '► Volume threshold'
+vol_threshold_src_tf = input.timeframe('','Volume timeframe', group = vol_threshold_grp)
+vol_threshold_ma_inline = 'Volume MA'
+vol_threshold_ma_type = input.enum(MaType.sma,vol_threshold_ma_inline,group = vol_threshold_grp,inline = vol_threshold_ma_inline)
+vol_threshold_ma_len = input.int(20,'',group = vol_threshold_grp,inline = vol_threshold_ma_inline)
+vol_threshold_limit = input.float(3.618, 'Threshold',group = vol_threshold_grp)
+
+filter_rsi_grp = '► RSI threshold'
+filter_rsi_inline = 'RSI source'
+filter_rsi_src = input.source(close,filter_rsi_inline,group = filter_rsi_grp,inline = filter_rsi_inline)
+filter_rsi_len = input.int(14,'',group = filter_rsi_grp,inline = filter_rsi_inline)
+filter_rsi_thresholds_inline = 'RSI thresholds'
+filter_rsi_low_threshold = input.int(40,filter_rsi_thresholds_inline,group = filter_rsi_grp,inline = filter_rsi_thresholds_inline)
+filter_rsi_high_threshold = input.int(60,'',group = filter_rsi_grp,inline = filter_rsi_thresholds_inline)
+
+zones_grp = '► Zones'
+zones_max_keep = input.int(10,'Max zones',group = zones_grp)
+zones_demand_grad_inline = 'Demand zones'
+zones_demand_grad_start = input.color(color.new(color.aqua,80),zones_demand_grad_inline,group = zones_grp,inline = zones_demand_grad_inline)
+zones_demand_grad_end = input.color(color.new(color.purple,80),'',group = zones_grp,inline = zones_demand_grad_inline)
+zones_supply_grad_inline = 'Supply zones'
+zones_supply_grad_start = input.color(color.new(color.orange,80),zones_supply_grad_inline,group = zones_grp,inline = zones_supply_grad_inline)
+zones_supply_grad_end = input.color(color.new(color.maroon,80),'',group = zones_grp,inline = zones_supply_grad_inline)
+
+detection_grp = '► Price backup detection'
+detection_src = input.source(close,'Price source',group = detection_grp)
+detection_tfs_inline = 'Timeframes'
+detection_tf1 = input.timeframe('1',detection_tfs_inline,group = detection_grp,inline = detection_tfs_inline)
+detection_tf2 = input.timeframe('5','',group = detection_grp,inline = detection_tfs_inline)
+detection_tf3 = input.timeframe('30','',group = detection_grp,inline = detection_tfs_inline)
+detection_tf4 = input.timeframe('240','',group = detection_grp,inline = detection_tfs_inline)
+detection_tf5 = input.timeframe('D','',group = detection_grp,inline = detection_tfs_inline)
+//-----------------------------------------------------------------------------}
+
+// Calculation
+//-----------------------------------------------------------------------------{
+rsi = ta.rsi(filter_rsi_src,filter_rsi_len)
+
+
+time_src = time(vol_threshold_src_tf)
+open_src = request.security(syminfo.tickerid,vol_threshold_src_tf,open)
+high_src = request.security(syminfo.tickerid,vol_threshold_src_tf,high)
+low_src = request.security(syminfo.tickerid,vol_threshold_src_tf,low)
+close_src = request.security(syminfo.tickerid,vol_threshold_src_tf,close)
+vol_src = request.security(syminfo.tickerid,vol_threshold_src_tf,volume)
+rsi_src = request.security(syminfo.tickerid,vol_threshold_src_tf,rsi)
+vol_ma = ta_ma(vol_threshold_ma_type,vol_src,vol_threshold_ma_len)
+vol_threshold = vol_ma * vol_threshold_limit
+
+tfs = array.from(detection_tf1,detection_tf2,detection_tf3,detection_tf4,detection_tf5)
+
+price_sources = array.new<float>()
+array.push(price_sources,request.security(syminfo.tickerid,detection_tf1,detection_src))
+array.push(price_sources,request.security(syminfo.tickerid,detection_tf2,detection_src))
+array.push(price_sources,request.security(syminfo.tickerid,detection_tf3,detection_src))
+array.push(price_sources,request.security(syminfo.tickerid,detection_tf4,detection_src))
+array.push(price_sources,request.security(syminfo.tickerid,detection_tf5,detection_src))
+
+var zones = array.new<Zone>()
+var is_demand_zones = array.new<int>()
+
+is_demand_vol = close_src >= open_src ? 1 : 0
+is_abnormal_vol = vol_src >= vol_threshold ? 1 : 0
+is_oversold_rsi = rsi_src <= filter_rsi_low_threshold
+is_overbought_rsi = rsi_src >= filter_rsi_high_threshold
+// High volume candle
+is_demand_candle = is_abnormal_vol > 0 and is_demand_vol > 0 and is_oversold_rsi
+is_supply_candle = is_abnormal_vol > 0 and is_demand_vol == 0 and is_overbought_rsi
+if is_demand_candle or is_supply_candle
+    zone = Zone.new(time_src,open_src,high_src,low_src,close_src)
+    array.push(zones,zone)
+    array.push(is_demand_zones, is_demand_vol > 0 ? 1 : 0)
+
+    // Keep latest zones
+    while zones.size() > zones_max_keep
+        array.shift(zones)
+        array.shift(is_demand_zones)
+
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+
+vol_clr = switch is_abnormal_vol + 2 * is_demand_vol
+    0 => color.new(zones_supply_grad_start,90)
+    1 => color.new(zones_supply_grad_end,0)
+    2 => color.new(zones_demand_grad_start,90)
+    3 => color.new(zones_demand_grad_end,0)
+// Volume source
+plot(vol_src, 'Volume',vol_clr,style = plot.style_columns,force_overlay = false)
+// Volume MA
+plot(vol_ma,'Volume MA', color.new(color.yellow,80),style = plot.style_area,force_overlay = false)
+// Volume MA threshold
+plot(vol_threshold, 'Volume threshold', color.new(color.purple,60),style=plot.style_line,force_overlay = false)
+
+supply_idx = 0
+demand_idx = 0
+cnt_demands = array.sum(is_demand_zones)
+cnt_supply = is_demand_zones.size() - cnt_demands
+
+if barstate.islast
+    // Reset zone drawings
+    for f in linefill.all
+        linefill.delete(f)
+    for l in line.all
+        line.delete(l)
+
+    // Redraw
+    if zones.size() > 0
+        for idx = 0 to zones.size() - 1
+            zone = zones.get(idx)
+            is_demand = is_demand_zones.get(idx) > 0
+            clr_start = is_demand ? zones_demand_grad_start : zones_supply_grad_start
+            clr_end = is_demand ? zones_demand_grad_end : zones_supply_grad_end
+            clr = color.from_gradient(is_demand ? demand_idx : supply_idx, 0, cnt_demands - 1, clr_start, clr_end)
+            zone_low_plt = line.new(zone.t,zone.l,timenow,zone.l,xloc = xloc.bar_time,extend=extend.right,color = clr,force_overlay = true)
+            zone_high_plt = line.new(zone.t,zone.h,timenow,zone.h,xloc = xloc.bar_time,extend=extend.right,color = clr,force_overlay = true)
+            linefill.new(zone_low_plt,zone_high_plt,clr)
+//-----------------------------------------------------------------------------}

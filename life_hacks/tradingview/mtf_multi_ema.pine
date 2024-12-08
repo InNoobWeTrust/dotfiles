@@ -18,6 +18,16 @@ type EmaTf
     float ema
     float ema_filled
     color clr
+
+enum TbLoc
+    top_right = "Top Right"
+    top_center = "Top Center"
+    top_left = "Top Left"
+    bot_right = "Bottom Right"
+    bot_center = "Bottom Center"
+    bot_left = "Bottom Left"
+    mid_right = "Middle Right"
+    mid_left = "Middle Left"
 //-----------------------------------------------------------------------------}
 
 // Const
@@ -38,22 +48,32 @@ pstrct_at_cross(src1,src2) =>
     cross = ta.cross(src1,src2)
     cross ? pstrct : 0
 
+tb_location(TbLoc loc) =>
+    switch loc
+        TbLoc.top_left => position.top_left
+        TbLoc.top_center => position.top_center
+        TbLoc.top_right => position.top_right
+        TbLoc.bot_left => position.bottom_left
+        TbLoc.bot_center => position.bottom_center
+        TbLoc.bot_right => position.bottom_right
+        TbLoc.mid_right => position.middle_right
+        TbLoc.mid_left => position.middle_left
+
 countdown(string tf) =>
     if timeframe.in_seconds(timeframe.period) < timeframe.in_seconds(tf)
         time_left = int(time_close(tf) - timenow)
     else
         na
 
-fmt_countdown(string tf) =>
-    cntdwn = countdown(tf)
-    if not na(cntdwn)
-        cntdwn := cntdwn / 1000
+fmt_countdown(int secs) =>
+    if not na(secs)
+        cntdwn = secs / 1000
         hh = int(cntdwn / 3600)
         mm = int((cntdwn % 3600) / 60)
         ss = int(cntdwn % 60)
-        str.format('ETA: {0,number,00}:{1,number,00}:{2,number,00}', hh,mm,ss)
+        str.format('{0,number,00}:{1,number,00}:{2,number,00}', hh,mm,ss)
     else
-        'ETA: -- : -- : --'
+        '-- : -- : --'
 
 trend_ico(trend) =>
     switch trend
@@ -103,7 +123,7 @@ ema2_max_tf = input.int(TF_SIZE, 'Max timeframes to show', minval=1,maxval=TF_SI
 
 ema3_grp = "► EMA auxiliary"
 ema3_inline = "EMA auxiliary"
-ema3_enable = input.bool(true, '', group = ema3_grp, inline = ema3_inline)
+ema3_enable = input.bool(false, '', group = ema3_grp, inline = ema3_inline)
 ema3_len = input.int(610, '', group = ema3_grp, inline = ema3_inline)
 ema3_gradient_start = input.color(color.new(color.white,80), '', group = ema3_grp, inline = ema3_inline)
 ema3_gradient_end = input.color(color.new(color.gray,50), '', group = ema3_grp, inline = ema3_inline)
@@ -121,6 +141,10 @@ tf7 = input.timeframe('M', '', group = tf_grp, inline = tf_inline)
 
 smooth = input.bool(false, 'Smooth lines', tooltip = 'Enable this option will make ema lines in higher timeframes lag behind current bar')
 variable_width = input.bool(false, 'Variable line width', tooltip = 'Increase line width for higher timeframes')
+
+summary_tb_grp = '► Trend summary table'
+summary_tb_enable = input.bool(true, 'Show',group = summary_tb_grp)
+summary_tb_loc = input.enum(TbLoc.top_right, 'Location',group = summary_tb_grp)
 
 cross_grp = "► MTF crossing background (distribution/accumulation zones)"
 cross_enable = input.bool(true, 'Enable',group = cross_grp)
@@ -330,17 +354,26 @@ position_color = switch
 bgcolor(position_color)
 
 // Trend summary and countdown to bar close
-cntdwn_tb = table.new(position.top_right, 3, TF_SIZE, force_overlay = true)
-countdowns = array.from(fmt_countdown(tf1),fmt_countdown(tf2),fmt_countdown(tf3),fmt_countdown(tf4),fmt_countdown(tf5),fmt_countdown(tf6),fmt_countdown(tf7))
+var cntdwn_tb = table.new(tb_location(summary_tb_loc), 3, TF_SIZE, force_overlay = true)
 
-for idx = 0 to TF_SIZE - 1
-    trend = ema_trends.get(idx)
-    ico = trend_ico(trend)
-    txt_color = trend_txt_color(trend)
-    bg_color = trend_bg_color(trend)
-    table.cell(cntdwn_tb,0,idx,tfs.get(idx),text_color = color.gray,bgcolor = na)
-    table.cell(cntdwn_tb,1,idx,ico,text_color = txt_color,bgcolor = bg_color)
-    table.cell(cntdwn_tb,2,idx,countdowns.get(idx),text_color = color.gray,bgcolor = na)
+if summary_tb_enable
+    row = -1
+    for idx = 0 to TF_SIZE - 1
+        tf = tfs.get(idx)
+        cntdwn_secs = countdown(tf)
+        if na(cntdwn_secs)
+            continue
+        else
+            row += 1
+
+        countdown_text = fmt_countdown(cntdwn_secs)
+        trend = ema_trends.get(idx)
+        ico = trend_ico(trend)
+        txt_color = trend_txt_color(trend)
+        bg_color = trend_bg_color(trend)
+        table.cell(cntdwn_tb,0,row,tf,text_color = color.gray,bgcolor = na)
+        table.cell(cntdwn_tb,1,row,ico,text_color = txt_color,bgcolor = bg_color)
+        table.cell(cntdwn_tb,2,row,countdown_text,text_color = color.gray,bgcolor = na)
 //-----------------------------------------------------------------------------}
 
 // Strategic actions
