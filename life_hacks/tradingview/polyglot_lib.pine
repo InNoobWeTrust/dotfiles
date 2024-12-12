@@ -1,0 +1,271 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// ©  InNoobWeTrust
+
+//@version=6
+
+// @description TODO: add library description here
+library("polyglot_lib", overlay = false)
+import TradingView/ta/9
+
+//===============================================================================
+// Constants
+//===============================================================================
+
+const int[] fib_numbers = array.from(0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610)
+
+//===============================================================================
+// Types
+//===============================================================================
+
+export type PositionPlot
+	line tp
+	line sl
+	line c
+	linefill tp_fill
+	linefill sl_fill
+
+//===============================================================================
+// Functions
+//===============================================================================
+
+// @function Calculate safe leverage based on ATR and the percentage of acceptable SL
+// @param atr_len The length to calculate ATR
+// @param sl_percent The percentage of acceptable SL
+// @param mult The ATR multiplier to account for lateness in entry price
+// @returns The tuple of: leverage rounded up to whole number, max_endurable_spread, max_endurable_percent
+export estimate_leverage(int atr_len = 14, float sl_percent = 0.2, float mult = 1.5) =>
+	spread_osc = ta.atr(atr_len)
+	max_endurable_spread = spread_osc * mult
+	max_endurable_percent = max_endurable_spread / close
+	max_leverage = sl_percent / max_endurable_percent
+	// Return max leverage as whole number
+	[math.ceil(max_leverage), max_endurable_spread, max_endurable_percent]
+
+// @function Display table leverage based on ATR and the percentage of acceptable SL
+// @param atr_len The length to calculate ATR
+// @param sl_percent The percentage of acceptable SL
+// @param mult The ATR multiplier to account for lateness in entry price
+// @returns The leverage rounded up to whole number
+export display_lvrg_table(int atr_len = 14, float sl_percent = 0.2, float mult = 1.5, string pos = position.bottom_right) =>
+	lvrg_tb = table.new(pos,2,3,force_overlay = true)
+	[lvrg, _, _] = estimate_leverage(atr_len,sl_percent,mult)
+	atr = ta.atr(atr_len)
+	atr_percent = atr / close
+	table.cell(lvrg_tb,0,0,'SL',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(lvrg_tb,1,0,str.format('{0,number,percent}',sl_percent),bgcolor=color.new(color.gray, transp = 80),text_color=color.red)
+	table.cell(lvrg_tb,0,1,'ATR',text_color=color.gray,bgcolor=color.new(color.silver, transp = 80))
+	table.cell(lvrg_tb,1,1,str.format('{0,number,#.###}%',atr_percent*100),bgcolor=color.new(color.silver, transp = 80),text_color=color.yellow)
+	table.cell(lvrg_tb,0,2,'Lvrg',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(lvrg_tb,1,2,str.format('x{0,number,integer}',lvrg),bgcolor=color.new(color.gray, transp = 80),text_color=color.aqua)
+	// Return the table id to manage drawings
+	lvrg_tb
+
+// @function Calculate the pivot left high with cutoff
+// @param src The source series
+// @param len Pivot length
+// @param cutoff Cutoff value, na means no cutoff
+// @returns The pivot high with cutoff
+export pivot_left_high(float src, int len, float cutoff = na) =>
+	pivot_high = ta.pivothigh(src,len,0)
+	pivot_high_non_na = ta.valuewhen(not na(pivot_high),pivot_high,0)
+	if not na(cutoff)
+		// Return the pivot with cutoff
+		math.max(pivot_high_non_na,cutoff)
+	else
+		// Return the non na
+		pivot_high_non_na
+
+// @function Calculate the pivot left low with cutoff
+// @param src The source series
+// @param len Pivot length
+// @param cutoff Cutoff value, na means no cutoff
+// @returns The pivot low with cutoff
+export pivot_left_low(float src, int len, float cutoff = na) =>
+	pivot_low = ta.pivotlow(src,len,0)
+	pivot_low_non_na = ta.valuewhen(not na(pivot_low),pivot_low,0)
+	pivot_low_cutoff = math.min(pivot_low_non_na,cutoff)
+	if not na(cutoff)
+		// Return the pivot with cutoff
+		math.min(pivot_low_non_na,cutoff)
+	else
+		// Return the non na
+		pivot_low_non_na
+
+// @function Calculate top wick, bottom wick and body in percentage of candle's height
+// @param o Open price
+// @param h High price
+// @param l Low price
+// @param c Close price
+// @returns Tuple of top wick + bottom wick + body as percentage, body can be negative
+export candle_split_percent(float o,float h, float l, float c) =>
+	spread = h - l
+	body_top = c >= o ? c : o
+	body_bottom = c <= o ? c : o
+	body = c - o / spread // Can be negative
+	top_wick = (h - body_top) / spread
+	bottom_wick = (body_bottom - l) / spread
+	// Return the wicks and body as percentage
+	[top_wick, bottom_wick, body]
+
+// @function Draw entry with TP/SL
+// @param tp The take profit price
+// @param sl The stop loss price
+// @param bars The width of the drawing
+// @returns The drawings ids
+export plot_position_entry(float tp,float sl, int bars) =>
+	tp_color = color.new(#40ee40,50)
+	tp_fill_color = color.new(#40ee40,90)
+	sl_color = color.new(#ee4040,50)
+	sl_fill_color = color.new(#ee4040,90)
+	tp_plt = line.new(bar_index,tp,bar_index + bars,tp,xloc = xloc.bar_index,color=tp_color,force_overlay = true)
+	sl_plt = line.new(bar_index,sl,bar_index + bars,sl,xloc = xloc.bar_index,color=sl_color,force_overlay = true)
+	close_plt = line.new(bar_index,close,bar_index+bars,close,xloc = xloc.bar_index,color = color(na),force_overlay = true)
+	tp_fill = linefill.new(tp_plt,close_plt,tp_fill_color)
+	sl_fill = linefill.new(sl_plt,close_plt,sl_fill_color)
+	// Return the drawings
+	PositionPlot.new(tp_plt,sl_plt,close_plt,tp_fill,sl_fill)
+
+// @function Clear position plot
+// @param pos_plt The plot to clear
+export clear_position_plot(PositionPlot pos_plt) =>
+	linefill.delete(pos_plt.tp_fill)
+	linefill.delete(pos_plt.sl_fill)
+	line.delete(pos_plt.c)
+	line.delete(pos_plt.tp)
+	line.delete(pos_plt.sl)
+
+//===============================================================================
+// Testing
+//===============================================================================
+
+// Volatility
+//-------------------------------------------------------------------------------
+fast_atr = ta.atr(34)
+slow_atr = ta.atr(144)
+atr_diff = fast_atr - slow_atr
+atr_rising = ta.rising(atr_diff,1)
+atr_falling = ta.falling(atr_diff,1)
+
+atr_diff_color = switch atr_diff >=0
+	true => atr_rising ? color.blue : color.aqua
+	false => atr_falling ? color.purple : color.olive
+atr_diff_histcolor = color.new(atr_diff_color,80)
+atr_diff_pivot_high = pivot_left_high(atr_diff,34,0)
+atr_diff_pivot_low = pivot_left_low(atr_diff,34,0)
+// fast_atr_plt = plot(fast_atr, 'ATR fast',color=#eeeeee,force_overlay = false)
+// slow_atr_plt = plot(slow_atr, 'ATR slow',color=#888888,force_overlay = false)
+atr_diff_plt = plot(atr_diff, 'ATR diff',color=atr_diff_color,linewidth = 2,force_overlay = false)
+atr_diff_histplt = plot(atr_diff, 'ATR diff',color=atr_diff_histcolor,style = plot.style_histogram,force_overlay = false)
+atr_diff_pivot_high_plt = plot(atr_diff_pivot_high, 'ATR pivot high',color = color.blue,force_overlay = false)
+atr_diff_pivot_low_plt = plot(atr_diff_pivot_low, 'ATR pivot low',color = color.yellow,force_overlay = false)
+
+demand_price = pivot_left_low(low,34)
+supply_price = pivot_left_high(high,34)
+demand_supply_balance = (close - demand_price) / ((close - demand_price) + (supply_price - close))
+
+close_plt = plot(close,'Close price',color=color(na),force_overlay = true)
+demand_price_plt = plot(demand_price,'Demand price',color=color.new(color.olive,70),force_overlay = true)
+supply_price_plt = plot(supply_price,'Supply price',color=color.new(color.red,70),force_overlay = true)
+fill(demand_price_plt,close_plt,color=color.new(color.olive,90))
+fill(supply_price_plt,close_plt,color=color.new(color.red,90))
+
+wyckoff_test = low < demand_price[1] ? 1 : high > supply_price[1] ? -1 : 0
+atr_entry_tracker = 0
+// Testing demand/supply during high volatility
+if ta.rising(atr_diff_pivot_high,1) and wyckoff_test == 0
+    atr_entry_tracker := wyckoff_test[1]
+
+wyckoff_test_bg_color = color(na)
+if atr_entry_tracker == 0 and atr_entry_tracker[1] == 1
+	// Previous candle is peak
+	wyckoff_test_bg_color := color.new(color.green,80)
+if atr_entry_tracker == 0 and atr_entry_tracker[1] == -1
+	// Previous candle is trough
+	wyckoff_test_bg_color := color.new(color.red,80)
+bgcolor(wyckoff_test_bg_color,force_overlay = false)
+
+// Leverage table
+//-------------------------------------------------------------------------------
+var table lvrg_tb = na
+
+// Cleanup old table
+if not na(lvrg_tb)
+	table.delete(lvrg_tb)
+// Update leverage table
+lvrg_tb := display_lvrg_table(144)
+
+// Biased candle
+//-------------------------------------------------------------------------------
+[top_wick, bottom_wick, body] = candle_split_percent(open,high,low,close)
+candle_wick_bias = top_wick >= 0.5 ? -1 : bottom_wick >= 0.5 ? 1 : na
+candle_decisive = top_wick + bottom_wick < 0.786
+candle_rising = candle_decisive and candle_wick_bias > 0
+candle_falling = candle_decisive and candle_wick_bias < 0
+
+// Bollinger band
+//-------------------------------------------------------------------------------
+[bb_mid,bb_upper,bb_lower] = ta.bb(close,34,1)
+// plot(bb_mid, color=color.new(color.gray,50),force_overlay = true)
+// plot(bb_upper, color=color.new(#688868,50),force_overlay = true)
+// plot(bb_lower, color=color.new(#886868,50),force_overlay = true)
+bb_exceed_upper = high > bb_upper
+bb_exceed_lower = low < bb_lower
+
+// MA
+//-------------------------------------------------------------------------------
+ma_fast = ta.sma(close, 34)
+ma_slow = ta.sma(close,89)
+ma_fast_plt = plot(ma_fast,'MA fast',color.blue,force_overlay = true)
+ma_slow_plt = plot(ma_slow,'MA slow',color.orange,force_overlay = true)
+ma_diff = ma_fast - ma_slow
+ma_rising = ta.rising(ma_diff,1)
+ma_falling = ta.falling(ma_diff,1)
+
+// RSI
+//-------------------------------------------------------------------------------
+rsi = ta.rsi(close,14)
+rsi_oversold = rsi <= 30
+rsi_overbought = rsi >= 70
+
+// MACD
+//-------------------------------------------------------------------------------
+[macd_line, macd_signal_line, macd_hist_line] = ta.macd(close,34,89,9)
+macd_rising = ta.rising(macd_hist_line,1)
+macd_falling = ta.falling(macd_hist_line,1)
+// plot(macd_line, color=color.blue, force_overlay = false)
+// plot(macd_signal_line, color=color.orange, force_overlay = false)
+macd_hist_color = switch macd_hist_line >= 0
+	true => macd_rising ? color.new(color.teal,50) : color.new(color.lime,50)
+	false => macd_falling ? color.new(color.red,50) : color.new(color.orange,50)
+plot(macd_hist_line, color=macd_hist_color, style=plot.style_columns, force_overlay = false)
+
+// Trading session is when volatility is high, macd + candle for entry, MA + ATR + candle for TP/SL
+//-------------------------------------------------------------------------------
+long_signal = atr_diff > 0 and macd_rising and candle_rising and ma_falling
+short_signal = atr_diff > 0 and macd_falling and candle_falling and ma_rising
+
+sl = long_signal ? math.min(low,low - slow_atr) : short_signal ? math.max(high,high + slow_atr) : na
+tp = long_signal ? math.max(high + slow_atr,ma_slow - slow_atr) : short_signal ? math.min(low - slow_atr,ma_slow + slow_atr) : na
+
+rr = long_signal or short_signal ? (tp - close) / (close - sl) : na
+desired_winrate = 0.9
+desired_rr = math.sqrt((1 - desired_winrate) / desired_winrate)
+[_,max_endurable_spread, _] = estimate_leverage(89,0.2,1.5)
+
+scalp_entry_up = long_signal and math.abs(rr) >= desired_rr and math.abs(close - sl) < max_endurable_spread
+scalp_entry_down = short_signal and math.abs(rr) >= desired_rr and math.abs(close - sl) < max_endurable_spread
+
+plotshape(scalp_entry_up,'scalping up',style=shape.triangleup,location=location.belowbar,color=color.green,force_overlay = true)
+plotshape(scalp_entry_down,'scalping down',style=shape.triangledown,location=location.abovebar,color=color.red,force_overlay = true)
+
+// var PositionPlot[] pos_plts = array.new<PositionPlot>()
+if scalp_entry_up or scalp_entry_down
+	plt = plot_position_entry(tp,sl,3)
+	if scalp_entry_up
+		log.info(str.format('Long: {0,number}, TP: {1,number}, SL: {2,number}, RR: {3,number,percent}',close,tp,sl,rr))
+	else if scalp_entry_down
+		log.info(str.format('Short: {0,number}, TP: {1,number}, SL: {2,number}, RR: {3,number,percent}',close,tp,sl,rr))
+	// array.push(pos_plts, plt)
+	// if pos_plts.size() > 10
+	// 	old_plt = array.shift(pos_plts)
+	// 	clear_position_plot(old_plt)
