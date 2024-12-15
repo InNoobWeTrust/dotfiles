@@ -143,22 +143,38 @@ export clear_position_plot(PositionPlot pos_plt) =>
 fast_atr = ta.atr(34)
 slow_atr = ta.atr(144)
 atr_diff = fast_atr - slow_atr
-atr_rising = ta.rising(atr_diff,1)
-atr_falling = ta.falling(atr_diff,1)
+atr_diff_signal = ta.ema(atr_diff,9)
+atr_diff_hist = atr_diff - atr_diff_signal
+atr_rising = ta.rising(atr_diff_hist,1)
+atr_falling = ta.falling(atr_diff_hist,1)
 
-atr_diff_color = switch atr_diff >=0
-	true => atr_rising ? color.blue : color.aqua
-	false => atr_falling ? color.purple : color.olive
-atr_diff_histcolor = color.new(atr_diff_color,80)
+atr_diff_areacolor = switch atr_diff >=0
+	true => color.new(color.teal,70)
+	false => color.new(color.olive,70)
+atr_diff_histcolor = switch atr_diff > atr_diff_signal
+	true => color.new(color.blue,10)
+	false => color.new(color.maroon,10)
 atr_diff_pivot_high = pivot_left_high(atr_diff,34,0)
 atr_diff_pivot_low = pivot_left_low(atr_diff,34,0)
 // fast_atr_plt = plot(fast_atr, 'ATR fast',color=#eeeeee,force_overlay = false)
 // slow_atr_plt = plot(slow_atr, 'ATR slow',color=#888888,force_overlay = false)
-atr_diff_plt = plot(atr_diff, 'ATR diff',color=atr_diff_color,linewidth = 2,force_overlay = false)
-atr_diff_histplt = plot(atr_diff, 'ATR diff',color=atr_diff_histcolor,style = plot.style_histogram,force_overlay = false)
+atr_diff_plt = plot(atr_diff, 'ATR diff',color=color.purple,linewidth = 1,force_overlay = false)
+atr_diff_histfillplt = plot(atr_diff >= 0 ? math.min(atr_diff,atr_diff_signal) : math.max(atr_diff,atr_diff_signal), 'ATR diff area filling',color=atr_diff_areacolor,style = plot.style_histogram,force_overlay = false)
+atr_diff_signal_plt = plot(atr_diff_signal, 'ATR diff signal',color=color.red,linewidth = 1,force_overlay = false)
+fill(atr_diff_plt,atr_diff_signal_plt,atr_diff_histcolor,'ATR convergence divergence')
 atr_diff_pivot_high_plt = plot(atr_diff_pivot_high, 'ATR pivot high',color = color.blue,force_overlay = false)
 atr_diff_pivot_low_plt = plot(atr_diff_pivot_low, 'ATR pivot low',color = color.yellow,force_overlay = false)
 
+atr_hist_crossover = ta.crossover(atr_diff,atr_diff_signal)
+atr_hist_crossunder = ta.crossunder(atr_diff,atr_diff_signal)
+atr_cross_bg_color = switch
+	atr_hist_crossover => color.new(color.aqua,80)
+	atr_hist_crossunder => color.new(color.yellow,80)
+	=> color(na)
+bgcolor(atr_cross_bg_color)
+
+// Demand/Supply zones
+//-------------------------------------------------------------------------------
 demand_price = pivot_left_low(low,34)
 supply_price = pivot_left_high(high,34)
 demand_supply_balance = (close - demand_price) / ((close - demand_price) + (supply_price - close))
@@ -168,21 +184,6 @@ demand_price_plt = plot(demand_price,'Demand price',color=color.new(color.olive,
 supply_price_plt = plot(supply_price,'Supply price',color=color.new(color.red,70),force_overlay = true)
 fill(demand_price_plt,close_plt,color=color.new(color.olive,90))
 fill(supply_price_plt,close_plt,color=color.new(color.red,90))
-
-wyckoff_test = low < demand_price[1] ? 1 : high > supply_price[1] ? -1 : 0
-atr_entry_tracker = 0
-// Testing demand/supply during high volatility
-if ta.rising(atr_diff_pivot_high,1) and wyckoff_test == 0
-    atr_entry_tracker := wyckoff_test[1]
-
-wyckoff_test_bg_color = color(na)
-if atr_entry_tracker == 0 and atr_entry_tracker[1] == 1
-	// Previous candle is peak
-	wyckoff_test_bg_color := color.new(color.green,80)
-if atr_entry_tracker == 0 and atr_entry_tracker[1] == -1
-	// Previous candle is trough
-	wyckoff_test_bg_color := color.new(color.red,80)
-bgcolor(wyckoff_test_bg_color,force_overlay = false)
 
 // Leverage table
 //-------------------------------------------------------------------------------
@@ -215,11 +216,13 @@ bb_exceed_lower = low < bb_lower
 //-------------------------------------------------------------------------------
 ma_fast = ta.sma(close, 34)
 ma_slow = ta.sma(close,89)
-ma_fast_plt = plot(ma_fast,'MA fast',color.blue,force_overlay = true)
-ma_slow_plt = plot(ma_slow,'MA slow',color.orange,force_overlay = true)
+// ma_fast_plt = plot(ma_fast,'MA fast',color.blue,force_overlay = true)
+// ma_slow_plt = plot(ma_slow,'MA slow',color.orange,force_overlay = true)
 ma_diff = ma_fast - ma_slow
-ma_rising = ta.rising(ma_diff,1)
-ma_falling = ta.falling(ma_diff,1)
+ma_signal = ta.ema(ma_diff,9)
+ma_diff_hist = ma_diff - ma_signal
+ma_rising = ta.rising(ma_diff_hist,1)
+ma_falling = ta.falling(ma_diff_hist,1)
 
 // RSI
 //-------------------------------------------------------------------------------
