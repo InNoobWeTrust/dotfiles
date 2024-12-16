@@ -83,7 +83,6 @@ export pivot_left_high(float src, int len, float cutoff = na) =>
 export pivot_left_low(float src, int len, float cutoff = na) =>
 	pivot_low = ta.pivotlow(src,len,0)
 	pivot_low_non_na = ta.valuewhen(not na(pivot_low),pivot_low,0)
-	pivot_low_cutoff = math.min(pivot_low_non_na,cutoff)
 	if not na(cutoff)
 		// Return the pivot with cutoff
 		math.min(pivot_low_non_na,cutoff)
@@ -99,9 +98,9 @@ export pivot_left_low(float src, int len, float cutoff = na) =>
 // @returns Tuple of top wick + bottom wick + body as percentage, body can be negative
 export candle_split_percent(float o,float h, float l, float c) =>
 	spread = h - l
-	body_top = c >= o ? c : o
-	body_bottom = c <= o ? c : o
-	body = c - o / spread // Can be negative
+	body_top = math.max(o,c)
+	body_bottom = math.min(o,c)
+	body = (c - o) / spread // Can be negative
 	top_wick = (h - body_top) / spread
 	bottom_wick = (body_bottom - l) / spread
 	// Return the wicks and body as percentage
@@ -173,15 +172,21 @@ atr_cross_bg_color = switch
 	=> color(na)
 bgcolor(atr_cross_bg_color)
 
-// Demand/Supply zones
+// Demand/Supply zones (Elliott's single full cycle of 8 waves)
 //-------------------------------------------------------------------------------
-demand_price = pivot_left_low(low,34)
-supply_price = pivot_left_high(high,34)
-demand_supply_balance = (close - demand_price) / ((close - demand_price) + (supply_price - close))
+demand_price = pivot_left_low(low,8)
+pivot_low = ta.pivotlow(8,0)
+demand_zone = ta.valuewhen(not na(pivot_low),math.min(open,close),0)
+supply_price = pivot_left_high(high,8)
+pivot_high = ta.pivothigh(8,0)
+supply_zone = ta.valuewhen(not na(pivot_high),math.max(open,close),0)
+demand_supply_balance = (close - demand_zone) / ((close - demand_zone) + (supply_zone - close))
 
 close_plt = plot(close,'Close price',color=color(na),force_overlay = true)
 demand_price_plt = plot(demand_price,'Demand price',color=color.new(color.olive,70),force_overlay = true)
+demand_zone_plt = plot(demand_zone,'Demand zone',color=color.new(color.olive,20),force_overlay = true)
 supply_price_plt = plot(supply_price,'Supply price',color=color.new(color.red,70),force_overlay = true)
+supply_zone_plt = plot(supply_zone,'Supply zone',color=color.new(color.red,20),force_overlay = true)
 fill(demand_price_plt,close_plt,color=color.new(color.olive,90))
 fill(supply_price_plt,close_plt,color=color.new(color.red,90))
 
@@ -198,10 +203,12 @@ lvrg_tb := display_lvrg_table(144)
 // Biased candle
 //-------------------------------------------------------------------------------
 [top_wick, bottom_wick, body] = candle_split_percent(open,high,low,close)
-candle_wick_bias = top_wick >= 0.5 ? -1 : bottom_wick >= 0.5 ? 1 : na
-candle_decisive = top_wick + bottom_wick < 0.786
-candle_rising = candle_decisive and candle_wick_bias > 0
-candle_falling = candle_decisive and candle_wick_bias < 0
+candle_wick_bias = bottom_wick >= 0.5 ? 1 : top_wick >= 0.5 ? -1 : na
+candle_rising = candle_wick_bias > 0
+candle_falling = candle_wick_bias < 0
+
+plotshape(candle_rising,'Biased candle rising',style=shape.triangleup,location=location.belowbar,color=color.green,force_overlay = true)
+plotshape(candle_falling,'Biased candle falling',style=shape.triangledown,location=location.abovebar,color=color.red,force_overlay = true)
 
 // Bollinger band
 //-------------------------------------------------------------------------------
@@ -216,19 +223,44 @@ bb_exceed_lower = low < bb_lower
 //-------------------------------------------------------------------------------
 ma_fast = ta.sma(close, 34)
 ma_slow = ta.sma(close,89)
-// ma_fast_plt = plot(ma_fast,'MA fast',color.blue,force_overlay = true)
-// ma_slow_plt = plot(ma_slow,'MA slow',color.orange,force_overlay = true)
+ma_fast_plt = plot(ma_fast,'MA fast',color.new(color.blue,95),force_overlay = true)
+ma_slow_plt = plot(ma_slow,'MA slow',color.new(color.orange,95),linewidth = 2,force_overlay = true)
 ma_diff = ma_fast - ma_slow
+fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,80) : color.new(color.red,90))
 ma_signal = ta.ema(ma_diff,9)
 ma_diff_hist = ma_diff - ma_signal
 ma_rising = ta.rising(ma_diff_hist,1)
 ma_falling = ta.falling(ma_diff_hist,1)
+
+test_ma = math.sign((ohlc4 - ma_fast) * (ohlc4 - ma_slow)) < 0
+plotcandle(close >= open ? low : high,test_ma ? high : na,test_ma ? low : na,close>=open ? high : low,color=close>=open ? color.new(color.teal,70) : color.new(color.red,70),bordercolor = close>=open ? color.new(color.teal,70) : color.new(color.red,70),force_overlay = true)
 
 // RSI
 //-------------------------------------------------------------------------------
 rsi = ta.rsi(close,14)
 rsi_oversold = rsi <= 30
 rsi_overbought = rsi >= 70
+rsi_sw = 42 <= rsi and rsi <= 58
+
+rsi_enter_sw = rsi_sw and not rsi_sw[1]
+rsi_exit_sw = not rsi_sw and rsi_sw[1]
+var int first_sw_bar_index = 0
+var box latest_sw_box = na
+if rsi_enter_sw
+	first_sw_bar_index := bar_index
+box_bottom = ta.lowest(bar_index - first_sw_bar_index + 1)
+box_top = ta.highest(bar_index - first_sw_bar_index + 1)
+if barstate.isconfirmed
+	if rsi_sw and bar_index - first_sw_bar_index > 7
+		if not na(latest_sw_box)
+			box.delete(latest_sw_box)
+		latest_sw_box := box.new(first_sw_bar_index,box_top,bar_index,box_bottom,xloc = xloc.bar_index,border_color = color.new(color.gray,50),bgcolor = color.new(color.silver,70),force_overlay = true)
+	else if rsi_exit_sw
+		if not na(latest_sw_box)
+			log_msg = str.format('Sideway in TR from {0,number} to {1,number}',latest_sw_box.get_bottom(),latest_sw_box.get_top())
+			log.warning(log_msg)
+			alert(log_msg)
+			latest_sw_box := na
 
 // MACD
 //-------------------------------------------------------------------------------
@@ -242,32 +274,118 @@ macd_hist_color = switch macd_hist_line >= 0
 	false => macd_falling ? color.new(color.red,50) : color.new(color.orange,50)
 plot(macd_hist_line, color=macd_hist_color, style=plot.style_columns, force_overlay = false)
 
-// Trading session is when volatility is high, macd + candle for entry, MA + ATR + candle for TP/SL
+// Pivot profile
 //-------------------------------------------------------------------------------
-long_signal = atr_diff > 0 and macd_rising and candle_rising and ma_falling
-short_signal = atr_diff > 0 and macd_falling and candle_falling and ma_rising
+const int MAX_PROFILE_BARS = 36
+max_pivots = MAX_PROFILE_BARS * 2
+var float[] pivots = array.new<float>(max_pivots)
 
-sl = long_signal ? math.min(low,low - slow_atr) : short_signal ? math.max(high,high + slow_atr) : na
-tp = long_signal ? math.max(high + slow_atr,ma_slow - slow_atr) : short_signal ? math.min(low - slow_atr,ma_slow + slow_atr) : na
+// Add new pivots
+if demand_price != demand_price[1]
+	array.push(pivots, demand_price)
+if supply_price != supply_price[1]
+	array.push(pivots, supply_price)
+// Shrink the original array to max capacity
+while pivots.size() > max_pivots
+	array.shift(pivots)
+
+// Sorted pivots for finding nearest key levels
+sorted_pivots = array.copy(pivots)
+// Sort the arrays
+array.sort(sorted_pivots,order.ascending)
+
+// Calculate delta price for each profile bar
+pivot_profile_lowest = sorted_pivots.first()
+pivot_profile_delta = (sorted_pivots.last() - sorted_pivots.first()) / MAX_PROFILE_BARS
+pivot_profile_hist = array.new<float>(MAX_PROFILE_BARS,0.)
+for i = 0 to MAX_PROFILE_BARS - 1
+	profile_bar_l = pivot_profile_lowest + pivot_profile_delta * (i - 0.5)
+	profile_bar_h = profile_bar_l + pivot_profile_delta
+	for pivot in sorted_pivots
+		if profile_bar_l <= pivot and pivot < profile_bar_h
+			count = array.get(pivot_profile_hist,i)
+			count += 1
+			array.set(pivot_profile_hist,i,count)
+
+// Scale profile histogram
+const int PIVOT_PROFILE_OFFSET = 2
+pivot_profile_width = math.round(array.max(pivot_profile_hist))
+pivot_profile_bar_index = bar_index + pivot_profile_width + PIVOT_PROFILE_OFFSET
+pivot_scale_factor = array.range(pivot_profile_hist) / pivot_profile_width
+pivot_hist_max_nth = math.round(array.max(pivot_profile_hist,1))
+// pivot_hist_max_nth_price = pivot_profile_lowest + pivot_profile_delta / 2 * array.indexof(pivot_profile_hist,array.max(pivot_profile_hist,1))
+
+var line[] pivot_profile_lines = array.new<line>(MAX_PROFILE_BARS,na)
+var line[] pivot_poc_lines = array.new<line>()
+// Plot pivot profile
+if barstate.islast
+	for l in pivot_profile_lines
+		line.delete(l)
+	for l in pivot_poc_lines
+		line.delete(l)
+	array.clear(pivot_poc_lines)
+	for i = 0 to MAX_PROFILE_BARS - 1
+		profile_bar_avg = pivot_profile_lowest + pivot_profile_delta * i / 2.
+		hist_value = math.round(array.get(pivot_profile_hist,i))
+		l = line.new(x1 = pivot_profile_bar_index - hist_value,
+				 	 y1 = profile_bar_avg,
+				 	 x2 = pivot_profile_bar_index,
+				 	 y2 = profile_bar_avg,
+				 	 xloc = xloc.bar_index,
+				 	 extend = extend.none,
+				 	 color = color.new(color.orange,50),
+				 	 style = line.style_solid,
+				 	 width = 2,
+				 	 force_overlay = true)
+		array.set(pivot_profile_lines,i,l)
+		if hist_value >= pivot_hist_max_nth
+			poc = line.new(x1 = pivot_profile_bar_index - hist_value,
+					 	   y1 = profile_bar_avg,
+					 	   x2 = pivot_profile_bar_index,
+					 	   y2 = profile_bar_avg,
+					 	   xloc = xloc.bar_index,
+					 	   extend = extend.left,
+					 	   color = hist_value > pivot_hist_max_nth ? color.new(color.red,25) : color.new(color.yellow,25),
+					 	   style = line.style_solid,
+					 	   width = 1,
+					 	   force_overlay = true)
+			array.push(pivot_poc_lines,poc)
+
+
+// Biased candle for reversal signal, ma_diff for trend, atr signal low volatility environment that supports reversal
+//-------------------------------------------------------------------------------
+long_signal = not rsi_sw and candle_rising and ((test_ma and ma_diff > 0) or (ma_rising and ma_diff < 0))
+short_signal = not rsi_sw and candle_falling and ((test_ma and ma_diff < 0) or (ma_falling and ma_diff > 0))
+
+nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,close))
+nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,close) - 1)
+
+sl = long_signal ? math.min(low, math.avg(nearest_lower_pivot, low - slow_atr)) : short_signal ? math.max(high,math.avg(nearest_higher_pivot,high + slow_atr)) : na
+tp = long_signal ? math.max(close + 1.5 * slow_atr,math.avg(nearest_higher_pivot,supply_zone)) : short_signal ? math.min(close - 1.5 * slow_atr,math.avg(nearest_lower_pivot,demand_zone)) : na
 
 rr = long_signal or short_signal ? (tp - close) / (close - sl) : na
-desired_winrate = 0.9
-desired_rr = math.sqrt((1 - desired_winrate) / desired_winrate)
-[_,max_endurable_spread, _] = estimate_leverage(89,0.2,1.5)
+desired_winrate = 0.6
+desired_rr = desired_winrate / (1 - desired_winrate)
+is_satisfactory_rr = math.abs(rr) >= desired_rr
+[lvrg,max_endurable_spread, _] = estimate_leverage(89,0.2,3)
+is_safe_sl = math.abs(close - sl) < max_endurable_spread
 
-scalp_entry_up = long_signal and math.abs(rr) >= desired_rr and math.abs(close - sl) < max_endurable_spread
-scalp_entry_down = short_signal and math.abs(rr) >= desired_rr and math.abs(close - sl) < max_endurable_spread
+scalp_entry_up = long_signal and is_satisfactory_rr and is_safe_sl
+scalp_entry_down = short_signal and is_satisfactory_rr and is_safe_sl
 
-plotshape(scalp_entry_up,'scalping up',style=shape.triangleup,location=location.belowbar,color=color.green,force_overlay = true)
-plotshape(scalp_entry_down,'scalping down',style=shape.triangledown,location=location.abovebar,color=color.red,force_overlay = true)
+// plotchar(scalp_entry_up,'Biased candle rising',char='L',location=location.belowbar,size = size.tiny,color=color.green,force_overlay = true)
+// plotchar(scalp_entry_down,'Biased candle falling',char='S',location=location.abovebar,size = size.tiny,color=color.red,force_overlay = true)
 
 // var PositionPlot[] pos_plts = array.new<PositionPlot>()
 if scalp_entry_up or scalp_entry_down
+	label.new(x=bar_index, y = scalp_entry_down ? low : high,text = str.format('x{0,number,integer}',lvrg),xloc = xloc.bar_index,yloc = scalp_entry_up ? yloc.belowbar : yloc.abovebar,color=scalp_entry_up ? color.green : color.red,style = label.style_text_outline,size=size.small,force_overlay = true)
 	plt = plot_position_entry(tp,sl,3)
-	if scalp_entry_up
-		log.info(str.format('Long: {0,number}, TP: {1,number}, SL: {2,number}, RR: {3,number,percent}',close,tp,sl,rr))
+	log_msg = if scalp_entry_up
+		str.format('Long: {0,number}, TP: {1,number}, SL: {2,number}, RR: {3,number,percent}',close,tp,sl,rr)
 	else if scalp_entry_down
-		log.info(str.format('Short: {0,number}, TP: {1,number}, SL: {2,number}, RR: {3,number,percent}',close,tp,sl,rr))
+		str.format('Short: {0,number}, TP: {1,number}, SL: {2,number}, RR: {3,number,percent}',close,tp,sl,rr)
+	log.info(log_msg)
+	alert(log_msg)
 	// array.push(pos_plts, plt)
 	// if pos_plts.size() > 10
 	// 	old_plt = array.shift(pos_plts)
