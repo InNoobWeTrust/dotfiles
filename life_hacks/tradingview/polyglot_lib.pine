@@ -183,10 +183,10 @@ supply_zone = ta.valuewhen(not na(pivot_high),math.max(open,close),0)
 demand_supply_balance = (close - demand_zone) / ((close - demand_zone) + (supply_zone - close))
 
 close_plt = plot(close,'Close price',color=color(na),force_overlay = true)
-demand_price_plt = plot(demand_price,'Demand price',color=color.new(color.olive,70),force_overlay = true)
-demand_zone_plt = plot(demand_zone,'Demand zone',color=color.new(color.olive,20),force_overlay = true)
-supply_price_plt = plot(supply_price,'Supply price',color=color.new(color.red,70),force_overlay = true)
-supply_zone_plt = plot(supply_zone,'Supply zone',color=color.new(color.red,20),force_overlay = true)
+demand_price_plt = plot(demand_price,'Demand price',color=color.new(color.olive,80),force_overlay = true)
+demand_zone_plt = plot(demand_zone,'Demand zone',color=color.new(color.olive,70),force_overlay = true)
+supply_price_plt = plot(supply_price,'Supply price',color=color.new(color.red,80),force_overlay = true)
+supply_zone_plt = plot(supply_zone,'Supply zone',color=color.new(color.red,70),force_overlay = true)
 fill(demand_price_plt,close_plt,color=color.new(color.olive,90))
 fill(supply_price_plt,close_plt,color=color.new(color.red,90))
 
@@ -198,14 +198,15 @@ var table lvrg_tb = na
 if not na(lvrg_tb)
 	table.delete(lvrg_tb)
 // Update leverage table
-lvrg_tb := display_lvrg_table(144)
+lvrg_tb := display_lvrg_table(atr_len = 144, mult = 2)
 
 // Biased candle
 //-------------------------------------------------------------------------------
 [top_wick, bottom_wick, body] = candle_split_percent(open,high,low,close)
 candle_wick_bias = bottom_wick >= 0.5 ? 1 : top_wick >= 0.5 ? -1 : na
-candle_rising = candle_wick_bias > 0
-candle_falling = candle_wick_bias < 0
+candle_bias = (ohlc4 - low) / (high - low)
+candle_rising = candle_wick_bias > 0 and candle_bias >= 0.5
+candle_falling = candle_wick_bias < 0 and candle_bias < 0.5
 
 plotshape(candle_rising,'Biased candle rising',style=shape.triangleup,location=location.belowbar,color=color.green,force_overlay = true)
 plotshape(candle_falling,'Biased candle falling',style=shape.triangledown,location=location.abovebar,color=color.red,force_overlay = true)
@@ -240,7 +241,7 @@ plotcandle(close >= open ? low : high,test_ma ? high : na,test_ma ? low : na,clo
 rsi = ta.rsi(close,14)
 rsi_oversold = rsi <= 30
 rsi_overbought = rsi >= 70
-rsi_sw = 42 <= rsi and rsi <= 58
+rsi_sw = 45 <= rsi and rsi <= 55
 
 rsi_enter_sw = rsi_sw and not rsi_sw[1]
 rsi_exit_sw = not rsi_sw and rsi_sw[1]
@@ -276,8 +277,9 @@ plot(macd_hist_line, color=macd_hist_color, style=plot.style_columns, force_over
 
 // Pivot profile
 //-------------------------------------------------------------------------------
-const int MAX_PROFILE_BARS = 36
-max_pivots = MAX_PROFILE_BARS * 2
+const int MAX_PROFILE_BARS = 32
+max_pivots = MAX_PROFILE_BARS * 16
+max_pivots_cutoff = max_pivots / 8
 var float[] pivots = array.new<float>(max_pivots)
 
 // Add new pivots
@@ -294,6 +296,19 @@ sorted_pivots = array.copy(pivots)
 // Sort the arrays
 array.sort(sorted_pivots,order.ascending)
 
+// Take only pivots around the last close price
+pivots_stdev = array.stdev(sorted_pivots)
+pivot_low_cutoff = close[1] - pivots_stdev
+pivot_high_cutoff = close[1] + pivots_stdev
+pivot_low_offset_idx = array.binary_search_leftmost(sorted_pivots,pivot_low_cutoff)
+pivot_high_offset_idx = array.binary_search_rightmost(sorted_pivots,pivot_high_cutoff)
+// Cutoff the sorted array
+if pivot_high_offset_idx - pivot_low_offset_idx > 1
+	sorted_pivots := array.slice(sorted_pivots,math.max(0,pivot_low_offset_idx), math.min(pivot_high_offset_idx, sorted_pivots.size() - 1))
+else
+	pivot_offset_idx = array.binary_search_leftmost(sorted_pivots,close[1])
+	sorted_pivots := array.slice(sorted_pivots,math.max(0,pivot_offset_idx - max_pivots_cutoff), math.min(pivot_offset_idx + max_pivots_cutoff, sorted_pivots.size() - 1))
+
 // Calculate delta price for each profile bar
 pivot_profile_lowest = sorted_pivots.first()
 pivot_profile_delta = (sorted_pivots.last() - sorted_pivots.first()) / MAX_PROFILE_BARS
@@ -301,24 +316,28 @@ pivot_profile_hist = array.new<float>(MAX_PROFILE_BARS,0.)
 for i = 0 to MAX_PROFILE_BARS - 1
 	profile_bar_l = pivot_profile_lowest + pivot_profile_delta * (i - 0.5)
 	profile_bar_h = profile_bar_l + pivot_profile_delta
-	for pivot in sorted_pivots
+	// Optimize loop by only looping till the value below profile_bar_h
+	max_idx = array.binary_search_rightmost(sorted_pivots,profile_bar_h)
+	for j = 0 to max_idx
+		pivot = sorted_pivots.get(j)
 		if profile_bar_l <= pivot and pivot < profile_bar_h
 			count = array.get(pivot_profile_hist,i)
 			count += 1
 			array.set(pivot_profile_hist,i,count)
 
-// Scale profile histogram
+// Scaled profile histogram
 const int PIVOT_PROFILE_OFFSET = 2
-pivot_profile_width = math.round(array.max(pivot_profile_hist))
-pivot_profile_bar_index = bar_index + pivot_profile_width + PIVOT_PROFILE_OFFSET
-pivot_scale_factor = array.range(pivot_profile_hist) / pivot_profile_width
-pivot_hist_max_nth = math.round(array.max(pivot_profile_hist,1))
-// pivot_hist_max_nth_price = pivot_profile_lowest + pivot_profile_delta / 2 * array.indexof(pivot_profile_hist,array.max(pivot_profile_hist,1))
-
 var line[] pivot_profile_lines = array.new<line>(MAX_PROFILE_BARS,na)
 var line[] pivot_poc_lines = array.new<line>()
+
 // Plot pivot profile
 if barstate.islast
+	pivot_profile_width = math.round(array.max(pivot_profile_hist))
+	pivot_profile_bar_index = bar_index + pivot_profile_width + PIVOT_PROFILE_OFFSET
+	pivot_scale_factor = array.range(pivot_profile_hist) / pivot_profile_width
+	pivot_hist_max_nth = math.round(array.max(pivot_profile_hist,2))
+	// pivot_hist_max_nth_price = pivot_profile_lowest + pivot_profile_delta / 2 * array.indexof(pivot_profile_hist,array.max(pivot_profile_hist,1))
+
 	for l in pivot_profile_lines
 		line.delete(l)
 	for l in pivot_poc_lines
@@ -345,7 +364,7 @@ if barstate.islast
 					 	   y2 = profile_bar_avg,
 					 	   xloc = xloc.bar_index,
 					 	   extend = extend.left,
-					 	   color = hist_value > pivot_hist_max_nth ? color.new(color.red,25) : color.new(color.yellow,25),
+					 	   color = hist_value > pivot_hist_max_nth ? color.new(color.red,70) : color.new(color.yellow,70),
 					 	   style = line.style_solid,
 					 	   width = 1,
 					 	   force_overlay = true)
@@ -354,8 +373,8 @@ if barstate.islast
 
 // Biased candle for reversal signal, ma_diff for trend, atr signal low volatility environment that supports reversal
 //-------------------------------------------------------------------------------
-long_signal = not rsi_sw and candle_rising and ((test_ma and ma_diff > 0) or (ma_rising and ma_diff < 0))
-short_signal = not rsi_sw and candle_falling and ((test_ma and ma_diff < 0) or (ma_falling and ma_diff > 0))
+long_signal = not rsi_sw and candle_rising and ((test_ma and ma_diff > 0) or (ma_rising and ma_diff > 0))
+short_signal = not rsi_sw and candle_falling and ((test_ma and ma_diff < 0) or (ma_falling and ma_diff < 0))
 
 nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,close))
 nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,close) - 1)
