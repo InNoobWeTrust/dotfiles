@@ -266,6 +266,8 @@ require('packer').startup({
 				})
 			end
 		}
+		-- Github Copilot
+		use 'github/copilot.vim'
 		---- TODO: Self-hosted LLM backend
 		--use {
 		--  'huggingface/llm.nvim',
