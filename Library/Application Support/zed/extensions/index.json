@@ -108,7 +108,7 @@
       "manifest": {
         "id": "html",
         "name": "HTML",
-        "version": "0.1.2",
+        "version": "0.1.4",
         "schema_version": 1,
         "description": "HTML support.",
         "repository": "https://github.com/zed-industries/zed",
@@ -117,7 +117,7 @@
         ],
         "lib": {
           "kind": "Rust",
-          "version": "0.0.6"
+          "version": "0.1.0"
         },
         "themes": [],
         "languages": [
@@ -135,8 +135,8 @@
             "language": "HTML",
             "languages": [],
             "language_ids": {
-              "HTML": "html",
-              "CSS": "css"
+              "CSS": "css",
+              "HTML": "html"
             },
             "code_action_kinds": null
           }
@@ -151,9 +151,9 @@
       "manifest": {
         "id": "ini",
         "name": "ini",
-        "version": "0.0.2",
+        "version": "0.0.3",
         "schema_version": 1,
-        "description": "Ini support.",
+        "description": "Ini support and conf, config etc too",
         "repository": "https://github.com/bajrangCoder/zed-ini",
         "authors": [
           "Raunak Raj <bajrangcoders@gmail.com>"
@@ -382,10 +382,10 @@
       "manifest": {
         "id": "swift",
         "name": "Swift",
-        "version": "0.3.1",
+        "version": "0.3.2",
         "schema_version": 1,
         "description": "Swift support.",
-        "repository": "https://github.com/zed-industries/zed",
+        "repository": "https://github.com/zed-extensions/swift",
         "authors": [
           "ejjonny <https://github.com/ejjonny>",
           "Samuser107 L.Longheval <samuser107@gmail.com>"
@@ -423,7 +423,7 @@
       "manifest": {
         "id": "toml",
         "name": "TOML",
-        "version": "0.1.1",
+        "version": "0.1.2",
         "schema_version": 1,
         "description": "TOML support.",
         "repository": "https://github.com/zed-industries/zed",
@@ -433,7 +433,7 @@
         ],
         "lib": {
           "kind": "Rust",
-          "version": "0.0.6"
+          "version": "0.1.0"
         },
         "themes": [],
         "languages": [
@@ -464,7 +464,7 @@
       "manifest": {
         "id": "xml",
         "name": "XML",
-        "version": "0.0.6",
+        "version": "0.0.8",
         "schema_version": 1,
         "description": "XML syntax support.",
         "repository": "https://github.com/sweetppro/zed-xml",
@@ -482,7 +482,7 @@
         "grammars": {
           "xml": {
             "repository": "https://github.com/tree-sitter-grammars/tree-sitter-xml",
-            "rev": "809266ed1694d64dedc168a18893cc254e3edf7e",
+            "rev": "4b64dd3a03ec002258d6268d712fd93716d6ab57",
             "path": "xml"
           }
         },
@@ -668,7 +668,9 @@
       "matcher": {
         "path_suffixes": [
           "Cargo.lock",
-          "toml"
+          "toml",
+          "Pipfile",
+          "uv.lock"
         ],
         "first_line_pattern": null
       },
@@ -679,78 +681,9 @@
       "path": "languages/xml",
       "matcher": {
         "path_suffixes": [
-          "xml",
-          "xsd",
-          "ascx",
-          "atom",
-          "axml",
-          "axaml",
-          "bpmn",
-          "cpt",
-          "csl",
-          "csproj",
-          "csproj.user",
-          "dita",
-          "ditamap",
-          "dtd",
-          "ent",
-          "mod",
-          "dtml",
-          "entitlements",
-          "fsproj",
-          "fxml",
-          "iml",
-          "isml",
-          "jmx",
-          "launch",
-          "menu",
-          "mxml",
-          "nuspec",
-          "opml",
-          "owl",
-          "plist",
-          "proj",
-          "props",
-          "pt",
-          "publishsettings",
-          "pubxml",
-          "pubxml.user",
-          "rbxlx",
-          "rbxmx",
-          "rdf",
-          "rng",
-          "rss",
-          "shproj",
-          "storyboard",
-          "svg",
-          "targets",
-          "tld",
-          "tmTheme",
-          "tmx",
-          "vbproj",
-          "vbproj.user",
-          "vcxproj",
-          "vcxproj.filters",
-          "wsdl",
-          "wxi",
-          "wxl",
-          "wxs",
-          "xaml",
-          "xbl",
-          "xcsettings",
-          "xcprivacy",
-          "xcscheme",
-          "xcworkspacedata",
-          "xib",
-          "xlf",
-          "xliff",
-          "xpdl",
-          "xul",
-          "xoml",
-          "xsl",
-          "xslt"
+          "xml"
         ],
-        "first_line_pattern": null
+        "first_line_pattern": "^<.*xml"
       },
       "grammar": "xml"
     },
@@ -759,7 +692,10 @@
       "path": "languages/ini",
       "matcher": {
         "path_suffixes": [
-          "ini"
+          "ini",
+          "conf",
+          "cfg",
+          "config"
         ],
         "first_line_pattern": null
       },

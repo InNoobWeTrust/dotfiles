@@ -24,6 +24,23 @@ export type PositionPlot
 	linefill tp_fill
 	linefill sl_fill
 
+export type TfBar
+    float o
+    float h
+    float l
+    float c
+    int t_o
+    int t_c
+
+export type TfBarZone
+    int period_seconds
+    TfBar bar
+
+export type TfBarZonePlot
+    line h
+    line l
+    linefill f
+
 //===============================================================================
 // Functions
 //===============================================================================
@@ -133,6 +150,71 @@ export clear_position_plot(PositionPlot pos_plt) =>
 	line.delete(pos_plt.tp)
 	line.delete(pos_plt.sl)
 
+// @function fill na value from a source with its last non-na
+// @param src source series
+// @returns the series with filled values using previous data point
+export fill_na(series float src) =>
+    ta.valuewhen(not na(src), src, 0)
+
+// @function check if the bar is in right timing as specified
+// @param bar_time the bar's time in UNIX format
+// @param period_seconds the period of bar's timeframe, in seconds
+// @param timing the timing, in seconds
+// @returns true if timing is within bar's session, false otherwise
+export check_bar_time(int bar_open_time, int bar_close_time, int timing) =>
+    bar_open_time <= timing and timing < bar_close_time
+
+// @function checking if any timing is within the bar's time using binary search
+// @param open_time bar's open time in UNIX format
+// @param close_time bar's close time in UNIX format
+// @param timings array of timings
+// @returns true if any timing is within bar's session, false otherwise
+export check_bar_time(int open_time, int close_time, int[] timings) =>
+    found = false
+	// Try copy and then sort
+	sorted_timings = array.copy(timings)
+	array.sort(sorted_timings, order.ascending)
+	timing_left_idx = array.binary_search_leftmost(sorted_timings,open_time)
+	timing_right_idx = array.binary_search_rightmost(sorted_timings,close_time)
+    if timing_right_idx - timing_left_idx > 0
+		for idx = timing_left_idx to timing_right_idx
+			timing = sorted_timings.get(idx)
+			if check_bar_time(open_time,close_time,timing)
+				found := true
+				break
+    found
+
+// @function check if current bar just broke resistance level
+// @param resistance the resistance level
+// @returns true if broke, false otherwise
+resistance_breakout(float resistance) =>
+    // Breakout if previous bar touches the level but current bar is higher than level
+    low > resistance and low[1] <= resistance
+
+// @function check if current bar just broke support level
+// @param support the support level
+// @returns true if broke, false otherwise
+support_breakout(float support) =>
+    // Breakout if previous bar touches the level but current bar is lower than level
+    high < support and high[1] >= support
+
+// @function Plot the price zone of TfBar
+// @param z Zone data of TfBar
+// @param clr Color for the zone
+plot_tf_zone(TfBarZone z, color clr) =>
+    // Line for high value
+    h = line.new(time, z.bar.h, time_close, z.bar.h, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
+    l = line.new(time, z.bar.l, time_close, z.bar.l, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
+    f = linefill.new(h,l,clr)
+    TfBarZonePlot.new(h,l,f)
+
+// @function Clear plotted TfBarZone
+// @param z Plot data
+clear_tf_zone(TfBarZonePlot z) =>
+	linefill.delete(z.f)
+	line.delete(z.h)
+	line.delete(z.l)
+
 //===============================================================================
 // Testing
 //===============================================================================
@@ -208,6 +290,7 @@ candle_bias = (ohlc4 - low) / (high - low)
 candle_rising = candle_wick_bias > 0 and candle_bias >= 0.5
 candle_falling = candle_wick_bias < 0 and candle_bias < 0.5
 
+// plot(not candle_rising and not candle_falling ? ohlc4 : na,'Price balance',style = plot.style_linebr,linewidth = 2, color = color.silver,force_overlay = true)
 plotshape(candle_rising,'Biased candle rising',style=shape.triangleup,location=location.belowbar,color=color.green,force_overlay = true)
 plotshape(candle_falling,'Biased candle falling',style=shape.triangledown,location=location.abovebar,color=color.red,force_overlay = true)
 
@@ -224,16 +307,20 @@ bb_exceed_lower = low < bb_lower
 //-------------------------------------------------------------------------------
 ma_fast = ta.sma(close, 34)
 ma_slow = ta.sma(close,89)
-ma_fast_plt = plot(ma_fast,'MA fast',color.new(color.blue,95),force_overlay = true)
-ma_slow_plt = plot(ma_slow,'MA slow',color.new(color.orange,95),linewidth = 2,force_overlay = true)
 ma_diff = ma_fast - ma_slow
-fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,80) : color.new(color.red,90))
+// ma_fast_plt = plot(ma_fast,'MA fast',color.new(color.blue,95),force_overlay = true)
+// ma_slow_plt = plot(ma_slow,'MA slow',color.new(color.orange,95),linewidth = 2,force_overlay = true)
+// fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,80) : color.new(color.red,90))
+ma_rising = ta.rising(ma_slow,1)
+ma_falling = ta.falling(ma_slow,1)
 ma_signal = ta.ema(ma_diff,9)
 ma_diff_hist = ma_diff - ma_signal
-ma_rising = ta.rising(ma_diff_hist,1)
-ma_falling = ta.falling(ma_diff_hist,1)
+ma_converging = ta.rising(math.abs(ma_diff_hist),2)
+ma_diverging = ta.falling(math.abs(ma_diff_hist),2)
 
-test_ma = math.sign((ohlc4 - ma_fast) * (ohlc4 - ma_slow)) < 0
+test_ma = switch ma_diff_hist >= 0
+	true => low > ma_slow and high < ma_fast
+	false => high < ma_slow and low > ma_fast
 plotcandle(close >= open ? low : high,test_ma ? high : na,test_ma ? low : na,close>=open ? high : low,color=close>=open ? color.new(color.teal,70) : color.new(color.red,70),bordercolor = close>=open ? color.new(color.teal,70) : color.new(color.red,70),force_overlay = true)
 
 // RSI
@@ -274,6 +361,11 @@ macd_hist_color = switch macd_hist_line >= 0
 	true => macd_rising ? color.new(color.teal,50) : color.new(color.lime,50)
 	false => macd_falling ? color.new(color.red,50) : color.new(color.orange,50)
 plot(macd_hist_line, color=macd_hist_color, style=plot.style_columns, force_overlay = false)
+
+// Candle bias + MACD histogram => Scaled candle bias
+//-------------------------------------------------------------------------------
+scaled_candle_bias = candle_bias * macd_hist_line
+plot(scaled_candle_bias,"Scaled candle's bias",color.new(color.silver,60),style = plot.style_area,force_overlay = false)
 
 // Pivot profile
 //-------------------------------------------------------------------------------
@@ -373,8 +465,8 @@ if barstate.islast
 
 // Biased candle for reversal signal, ma_diff for trend, atr signal low volatility environment that supports reversal
 //-------------------------------------------------------------------------------
-long_signal = not rsi_sw and candle_rising and ((test_ma and ma_diff > 0) or (ma_rising and ma_diff > 0))
-short_signal = not rsi_sw and candle_falling and ((test_ma and ma_diff < 0) or (ma_falling and ma_diff < 0))
+long_signal = not rsi_sw and candle_rising and ma_rising and ma_converging
+short_signal = not rsi_sw and candle_falling and ma_falling and ma_converging
 
 nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,close))
 nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,close) - 1)
