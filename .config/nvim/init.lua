@@ -248,24 +248,24 @@ require('packer').startup({
 		}
 		-- AI code completion
 		-- Tabnine
-		local function tabnine_build_path()
-			-- Replace vim.uv with vim.loop if using NVIM 0.9.0 or below
-			if vim.uv.os_uname().sysname == "Windows_NT" then
-				return "pwsh.exe -file .\\dl_binaries.ps1"
-			else
-				return "./dl_binaries.sh"
-			end
-		end
-		use {
-			'codota/tabnine-nvim',
-			run = tabnine_build_path(),
-			config = function()
-				require('tabnine').setup({
-					accept_keymap = false,
-					dismiss_keymap = false,
-				})
-			end
-		}
+		--local function tabnine_build_path()
+		--  -- Replace vim.uv with vim.loop if using NVIM 0.9.0 or below
+		--  if vim.uv.os_uname().sysname == "Windows_NT" then
+		--    return "pwsh.exe -file .\\dl_binaries.ps1"
+		--  else
+		--    return "./dl_binaries.sh"
+		--  end
+		--end
+		--use {
+		--  'codota/tabnine-nvim',
+		--  run = tabnine_build_path(),
+		--  config = function()
+		--    require('tabnine').setup({
+		--      accept_keymap = false,
+		--      dismiss_keymap = false,
+		--    })
+		--  end
+		--}
 		-- Github Copilot
 		use 'github/copilot.vim'
 		---- TODO: Self-hosted LLM backend
@@ -306,6 +306,13 @@ require('packer').startup({
 				'hrsh7th/vim-vsnip',
 				'FelipeLema/cmp-async-path',
 			}
+		}
+		use {
+			"zbirenbaum/copilot-cmp",
+			after = { "copilot.lua" },
+			config = function()
+				require("copilot_cmp").setup()
+			end
 		}
 		-- Add surrounding brackets, quotes, xml tags,...
 		use 'tpope/vim-surround'
@@ -573,12 +580,13 @@ require('packer').startup({
 		end
 
 		-- Call setup() LAST!
-		require('guard').setup({
+		g.guard_config = {
 			-- the only options for the setup function
 			fmt_on_save = true,
 			-- Use lsp if no formatter was defined for this filetype
 			lsp_as_default_formatter = true,
-		})
+			save_on_fmt = false,
+		}
 		--------------------------------------------- End linter
 
 		--------------------------------------------- Completion
@@ -616,13 +624,13 @@ require('packer').startup({
 				end, { "i", "s" }),
 				['<C-b>'] = cmp.mapping.scroll_docs(-4),
 				['<C-f>'] = cmp.mapping.scroll_docs(4),
-				['<C-Space>'] = cmp.mapping(function()
-					if require("tabnine.keymaps").has_suggestion() then
-						return require("tabnine.keymaps").accept_suggestion()
-					else
-						return cmp.complete()
-					end
-				end, { "i", "s" }),
+				--['<C-Space>'] = cmp.mapping(function()
+				--  if require("tabnine.keymaps").has_suggestion() then
+				--    return require("tabnine.keymaps").accept_suggestion()
+				--  else
+				--    return cmp.complete()
+				--  end
+				--end, { "i", "s" }),
 				['<C-e>'] = cmp.mapping.abort(),
 				['<CR>'] = cmp.mapping.confirm({
 					select = true,
@@ -646,7 +654,6 @@ require('packer').startup({
 		require("mason-lspconfig").setup {
 			ensure_installed = {
 				'bashls',
-				'bufls',
 				'cssls',
 				'cssmodules_ls',
 				'diagnosticls',

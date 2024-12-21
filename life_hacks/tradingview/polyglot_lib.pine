@@ -58,11 +58,12 @@ export estimate_leverage(int atr_len = 14, float sl_percent = 0.2, float mult = 
 	// Return max leverage as whole number
 	[math.ceil(max_leverage), max_endurable_spread, max_endurable_percent]
 
-// @function Display table leverage based on ATR and the percentage of acceptable SL
+// @function Display leverage, ATR, and the percentage of acceptable SL
 // @param atr_len The length to calculate ATR
 // @param sl_percent The percentage of acceptable SL
 // @param mult The ATR multiplier to account for lateness in entry price
-// @returns The leverage rounded up to whole number
+// @param pos The position to display the table
+// @returns The table
 export display_lvrg_table(int atr_len = 14, float sl_percent = 0.2, float mult = 1.5, string pos = position.bottom_right) =>
 	lvrg_tb = table.new(pos,2,3,force_overlay = true)
 	[lvrg, _, _] = estimate_leverage(atr_len,sl_percent,mult)
@@ -76,6 +77,30 @@ export display_lvrg_table(int atr_len = 14, float sl_percent = 0.2, float mult =
 	table.cell(lvrg_tb,1,2,str.format('x{0,number,integer}',lvrg),bgcolor=color.new(color.gray, transp = 80),text_color=color.aqua)
 	// Return the table id to manage drawings
 	lvrg_tb
+
+// @function Display current RSI and SMA of RSI
+// @param rsi_len The length to calculate RSI
+// @param rsi_sma_len The length to calculate SMA of RSI
+// @param pos The position to display the table
+// @returns The table
+export display_rsi_table(int rsi_len = 14, int rsi_sma_len = 14, string pos = position.middle_right) =>
+	rsi_tb = table.new(pos,1,4,force_overlay = false)
+	rsi = ta.rsi(close,rsi_len)
+	rsi_sma = ta.sma(rsi,rsi_sma_len)
+	rsi_color = switch
+		rsi >= 70 => color.green
+		rsi <= 30 => color.red
+		=> color.gray
+	rsi_sma_color = switch
+		rsi_sma >= 70 => color.teal
+		rsi_sma <=30 => color.orange
+		=> color.silver
+	table.cell(rsi_tb,0,0,'RSI',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(rsi_tb,0,1,str.format('{0,number}',rsi),bgcolor=color.new(color.silver, transp = 80),text_color=rsi_color)
+	table.cell(rsi_tb,0,2,'RSI SMA',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(rsi_tb,0,3,str.format('{0,number}',rsi_sma),bgcolor=color.new(color.silver, transp = 80),text_color=rsi_sma_color)
+	// Return the table id to manage drawings
+	rsi_tb
 
 // @function Calculate the pivot left high with cutoff
 // @param src The source series
@@ -272,6 +297,16 @@ supply_zone_plt = plot(supply_zone,'Supply zone',color=color.new(color.red,70),f
 fill(demand_price_plt,close_plt,color=color.new(color.olive,90))
 fill(supply_price_plt,close_plt,color=color.new(color.red,90))
 
+// RSI table
+//-------------------------------------------------------------------------------
+var table rsi_tb = na
+
+// Cleanup old table
+if not na(rsi_tb)
+	table.delete(rsi_tb)
+// Update leverage table
+rsi_tb := display_rsi_table()
+
 // Leverage table
 //-------------------------------------------------------------------------------
 var table lvrg_tb = na
@@ -364,8 +399,11 @@ plot(macd_hist_line, color=macd_hist_color, style=plot.style_columns, force_over
 
 // Candle bias + MACD histogram => Scaled candle bias
 //-------------------------------------------------------------------------------
-scaled_candle_bias = candle_bias * macd_hist_line
+scaled_candle_bias = switch macd_hist_line >=0
+	true => candle_bias * macd_hist_line
+	false => (1 - candle_bias) * macd_hist_line
 plot(scaled_candle_bias,"Scaled candle's bias",color.new(color.silver,60),style = plot.style_area,force_overlay = false)
+plot(0.5 * macd_hist_line,"MACD balance guide",color.new(color.white,50),style = plot.style_line,force_overlay = false)
 
 // Pivot profile
 //-------------------------------------------------------------------------------
