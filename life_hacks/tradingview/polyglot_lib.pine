@@ -148,6 +148,27 @@ export candle_split_percent(float o,float h, float l, float c) =>
 	// Return the wicks and body as percentage
 	[top_wick, bottom_wick, body]
 
+// @function Calculate target price by providing target rsi and reverse engineer the formula.
+// 			 Reference: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf
+// @param len RSI length
+// @param target_rsi the target RSI for price estimation
+// @returns the reverse engineered close price that matches target RSI
+export reverse_engineering_rsi(int len, float target_rsi) =>
+	exp_per = 2 * len - 1
+	// Average up close
+	uc = close > close[1] ? close - close[1] : 0
+	auc = ta.ema(uc,exp_per)
+	// Average down close
+	dc = close < close[1] ? close[1] - close : 0
+	adc = ta.ema(dc,exp_per)
+	// x factor
+	x = (len - 1) * (adc * target_rsi / (100 - target_rsi) - auc)
+	// RevEngRSI
+	rev_eng_rsi = x >= 0 ? close + x : close + x * (100 - target_rsi) / target_rsi
+	// Return RevEngRSI
+	rev_eng_rsi
+
+
 // @function Draw entry with TP/SL
 // @param tp The take profit price
 // @param sl The stop loss price
@@ -212,21 +233,21 @@ export check_bar_time(int open_time, int close_time, int[] timings) =>
 // @function check if current bar just broke resistance level
 // @param resistance the resistance level
 // @returns true if broke, false otherwise
-resistance_breakout(float resistance) =>
+export resistance_breakout(float resistance) =>
     // Breakout if previous bar touches the level but current bar is higher than level
     low > resistance and low[1] <= resistance
 
 // @function check if current bar just broke support level
 // @param support the support level
 // @returns true if broke, false otherwise
-support_breakout(float support) =>
+export support_breakout(float support) =>
     // Breakout if previous bar touches the level but current bar is lower than level
     high < support and high[1] >= support
 
 // @function Plot the price zone of TfBar
 // @param z Zone data of TfBar
 // @param clr Color for the zone
-plot_tf_zone(TfBarZone z, color clr) =>
+export plot_tf_zone(TfBarZone z, color clr) =>
     // Line for high value
     h = line.new(time, z.bar.h, time_close, z.bar.h, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
     l = line.new(time, z.bar.l, time_close, z.bar.l, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
@@ -235,7 +256,7 @@ plot_tf_zone(TfBarZone z, color clr) =>
 
 // @function Clear plotted TfBarZone
 // @param z Plot data
-clear_tf_zone(TfBarZonePlot z) =>
+export clear_tf_zone(TfBarZonePlot z) =>
 	linefill.delete(z.f)
 	line.delete(z.h)
 	line.delete(z.l)
@@ -283,30 +304,36 @@ bgcolor(atr_cross_bg_color)
 
 // Demand/Supply zones (Elliott's single full cycle of 8 waves)
 //-------------------------------------------------------------------------------
-demand_price = pivot_left_low(low,8)
-pivot_low = ta.pivotlow(8,0)
-demand_zone = ta.valuewhen(not na(pivot_low),math.min(open,close),0)
-supply_price = pivot_left_high(high,8)
-pivot_high = ta.pivothigh(8,0)
-supply_zone = ta.valuewhen(not na(pivot_high),math.max(open,close),0)
+demand_supply_enable = input.bool(true,'Enable demand/supply zones')
+
+demand_price = demand_supply_enable ? pivot_left_low(low,8) : na
+pivot_low = demand_supply_enable ? ta.pivotlow(8,0) : na
+demand_zone = demand_supply_enable ? ta.valuewhen(not na(pivot_low),math.min(open,close),0) : na
+supply_price = demand_supply_enable ? pivot_left_high(high,8) : na
+pivot_high = demand_supply_enable ? ta.pivothigh(8,0) : na
+supply_zone = demand_supply_enable ? ta.valuewhen(not na(pivot_high),math.max(open,close),0) : na
 demand_supply_balance = (close - demand_zone) / ((close - demand_zone) + (supply_zone - close))
 
 close_plt = plot(close,'Close price',color=color(na),force_overlay = true)
-demand_price_plt = plot(demand_price,'Demand price',color=color.new(color.olive,80),force_overlay = true)
-demand_zone_plt = plot(demand_zone,'Demand zone',color=color.new(color.olive,70),force_overlay = true)
-supply_price_plt = plot(supply_price,'Supply price',color=color.new(color.red,80),force_overlay = true)
-supply_zone_plt = plot(supply_zone,'Supply zone',color=color.new(color.red,70),force_overlay = true)
-fill(demand_price_plt,close_plt,color=color.new(color.olive,90))
-fill(supply_price_plt,close_plt,color=color.new(color.red,90))
+demand_price_plt = plot(demand_price,'Demand price',color=color.new(color.olive,90),force_overlay = true)
+demand_zone_plt = plot(demand_zone,'Demand zone',color=color.new(color.olive,80),force_overlay = true)
+supply_price_plt = plot(supply_price,'Supply price',color=color.new(color.red,90),force_overlay = true)
+supply_zone_plt = plot(supply_zone,'Supply zone',color=color.new(color.red,80),force_overlay = true)
+fill(demand_price_plt,close_plt,color=color.new(color.olive,95))
+fill(supply_price_plt,close_plt,color=color.new(color.red,95))
 
 // ATR based band
-atr_upper_band = ohlc4 + slow_atr[1] * 0.75
-atr_lower_band = ohlc4 - slow_atr[1] * 0.75
+//-------------------------------------------------------------------------------
+atr_band_enable = input.bool(true, 'Enable ATR band')
+
+atr_upper_band = atr_band_enable ? ohlc4 + slow_atr[1] * 0.75 : na
+atr_mid_band = atr_band_enable ? ohlc4 : na
+atr_lower_band = atr_band_enable ? ohlc4 - slow_atr[1] * 0.75 : na
 atr_upper_band_plt = plot(atr_upper_band,'ATR upper band',color.new(color.teal,70),force_overlay = true)
-candle_balance_plt = plot(ohlc4,'Candle balance',color.new(color.gray,80), force_overlay = true)
+atr_mid_band_plt = plot(atr_mid_band,'ATR middle band',color.new(color.gray,80), force_overlay = true)
 atr_lower_band_plt = plot(atr_lower_band,'ATR lower band',color.new(color.red,70),force_overlay = true)
-fill(atr_upper_band_plt,candle_balance_plt,color.new(color.teal,90))
-fill(atr_lower_band_plt,candle_balance_plt,color.new(color.red,90))
+fill(atr_upper_band_plt,atr_mid_band_plt,color.new(color.teal,90))
+fill(atr_lower_band_plt,atr_mid_band_plt,color.new(color.red,90))
 
 // RSI table
 //-------------------------------------------------------------------------------
@@ -317,6 +344,18 @@ if not na(rsi_tb)
 	table.delete(rsi_tb)
 // Update leverage table
 rsi_tb := display_rsi_table()
+
+// Overbought/Oversold price by reverse engineering RSI
+//-------------------------------------------------------------------------------
+revengrsi_enable = input.bool(false,'Enable RevEngRSI', tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
+
+overbought_threshold = revengrsi_enable ? reverse_engineering_rsi(14,70) : na
+equilibrium_threshold = revengrsi_enable ? reverse_engineering_rsi(14,50) : na
+oversold_threshold = revengrsi_enable ? reverse_engineering_rsi(14,30) : na
+
+overbought_plt = plot(overbought_threshold,'Overbought threshold', color = color.new(color.red,50),force_overlay = true)
+equilibrium_plt = plot(equilibrium_threshold,'Equilibrium threshold', color = color.new(color.silver,50),style = plot.style_circles,force_overlay = true)
+oversold_plt = plot(oversold_threshold,'Oversold threshold', color = color.new(color.green,50),force_overlay = true)
 
 // Leverage table
 //-------------------------------------------------------------------------------
@@ -349,27 +388,36 @@ plotshape(candle_strictly_falling,'Biased candle falling',style=shape.triangledo
 
 // Bollinger band
 //-------------------------------------------------------------------------------
+bb_enable = input.bool(false, 'Enable Bollinger Band')
+
 [bb_mid,bb_upper,bb_lower] = ta.bb(close,34,1)
-// plot(bb_mid, color=color.new(color.gray,50),force_overlay = true)
-// plot(bb_upper, color=color.new(#688868,50),force_overlay = true)
-// plot(bb_lower, color=color.new(#886868,50),force_overlay = true)
+if not bb_enable
+	bb_mid := na
+	bb_upper := na
+	bb_lower := na
+plot(bb_mid, color=color.new(color.gray,50),force_overlay = true)
+plot(bb_upper, color=color.new(#688868,50),force_overlay = true)
+plot(bb_lower, color=color.new(#886868,50),force_overlay = true)
 bb_exceed_upper = high > bb_upper
 bb_exceed_lower = low < bb_lower
 
 // MA
 //-------------------------------------------------------------------------------
-ma_fast = ta.sma(close, 34)
-ma_slow = ta.sma(close,89)
+ma_enable = input.bool(false, 'Enable MA')
+
+ma_fast = ma_enable ? ta.sma(close, 34) : na
+ma_slow = ma_enable ? ta.sma(close,89) : na
 ma_diff = ma_fast - ma_slow
-ma_fast_plt = plot(ma_fast,'MA fast',color.new(color.blue,95),force_overlay = true)
-ma_slow_plt = plot(ma_slow,'MA slow',color.new(color.orange,95),linewidth = 2,force_overlay = true)
-fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,80) : color.new(color.red,90))
 ma_rising = ta.rising(ma_slow,1)
 ma_falling = ta.falling(ma_slow,1)
 ma_signal = ta.ema(ma_diff,9)
 ma_diff_hist = ma_diff - ma_signal
 ma_converging = ta.falling(math.abs(ma_diff_hist),1)
 ma_diverging = ta.rising(math.abs(ma_diff_hist),1)
+
+ma_fast_plt = plot(ma_fast,'MA fast',color.new(color.blue,95),force_overlay = true)
+ma_slow_plt = plot(ma_slow,'MA slow',color.new(color.orange,95),linewidth = 2,force_overlay = true)
+fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,80) : color.new(color.red,90))
 
 test_ma = switch ma_diff_hist >= 0
 	true => low > ma_slow and high < ma_fast
@@ -523,8 +571,14 @@ if barstate.islast
 
 // Biased candle for reversal signal, atr signal low volatility environment that supports reversal
 //-------------------------------------------------------------------------------
+position_enable = input.bool(true,'Enable order positions')
+
 long_signal = not rsi_sw and candle_strictly_rising and atr_rising and atr_diverging
 short_signal = not rsi_sw and candle_strictly_falling and atr_falling and macd_falling
+
+if not position_enable
+	long_signal := false
+	short_signal := false
 
 nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,close))
 nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,close) - 1)
