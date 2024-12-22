@@ -92,8 +92,8 @@ export display_rsi_table(int rsi_len = 14, int rsi_sma_len = 14, string pos = po
 		rsi <= 30 => color.red
 		=> color.gray
 	rsi_sma_color = switch
-		rsi_sma >= 70 => color.teal
-		rsi_sma <=30 => color.orange
+		rsi_sma >= 65 => color.teal
+		rsi_sma <= 35 => color.orange
 		=> color.silver
 	table.cell(rsi_tb,0,0,'RSI',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
 	table.cell(rsi_tb,0,1,str.format('{0,number}',rsi),bgcolor=color.new(color.silver, transp = 80),text_color=rsi_color)
@@ -253,6 +253,8 @@ atr_diff_signal = ta.ema(atr_diff,9)
 atr_diff_hist = atr_diff - atr_diff_signal
 atr_rising = ta.rising(atr_diff_hist,1)
 atr_falling = ta.falling(atr_diff_hist,1)
+atr_converging = ta.falling(math.abs(atr_diff_hist),1)
+atr_diverging = ta.rising(math.abs(atr_diff_hist),1)
 
 atr_diff_areacolor = switch atr_diff >=0
 	true => color.new(color.teal,70)
@@ -297,6 +299,15 @@ supply_zone_plt = plot(supply_zone,'Supply zone',color=color.new(color.red,70),f
 fill(demand_price_plt,close_plt,color=color.new(color.olive,90))
 fill(supply_price_plt,close_plt,color=color.new(color.red,90))
 
+// ATR based band
+atr_upper_band = ohlc4 + slow_atr[1] * 0.75
+atr_lower_band = ohlc4 - slow_atr[1] * 0.75
+atr_upper_band_plt = plot(atr_upper_band,'ATR upper band',color.new(color.teal,70),force_overlay = true)
+candle_balance_plt = plot(ohlc4,'Candle balance',color.new(color.gray,80), force_overlay = true)
+atr_lower_band_plt = plot(atr_lower_band,'ATR lower band',color.new(color.red,70),force_overlay = true)
+fill(atr_upper_band_plt,candle_balance_plt,color.new(color.teal,90))
+fill(atr_lower_band_plt,candle_balance_plt,color.new(color.red,90))
+
 // RSI table
 //-------------------------------------------------------------------------------
 var table rsi_tb = na
@@ -322,12 +333,19 @@ lvrg_tb := display_lvrg_table(atr_len = 144, mult = 2)
 [top_wick, bottom_wick, body] = candle_split_percent(open,high,low,close)
 candle_wick_bias = bottom_wick >= 0.5 ? 1 : top_wick >= 0.5 ? -1 : na
 candle_bias = (ohlc4 - low) / (high - low)
+candle_bias_rising = ta.rising(ohlc4,1)
+candle_bias_falling = ta.falling(ohlc4,1)
 candle_rising = candle_wick_bias > 0 and candle_bias >= 0.5
 candle_falling = candle_wick_bias < 0 and candle_bias < 0.5
+candle_atr_band_pushback_up = low < atr_lower_band and close < atr_upper_band
+candle_atr_band_pushback_down = high > atr_upper_band and close > atr_lower_band
+
+candle_strictly_rising = candle_rising and candle_atr_band_pushback_up and candle_bias_falling
+candle_strictly_falling = candle_falling and candle_atr_band_pushback_down and candle_bias_rising
 
 // plot(not candle_rising and not candle_falling ? ohlc4 : na,'Price balance',style = plot.style_linebr,linewidth = 2, color = color.silver,force_overlay = true)
-plotshape(candle_rising,'Biased candle rising',style=shape.triangleup,location=location.belowbar,color=color.green,force_overlay = true)
-plotshape(candle_falling,'Biased candle falling',style=shape.triangledown,location=location.abovebar,color=color.red,force_overlay = true)
+plotshape(candle_strictly_rising,'Biased candle rising',style=shape.triangleup,location=location.belowbar,color=color.green,force_overlay = true)
+plotshape(candle_strictly_falling,'Biased candle falling',style=shape.triangledown,location=location.abovebar,color=color.red,force_overlay = true)
 
 // Bollinger band
 //-------------------------------------------------------------------------------
@@ -343,19 +361,20 @@ bb_exceed_lower = low < bb_lower
 ma_fast = ta.sma(close, 34)
 ma_slow = ta.sma(close,89)
 ma_diff = ma_fast - ma_slow
-// ma_fast_plt = plot(ma_fast,'MA fast',color.new(color.blue,95),force_overlay = true)
-// ma_slow_plt = plot(ma_slow,'MA slow',color.new(color.orange,95),linewidth = 2,force_overlay = true)
-// fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,80) : color.new(color.red,90))
+ma_fast_plt = plot(ma_fast,'MA fast',color.new(color.blue,95),force_overlay = true)
+ma_slow_plt = plot(ma_slow,'MA slow',color.new(color.orange,95),linewidth = 2,force_overlay = true)
+fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,80) : color.new(color.red,90))
 ma_rising = ta.rising(ma_slow,1)
 ma_falling = ta.falling(ma_slow,1)
 ma_signal = ta.ema(ma_diff,9)
 ma_diff_hist = ma_diff - ma_signal
-ma_converging = ta.rising(math.abs(ma_diff_hist),2)
-ma_diverging = ta.falling(math.abs(ma_diff_hist),2)
+ma_converging = ta.falling(math.abs(ma_diff_hist),1)
+ma_diverging = ta.rising(math.abs(ma_diff_hist),1)
 
 test_ma = switch ma_diff_hist >= 0
 	true => low > ma_slow and high < ma_fast
 	false => high < ma_slow and low > ma_fast
+// Colored background for candles that stuck between the ema lines
 plotcandle(close >= open ? low : high,test_ma ? high : na,test_ma ? low : na,close>=open ? high : low,color=close>=open ? color.new(color.teal,70) : color.new(color.red,70),bordercolor = close>=open ? color.new(color.teal,70) : color.new(color.red,70),force_overlay = true)
 
 // RSI
@@ -392,6 +411,7 @@ macd_rising = ta.rising(macd_hist_line,1)
 macd_falling = ta.falling(macd_hist_line,1)
 // plot(macd_line, color=color.blue, force_overlay = false)
 // plot(macd_signal_line, color=color.orange, force_overlay = false)
+
 macd_hist_color = switch macd_hist_line >= 0
 	true => macd_rising ? color.new(color.teal,50) : color.new(color.lime,50)
 	false => macd_falling ? color.new(color.red,50) : color.new(color.orange,50)
@@ -501,10 +521,10 @@ if barstate.islast
 			array.push(pivot_poc_lines,poc)
 
 
-// Biased candle for reversal signal, ma_diff for trend, atr signal low volatility environment that supports reversal
+// Biased candle for reversal signal, atr signal low volatility environment that supports reversal
 //-------------------------------------------------------------------------------
-long_signal = not rsi_sw and candle_rising and ma_rising and ma_converging
-short_signal = not rsi_sw and candle_falling and ma_falling and ma_converging
+long_signal = not rsi_sw and candle_strictly_rising and atr_rising and atr_diverging
+short_signal = not rsi_sw and candle_strictly_falling and atr_falling and macd_falling
 
 nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,close))
 nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,close) - 1)
