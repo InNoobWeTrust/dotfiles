@@ -1,0 +1,49 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © InNoobWeTrust
+
+//@version=6
+indicator("Relative Liquidity Index", overlay = false)
+
+//===============================================================================
+// Functions
+//===============================================================================
+relative_liquidity_index(int atr_len, int rli_len) =>
+	atr = ta.atr(atr_len)
+	atr_up = atr > atr[1] ? atr - atr[1] : 0
+	atr_down = atr < atr[1] ? atr[1] - atr : 0
+	average_atr_up = ta.sma(atr_up,rli_len)
+	average_atr_down = ta.sma(atr_down,rli_len)
+	relative_liquidity = average_atr_up / average_atr_down
+	relative_liquidity_index = 100 - (100 / (1 + relative_liquidity))
+	// Return the RLI
+	relative_liquidity_index
+
+//===============================================================================
+// Input
+//===============================================================================
+atr_len = input.int(34,'ATR length')
+rli_len = input.int(14,'Relative Liquidity Index length')
+low_liquidity_threshold = input.float(30,'Low liquidity threshold',minval=0,maxval=50)
+high_liquidity_threshold = input.float(70,'High liquidity threshold',minval=50,maxval=100)
+low_liquidity_color = input.color(color.new(color.maroon,80),'Low liquidity area color')
+high_liquidity_color = input.color(color.new(color.teal,80),'High liquidity area color')
+show_chart_background = input.bool(true,'Show gradient background on chart')
+//===============================================================================
+// Calculation
+//===============================================================================
+rli = relative_liquidity_index(atr_len,rli_len)
+low_liquidity_area_color = rli <= low_liquidity_threshold ? low_liquidity_color : na
+high_liquidity_area_color = rli >= high_liquidity_threshold ? high_liquidity_color : na
+rli_bg_color = color.from_gradient(rli,0,100,low_liquidity_color,high_liquidity_color)
+
+//===============================================================================
+// Plot
+//===============================================================================
+rli_plt = plot(rli, 'Relative Liquidity Index',color = color.new(rli_bg_color,0),linewidth = 2,force_overlay = false)
+low_liquidity_plt = hline(low_liquidity_threshold,'Low liquidity threshold',linestyle = hline.style_dashed,color=color.new(color.red,50))
+high_liquidity_plt = hline(high_liquidity_threshold,'High liquidity threshold',linestyle = hline.style_dashed,color=color.new(color.green,50))
+
+plot(rli,'Time of low liquidity',low_liquidity_area_color,style = plot.style_area,histbase = low_liquidity_threshold)
+plot(rli,'Time of high liquidity',high_liquidity_area_color,style = plot.style_area,histbase = high_liquidity_threshold)
+
+bgcolor(show_chart_background ? rli_bg_color : color(na),force_overlay = true)
