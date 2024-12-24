@@ -306,6 +306,7 @@ atr_inline = 'Volatility estimation'
 atr_fast_len = input.int(34,'Fast length',group = atr_grp,inline = atr_inline)
 atr_slow_len = input.int(144,'Slow length',group = atr_grp,inline = atr_inline)
 atr_sig_len = input.int(9,'Signal length',group = atr_grp,inline = atr_inline)
+atr_plot_lines = input.bool(false,'Show ATR fast and slow lines',group = atr_grp)
 
 fast_atr = ta.atr(atr_fast_len)
 slow_atr = ta.atr(atr_slow_len)
@@ -325,8 +326,8 @@ atr_diff_histcolor = switch atr_diff > atr_diff_signal
 	false => color.new(color.maroon,10)
 atr_diff_pivot_high = pivot_left_high(atr_diff,34,0)
 atr_diff_pivot_low = pivot_left_low(atr_diff,34,0)
-// fast_atr_plt = plot(fast_atr, 'ATR fast',color=#eeeeee,force_overlay = false)
-// slow_atr_plt = plot(slow_atr, 'ATR slow',color=#888888,force_overlay = false)
+fast_atr_plt = plot(atr_plot_lines ? fast_atr : na, 'ATR fast',color=#eeeeee,force_overlay = false)
+slow_atr_plt = plot(atr_plot_lines ? slow_atr : na, 'ATR slow',color=#888888,force_overlay = false)
 atr_diff_plt = plot(atr_diff, 'ATR diff',color=color.purple,linewidth = 1,force_overlay = false)
 atr_diff_histfillplt = plot(atr_diff >= 0 ? math.min(atr_diff,atr_diff_signal) : math.max(atr_diff,atr_diff_signal), 'ATR diff area filling',color=atr_diff_areacolor,style = plot.style_histogram,force_overlay = false)
 atr_diff_signal_plt = plot(atr_diff_signal, 'ATR diff signal',color=color.red,linewidth = 1,force_overlay = false)
@@ -337,8 +338,8 @@ atr_diff_pivot_low_plt = plot(atr_diff_pivot_low, 'ATR pivot low',color = color.
 atr_hist_crossover = ta.crossover(atr_diff,atr_diff_signal)
 atr_hist_crossunder = ta.crossunder(atr_diff,atr_diff_signal)
 atr_converge_diverge_bg_color = switch
-	atr_converging => color.new(color.maroon,90)
-	atr_diverging => color.new(color.teal,90)
+	atr_rising and atr_diverging and atr_diff > 0 => color.new(color.teal,80)
+	atr_falling and atr_diverging and atr_diff < 0 => color.new(color.maroon,80)
 	=> color(na)
 bgcolor(atr_converge_diverge_bg_color)
 
