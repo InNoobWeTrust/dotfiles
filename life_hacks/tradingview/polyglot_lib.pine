@@ -94,8 +94,8 @@ export estimate_leverage(int atr_len = 14, float sl_percent = 0.2, float mult = 
 // @param mult The ATR multiplier to account for lateness in entry price
 // @param pos The position to display the table
 // @returns The table
-export display_lvrg_table(int atr_len = 14, float sl_percent = 0.2, float mult = 1.5, string pos = position.bottom_right) =>
-	lvrg_tb = table.new(pos,2,3,force_overlay = true)
+export display_lvrg_table(int atr_len = 14, float sl_percent = 0.2, float mult = 1.5, string pos = position.bottom_right, bool overlay = true) =>
+	lvrg_tb = overlay ? table.new(pos,2,3,force_overlay = true) : table.new(pos,2,3,force_overlay = false)
 	[lvrg, _, _] = estimate_leverage(atr_len,sl_percent,mult)
 	atr = ta.atr(atr_len)
 	atr_percent = atr / close
@@ -113,8 +113,8 @@ export display_lvrg_table(int atr_len = 14, float sl_percent = 0.2, float mult =
 // @param rsi_sma_len The length to calculate SMA of RSI
 // @param pos The position to display the table
 // @returns The table
-export display_rsi_table(int rsi_len = 14, simple int rsi_ma_len = 14, MaT rsi_ma_type = MaT.sma, string pos = position.middle_right) =>
-	rsi_tb = table.new(pos,1,4,force_overlay = false)
+export display_rsi_table(int rsi_len = 14, simple int rsi_ma_len = 14, MaT rsi_ma_type = MaT.sma, string pos = position.middle_right, bool overlay = false) =>
+	rsi_tb = overlay ? table.new(pos,1,4,force_overlay = true) : table.new(pos,1,4,force_overlay = false)
 	rsi = ta.rsi(close,rsi_len)
 	rsi_sma = ma(rsi_ma_type,rsi,rsi_ma_len)
 	rsi_color = switch
@@ -398,16 +398,18 @@ plot(macd_enable ? macd_hist_line : na, 'MACD histogram', color=macd_hist_color,
 
 // Leverage table
 //-------------------------------------------------------------------------------
-lvrg_table_grp = '► Leverage table'
-lvrg_table_inline = 'Leverage table'
-lvrg_table_enable = input.bool(true,'',group = lvrg_table_grp,inline = lvrg_table_inline)
-lvrg_table_mult = input.float(2,'Multiplier',group = lvrg_table_grp,inline = lvrg_table_inline)
+lvrg_tb_grp = '► Leverage table'
+lvrg_tb_opts_inline = 'Leverage table options'
+lvrg_tb_enable = input.bool(true,'',group = lvrg_tb_grp,inline = lvrg_tb_opts_inline)
+lvrg_tb_mult = input.float(2,'Multiplier',group = lvrg_tb_grp,inline = lvrg_tb_opts_inline)
+lvrg_tb_overlay = input.bool(true,'Overlay',group = lvrg_tb_grp)
+lvrg_tb_position = input.string(position.top_right,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = lvrg_tb_grp)
 
 var table lvrg_tb = na
 
 // Update leverage table
-if lvrg_table_enable
-	lvrg_tb := display_lvrg_table(atr_len = atr_slow_len, mult = lvrg_table_mult)
+if lvrg_tb_enable
+	lvrg_tb := display_lvrg_table(atr_len = atr_slow_len, mult = lvrg_tb_mult,pos = lvrg_tb_position,overlay = lvrg_tb_overlay)
 
 // RSI
 //-------------------------------------------------------------------------------
@@ -425,13 +427,16 @@ rsi_ma_len = input.int(14,'',group = rsi_grp,inline=rsi_ma_inline)
 
 // RSI table
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-rsi_tb_enable = input.bool(true,'RSI table',group = rsi_grp)
+rsi_tb_inline = 'RSI table'
+rsi_tb_enable = input.bool(true,'RSI table',group = rsi_grp,inline = rsi_tb_inline)
+rsi_tb_overlay = input.bool(false,'Overlay',group = rsi_grp,inline = rsi_tb_inline)
+rsi_tb_position = input.string(position.middle_right,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = rsi_grp,inline = rsi_tb_inline)
 
 var table rsi_tb = na
 
 // Update leverage table
 if rsi_tb_enable
-	rsi_tb := display_rsi_table(rsi_len,rsi_ma_len,rsi_ma_type)
+	rsi_tb := display_rsi_table(rsi_len,rsi_ma_len,rsi_ma_type,rsi_tb_position,rsi_tb_overlay)
 
 // Overbought/Oversold price by reverse engineering RSI
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

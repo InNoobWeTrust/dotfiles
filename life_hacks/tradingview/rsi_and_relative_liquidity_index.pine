@@ -11,6 +11,17 @@ enum MaT
 	sma = 'SMA'
 	wma = 'WMA'
 	ema = 'ema'
+
+type ClimaxCandle
+	float o // open price
+	float h // high price
+	float l // low price
+	float c // close price
+	int b_idx // bar index
+	color clr // color
+	line h_line_plt // drawing of high price
+	line l_line_plt // drawing of low price
+	linefill fill_between_plt // fill between high and low
 //===============================================================================
 // Functions
 //===============================================================================
@@ -30,6 +41,23 @@ relative_liquidity_index(int atr_len, int rli_len) =>
 	relative_liquidity_index = 100 - (100 / (1 + relative_liquidity))
 	// Return the RLI
 	relative_liquidity_index
+
+climax_candle_from_history(int bar_idx, color clr, int extend_bars) =>
+	bars_back = bar_index - bar_idx
+	o = close[bars_back]
+	h = high[bars_back]
+	l = low[bars_back]
+	c = low[bars_back]
+	h_line_plt = line.new(bar_idx,h,bar_idx + extend_bars,h,color=clr,force_overlay = true)
+	l_line_plt = line.new(bar_idx,l,bar_idx + extend_bars,l,color=clr,force_overlay = true)
+	fill_between_plt = linefill.new(h_line_plt,l_line_plt,clr)
+	// Return the candle
+	ClimaxCandle.new(o,h,l,c,bar_idx,clr,h_line_plt,l_line_plt,fill_between_plt)
+
+clean_candle_drawing(ClimaxCandle candle) =>
+	linefill.delete(candle.fill_between_plt)
+	line.delete(candle.h_line_plt)
+	line.delete(candle.l_line_plt)
 
 //===============================================================================
 // Input
@@ -53,19 +81,57 @@ rli_len = input.int(14,'Relative Liquidity Index length',group = liquidity_grp)
 low_liquidity_color = input.color(color.new(color.maroon,80),'Low liquidity area color',group = liquidity_grp)
 high_liquidity_color = input.color(color.new(color.teal,80),'High liquidity area color',group = liquidity_grp)
 show_chart_background = input.bool(true,'Show gradient background on chart',group = liquidity_grp)
+
+climax_candle_grp = '► Climax candle'
+climax_candle_enable = input.bool(true,'Enable',tooltip = 'Highlight price ranges of candles that reach highest/lowest point during high liquidity zones',group = climax_candle_grp)
+climax_candle_max_zones = input.int(25,'Max zones',group = climax_candle_grp)
+climax_candle_max_extend = input.int(258,'Max bars to extend zones',group = climax_candle_grp)
+climax_candle_zone_color_inline = 'Zone colors (low/high swing)'
+climax_candle_zone_low_color = input.color(color.new(color.red,90),climax_candle_zone_color_inline,group = climax_candle_grp,inline = climax_candle_zone_color_inline)
+climax_candle_zone_high_color = input.color(color.new(color.green,90),'',group = climax_candle_grp,inline = climax_candle_zone_color_inline)
 //===============================================================================
 // Calculation
 //===============================================================================
+
+// RSI
 rsi = ta.rsi(rsi_src,rsi_len)
 rsi_ma = ma(rsi_ma_type,rsi,rsi_ma_len)
 oversold_area_color = rsi <= index_low_threshold ? oversold_color : na
 overbought_area_color = rsi >= index_high_threshold ? overbought_color : na
 
+// RLI
 rli = relative_liquidity_index(atr_len,rli_len)
 low_liquidity_area_color = rli <= index_low_threshold ? low_liquidity_color : na
 high_liquidity_area_color = rli >= index_high_threshold ? high_liquidity_color : na
 rli_bg_color = color.from_gradient(rli,0,100,low_liquidity_color,high_liquidity_color)
 
+// Climax candles
+var ClimaxCandle[] candles = array.new<ClimaxCandle>()
+var int last_cross_middle = 0
+// liquidity_crossunder_low = ta.crossunder(rli,index_low_threshold)
+// liquidity_crossover_low = ta.crossover(rli,index_low_threshold)
+// liquidity_crossover_high = ta.crossover(rli,index_high_threshold)
+liquidity_crossunder_high = ta.crossunder(rli,index_high_threshold)
+liquidity_cross_middle = ta.cross(rli,50)
+
+if liquidity_cross_middle
+	last_cross_middle := bar_index
+
+pivot_high = ta.pivothigh(math.max(bar_index - last_cross_middle,1),0)
+pivot_high_idx = ta.valuewhen(not na(pivot_high),bar_index,0)
+pivot_low = ta.pivotlow(math.max(bar_index - last_cross_middle,1),0)
+pivot_low_idx = ta.valuewhen(not na(pivot_low),bar_index,0)
+avg_rsi_ma = ta.sma(rsi_ma,math.max(bar_index - last_cross_middle,1))
+
+if climax_candle_enable and liquidity_crossunder_high
+	candle_idx = avg_rsi_ma >= 50 ? pivot_high_idx : pivot_low_idx
+	clr = avg_rsi_ma >= 50 ? climax_candle_zone_low_color : climax_candle_zone_high_color
+	candles.push(climax_candle_from_history(candle_idx,clr,climax_candle_max_extend))
+
+// Prune old candles
+while candles.size() > climax_candle_max_zones
+	clean_candle_drawing(candles.first())
+	candles.shift()
 //===============================================================================
 // Plot
 //===============================================================================
