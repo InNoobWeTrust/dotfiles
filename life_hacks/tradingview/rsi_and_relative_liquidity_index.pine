@@ -2,7 +2,7 @@
 // © InNoobWeTrust
 
 //@version=6
-indicator("RSI + Relative Liquidity Index", overlay = false)
+indicator("RSI + Relative Liquidity Index",max_bars_back = 3600, overlay = false)
 
 //===============================================================================
 // Types

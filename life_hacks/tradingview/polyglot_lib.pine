@@ -346,7 +346,7 @@ bgcolor(atr_converge_diverge_bg_color)
 // ATR based band
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 atr_band_inline = 'ATR bands'
-atr_band_enable = input.bool(true,atr_band_inline,group = atr_grp,inline = atr_band_inline)
+atr_band_enable = input.bool(false,atr_band_inline,group = atr_grp,inline = atr_band_inline)
 atr_band_mult = input.float(1.5,'',group = atr_grp,inline = atr_band_inline)
 
 atr_upper_band = ohlc4 + slow_atr[1] * atr_band_mult / 2

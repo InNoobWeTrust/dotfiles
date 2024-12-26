@@ -35,6 +35,7 @@
             "code_action_kinds": null
           }
         },
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -98,6 +99,7 @@
           }
         },
         "language_servers": {},
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -141,6 +143,7 @@
             "code_action_kinds": null
           }
         },
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -174,6 +177,7 @@
           }
         },
         "language_servers": {},
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -215,6 +219,7 @@
             "code_action_kinds": null
           }
         },
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -250,6 +255,7 @@
           }
         },
         "language_servers": {},
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -290,6 +296,7 @@
             "code_action_kinds": null
           }
         },
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -336,6 +343,7 @@
             "code_action_kinds": null
           }
         },
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -372,6 +380,7 @@
           }
         },
         "language_servers": {},
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -413,6 +422,7 @@
             "code_action_kinds": null
           }
         },
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -454,6 +464,7 @@
             "code_action_kinds": null
           }
         },
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -487,6 +498,7 @@
           }
         },
         "language_servers": {},
+        "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
         "snippets": null
@@ -506,6 +518,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "cmake"
     },
     "Diff": {
@@ -517,6 +530,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "diff"
     },
     "Dockerfile": {
@@ -529,6 +543,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "dockerfile"
     },
     "Git Attributes": {
@@ -540,6 +555,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "gitattributes"
     },
     "Git Commit": {
@@ -555,6 +571,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "git_commit"
     },
     "Git Config": {
@@ -567,6 +584,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "git_config"
     },
     "Git Ignore": {
@@ -579,6 +597,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "gitignore"
     },
     "Git Rebase": {
@@ -590,6 +609,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "git_rebase"
     },
     "HTML": {
@@ -603,6 +623,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "html"
     },
     "Kotlin": {
@@ -615,6 +636,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "kotlin"
     },
     "LOG": {
@@ -626,6 +648,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "log"
     },
     "SCSS": {
@@ -637,6 +660,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "scss"
     },
     "SQL": {
@@ -648,6 +672,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "sql"
     },
     "Swift": {
@@ -660,6 +685,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "swift"
     },
     "TOML": {
@@ -674,6 +700,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "toml"
     },
     "XML": {
@@ -685,6 +712,7 @@
         ],
         "first_line_pattern": "^<.*xml"
       },
+      "hidden": false,
       "grammar": "xml"
     },
     "ini": {
@@ -699,6 +727,7 @@
         ],
         "first_line_pattern": null
       },
+      "hidden": false,
       "grammar": "ini"
     }
   }

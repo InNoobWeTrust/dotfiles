@@ -1,0 +1,77 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © InNoobWeTrust
+
+//@version=6
+indicator("RSI fixed timeframe", overlay = false)
+
+//===============================================================================
+// Types
+//===============================================================================
+enum MaT
+	sma = 'SMA'
+	wma = 'WMA'
+	ema = 'ema'
+
+//===============================================================================
+// Functions
+//===============================================================================
+ma(MaT t, src, int len) =>
+	switch t
+		MaT.sma => ta.sma(src,len)
+		MaT.wma => ta.wma(src,len)
+		MaT.ema => ta.ema(src,len)
+//===============================================================================
+// Input
+//===============================================================================
+tf = input.timeframe('','► Timeframe')
+
+threshold_grp = '► Thresholds'
+threshold_low_limit = input.float(30,'Low threshold',minval=0,maxval=50,group = threshold_grp)
+threshold_high_limit = input.float(70,'High threshold',minval=50,maxval=100,group = threshold_grp)
+threshold_color_inline = 'Threshold colors (middle line to low/high)'
+threshold_color_middle_low = input.color(color.new(color.blue,90),threshold_color_inline,group = threshold_grp,inline = threshold_color_inline)
+threshold_color_middle_high = input.color(color.new(color.yellow,90),'',group = threshold_grp,inline = threshold_color_inline)
+
+rsi_grp = '► RSI'
+rsi_src = input.source(close,'RSI source',group = rsi_grp)
+rsi_len = input.int(14,'RSI length',group = rsi_grp)
+rsi_ma_inline = 'RSI MA'
+rsi_ma_type = input.enum(MaT.sma,rsi_ma_inline,group = rsi_grp,inline = rsi_ma_inline)
+rsi_ma_len = input.int(14,'',group = rsi_grp,inline = rsi_ma_inline)
+oversold_color = input.color(color.new(color.green,50),'Oversold area color',group = rsi_grp)
+overbought_color = input.color(color.new(color.red,50),'Overbought area color',group = rsi_grp)
+
+bg_grp = '► Oversold/overbought chart background'
+bg_enable = input.bool(true,'Enable',group = bg_grp)
+bg_color_inline = 'Background colors (oversold/overbought)'
+bg_overbought_color = input.color(color.new(color.orange,90),bg_color_inline,group = bg_grp,inline = bg_color_inline)
+bg_oversold_color = input.color(color.new(color.aqua,90),'',group = bg_grp,inline = bg_color_inline)
+//===============================================================================
+// Calculation
+//===============================================================================
+
+// RSI
+rsi = ta.rsi(rsi_src,rsi_len)
+tf_rsi = request.security(syminfo.tickerid,tf,rsi)
+tf_rsi_ma = ma(rsi_ma_type,tf_rsi,rsi_ma_len)
+oversold_area_color = tf_rsi <= threshold_low_limit ? oversold_color : na
+overbought_area_color = tf_rsi >= threshold_high_limit ? overbought_color : na
+
+bg_color = tf_rsi <= threshold_low_limit ? bg_oversold_color : tf_rsi >= threshold_high_limit ? bg_overbought_color : color(na)
+//===============================================================================
+// Plot
+//===============================================================================
+// Thesholds
+low_line = hline(threshold_low_limit,'Index Low threshold',linestyle = hline.style_dashed,color=color.new(color.gray,50))
+middle_line = hline(50,'Index Middle',linestyle = hline.style_dashed,color=color.new(color.gray,50))
+high_line = hline(threshold_high_limit,'Index High threshold',linestyle = hline.style_dashed,color=color.new(color.gray,50))
+fill(low_line,middle_line,threshold_color_middle_low)
+fill(high_line,middle_line,threshold_color_middle_high)
+
+// RSI
+plot(tf_rsi,'RSI',color.purple,force_overlay = false)
+plot(tf_rsi_ma,'RSI MA', color.yellow,force_overlay = false)
+plot(rsi,'Oversold',oversold_area_color,style = plot.style_area,histbase = threshold_low_limit)
+plot(rsi,'Overbought',overbought_area_color,style = plot.style_area,histbase = threshold_high_limit)
+
+bgcolor(bg_enable ? bg_color : color(na),force_overlay = true)
