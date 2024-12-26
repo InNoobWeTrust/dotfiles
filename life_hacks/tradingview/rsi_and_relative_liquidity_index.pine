@@ -123,7 +123,7 @@ pivot_low = ta.pivotlow(math.max(bar_index - last_cross_middle,1),0)
 pivot_low_idx = ta.valuewhen(not na(pivot_low),bar_index,0)
 avg_rsi_ma = ta.sma(rsi_ma,math.max(bar_index - last_cross_middle,1))
 
-if climax_candle_enable and liquidity_crossunder_high
+if climax_candle_enable and barstate.isconfirmed and liquidity_crossunder_high
 	candle_idx = avg_rsi_ma >= 50 ? pivot_high_idx : pivot_low_idx
 	clr = avg_rsi_ma >= 50 ? climax_candle_zone_low_color : climax_candle_zone_high_color
 	candles.push(climax_candle_from_history(candle_idx,clr,climax_candle_max_extend))
