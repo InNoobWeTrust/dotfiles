@@ -267,33 +267,25 @@ require('packer').startup({
 		--  end
 		--}
 		-- Github Copilot
-		use 'github/copilot.vim'
+		use {
+			"zbirenbaum/copilot.lua",
+			cmd = "Copilot",
+			event = "InsertEnter",
+			config = function()
+				require("copilot").setup({})
+			end,
+		}
 		---- TODO: Self-hosted LLM backend
-		--use {
-		--  'huggingface/llm.nvim',
+		--use({
+		--  "olimorris/codecompanion.nvim",
 		--  config = function()
-		--    require('llm').setup({
-		--      api_token = os.getenv('HF_TOKEN'),
-		--      backend = "huggingface", -- backend ID, "huggingface" | "ollama" | "openai" | "tgi"
-		--      -- cf Setup
-		--      tokens_to_clear = { "<EOT>" },
-		--      fim = {
-		--        enabled = true,
-		--        prefix = "<PRE> ",
-		--        middle = " <MID>",
-		--        suffix = " <SUF>",
-		--      },
-		--      model = "codellama/CodeLlama-13b-hf",
-		--      context_window = 4096,
-		--      tokenizer = {
-		--        repository = "codellama/CodeLlama-13b-hf",
-		--      },
-		--      lsp = {
-		--        bin_path = fn.stdpath('data') .. '/mason/bin/llm-ls',
-		--      },
-		--    })
+		--    require("codecompanion").setup()
 		--  end,
-		--}
+		--  requires = {
+		--    "nvim-lua/plenary.nvim",
+		--    "nvim-treesitter/nvim-treesitter",
+		--  }
+		--})
 		-- Completion engine plugin for neovim written in Lua
 		use {
 			'hrsh7th/nvim-cmp',
