@@ -2,6 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AI Prompt</key>
+	<string>Return commands suitable for copy/pasting into \(shell) on \(uname). Do NOT include commentary NOR Markdown triple-backtick code blocks as your whole response will be copied into my terminal automatically.
+
+The script should do this: \(ai.prompt)</string>
+	<key>AiMaxTokens</key>
+	<integer>8000</integer>
+	<key>AiModel</key>
+	<string>llama-3.1-8b-instant</string>
+	<key>AitermURL</key>
+	<string>https://api.groq.com/openai/v1/chat/completions</string>
 	<key>AllowClipboardAccess</key>
 	<true/>
 	<key>AutoCommandHistory</key>
@@ -839,7 +849,7 @@
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Transparency</key>
-			<real>0.19637276785714275</real>
+			<real>0.098839760638298191</real>
 			<key>Unlimited Scrollback</key>
 			<true/>
 			<key>Use Bold Font</key>
@@ -1300,7 +1310,7 @@
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Transparency</key>
-			<real>0.19883976063829825</real>
+			<real>0.098839760638298191</real>
 			<key>Unlimited Scrollback</key>
 			<true/>
 			<key>Use Bold Font</key>
@@ -1763,7 +1773,7 @@
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Transparency</key>
-			<real>0.19883976063829825</real>
+			<real>0.098839760638298191</real>
 			<key>Unlimited Scrollback</key>
 			<true/>
 			<key>Use Bold Font</key>
@@ -2248,7 +2258,7 @@
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Transparency</key>
-			<real>0.19883976063829825</real>
+			<real>0.098839760638298191</real>
 			<key>Unlimited Scrollback</key>
 			<true/>
 			<key>Use Bold Font</key>
@@ -2269,6 +2279,10 @@
 			<string>/Users/InNoobWeTrust</string>
 		</dict>
 	</array>
+	<key>OpenArrangementAtStartup</key>
+	<false/>
+	<key>OpenNoWindowsAtStartup</key>
+	<false/>
 	<key>PointerActions</key>
 	<dict>
 		<key>Button,1,1,,</key>
@@ -2308,14 +2322,14 @@
 	<false/>
 	<key>QuitWhenAllWindowsClosed</key>
 	<true/>
+	<key>RestoreWindowsToSameSpaces</key>
+	<true/>
 	<key>ShowFullScreenTabBar</key>
 	<true/>
 	<key>SmartPlacement</key>
 	<true/>
 	<key>SoundForEsc</key>
 	<false/>
-	<key>SplitPaneDimmingAmount</key>
-	<real>0.59999999999999998</real>
 	<key>TabStyleWithAutomaticOption</key>
 	<integer>5</integer>
 	<key>ToolbeltTools</key>
