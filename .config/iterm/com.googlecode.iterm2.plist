@@ -849,7 +849,7 @@ The script should do this: \(ai.prompt)</string>
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Transparency</key>
-			<real>0.098839760638298191</real>
+			<real>0.25</real>
 			<key>Unlimited Scrollback</key>
 			<true/>
 			<key>Use Bold Font</key>
@@ -1310,7 +1310,7 @@ The script should do this: \(ai.prompt)</string>
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Transparency</key>
-			<real>0.098839760638298191</real>
+			<real>0.2488397606382983</real>
 			<key>Unlimited Scrollback</key>
 			<true/>
 			<key>Use Bold Font</key>
@@ -1773,7 +1773,7 @@ The script should do this: \(ai.prompt)</string>
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Transparency</key>
-			<real>0.098839760638298191</real>
+			<real>0.2488397606382983</real>
 			<key>Unlimited Scrollback</key>
 			<true/>
 			<key>Use Bold Font</key>
@@ -2258,7 +2258,7 @@ The script should do this: \(ai.prompt)</string>
 			<key>Terminal Type</key>
 			<string>xterm-256color</string>
 			<key>Transparency</key>
-			<real>0.098839760638298191</real>
+			<real>0.2488397606382983</real>
 			<key>Unlimited Scrollback</key>
 			<true/>
 			<key>Use Bold Font</key>
@@ -2330,6 +2330,8 @@ The script should do this: \(ai.prompt)</string>
 	<true/>
 	<key>SoundForEsc</key>
 	<false/>
+	<key>SplitPaneDimmingAmount</key>
+	<real>0.1952856326219512</real>
 	<key>TabStyleWithAutomaticOption</key>
 	<integer>5</integer>
 	<key>ToolbeltTools</key>

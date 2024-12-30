@@ -61,6 +61,22 @@ export ma(MaT t, float src, simple int len) =>
 		MaT.wma => ta.wma(src,len)
 		MaT.ema => ta.ema(src,len)
 
+// @function calculate rolling SMA
+// @param src the series to calculate
+// @param len averaging length
+// @param prev_sma the previous value of SMA
+// @returns the SMA value
+export rolling_sma(float src, simple int len, float prev_sma) =>
+	prev_sma * (len - 1) / len + src / len
+
+// @function calculate rolling EMA
+// @param src the series to calculate
+// @param len averaging length
+// @param prev_ema the previous value of EMA
+// @returns the EMA value
+export rolling_ema(float src, simple int len, float prev_ema) =>
+	src * 2 / (len + 1) + prev_ema * (1 - 2 / (len + 1))
+
 // @function calculate liquidity as strength index of 100
 // @param len length to calculate ATR
 // @returns the relative liquidity index
@@ -220,26 +236,50 @@ export candle_split_percent(float o,float h, float l, float c) =>
 	// Return the wicks and body as percentage
 	[top_wick, bottom_wick, body]
 
-// @function Calculate target price by providing target rsi and reverse engineer the formula.
+// @function Calculate target value by providing target rsi and reverse engineer the formula.
 // 			 Reference: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf
 // @param len RSI length
-// @param target_rsi the target RSI for price estimation
-// @returns the reverse engineered close price that matches target RSI
-export reverse_engineering_rsi(int len, float target_rsi) =>
+// @param target_rsi the target RSI for estimation
+// @param src the souce series to calculate
+// @returns the reverse engineered value that matches target RSI
+export reverse_engineering_rsi(int len, float target_rsi,float src=close) =>
 	exp_per = 2 * len - 1
-	// Average up close
-	uc = close > close[1] ? close - close[1] : 0
+	// Average up src
+	uc = src > src[1] ? src - src[1] : 0
 	auc = ta.ema(uc, exp_per)
-	// Average down close
-	dc = close < close[1] ? close[1] - close : 0
+	// Average down src
+	dc = src < src[1] ? src[1] - src : 0
 	adc = ta.ema(dc, exp_per)
 	// x factor
 	x = (len - 1) * (adc * target_rsi / (100 - target_rsi) - auc)
 	// RevEngRSI
-	rev_eng_rsi = x >= 0 ? close + x : close + x * (100 - target_rsi) / target_rsi
+	rev_eng_rsi = x >= 0 ? src + x : src + x * (100 - target_rsi) / target_rsi
 	// Return RevEngRSI
 	rev_eng_rsi
 
+// @function Calculate target value by providing target rsi and reverse engineer the formula.
+// 			 Reference: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf
+// @param len RSI length
+// @param target_rsi the target RSI for estimation
+// @param src the current value to calculate RSI
+// @param prev_src the previous value to calculate RSI
+// @param prev_auc the previous auc value
+// @param prev_adc the previous adc value
+// @returns Tuple of RevEngRSI, auc, adc
+export rolling_revengrsi(int len, float target_rsi, float src, float prev_src, float prev_auc, float prev_adc) =>
+	exp_per = 2 * len - 1
+	// New average up
+	uc  = src > prev_src ? src - prev_src : 0
+	auc = rolling_ema(uc,exp_per,prev_auc)
+	// New average down
+	dc = prev_src > src ? prev_src - src : 0
+	adc = rolling_ema(dc,exp_per,prev_adc)
+	// x factor
+	x = (len - 1) * (adc * target_rsi / (100 - target_rsi) - auc)
+	// RevEngRSI
+	rev_eng_rsi = x >= 0 ? src + x : src + x * (100 - target_rsi) / target_rsi
+	// Return RevEngRSI, auc, adc
+	[rev_eng_rsi, auc, adc]
 
 // @function Draw entry with TP/SL
 // @param tp The take profit price
@@ -378,7 +418,7 @@ bgcolor(tr_converge_diverge_bg_color)
 // Lagged ATR bands
 //-------------------------------------------------------------------------------
 atr_band_grp = '► Lagged ATR bands'
-atr_band_enable = input.bool(true,'Enable',group = atr_band_grp,tooltip = 'Harmonic characteristic, ATR band in the past can tell the range in future')
+atr_band_enable = input.bool(false,'Enable',group = atr_band_grp,tooltip = 'Harmonic characteristic, ATR band in the past can tell the range in future')
 atr_band_len = input.int(34,'Length',group = atr_band_grp)
 atr_band_mult = input.float(9,'Multiplier',group = atr_band_grp)
 atr_band_lag = input.int(9,'Lag',minval=0,group = atr_band_grp)
@@ -387,11 +427,11 @@ atr = ta.atr(atr_band_len)
 atr_upper_band = ohlc4 + atr[1] * atr_band_mult / 2
 atr_mid_band = ohlc4
 atr_lower_band = ohlc4 - atr[1] * atr_band_mult / 2
-atr_upper_band_plt = plot(atr_band_enable ? atr_upper_band[atr_band_lag] : na,'Lagged ATR upper band',color.new(color.teal,70),force_overlay = true)
-atr_mid_band_plt = plot(atr_band_enable ? atr_mid_band[atr_band_lag] : na,'Lagged ATR middle band',color.new(color.gray,80), force_overlay = true)
-atr_lower_band_plt = plot(atr_band_enable ? atr_lower_band[atr_band_lag] : na,'Lagged ATR lower band',color.new(color.red,70),force_overlay = true)
-fill(atr_upper_band_plt,atr_mid_band_plt,color.new(color.teal,90))
-fill(atr_lower_band_plt,atr_mid_band_plt,color.new(color.red,90))
+atr_upper_band_plt = plot(atr_band_enable ? atr_upper_band[atr_band_lag] : na,'Lagged ATR upper band',color.new(color.teal,80),force_overlay = true)
+atr_mid_band_plt = plot(atr_band_enable ? atr_mid_band[atr_band_lag] : na,'Lagged ATR middle band',color.new(color.gray,90), force_overlay = true)
+atr_lower_band_plt = plot(atr_band_enable ? atr_lower_band[atr_band_lag] : na,'Lagged ATR lower band',color.new(color.red,80),force_overlay = true)
+fill(atr_upper_band_plt,atr_mid_band_plt,color.new(color.teal,95))
+fill(atr_lower_band_plt,atr_mid_band_plt,color.new(color.red,95))
 
 // Biased candle
 //-------------------------------------------------------------------------------
@@ -472,15 +512,23 @@ revengrsi_enable = input.bool(true,'Enable',group = revengrsi_grp,tooltip = 'Ref
 revengrsi_len = input.int(18,'Length',group = revengrsi_grp)
 revengrsi_oversold_threshold = input.float(30,'Oversold',group = revengrsi_grp)
 revengrsi_overbought_threshold = input.float(70,'Overbought',group = revengrsi_grp)
+revengrsi_ghost_inline = 'Ghost high/low'
+revengrsi_ghost_enable = input.bool(true,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_ghost_len = input.int(9,'',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 
 overbought_threshold = revengrsi_enable ? reverse_engineering_rsi(revengrsi_len,revengrsi_overbought_threshold) : na
 equilibrium_threshold = revengrsi_enable ? reverse_engineering_rsi(revengrsi_len,50) : na
 oversold_threshold = revengrsi_enable ? reverse_engineering_rsi(revengrsi_len,revengrsi_oversold_threshold) : na
 
-overbought_plt = plot(overbought_threshold,'Overbought threshold', color = color.new(color.red,50),force_overlay = true)
-equilibrium_plt = plot(equilibrium_threshold,'Equilibrium threshold', color = color.new(color.silver,50),style = plot.style_circles,force_overlay = true)
-oversold_plt = plot(oversold_threshold,'Oversold threshold', color = color.new(color.green,50),force_overlay = true)
+ghost_overbought_threshold = revengrsi_enable and revengrsi_ghost_enable ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_overbought_threshold, high) : na
+ghost_oversold_threshold = revengrsi_enable and revengrsi_ghost_enable ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_oversold_threshold,low) : na
 
+overbought_plt = plot(overbought_threshold,'Overbought Threshold', color = color.new(color.red,50),force_overlay = true)
+equilibrium_plt = plot(equilibrium_threshold,'Equilibrium Threshold', color = color.new(color.silver,50),style = plot.style_circles,force_overlay = true)
+oversold_plt = plot(oversold_threshold,'Oversold Threshold', color = color.new(color.green,50),force_overlay = true)
+
+ghost_overbought_plt = plot(ghost_overbought_threshold,'Ghost Overbought Threshold', color = color.new(color.red,80),force_overlay = true)
+ghost_oversold_plt = plot(ghost_oversold_threshold,'Ghost Oversold Threshold', color = color.new(color.green,80),force_overlay = true)
 // Bollinger band
 //-------------------------------------------------------------------------------
 bb_grp = '► Bollinger band'
@@ -500,7 +548,7 @@ plot(bb_enable ? bb_lower : na, color=color.new(#886868,50),force_overlay = true
 // MA
 //-------------------------------------------------------------------------------
 ma_grp = '► Moving average'
-ma_enable = input.bool(false, 'Enable',group = ma_grp)
+ma_enable = input.bool(true, 'Enable',group = ma_grp)
 ma_pair_inline = 'MA pair'
 ma_type = input.enum(MaT.sma,ma_pair_inline,group = ma_grp,inline = ma_pair_inline)
 ma_src = input.source(close,'',group = ma_grp,inline = ma_pair_inline)
@@ -518,7 +566,7 @@ ma_diverging = ta.rising(ma_diff,1)
 
 ma_fast_plt = plot(ma_enable ? ma_fast : na,'MA fast',color.new(color.blue,95),force_overlay = true)
 ma_slow_plt = plot(ma_enable ? ma_slow : na,'MA slow',color.new(color.orange,95),linewidth = 2,force_overlay = true)
-fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,80) : color.new(color.red,90))
+fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,80) : color.new(color.red,80))
 
 test_ma = switch ma_diverging
 	true => low > ma_slow and high < ma_fast
@@ -657,8 +705,8 @@ high_liquidity = rli > 60
 long_signal = position_enable and candle_rising and high_liquidity and rsi_low
 short_signal = position_enable and candle_falling and high_liquidity and rsi_high
 
-nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,atr_lower_band))
-nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,atr_upper_band) - 1)
+nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,ghost_oversold_threshold))
+nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,ghost_overbought_threshold) - 1)
 
 sl = long_signal ? low - 1.5 * atr : short_signal ? high + 1.5 * atr : na
 tp = long_signal ? nearest_higher_pivot : short_signal ? nearest_lower_pivot : na
