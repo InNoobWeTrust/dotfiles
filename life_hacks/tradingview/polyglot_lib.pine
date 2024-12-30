@@ -392,29 +392,39 @@ tr_falling = ta.falling(tr_hist,1)
 tr_converging = ta.falling(math.abs(tr_hist),1)
 tr_diverging = ta.rising(math.abs(tr_hist),1)
 
-tr_pivot_high = pivot_left_high(trcd,34,0)
-tr_pivot_low = pivot_left_low(trcd,34,0)
 trcd_areacolor = switch trcd >=0
 	true => color.new(color.teal,70)
-	false => color.new(color.olive,70)
+	false => color.new(color.red,70)
+trcd_diffcolor = switch tr_hist > 0
+	true => color.new(color.aqua,80)
+	false => color.new(color.yellow,80)
 trcd_histcolor = switch trcd > tr_sig
-	true => color.new(color.blue,10)
-	false => color.new(color.maroon,10)
-trcd_plt = plot(trcd, 'TRCD',color=color.purple,linewidth = 1,force_overlay = false)
+	true => color.new(color.teal,40)
+	false => color.new(color.red,40)
+trcd_plt = plot(trcd, 'TRCD',color=color(na),linewidth = 1,force_overlay = false)
 trcd_fillplt = plot(trcd >= 0 ? math.min(trcd,tr_sig) : math.max(trcd,tr_sig), 'TRCD area filling',color=trcd_areacolor,style = plot.style_histogram,force_overlay = false)
-tr_sig_plt = plot(tr_sig, 'TR signal',color=color.red,linewidth = 1,force_overlay = false)
-fill(trcd_plt,tr_sig_plt,trcd_histcolor,'TR convergence divergence')
-tr_pivot_high_plt = plot(tr_pivot_high, 'TR pivot high',color = color.blue,force_overlay = false)
-tr_pivot_low_plt = plot(tr_pivot_low, 'TR pivot low',color = color.yellow,force_overlay = false)
+tr_sig_plt = plot(tr_sig, 'TR signal',color=color(na),linewidth = 1,force_overlay = false)
+fill(trcd_plt,tr_sig_plt,trcd_diffcolor,'TR convergence divergence')
 
-tr_hist_crossover = ta.crossover(trcd,tr_sig)
-tr_hist_crossunder = ta.crossunder(trcd,tr_sig)
-tr_converge_diverge_bg_color = switch
-	tr_rising and tr_diverging and trcd > 0 => color.new(color.teal,80)
-	tr_falling and tr_diverging and trcd < 0 => color.new(color.maroon,80)
-	=> color(na)
-bgcolor(tr_converge_diverge_bg_color)
+tr_hist_plt = plot(tr_hist,'TR hist',color=trcd_histcolor,style = plot.style_columns,force_overlay = false)
 
+// RLI
+//-------------------------------------------------------------------------------
+rli_grp = '► Relative Liquidity Index'
+
+rli_enable = input.bool(true,'Enable',group = rli_grp)
+rli_atr_len = input.int(34,"RLI's ATR length",group = rli_grp)
+rli_len = input.int(14,'RLI length',group = rli_grp)
+rli_gradient_bg_enable = input.bool(true,'Show gradient background',group = rli_grp)
+
+rli = relative_liquidity_index(rli_atr_len,rli_len)
+shifted_rli = rli - 50
+scaled_rli = shifted_rli * math.min(math.abs(trcd),math.abs(tr_sig)) / 50
+
+rli_color = color.from_gradient(rli,0,100,color.new(color.red,25),color.new(color.teal,25))
+plot(rli_enable ? scaled_rli : na,'Scaled RLI',color = rli_color,linewidth = 2,force_overlay = false)
+
+bgcolor(rli_enable and rli_gradient_bg_enable ? color.new(rli_color,95) : color(na),force_overlay = true)
 // Lagged ATR bands
 //-------------------------------------------------------------------------------
 atr_band_grp = '► Lagged ATR bands'
@@ -455,21 +465,21 @@ plotshape(biased_candle_enable and candle_strictly_falling,'Biased candle fallin
 
 // MACD
 //-------------------------------------------------------------------------------
-macd_grp = '► MACD histogram'
-macd_enable = input.bool(true,'Enable',group = macd_grp)
-macd_src = input.source(close,'Source', group = macd_grp)
-macd_fast_len = input.int(34,'Fast length',group = macd_grp)
-macd_slow_len = input.int(89,'Slow length',group = macd_grp)
-macd_sig_len = input.int(9,'Signal length',group = macd_grp)
+// macd_grp = '► MACD histogram'
+// macd_enable = input.bool(false,'Enable',group = macd_grp)
+// macd_src = input.source(close,'Source', group = macd_grp)
+// macd_fast_len = input.int(34,'Fast length',group = macd_grp)
+// macd_slow_len = input.int(89,'Slow length',group = macd_grp)
+// macd_sig_len = input.int(9,'Signal length',group = macd_grp)
 
-[macd_line, macd_signal_line, macd_hist_line] = ta.macd(macd_src,macd_fast_len,macd_slow_len,macd_sig_len)
-macd_rising = ta.rising(macd_hist_line,1)
-macd_falling = ta.falling(macd_hist_line,1)
+// [macd_line, macd_signal_line, macd_hist_line] = ta.macd(macd_src,macd_fast_len,macd_slow_len,macd_sig_len)
+// macd_rising = ta.rising(macd_hist_line,1)
+// macd_falling = ta.falling(macd_hist_line,1)
 
-macd_hist_color = switch macd_hist_line >= 0
-	true => macd_rising ? color.new(color.teal,50) : color.new(color.lime,50)
-	false => macd_falling ? color.new(color.red,50) : color.new(color.orange,50)
-plot(macd_enable ? macd_hist_line : na, 'MACD histogram', color=macd_hist_color, style=plot.style_columns, force_overlay = false)
+// macd_hist_color = switch macd_hist_line >= 0
+// 	true => macd_rising ? color.new(color.teal,50) : color.new(color.lime,50)
+// 	false => macd_falling ? color.new(color.red,50) : color.new(color.orange,50)
+// plot(macd_enable ? macd_hist_line : na, 'MACD histogram', color=macd_hist_color, style=plot.style_columns, force_overlay = false)
 
 // Leverage table
 //-------------------------------------------------------------------------------
@@ -531,19 +541,19 @@ ghost_overbought_plt = plot(ghost_overbought_threshold,'Ghost Overbought Thresho
 ghost_oversold_plt = plot(ghost_oversold_threshold,'Ghost Oversold Threshold', color = color.new(color.green,80),force_overlay = true)
 // Bollinger band
 //-------------------------------------------------------------------------------
-bb_grp = '► Bollinger band'
-bb_enable = input.bool(false, 'Enable',group = bb_grp)
-bb_src = input.source(close,'Source',group = bb_grp)
-bb_len = input.int(34,'Length',group = bb_grp)
-bb_mult = input.int(1,'Multiplier',group = bb_grp)
+// bb_grp = '► Bollinger band'
+// bb_enable = input.bool(false, 'Enable',group = bb_grp)
+// bb_src = input.source(close,'Source',group = bb_grp)
+// bb_len = input.int(34,'Length',group = bb_grp)
+// bb_mult = input.int(1,'Multiplier',group = bb_grp)
 
-[bb_mid,bb_upper,bb_lower] = ta.bb(bb_src,bb_len,bb_mult)
-bb_exceed_upper = high > bb_upper
-bb_exceed_lower = low < bb_lower
+// [bb_mid,bb_upper,bb_lower] = ta.bb(bb_src,bb_len,bb_mult)
+// bb_exceed_upper = high > bb_upper
+// bb_exceed_lower = low < bb_lower
 
-plot(bb_enable ? bb_mid : na, color=color.new(color.gray,50),force_overlay = true)
-plot(bb_enable ? bb_upper : na, color=color.new(#688868,50),force_overlay = true)
-plot(bb_enable ? bb_lower : na, color=color.new(#886868,50),force_overlay = true)
+// plot(bb_enable ? bb_mid : na, color=color.new(color.gray,50),force_overlay = true)
+// plot(bb_enable ? bb_upper : na, color=color.new(#688868,50),force_overlay = true)
+// plot(bb_enable ? bb_lower : na, color=color.new(#886868,50),force_overlay = true)
 
 // MA
 //-------------------------------------------------------------------------------
@@ -695,15 +705,15 @@ if demand_supply_draw_pivot_profile and barstate.islast
 position_grp = '► Long/Short entries'
 position_enable = input.bool(true,'Enable',group = position_grp)
 
-rsi = ta.rsi(close,index_len)
-rli = relative_liquidity_index(index_atr_len,index_len)
-rsi_high = rsi > 60
-rsi_low = rsi < 40
-high_liquidity = rli > 60
+pos_rsi = ta.rsi(close,index_len)
+pos_rli = relative_liquidity_index(index_atr_len,index_len)
+pos_rsi_high = pos_rsi > 60
+pos_rsi_low = pos_rsi < 40
+high_liquidity = pos_rli > 60
 
 // Signal + liquidity + rsi swing range
-long_signal = position_enable and candle_rising and high_liquidity and rsi_low
-short_signal = position_enable and candle_falling and high_liquidity and rsi_high
+long_signal = position_enable and candle_rising and high_liquidity and pos_rsi_low
+short_signal = position_enable and candle_falling and high_liquidity and pos_rsi_high
 
 nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,ghost_oversold_threshold))
 nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,ghost_overbought_threshold) - 1)
