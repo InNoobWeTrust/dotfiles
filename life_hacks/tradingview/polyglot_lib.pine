@@ -398,9 +398,9 @@ trcd_areacolor = switch trcd >=0
 trcd_diffcolor = switch tr_hist > 0
 	true => color.new(color.aqua,80)
 	false => color.new(color.yellow,80)
-trcd_histcolor = switch trcd > tr_sig
-	true => color.new(color.teal,40)
-	false => color.new(color.red,40)
+trcd_histcolor = switch tr_hist > 0
+	true => tr_diverging ? color.new(color.teal,40) : color.new(color.lime,40)
+	false => tr_diverging ? color.new(color.red,40) : color.new(color.orange,40)
 trcd_plt = plot(trcd, 'TRCD',color=color(na),linewidth = 1,force_overlay = false)
 trcd_fillplt = plot(trcd >= 0 ? math.min(trcd,tr_sig) : math.max(trcd,tr_sig), 'TRCD area filling',color=trcd_areacolor,style = plot.style_histogram,force_overlay = false)
 tr_sig_plt = plot(tr_sig, 'TR signal',color=color(na),linewidth = 1,force_overlay = false)
@@ -424,7 +424,7 @@ scaled_rli = shifted_rli * math.min(math.abs(trcd),math.abs(tr_sig)) / 50
 rli_color = color.from_gradient(rli,0,100,color.new(color.red,25),color.new(color.teal,25))
 plot(rli_enable ? scaled_rli : na,'Scaled RLI',color = rli_color,linewidth = 2,force_overlay = false)
 
-bgcolor(rli_enable and rli_gradient_bg_enable ? color.new(rli_color,95) : color(na),force_overlay = true)
+bgcolor(rli_enable and rli_gradient_bg_enable ? color.new(rli_color,90) : color(na),force_overlay = true)
 // Lagged ATR bands
 //-------------------------------------------------------------------------------
 atr_band_grp = '► Lagged ATR bands'
@@ -533,27 +533,12 @@ oversold_threshold = revengrsi_enable ? reverse_engineering_rsi(revengrsi_len,re
 ghost_overbought_threshold = revengrsi_enable and revengrsi_ghost_enable ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_overbought_threshold, high) : na
 ghost_oversold_threshold = revengrsi_enable and revengrsi_ghost_enable ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_oversold_threshold,low) : na
 
-overbought_plt = plot(overbought_threshold,'Overbought Threshold', color = color.new(color.red,50),force_overlay = true)
-equilibrium_plt = plot(equilibrium_threshold,'Equilibrium Threshold', color = color.new(color.silver,50),style = plot.style_circles,force_overlay = true)
-oversold_plt = plot(oversold_threshold,'Oversold Threshold', color = color.new(color.green,50),force_overlay = true)
+overbought_plt = plot(overbought_threshold,'Overbought Threshold', color = color.new(color.red,70),force_overlay = true)
+equilibrium_plt = plot(equilibrium_threshold,'Equilibrium Threshold', color = color.new(color.silver,70),style = plot.style_circles,force_overlay = true)
+oversold_plt = plot(oversold_threshold,'Oversold Threshold', color = color.new(color.green,70),force_overlay = true)
 
 ghost_overbought_plt = plot(ghost_overbought_threshold,'Ghost Overbought Threshold', color = color.new(color.red,80),force_overlay = true)
 ghost_oversold_plt = plot(ghost_oversold_threshold,'Ghost Oversold Threshold', color = color.new(color.green,80),force_overlay = true)
-// Bollinger band
-//-------------------------------------------------------------------------------
-// bb_grp = '► Bollinger band'
-// bb_enable = input.bool(false, 'Enable',group = bb_grp)
-// bb_src = input.source(close,'Source',group = bb_grp)
-// bb_len = input.int(34,'Length',group = bb_grp)
-// bb_mult = input.int(1,'Multiplier',group = bb_grp)
-
-// [bb_mid,bb_upper,bb_lower] = ta.bb(bb_src,bb_len,bb_mult)
-// bb_exceed_upper = high > bb_upper
-// bb_exceed_lower = low < bb_lower
-
-// plot(bb_enable ? bb_mid : na, color=color.new(color.gray,50),force_overlay = true)
-// plot(bb_enable ? bb_upper : na, color=color.new(#688868,50),force_overlay = true)
-// plot(bb_enable ? bb_lower : na, color=color.new(#886868,50),force_overlay = true)
 
 // MA
 //-------------------------------------------------------------------------------
@@ -576,7 +561,7 @@ ma_diverging = ta.rising(ma_diff,1)
 
 ma_fast_plt = plot(ma_enable ? ma_fast : na,'MA fast',color.new(color.blue,95),force_overlay = true)
 ma_slow_plt = plot(ma_enable ? ma_slow : na,'MA slow',color.new(color.orange,95),linewidth = 2,force_overlay = true)
-fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,80) : color.new(color.red,80))
+fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,85) : color.new(color.red,80))
 
 test_ma = switch ma_diverging
 	true => low > ma_slow and high < ma_fast
