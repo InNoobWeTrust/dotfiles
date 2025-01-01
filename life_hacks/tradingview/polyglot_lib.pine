@@ -463,24 +463,6 @@ candle_strictly_falling = candle_falling and candle_bias_rising
 plotshape(biased_candle_enable and candle_strictly_rising,'Biased candle rising',style=shape.triangleup,location=location.belowbar,color=color.green,force_overlay = true)
 plotshape(biased_candle_enable and candle_strictly_falling,'Biased candle falling',style=shape.triangledown,location=location.abovebar,color=color.red,force_overlay = true)
 
-// MACD
-//-------------------------------------------------------------------------------
-// macd_grp = '► MACD histogram'
-// macd_enable = input.bool(false,'Enable',group = macd_grp)
-// macd_src = input.source(close,'Source', group = macd_grp)
-// macd_fast_len = input.int(34,'Fast length',group = macd_grp)
-// macd_slow_len = input.int(89,'Slow length',group = macd_grp)
-// macd_sig_len = input.int(9,'Signal length',group = macd_grp)
-
-// [macd_line, macd_signal_line, macd_hist_line] = ta.macd(macd_src,macd_fast_len,macd_slow_len,macd_sig_len)
-// macd_rising = ta.rising(macd_hist_line,1)
-// macd_falling = ta.falling(macd_hist_line,1)
-
-// macd_hist_color = switch macd_hist_line >= 0
-// 	true => macd_rising ? color.new(color.teal,50) : color.new(color.lime,50)
-// 	false => macd_falling ? color.new(color.red,50) : color.new(color.orange,50)
-// plot(macd_enable ? macd_hist_line : na, 'MACD histogram', color=macd_hist_color, style=plot.style_columns, force_overlay = false)
-
 // Leverage table
 //-------------------------------------------------------------------------------
 lvrg_tb_grp = '► Leverage table'
@@ -519,31 +501,40 @@ if index_tb_enable
 //-------------------------------------------------------------------------------
 revengrsi_grp = '► Reverse Engineering RSI'
 revengrsi_enable = input.bool(true,'Enable',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
-revengrsi_len = input.int(18,'Length',group = revengrsi_grp)
+revengrsi_len = input.int(17,'Length',group = revengrsi_grp)
 revengrsi_oversold_threshold = input.float(30,'Oversold',group = revengrsi_grp)
 revengrsi_overbought_threshold = input.float(70,'Overbought',group = revengrsi_grp)
 revengrsi_ghost_inline = 'Ghost high/low'
 revengrsi_ghost_enable = input.bool(true,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_len = input.int(9,'',group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_multi_middle_inline = 'Alternate middle multi-length'
+revengrsi_multi_middle_enable = input.bool(true,revengrsi_multi_middle_inline,group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
+revengrsi_multi_middle_len1 = input.int(45,'',group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
+revengrsi_multi_middle_len2 = input.int(129,'',group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
 
-overbought_threshold = revengrsi_enable ? reverse_engineering_rsi(revengrsi_len,revengrsi_overbought_threshold) : na
-equilibrium_threshold = revengrsi_enable ? reverse_engineering_rsi(revengrsi_len,50) : na
-oversold_threshold = revengrsi_enable ? reverse_engineering_rsi(revengrsi_len,revengrsi_oversold_threshold) : na
+overbought_threshold = reverse_engineering_rsi(revengrsi_len,revengrsi_overbought_threshold)
+equilibrium_threshold = reverse_engineering_rsi(revengrsi_len,50)
+oversold_threshold = reverse_engineering_rsi(revengrsi_len,revengrsi_oversold_threshold)
 
-ghost_overbought_threshold = revengrsi_enable and revengrsi_ghost_enable ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_overbought_threshold, high) : na
-ghost_oversold_threshold = revengrsi_enable and revengrsi_ghost_enable ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_oversold_threshold,low) : na
+overbought_plt = plot(revengrsi_enable ? overbought_threshold : na,'Overbought Threshold', color = color.new(color.red,70),force_overlay = true)
+equilibrium_plt = plot(revengrsi_enable ? equilibrium_threshold : na,'Equilibrium Threshold', color = color.new(color.silver,70),style = plot.style_circles,force_overlay = true)
+oversold_plt = plot(revengrsi_enable ? oversold_threshold : na,'Oversold Threshold', color = color.new(color.green,70),force_overlay = true)
 
-overbought_plt = plot(overbought_threshold,'Overbought Threshold', color = color.new(color.red,70),force_overlay = true)
-equilibrium_plt = plot(equilibrium_threshold,'Equilibrium Threshold', color = color.new(color.silver,70),style = plot.style_circles,force_overlay = true)
-oversold_plt = plot(oversold_threshold,'Oversold Threshold', color = color.new(color.green,70),force_overlay = true)
+ghost_overbought_threshold = reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_overbought_threshold, high)
+ghost_oversold_threshold = reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_oversold_threshold,low)
 
-ghost_overbought_plt = plot(ghost_overbought_threshold,'Ghost Overbought Threshold', color = color.new(color.red,80),force_overlay = true)
-ghost_oversold_plt = plot(ghost_oversold_threshold,'Ghost Oversold Threshold', color = color.new(color.green,80),force_overlay = true)
+ghost_overbought_plt = plot(revengrsi_enable and revengrsi_ghost_enable ? ghost_overbought_threshold : na,'Ghost Overbought Threshold', color = color.new(color.red,80),force_overlay = true)
+ghost_oversold_plt = plot(revengrsi_enable and revengrsi_ghost_enable ? ghost_oversold_threshold : na,'Ghost Oversold Threshold', color = color.new(color.green,80),force_overlay = true)
 
+equilibrium_multi1 = revengrsi_enable and revengrsi_multi_middle_enable ? reverse_engineering_rsi(revengrsi_multi_middle_len1,50) : na
+equilibrium_multi2 = revengrsi_enable and revengrsi_multi_middle_enable ? reverse_engineering_rsi(revengrsi_multi_middle_len2,50) : na
+
+equilibrium_multi1_plt = plot(revengrsi_enable and revengrsi_multi_middle_enable ? equilibrium_multi1 : na,'Multi middle #1',color=color.new(color.silver,80),linewidth = 2,force_overlay = true)
+equilibrium_multi2_plt = plot(revengrsi_enable and revengrsi_multi_middle_enable ? equilibrium_multi2 : na,'Multi middle #2',color=color.new(color.silver,85),linewidth = 3,force_overlay = true)
 // MA
 //-------------------------------------------------------------------------------
 ma_grp = '► Moving average'
-ma_enable = input.bool(true, 'Enable',group = ma_grp)
+ma_enable = input.bool(false, 'Enable',group = ma_grp)
 ma_pair_inline = 'MA pair'
 ma_type = input.enum(MaT.sma,ma_pair_inline,group = ma_grp,inline = ma_pair_inline)
 ma_src = input.source(close,'',group = ma_grp,inline = ma_pair_inline)
