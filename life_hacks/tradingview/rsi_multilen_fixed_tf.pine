@@ -2,7 +2,7 @@
 // © InNoobWeTrust
 
 //@version=6
-indicator("RSI fixed timeframe", overlay = false)
+indicator("RSI multi-length fixed timeframe", overlay = false)
 
 //===============================================================================
 // Types
@@ -38,12 +38,12 @@ rsi_src = input.source(close,'RSI source',group = rsi_grp)
 rsi_len = input.int(14,'RSI length',group = rsi_grp)
 rsi_ma_inline = 'RSI MA'
 rsi_ma_type = input.enum(MaT.sma,rsi_ma_inline,group = rsi_grp,inline = rsi_ma_inline)
-rsi_ma_len = input.int(14,'',group = rsi_grp,inline = rsi_ma_inline)
+rsi_ma_len = input.int(9,'',group = rsi_grp,inline = rsi_ma_inline)
 oversold_color = input.color(color.new(color.green,50),'Oversold area color',group = rsi_grp)
 overbought_color = input.color(color.new(color.red,50),'Overbought area color',group = rsi_grp)
 
 bg_grp = '► Oversold/overbought chart background'
-bg_enable = input.bool(true,'Enable',group = bg_grp)
+bg_enable = input.bool(false,'Enable',group = bg_grp)
 bg_color_inline = 'Background colors (oversold/overbought)'
 bg_overbought_color = input.color(color.new(color.orange,90),bg_color_inline,group = bg_grp,inline = bg_color_inline)
 bg_oversold_color = input.color(color.new(color.aqua,90),'',group = bg_grp,inline = bg_color_inline)
@@ -59,6 +59,21 @@ cross_low_enable = input.bool(true,cross_low_inline,group = cross_grp,inline = c
 cross_low_threshold = input.int(40,'',group = cross_grp,inline = cross_low_inline)
 cross_low_bg_color = input.color(color.new(color.navy,25),'',group = cross_grp,inline = cross_low_inline)
 
+multilen_grp = '► Multi-length'
+multilen_tf = input.timeframe('5','Base',group = multilen_grp)
+multilen_mult = input.int(6,'Multiplier',group = multilen_grp)
+multilen_levels = input.int(4,'Levels',minval=0,maxval=4,group = multilen_grp)
+multilen_color = input.color(color.new(color.aqua,85),'Color',group = multilen_grp)
+multilen_avg_inline = 'Multi-length Average'
+multilen_avg_enable = input.bool(true,multilen_avg_inline,group = multilen_grp,inline = multilen_avg_inline)
+multilen_avg_color = input.color(color.new(color.teal,70),'',group = multilen_grp,inline = multilen_avg_inline)
+
+//===============================================================================
+// Pre-calculated
+//===============================================================================
+var tf_secs = timeframe.in_seconds(tf)
+var multilen_tf_secs = timeframe.in_seconds(multilen_tf)
+var multilen_scale = multilen_tf_secs / tf_secs
 //===============================================================================
 // Calculation
 //===============================================================================
@@ -77,6 +92,14 @@ cross_signal = switch cross_signal_line
 signal_cross_high = ta.cross(cross_signal,cross_high_threshold)
 signal_cross_low = ta.cross(cross_signal,cross_low_threshold)
 
+// Multilen RSI
+multi_rsi_data = array.new<float>(4,0.)
+multi_rsi_data.set(0,request.security(syminfo.tickerid,multilen_tf,ta.rsi(rsi_src,rsi_len * 1)))
+multi_rsi_data.set(1,request.security(syminfo.tickerid,multilen_tf,ta.rsi(rsi_src,rsi_len * 2)))
+multi_rsi_data.set(2,request.security(syminfo.tickerid,multilen_tf,ta.rsi(rsi_src,rsi_len * 3)))
+multi_rsi_data.set(3,request.security(syminfo.tickerid,multilen_tf,ta.rsi(rsi_src,rsi_len * 4)))
+
+multi_rsi_avg = multi_rsi_data.avg()
 //===============================================================================
 // Visual calculation
 //===============================================================================
@@ -115,3 +138,11 @@ bgcolor(chart_bg_color,force_overlay = true)
 
 // Panel background
 bgcolor(bg_color,force_overlay = false)
+
+// Multi-length RSI
+plot(multilen_levels > 0 ? multi_rsi_data.get(0) : na,'Multi-length RSI #1',color = multilen_color,force_overlay = false)
+plot(multilen_levels > 1 ? multi_rsi_data.get(1) : na,'Multi-length RSI #2',color = multilen_color,force_overlay = false)
+plot(multilen_levels > 2 ? multi_rsi_data.get(2) : na,'Multi-length RSI #3',color = multilen_color,force_overlay = false)
+plot(multilen_levels > 3 ? multi_rsi_data.get(3) : na,'Multi-length RSI #4',color = multilen_color,force_overlay = false)
+// Multi-length RSI Average
+plot(multilen_levels > 0 and multilen_avg_enable ? multi_rsi_avg : na,'Multi-length RSI Average',color = multilen_avg_color,force_overlay = false)
