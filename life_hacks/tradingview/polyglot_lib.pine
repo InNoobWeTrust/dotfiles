@@ -287,9 +287,9 @@ export rolling_revengrsi(int len, float target_rsi, float src, float prev_src, f
 // @param bars The width of the drawing
 // @returns The drawings ids
 export plot_position_entry(float tp,float sl, int bars) =>
-	tp_color = color.new(#40ee40,50)
+	tp_color = color.new(#40ee40,80)
 	tp_fill_color = color.new(#40ee40,90)
-	sl_color = color.new(#ee4040,50)
+	sl_color = color.new(#ee4040,80)
 	sl_fill_color = color.new(#ee4040,90)
 	tp_plt = line.new(bar_index,tp,bar_index + bars,tp,xloc = xloc.bar_index,color=tp_color,force_overlay = true)
 	sl_plt = line.new(bar_index,sl,bar_index + bars,sl,xloc = xloc.bar_index,color=sl_color,force_overlay = true)
@@ -415,33 +415,19 @@ rli_grp = '► Relative Liquidity Index'
 rli_enable = input.bool(true,'Enable',group = rli_grp)
 rli_atr_len = input.int(34,"RLI's ATR length",group = rli_grp)
 rli_len = input.int(14,'RLI length',group = rli_grp)
+rli_low_color = input.color(color.new(color.red,25),'Low liquidity color',group = rli_grp)
+rli_high_color = input.color(color.new(color.teal,25),'High liquidity color',group = rli_grp)
 rli_gradient_bg_enable = input.bool(true,'Show gradient background',group = rli_grp)
+rli_gradient_bg_transparency = input.int(85,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
 
 rli = relative_liquidity_index(rli_atr_len,rli_len)
 shifted_rli = rli - 50
-scaled_rli = shifted_rli * math.min(math.abs(trcd),math.abs(tr_sig)) / 50
+scaled_rli = shifted_rli * math.max(math.abs(trcd),math.abs(tr_sig)) / 50
 
-rli_color = color.from_gradient(rli,0,100,color.new(color.red,25),color.new(color.teal,25))
+rli_color = color.from_gradient(rli,0,100,rli_low_color,rli_high_color)
 plot(rli_enable ? scaled_rli : na,'Scaled RLI',color = rli_color,linewidth = 2,force_overlay = false)
 
-bgcolor(rli_enable and rli_gradient_bg_enable ? color.new(rli_color,90) : color(na),force_overlay = true)
-// Lagged ATR bands
-//-------------------------------------------------------------------------------
-atr_band_grp = '► Lagged ATR bands'
-atr_band_enable = input.bool(true,'Enable',group = atr_band_grp,tooltip = 'Harmonic characteristic, ATR band in the past can tell the range in future')
-atr_band_len = input.int(34,'Length',group = atr_band_grp)
-atr_band_mult = input.float(9,'Multiplier',group = atr_band_grp)
-atr_band_lag = input.int(9,'Lag',minval=0,group = atr_band_grp)
-
-atr = ta.atr(atr_band_len)
-atr_upper_band = ohlc4 + atr[1] * atr_band_mult / 2
-atr_mid_band = ohlc4
-atr_lower_band = ohlc4 - atr[1] * atr_band_mult / 2
-atr_upper_band_plt = plot(atr_band_enable ? atr_upper_band[atr_band_lag] : na,'Lagged ATR upper band',color(na),force_overlay = true)
-atr_mid_band_plt = plot(atr_band_enable ? atr_mid_band[atr_band_lag] : na,'Lagged ATR middle band',color(na), force_overlay = true)
-atr_lower_band_plt = plot(atr_band_enable ? atr_lower_band[atr_band_lag] : na,'Lagged ATR lower band',color(na),force_overlay = true)
-fill(atr_upper_band_plt,atr_mid_band_plt,color.new(color.aqua,92))
-fill(atr_lower_band_plt,atr_mid_band_plt,color.new(color.orange,92))
+bgcolor(rli_enable and rli_gradient_bg_enable ? color.new(rli_color,rli_gradient_bg_transparency) : color(na),force_overlay = true)
 
 // Biased candle
 //-------------------------------------------------------------------------------
@@ -504,13 +490,13 @@ revengrsi_enable = input.bool(true,'Enable',group = revengrsi_grp,tooltip = 'Ref
 revengrsi_len = input.int(17,'Length',group = revengrsi_grp)
 revengrsi_ghost_inline = 'Ghost high/low'
 revengrsi_ghost_enable = input.bool(true,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
-revengrsi_ghost_len = input.int(9,'',group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_ghost_len = input.int(9,'Length',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_oversold_threshold = input.float(30,'Oversold',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_overbought_threshold = input.float(70,'Overbought',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_multi_middle_inline = 'Alternate middle multi-length'
 revengrsi_multi_middle_enable = input.bool(true,revengrsi_multi_middle_inline,group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
-revengrsi_multi_middle_len1 = input.int(45,'',group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
-revengrsi_multi_middle_len2 = input.int(129,'',group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
+revengrsi_multi_middle_len1 = input.int(129,'',group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
+revengrsi_multi_middle_len2 = input.int(305,'',group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
 
 equilibrium_threshold = reverse_engineering_rsi(revengrsi_len,50)
 equilibrium_plt = plot(revengrsi_enable ? equilibrium_threshold : na,'Equilibrium Threshold', color = color.new(color.silver,70),style = plot.style_circles,force_overlay = true)
@@ -526,6 +512,7 @@ equilibrium_multi2 = revengrsi_enable and revengrsi_multi_middle_enable ? revers
 
 equilibrium_multi1_plt = plot(revengrsi_enable and revengrsi_multi_middle_enable ? equilibrium_multi1 : na,'Multi middle #1',color=color.new(color.silver,80),linewidth = 2,force_overlay = true)
 equilibrium_multi2_plt = plot(revengrsi_enable and revengrsi_multi_middle_enable ? equilibrium_multi2 : na,'Multi middle #2',color=color.new(color.silver,85),linewidth = 3,force_overlay = true)
+
 // MA
 //-------------------------------------------------------------------------------
 ma_grp = '► Moving average'
@@ -535,6 +522,8 @@ ma_type = input.enum(MaT.sma,ma_pair_inline,group = ma_grp,inline = ma_pair_inli
 ma_src = input.source(close,'',group = ma_grp,inline = ma_pair_inline)
 ma_fast_len = input.int(34,'',group = ma_grp,inline = ma_pair_inline)
 ma_slow_len = input.int(89,'',group = ma_grp,inline = ma_pair_inline)
+ma_up_cloud_color = input.color(color.new(color.teal,85),'MA up cloud',group = ma_grp)
+ma_down_cloud_color = input.color(color.new(color.red,85),'MA down cloud',group = ma_grp)
 
 ma_fast = ma(ma_type,ma_src,ma_fast_len)
 ma_slow = ma(ma_type,ma_src,ma_slow_len)
@@ -547,7 +536,7 @@ ma_diverging = ta.rising(ma_diff,1)
 
 ma_fast_plt = plot(ma_enable ? ma_fast : na,'MA fast',color.new(color.blue,95),force_overlay = true)
 ma_slow_plt = plot(ma_enable ? ma_slow : na,'MA slow',color.new(color.orange,95),linewidth = 2,force_overlay = true)
-fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? color.new(color.teal,85) : color.new(color.red,80))
+fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? ma_up_cloud_color : ma_down_cloud_color)
 
 test_ma = switch ma_diverging
 	true => low > ma_slow and high < ma_fast
@@ -676,6 +665,7 @@ if demand_supply_draw_pivot_profile and barstate.islast
 position_grp = '► Long/Short entries'
 position_enable = input.bool(true,'Enable',group = position_grp)
 
+pos_atr = ta.atr(34)
 pos_rsi = ta.rsi(close,index_len)
 pos_rli = relative_liquidity_index(index_atr_len,index_len)
 pos_rsi_high = pos_rsi > 60
@@ -689,7 +679,7 @@ short_signal = position_enable and candle_falling and high_liquidity and pos_rsi
 nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,ghost_oversold_threshold))
 nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,ghost_overbought_threshold) - 1)
 
-sl = long_signal ? low - 1.5 * atr : short_signal ? high + 1.5 * atr : na
+sl = long_signal ? low - 1.5 * pos_atr : short_signal ? high + 1.5 * pos_atr : na
 tp = long_signal ? nearest_higher_pivot : short_signal ? nearest_lower_pivot : na
 
 rr = long_signal or short_signal ? (tp - close) / (close - sl) : na
