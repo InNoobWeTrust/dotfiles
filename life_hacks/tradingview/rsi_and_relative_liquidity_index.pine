@@ -33,14 +33,9 @@ ma(MaT t, src, int len) =>
 
 relative_liquidity_index(int atr_len, int rli_len) =>
 	atr = ta.atr(atr_len)
-	atr_up = atr > atr[1] ? atr - atr[1] : 0
-	atr_down = atr < atr[1] ? atr[1] - atr : 0
-	average_atr_up = ta.sma(atr_up,rli_len)
-	average_atr_down = ta.sma(atr_down,rli_len)
-	relative_liquidity = average_atr_up / average_atr_down
-	relative_liquidity_index = 100 - (100 / (1 + relative_liquidity))
+	rli = ta.rsi(atr,rli_len)
 	// Return the RLI
-	relative_liquidity_index
+	rli
 
 climax_candle_from_history(int bar_idx, color clr, int extend_bars) =>
 	bars_back = bar_index - bar_idx
