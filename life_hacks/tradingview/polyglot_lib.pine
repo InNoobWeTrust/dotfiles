@@ -405,7 +405,7 @@ tr_hist_plt = plot(tr_hist,'TR hist',color=trcd_histcolor,style = plot.style_col
 
 // RLI
 //-------------------------------------------------------------------------------
-rli_grp = '► Relative Liquidity Index'
+rli_grp = '► Scaled Relative Liquidity Index'
 
 rli_enable = input.bool(true,'Enable',group = rli_grp)
 rli_atr_len = input.int(34,"RLI's ATR length",group = rli_grp)
@@ -447,7 +447,7 @@ plotshape(biased_candle_enable and candle_strictly_falling,'Biased candle fallin
 // Leverage table
 //-------------------------------------------------------------------------------
 lvrg_tb_grp = '► Leverage table'
-lvrg_tb_enable = input.bool(true,'Enable',group = lvrg_tb_grp)
+lvrg_tb_enable = input.bool(false,'Enable',group = lvrg_tb_grp)
 lvrg_tb_mult = input.float(2,'Multiplier',group = lvrg_tb_grp)
 lvrg_tb_position = input.string(position.top_right,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = lvrg_tb_grp)
 lvrg_tb_overlay = input.bool(true,'Overlay',group = lvrg_tb_grp)
@@ -514,7 +514,7 @@ bb_grp = '► Bollinger Bands'
 bb_enable = input.bool(true,'Enable',group = bb_grp)
 bb_src = input.source(close,'Source',group = bb_grp)
 bb_len = input.int(34,'Length',group = bb_grp)
-bb_mult = input.int(2,'Mult',group = bb_grp)
+bb_mult = input.float(2.25,'Mult',group = bb_grp)
 bb_u_color = input.color(color.new(color.yellow,92),'Upperband',group = bb_grp)
 bb_l_color = input.color(color.new(color.aqua,92),'Lowerband',group = bb_grp)
 [bb_m,bb_u,bb_l] = ta.bb(bb_src,bb_len,bb_mult)

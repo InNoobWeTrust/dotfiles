@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
-# Add ~/.local/**/bin to PATH if it's not there
+# Add ~/.local/*/bin to PATH if it's not there
 [ -d "$HOME/.local" ] && \
-    for d in "$HOME"/.local/*/bin "$HOME"/.local/*/*/bin "$HOME"/.local/*/*/*/bin; do
+    for d in "$HOME"/.local/*/bin; do
         setPath "$d"
     done
 

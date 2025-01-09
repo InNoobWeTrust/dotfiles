@@ -1,0 +1,229 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// ©  InNoobWeTrust
+
+//@version=6
+
+// @description TODO: add library description here
+indicator("TRCD + Scaled RLI", overlay = false)
+
+//===============================================================================
+// Types
+//===============================================================================
+
+enum MaT
+	sma = 'SMA'
+	wma = 'WMA'
+	ema = 'EMA'
+
+//===============================================================================
+// Functions
+//===============================================================================
+
+// @function calculate moving average
+// @param t type of moving average
+// @param src the series to calculate
+// @param len averaging length
+// @returns the moving average series
+ma(MaT t, float src, simple int len) =>
+	switch t
+		MaT.sma => ta.sma(src,len)
+		MaT.wma => ta.wma(src,len)
+		MaT.ema => ta.ema(src,len)
+
+// @function calculate liquidity as strength index of 100
+// @param len length to calculate ATR
+// @returns the relative liquidity index
+relative_liquidity_index(int atr_len, int rli_len) =>
+	atr = ta.atr(atr_len)
+	rli = ta.rsi(atr,rli_len)
+	// Return the RLI
+	rli
+
+// @function Calculate safe leverage based on ATR and the percentage of acceptable SL
+// @param atr_len The length to calculate ATR
+// @param sl_percent The percentage of acceptable SL
+// @param mult The ATR multiplier to account for lateness in entry price
+// @returns The tuple of: leverage rounded up to whole number, max_endurable_spread, max_endurable_percent
+estimate_leverage(int atr_len = 14, float sl_percent = 0.2, float mult = 1.5) =>
+	spread_osc = ta.atr(atr_len)
+	max_endurable_spread = spread_osc * mult
+	max_endurable_percent = max_endurable_spread / close
+	max_leverage = sl_percent / max_endurable_percent
+	// Return max leverage as whole number
+	[math.ceil(max_leverage), max_endurable_spread, max_endurable_percent]
+
+// @function Display leverage, ATR, and the percentage of acceptable SL
+// @param atr_len The length to calculate ATR
+// @param sl_percent The percentage of acceptable SL
+// @param mult The ATR multiplier to account for lateness in entry price
+// @param pos The position to display the table
+// @returns The table
+display_lvrg_table(int atr_len = 14, float sl_percent = 0.2, float mult = 1.5, string pos = position.bottom_right, bool overlay = true) =>
+	lvrg_tb = overlay ? table.new(pos,2,3,force_overlay = true) : table.new(pos,2,3,force_overlay = false)
+	[lvrg, _, _] = estimate_leverage(atr_len,sl_percent,mult)
+	atr = ta.atr(atr_len)
+	atr_percent = atr / close
+	table.cell(lvrg_tb,0,0,'SL',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(lvrg_tb,1,0,str.format('{0,number,percent}',sl_percent),bgcolor=color.new(color.gray, transp = 80),text_color=color.red)
+	table.cell(lvrg_tb,0,1,'ATR',text_color=color.gray,bgcolor=color.new(color.silver, transp = 80))
+	table.cell(lvrg_tb,1,1,str.format('{0,number,#.##}%',atr_percent*100),bgcolor=color.new(color.silver, transp = 80),text_color=color.yellow)
+	table.cell(lvrg_tb,0,2,'Lvrg',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(lvrg_tb,1,2,str.format('x{0,number,integer}',lvrg),bgcolor=color.new(color.gray, transp = 80),text_color=color.aqua)
+	// Return the table id to manage drawings
+	lvrg_tb
+
+// @function Display current RSI and SMA of RSI
+// @param rsi_len The length to calculate RSI
+// @param rsi_sma_len The length to calculate MA of RSI
+// @param rsi_sma_type The type of MA to calculate for RSI
+// @param pos The position to display the table
+// @returns The table
+display_rsi_table(int rsi_len = 14, simple int rsi_ma_len = 14, MaT rsi_ma_type = MaT.sma, string pos = position.middle_right, bool overlay = false) =>
+	rsi_tb = overlay ? table.new(pos,1,4,force_overlay = true) : table.new(pos,1,4,force_overlay = false)
+	rsi = ta.rsi(close,rsi_len)
+	rsi_ma = ma(rsi_ma_type,rsi,rsi_ma_len)
+	rsi_color = switch
+		rsi >= 70 => color.green
+		rsi <= 30 => color.red
+		=> color.gray
+	rsi_sma_color = switch
+		rsi_ma >= 65 => color.teal
+		rsi_ma <= 35 => color.orange
+		=> color.silver
+	table.cell(rsi_tb,0,0,'RSI',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(rsi_tb,0,1,str.format('{0,number}',rsi),bgcolor=color.new(color.silver, transp = 80),text_color=rsi_color)
+	table.cell(rsi_tb,0,2,'RSI SMA',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(rsi_tb,0,3,str.format('{0,number}',rsi_ma),bgcolor=color.new(color.silver, transp = 80),text_color=rsi_sma_color)
+	// Return the table id to manage drawings
+	rsi_tb
+
+
+// @function Display current RSI and SMA of RSI and RLI (Relative Liquidity Index)
+// @param index_len The length to calculate index
+// @param index_ma_len The length to calculate SMA of index values
+// @param index_ma_type The type of MA to calculate for index values
+// @param atr_len The length to calculate ATR for RLI
+// @param pos The position to display the table
+// @returns The table
+display_index_table(int index_len = 14, simple int ma_len = 14, MaT ma_type = MaT.sma, int atr_len = 34, string pos = position.middle_right, bool overlay = false) =>
+	index_tb = overlay ? table.new(pos,3,3,frame_color = color.white,force_overlay = true) : table.new(pos,3,3,frame_color = color.white,force_overlay = false)
+	rsi = ta.rsi(close,index_len)
+	rli = relative_liquidity_index(atr_len,index_len)
+	rsi_ma = ma(ma_type,rsi,ma_len)
+	rli_ma = ma(ma_type,rli,ma_len)
+	rsi_color = switch
+		rsi >= 70 => color.red
+		rsi <= 30 => color.green
+		=> color.gray
+	rsi_ma_color = switch
+		rsi_ma >= 65 => color.yellow
+		rsi_ma <= 35 => color.lime
+		=> color.silver
+	rli_color = switch
+		rli >= 70 => color.teal
+		rli <= 30 => color.maroon
+		=> color.gray
+	rli_ma_color = switch
+		rli_ma >= 65 => color.aqua
+		rli_ma <= 35 => color.orange
+		=> color.silver
+	table.cell(index_tb,1,0,'Index',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(index_tb,2,0,'MA',text_color=color.gray,bgcolor=color.new(color.silver, transp = 80))
+	table.cell(index_tb,0,1,'RSI',text_color=color.gray,bgcolor=color.new(color.silver, transp = 80))
+	table.cell(index_tb,0,2,'RLI',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(index_tb,1,1,str.format('{0,number,integer}',rsi),bgcolor=color.new(color.black, transp = 80),text_color=rsi_color)
+	table.cell(index_tb,2,1,str.format('{0,number,integer}',rsi_ma),bgcolor=color.new(color.black, transp = 80),text_color=rsi_ma_color)
+	table.cell(index_tb,1,2,str.format('{0,number,integer}',rli),bgcolor=color.new(color.black, transp = 80),text_color=rli_color)
+	table.cell(index_tb,2,2,str.format('{0,number,integer}',rli_ma),bgcolor=color.new(color.black, transp = 80),text_color=rli_ma_color)
+	// Return the table id to manage drawings
+	index_tb
+
+//===============================================================================
+// Calculation
+//===============================================================================
+
+// TR convergence divergence
+//-------------------------------------------------------------------------------
+trcd_grp = '► True Range Convergence Divergence'
+
+trcd_fast_len = input.int(34,'TR fast length',group = trcd_grp)
+trcd_slow_len = input.int(144,'TR slow length',group = trcd_grp)
+trcd_sig_len = input.int(9,'TR signal length',group = trcd_grp)
+
+[trcd,tr_sig,tr_hist] = ta.macd(ta.tr(true),trcd_fast_len,trcd_slow_len,trcd_sig_len)
+
+tr_rising = ta.rising(tr_hist,1)
+tr_falling = ta.falling(tr_hist,1)
+tr_converging = ta.falling(math.abs(tr_hist),1)
+tr_diverging = ta.rising(math.abs(tr_hist),1)
+
+trcd_areacolor = switch trcd >=0
+	true => color.new(color.teal,70)
+	false => color.new(color.red,70)
+trcd_diffcolor = switch tr_hist > 0
+	true => color.new(color.aqua,80)
+	false => color.new(color.yellow,80)
+trcd_histcolor = switch tr_hist > 0
+	true => tr_diverging ? color.new(color.teal,40) : color.new(color.lime,40)
+	false => tr_diverging ? color.new(color.red,40) : color.new(color.orange,40)
+trcd_plt = plot(trcd, 'TRCD',color=color(na),linewidth = 1,force_overlay = false)
+trcd_fillplt = plot(trcd >= 0 ? math.min(trcd,tr_sig) : math.max(trcd,tr_sig), 'TRCD area filling',color=trcd_areacolor,style = plot.style_histogram,force_overlay = false)
+tr_sig_plt = plot(tr_sig, 'TR signal',color=color(na),linewidth = 1,force_overlay = false)
+fill(trcd_plt,tr_sig_plt,trcd_diffcolor,'TR convergence divergence')
+
+tr_hist_plt = plot(tr_hist,'TR hist',color=trcd_histcolor,style = plot.style_columns,force_overlay = false)
+
+// RLI
+//-------------------------------------------------------------------------------
+rli_grp = '► Scaled Relative Liquidity Index'
+
+rli_enable = input.bool(true,'Enable',group = rli_grp)
+rli_atr_len = input.int(34,"RLI's ATR length",group = rli_grp)
+rli_len = input.int(14,'RLI length',group = rli_grp)
+rli_low_color = input.color(color.new(color.red,25),'Low liquidity color',group = rli_grp)
+rli_high_color = input.color(color.new(color.teal,25),'High liquidity color',group = rli_grp)
+rli_gradient_bg_enable = input.bool(true,'Show gradient background',group = rli_grp)
+rli_gradient_bg_transparency = input.int(85,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
+
+rli = relative_liquidity_index(rli_atr_len,rli_len)
+shifted_rli = rli - 50
+scaled_rli = shifted_rli * math.max(math.abs(trcd),math.abs(tr_sig)) / 50
+
+rli_color = color.from_gradient(rli,0,100,rli_low_color,rli_high_color)
+plot(rli_enable ? scaled_rli : na,'Scaled RLI',color = rli_color,linewidth = 2,force_overlay = false)
+
+bgcolor(rli_enable and rli_gradient_bg_enable ? color.new(rli_color,rli_gradient_bg_transparency) : color(na),force_overlay = true)
+
+// Leverage table
+//-------------------------------------------------------------------------------
+lvrg_tb_grp = '► Leverage table'
+lvrg_tb_enable = input.bool(true,'Enable',group = lvrg_tb_grp)
+lvrg_tb_mult = input.float(2,'Multiplier',group = lvrg_tb_grp)
+lvrg_tb_position = input.string(position.top_right,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = lvrg_tb_grp)
+lvrg_tb_overlay = input.bool(true,'Overlay',group = lvrg_tb_grp)
+
+var table lvrg_tb = na
+
+// Update leverage table
+if lvrg_tb_enable
+	lvrg_tb := display_lvrg_table(atr_len = trcd_slow_len, mult = lvrg_tb_mult,pos = lvrg_tb_position,overlay = lvrg_tb_overlay)
+
+
+// RSI + RLI (Relative Liquidity Index) table
+//-------------------------------------------------------------------------------
+index_tb_grp = '► Index table'
+index_tb_enable = input.bool(true,'Enable',group = index_tb_grp)
+index_tb_position = input.string(position.middle_right,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = index_tb_grp)
+index_tb_overlay = input.bool(false,'Overlay',group = index_tb_grp)
+index_len = input.int(14,'Index length',group = index_tb_grp)
+index_ma_inline = 'Index MA'
+index_ma_type = input.enum(MaT.sma,index_ma_inline,group = index_tb_grp,inline = index_ma_inline)
+index_ma_len = input.int(14,'',group = index_tb_grp,inline = index_ma_inline)
+index_atr_len = input.int(34,'Index ATR length',group = index_tb_grp)
+
+
+var table index_tb = na
+
+// Update leverage table
+if index_tb_enable
+	index_tb := display_index_table(index_len = index_len,ma_len = index_ma_len,ma_type = index_ma_type,atr_len = index_atr_len,pos = index_tb_position,overlay = index_tb_overlay)
