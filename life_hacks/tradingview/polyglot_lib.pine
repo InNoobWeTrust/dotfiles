@@ -484,12 +484,12 @@ revengrsi_grp = '► Reverse Engineering RSI'
 revengrsi_enable = input.bool(true,'Enable',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
 revengrsi_len = input.int(17,'Length',group = revengrsi_grp)
 revengrsi_ghost_inline = 'Ghost high/low'
-revengrsi_ghost_enable = input.bool(true,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_ghost_enable = input.bool(false,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_len = input.int(9,'Length',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_oversold_threshold = input.float(30,'Oversold',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_overbought_threshold = input.float(70,'Overbought',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_multi_middle_inline = 'Alternate middle multi-length'
-revengrsi_multi_middle_enable = input.bool(false,revengrsi_multi_middle_inline,group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
+revengrsi_multi_middle_enable = input.bool(true,revengrsi_multi_middle_inline,group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
 revengrsi_multi_middle_len1 = input.int(129,'',group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
 revengrsi_multi_middle_len2 = input.int(305,'',group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
 
