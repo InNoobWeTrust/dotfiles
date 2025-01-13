@@ -314,6 +314,9 @@ alias cargo-cross-install-armv6l='usable cargo && cargo install --target arm-unk
 alias install-nushell-cargo='cargo install --locked nu'
 alias install-nushell-npm='npm install -g nushell'
 
+## Smarter cd by using zeoxide
+alias install-zeoxide='curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh'
+
 ## Terminal multiplexer
 alias install-zellij-cargo='cargo install --locked zellij'
 
