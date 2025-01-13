@@ -21,5 +21,7 @@
   path = ~/.nerd.gitconfig
 [includeIf "gitdir:~/Developer/tokoinofficial/"]
   path = ~/.work.gitconfig
+[includeIf "gitdir:~/Developer/homebrew-research/"]
+  path = ~/.work.gitconfig
 [includeIf "gitdir:~/Developer/rex/"]
   path = ~/.work.collab.gitconfig
