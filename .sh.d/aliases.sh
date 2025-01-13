@@ -216,6 +216,9 @@ alias update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && ap
 # Update possible tools (normal mode)
 alias update-tooling='(update-rustup) || (update-pyenv) || (update-conda) || (update-brew)'
 
+#################### Pkgx ######################
+alias install-pkgx='curl -fsS https://pkgx.sh | sh'
+
 #################### Brew ######################
 
 alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"'
