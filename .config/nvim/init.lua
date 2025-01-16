@@ -50,10 +50,12 @@ o.number = true
 o.cursorline = true
 o.scrolloff = 10
 o.wrap = true
-o.colorcolumn = '80,100,120,140,160,180,200'
+--o.colorcolumn = '80,100,120,140,160,180,200'
 o.binary = true
-o.list = true
-o.listchars = 'eol:$,tab:>-,trail:_,extends:>,precedes:<'
+--o.list = true
+--o.listchars = 'eol:$,tab:>-,trail:_,extends:>,precedes:<'
+o.concealcursor = ''
+o.conceallevel = 1
 o.backspace = 'indent,eol,start'
 o.spell = true
 o.completeopt = 'menu,preview,menuone,longest'
@@ -334,7 +336,7 @@ require('packer').startup({
 				require('gitsigns').setup()
 			end
 		}
-		-- Interation with databases
+		-- Interact with databases
 		use {
 			'kristijanhusak/vim-dadbod-ui',
 			requires = { 'tpope/vim-dadbod' }

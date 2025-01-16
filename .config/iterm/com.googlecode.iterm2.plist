@@ -15,7 +15,7 @@ The script should do this: \(ai.prompt)</string>
 	<key>AllowClipboardAccess</key>
 	<true/>
 	<key>AutoCommandHistory</key>
-	<true/>
+	<false/>
 	<key>Command</key>
 	<string></string>
 	<key>Custom Color Presets</key>
@@ -364,11 +364,17 @@ The script should do this: \(ai.prompt)</string>
 	</dict>
 	<key>Default Bookmark Guid</key>
 	<string>1E7BAED3-5833-4724-AAB4-62589FAF3E43</string>
+	<key>DisableTransparencyForKeyWindow</key>
+	<false/>
 	<key>DoubleClickPerformsSmartSelection</key>
 	<true/>
 	<key>EnableAPIServer</key>
 	<true/>
 	<key>HapticFeedbackForEsc</key>
+	<false/>
+	<key>HideFromDockAndAppSwitcher</key>
+	<true/>
+	<key>HideMenuBarInFullscreen</key>
 	<false/>
 	<key>Hotkey</key>
 	<true/>
@@ -630,7 +636,7 @@ The script should do this: \(ai.prompt)</string>
 				<real>0.7928692102432251</real>
 			</dict>
 			<key>Blend</key>
-			<real>0.74951426630434803</real>
+			<real>0.052725945136464412</real>
 			<key>Blinking Cursor</key>
 			<true/>
 			<key>Blur</key>
@@ -653,7 +659,7 @@ The script should do this: \(ai.prompt)</string>
 			<key>Close Sessions On End</key>
 			<true/>
 			<key>Columns</key>
-			<integer>80</integer>
+			<integer>110</integer>
 			<key>Command</key>
 			<string></string>
 			<key>Cursor Boost</key>
@@ -737,21 +743,21 @@ The script should do this: \(ai.prompt)</string>
 			<key>HotKey Alternate Shortcuts</key>
 			<array/>
 			<key>HotKey Characters</key>
-			<string>	</string>
+			<string>†</string>
 			<key>HotKey Characters Ignoring Modifiers</key>
-			<string>i</string>
+			<string>t</string>
 			<key>HotKey Key Code</key>
-			<integer>34</integer>
+			<integer>17</integer>
 			<key>HotKey Modifier Activation</key>
 			<integer>0</integer>
 			<key>HotKey Modifier Flags</key>
-			<integer>1835008</integer>
+			<integer>1572864</integer>
 			<key>HotKey Window Animates</key>
 			<true/>
 			<key>HotKey Window AutoHides</key>
 			<true/>
 			<key>HotKey Window Dock Click Action</key>
-			<integer>0</integer>
+			<integer>2</integer>
 			<key>HotKey Window Floats</key>
 			<true/>
 			<key>HotKey Window Reopens On Activation</key>
@@ -801,7 +807,7 @@ The script should do this: \(ai.prompt)</string>
 			<key>Right Option Key Sends</key>
 			<integer>0</integer>
 			<key>Rows</key>
-			<integer>60</integer>
+			<integer>20</integer>
 			<key>Screen</key>
 			<integer>-2</integer>
 			<key>Scrollback Lines</key>
@@ -2138,7 +2144,7 @@ The script should do this: \(ai.prompt)</string>
 			<key>Guid</key>
 			<string>2B05277A-2664-4C8D-B759-784714DCB0C5</string>
 			<key>Has Hotkey</key>
-			<true/>
+			<false/>
 			<key>Horizontal Spacing</key>
 			<real>1</real>
 			<key>HotKey Activated By Modifier</key>
@@ -2319,9 +2325,9 @@ The script should do this: \(ai.prompt)</string>
 	<key>Print In Black And White</key>
 	<true/>
 	<key>PromptOnQuitEvenIfThereAreNoWindows</key>
-	<false/>
-	<key>QuitWhenAllWindowsClosed</key>
 	<true/>
+	<key>QuitWhenAllWindowsClosed</key>
+	<false/>
 	<key>RestoreWindowsToSameSpaces</key>
 	<true/>
 	<key>ShowFullScreenTabBar</key>
@@ -2339,6 +2345,8 @@ The script should do this: \(ai.prompt)</string>
 		<string>Profiles</string>
 		<string>Jobs</string>
 	</array>
+	<key>UIElementRequiresHotkeys</key>
+	<true/>
 	<key>VisualIndicatorForEsc</key>
 	<false/>
 	<key>findMode_iTerm</key>
