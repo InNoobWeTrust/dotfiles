@@ -412,7 +412,7 @@ rli_atr_len = input.int(34,"RLI's ATR length",group = rli_grp)
 rli_len = input.int(14,'RLI length',group = rli_grp)
 rli_low_color = input.color(color.new(color.red,25),'Low liquidity color',group = rli_grp)
 rli_high_color = input.color(color.new(color.teal,25),'High liquidity color',group = rli_grp)
-rli_gradient_bg_enable = input.bool(true,'Show gradient background',group = rli_grp)
+rli_gradient_bg_enable = input.bool(false,'Show gradient background',group = rli_grp)
 rli_gradient_bg_transparency = input.int(85,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
 
 rli = relative_liquidity_index(rli_atr_len,rli_len)
@@ -510,18 +510,25 @@ equilibrium_multi2_plt = plot(revengrsi_enable and revengrsi_multi_middle_enable
 
 // Bollinger Bands
 //-------------------------------------------------------------------------------
-bb_grp = '► Bollinger Bands'
+bb_grp = '► Bollinger Bands multi-length'
 bb_enable = input.bool(true,'Enable',group = bb_grp)
 bb_src = input.source(close,'Source',group = bb_grp)
-bb_len = input.int(34,'Length',group = bb_grp)
-bb_mult = input.float(2.25,'Mult',group = bb_grp)
-bb_u_color = input.color(color.new(color.yellow,92),'Upperband',group = bb_grp)
-bb_l_color = input.color(color.new(color.aqua,92),'Lowerband',group = bb_grp)
-[bb_m,bb_u,bb_l] = ta.bb(bb_src,bb_len,bb_mult)
+bb_len_inline = 'Length'
+bbf_len = input.int(34,bb_len_inline,group = bb_grp,inline = bb_len_inline)
+bbs_len = input.int(89,'',group = bb_grp,inline = bb_len_inline)
+bb_mult = input.float(2,'Mult',group = bb_grp)
+bbf_color = input.color(color.new(color.aqua,85),'Fast color',group = bb_grp)
+bbs_color = input.color(color.new(color.yellow,85),'Slow color',group = bb_grp)
+bb_line_transp = input.int(85,'BB line transparency',minval=0,maxval=100,group = bb_grp)
+[bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,bbf_len,bb_mult)
+[bbs_m,bbs_u,bbs_l] = ta.bb(bb_src,bbs_len,bb_mult)
 
-bb_u_plt = plot(bb_enable ? bb_u : na, 'BB upperband',color = color(na),force_overlay = true)
-bb_l_plt = plot(bb_enable ? bb_l : na, 'BB lowerband',color = color(na),force_overlay = true)
-fill(bb_u_plt,bb_l_plt,bb_u,bb_l,bb_u_color,bb_l_color,'BB fill')
+bbf_u_plt = plot(bb_enable ? bbf_u : na, 'BB fast upperband',color = color.new(bbf_color,bb_line_transp),force_overlay = true)
+bbf_l_plt = plot(bb_enable ? bbf_l : na, 'BB fast lowerband',color = color.new(bbf_color,bb_line_transp),force_overlay = true)
+bbs_u_plt = plot(bb_enable ? bbs_u : na, 'BB slow upperband',color = color.new(bbs_color,bb_line_transp),force_overlay = true)
+bbs_l_plt = plot(bb_enable ? bbs_l : na, 'BB slow lowerband',color = color.new(bbs_color,bb_line_transp),force_overlay = true)
+fill(bbf_u_plt,bbs_u_plt,bbf_u,bbs_u,bbf_color,bbs_color,'BB upper fill')
+fill(bbf_l_plt,bbs_l_plt,bbf_l,bbs_l,bbf_color,bbs_color,'BB lower fill')
 
 // MA
 //-------------------------------------------------------------------------------
@@ -564,7 +571,7 @@ demand_supply_zone_color_demand = input.color(color.new(color.olive,90),demand_s
 demand_supply_zone_color_supply = input.color(color.new(color.red,90),'',group = demand_supply_grp,inline = demand_supply_zone_color_inline)
 demand_supply_draw_pivot_profile = input.bool(true,'Draw pivot profile',group = demand_supply_grp)
 demand_supply_pivot_profile_bars = input.int(32,'Profile bars',group = demand_supply_grp)
-demand_supply_pivot_profile_span = input.int(16,'Span',group = demand_supply_grp)
+demand_supply_pivot_profile_span = input.int(8,'Span',group = demand_supply_grp)
 demand_supply_pivot_profile_offset = input.int(2,'Offset',group = demand_supply_grp)
 
 demand_price = pivot_left_low(low,demand_supply_pivot_len)
