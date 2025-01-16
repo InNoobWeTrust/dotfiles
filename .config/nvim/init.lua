@@ -370,6 +370,13 @@ require('packer').startup({
 		---------------------------------------- Custom commands
 		------------------------------------ End custom commands
 
+		----------------------------------------------- Override
+		-- Override conceal level for markdown
+		cmd [[autocmd FileType markdown setlocal conceallevel=1]]
+		-- Override concealcursor for markdown
+		cmd [[autocmd FileType markdown setlocal concealcursor=]]
+		-------------------------------------------- End override
+
 		-------------------------------------------------- Theme
 		-- GruvBox
 		cmd 'highlight Normal ctermbg=none ctermfg=white guibg=none'
