@@ -27,7 +27,7 @@ o.hidden = true
 o.cmdheight = 2
 --set encoding=utf-8
 o.mouse = 'a'
-if vim.g.neovide then
+if g.neovide then
 	-- Put anything you want to happen only in Neovide here
 	o.guifont = 'Iosevka Nerd Font:h14'
 	g.neovide_cursor_animation_length = 0
@@ -186,7 +186,7 @@ o.secure = true
 local install_path = fn.stdpath('data') .. '/site/pack/packer/opt/packer.nvim'
 local first_time_packer = false
 
-if fn.empty(vim.fn.glob(install_path)) > 0 then
+if fn.empty(fn.glob(install_path)) > 0 then
 	execute('!git clone https://github.com/wbthomason/packer.nvim ' .. install_path)
 	first_time_packer = true
 end
@@ -228,7 +228,6 @@ require('packer').startup({
 		use {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
-			"mfussenegger/nvim-dap",
 			"neovim/nvim-lspconfig",
 			run = ":MasonUpdate" -- :MasonUpdate updates registry contents
 		}
@@ -237,8 +236,12 @@ require('packer').startup({
 		use {
 			'ray-x/navigator.lua',
 			requires = {
-				{ 'ray-x/guihua.lua',     run = 'cd lua/fzy && make' },
+				{
+					'ray-x/guihua.lua',
+					run = 'cd lua/fzy && make',
+				},
 				{ 'neovim/nvim-lspconfig' },
+				{ "nvim-treesitter/nvim-treesitter" },
 			},
 		}
 		-- Linters
@@ -247,6 +250,30 @@ require('packer').startup({
 			requires = {
 				"nvimdev/guard-collection",
 			},
+		}
+		-- Debugger
+		use {
+			"rcarriga/nvim-dap-ui",
+			requires = {
+				"mfussenegger/nvim-dap",
+				"nvim-neotest/nvim-nio",
+			},
+			config = function()
+				local dap, dapui = require("dap"), require("dapui")
+				dap.listeners.before.attach.dapui_config = function()
+					dapui.open()
+				end
+				dap.listeners.before.launch.dapui_config = function()
+					dapui.open()
+				end
+				dap.listeners.before.event_terminated.dapui_config = function()
+					dapui.close()
+				end
+				dap.listeners.before.event_exited.dapui_config = function()
+					dapui.close()
+				end
+				dapui.setup()
+			end,
 		}
 		-- AI code completion
 		-- Tabnine
@@ -269,25 +296,37 @@ require('packer').startup({
 		--  end
 		--}
 		-- Github Copilot
-		use {
-			"zbirenbaum/copilot.lua",
-			cmd = "Copilot",
-			event = "InsertEnter",
-			config = function()
-				require("copilot").setup({})
-			end,
-		}
-		---- TODO: Self-hosted LLM backend
-		--use({
-		--  "olimorris/codecompanion.nvim",
+		--use {
+		--  "zbirenbaum/copilot.lua",
+		--  cmd = "Copilot",
+		--  event = "InsertEnter",
 		--  config = function()
-		--    require("codecompanion").setup()
+		--    require("copilot").setup({})
 		--  end,
-		--  requires = {
-		--    "nvim-lua/plenary.nvim",
-		--    "nvim-treesitter/nvim-treesitter",
-		--  }
-		--})
+		--}
+		---- TODO: Self-hosted LLM backend
+		use({
+			"olimorris/codecompanion.nvim",
+			config = function()
+				require("codecompanion").setup({
+					adapters = {
+						groq = function()
+							return require('codecompanion.adapters').extend('openai_compatible', {
+								name = 'groq',
+								env = {
+									api_key = "GROQ_API_KEY",
+									url = "https://api.groq.com/openai",
+								},
+							})
+						end,
+					},
+				})
+			end,
+			requires = {
+				"nvim-lua/plenary.nvim",
+				"nvim-treesitter/nvim-treesitter",
+			}
+		})
 		-- Completion engine plugin for neovim written in Lua
 		use {
 			'hrsh7th/nvim-cmp',
@@ -301,13 +340,13 @@ require('packer').startup({
 				'FelipeLema/cmp-async-path',
 			}
 		}
-		use {
-			"zbirenbaum/copilot-cmp",
-			after = { "copilot.lua" },
-			config = function()
-				require("copilot_cmp").setup()
-			end
-		}
+		--use {
+		--  "zbirenbaum/copilot-cmp",
+		--  after = { "copilot.lua" },
+		--  config = function()
+		--    require("copilot_cmp").setup()
+		--  end
+		--}
 		-- Add surrounding brackets, quotes, xml tags,...
 		use 'tpope/vim-surround'
 		-- Extended matching for the % operator
@@ -318,7 +357,7 @@ require('packer').startup({
 		--use 'terryma/vim-multiple-cursors'
 		-- Edit a region in new buffer
 		use 'chrisbra/NrrwRgn'
-		-- Run shell command asynchromously
+		-- Run shell command asynchronously
 		use 'skywind3000/asyncrun.vim'
 		-- REPL alike
 		use 'thinca/vim-quickrun'
@@ -360,9 +399,33 @@ require('packer').startup({
 		-- Highlight using language servers
 		use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
 		use { 'nvim-treesitter/nvim-treesitter-refactor' }
+		-- Render preview for Markdown/HTML/Latex
+		--use {
+		--  "OXY2DEV/markview.nvim",
+		--  requires = {
+		--    { "nvim-treesitter/nvim-treesitter" },
+		--    { "nvim-tree/nvim-web-devicons" },
+		--  },
+		--  config = function()
+		--    require('markview').setup({
+		--      initial_state = false,
+		--      --hybrid_modes = { 'n' }
+		--    })
+		--  end,
+		--}
+		use({
+			'MeanderingProgrammer/render-markdown.nvim',
+			after = { 'nvim-treesitter' },
+			requires = { 'echasnovski/mini.nvim', opt = true }, -- if you use the mini.nvim suite
+			-- requires = { 'echasnovski/mini.icons', opt = true }, -- if you use standalone mini plugins
+			-- requires = { 'nvim-tree/nvim-web-devicons', opt = true }, -- if you prefer nvim-web-devicons
+			config = function()
+				require('render-markdown').setup({})
+			end,
+		})
 		-- Detect file encoding
 		use 's3rvac/AutoFenc'
-		-- Indent line
+		-- Indent line for code wrapping
 		use 'Yggdroot/indentLine'
 		-- Theme
 		use 'morhetz/gruvbox'
@@ -676,26 +739,30 @@ require('packer').startup({
 				'yamlls',
 			},
 			--automatic_installation = true,
+			handlers = {
+				-- The first entry (without a key) will be the default handler
+				-- and will be called for each installed server that doesn't have
+				-- a dedicated handler.
+				function(server_name) -- default handler (optional)
+					-- Prevent some LSP servers from autostart
+					local no_autostart = { 'deno', 'denols' }
+					require("lspconfig")[server_name].setup {
+						autostart = not no_autostart[server_name],
+						single_file_support = true,
+						-- advertise capabilities to language servers.
+						capabilities = capabilities,
+					}
+				end,
+				-- Next, you can provide a dedicated handler for specific servers.
+				-- For example, a handler override for the `rust_analyzer`:
+				["denols"] = function()
+					require("rust-tools").setup {}
+				end,
+			},
 		}
-		require("mason-lspconfig").setup_handlers {
-			-- The first entry (without a key) will be the default handler
-			-- and will be called for each installed server that doesn't have
-			-- a dedicated handler.
-			function(server_name) -- default handler (optional)
-				-- Prevent some LSP servers from autostart
-				local no_autostart = { 'deno', 'denols' }
-				require("lspconfig")[server_name].setup {
-					autostart = not no_autostart[server_name],
-					single_file_support = true,
-					-- advertise capabilities to language servers.
-					capabilities = capabilities,
-				}
-			end,
-			-- Next, you can provide a dedicated handler for specific servers.
-			-- For example, a handler override for the `rust_analyzer`:
-			["denols"] = function()
-				require("rust-tools").setup {}
-			end
+
+		require("navigator").setup {
+			mason = true,
 		}
 		----------------------------- End editor tooling manager
 	end,
