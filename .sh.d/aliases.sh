@@ -145,11 +145,28 @@ usable docker && \
         alias selenium-arm-docker='docker run --rm -d -p 4444:4444 --shm-size 2g --name selenium seleniarm/standalone-chromium'
     }
 
+usable pkgx && \
+    {
+        ## Advance devcontainer
+        alias devpod='pkgx devpod'
+        ## Bat
+        alias bat='pkgx bat'
+        ## Exa
+        alias exa='pkgx exa'
+    }
+
 # Node utilities
 usable npx && \
     {
         alias http-server='printf "%s\n" "$HTTP_SERVER_OPTIONS" | xargs npx http-server'
         alias remixd='npx @remix-project/remixd'
+        # Execute http files
+        alias httpyac='npx httpyac'
+    }
+
+usable python3 && \
+    {
+        alias py-http-server='python3 -m http.server'
     }
 
 # Find using ripgrep
@@ -308,14 +325,17 @@ alias update-cargo='usable cargo && cargo install --list | grep -o "^\S*" | xarg
 
 alias cargo-cross-install-armv6l='usable cargo && cargo install --target arm-unknown-linux-gnueabihf --root . '
 
+# use cargo binstall to install cargo binaries
+alias install-cargo-binstall='cargo install cargo-binstall'
+
 ################ Shell toolings ################
 
 ## Advanced shell
 alias install-nushell-cargo='cargo install --locked nu'
 alias install-nushell-npm='npm install -g nushell'
 
-## Smarter cd by using zeoxide
-alias install-zeoxide='curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh'
+## Smarter cd by using zoxide
+alias install-zoxide='curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh'
 
 ## Terminal multiplexer
 alias install-zellij-cargo='cargo install --locked zellij'

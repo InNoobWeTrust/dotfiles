@@ -365,7 +365,7 @@ The script should do this: \(ai.prompt)</string>
 	<key>Default Bookmark Guid</key>
 	<string>1E7BAED3-5833-4724-AAB4-62589FAF3E43</string>
 	<key>DisableTransparencyForKeyWindow</key>
-	<false/>
+	<true/>
 	<key>DoubleClickPerformsSmartSelection</key>
 	<true/>
 	<key>EnableAPIServer</key>

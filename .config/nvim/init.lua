@@ -204,17 +204,6 @@ local use = require('packer').use
 require('packer').startup({
 	function()
 		use { 'wbthomason/packer.nvim', opt = true }
-		-- Use devcontainer just like VsCode
-		use {
-			'esensar/nvim-dev-container',
-			requires = {
-				'nvim-treesitter/nvim-treesitter',
-			},
-			config = function()
-				require("devcontainer").setup({
-				})
-			end,
-		}
 		-- Fuzzy finder and file browser
 		use {
 			'nvim-telescope/telescope-project.nvim',

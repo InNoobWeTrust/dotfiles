@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-text="$(xsel -o)"
-translate="$(trans -b :vi $text)"
-echo -e "Original text:" "$text"'\n' > /tmp/notitrans
-echo "Translation:" "$translate" >> /tmp/notitrans
-zenity --text-info --title="Translation" --filename=/tmp/notitrans
