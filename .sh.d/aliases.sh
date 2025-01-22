@@ -162,6 +162,8 @@ usable npx && \
         alias remixd='npx @remix-project/remixd'
         # Execute http files
         alias httpyac='npx httpyac'
+        # run commands from markdown files
+        alias runme='npx runme'
     }
 
 usable python3 && \

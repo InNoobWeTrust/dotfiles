@@ -137,8 +137,8 @@
             "language": "HTML",
             "languages": [],
             "language_ids": {
-              "CSS": "css",
-              "HTML": "html"
+              "HTML": "html",
+              "CSS": "css"
             },
             "code_action_kinds": null
           }
@@ -255,6 +255,39 @@
           }
         },
         "language_servers": {},
+        "context_servers": {},
+        "slash_commands": {},
+        "indexed_docs_providers": {},
+        "snippets": null
+      },
+      "dev": false
+    },
+    "markdown-oxide": {
+      "manifest": {
+        "id": "markdown-oxide",
+        "name": "Markdown Oxide",
+        "version": "0.0.4",
+        "schema_version": 1,
+        "description": "Obsidian-Inspired PKM Language Server for Zed",
+        "repository": "https://github.com/Feel-ix-343/markdown-oxide",
+        "authors": [
+          "Felix Zeller <felixazeller@gmail.com>"
+        ],
+        "lib": {
+          "kind": "Rust",
+          "version": "0.0.4"
+        },
+        "themes": [],
+        "languages": [],
+        "grammars": {},
+        "language_servers": {
+          "markdown-oxide": {
+            "language": "Markdown",
+            "languages": [],
+            "language_ids": {},
+            "code_action_kinds": null
+          }
+        },
         "context_servers": {},
         "slash_commands": {},
         "indexed_docs_providers": {},
