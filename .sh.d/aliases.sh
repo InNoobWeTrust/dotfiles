@@ -153,6 +153,11 @@ usable pkgx && \
         alias bat='pkgx bat'
         ## Exa
         alias exa='pkgx exa'
+        ## System monitor
+        alias btm='pkgx btm'
+        ## Modern python package manager
+        alias uv='pkgx uv'
+        alias uvx='pkgx uvx'
     }
 
 # Node utilities
