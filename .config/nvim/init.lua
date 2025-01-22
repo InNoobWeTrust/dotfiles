@@ -1,18 +1,20 @@
 ---------------------------------------------------------------------- No-plugin
 
 ---------------------------------------------------- Aliases
-local execute = vim.api.nvim_command
-local opt     = vim.opt -- global
-local api     = vim.api -- access vim api
-local o       = vim.o   -- global
-local g       = vim.g   -- global for let options
-local wo      = vim.wo  -- window local
-local bo      = vim.bo  -- buffer local
-local fn      = vim.fn  -- access vim functions
-local cmd     = vim.cmd -- vim commands
-local win     = fn.has('win16') or fn.has('win32') or fn.has('win64')
-local linux   = fn.has('unix') and not fn.system('uname -s') == 'Darwin'
-local mac     = fn.has('unix') and fn.system('uname -s') == 'Darwin'
+local execute    = vim.api.nvim_command
+local opt        = vim.opt        -- global
+local api        = vim.api        -- access vim api
+local o          = vim.o          -- global
+local g          = vim.g          -- global for let options
+local wo         = vim.wo         -- window local
+local bo         = vim.bo         -- buffer local
+local fn         = vim.fn         -- access vim functions
+local cmd        = vim.cmd        -- vim commands
+local diagnostic = vim.diagnostic -- vim diagnostic
+local lsp        = vim.lsp        -- vim lsp
+local win        = fn.has('win16') or fn.has('win32') or fn.has('win64')
+local linux      = fn.has('unix') and not fn.system('uname -s') == 'Darwin'
+local mac        = fn.has('unix') and fn.system('uname -s') == 'Darwin'
 ------------------------------------------------ End aliases
 
 ---------------------------------------------------- General
@@ -236,6 +238,7 @@ require('packer').startup({
 		-- Linters
 		use {
 			"nvimdev/guard.nvim",
+			-- Builtin configuration, optional
 			requires = {
 				"nvimdev/guard-collection",
 			},
@@ -351,6 +354,14 @@ require('packer').startup({
 		-- REPL alike
 		use 'thinca/vim-quickrun'
 		g.quickrun_no_default_key_mappings = 1
+		-- Toggle terminal
+		use {
+			"akinsho/toggleterm.nvim",
+			tag = '*',
+			config = function()
+				require("toggleterm").setup()
+			end,
+		}
 		-- Text object per indent level
 		use { 'michaeljsmith/vim-indent-object', ft = { 'python' } }
 		-- Code commenting
@@ -553,9 +564,9 @@ require('packer').startup({
 		g.dart_style_guide = 2
 		g.dart_format_on_save = 0
 		-- Rust
-		g.rustfmt_autosave = 1
-		g.racer_experimental_completer = 1
-		g.racer_insert_paren = 1
+		g.rustfmt_autosave = 0
+		g.racer_experimental_completer = 0
+		g.racer_insert_paren = 0
 		if win then
 			g.rust_clip_command = 'win32yank'
 		elseif linux then
@@ -569,6 +580,11 @@ require('packer').startup({
 		-- navigator.lua
 		require 'navigator'.setup({
 			mason = true,
+			lsp = {
+				diagnostic = {
+					virtual_text = false,
+				},
+			},
 		})
 		--- coc.nvim
 		--require('coc')
@@ -596,6 +612,10 @@ require('packer').startup({
 		------------------------------------------------- Linter
 		local ft = require('guard.filetype')
 
+		-- Codespell
+		if fn.executable('codespell') == 1 then
+			ft('*'):lint('codespell')
+		end
 		-- Format c, cpp, cs, java, cuda, proto
 		if fn.executable('clang-format') == 1 then
 			ft('c,cpp,cs,java,cuda,proto'):fmt('clang-format')
@@ -633,12 +653,18 @@ require('packer').startup({
 		end
 
 		-- Call setup() LAST!
+		-- change this anywhere in your config (or not), these are the defaults
 		g.guard_config = {
-			-- the only options for the setup function
-			fmt_on_save = true,
-			-- Use lsp if no formatter was defined for this filetype
-			lsp_as_default_formatter = true,
+			-- format on write to buffer
+			fmt_on_save = false,
+			-- use lsp if no formatter was defined for this filetype
+			lsp_as_default_formatter = false,
+			-- whether or not to save the buffer after formatting
 			save_on_fmt = false,
+			-- automatic linting
+			auto_lint = false,
+			-- how frequently can linters be called
+			lint_interval = 500
 		}
 		--------------------------------------------- End linter
 
@@ -720,7 +746,6 @@ require('packer').startup({
 				'ts_ls',
 				'lua_ls',
 				'pyright',
-				'rust_analyzer',
 				'sqlls',
 				'stylelint_lsp',
 				'tailwindcss',
@@ -735,15 +760,30 @@ require('packer').startup({
 				function(server_name) -- default handler (optional)
 					-- Prevent some LSP servers from autostart
 					local no_autostart = { 'deno', 'denols' }
+					local no_single_file_support = { 'rust_analyzer' }
 					require("lspconfig")[server_name].setup {
 						autostart = not no_autostart[server_name],
-						single_file_support = true,
+						single_file_support = not no_single_file_support[server_name],
 						-- advertise capabilities to language servers.
 						capabilities = capabilities,
 					}
 				end,
 				-- Next, you can provide a dedicated handler for specific servers.
 				-- For example, a handler override for the `rust_analyzer`:
+				["rust_analyzer"] = function()
+					require('lspconfig').rust_analyzer.setup {
+						settings = {
+							['rust-analyzer'] = {
+								checkOnSave = {
+									enable = false,
+								},
+								diagnostics = {
+									enable = false,
+								}
+							}
+						}
+					}
+				end,
 				["denols"] = function()
 					require("rust-tools").setup {}
 				end,
@@ -753,7 +793,69 @@ require('packer').startup({
 		require("navigator").setup {
 			mason = true,
 		}
+
+		-- Setup LSP servers not included by default in navigator.lua
+		require("lspconfig").bacon_ls.setup({
+			init_options = {
+				updateOnSave = false,
+				updateOnSaveWaitMillis = 1000,
+				updateOnChange = true,
+			}
+		})
+		-- Show line diagnostics automatically in hover window
+		--o.updatetime = 250
+		--cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+
 		----------------------------- End editor tooling manager
+
+		----------------------------------------- Terminal tools
+		local Terminal = require('toggleterm.terminal').Terminal
+
+		-- Floating term
+		api.nvim_create_user_command(
+			'FloatTerm',
+			function()
+				cmd [[ ToggleTerm direction='float' ]]
+			end,
+			{ nargs = 0 }
+		)
+
+		-- Cli tools
+		if fn.executable("pkgx") then
+			local lazygit = Terminal:new({ cmd = "pkgx lazygit", direction = 'float', hidden = true })
+			local lazydocker = Terminal:new({ cmd = "pkgx lazydocker", direction = 'float', hidden = true })
+			local btm = Terminal:new({ cmd = "pkgx btm", direction = 'float', hidden = true })
+
+			api.nvim_create_user_command(
+				'Lazygit',
+				function()
+					if lazygit then
+						lazygit:toggle()
+					end
+				end,
+				{ nargs = 0 }
+			)
+			api.nvim_create_user_command(
+				'Lazydocker',
+				function()
+					if lazydocker then
+						lazydocker:toggle()
+					end
+				end,
+				{ nargs = 0 }
+			)
+			api.nvim_create_user_command(
+				'Btm',
+				function()
+					if btm then
+						btm:toggle()
+					end
+				end,
+				{ nargs = 0 }
+			)
+		end
+
+		------------------------------------- End terminal tools
 	end,
 	config = {
 		git = {
