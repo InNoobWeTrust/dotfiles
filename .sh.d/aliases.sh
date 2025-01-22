@@ -148,24 +148,42 @@ usable docker && \
 usable pkgx && \
     {
         ## Advance devcontainer
-        alias devpod='pkgx devpod'
+        if ! usable devpod; then
+            alias devpod='pkgx devpod'
+        fi
         ## Terminal multiplexer
-        alias zellij='pkgx zellij'
+        if ! usable zellij; then
+            alias zellij='pkgx zellij'
+        fi
         ## Code editors
-        alias nvim='pkgx nvim'
-        alias hx='pkgx hx'
+        if ! usable nvim; then
+            alias nvim='pkgx nvim'
+        fi
+        if ! usable hx; then
+            alias hx='pkgx hx'
+        fi
         ## Text document viewer
-        alias bat='pkgx bat'
+        if ! usable bat; then
+            alias bat='pkgx bat'
+        fi
         ## Listing files
-        alias exa='pkgx exa'
+        if ! usable exa; then
+            alias exa='pkgx exa'
+        fi
         ## System monitor
-        alias btm='pkgx btm'
+        if ! usable btm; then
+            alias btm='pkgx btm'
+        fi
         ## Modern python package manager
-        alias uv='pkgx uv'
-        alias uvx='pkgx uvx'
+        if ! usable uv; then
+            alias uv='pkgx uv'
+            alias uvx='pkgx uvx'
+        fi
         ## Nodejs package manager
-        alias npm='pkgx npm'
-        alias npx='pkgx npx'
+        if ! usable npm; then
+            alias npm='pkgx npm'
+            alias npx='pkgx npx'
+        fi
     }
 
 # Node utilities
