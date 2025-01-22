@@ -101,9 +101,9 @@ usable git && \
 # MicroK8s
 usable microk8s && \
     {
-        alias mkctl='microk8s kubectl'
+        alias microk8s-kubectl='microk8s kubectl'
         # Selenium chromium on ARM
-        alias selenium-arm-mircrok8s='mkctl run selenium --image=seleniarm/standalone-chromium --port=4444 && mkctl expose pod selenium --type NodePort --port 4444 --target-port 4444'
+        alias selenium-arm-mircrok8s='microk8s-kubectl run selenium --image=seleniarm/standalone-chromium --port=4444 && mkctl expose pod selenium --type NodePort --port 4444 --target-port 4444'
     }
 
 # Colima (container runtime on Mac/Linux with minimal setup)
@@ -149,21 +149,29 @@ usable pkgx && \
     {
         ## Advance devcontainer
         alias devpod='pkgx devpod'
-        ## Bat
+        ## Terminal multiplexer
+        alias zellij='pkgx zellij'
+        ## Code editors
+        alias nvim='pkgx nvim'
+        alias hx='pkgx hx'
+        ## Text document viewer
         alias bat='pkgx bat'
-        ## Exa
+        ## Listing files
         alias exa='pkgx exa'
         ## System monitor
         alias btm='pkgx btm'
         ## Modern python package manager
         alias uv='pkgx uv'
         alias uvx='pkgx uvx'
+        ## Nodejs package manager
+        alias npm='pkgx npm'
+        alias npx='pkgx npx'
     }
 
 # Node utilities
 usable npx && \
     {
-        alias http-server='printf "%s\n" "$HTTP_SERVER_OPTIONS" | xargs npx http-server'
+        alias http-server='npx http-server'
         alias remixd='npx @remix-project/remixd'
         # Execute http files
         alias httpyac='npx httpyac'

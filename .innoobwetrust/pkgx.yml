@@ -1,0 +1,4 @@
+dependencies:
+  neovim.io: ^0.10
+  hx: ^25
+  zellij: ^0.40

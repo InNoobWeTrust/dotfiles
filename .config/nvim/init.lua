@@ -797,7 +797,7 @@ require('packer').startup({
 		-- Setup LSP servers not included by default in navigator.lua
 		require("lspconfig").bacon_ls.setup({
 			init_options = {
-				updateOnSave = false,
+				updateOnSave = true,
 				updateOnSaveWaitMillis = 1000,
 				updateOnChange = true,
 			}

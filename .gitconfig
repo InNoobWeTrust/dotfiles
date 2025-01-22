@@ -16,12 +16,12 @@
 ;  insteadOf = https://github.com/
 
 [includeIf "gitdir:~/Developer/"]
-  path = ~/.weeaboo.gitconfig
+  path = ~/.gitconfig.d/.weeaboo.gitconfig
 [includeIf "gitdir:~/Developer/InNoobWeTrust/"]
-  path = ~/.nerd.gitconfig
+  path = ~/.gitconfig.d/.nerd.gitconfig
 [includeIf "gitdir:~/Developer/tokoinofficial/"]
-  path = ~/.work.gitconfig
+  path = ~/.gitconfig.d/.work.gitconfig
 [includeIf "gitdir:~/Developer/homebrew-research/"]
-  path = ~/.work.gitconfig
+  path = ~/.gitconfig.d/.work.gitconfig
 [includeIf "gitdir:~/Developer/rex/"]
-  path = ~/.work.collab.gitconfig
+  path = ~/.gitconfig.d/.work.collab.gitconfig
