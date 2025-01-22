@@ -1,0 +1,22 @@
+contexts:
+  default:
+    defaultIde: none
+    defaultProvider: docker
+    options:
+      DOTFILES_SCRIPT:
+        userProvided: true
+        value: bootstrap.sh
+      DOTFILES_URL:
+        userProvided: true
+        value: https://github.com/InNoobWeTrust/dotfiles
+    providers:
+      docker:
+        creationTimestamp: "2025-01-21T22:10:39Z"
+        initialized: true
+        options:
+          DOCKER_BUILDER: {}
+          DOCKER_HOST: {}
+          DOCKER_PATH:
+            value: docker
+          INACTIVITY_TIMEOUT: {}
+defaultContext: default
