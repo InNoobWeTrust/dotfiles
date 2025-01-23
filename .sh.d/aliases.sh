@@ -184,6 +184,10 @@ usable pkgx && \
             alias npm='pkgx npm'
             alias npx='pkgx npx'
         fi
+        ## Jupyter notebook
+        if ! usabel jupyter; then
+            alias jupyter='pkgx jupyter'
+        fi
     }
 
 # Node utilities
@@ -360,6 +364,9 @@ alias cargo-cross-install-armv6l='usable cargo && cargo install --target arm-unk
 
 # use cargo binstall to install cargo binaries
 alias install-cargo-binstall='cargo install cargo-binstall'
+
+# Jupyer kernel for Rust language
+alias install-evcxr='(command -v cargo-binstall && cargo binstall evcxr_jupyter || cargo install --locked evcxr_jupyter) && evcxr_jupyter --install'
 
 ################ Shell toolings ################
 
