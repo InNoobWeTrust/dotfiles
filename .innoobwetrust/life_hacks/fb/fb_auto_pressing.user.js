@@ -3,8 +3,8 @@
 // @namespace    all
 // @version      2024-02-06
 // @description  Auto pressing assholes on FB
-// @downloadURL  https://github.com/InNoobWeTrust/dotfiles/raw/master/life_hacks/fb/fb_auto_pressing.js
-// @updateURL    https://github.com/InNoobWeTrust/dotfiles/raw/master/life_hacks/fb/fb_auto_pressing.js
+// @downloadURL  https://github.com/InNoobWeTrust/dotfiles/raw/master/.innoobwetrust/life_hacks/fb/fb_auto_pressing.user.js
+// @updateURL    https://github.com/InNoobWeTrust/dotfiles/raw/master/.innoobwetrust/life_hacks/fb/fb_auto_pressing.user.js
 // @require      https://cdn.jsdelivr.net/npm/eruda
 // @match        https://*.facebook.com/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
@@ -12,13 +12,13 @@
 // ==/UserScript==
 
 Object.defineProperty(Array.prototype, "sample", {
-  value: function () {
+  value: function() {
     const idx = Math.floor(Math.random() * (this.length + 1));
     return [...this][idx];
   },
 });
 Object.defineProperty(Array.prototype, "inspectEach", {
-  value: function (fn) {
+  value: function(fn) {
     this.forEach(fn);
     return this;
   },

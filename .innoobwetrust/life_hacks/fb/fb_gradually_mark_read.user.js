@@ -3,8 +3,8 @@
 // @namespace    all
 // @version      2024-10-13
 // @description  Mark stubborn FB notifications as read
-// @downloadURL  https://github.com/InNoobWeTrust/dotfiles/raw/master/life_hacks/fb/fb_gradually_mark_read.js
-// @updateURL    https://github.com/InNoobWeTrust/dotfiles/raw/master/life_hacks/fb/fb_gradually_mark_read.js
+// @downloadURL  https://github.com/InNoobWeTrust/dotfiles/raw/master/.innoobwetrust/life_hacks/fb/fb_gradually_mark_read.user.js
+// @updateURL    https://github.com/InNoobWeTrust/dotfiles/raw/master/.innoobwetrust/life_hacks/fb/fb_gradually_mark_read.user.js
 // @match        https://*.facebook.com/notifications
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
@@ -28,6 +28,13 @@ const mark_read = async () => {
       await new Promise(res => setTimeout(res, 500))
     }
     cnt++
+    if (cnt % 10 === 0) {
+      if (window.hasOwnProperty('scrollByPages')) {
+        window.scrollByPages(2)
+      } else if (window.hasOwnProperty('scrollBy')) {
+        window.scrollBy(0, 1080)
+      }
+    }
     lst = [...document.querySelectorAll('div[aria-label=Notifications] div[role=row] div[role=button]')]
   }
 };

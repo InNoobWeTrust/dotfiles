@@ -12,7 +12,7 @@ import winston from "winston";
 import fs from "node:fs/promises";
 
 const CONFIG = process.env.CONFIG || "./config.yml";
-const SCRIPT = process.env.SCRIPT || "./fb_auto_pressing.js";
+const SCRIPT = process.env.SCRIPT || "./fb_auto_pressing.user.js";
 const LOGLEVEL = process.env.LOGLEVEL || "info";
 const CHECKPOINT = process.env.CHECKPOINT || "./checkpoint.txt";
 const CRON = process.env.CRON || false;
