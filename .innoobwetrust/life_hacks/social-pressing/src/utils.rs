@@ -1,7 +1,7 @@
 use core::time::Duration;
 use std::thread;
 
-use log::debug;
+use tracing::{debug, instrument};
 
 pub(crate) fn rand_delay_duration() -> Duration {
     let millis = (rand::random::<usize>() % 3 + 2) * 1000 + (rand::random::<usize>() % 1000 + 1); // Max 5s
@@ -10,6 +10,7 @@ pub(crate) fn rand_delay_duration() -> Duration {
     millis
 }
 
+#[instrument]
 pub(crate) fn delay(duration: Option<Duration>) {
     let duration = duration.unwrap_or_else(|| rand_delay_duration());
     let duration_str = humantime::format_duration(duration);

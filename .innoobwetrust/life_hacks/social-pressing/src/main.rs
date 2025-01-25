@@ -6,11 +6,11 @@ mod tiktok;
 mod utils;
 
 use clap::Parser;
+use core::fmt::Debug;
 use core::future::Future;
 use core::time::Duration;
 use fantoccini::cookies::Cookie;
 use fantoccini::error::CmdError;
-use log::{debug, error, info, warn};
 use rand::seq::SliceRandom;
 use serde::Deserialize;
 use std::collections::HashSet;
@@ -18,11 +18,14 @@ use std::error::Error;
 use std::fs;
 use std::time::Instant;
 use tokio::time::timeout;
+use tracing::{debug, error, info, instrument, warn};
+use tracing_futures::Instrument;
 use url::Url;
 
 use crate::driver::login;
 use crate::utils::delay;
 
+#[instrument]
 fn read_lines(filename: &str) -> Vec<String> {
     // Read the file line by line, and return an iterator of the lines of the file.
     fs::read_to_string(filename)
@@ -33,8 +36,8 @@ fn read_lines(filename: &str) -> Vec<String> {
         .collect::<Vec<_>>()
 }
 
-async fn report_step(
-    reporter: impl Future<Output = Result<bool, CmdError>>,
+async fn report_step<F>(
+    reporter: F,
     domain: constants::Domain,
     target: &str,
     comment: &str,
@@ -43,9 +46,12 @@ async fn report_step(
     limitation_status: &mut HashSet<constants::Domain>,
     success_lst: &mut Vec<(String, String)>,
     failure_lst: &mut Vec<(String, String, String, String)>,
-) -> Result<bool, CmdError> {
+) -> Result<bool, CmdError>
+where
+    F: Future<Output = Result<bool, CmdError>>,
+{
     if limitation_status.contains(&domain) {
-        info!("{domain} is temporarily limited, skipping {target} <{comment}>");
+        info!(%domain, %target, %comment, "temporarily limited, skipping");
         failure_lst.push((
             target.to_string(),
             comment.to_string(),
@@ -55,7 +61,7 @@ async fn report_step(
         return Ok(true);
     }
 
-    info!(target: domain.to_string().as_str(), "Pressing on {domain} for {target} <{comment}>...");
+    info!(%domain, %target, %comment, "Pressing...");
 
     match timeout(wait, reporter).await {
         Ok(Ok(is_temporary_limited)) => {
@@ -67,7 +73,7 @@ async fn report_step(
             delay(Some(Duration::from_secs(start.elapsed().as_secs() % 30)));
         }
         Ok(Err(e)) => {
-            error!(target: domain.to_string().as_str(), "Reporting failed for {target} <{comment}>, error: {e:?}");
+            error!(%domain, %target, %comment, error = %e, "Reporting failed");
             failure_lst.push((
                 target.to_string(),
                 comment.to_string(),
@@ -76,7 +82,8 @@ async fn report_step(
             ));
         }
         Err(e) => {
-            error!(target: domain.to_string().as_str(), "Reporting timeout for {target} <{comment}>, allowed duration: {wait:?}");
+            let wait_str = humantime::format_duration(wait).to_string();
+            error!(%domain, %target, %comment, error= %e, allowed_duration = %wait_str, "Reporting timeout");
             failure_lst.push((
                 target.to_string(),
                 comment.to_string(),
@@ -117,7 +124,7 @@ async fn report(
                 domain = d;
             }
             Err(e) => {
-                error!(target: "login", "Login failed before pressing {target} <{comment}>, error: {e:?}");
+                error!(%target, %comment, error = %e, "Login failed before pressing");
                 failure_lst.push((
                     target.to_string(),
                     comment.to_string(),
@@ -132,7 +139,7 @@ async fn report(
                 delay(None);
             }
             Err(e) => {
-                error!(target: domain.to_string().as_str(), "Failed to go to {target} <{comment}>, error: {e:?}");
+                error!(%domain, %target, %comment, error = %e, "Failed to navigate");
                 failure_lst.push((
                     target.to_string(),
                     comment.to_string(),
@@ -146,7 +153,7 @@ async fn report(
         let pressing_start = Instant::now();
         match domain {
             constants::Domain::Facebook => match report_step(
-                fb::report(&client, &target),
+                fb::report(&client, &target).instrument(tracing::info_span!("fb::report")),
                 domain,
                 target,
                 comment,
@@ -163,7 +170,8 @@ async fn report(
             },
 
             constants::Domain::Instagram => match report_step(
-                instagram::report(&client, &target),
+                instagram::report(&client, &target)
+                    .instrument(tracing::info_span!("instagram::report")),
                 domain,
                 target,
                 comment,
@@ -180,7 +188,7 @@ async fn report(
             },
 
             constants::Domain::TikTok => match report_step(
-                tiktok::report(&client, &target),
+                tiktok::report(&client, &target).instrument(tracing::info_span!("tiktok::report")),
                 domain,
                 target,
                 comment,
@@ -199,32 +207,28 @@ async fn report(
 
         let elapsed = pressing_start.elapsed();
         let elapsed_str = humantime::format_duration(elapsed);
-        info!(target: "report", "Took: {elapsed_str}");
+        info!(elapsed = %elapsed_str);
 
         if let Some(limit) = time_limit {
             let limit_str = humantime::format_duration(*limit);
             let elapsed_total = start.elapsed();
             let elapsed_total_str = humantime::format_duration(elapsed_total);
             if elapsed_total > *limit {
-                warn!(target: "report", "<{elapsed_total_str}> exceeded <{limit_str}>, stopping early...");
+                warn!(elapsed = %elapsed_total_str, limit = %limit_str, "time limit exceeded, stopping early...");
                 break;
             }
         }
     }
     if !success_lst.is_empty() {
-        info!("Success:");
-        for (target, comment) in &success_lst {
-            info!("  - {target} <{comment}>");
-        }
+        let success_lst_str = format!("{:?}", success_lst);
+        info!(list = %success_lst_str, "Success");
     }
     if !failure_lst.is_empty() {
-        info!("Failure:");
-        for (target, comment, reason, detail) in &failure_lst {
-            info!("  - {target} <{comment}>: {reason}: {detail}");
-        }
+        let failure_lst_str = format!("{:?}", failure_lst);
+        info!(list = %failure_lst_str, "Failure");
     }
     let total = humantime::format_duration(start.elapsed());
-    info!(target: "report", "Finished in {total}");
+    info!(total_elapsed = %total);
 
     client.close().await?;
 
@@ -259,8 +263,28 @@ struct Args {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug")).init();
+async fn run(
+    links: &Vec<String>,
+    cookies: &Vec<Cookie<'_>>,
+    wait: Duration,
+    time_limit: &Option<Duration>,
+) -> Result<(), Box<dyn Error>> {
+    let links_str = format!("{:?}", links);
+    let cookies_str = format!("{:?}", cookies);
+    let wait_time_str = humantime::format_duration(wait);
+    let time_limit_str = if let Some(time_limit) = time_limit {
+        humantime::format_duration(*time_limit).to_string()
+    } else {
+        "unlimited".into()
+    };
+    debug!(links = %links_str, cookies = %cookies_str, wait = %wait_time_str, time_limit = %time_limit_str);
+
+    report(&links, &cookies, wait, &time_limit).await
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
+    tracing_subscriber::fmt().init();
+
     let args = Args::parse();
     let link_file = args.file;
     let cookie_file = args.cookies;
@@ -288,10 +312,5 @@ async fn main() -> Result<(), Box<dyn Error>> {
         })
         .collect::<Vec<Cookie>>();
 
-    debug!("Targets: {links:#?}");
-    debug!("Cookies: {cookies:#?}");
-    debug!("Wait time: {wait:#?}");
-    debug!("Time limit: {time_limit:#?}");
-
-    report(&links, &cookies, wait, &time_limit).await
+    run(&links, &cookies, wait, &time_limit)
 }

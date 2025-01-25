@@ -110,7 +110,7 @@
       "manifest": {
         "id": "html",
         "name": "HTML",
-        "version": "0.1.4",
+        "version": "0.1.5",
         "schema_version": 1,
         "description": "HTML support.",
         "repository": "https://github.com/zed-industries/zed",
@@ -137,8 +137,8 @@
             "language": "HTML",
             "languages": [],
             "language_ids": {
-              "HTML": "html",
-              "CSS": "css"
+              "CSS": "css",
+              "HTML": "html"
             },
             "code_action_kinds": null
           }

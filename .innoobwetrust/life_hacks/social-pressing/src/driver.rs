@@ -6,7 +6,7 @@ use fantoccini::{
     error::CmdError,
     Client, ClientBuilder,
 };
-use log::warn;
+use tracing::{instrument, warn};
 
 use std::{collections::HashSet, env, error::Error};
 
@@ -15,6 +15,7 @@ use crate::{
     utils::{delay, rand_delay_duration},
 };
 
+#[instrument]
 pub async fn get_client() -> Result<Client, Box<dyn Error>> {
     let is_headless = !env::var("HEADFUL").is_ok();
     let capabilities = serde_json::json!({
@@ -47,6 +48,7 @@ pub async fn get_client() -> Result<Client, Box<dyn Error>> {
     Ok(client)
 }
 
+#[instrument]
 pub async fn login(
     client: &Client,
     cookies: &[Cookie<'_>],
@@ -92,6 +94,7 @@ pub async fn login(
     Ok(domain)
 }
 
+#[instrument]
 pub async fn mouse_move_to_element(client: &Client, el: &Element) -> Result<(), CmdError> {
     let mouse_move_to_element =
         MouseActions::new("mouse".into()).then(PointerAction::MoveToElement {
@@ -101,7 +104,7 @@ pub async fn mouse_move_to_element(client: &Client, el: &Element) -> Result<(), 
             y: 0,
         });
     if let Err(e) = client.perform_actions(mouse_move_to_element).await {
-        warn!("failed to move to element: {e}");
+        warn!(element = %e, "failed to move to element");
     }
 
     delay(Some(Duration::from_millis(250)));
@@ -109,6 +112,7 @@ pub async fn mouse_move_to_element(client: &Client, el: &Element) -> Result<(), 
     Ok(())
 }
 
+#[instrument]
 pub async fn perform_click(client: &Client, el: &Element) -> Result<(), CmdError> {
     //el.click().await?;
     client
@@ -118,6 +122,7 @@ pub async fn perform_click(client: &Client, el: &Element) -> Result<(), CmdError
     Ok(())
 }
 
+#[instrument]
 pub async fn mouse_scroll(
     client: &Client,
     x_offset: isize,

@@ -1,7 +1,7 @@
 use core::time::Duration;
 use fantoccini::{elements::Element, error::CmdError, Client, Locator};
-use log::{debug, error, info, warn};
 use rand::seq::SliceRandom;
+use tracing::{debug, error, info, warn};
 
 use crate::driver::{mouse_move_to_element, mouse_scroll, perform_click};
 use crate::utils::delay;
@@ -70,7 +70,7 @@ async fn report_process(
     target: &str,
     menu_btn: &Element,
 ) -> Result<bool, CmdError> {
-    debug!(target: target, "Clicking 'menu' button...");
+    debug!(%target, "Clicking 'menu' button...");
     perform_click(client, menu_btn).await?;
     delay(None);
 
@@ -81,7 +81,7 @@ async fn report_process(
     for item in menu_items {
         let item_text = item.text().await?;
         if item_text.to_lowercase().contains("report") {
-            debug!(target: target, "Clicking '{item_text}' button...");
+            debug!(%target, %item_text, "Clicking button...");
             perform_click(client, &item).await?;
             break;
         }
@@ -93,7 +93,7 @@ async fn report_process(
     }
 
     loop {
-        debug!(target: target, "Checking for report options...");
+        debug!(%target, "Checking for report options...");
         match client
             .find_all(Locator::Css(
                 r#"div[role="dialog"] div[role="listitem"] div[role="button"]"#,
@@ -125,14 +125,18 @@ async fn report_process(
                     filtered_reasons_str.push(reason_str);
                 }
                 if filtered_reasons.len() == 0 {
-                    debug!(target: target, "No valid report option, proceeding to submit...");
+                    debug!(%target, "No valid report option, proceeding to submit...");
                     break;
                 }
-                debug!(target: target, "Found: {filtered_reasons_str:?}");
+                {
+                    let fmt_filtered_reason_str = format!("{:?}", filtered_reasons_str);
+                    debug!(%target, filtered_reasons_str = fmt_filtered_reason_str, "Found");
+                }
                 // Picking reason
                 let chosen_report = filtered_reasons.choose(&mut rand::thread_rng()).unwrap();
                 let reason = chosen_report.text().await?;
-                info!(target: target, "Choosing reason {reason:?}...");
+                let reason_str = format!("{:?}", reason);
+                info!(%target, reason = %reason_str, "Choosing reason...");
                 mouse_move_to_element(client, chosen_report).await?;
                 perform_click(client, chosen_report).await?;
                 delay(None);
@@ -146,7 +150,8 @@ async fn report_process(
                     match client.find(Locator::Css(btn_css)).await {
                         Ok(btn) => {
                             let btn_text = btn.text().await?;
-                            debug!(target: target, "Clicking {btn_text}");
+                            let btn_text_str = format!("{:?}", btn_text);
+                            debug!(%target, btn_text = %btn_text_str, "Clicking");
                             mouse_move_to_element(client, &btn).await?;
                             perform_click(client, &btn).await?;
                             delay(None);
@@ -169,7 +174,7 @@ async fn report_process(
 
 pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
     if let Ok(_) = check_availability(client).await {
-        warn!(target: target, "User not found for {target}");
+        warn!(%target, "User not found");
         return Ok(false);
     }
     let account_report_btn = get_account_report_btn(client).await?;
@@ -180,13 +185,13 @@ pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
             }
         }
         Err(e) => {
-            error!(target: target, "{e}");
+            error!(%target, error = %e);
         }
     }
 
     let posts_report_btn = get_posts_report_btns(client).await;
     if let Err(e) = posts_report_btn {
-        warn!(target: target, "Found no post to report for {target}, error: {e}");
+        warn!(%target, error = %e, "Found no post to report");
         return Ok(false);
     }
     for menu_btn in posts_report_btn? {
@@ -197,7 +202,7 @@ pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
                 }
             }
             Err(e) => {
-                error!(target: target, "{e}");
+                error!(%target, error = %e);
             }
         }
     }

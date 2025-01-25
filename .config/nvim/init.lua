@@ -735,7 +735,6 @@ require('packer').startup({
 				'bashls',
 				'cssls',
 				'cssmodules_ls',
-				'diagnosticls',
 				'dockerls',
 				'docker_compose_language_service',
 				'emmet_ls',

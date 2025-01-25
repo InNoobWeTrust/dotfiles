@@ -1,7 +1,7 @@
 use core::time::Duration;
 use fantoccini::{elements::Element, error::CmdError, Client, Locator};
-use log::{debug, error, info, warn};
 use rand::seq::SliceRandom;
+use tracing::{debug, error, info, warn};
 
 use crate::driver::{mouse_move_to_element, perform_click};
 use crate::utils::delay;
@@ -87,23 +87,29 @@ async fn choose_report_option(client: &Client, target: &str) -> Result<bool, Cmd
             }
         }
         _ => {
-            warn!(target: target, "No report option found, proceeding to submit...");
+            warn!(
+                target = target,
+                "No report option found, proceeding to submit..."
+            );
             return Ok(true);
         }
     }
 
     if filtered_reasons.len() == 0 {
-        debug!(target: target, "No valid report option, proceeding to submit...");
+        debug!(
+            target = target,
+            "No valid report option, proceeding to submit..."
+        );
         return Ok(true);
     }
 
-    debug!(target: target, "Found: {filtered_reasons_str:?}");
+    debug!(target = target, "Found: {filtered_reasons_str:?}");
 
     // Picking reason
     let chosen_report = filtered_reasons.choose(&mut rand::thread_rng()).unwrap();
     let reason = chosen_report.text().await?;
 
-    info!(target: target, "Choosing reason {reason:?}...");
+    info!(target = target, "Choosing reason {reason:?}...");
 
     mouse_move_to_element(client, chosen_report).await?;
     perform_click(client, chosen_report).await?;
@@ -117,7 +123,7 @@ async fn report_process(
     target: &str,
     menu_btn: &Element,
 ) -> Result<bool, CmdError> {
-    debug!(target: target, "Clicking 'menu' button...");
+    debug!(target = target, "Clicking 'menu' button...");
     perform_click(client, menu_btn).await?;
     delay(None);
 
@@ -128,7 +134,7 @@ async fn report_process(
     for item in menu_items {
         let item_text = item.text().await?;
         if item_text.to_lowercase().contains("report") {
-            debug!(target: target, "Clicking '{item_text}' button...");
+            debug!(target = target, "Clicking '{item_text}' button...");
             perform_click(client, &item).await?;
             break;
         }
@@ -148,7 +154,7 @@ async fn report_process(
     for item in menu_items {
         let item_text = item.text().await?;
         if item_text.to_lowercase().contains("report account") {
-            debug!(target: target, "Clicking '{item_text}' button...");
+            debug!(target = target, "Clicking '{item_text}' button...");
             perform_click(client, &item).await?;
             break;
         }
@@ -159,7 +165,7 @@ async fn report_process(
         return Ok(true);
     }
 
-    debug!(target: target, "Checking for report options...");
+    debug!(target = target, "Checking for report options...");
     loop {
         match choose_report_option(client, target).await {
             Ok(is_done) => {
@@ -183,7 +189,7 @@ async fn report_process(
                         continue;
                     }
                     let btn_text = btn.text().await?;
-                    debug!(target: target, "Clicking {btn_text}");
+                    debug!(target = target, "Clicking {btn_text}");
                     mouse_move_to_element(client, &btn).await?;
                     perform_click(client, &btn).await?;
                     delay(None);
@@ -204,7 +210,7 @@ async fn report_process(
 pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
     let account_report_btn = get_account_report_btn(client).await;
     if let Err(e) = account_report_btn {
-        warn!(target: target, "User not found for {target}, error: {e}");
+        warn!(target = target, "User not found for {target}, error: {e}");
         return Ok(false);
     }
     match report_process(client, target, &account_report_btn?).await {
@@ -214,7 +220,7 @@ pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
             }
         }
         Err(e) => {
-            error!(target: target, "{e}");
+            error!(target = target, "{e}");
         }
     }
 
