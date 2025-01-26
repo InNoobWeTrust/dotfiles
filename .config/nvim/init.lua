@@ -583,6 +583,8 @@ require('packer').startup({
 			lsp = {
 				diagnostic = {
 					virtual_text = false,
+					underline = false,
+					signs = true,
 				},
 			},
 		})
