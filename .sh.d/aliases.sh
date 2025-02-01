@@ -157,7 +157,7 @@ usable pkgx && \
         fi
         ## Code editors
         if ! usable nvim; then
-            alias nvim='pkgx nvim'
+            alias nvim='pkgx +neovim.io nvim'
         fi
         if ! usable hx; then
             alias hx='pkgx hx'
