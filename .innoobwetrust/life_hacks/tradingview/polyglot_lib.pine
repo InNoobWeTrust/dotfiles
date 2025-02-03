@@ -6,6 +6,7 @@
 // @description TODO: add library description here
 library("polyglot_lib", overlay = false)
 import TradingView/ta/9
+import forbidden_gun/commonlib/4
 
 //===============================================================================
 // Constants
@@ -414,34 +415,59 @@ rli_low_color = input.color(color.new(color.red,25),'Low liquidity color',group 
 rli_high_color = input.color(color.new(color.teal,25),'High liquidity color',group = rli_grp)
 rli_gradient_bg_enable = input.bool(false,'Show gradient background',group = rli_grp)
 rli_gradient_bg_transparency = input.int(85,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
-rli_key_range_enable = input.bool(true, 'Highlight key ranges', group = rli_grp)
-rli_key_range_keep_last_n = input.int(3, 'Keep last n ranges', group = rli_grp)
 
 rli = relative_liquidity_index(rli_atr_len,rli_len)
 shifted_rli = rli - 50
 scaled_rli = shifted_rli * math.max(math.abs(trcd),math.abs(tr_sig)) / 50
 
 rli_atr = ta.atr(rli_atr_len)
-// If candle spread is more than 1.5 of last ATR, then it's considered key candle
-rli_candle_is_key = high - low >= 1.5 * rli_atr[1]
-var array<TfBarZonePlot> key_zones = array.new<TfBarZonePlot>(rli_key_range_keep_last_n, na)
 
 rli_color = color.from_gradient(rli,0,100,rli_low_color,rli_high_color)
 plot(rli_enable ? scaled_rli : na,'Scaled RLI',color = rli_color,linewidth = 2,force_overlay = false)
 
-if rli_key_range_enable and rli_candle_is_key
+bgcolor(rli_enable and rli_gradient_bg_enable ? color.new(rli_color,rli_gradient_bg_transparency) : color(na),force_overlay = true)
+
+// Key range
+//-------------------------------------------------------------------------------
+key_range_grp = 'Key range'
+key_range_enable = input.bool(true, 'Enable', group = key_range_grp)
+key_range_atr_len = input.int(34, 'base ATR length', group = key_range_grp)
+key_range_threshold = input.float(2.618, 'ATR mult',group = key_range_grp)
+key_range_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1,group = key_range_grp)
+key_range_plot_last = input.int(3, 'Plot last', minval=0, group = key_range_grp)
+key_range_gradient_inline = 'Key range gradient'
+key_range_gradient_low = input.color(color.new(color.red, 90), key_range_gradient_inline, group = key_range_grp, inline = key_range_gradient_inline)
+key_range_gradient_high = input.color(color.new(color.teal, 90), '', group = key_range_grp, inline = key_range_gradient_inline)
+
+var array<TfBarZone> key_zones = array.new<TfBarZone>(key_range_plot_last, na)
+var array<TfBarZonePlot> key_zones_plt = array.new<TfBarZonePlot>(key_range_plot_last, na)
+
+key_range_atr = ta.atr(key_range_atr_len)
+key_range_candle_spread_mult = (high - low) / key_range_atr[1]
+candle_is_key = key_range_candle_spread_mult >= key_range_threshold and commonlib.bar_body_percent() >= key_range_body_percent
+
+if candle_is_key and key_range_plot_last > 0
 	// Remove old plots
-	while key_zones.size() >= rli_key_range_keep_last_n
-		oldest_zone_plt = key_zones.shift()
-		if not na(oldest_zone_plt)
-			clear_tf_zone(oldest_zone_plt)
+	key_zones.shift()
+	oldest_zone_plt = key_zones_plt.shift()
+	if not na(oldest_zone_plt)
+		clear_tf_zone(oldest_zone_plt)
 
 	tf_secs = timeframe.in_seconds()
 	bar = TfBar.new(open, high, low, close, time, time_close)
 	bar_zone = TfBarZone.new(tf_secs, bar)
-	key_zones.push(plot_tf_zone(bar_zone, color.new(rli_color,rli_gradient_bg_transparency)))
+	key_zones.push(bar_zone)
 
-bgcolor(rli_enable and rli_gradient_bg_enable ? color.new(rli_color,rli_gradient_bg_transparency) : color(na),force_overlay = true)
+	clr = color.from_gradient(key_range_candle_spread_mult, 1.618, 4.236, key_range_gradient_low, key_range_gradient_high)
+	plt = plot_tf_zone(bar_zone, clr)
+	key_zones_plt.push(plt)
+
+key_levels = array.new<float>()
+for zone in key_zones
+	if not na(zone)
+		key_levels.push(zone.bar.l)
+		key_levels.push(zone.bar.h)
+key_levels.sort()
 
 // Biased candle
 //-------------------------------------------------------------------------------
@@ -662,9 +688,7 @@ for i = 0 to demand_supply_pivot_profile_bars - 1
 
 // Plot pivot profile
 if demand_supply_draw_pivot_profile and barstate.islast
-	pivot_profile_width = pivot_profile_hist.max()
-	pivot_profile_bar_index = bar_index + pivot_profile_width + demand_supply_pivot_profile_offset
-	pivot_scale_factor = pivot_profile_hist.range() / pivot_profile_width
+	pivot_profile_bar_index = bar_index + demand_supply_pivot_profile_offset
 	// pivot_hist_max_nth = pivot_profile_hist.max(1)
 	// pivot_hist_max_nth_price = pivot_profile_lowest + pivot_profile_delta / 2 * array.indexof(pivot_profile_hist,array.max(pivot_profile_hist,1))
 
@@ -676,7 +700,7 @@ if demand_supply_draw_pivot_profile and barstate.islast
 	for i = 0 to demand_supply_pivot_profile_bars - 1
 		profile_bar_avg = pivot_profile_lowest + pivot_profile_delta * i / 2.
 		hist_value = array.get(pivot_profile_hist,i)
-		l = line.new(x1 = pivot_profile_bar_index - hist_value,
+		l = line.new(x1 = pivot_profile_bar_index + hist_value,
 				 	 y1 = profile_bar_avg,
 				 	 x2 = pivot_profile_bar_index,
 				 	 y2 = profile_bar_avg,
@@ -711,19 +735,33 @@ pos_rli = relative_liquidity_index(index_atr_len,index_len)
 pos_rsi_high = pos_rsi > 60
 pos_rsi_low = pos_rsi < 40
 high_liquidity = pos_rli > 60
+high_spread = (high - low) / pos_atr[1] >= 1.618
 
-// Signal + liquidity + rsi swing range
-long_signal = position_enable and candle_rising and high_liquidity and pos_rsi_low
-short_signal = position_enable and candle_falling and high_liquidity and pos_rsi_high
+// Signal + liquidity + spread
+signal_filter = position_enable and high_spread
+long_signal = signal_filter and candle_rising
+short_signal = signal_filter and candle_falling
 
-nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,ghost_oversold_threshold))
-nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,ghost_overbought_threshold) - 1)
+nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,bbf_l))
+nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,bbf_u) - 1)
+if key_levels.size() > 0
+	// nearest_lower_pivot := key_levels.first()
+	// nearest_higher_pivot := key_levels.last()
+	max_range = 0.
+	for zone in key_zones
+		if na(zone)
+			continue
+		if zone.bar.h - zone.bar.l <= max_range
+			continue
+		max_range := zone.bar.h - zone.bar.l
+		nearest_lower_pivot := zone.bar.l
+		nearest_higher_pivot := zone.bar.h
 
-sl = long_signal ? low - 1.5 * pos_atr : short_signal ? high + 1.5 * pos_atr : na
+sl = long_signal ? math.min(low - 1.5 * pos_atr, nearest_lower_pivot) : short_signal ? math.max(high + 1.5 * pos_atr, nearest_higher_pivot) : na
 tp = long_signal ? nearest_higher_pivot : short_signal ? nearest_lower_pivot : na
 
 rr = long_signal or short_signal ? (tp - close) / (close - sl) : na
-desired_winrate = 0.6
+desired_winrate = 0.5
 desired_rr = desired_winrate / (1 - desired_winrate)
 is_satisfactory_rr = math.abs(rr) >= desired_rr
 [lvrg,max_endurable_spread, _] = estimate_leverage(89,0.2,3)
