@@ -427,43 +427,46 @@ plot(rli_enable ? scaled_rli : na,'Scaled RLI',color = rli_color,linewidth = 2,f
 
 bgcolor(rli_enable and rli_gradient_bg_enable ? color.new(rli_color,rli_gradient_bg_transparency) : color(na),force_overlay = true)
 
-// Key range
+// Key gap
 //-------------------------------------------------------------------------------
-key_range_grp = 'Key range'
-key_range_enable = input.bool(true, 'Enable', group = key_range_grp)
-key_range_atr_len = input.int(34, 'base ATR length', group = key_range_grp)
-key_range_threshold = input.float(2.618, 'ATR mult',group = key_range_grp)
-key_range_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1,group = key_range_grp)
-key_range_plot_last = input.int(3, 'Plot last', minval=0, group = key_range_grp)
-key_range_gradient_inline = 'Key range gradient'
-key_range_gradient_low = input.color(color.new(color.red, 90), key_range_gradient_inline, group = key_range_grp, inline = key_range_gradient_inline)
-key_range_gradient_high = input.color(color.new(color.teal, 90), '', group = key_range_grp, inline = key_range_gradient_inline)
+key_gap_grp = '► Key gaps'
+key_gap_enable = input.bool(true, 'Enable', group = key_gap_grp)
+key_gap_atr_len = input.int(34, 'base ATR length', group = key_gap_grp)
+key_gap_threshold = input.float(2.618, 'ATR mult',group = key_gap_grp)
+key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1,group = key_gap_grp)
+key_gap_plot_last = input.int(3, 'Plot last', minval = 0, group = key_gap_grp)
+key_gap_gradient_inline = 'Key gap gradient'
+key_gap_gradient_low = input.color(color.new(color.red, 90), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
+key_gap_gradient_high = input.color(color.new(color.teal, 90), '', group = key_gap_grp, inline = key_gap_gradient_inline)
 
-var array<TfBarZone> key_zones = array.new<TfBarZone>(key_range_plot_last, na)
-var array<TfBarZonePlot> key_zones_plt = array.new<TfBarZonePlot>(key_range_plot_last, na)
+var array<TfBarZone> key_gaps = array.new<TfBarZone>(key_gap_plot_last, na)
+var array<TfBarZonePlot> key_gaps_plt = array.new<TfBarZonePlot>(key_gap_plot_last, na)
 
-key_range_atr = ta.atr(key_range_atr_len)
-key_range_candle_spread_mult = (high - low) / key_range_atr[1]
-candle_is_key = key_range_candle_spread_mult >= key_range_threshold and commonlib.bar_body_percent() >= key_range_body_percent
+key_gap_atr = ta.atr(key_gap_atr_len)
+key_gap_candle_spread_mult = (high - low) / key_gap_atr[1]
+candle_is_key = key_gap_candle_spread_mult >= key_gap_threshold and commonlib.bar_body_percent() >= key_gap_body_percent
 
-if candle_is_key and key_range_plot_last > 0
-	// Remove old plots
-	key_zones.shift()
-	oldest_zone_plt = key_zones_plt.shift()
-	if not na(oldest_zone_plt)
-		clear_tf_zone(oldest_zone_plt)
+if candle_is_key and key_gap_plot_last > 0
+	// Remove old gaps
+	key_gaps.shift()
 
 	tf_secs = timeframe.in_seconds()
 	bar = TfBar.new(open, high, low, close, time, time_close)
 	bar_zone = TfBarZone.new(tf_secs, bar)
-	key_zones.push(bar_zone)
+	key_gaps.push(bar_zone)
 
-	clr = color.from_gradient(key_range_candle_spread_mult, 1.618, 4.236, key_range_gradient_low, key_range_gradient_high)
-	plt = plot_tf_zone(bar_zone, clr)
-	key_zones_plt.push(plt)
+	if key_gap_enable
+		// Remove and clear old plots
+		oldest_zone_plt = key_gaps_plt.shift()
+		if not na(oldest_zone_plt)
+			clear_tf_zone(oldest_zone_plt)
+
+		clr = color.from_gradient(key_gap_candle_spread_mult, 1.618, 4.236, key_gap_gradient_low, key_gap_gradient_high)
+		plt = plot_tf_zone(bar_zone, clr)
+		key_gaps_plt.push(plt)
 
 key_levels = array.new<float>()
-for zone in key_zones
+for zone in key_gaps
 	if not na(zone)
 		key_levels.push(zone.bar.l)
 		key_levels.push(zone.bar.h)
@@ -748,7 +751,7 @@ if key_levels.size() > 0
 	// nearest_lower_pivot := key_levels.first()
 	// nearest_higher_pivot := key_levels.last()
 	max_range = 0.
-	for zone in key_zones
+	for zone in key_gaps
 		if na(zone)
 			continue
 		if zone.bar.h - zone.bar.l <= max_range
