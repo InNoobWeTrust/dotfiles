@@ -1,6 +1,6 @@
 use core::time::Duration;
 use fantoccini::{elements::Element, error::CmdError, Client, Locator};
-use rand::seq::SliceRandom;
+use rand::prelude::*;
 use tracing::{debug, error, info, warn};
 
 use crate::driver::{mouse_move_to_element, perform_click};
@@ -106,7 +106,7 @@ async fn choose_report_option(client: &Client, target: &str) -> Result<bool, Cmd
     debug!(target = target, "Found: {filtered_reasons_str:?}");
 
     // Picking reason
-    let chosen_report = filtered_reasons.choose(&mut rand::thread_rng()).unwrap();
+    let chosen_report = filtered_reasons.choose(&mut rand::rng()).unwrap();
     let reason = chosen_report.text().await?;
 
     info!(target = target, "Choosing reason {reason:?}...");
@@ -130,7 +130,7 @@ async fn report_process(
     let mut menu_items = client
         .find_all(Locator::Css(r#"div[role="dialog"] > button[tabindex="0"]"#))
         .await?;
-    menu_items.shuffle(&mut rand::thread_rng());
+    menu_items.shuffle(&mut rand::rng());
     for item in menu_items {
         let item_text = item.text().await?;
         if item_text.to_lowercase().contains("report") {
@@ -150,7 +150,7 @@ async fn report_process(
             r#"div[role="dialog"] div[role="list"] > button"#,
         ))
         .await?;
-    menu_items.shuffle(&mut rand::thread_rng());
+    menu_items.shuffle(&mut rand::rng());
     for item in menu_items {
         let item_text = item.text().await?;
         if item_text.to_lowercase().contains("report account") {

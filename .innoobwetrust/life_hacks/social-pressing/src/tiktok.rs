@@ -1,7 +1,7 @@
 use core::time::Duration;
 use fantoccini::{error::CmdError, Client, Locator};
 use futures::future;
-use rand::seq::SliceRandom;
+use rand::prelude::*;
 use tracing::{debug, info, warn};
 
 use crate::driver::{mouse_move_to_element, perform_click};
@@ -92,7 +92,7 @@ pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
                 }
                 // Picking reason
                 loop {
-                    let chosen_report = report_types.choose(&mut rand::thread_rng()).unwrap();
+                    let chosen_report = report_types.choose(&mut rand::rng()).unwrap();
                     let reason = chosen_report.text().await?;
                     if [
                         "Counterfeits and intellectual property",

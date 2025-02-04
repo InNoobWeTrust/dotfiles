@@ -11,7 +11,7 @@ clap = { version = "4.5.7", features = ["derive"] }
 fantoccini = "0.19.3"
 futures = "0.3.30"
 humantime = "2.1.0"
-rand = "0.8.5"
+rand = "0.9.0"
 serde = { version = "1.0.197", features = ["derive"] }
 serde_json = "1.0.114"
 tokio = { version = "1.36.0", features = ["full"] }

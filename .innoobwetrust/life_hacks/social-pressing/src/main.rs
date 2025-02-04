@@ -298,7 +298,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .into_iter()
         .filter(|l| Url::parse(l).is_ok())
         .collect::<Vec<_>>();
-    links.shuffle(&mut rand::thread_rng());
+    links.shuffle(&mut rand::rng());
 
     let cookies_raw_json = fs::read_to_string(cookie_file.to_owned())
         .expect(&format!("failed to read {}", cookie_file));
