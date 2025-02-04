@@ -8,7 +8,7 @@ use fantoccini::{
 };
 use tracing::{instrument, warn};
 
-use std::{collections::HashSet, env, error::Error};
+use std::{collections::HashSet, error::Error};
 
 use crate::{
     constants::Domain,
@@ -16,8 +16,7 @@ use crate::{
 };
 
 #[instrument]
-pub async fn get_client() -> Result<Client, Box<dyn Error>> {
-    let is_headless = !env::var("HEADFUL").is_ok();
+pub async fn get_client(headful: bool) -> Result<Client, Box<dyn Error>> {
     let capabilities = serde_json::json!({
         "browserName": "firefox",
         "setWindowRect": true,
@@ -26,7 +25,7 @@ pub async fn get_client() -> Result<Client, Box<dyn Error>> {
                 "intl.accept_languages": "en-GB"
             },
             "args": [
-                if is_headless { "--headless" } else { "" },
+                if headful { "" } else { "--headless" },
                 "--enable-automation=False",
                 "--disable-blink-features=AutomationControlled"
             ]

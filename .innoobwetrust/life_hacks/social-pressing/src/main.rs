@@ -18,17 +18,19 @@ use std::error::Error;
 use std::fs;
 use std::time::Instant;
 use tokio::time::timeout;
-use tracing::{debug, error, info, instrument, warn};
+use tracing::level_filters::LevelFilter;
+use tracing::{debug, error, info, instrument, warn, Level};
 use tracing_futures::Instrument;
+use tracing_subscriber::{fmt, prelude::*, Registry};
 use url::Url;
 
 use crate::driver::login;
 use crate::utils::delay;
 
 #[instrument]
-fn read_lines(filename: &str) -> Vec<String> {
+fn read_lines(filepath: &std::path::PathBuf) -> Vec<String> {
     // Read the file line by line, and return an iterator of the lines of the file.
-    fs::read_to_string(filename)
+    fs::read_to_string(filepath)
         .unwrap()
         .lines()
         .map(|l| l.to_owned())
@@ -96,14 +98,13 @@ where
     Ok(false)
 }
 
-async fn report(
-    links: &[String],
-    cookies: &[Cookie<'_>],
-    wait: Duration,
-    time_limit: &Option<Duration>,
-) -> Result<(), Box<dyn Error>> {
+async fn report(report_args: &ReportArgs<'_>) -> Result<(), Box<dyn Error>> {
+    let links = &report_args.links;
+    let cookies = &report_args.cookies;
+    let wait = report_args.wait;
+    let time_limit = report_args.time_limit;
     info!("Getting webdriver...");
-    let client = driver::get_client().await?;
+    let client = driver::get_client(report_args.headful).await?;
     info!("Starting...");
     let start = Instant::now();
     let mut login_status = HashSet::<constants::Domain>::new();
@@ -210,10 +211,10 @@ async fn report(
         info!(elapsed = %elapsed_str);
 
         if let Some(limit) = time_limit {
-            let limit_str = humantime::format_duration(*limit);
+            let limit_str = humantime::format_duration(limit);
             let elapsed_total = start.elapsed();
             let elapsed_total_str = humantime::format_duration(elapsed_total);
-            if elapsed_total > *limit {
+            if elapsed_total > limit {
                 warn!(elapsed = %elapsed_total_str, limit = %limit_str, "time limit exceeded, stopping early...");
                 break;
             }
@@ -244,14 +245,14 @@ struct CookieJson {
 
 #[derive(Parser, Debug)]
 #[command(version, about = "All-in-one reporting tool for social networks", long_about = None)]
-struct Args {
+struct CliArgs {
     /// File contains links to report
-    #[arg(short, long)]
-    file: String,
+    #[arg(short, long, env)]
+    file: std::path::PathBuf,
 
     /// Cookie json file
-    #[arg(short, long)]
-    cookies: String,
+    #[arg(short, long, env)]
+    cookies: std::path::PathBuf,
 
     /// Report timeout
     #[arg(short, long, default_value = "10m")]
@@ -260,32 +261,51 @@ struct Args {
     /// Time limit
     #[arg(short, long)]
     time_limit: Option<String>,
+
+    /// Headful
+    #[arg(long, env, default_value = "false")]
+    headful: bool,
+
+    /// Log file
+    #[arg(long, env)]
+    logfile: Option<std::path::PathBuf>,
+}
+
+#[derive(Debug)]
+struct ReportArgs<'a> {
+    /// File contains links to report
+    links: Vec<String>,
+
+    /// Cookies
+    cookies: Vec<Cookie<'a>>,
+
+    /// Report timeout
+    wait: Duration,
+
+    /// Time limit
+    time_limit: Option<Duration>,
+
+    /// Headful
+    headful: bool,
 }
 
 #[tokio::main]
-async fn run(
-    links: &Vec<String>,
-    cookies: &Vec<Cookie<'_>>,
-    wait: Duration,
-    time_limit: &Option<Duration>,
-) -> Result<(), Box<dyn Error>> {
-    let links_str = format!("{:?}", links);
-    let cookies_str = format!("{:?}", cookies);
-    let wait_time_str = humantime::format_duration(wait);
-    let time_limit_str = if let Some(time_limit) = time_limit {
-        humantime::format_duration(*time_limit).to_string()
+async fn run(report_args: &ReportArgs) -> Result<(), Box<dyn Error>> {
+    let links_str = format!("{:?}", report_args.links);
+    let cookies_str = format!("{:?}", report_args.cookies);
+    let wait_time_str = humantime::format_duration(report_args.wait);
+    let time_limit_str = if let Some(time_limit) = report_args.time_limit {
+        humantime::format_duration(time_limit).to_string()
     } else {
         "unlimited".into()
     };
     debug!(links = %links_str, cookies = %cookies_str, wait = %wait_time_str, time_limit = %time_limit_str);
 
-    report(&links, &cookies, wait, &time_limit).await
+    report(&report_args).await
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    tracing_subscriber::fmt().init();
-
-    let args = Args::parse();
+    let args = CliArgs::parse();
     let link_file = args.file;
     let cookie_file = args.cookies;
     let wait = humantime::parse_duration(&args.wait)?;
@@ -301,7 +321,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     links.shuffle(&mut rand::rng());
 
     let cookies_raw_json = fs::read_to_string(cookie_file.to_owned())
-        .expect(&format!("failed to read {}", cookie_file));
+        .expect(&format!("failed to read {}", cookie_file.to_str().unwrap()));
     let cookies: Vec<CookieJson> = serde_json::from_str(&cookies_raw_json)?;
     let cookies = cookies
         .iter()
@@ -312,5 +332,41 @@ fn main() -> Result<(), Box<dyn Error>> {
         })
         .collect::<Vec<Cookie>>();
 
-    run(&links, &cookies, wait, &time_limit)
+    if let Some(logfile) = args.logfile {
+        let logfile = std::fs::OpenOptions::new()
+            .append(true)
+            .create(true)
+            .open(logfile)
+            .unwrap();
+
+        let subscriber = Registry::default()
+            .with(
+                // stdout layer, to view everything in the console
+                fmt::layer().compact().with_ansi(true),
+            )
+            .with(
+                // log-error file, to log the errors that arise
+                fmt::layer()
+                    .json()
+                    .with_writer(logfile)
+                    .with_filter(LevelFilter::from_level(Level::DEBUG)),
+            );
+        tracing::subscriber::set_global_default(subscriber).unwrap();
+    } else {
+        let subscriber = Registry::default().with(
+            // stdout layer, to view everything in the console
+            fmt::layer().compact().with_ansi(true),
+        );
+        tracing::subscriber::set_global_default(subscriber).unwrap();
+    }
+
+    let report_args = ReportArgs {
+        links,
+        cookies,
+        wait,
+        time_limit,
+        headful: args.headful,
+    };
+
+    run(&report_args)
 }
