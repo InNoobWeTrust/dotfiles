@@ -104,7 +104,7 @@ async fn report(report_args: &ReportArgs<'_>) -> Result<(), Box<dyn Error>> {
     let wait = report_args.wait;
     let time_limit = report_args.time_limit;
     info!("Getting webdriver...");
-    let client = driver::get_client(report_args.headful).await?;
+    let client = driver::get_client(report_args.headful, &report_args.profile_name).await?;
     info!("Starting...");
     let start = Instant::now();
     let mut login_status = HashSet::<constants::Domain>::new();
@@ -250,6 +250,10 @@ struct CliArgs {
     #[arg(short, long, env)]
     file: std::path::PathBuf,
 
+    /// Profile name
+    #[arg(short, long, env, default_value = "default-release")]
+    profile_name: String,
+
     /// Cookie json file
     #[arg(short, long, env)]
     cookies: std::path::PathBuf,
@@ -269,6 +273,10 @@ struct CliArgs {
     /// Log file
     #[arg(long, env)]
     logfile: Option<std::path::PathBuf>,
+
+    /// Log level
+    #[arg(long, env, value_enum, default_value_t = Level::DEBUG)]
+    log_level: Level,
 }
 
 #[derive(Debug)]
@@ -278,6 +286,9 @@ struct ReportArgs<'a> {
 
     /// Cookies
     cookies: Vec<Cookie<'a>>,
+
+    /// Profile name
+    profile_name: String,
 
     /// Report timeout
     wait: Duration,
@@ -342,7 +353,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         let subscriber = Registry::default()
             .with(
                 // stdout layer, to view everything in the console
-                fmt::layer().compact().with_ansi(true),
+                fmt::layer().compact().with_ansi(true).with_writer(LevelFilter::from_level(args.log_level)),
             )
             .with(
                 // log-error file, to log the errors that arise
@@ -366,6 +377,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         wait,
         time_limit,
         headful: args.headful,
+        profile_name: args.profile_name,
     };
 
     run(&report_args)

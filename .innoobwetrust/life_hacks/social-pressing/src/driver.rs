@@ -9,14 +9,46 @@ use fantoccini::{
 use tracing::{instrument, warn};
 
 use std::{collections::HashSet, error::Error};
+use std::process::{Command, Stdio};
 
 use crate::{
     constants::Domain,
     utils::{delay, rand_delay_duration},
 };
 
+struct Subprocess {
+    child: Command,
+}
+
+impl Drop for Subprocess {
+    fn drop(&mut self) {
+        child.exit();
+    }
+}
+
+impl Subprocess {
+    pub fn new(cmd: &str, arg: &str) -> Self {
+        Subprocess {
+            child: Command::new(cmd)
+            .arg(arg)
+                .stdin(Stdio::null())
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
+                .spawn()
+                .expect(format!("Failed to spawn {cmd} process"))
+        }
+    }
+}
+
 #[instrument]
-pub async fn get_client(headful: bool) -> Result<Client, Box<dyn Error>> {
+pub async fn get_client(headful: bool, profile_name: &str) -> Result<Client, Box<dyn Error>> {
+    let browser_args = [
+        "--enable-automation=False".into(),
+        "--disable-blink-features=AutomationControlled".into(),
+        if !profile_name.is_empty() { format!("-P {profile_name}") } else { "".into() },
+        if headful { "".into() } else { "--headless".into() },
+    ].into_iter().filter(|s| !s.is_empty()).collect::<Vec<String>>();
+
     let capabilities = serde_json::json!({
         "browserName": "firefox",
         "setWindowRect": true,
@@ -24,11 +56,7 @@ pub async fn get_client(headful: bool) -> Result<Client, Box<dyn Error>> {
             "prefs": {
                 "intl.accept_languages": "en-GB"
             },
-            "args": [
-                if headful { "" } else { "--headless" },
-                "--enable-automation=False",
-                "--disable-blink-features=AutomationControlled"
-            ]
+            "args": browser_args,
         },
         "timeouts": {
             "pageLoad": 10_000,

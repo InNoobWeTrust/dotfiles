@@ -185,8 +185,20 @@ usable pkgx && \
             alias npx='pkgx npx'
         fi
         ## Jupyter notebook
-        if ! usabel jupyter; then
+        if ! usable jupyter; then
             alias jupyter='pkgx jupyter'
+        fi
+        ## yt-dlp
+        if ! usable yt-dlp; then
+            alias yt-dlp='pkgx yt-dlp'
+        fi
+        ## curl
+        if ! usable curl; then
+            alias curl='pkgx curl'
+        fi
+        ## wget
+        if ! usable wget; then
+            alias wget='pkgx wget'
         fi
     }
 
