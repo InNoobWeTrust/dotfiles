@@ -1,3 +1,4 @@
+use core::error::Error;
 use core::time::Duration;
 use fantoccini::{
     actions::{InputSource, MouseActions, PointerAction},
@@ -6,73 +7,151 @@ use fantoccini::{
     error::CmdError,
     Client, ClientBuilder,
 };
-use tracing::{instrument, warn};
+use tracing::{debug, instrument, warn};
 
-use std::{collections::HashSet, error::Error};
-use std::process::{Command, Stdio};
+use std::collections::HashSet;
+use std::ops::Deref;
+use std::process::{Child, Command, Stdio};
 
 use crate::{
     constants::Domain,
     utils::{delay, rand_delay_duration},
 };
 
-struct Subprocess {
-    child: Command,
+pub(crate) struct Subprocess(Child);
+
+impl Deref for Subprocess {
+    type Target = Child;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
 impl Drop for Subprocess {
     fn drop(&mut self) {
-        child.exit();
-    }
-}
-
-impl Subprocess {
-    pub fn new(cmd: &str, arg: &str) -> Self {
-        Subprocess {
-            child: Command::new(cmd)
-            .arg(arg)
-                .stdin(Stdio::null())
-                .stdout(Stdio::inherit())
-                .stderr(Stdio::inherit())
-                .spawn()
-                .expect(format!("Failed to spawn {cmd} process"))
+        for _ in 0..3 {
+            if self.0.kill().is_ok() {
+                return;
+            }
+            std::thread::sleep(Duration::from_secs(5));
         }
     }
 }
 
+impl Subprocess {
+    pub fn new(cmd: &str, args: &Vec<String>) -> Result<Self, Box<dyn Error>> {
+        let child = Command::new(cmd)
+            .args(args)
+            .stdin(Stdio::null())
+            .stdout(Stdio::inherit())
+            .stderr(Stdio::inherit())
+            .spawn()?;
+        Ok(Subprocess(child))
+    }
+}
+
+pub(crate) trait Driver {
+    fn get_port(&self) -> usize;
+}
+
+struct GeckoDriver {
+    #[allow(dead_code)]
+    proc: Subprocess,
+    port: usize,
+}
+
+impl GeckoDriver {
+    pub fn new(port: usize) -> Result<Self, Box<dyn Error>> {
+        let proc = Subprocess::new("geckodriver", &vec!["-p".to_string(), port.to_string()])?;
+
+        debug!(%port, "starting geckodriver...");
+        // Sleep for 3 seconds, waiting webdriver
+        std::thread::sleep(Duration::from_secs(3));
+        debug!(%port, "geckodriver is listening...");
+
+        Ok(Self { proc, port })
+    }
+}
+
+impl Driver for GeckoDriver {
+    fn get_port(&self) -> usize {
+        self.port
+    }
+}
+
 #[instrument]
-pub async fn get_client(headful: bool, profile_name: &str) -> Result<Client, Box<dyn Error>> {
+pub async fn get_client(
+    headful: bool,
+    standalone: bool,
+    retries: &Option<usize>,
+) -> Result<(Client, Option<Box<dyn Driver>>), Box<dyn Error>> {
     let browser_args = [
-        "--enable-automation=False".into(),
-        "--disable-blink-features=AutomationControlled".into(),
-        if !profile_name.is_empty() { format!("-P {profile_name}") } else { "".into() },
-        if headful { "".into() } else { "--headless".into() },
-    ].into_iter().filter(|s| !s.is_empty()).collect::<Vec<String>>();
+        "--enable-automation".into(),
+        "False".into(),
+        "--disable-blink-features".into(),
+        "AutomationControlled".into(),
+        if headful {
+            "".into()
+        } else {
+            "--headless".into()
+        },
+    ]
+    .into_iter()
+    .filter(|s: &String| !s.is_empty())
+    .collect::<Vec<String>>();
 
     let capabilities = serde_json::json!({
         "browserName": "firefox",
         "setWindowRect": true,
         "moz:firefoxOptions": {
-            "prefs": {
-                "intl.accept_languages": "en-GB"
-            },
-            "args": browser_args,
-        },
+        "prefs": {
+        "intl.accept_languages": "en-GB"
+    },
+        "args": browser_args,
+    },
         "timeouts": {
-            "pageLoad": 10_000,
-            "implicit": 5_000,
-            "script": 120_000,
-        }
+        "pageLoad": 10_000,
+        "implicit": 5_000,
+        "script": 120_000,
+    }
     });
 
-    let capabilities = capabilities.as_object().unwrap().to_owned();
-    let client = ClientBuilder::native()
-        .capabilities(capabilities)
-        .connect("http://localhost:4444")
-        .await?;
-    client.set_window_size(1024, 3840).await?;
+    if standalone {
+        let mut driver_or_err = GeckoDriver::new(rand::random_range(4445..=7999));
+        if driver_or_err.is_err() {
+            if retries.is_none() {
+                return Err(driver_or_err.err().unwrap());
+            }
 
-    Ok(client)
+            for _ in 0..retries.unwrap() {
+                driver_or_err = GeckoDriver::new(rand::random_range(4445..=7999));
+
+                if driver_or_err.is_ok() {
+                    break;
+                }
+            }
+        }
+
+        let driver = driver_or_err?;
+        let port = driver.get_port();
+
+        let capabilities = capabilities.as_object().unwrap().to_owned();
+        let client = ClientBuilder::native()
+            .capabilities(capabilities)
+            .connect(&format!("http://localhost:{port}"))
+            .await?;
+        client.set_window_size(1024, 3840).await?;
+        Ok((client, Some(Box::new(driver))))
+    } else {
+        let capabilities = capabilities.as_object().unwrap().to_owned();
+        let client = ClientBuilder::native()
+            .capabilities(capabilities)
+            .connect(&format!("http://localhost:4444"))
+            .await?;
+        client.set_window_size(1024, 3840).await?;
+        Ok((client, None))
+    }
 }
 
 #[instrument]

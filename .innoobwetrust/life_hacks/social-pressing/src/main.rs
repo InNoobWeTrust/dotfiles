@@ -16,6 +16,8 @@ use serde::Deserialize;
 use std::collections::HashSet;
 use std::error::Error;
 use std::fs;
+use std::str::FromStr;
+use std::string::ToString;
 use std::time::Instant;
 use tokio::time::timeout;
 use tracing::level_filters::LevelFilter;
@@ -104,7 +106,8 @@ async fn report(report_args: &ReportArgs<'_>) -> Result<(), Box<dyn Error>> {
     let wait = report_args.wait;
     let time_limit = report_args.time_limit;
     info!("Getting webdriver...");
-    let client = driver::get_client(report_args.headful, &report_args.profile_name).await?;
+    let (client, _driver) =
+        driver::get_client(report_args.headful, report_args.standalone, &Some(3)).await?;
     info!("Starting...");
     let start = Instant::now();
     let mut login_status = HashSet::<constants::Domain>::new();
@@ -243,16 +246,54 @@ struct CookieJson {
     domain: String,
 }
 
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+enum LogLevel {
+    TRACE,
+    DEBUG,
+    WARN,
+    INFO,
+    ERROR,
+}
+
+impl LogLevel {
+    fn into_tracing(&self) -> Level {
+        match self {
+            Self::TRACE => Level::TRACE,
+            Self::DEBUG => Level::DEBUG,
+            Self::WARN => Level::WARN,
+            Self::INFO => Level::INFO,
+            Self::ERROR => Level::ERROR,
+        }
+    }
+}
+
+impl ToString for LogLevel {
+    fn to_string(&self) -> String {
+        format!("{self:?}")
+    }
+}
+
+impl FromStr for LogLevel {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "trace" => Ok(Self::TRACE),
+            "debug" => Ok(Self::DEBUG),
+            "warn" => Ok(Self::WARN),
+            "info" => Ok(Self::INFO),
+            "error" => Ok(Self::ERROR),
+            _ => Err(format!("Invalid log level: {}", s)),
+        }
+    }
+}
+
 #[derive(Parser, Debug)]
 #[command(version, about = "All-in-one reporting tool for social networks", long_about = None)]
 struct CliArgs {
     /// File contains links to report
     #[arg(short, long, env)]
     file: std::path::PathBuf,
-
-    /// Profile name
-    #[arg(short, long, env, default_value = "default-release")]
-    profile_name: String,
 
     /// Cookie json file
     #[arg(short, long, env)]
@@ -266,17 +307,21 @@ struct CliArgs {
     #[arg(short, long)]
     time_limit: Option<String>,
 
-    /// Headful
-    #[arg(long, env, default_value = "false")]
-    headful: bool,
-
     /// Log file
     #[arg(long, env)]
     logfile: Option<std::path::PathBuf>,
 
     /// Log level
-    #[arg(long, env, value_enum, default_value_t = Level::DEBUG)]
-    log_level: Level,
+    #[arg(long, env, default_value_t = LogLevel::DEBUG)]
+    log_level: LogLevel,
+
+    /// Use standalone driver
+    #[arg(long, env, default_value = "true")]
+    standalone: bool,
+
+    /// Headful
+    #[arg(long, env, default_value = "false")]
+    headful: bool,
 }
 
 #[derive(Debug)]
@@ -287,14 +332,14 @@ struct ReportArgs<'a> {
     /// Cookies
     cookies: Vec<Cookie<'a>>,
 
-    /// Profile name
-    profile_name: String,
-
     /// Report timeout
     wait: Duration,
 
     /// Time limit
     time_limit: Option<Duration>,
+
+    /// Use standalone driver
+    standalone: bool,
 
     /// Headful
     headful: bool,
@@ -302,15 +347,13 @@ struct ReportArgs<'a> {
 
 #[tokio::main]
 async fn run(report_args: &ReportArgs) -> Result<(), Box<dyn Error>> {
-    let links_str = format!("{:?}", report_args.links);
-    let cookies_str = format!("{:?}", report_args.cookies);
     let wait_time_str = humantime::format_duration(report_args.wait);
     let time_limit_str = if let Some(time_limit) = report_args.time_limit {
         humantime::format_duration(time_limit).to_string()
     } else {
         "unlimited".into()
     };
-    debug!(links = %links_str, cookies = %cookies_str, wait = %wait_time_str, time_limit = %time_limit_str);
+    debug!(wait = %wait_time_str, time_limit = %time_limit_str);
 
     report(&report_args).await
 }
@@ -350,18 +393,18 @@ fn main() -> Result<(), Box<dyn Error>> {
             .open(logfile)
             .unwrap();
 
-        let subscriber = Registry::default()
-            .with(
-                // stdout layer, to view everything in the console
-                fmt::layer().compact().with_ansi(true).with_writer(LevelFilter::from_level(args.log_level)),
-            )
-            .with(
-                // log-error file, to log the errors that arise
-                fmt::layer()
-                    .json()
-                    .with_writer(logfile)
-                    .with_filter(LevelFilter::from_level(Level::DEBUG)),
-            );
+        // stdout layer, to view everything in the console
+        let stdout_layer = fmt::layer()
+            .compact()
+            .with_ansi(true)
+            .with_filter(LevelFilter::from_level(args.log_level.into_tracing()));
+        // log to file from debug level
+        let log_layer = fmt::layer()
+            .json()
+            .with_writer(logfile)
+            .with_filter(LevelFilter::from_level(Level::DEBUG));
+        let subscriber = Registry::default().with(stdout_layer).with(log_layer);
+
         tracing::subscriber::set_global_default(subscriber).unwrap();
     } else {
         let subscriber = Registry::default().with(
@@ -376,8 +419,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         cookies,
         wait,
         time_limit,
+        standalone: args.standalone,
         headful: args.headful,
-        profile_name: args.profile_name,
     };
 
     run(&report_args)

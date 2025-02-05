@@ -1,0 +1,4 @@
+[tasks.test_run]
+env = { "LOG_LEVEL" = "debug" }
+command = "cargo"
+args = ["run", "--", "-c", "pressing.cookies.json", "-f", "pressing.txt", "--logfile", "pressing.log", "-w", "5m", "-t", "15m", "--standalone", "--headful"]
