@@ -2118,6 +2118,8 @@ The script should do this: \(ai.prompt)</string>
 			<string>Yes</string>
 			<key>Custom Directory</key>
 			<string>Recycle</string>
+			<key>Custom Locale</key>
+			<string>en_US.UTF-8</string>
 			<key>Default Bookmark</key>
 			<string>No</string>
 			<key>Description</key>
@@ -2251,6 +2253,8 @@ The script should do this: \(ai.prompt)</string>
 			</dict>
 			<key>Send Code When Idle</key>
 			<false/>
+			<key>Set Local Environment Vars</key>
+			<integer>2</integer>
 			<key>Shortcut</key>
 			<string></string>
 			<key>Silence Bell</key>
