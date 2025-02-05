@@ -23,7 +23,7 @@ use tokio::time::timeout;
 use tracing::level_filters::LevelFilter;
 use tracing::{debug, error, info, instrument, warn, Level};
 use tracing_futures::Instrument;
-use tracing_subscriber::{fmt, prelude::*, Registry};
+use tracing_subscriber::{filter::targets::Targets, fmt, prelude::*, Registry};
 use url::Url;
 
 use crate::driver::login;
@@ -402,15 +402,30 @@ fn main() -> Result<(), Box<dyn Error>> {
         let log_layer = fmt::layer()
             .json()
             .with_writer(logfile)
-            .with_filter(LevelFilter::from_level(Level::DEBUG));
-        let subscriber = Registry::default().with(stdout_layer).with(log_layer);
+            .with_filter(LevelFilter::DEBUG);
+        let tag_filter = Targets::new().with_target(
+            "social_pressing",
+            LevelFilter::from_level(args.log_level.into_tracing()),
+        );
+        let subscriber = Registry::default()
+            .with(stdout_layer)
+            .with(log_layer)
+            .with(tag_filter);
 
         tracing::subscriber::set_global_default(subscriber).unwrap();
     } else {
-        let subscriber = Registry::default().with(
-            // stdout layer, to view everything in the console
-            fmt::layer().compact().with_ansi(true),
-        );
+        let subscriber = Registry::default()
+            .with(
+                // stdout layer, to view everything in the console
+                fmt::layer()
+                    .compact()
+                    .with_ansi(true)
+                    .with_filter(LevelFilter::from_level(args.log_level.into_tracing())),
+            )
+            .with(Targets::new().with_target(
+                "social_pressing",
+                LevelFilter::from_level(args.log_level.into_tracing()),
+            ));
         tracing::subscriber::set_global_default(subscriber).unwrap();
     }
 
