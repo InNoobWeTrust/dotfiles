@@ -83,6 +83,7 @@ g.netrw_list_hide = { fn['netrw_gitignore#Hide()'], ',\\(^\\|\\s\\s\\)\\zs\\.\\S
 ----------------------------------------- Keyboard shortcuts
 -- Change leader key
 g.mapleader = ' '
+g.maplocalleader = "\\"
 -- Visual indication of leader key timeout
 o.showcmd = true
 -- map helper
@@ -99,6 +100,13 @@ map('v', '<S-Insert>', 'c<ESC>"+p')
 map('i', '<S-Insert>', '<ESC>"+pa')
 -- Map Ctrl-Del to delete word
 map('i', '<C-Delete>', '<ESC>bdwi')
+-- Tab switching
+map('n', '<c-tab>', ':tabnext<cr>', { noremap = false })
+map('n', '<leader><tab>', ':tabnext<cr>', { noremap = false })
+map('n', '<c-s-tab>', ':tabprevious<cr>', { noremap = false })
+map('n', '<leader><leader><tab>', ':tabprevious<cr>', { noremap = false })
+-- Key mapping for native LSP
+map('n', 'ff', '<cmd>lua vim.lsp.buf.format()<cr>')
 ------------------------------------- End keyboard shortcuts
 
 ---------------------------------------------------- Autocmd
@@ -184,49 +192,143 @@ o.secure = true
 
 ----------------------------------------------------------------- End No-plugins
 
--- Install packer
-local install_path = fn.stdpath('data') .. '/site/pack/packer/opt/packer.nvim'
-local first_time_packer = false
-
-if fn.empty(fn.glob(install_path)) > 0 then
-	execute('!git clone https://github.com/wbthomason/packer.nvim ' .. install_path)
-	first_time_packer = true
+-- Bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+	if vim.v.shell_error ~= 0 then
+		vim.api.nvim_echo({
+			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+			{ out,                            "WarningMsg" },
+			{ "\nPress any key to exit..." },
+		}, true, {})
+		vim.fn.getchar()
+		os.exit(1)
+	end
 end
+vim.opt.rtp:prepend(lazypath)
 
-cmd [[packadd packer.nvim]]
-local packer_autocmds = {
-	packer = {
-		{ 'BufWritePost', 'plugins.lua', 'PackerCompile' },
-	},
-}
-
-nvim_create_augroups(packer_autocmds)
-
-local use = require('packer').use
-require('packer').startup({
-	function()
-		use { 'wbthomason/packer.nvim', opt = true }
+-- Setup lazy.nvim
+require("lazy").setup({
+	-- Configure any other settings here. See the documentation for more details.
+	-- colorscheme that will be used when installing plugins.
+	install = { colorscheme = { "gruvbox" } },
+	-- automatically check for plugin updates
+	checker = { enabled = true },
+	spec = {
+		-- add your plugins here
+		-- Showing keybindings with descriptions
+		{ "folke/which-key.nvim" },
 		-- Fuzzy finder and file browser
-		use {
+		{
 			'nvim-telescope/telescope-project.nvim',
-			requires = {
+			dependencies = {
 				'nvim-telescope/telescope.nvim',
 				'nvim-lua/plenary.nvim',
 				'nvim-telescope/telescope-file-browser.nvim',
-			}
-		}
+			},
+			config = function()
+				require('telescope').setup {
+					extensions = {
+						file_browser = {
+							theme = 'ivy',
+							-- disables netrw and use telescope-file-browser in its place
+							hijack_netrw = true,
+							collapse_dirs = true,
+							auto_depth = true,
+						},
+					},
+				}
+				-- To get telescope-file-browser loaded and working with telescope,
+				-- you need to call load_extension, somewhere after setup function:
+				require('telescope').load_extension('file_browser')
+				require('telescope').load_extension('project')
+				map('n', '<leader><leader>', '<cmd>Telescope<cr>')
+				map('n', '<leader><leader>f',
+					'<cmd>lua require"telescope.builtin".find_files({ find_command = {"rg", "--files", "--hidden", "-g", "!.git" }})<cr>')
+				map('n', '<leader><leader>br', '<cmd>Telescope file_browser<cr>')
+				map('n', '<leader><leader>pj', '<cmd>Telescope project<cr>')
+				map('n', '<leader><leader>s', '<cmd>Telescope grep_string<cr>')
+				map('n', '<leader><leader>g', '<cmd>Telescope live_grep<cr>')
+				map('n', '<leader><leader>bu', '<cmd>Telescope buffers<cr>')
+				map('n', '<leader><leader>h', '<cmd>Telescope help_tags<cr>')
+			end,
+		},
 		-- Editor toolings
-		use {
+		{
 			"williamboman/mason.nvim",
-			"williamboman/mason-lspconfig.nvim",
-			"neovim/nvim-lspconfig",
-			run = ":MasonUpdate" -- :MasonUpdate updates registry contents
-		}
+			dependencies = {
+				{ "williamboman/mason-lspconfig.nvim" },
+				{ "neovim/nvim-lspconfig" },
+			},
+			config = function()
+				require("mason").setup()
+				require("mason-lspconfig").setup {
+					ensure_installed = {
+						'bashls',
+						'cssls',
+						'cssmodules_ls',
+						'dockerls',
+						'docker_compose_language_service',
+						'emmet_ls',
+						'eslint',
+						'grammarly',
+						'html',
+						'jsonls',
+						'ts_ls',
+						'lua_ls',
+						'pyright',
+						'sqlls',
+						'stylelint_lsp',
+						'tailwindcss',
+						'vimls',
+						'yamlls',
+					},
+					--automatic_installation = true,
+					handlers = {
+						-- The first entry (without a key) will be the default handler
+						-- and will be called for each installed server that doesn't have
+						-- a dedicated handler.
+						function(server_name) -- default handler (optional)
+							-- Prevent some LSP servers from autostart
+							local no_autostart = { 'deno', 'denols' }
+							local no_single_file_support = { 'rust_analyzer' }
+							require("lspconfig")[server_name].setup {
+								autostart = not no_autostart[server_name],
+								single_file_support = not no_single_file_support[server_name],
+								-- advertise capabilities to language servers.
+								capabilities = capabilities,
+							}
+						end,
+						-- Next, you can provide a dedicated handler for specific servers.
+						-- For example, a handler override for the `rust_analyzer`:
+						["rust_analyzer"] = function()
+							require('lspconfig').rust_analyzer.setup {
+								settings = {
+									['rust-analyzer'] = {
+										checkOnSave = {
+											enable = false,
+										},
+										diagnostics = {
+											enable = false,
+										}
+									}
+								}
+							}
+						end,
+						["denols"] = function()
+							require("rust-tools").setup {}
+						end,
+					},
+				}
+			end,
+		},
 		-- Language clients
-		--use {'neoclide/coc.nvim', branch = 'release'}
-		use {
+		--{'neoclide/coc.nvim', branch = 'release'}
+		{
 			'ray-x/navigator.lua',
-			requires = {
+			dependencies = {
 				{
 					'ray-x/guihua.lua',
 					run = 'cd lua/fzy && make',
@@ -234,19 +336,98 @@ require('packer').startup({
 				{ 'neovim/nvim-lspconfig' },
 				{ "nvim-treesitter/nvim-treesitter" },
 			},
-		}
+			config = function()
+				require 'navigator'.setup({
+					mason = true,
+					lsp = {
+						diagnostic = {
+							virtual_text = false,
+							underline = false,
+							signs = true,
+						},
+					},
+				})
+
+				-- Setup LSP servers not included by default in navigator.lua
+				require("lspconfig").bacon_ls.setup({
+					init_options = {
+						updateOnSave = true,
+						updateOnSaveWaitMillis = 1000,
+						updateOnChange = true,
+					}
+				})
+			end,
+		},
 		-- Linters
-		use {
+		{
 			"nvimdev/guard.nvim",
 			-- Builtin configuration, optional
-			requires = {
+			dependencies = {
 				"nvimdev/guard-collection",
 			},
-		}
+			config = function()
+				local ft = require('guard.filetype')
+
+				-- Codespell
+				if fn.executable('codespell') == 1 then
+					ft('*'):lint('codespell')
+				end
+				-- Format c, cpp, cs, java, cuda, proto
+				if fn.executable('clang-format') == 1 then
+					ft('c,cpp,cs,java,cuda,proto'):fmt('clang-format')
+				end
+				-- Eslint for js, jsx, ts, tsx, vue
+				if fn.executable('eslint') == 1 then
+					ft('js,jsx,ts,tsx,vue'):fmt({
+						cmd = 'eslint',
+						args = { '--fix' },
+					}):lint('eslint')
+				end
+				-- Prettier format html, css, json, etc..
+				if fn.executable('prettier') == 1 then
+					ft('typescript,javascript,typescriptreact,html,css,scss,json,yaml,markdown,graphql,md,txt'):fmt(
+						'prettier')
+				end
+				-- Golang
+				if fn.executable('gofmt') == 1 then
+					ft('go'):fmt('gofmt')
+				end
+				-- Rust
+				if fn.executable('rustfmt') == 1 then
+					ft('rust'):fmt('rustfmt')
+				end
+				-- Python
+				if fn.executable('ruff') == 1 then
+					ft('python'):fmt('ruff')
+				end
+				-- Lint protobuf
+				if fn.executable('buf') == 1 then
+					ft('proto'):lint({
+						cmd = 'buf',
+						args = { 'lint' },
+					})
+				end
+
+				-- Call setup() LAST!
+				-- change this anywhere in your config (or not), these are the defaults
+				g.guard_config = {
+					-- format on write to buffer
+					fmt_on_save = false,
+					-- use lsp if no formatter was defined for this filetype
+					lsp_as_default_formatter = false,
+					-- whether or not to save the buffer after formatting
+					save_on_fmt = false,
+					-- automatic linting
+					auto_lint = false,
+					-- how frequently can linters be called
+					lint_interval = 500
+				}
+			end,
+		},
 		-- Debugger
-		use {
+		{
 			"rcarriga/nvim-dap-ui",
-			requires = {
+			dependencies = {
 				"mfussenegger/nvim-dap",
 				"nvim-neotest/nvim-nio",
 			},
@@ -266,63 +447,67 @@ require('packer').startup({
 				end
 				dapui.setup()
 			end,
-		}
+		},
 		-- AI code completion
-		-- Tabnine
-		--local function tabnine_build_path()
-		--  -- Replace vim.uv with vim.loop if using NVIM 0.9.0 or below
-		--  if vim.uv.os_uname().sysname == "Windows_NT" then
-		--    return "pwsh.exe -file .\\dl_binaries.ps1"
-		--  else
-		--    return "./dl_binaries.sh"
-		--  end
-		--end
-		--use {
-		--  'codota/tabnine-nvim',
-		--  run = tabnine_build_path(),
-		--  config = function()
-		--    require('tabnine').setup({
-		--      accept_keymap = false,
-		--      dismiss_keymap = false,
-		--    })
-		--  end
-		--}
 		-- Github Copilot
-		--use {
+		--{
 		--  "zbirenbaum/copilot.lua",
 		--  cmd = "Copilot",
 		--  event = "InsertEnter",
 		--  config = function()
 		--    require("copilot").setup({})
 		--  end,
-		--}
+		--},
 		---- TODO: Self-hosted LLM backend
-		use({
+		{
 			"olimorris/codecompanion.nvim",
-			config = function()
-				require("codecompanion").setup({
-					adapters = {
-						groq = function()
-							return require('codecompanion.adapters').extend('openai_compatible', {
-								name = 'groq',
-								env = {
-									api_key = "GROQ_API_KEY",
-									url = "https://api.groq.com/openai",
+			opts = {
+				adapters = {
+					groq = function()
+						return require('codecompanion.adapters').extend('openai', {
+							name = 'groq',
+							url = "https://api.groq.com/openai/v1/chat/completions",
+							env = {
+								api_key = "GROQ_API_KEY",
+							},
+							schema = {
+								model = {
+									default = "gemma2-9b-it",
+									choices = {
+										"gemma2-9b-it",
+										"llama-3.3-70b-versatile",
+										"Llama-3.1-8b-instant",
+										"Llama-guard-3-8b",
+										"llama3-70b-8192",
+										"llama3-8b-8192",
+										"mixtral-8x7b-32768",
+									},
 								},
-							})
-						end,
+							},
+						})
+					end,
+				},
+				strategies = {
+					chat = {
+						adapter = "groq",
 					},
-				})
-			end,
-			requires = {
+					inline = {
+						adapter = "groq",
+					},
+				},
+				opts = {
+					log_level = "DEBUG",
+				},
+			},
+			dependencies = {
 				"nvim-lua/plenary.nvim",
 				"nvim-treesitter/nvim-treesitter",
 			}
-		})
+		},
 		-- Completion engine plugin for neovim written in Lua
-		use {
+		{
 			'hrsh7th/nvim-cmp',
-			requires = {
+			dependencies = {
 				'hrsh7th/cmp-buffer',
 				'hrsh7th/cmp-nvim-lsp',
 				'hrsh7th/cmp-nvim-lsp-signature-help',
@@ -330,77 +515,296 @@ require('packer').startup({
 				'hrsh7th/cmp-vsnip',
 				'hrsh7th/vim-vsnip',
 				'FelipeLema/cmp-async-path',
-			}
-		}
-		--use {
+			},
+			config = function()
+				local has_words_before = function()
+					unpack = unpack or table.unpack
+					local line, col = unpack(api.nvim_win_get_cursor(0))
+					return col ~= 0 and
+							api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+				end
+
+				local cmp = require('cmp')
+				cmp.setup({
+					snippet = {
+						-- REQUIRED - you must specify a snippet engine
+						expand = function(args)
+							fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+							-- vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
+						end,
+					},
+					mapping = cmp.mapping.preset.insert({
+						--['<C-y>'] = cmp.mapping.confirm({ select = true }),
+						["<Tab>"] = cmp.mapping(function(fallback)
+							if cmp.visible() then
+								cmp.select_next_item()
+							elseif has_words_before() then
+								cmp.complete()
+							else
+								fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+							end
+						end, { "i", "s" }),
+						["<S-Tab>"] = cmp.mapping(function()
+							if cmp.visible() then
+								cmp.select_prev_item()
+							end
+						end, { "i", "s" }),
+						['<C-b>'] = cmp.mapping.scroll_docs(-4),
+						['<C-f>'] = cmp.mapping.scroll_docs(4),
+						--['<C-Space>'] = cmp.mapping(function()
+						--  if require("tabnine.keymaps").has_suggestion() then
+						--    return require("tabnine.keymaps").accept_suggestion()
+						--  else
+						--    return cmp.complete()
+						--  end
+						--end, { "i", "s" }),
+						['<C-e>'] = cmp.mapping.abort(),
+						['<CR>'] = cmp.mapping.confirm({
+							select = true,
+						})
+					}),
+					sources = {
+						{ name = 'async_path' },
+						{ name = 'buffer' },
+						{ name = 'nvim_lsp' },
+						{ name = 'nvim_lsp_signature_help' },
+						{ name = 'emoji' },
+					}
+				})
+				-- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
+				local capabilities = vim.lsp.protocol.make_client_capabilities()
+				capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+			end,
+		},
+		--{
 		--  "zbirenbaum/copilot-cmp",
 		--  after = { "copilot.lua" },
 		--  config = function()
 		--    require("copilot_cmp").setup()
 		--  end
-		--}
+		--},
 		-- Add surrounding brackets, quotes, xml tags,...
-		use 'tpope/vim-surround'
+		{ 'tpope/vim-surround' },
 		-- Extended matching for the % operator
-		use 'adelarsq/vim-matchit'
+		{ 'adelarsq/vim-matchit' },
 		-- Autocompletion for pairs
-		--use 'Raimondi/delimitMate'
+		--{
+		--  'Raimondi/delimitMate',
+		--  config = function()
+		--    -- Expand CR when autocomplete pairs
+		--    g.delimitMate_expand_cr = 2
+		--    g.delimitMate_expand_space = 1
+		--    g.delimitMate_expand_inside_quotes = 1
+		--    g.delimitMate_jump_expansion = 1
+		--  end
+		--},
 		-- Multiple cursor
-		--use 'terryma/vim-multiple-cursors'
+		-- { 'terryma/vim-multiple-cursors' },
 		-- Edit a region in new buffer
-		use 'chrisbra/NrrwRgn'
+		{ 'chrisbra/NrrwRgn' },
 		-- Run shell command asynchronously
-		use 'skywind3000/asyncrun.vim'
+		{ 'skywind3000/asyncrun.vim' },
 		-- REPL alike
-		use 'thinca/vim-quickrun'
-		g.quickrun_no_default_key_mappings = 1
+		{
+			'thinca/vim-quickrun',
+			init = function()
+				g.quickrun_no_default_key_mappings = 1
+			end,
+		},
 		-- Toggle terminal
-		use {
+		{
 			"akinsho/toggleterm.nvim",
-			tag = '*',
 			config = function()
 				require("toggleterm").setup()
+				local Terminal = require('toggleterm.terminal').Terminal
+
+				-- Floating term
+				api.nvim_create_user_command(
+					'FloatTerm',
+					function()
+						cmd [[ ToggleTerm direction='float' ]]
+					end,
+					{ nargs = 0 }
+				)
+
+				-- Cli tools
+				if fn.executable("pkgx") then
+					local lazygit = Terminal:new({ cmd = "pkgx lazygit", direction = 'float', hidden = true })
+					local lazydocker = Terminal:new({ cmd = "pkgx lazydocker", direction = 'float', hidden = true })
+					local btm = Terminal:new({ cmd = "pkgx btm", direction = 'float', hidden = true })
+
+					api.nvim_create_user_command(
+						'Lazygit',
+						function()
+							if lazygit then
+								lazygit:toggle()
+							end
+						end,
+						{ nargs = 0 }
+					)
+					api.nvim_create_user_command(
+						'Lazydocker',
+						function()
+							if lazydocker then
+								lazydocker:toggle()
+							end
+						end,
+						{ nargs = 0 }
+					)
+					api.nvim_create_user_command(
+						'Btm',
+						function()
+							if btm then
+								btm:toggle()
+							end
+						end,
+						{ nargs = 0 }
+					)
+				end
 			end,
-		}
+		},
 		-- Text object per indent level
-		use { 'michaeljsmith/vim-indent-object', ft = { 'python' } }
+		{ 'michaeljsmith/vim-indent-object', ft = { 'python' } },
 		-- Code commenting
-		use 'scrooloose/nerdcommenter'
+		{ 'scrooloose/nerdcommenter' },
 		-- Git wrapper
-		use 'tpope/vim-fugitive'
+		{ 'tpope/vim-fugitive' },
 		-- Git signs in gutter
-		use {
+		{
 			'lewis6991/gitsigns.nvim',
 			config = function()
 				require('gitsigns').setup()
+				---- Key mapping for git signs
+				-- Navigation
+				map('n', ']c', "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", { expr = true })
+				map('n', '[c', "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'", { expr = true })
+
+				-- Actions
+				map('n', '<leader>hs', ':Gitsigns stage_hunk<CR>')
+				map('v', '<leader>hs', ':Gitsigns stage_hunk<CR>')
+				map('n', '<leader>hr', ':Gitsigns reset_hunk<CR>')
+				map('v', '<leader>hr', ':Gitsigns reset_hunk<CR>')
+				map('n', '<leader>hS', '<cmd>Gitsigns stage_buffer<CR>')
+				map('n', '<leader>hu', '<cmd>Gitsigns undo_stage_hunk<CR>')
+				map('n', '<leader>hR', '<cmd>Gitsigns reset_buffer<CR>')
+				map('n', '<leader>hp', '<cmd>Gitsigns preview_hunk<CR>')
+				map('n', '<leader>hb', '<cmd>lua require"gitsigns".blame_line{full=true}<CR>')
+				map('n', '<leader>tb', '<cmd>Gitsigns toggle_current_line_blame<CR>')
+				map('n', '<leader>hd', '<cmd>Gitsigns diffthis<CR>')
+				map('n', '<leader>hD', '<cmd>lua require"gitsigns".diffthis("~")<CR>')
+				map('n', '<leader>td', '<cmd>Gitsigns toggle_deleted<CR>')
+
+				-- Text object
+				map('o', 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+				map('x', 'ih', ':<C-U>Gitsigns select_hunk<CR>')
 			end
-		}
+		},
 		-- Interact with databases
-		use {
+		{
 			'kristijanhusak/vim-dadbod-ui',
-			requires = { 'tpope/vim-dadbod' }
-		}
+			dependencies = { 'tpope/vim-dadbod' },
+		},
 		-- Automatically toggle relative line number
-		--use 'jeffkreeftmeijer/vim-numbertoggle'
+		--{ 'jeffkreeftmeijer/vim-numbertoggle' },
 		-- Use registers as stack for yank and delete
-		use 'maxbrunsfeld/vim-yankstack'
+		{ 'maxbrunsfeld/vim-yankstack' },
 		-- Status line
-		use {
+		{
 			'hoob3rt/lualine.nvim',
-			requires = { 'kyazdani42/nvim-web-devicons', opt = true }
-		}
+			dependencies = { 'kyazdani42/nvim-web-devicons', opt = true },
+			config = function()
+				require('lualine').setup {
+					options = {
+						theme = 'gruvbox',
+						--component_separators = {'', ''},
+						--section_separators = {'', ''},
+						--disabled_filetypes = {}
+					},
+					--sections = {
+					--    lualine_a = {'mode'},
+					--    lualine_b = {'branch'},
+					--    lualine_c = {'filename'},
+					--    lualine_x = {'encoding', 'fileformat', 'filetype'},
+					--    lualine_y = {'progress'},
+					--    lualine_z = {'location'}
+					--},
+					--inactive_sections = {
+					--    lualine_a = {},
+					--    lualine_b = {},
+					--    lualine_c = {'filename'},
+					--    lualine_x = {'location'},
+					--    lualine_y = {},
+					--    lualine_z = {}
+					--},
+					--tabline = {},
+					--extensions = {}
+				}
+			end,
+		},
 		-- Delete buffers without messing window layout
-		use 'moll/vim-bbye'
+		{
+			'moll/vim-bbye',
+			config = function()
+				-- Delete buffer without messing layout
+				map('n', '<Leader>x', ':Bd<cr>', { noremap = false })
+			end
+		},
 		-- Maintain coding style per project
-		use 'editorconfig/editorconfig-vim'
+		{ 'editorconfig/editorconfig-vim' },
 		-- Language packs
-		use 'sheerun/vim-polyglot'
-		use 'jidn/vim-dbml'
+		{
+			'sheerun/vim-polyglot',
+			config = function()
+				-- Dart
+				g.dart_html_in_string = true
+				g.dart_style_guide = 2
+				g.dart_format_on_save = 0
+				-- Rust
+				g.rustfmt_autosave = 0
+				g.racer_experimental_completer = 0
+				g.racer_insert_paren = 0
+				if win then
+					g.rust_clip_command = 'win32yank'
+				elseif linux then
+					g.rust_clip_command = 'xclip -selection clipboard'
+				elseif mac then
+					g.rust_clip_command = 'pbcopy'
+				end
+
+				-- Override conceal level for markdown
+				cmd [[autocmd FileType markdown setlocal conceallevel=1]]
+				-- Override concealcursor for markdown
+				cmd [[autocmd FileType markdown setlocal concealcursor=]]
+			end,
+		},
+		{ 'jidn/vim-dbml' },
 		-- Highlight using language servers
-		use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
-		use { 'nvim-treesitter/nvim-treesitter-refactor' }
+		{
+			'nvim-treesitter/nvim-treesitter',
+			run = ':TSUpdate',
+			config = function()
+				require 'nvim-treesitter.configs'.setup {
+					auto_install = true,
+					highlight = {
+						enable = true,
+						-- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+						-- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+						-- Using this option may slow down your editor, and you may see some duplicate highlights.
+						-- Instead of true it can also be a list of languages
+						additional_vim_regex_highlighting = false,
+					},
+					indent = {
+						enable = true
+					},
+				}
+				o.foldmethod = 'expr'
+				o.foldexpr = 'nvim_treesitter#foldexpr()'
+				o.foldenable = false
+			end,
+		},
+		{ 'nvim-treesitter/nvim-treesitter-refactor' },
 		-- Render preview for Markdown/HTML/Latex
-		--use {
+		--{
 		--  "OXY2DEV/markview.nvim",
 		--  requires = {
 		--    { "nvim-treesitter/nvim-treesitter" },
@@ -412,459 +816,35 @@ require('packer').startup({
 		--      --hybrid_modes = { 'n' }
 		--    })
 		--  end,
-		--}
-		use({
+		--},
+		{
 			'MeanderingProgrammer/render-markdown.nvim',
 			after = { 'nvim-treesitter' },
-			requires = { 'echasnovski/mini.nvim', opt = true }, -- if you use the mini.nvim suite
-			-- requires = { 'echasnovski/mini.icons', opt = true }, -- if you use standalone mini plugins
-			-- requires = { 'nvim-tree/nvim-web-devicons', opt = true }, -- if you prefer nvim-web-devicons
+			dependencies = { 'echasnovski/mini.nvim', opt = true }, -- if you use the mini.nvim suite
+			-- dependencies = { 'echasnovski/mini.icons', opt = true }, -- if you use standalone mini plugins
+			-- dependencies = { 'nvim-tree/nvim-web-devicons', opt = true }, -- if you prefer nvim-web-devicons
 			config = function()
 				require('render-markdown').setup({})
 			end,
-		})
-		-- Detect file encoding
-		use 's3rvac/AutoFenc'
-		-- Indent line for code wrapping
-		use 'Yggdroot/indentLine'
-		-- Theme
-		use 'morhetz/gruvbox'
-
-		---------------------------------------- Custom commands
-		------------------------------------ End custom commands
-
-		----------------------------------------------- Override
-		-- Override conceal level for markdown
-		cmd [[autocmd FileType markdown setlocal conceallevel=1]]
-		-- Override concealcursor for markdown
-		cmd [[autocmd FileType markdown setlocal concealcursor=]]
-		-------------------------------------------- End override
-
-		-------------------------------------------------- Theme
-		-- GruvBox
-		cmd 'highlight Normal ctermbg=none ctermfg=white guibg=none'
-		g.gruvbox_italic = 1
-		g.gruvbox_contrast_dark = 'hard'
-		g.gruvbox_invert_tabline = 1
-		g.gruvbox_invert_indent_guides = 1
-		g.gruvbox_transparent_bg = 1
-		cmd 'colorscheme gruvbox'
-		---------------------------------------------- End theme
-
-		------------------------------------------------ Autocmd
-		local plugin_autocmds = {
-			packer = {
-				{ 'BufWritePost', 'plugins.lua', 'PackerCompile' },
-			},
-		}
-
-		nvim_create_augroups(plugin_autocmds)
-		-------------------------------------------- End autocmd
-
-		------------------------------------- Keyboard shortcuts
-		-- Expand CR when autocomplete pairs
-		g.delimitMate_expand_cr = 2
-		g.delimitMate_expand_space = 1
-		g.delimitMate_expand_inside_quotes = 1
-		g.delimitMate_jump_expansion = 1
-		-- Tab switching
-		map('n', '<c-tab>', ':tabnext<cr>', { noremap = false })
-		map('n', '<leader><tab>', ':tabnext<cr>', { noremap = false })
-		map('n', '<c-s-tab>', ':tabprevious<cr>', { noremap = false })
-		map('n', '<leader><leader><tab>', ':tabprevious<cr>', { noremap = false })
-		-- Delete buffer without messing layout
-		map('n', '<Leader>x', ':Bd<cr>', { noremap = false })
-		-- Key mapping for fuzzy finder
-		map('n', '<leader><leader>', '<cmd>Telescope<cr>')
-		map('n', '<leader><leader>f',
-			'<cmd>lua require"telescope.builtin".find_files({ find_command = {"rg", "--files", "--hidden", "-g", "!.git" }})<cr>')
-		map('n', '<leader><leader>br', '<cmd>Telescope file_browser<cr>')
-		map('n', '<leader><leader>pj', '<cmd>Telescope project<cr>')
-		map('n', '<leader><leader>s', '<cmd>Telescope grep_string<cr>')
-		map('n', '<leader><leader>g', '<cmd>Telescope live_grep<cr>')
-		map('n', '<leader><leader>bu', '<cmd>Telescope buffers<cr>')
-		map('n', '<leader><leader>h', '<cmd>Telescope help_tags<cr>')
-		-- Key mapping for native LSP
-		map('n', 'ff', '<cmd>lua vim.lsp.buf.format()<cr>')
-		---- Key mapping for git signs
-		-- Navigation
-		map('n', ']c', "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", { expr = true })
-		map('n', '[c', "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'", { expr = true })
-
-		-- Actions
-		map('n', '<leader>hs', ':Gitsigns stage_hunk<CR>')
-		map('v', '<leader>hs', ':Gitsigns stage_hunk<CR>')
-		map('n', '<leader>hr', ':Gitsigns reset_hunk<CR>')
-		map('v', '<leader>hr', ':Gitsigns reset_hunk<CR>')
-		map('n', '<leader>hS', '<cmd>Gitsigns stage_buffer<CR>')
-		map('n', '<leader>hu', '<cmd>Gitsigns undo_stage_hunk<CR>')
-		map('n', '<leader>hR', '<cmd>Gitsigns reset_buffer<CR>')
-		map('n', '<leader>hp', '<cmd>Gitsigns preview_hunk<CR>')
-		map('n', '<leader>hb', '<cmd>lua require"gitsigns".blame_line{full=true}<CR>')
-		map('n', '<leader>tb', '<cmd>Gitsigns toggle_current_line_blame<CR>')
-		map('n', '<leader>hd', '<cmd>Gitsigns diffthis<CR>')
-		map('n', '<leader>hD', '<cmd>lua require"gitsigns".diffthis("~")<CR>')
-		map('n', '<leader>td', '<cmd>Gitsigns toggle_deleted<CR>')
-
-		-- Text object
-		map('o', 'ih', ':<C-U>Gitsigns select_hunk<CR>')
-		map('x', 'ih', ':<C-U>Gitsigns select_hunk<CR>')
-		--------------------------------- End keyboard shortcuts
-
-		------------------------------------- Statusline/tabline
-		require('lualine').setup {
-			options = {
-				theme = 'gruvbox',
-				--component_separators = {'', ''},
-				--section_separators = {'', ''},
-				--disabled_filetypes = {}
-			},
-			--sections = {
-			--    lualine_a = {'mode'},
-			--    lualine_b = {'branch'},
-			--    lualine_c = {'filename'},
-			--    lualine_x = {'encoding', 'fileformat', 'filetype'},
-			--    lualine_y = {'progress'},
-			--    lualine_z = {'location'}
-			--},
-			--inactive_sections = {
-			--    lualine_a = {},
-			--    lualine_b = {},
-			--    lualine_c = {'filename'},
-			--    lualine_x = {'location'},
-			--    lualine_y = {},
-			--    lualine_z = {}
-			--},
-			--tabline = {},
-			--extensions = {}
-		}
-		--------------------------------- End statusline/tabline
-
-		------------------------------------------- Fuzzy finder
-		require('telescope').setup {
-			extensions = {
-				file_browser = {
-					theme = 'ivy',
-					-- disables netrw and use telescope-file-browser in its place
-					hijack_netrw = true,
-					collapse_dirs = true,
-					auto_depth = true,
-				},
-			},
-		}
-		-- To get telescope-file-browser loaded and working with telescope,
-		-- you need to call load_extension, somewhere after setup function:
-		require('telescope').load_extension('file_browser')
-		require('telescope').load_extension('project')
-		--------------------------------------- End fuzzy finder
-
-		-------------------------------------- Language specific
-		-- Dart
-		g.dart_html_in_string = true
-		g.dart_style_guide = 2
-		g.dart_format_on_save = 0
-		-- Rust
-		g.rustfmt_autosave = 0
-		g.racer_experimental_completer = 0
-		g.racer_insert_paren = 0
-		if win then
-			g.rust_clip_command = 'win32yank'
-		elseif linux then
-			g.rust_clip_command = 'xclip -selection clipboard'
-		elseif mac then
-			g.rust_clip_command = 'pbcopy'
-		end
-		---------------------------------- End language specific
-
-		---------------------------------------- Language server
-		-- navigator.lua
-		require 'navigator'.setup({
-			mason = true,
-			lsp = {
-				diagnostic = {
-					virtual_text = false,
-					underline = false,
-					signs = true,
-				},
-			},
-		})
-		--- coc.nvim
-		--require('coc')
-
-		-- nvim-treesitter
-		require 'nvim-treesitter.configs'.setup {
-			auto_install = true,
-			highlight = {
-				enable = true,
-				-- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-				-- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-				-- Using this option may slow down your editor, and you may see some duplicate highlights.
-				-- Instead of true it can also be a list of languages
-				additional_vim_regex_highlighting = false,
-			},
-			indent = {
-				enable = true
-			},
-		}
-		o.foldmethod = 'expr'
-		o.foldexpr = 'nvim_treesitter#foldexpr()'
-		o.foldenable = false
-		------------------------------------ End language server
-
-		------------------------------------------------- Linter
-		local ft = require('guard.filetype')
-
-		-- Codespell
-		if fn.executable('codespell') == 1 then
-			ft('*'):lint('codespell')
-		end
-		-- Format c, cpp, cs, java, cuda, proto
-		if fn.executable('clang-format') == 1 then
-			ft('c,cpp,cs,java,cuda,proto'):fmt('clang-format')
-		end
-		-- Eslint for js, jsx, ts, tsx, vue
-		if fn.executable('eslint') == 1 then
-			ft('js,jsx,ts,tsx,vue'):fmt({
-				cmd = 'eslint',
-				args = { '--fix' },
-			}):lint('eslint')
-		end
-		-- Prettier format html, css, json, etc..
-		if fn.executable('prettier') == 1 then
-			ft('typescript,javascript,typescriptreact,html,css,scss,json,yaml,markdown,graphql,md,txt'):fmt(
-				'prettier')
-		end
-		-- Golang
-		if fn.executable('gofmt') == 1 then
-			ft('go'):fmt('gofmt')
-		end
-		-- Rust
-		if fn.executable('rustfmt') == 1 then
-			ft('rust'):fmt('rustfmt')
-		end
-		-- Python
-		if fn.executable('ruff') == 1 then
-			ft('python'):fmt('ruff')
-		end
-		-- Lint protobuf
-		if fn.executable('buf') == 1 then
-			ft('proto'):lint({
-				cmd = 'buf',
-				args = { 'lint' },
-			})
-		end
-
-		-- Call setup() LAST!
-		-- change this anywhere in your config (or not), these are the defaults
-		g.guard_config = {
-			-- format on write to buffer
-			fmt_on_save = false,
-			-- use lsp if no formatter was defined for this filetype
-			lsp_as_default_formatter = false,
-			-- whether or not to save the buffer after formatting
-			save_on_fmt = false,
-			-- automatic linting
-			auto_lint = false,
-			-- how frequently can linters be called
-			lint_interval = 500
-		}
-		--------------------------------------------- End linter
-
-		--------------------------------------------- Completion
-		local has_words_before = function()
-			unpack = unpack or table.unpack
-			local line, col = unpack(api.nvim_win_get_cursor(0))
-			return col ~= 0 and
-					api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-		end
-
-		local cmp = require('cmp')
-		cmp.setup({
-			snippet = {
-				-- REQUIRED - you must specify a snippet engine
-				expand = function(args)
-					fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-					-- vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
-				end,
-			},
-			mapping = cmp.mapping.preset.insert({
-				--['<C-y>'] = cmp.mapping.confirm({ select = true }),
-				["<Tab>"] = cmp.mapping(function(fallback)
-					if cmp.visible() then
-						cmp.select_next_item()
-					elseif has_words_before() then
-						cmp.complete()
-					else
-						fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
-					end
-				end, { "i", "s" }),
-				["<S-Tab>"] = cmp.mapping(function()
-					if cmp.visible() then
-						cmp.select_prev_item()
-					end
-				end, { "i", "s" }),
-				['<C-b>'] = cmp.mapping.scroll_docs(-4),
-				['<C-f>'] = cmp.mapping.scroll_docs(4),
-				--['<C-Space>'] = cmp.mapping(function()
-				--  if require("tabnine.keymaps").has_suggestion() then
-				--    return require("tabnine.keymaps").accept_suggestion()
-				--  else
-				--    return cmp.complete()
-				--  end
-				--end, { "i", "s" }),
-				['<C-e>'] = cmp.mapping.abort(),
-				['<CR>'] = cmp.mapping.confirm({
-					select = true,
-				})
-			}),
-			sources = {
-				{ name = 'async_path' },
-				{ name = 'buffer' },
-				{ name = 'nvim_lsp' },
-				{ name = 'nvim_lsp_signature_help' },
-				{ name = 'emoji' },
-			}
-		})
-		-- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
-		local capabilities = vim.lsp.protocol.make_client_capabilities()
-		capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-		----------------------------------------- End completion
-
-		--------------------------------- Editor tooling manager
-		require("mason").setup()
-		require("mason-lspconfig").setup {
-			ensure_installed = {
-				'bashls',
-				'cssls',
-				'cssmodules_ls',
-				'dockerls',
-				'docker_compose_language_service',
-				'emmet_ls',
-				'eslint',
-				'grammarly',
-				'html',
-				'jsonls',
-				'ts_ls',
-				'lua_ls',
-				'pyright',
-				'sqlls',
-				'stylelint_lsp',
-				'tailwindcss',
-				'vimls',
-				'yamlls',
-			},
-			--automatic_installation = true,
-			handlers = {
-				-- The first entry (without a key) will be the default handler
-				-- and will be called for each installed server that doesn't have
-				-- a dedicated handler.
-				function(server_name) -- default handler (optional)
-					-- Prevent some LSP servers from autostart
-					local no_autostart = { 'deno', 'denols' }
-					local no_single_file_support = { 'rust_analyzer' }
-					require("lspconfig")[server_name].setup {
-						autostart = not no_autostart[server_name],
-						single_file_support = not no_single_file_support[server_name],
-						-- advertise capabilities to language servers.
-						capabilities = capabilities,
-					}
-				end,
-				-- Next, you can provide a dedicated handler for specific servers.
-				-- For example, a handler override for the `rust_analyzer`:
-				["rust_analyzer"] = function()
-					require('lspconfig').rust_analyzer.setup {
-						settings = {
-							['rust-analyzer'] = {
-								checkOnSave = {
-									enable = false,
-								},
-								diagnostics = {
-									enable = false,
-								}
-							}
-						}
-					}
-				end,
-				["denols"] = function()
-					require("rust-tools").setup {}
-				end,
-			},
-		}
-
-		require("navigator").setup {
-			mason = true,
-		}
-
-		-- Setup LSP servers not included by default in navigator.lua
-		require("lspconfig").bacon_ls.setup({
-			init_options = {
-				updateOnSave = true,
-				updateOnSaveWaitMillis = 1000,
-				updateOnChange = true,
-			}
-		})
-		-- Show line diagnostics automatically in hover window
-		--o.updatetime = 250
-		--cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
-
-		----------------------------- End editor tooling manager
-
-		----------------------------------------- Terminal tools
-		local Terminal = require('toggleterm.terminal').Terminal
-
-		-- Floating term
-		api.nvim_create_user_command(
-			'FloatTerm',
-			function()
-				cmd [[ ToggleTerm direction='float' ]]
-			end,
-			{ nargs = 0 }
-		)
-
-		-- Cli tools
-		if fn.executable("pkgx") then
-			local lazygit = Terminal:new({ cmd = "pkgx lazygit", direction = 'float', hidden = true })
-			local lazydocker = Terminal:new({ cmd = "pkgx lazydocker", direction = 'float', hidden = true })
-			local btm = Terminal:new({ cmd = "pkgx btm", direction = 'float', hidden = true })
-
-			api.nvim_create_user_command(
-				'Lazygit',
-				function()
-					if lazygit then
-						lazygit:toggle()
-					end
-				end,
-				{ nargs = 0 }
-			)
-			api.nvim_create_user_command(
-				'Lazydocker',
-				function()
-					if lazydocker then
-						lazydocker:toggle()
-					end
-				end,
-				{ nargs = 0 }
-			)
-			api.nvim_create_user_command(
-				'Btm',
-				function()
-					if btm then
-						btm:toggle()
-					end
-				end,
-				{ nargs = 0 }
-			)
-		end
-
-		------------------------------------- End terminal tools
-	end,
-	config = {
-		git = {
-			clone_timeout = 6000,
 		},
-	}
+		-- Detect file encoding
+		{ 's3rvac/AutoFenc' },
+		-- Indent line for code wrapping
+		{ 'Yggdroot/indentLine' },
+		-- Theme
+		{
+			'morhetz/gruvbox',
+			lazy = false,
+			priority = 1000,
+			config = function()
+				cmd [[highlight Normal ctermbg=none ctermfg=white guibg=none]]
+				g.gruvbox_italic = 1
+				g.gruvbox_contrast_dark = 'hard'
+				g.gruvbox_invert_tabline = 1
+				g.gruvbox_invert_indent_guides = 1
+				g.gruvbox_transparent_bg = 1
+				cmd [[colorscheme gruvbox]]
+			end,
+		},
+	},
 })
-
-if first_time_packer then
-	cmd 'PackerSync'
-end
