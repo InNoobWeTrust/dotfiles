@@ -93,9 +93,12 @@ local function map(mode, lhs, rhs, opts)
 	api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
+-- Save
+map("n", "<C-s>", "<cmd>w<CR>", { desc = "general save file" })
 -- Copy and paste
-map('v', '<C-c>', '"+y')
-map('v', '<C-x>', '"+c')
+map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "copy whole file" })
+map('v', '<C-c>', '"+y', { desc = "copy selected" })
+map('v', '<C-x>', '"+c', { desc = "cut selected" })
 map('v', '<S-Insert>', 'c<ESC>"+p')
 map('i', '<S-Insert>', '<ESC>"+pa')
 -- Map Ctrl-Del to delete word
@@ -107,6 +110,20 @@ map('n', '<c-s-tab>', ':tabprevious<cr>', { noremap = false })
 map('n', '<leader><leader><tab>', ':tabprevious<cr>', { noremap = false })
 -- Key mapping for native LSP
 map('n', 'ff', '<cmd>lua vim.lsp.buf.format()<cr>')
+-- Misc
+map("i", "<C-b>", "<ESC>^i", { desc = "move beginning of line" })
+map("i", "<C-e>", "<End>", { desc = "move end of line" })
+map("i", "<C-h>", "<Left>", { desc = "move left" })
+map("i", "<C-l>", "<Right>", { desc = "move right" })
+map("i", "<C-j>", "<Down>", { desc = "move down" })
+map("i", "<C-k>", "<Up>", { desc = "move up" })
+-- Windows
+map("n", "<C-h>", "<C-w>h", { desc = "switch window left" })
+map("n", "<C-l>", "<C-w>l", { desc = "switch window right" })
+map("n", "<C-j>", "<C-w>j", { desc = "switch window down" })
+map("n", "<C-k>", "<C-w>k", { desc = "switch window up" })
+-- Highlight
+map("n", "<Esc>", "<cmd>noh<CR>", { desc = "clear highlights" })
 ------------------------------------- End keyboard shortcuts
 
 ---------------------------------------------------- Autocmd
@@ -618,14 +635,16 @@ require("lazy").setup({
 				require("toggleterm").setup()
 				local Terminal = require('toggleterm.terminal').Terminal
 
-				-- Floating term
-				api.nvim_create_user_command(
-					'FloatTerm',
-					function()
-						cmd [[ ToggleTerm direction='float' ]]
-					end,
-					{ nargs = 0 }
-				)
+				-- Keyboard shortcuts
+				-- toggleable
+				vim.keymap.set({ "n", "t" }, "<A-v>", "<cmd>ToggleTerm direction=vertical size=50<CR>",
+					{ desc = "terminal toggleable vertical term" })
+
+				vim.keymap.set({ "n", "t" }, "<A-h>", "<cmd>ToggleTerm direction=horizontal size=12<CR>",
+					{ desc = "terminal toggleable horizontal term" })
+
+				vim.keymap.set({ "n", "t" }, "<A-i>", "<cmd>ToggleTerm direction=float<CR>",
+					{ desc = "terminal toggle floating term" })
 
 				-- Cli tools
 				if fn.executable("pkgx") then
