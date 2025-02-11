@@ -400,7 +400,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             .with_filter(LevelFilter::from_level(args.log_level.into_tracing()));
         // log to file from debug level
         let log_layer = fmt::layer()
-            .json()
+            .compact()
+            .with_ansi(false)
             .with_writer(logfile)
             .with_filter(LevelFilter::DEBUG);
         let tag_filter = Targets::new().with_target(
