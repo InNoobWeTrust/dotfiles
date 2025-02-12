@@ -103,11 +103,13 @@ map('v', '<S-Insert>', 'c<ESC>"+p')
 map('i', '<S-Insert>', '<ESC>"+pa')
 -- Map Ctrl-Del to delete word
 map('i', '<C-Delete>', '<ESC>bdwi')
--- Tab switching
-map('n', '<c-tab>', ':tabnext<cr>', { noremap = false })
-map('n', '<leader><tab>', ':tabnext<cr>', { noremap = false })
-map('n', '<c-s-tab>', ':tabprevious<cr>', { noremap = false })
-map('n', '<leader><leader><tab>', ':tabprevious<cr>', { noremap = false })
+-- Tab switching (buffers)
+map("n", "<tab>", ":bn<cr>", { desc = "buffer goto next" })
+map("n", "<S-tab>", ":bp<cr>", { desc = "buffer goto prev" })
+--map('n', '<c-tab>', ':tabnext<cr>', { noremap = false })
+--map('n', '<leader><tab>', ':tabnext<cr>', { noremap = false })
+--map('n', '<c-s-tab>', ':tabprevious<cr>', { noremap = false })
+--map('n', '<leader><leader><tab>', ':tabprevious<cr>', { noremap = false })
 -- Key mapping for native LSP
 map('n', 'ff', '<cmd>lua vim.lsp.buf.format()<cr>')
 -- Misc
@@ -755,7 +757,30 @@ require("lazy").setup({
 					--    lualine_y = {},
 					--    lualine_z = {}
 					--},
-					--tabline = {},
+					tabline = {
+						lualine_a = { 'buffers' },
+						lualine_b = { 'branch' },
+						lualine_c = { 'filename' },
+						lualine_x = {},
+						lualine_y = {},
+						lualine_z = { 'tabs' }
+					},
+					winbar = {
+						lualine_a = {},
+						lualine_b = {},
+						lualine_c = { 'filename' },
+						lualine_x = {},
+						lualine_y = {},
+						lualine_z = {},
+					},
+					inactive_winbar = {
+						lualine_a = {},
+						lualine_b = {},
+						lualine_c = { 'filename' },
+						lualine_x = {},
+						lualine_y = {},
+						lualine_z = {},
+					},
 					--extensions = {}
 				}
 			end,
