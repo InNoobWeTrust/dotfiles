@@ -871,7 +871,7 @@ The script should do this: \(ai.prompt)</string>
 			<key>Visual Bell</key>
 			<true/>
 			<key>Window Type</key>
-			<integer>0</integer>
+			<integer>15</integer>
 			<key>Working Directory</key>
 			<string>/Users/InNoobWeTrust</string>
 		</dict>

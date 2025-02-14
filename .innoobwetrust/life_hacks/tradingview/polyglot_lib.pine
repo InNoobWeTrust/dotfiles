@@ -7,6 +7,7 @@
 library("polyglot_lib", overlay = false)
 import TradingView/ta/9
 import forbidden_gun/commonlib/4
+import forbidden_gun/plot_lib/1
 
 //===============================================================================
 // Constants
@@ -22,30 +23,6 @@ export enum MaT
 	sma = 'SMA'
 	wma = 'WMA'
 	ema = 'EMA'
-
-export type PositionPlot
-	line tp
-	line sl
-	line c
-	linefill tp_fill
-	linefill sl_fill
-
-export type TfBar
-    float o
-    float h
-    float l
-    float c
-    int t_o
-    int t_c
-
-export type TfBarZone
-    int period_seconds
-    TfBar bar
-
-export type TfBarZonePlot
-    line h
-    line l
-    linefill f
 
 //===============================================================================
 // Functions
@@ -144,7 +121,6 @@ export display_rsi_table(int rsi_len = 14, simple int rsi_ma_len = 14, MaT rsi_m
 	table.cell(rsi_tb,0,3,str.format('{0,number}',rsi_ma),bgcolor=color.new(color.silver, transp = 80),text_color=rsi_sma_color)
 	// Return the table id to manage drawings
 	rsi_tb
-
 
 // @function Display current RSI and SMA of RSI and RLI (Relative Liquidity Index)
 // @param index_len The length to calculate index
@@ -277,33 +253,6 @@ export rolling_revengrsi(int len, float target_rsi, float src, float prev_src, f
 	// Return RevEngRSI, auc, adc
 	[rev_eng_rsi, auc, adc]
 
-// @function Draw entry with TP/SL
-// @param tp The take profit price
-// @param sl The stop loss price
-// @param bars The width of the drawing
-// @returns The drawings ids
-export plot_position_entry(float tp,float sl, int bars) =>
-	tp_color = color.new(#40ee40,80)
-	tp_fill_color = color.new(#40ee40,90)
-	sl_color = color.new(#ee4040,80)
-	sl_fill_color = color.new(#ee4040,90)
-	tp_plt = line.new(bar_index,tp,bar_index + bars,tp,xloc = xloc.bar_index,color=tp_color,force_overlay = true)
-	sl_plt = line.new(bar_index,sl,bar_index + bars,sl,xloc = xloc.bar_index,color=sl_color,force_overlay = true)
-	close_plt = line.new(bar_index,close,bar_index+bars,close,xloc = xloc.bar_index,color = color(na),force_overlay = true)
-	tp_fill = linefill.new(tp_plt,close_plt,tp_fill_color)
-	sl_fill = linefill.new(sl_plt,close_plt,sl_fill_color)
-	// Return the drawings
-	PositionPlot.new(tp_plt,sl_plt,close_plt,tp_fill,sl_fill)
-
-// @function Clear position plot
-// @param pos_plt The plot to clear
-export clear_position_plot(PositionPlot pos_plt) =>
-	linefill.delete(pos_plt.tp_fill)
-	linefill.delete(pos_plt.sl_fill)
-	line.delete(pos_plt.c)
-	line.delete(pos_plt.tp)
-	line.delete(pos_plt.sl)
-
 // @function fill na value from a source with its last non-na
 // @param src source series
 // @returns the series with filled values using previous data point
@@ -352,23 +301,6 @@ export support_breakout(float support) =>
     // Breakout if previous bar touches the level but current bar is lower than level
     high < support and high[1] >= support
 
-// @function Plot the price zone of TfBar
-// @param z Zone data of TfBar
-// @param clr Color for the zone
-export plot_tf_zone(TfBarZone z, color clr) =>
-    // Line for high value
-    h = line.new(time, z.bar.h, time_close, z.bar.h, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
-    l = line.new(time, z.bar.l, time_close, z.bar.l, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
-    f = linefill.new(h,l,clr)
-    TfBarZonePlot.new(h,l,f)
-
-// @function Clear plotted TfBarZone
-// @param z Plot data
-export clear_tf_zone(TfBarZonePlot z) =>
-	linefill.delete(z.f)
-	line.delete(z.h)
-	line.delete(z.l)
-
 //===============================================================================
 // Testing
 //===============================================================================
@@ -413,8 +345,8 @@ rli_atr_len = input.int(34,"RLI's ATR length",group = rli_grp)
 rli_len = input.int(14,'RLI length',group = rli_grp)
 rli_low_color = input.color(color.new(color.red,25),'Low liquidity color',group = rli_grp)
 rli_high_color = input.color(color.new(color.teal,25),'High liquidity color',group = rli_grp)
-rli_gradient_bg_enable = input.bool(false,'Show gradient background',group = rli_grp)
-rli_gradient_bg_transparency = input.int(85,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
+rli_gradient_bg_enable = input.bool(true,'Show gradient background',group = rli_grp)
+rli_gradient_bg_transparency = input.int(90,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
 
 rli = relative_liquidity_index(rli_atr_len,rli_len)
 shifted_rli = rli - 50
@@ -433,36 +365,38 @@ key_gap_grp = '► Key gaps'
 key_gap_enable = input.bool(true, 'Enable', group = key_gap_grp)
 key_gap_atr_len = input.int(34, 'base ATR length', group = key_gap_grp)
 key_gap_threshold = input.float(2.618, 'ATR mult',group = key_gap_grp)
+key_gap_cap = input.float(4.236, 'ATR upper cap',group = key_gap_grp)
 key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1,group = key_gap_grp)
-key_gap_plot_last = input.int(3, 'Plot last', minval = 0, group = key_gap_grp)
+key_gap_buffer = input.int(64, 'Buffer', minval = 0, group = key_gap_grp)
+key_gap_plot_last = input.int(5, 'Plot last', minval = 0, group = key_gap_grp)
 key_gap_gradient_inline = 'Key gap gradient'
-key_gap_gradient_low = input.color(color.new(color.red, 90), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
+key_gap_gradient_low = input.color(color.new(color.aqua, 95), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
 key_gap_gradient_high = input.color(color.new(color.teal, 90), '', group = key_gap_grp, inline = key_gap_gradient_inline)
 
-var array<TfBarZone> key_gaps = array.new<TfBarZone>(key_gap_plot_last, na)
-var array<TfBarZonePlot> key_gaps_plt = array.new<TfBarZonePlot>(key_gap_plot_last, na)
+var array<plot_lib.TfBarZone> key_gaps = array.new<plot_lib.TfBarZone>(key_gap_buffer, na)
+var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlot>(key_gap_plot_last, na)
 
 key_gap_atr = ta.atr(key_gap_atr_len)
 key_gap_candle_spread_mult = (high - low) / key_gap_atr[1]
 candle_is_key = key_gap_candle_spread_mult >= key_gap_threshold and commonlib.bar_body_percent() >= key_gap_body_percent
 
-if candle_is_key and key_gap_plot_last > 0
+if candle_is_key and key_gap_buffer > 0
 	// Remove old gaps
 	key_gaps.shift()
 
 	tf_secs = timeframe.in_seconds()
-	bar = TfBar.new(open, high, low, close, time, time_close)
-	bar_zone = TfBarZone.new(tf_secs, bar)
+	bar = plot_lib.TfBar.new(open, high, low, close, time, time_close)
+	bar_zone = plot_lib.TfBarZone.new(tf_secs, bar)
 	key_gaps.push(bar_zone)
 
-	if key_gap_enable
+	if key_gap_enable and key_gap_plot_last > 0
 		// Remove and clear old plots
 		oldest_zone_plt = key_gaps_plt.shift()
 		if not na(oldest_zone_plt)
-			clear_tf_zone(oldest_zone_plt)
+			plot_lib.clear_tf_zone(oldest_zone_plt)
 
-		clr = color.from_gradient(key_gap_candle_spread_mult, 1.618, 4.236, key_gap_gradient_low, key_gap_gradient_high)
-		plt = plot_tf_zone(bar_zone, clr)
+		clr = color.from_gradient(key_gap_candle_spread_mult, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
+		plt = plot_lib.plot_tf_zone(bar_zone, clr)
 		key_gaps_plt.push(plt)
 
 key_levels = array.new<float>()
@@ -495,7 +429,7 @@ plotshape(biased_candle_enable and candle_strictly_falling,'Biased candle fallin
 // Leverage table
 //-------------------------------------------------------------------------------
 lvrg_tb_grp = '► Leverage table'
-lvrg_tb_enable = input.bool(false,'Enable',group = lvrg_tb_grp)
+lvrg_tb_enable = input.bool(true,'Enable',group = lvrg_tb_grp)
 lvrg_tb_mult = input.float(2,'Multiplier',group = lvrg_tb_grp)
 lvrg_tb_position = input.string(position.top_right,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = lvrg_tb_grp)
 lvrg_tb_overlay = input.bool(true,'Overlay',group = lvrg_tb_grp)
@@ -506,13 +440,12 @@ var table lvrg_tb = na
 if lvrg_tb_enable
 	lvrg_tb := display_lvrg_table(atr_len = trcd_slow_len, mult = lvrg_tb_mult,pos = lvrg_tb_position,overlay = lvrg_tb_overlay)
 
-
 // RSI + RLI (Relative Liquidity Index) table
 //-------------------------------------------------------------------------------
 index_tb_grp = '► Index table'
 index_tb_enable = input.bool(true,'Enable',group = index_tb_grp)
-index_tb_position = input.string(position.middle_right,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = index_tb_grp)
-index_tb_overlay = input.bool(false,'Overlay',group = index_tb_grp)
+index_tb_position = input.string(position.bottom_left,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = index_tb_grp)
+index_tb_overlay = input.bool(true,'Overlay',group = index_tb_grp)
 index_len = input.int(14,'Index length',group = index_tb_grp)
 index_ma_inline = 'Index MA'
 index_ma_type = input.enum(MaT.sma,index_ma_inline,group = index_tb_grp,inline = index_ma_inline)
@@ -529,7 +462,7 @@ if index_tb_enable
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
 revengrsi_grp = '► Reverse Engineering RSI'
-revengrsi_enable = input.bool(true,'Enable',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
+revengrsi_enable = input.bool(false,'Enable',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
 revengrsi_len = input.int(17,'Length',group = revengrsi_grp)
 revengrsi_ghost_inline = 'Ghost high/low'
 revengrsi_ghost_enable = input.bool(false,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
@@ -565,9 +498,9 @@ bb_len_inline = 'Length'
 bbf_len = input.int(34,bb_len_inline,group = bb_grp,inline = bb_len_inline)
 bbs_len = input.int(89,'',group = bb_grp,inline = bb_len_inline)
 bb_mult = input.float(2,'Mult',group = bb_grp)
-bbf_color = input.color(color.new(color.aqua,85),'Fast color',group = bb_grp)
-bbs_color = input.color(color.new(color.yellow,85),'Slow color',group = bb_grp)
-bb_line_transp = input.int(85,'BB line transparency',minval=0,maxval=100,group = bb_grp)
+bbf_color = input.color(color.new(color.aqua,92),'Fast color',group = bb_grp)
+bbs_color = input.color(color.new(color.yellow,92),'Slow color',group = bb_grp)
+bb_line_transp = input.int(92,'BB line transparency',minval=0,maxval=100,group = bb_grp)
 [bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,bbf_len,bb_mult)
 [bbs_m,bbs_u,bbs_l] = ta.bb(bb_src,bbs_len,bb_mult)
 
@@ -745,23 +678,19 @@ signal_filter = position_enable and high_spread
 long_signal = signal_filter and candle_rising
 short_signal = signal_filter and candle_falling
 
-nearest_lower_pivot = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,bbf_l))
-nearest_higher_pivot = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,bbf_u) - 1)
+nearest_lower_price = array.get(sorted_pivots, array.binary_search_leftmost(sorted_pivots,bbf_l))
+nearest_higher_price = array.get(sorted_pivots, array.binary_search_rightmost(sorted_pivots,bbf_u) - 1)
 if key_levels.size() > 0
-	// nearest_lower_pivot := key_levels.first()
-	// nearest_higher_pivot := key_levels.last()
-	max_range = 0.
-	for zone in key_gaps
-		if na(zone)
-			continue
-		if zone.bar.h - zone.bar.l <= max_range
-			continue
-		max_range := zone.bar.h - zone.bar.l
-		nearest_lower_pivot := zone.bar.l
-		nearest_higher_pivot := zone.bar.h
+	nearest_lower_level = key_levels.get(key_levels.binary_search_leftmost(bbf_l))
+	nearest_higher_level = key_levels.get(key_levels.binary_search_rightmost(bbf_u) - 1)
 
-sl = long_signal ? math.min(low - 1.5 * pos_atr, nearest_lower_pivot) : short_signal ? math.max(high + 1.5 * pos_atr, nearest_higher_pivot) : na
-tp = long_signal ? nearest_higher_pivot : short_signal ? nearest_lower_pivot : na
+	if nearest_lower_price < nearest_lower_level
+		nearest_lower_price := nearest_lower_level
+	if nearest_higher_price > nearest_higher_level
+		nearest_higher_price := nearest_higher_level
+
+sl = long_signal ? math.min(low - 1.5 * pos_atr, nearest_lower_price) : short_signal ? math.max(high + 1.5 * pos_atr, nearest_higher_price) : na
+tp = long_signal ? nearest_higher_price : short_signal ? nearest_lower_price : na
 
 rr = long_signal or short_signal ? (tp - close) / (close - sl) : na
 desired_winrate = 0.5
@@ -779,7 +708,7 @@ scalp_entry_down = short_signal and is_satisfactory_rr and is_safe_sl
 // var PositionPlot[] pos_plts = array.new<PositionPlot>()
 if scalp_entry_up or scalp_entry_down
 	label.new(x=bar_index, y = scalp_entry_down ? low : high,text = str.format('x{0,number,integer}',lvrg),xloc = xloc.bar_index,yloc = scalp_entry_up ? yloc.belowbar : yloc.abovebar,color=scalp_entry_up ? color.green : color.red,style = label.style_text_outline,size=size.small,force_overlay = true)
-	plt = plot_position_entry(tp,sl,3)
+	plt = plot_lib.plot_position_entry(tp,sl,3)
 	log_msg = if scalp_entry_up
 		str.format('Long: {0,number}, TP: {1,number}, SL: {2,number}, RR: {3,number,percent}',close,tp,sl,rr)
 	else if scalp_entry_down

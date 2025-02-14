@@ -1,0 +1,61 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// ©  InNoobWeTrust
+
+//@version=6
+
+// @description TODO: add library description here
+indicator("[innoobwetrust][indi] key gaps", overlay = true)
+import TradingView/ta/9
+import forbidden_gun/commonlib/4
+import forbidden_gun/plot_lib/1
+
+//===============================================================================
+// Input
+//===============================================================================
+key_gap_enable = input.bool(true, 'Enable')
+key_gap_atr_len = input.int(34, 'base ATR length')
+key_gap_threshold = input.float(2.618, 'ATR mult')
+key_gap_cap = input.float(4.236, 'ATR upper cap')
+key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1)
+key_gap_buffer = input.int(64, 'Buffer', minval = 0)
+key_gap_plot_last = input.int(5, 'Plot last', minval = 0)
+key_gap_gradient_inline = 'Key gap gradient'
+key_gap_gradient_low = input.color(color.new(color.aqua, 95), key_gap_gradient_inline, inline = key_gap_gradient_inline)
+key_gap_gradient_high = input.color(color.new(color.teal, 90), '', inline = key_gap_gradient_inline)
+
+//===============================================================================
+// Global vars
+//===============================================================================
+var array<plot_lib.TfBarZone> key_gaps = array.new<plot_lib.TfBarZone>(key_gap_buffer, na)
+var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlot>(key_gap_plot_last, na)
+
+//===============================================================================
+// Calculation
+//===============================================================================
+
+key_gap_atr = ta.atr(key_gap_atr_len)
+key_gap_candle_spread_mult = (high - low) / key_gap_atr[1]
+candle_is_key = key_gap_candle_spread_mult >= key_gap_threshold and commonlib.bar_body_percent() >= key_gap_body_percent
+
+//===============================================================================
+// Plot
+//===============================================================================
+
+if candle_is_key and key_gap_buffer > 0
+	// Remove old gaps
+	key_gaps.shift()
+
+	tf_secs = timeframe.in_seconds()
+	bar = plot_lib.TfBar.new(open, high, low, close, time, time_close)
+	bar_zone = plot_lib.TfBarZone.new(tf_secs, bar)
+	key_gaps.push(bar_zone)
+
+	if key_gap_enable and key_gap_plot_last > 0
+		// Remove and clear old plots
+		oldest_zone_plt = key_gaps_plt.shift()
+		if not na(oldest_zone_plt)
+			plot_lib.clear_tf_zone(oldest_zone_plt)
+
+		clr = color.from_gradient(key_gap_candle_spread_mult, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
+		plt = plot_lib.plot_tf_zone(bar_zone, clr)
+		key_gaps_plt.push(plt)

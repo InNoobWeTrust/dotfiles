@@ -1,0 +1,83 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// ©  InNoobWeTrust
+
+//@version=6
+
+// @description TODO: add library description here
+library("plot_lib", overlay = false)
+
+//===============================================================================
+// Types
+//===============================================================================
+
+export type PositionPlot
+	line tp
+	line sl
+	line c
+	linefill tp_fill
+	linefill sl_fill
+
+export type TfBar
+    float o
+    float h
+    float l
+    float c
+    int t_o
+    int t_c
+
+export type TfBarZone
+    int period_seconds
+    TfBar bar
+
+export type TfBarZonePlot
+    line h
+    line l
+    linefill f
+
+//===============================================================================
+// Functions
+//===============================================================================
+
+// @function Draw entry with TP/SL
+// @param tp The take profit price
+// @param sl The stop loss price
+// @param bars The width of the drawing
+// @returns The drawings ids
+export plot_position_entry(float tp,float sl, int bars) =>
+	tp_color = color.new(#40ee40,80)
+	tp_fill_color = color.new(#40ee40,90)
+	sl_color = color.new(#ee4040,80)
+	sl_fill_color = color.new(#ee4040,90)
+	tp_plt = line.new(bar_index,tp,bar_index + bars,tp,xloc = xloc.bar_index,color=tp_color,force_overlay = true)
+	sl_plt = line.new(bar_index,sl,bar_index + bars,sl,xloc = xloc.bar_index,color=sl_color,force_overlay = true)
+	close_plt = line.new(bar_index,close,bar_index+bars,close,xloc = xloc.bar_index,color = color(na),force_overlay = true)
+	tp_fill = linefill.new(tp_plt,close_plt,tp_fill_color)
+	sl_fill = linefill.new(sl_plt,close_plt,sl_fill_color)
+	// Return the drawings
+	PositionPlot.new(tp_plt,sl_plt,close_plt,tp_fill,sl_fill)
+
+// @function Clear position plot
+// @param pos_plt The plot to clear
+export clear_position_plot(PositionPlot pos_plt) =>
+	linefill.delete(pos_plt.tp_fill)
+	linefill.delete(pos_plt.sl_fill)
+	line.delete(pos_plt.c)
+	line.delete(pos_plt.tp)
+	line.delete(pos_plt.sl)
+
+// @function Plot the price zone of TfBar
+// @param z Zone data of TfBar
+// @param clr Color for the zone
+export plot_tf_zone(TfBarZone z, color clr) =>
+    // Line for high value
+    h = line.new(time, z.bar.h, time_close, z.bar.h, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
+    l = line.new(time, z.bar.l, time_close, z.bar.l, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
+    f = linefill.new(h,l,clr)
+    TfBarZonePlot.new(h,l,f)
+
+// @function Clear plotted TfBarZone
+// @param z Plot data
+export clear_tf_zone(TfBarZonePlot z) =>
+	linefill.delete(z.f)
+	line.delete(z.h)
+	line.delete(z.l)
