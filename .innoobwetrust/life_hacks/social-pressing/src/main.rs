@@ -16,6 +16,7 @@ use serde::Deserialize;
 use std::collections::HashSet;
 use std::error::Error;
 use std::fs;
+use std::io::IsTerminal;
 use std::str::FromStr;
 use std::string::ToString;
 use std::time::Instant;
@@ -386,6 +387,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         })
         .collect::<Vec<Cookie>>();
 
+    let is_tty = std::io::stdin().is_terminal();
+
     if let Some(logfile) = args.logfile {
         let logfile = std::fs::OpenOptions::new()
             .append(true)
@@ -396,12 +399,16 @@ fn main() -> Result<(), Box<dyn Error>> {
         // stdout layer, to view everything in the console
         let stdout_layer = fmt::layer()
             .compact()
-            .with_ansi(true)
+            .with_ansi(is_tty)
+            .with_file(true)
+            .with_line_number(true)
             .with_filter(LevelFilter::from_level(args.log_level.into_tracing()));
         // log to file from debug level
         let log_layer = fmt::layer()
             .compact()
             .with_ansi(false)
+            .with_file(true)
+            .with_line_number(true)
             .with_writer(logfile)
             .with_filter(LevelFilter::DEBUG);
         let tag_filter = Targets::new().with_target(
@@ -420,7 +427,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 // stdout layer, to view everything in the console
                 fmt::layer()
                     .compact()
-                    .with_ansi(true)
+                    .with_ansi(is_tty)
+                    .with_file(true)
+                    .with_line_number(true)
                     .with_filter(LevelFilter::from_level(args.log_level.into_tracing())),
             )
             .with(Targets::new().with_target(
