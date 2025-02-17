@@ -345,7 +345,7 @@ rli_atr_len = input.int(34,"RLI's ATR length",group = rli_grp)
 rli_len = input.int(14,'RLI length',group = rli_grp)
 rli_low_color = input.color(color.new(color.red,25),'Low liquidity color',group = rli_grp)
 rli_high_color = input.color(color.new(color.teal,25),'High liquidity color',group = rli_grp)
-rli_gradient_bg_enable = input.bool(true,'Show gradient background',group = rli_grp)
+rli_gradient_bg_enable = input.bool(false,'Show gradient background',group = rli_grp)
 rli_gradient_bg_transparency = input.int(90,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
 
 rli = relative_liquidity_index(rli_atr_len,rli_len)
@@ -368,17 +368,18 @@ key_gap_threshold = input.float(2.618, 'ATR mult',group = key_gap_grp)
 key_gap_cap = input.float(4.236, 'ATR upper cap',group = key_gap_grp)
 key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1,group = key_gap_grp)
 key_gap_buffer = input.int(64, 'Buffer', minval = 0, group = key_gap_grp)
-key_gap_plot_last = input.int(5, 'Plot last', minval = 0, group = key_gap_grp)
+key_gap_plot_last = input.int(10, 'Plot last', minval = 0, group = key_gap_grp)
 key_gap_gradient_inline = 'Key gap gradient'
 key_gap_gradient_low = input.color(color.new(color.aqua, 95), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
 key_gap_gradient_high = input.color(color.new(color.teal, 90), '', group = key_gap_grp, inline = key_gap_gradient_inline)
+key_gap_inverse_gradient = input.bool(true, "Inverse gradient based on candle color", group = key_gap_grp)
 
 var array<plot_lib.TfBarZone> key_gaps = array.new<plot_lib.TfBarZone>(key_gap_buffer, na)
 var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlot>(key_gap_plot_last, na)
 
 key_gap_atr = ta.atr(key_gap_atr_len)
 key_gap_candle_spread_mult = (high - low) / key_gap_atr[1]
-candle_is_key = key_gap_candle_spread_mult >= key_gap_threshold and commonlib.bar_body_percent() >= key_gap_body_percent
+candle_is_key = key_gap_candle_spread_mult >= key_gap_threshold and math.abs(commonlib.bar_body_percent()) >= key_gap_body_percent
 
 if candle_is_key and key_gap_buffer > 0
 	// Remove old gaps
@@ -396,6 +397,9 @@ if candle_is_key and key_gap_buffer > 0
 			plot_lib.clear_tf_zone(oldest_zone_plt)
 
 		clr = color.from_gradient(key_gap_candle_spread_mult, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
+		if key_gap_inverse_gradient and close < open
+			// Invert the color
+			clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
 		plt = plot_lib.plot_tf_zone(bar_zone, clr)
 		key_gaps_plt.push(plt)
 
@@ -550,7 +554,7 @@ demand_supply_pivot_len = input.int(8,'Pivot length',group = demand_supply_grp)
 demand_supply_zone_color_inline = 'Zone colors (demand/supply)'
 demand_supply_zone_color_demand = input.color(color.new(color.olive,90),demand_supply_zone_color_inline,group = demand_supply_grp,inline = demand_supply_zone_color_inline)
 demand_supply_zone_color_supply = input.color(color.new(color.red,90),'',group = demand_supply_grp,inline = demand_supply_zone_color_inline)
-demand_supply_draw_pivot_profile = input.bool(true,'Draw pivot profile',group = demand_supply_grp)
+demand_supply_draw_pivot_profile = input.bool(false,'Draw pivot profile',group = demand_supply_grp)
 demand_supply_pivot_profile_bars = input.int(32,'Profile bars',group = demand_supply_grp)
 demand_supply_pivot_profile_span = input.int(8,'Span',group = demand_supply_grp)
 demand_supply_pivot_profile_offset = input.int(2,'Offset',group = demand_supply_grp)

@@ -22,6 +22,7 @@ key_gap_plot_last = input.int(5, 'Plot last', minval = 0)
 key_gap_gradient_inline = 'Key gap gradient'
 key_gap_gradient_low = input.color(color.new(color.aqua, 95), key_gap_gradient_inline, inline = key_gap_gradient_inline)
 key_gap_gradient_high = input.color(color.new(color.teal, 90), '', inline = key_gap_gradient_inline)
+key_gap_inverse_gradient = input.bool(true, "Inverse gradient based on candle color")
 
 //===============================================================================
 // Global vars
@@ -35,7 +36,7 @@ var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlo
 
 key_gap_atr = ta.atr(key_gap_atr_len)
 key_gap_candle_spread_mult = (high - low) / key_gap_atr[1]
-candle_is_key = key_gap_candle_spread_mult >= key_gap_threshold and commonlib.bar_body_percent() >= key_gap_body_percent
+candle_is_key = key_gap_candle_spread_mult >= key_gap_threshold and math.abs(commonlib.bar_body_percent()) >= key_gap_body_percent
 
 //===============================================================================
 // Plot
@@ -57,5 +58,8 @@ if candle_is_key and key_gap_buffer > 0
 			plot_lib.clear_tf_zone(oldest_zone_plt)
 
 		clr = color.from_gradient(key_gap_candle_spread_mult, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
+		if key_gap_inverse_gradient and close < open
+			// Invert the color
+			clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
 		plt = plot_lib.plot_tf_zone(bar_zone, clr)
 		key_gaps_plt.push(plt)
