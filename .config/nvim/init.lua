@@ -822,6 +822,13 @@ require("lazy").setup({
 			end,
 		},
 		{ 'jidn/vim-dbml' },
+		{
+			'saecki/crates.nvim',
+			event = { "BufRead Cargo.toml" },
+			config = function()
+				require('crates').setup()
+			end,
+		},
 		-- Highlight using language servers
 		{
 			'nvim-treesitter/nvim-treesitter',
