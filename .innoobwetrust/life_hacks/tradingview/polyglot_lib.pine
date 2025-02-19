@@ -345,8 +345,10 @@ rli_atr_len = input.int(34,"RLI's ATR length",group = rli_grp)
 rli_len = input.int(14,'RLI length',group = rli_grp)
 rli_low_color = input.color(color.new(color.red,25),'Low liquidity color',group = rli_grp)
 rli_high_color = input.color(color.new(color.teal,25),'High liquidity color',group = rli_grp)
-rli_gradient_bg_enable = input.bool(false,'Show gradient background',group = rli_grp)
+rli_gradient_bg_enable = input.bool(true,'Show gradient background',group = rli_grp)
 rli_gradient_bg_transparency = input.int(90,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
+rli_gradient_ignore_lowerbound = input.float(30, "Ignore low RLI gradient until this value", group = rli_grp)
+rli_gradient_ignore_upperbound = input.float(70, "Ignore high RLI gradient until this value", group = rli_grp)
 
 rli = relative_liquidity_index(rli_atr_len,rli_len)
 shifted_rli = rli - 50
@@ -355,9 +357,10 @@ scaled_rli = shifted_rli * math.max(math.abs(trcd),math.abs(tr_sig)) / 50
 rli_atr = ta.atr(rli_atr_len)
 
 rli_color = color.from_gradient(rli,0,100,rli_low_color,rli_high_color)
+rli_bg_color = rli_enable and rli_gradient_bg_enable and (rli <= rli_gradient_ignore_lowerbound or rli >= rli_gradient_ignore_upperbound) ? color.new(rli_color,rli_gradient_bg_transparency) : color(na)
 plot(rli_enable ? scaled_rli : na,'Scaled RLI',color = rli_color,linewidth = 2,force_overlay = false)
 
-bgcolor(rli_enable and rli_gradient_bg_enable ? color.new(rli_color,rli_gradient_bg_transparency) : color(na),force_overlay = true)
+bgcolor(rli_bg_color,force_overlay = true)
 
 // Key gap
 //-------------------------------------------------------------------------------
