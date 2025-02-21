@@ -108,6 +108,8 @@ export display_rsi_table(int rsi_len = 14, simple int rsi_ma_len = 14, MaT rsi_m
 	rsi = ta.rsi(close,rsi_len)
 	rsi_ma = ma(rsi_ma_type,rsi,rsi_ma_len)
 	rsi_color = switch
+		rsi >= 80 => color.navy
+		rsi <= 20 => color.maroon
 		rsi >= 70 => color.green
 		rsi <= 30 => color.red
 		=> color.gray
@@ -136,6 +138,8 @@ export display_index_table(int index_len = 14, simple int ma_len = 14, MaT ma_ty
 	rsi_ma = ma(ma_type,rsi,ma_len)
 	rli_ma = ma(ma_type,rli,ma_len)
 	rsi_color = switch
+		rsi >= 80 => color.navy
+		rsi <= 20 => color.maroon
 		rsi >= 70 => color.red
 		rsi <= 30 => color.green
 		=> color.gray
@@ -469,32 +473,29 @@ if index_tb_enable
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
 revengrsi_grp = '► Reverse Engineering RSI'
-revengrsi_enable = input.bool(false,'Enable',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
-revengrsi_len = input.int(17,'Length',group = revengrsi_grp)
+revengrsi_enable = input.bool(true,'Enable',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
+revengrsi_transp = input.int(70, "Transparency",group = revengrsi_grp)
+revengrsi_len1 = input.int(17,'Length 1 (0 to disable)',group = revengrsi_grp)
+revengrsi_len2 = input.int(129,'Length 2 (0 to disable)',group = revengrsi_grp)
+revengrsi_len3 = input.int(0,'Length 3 (0 to disable)',group = revengrsi_grp)
 revengrsi_ghost_inline = 'Ghost high/low'
-revengrsi_ghost_enable = input.bool(false,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
-revengrsi_ghost_len = input.int(9,'Length',group = revengrsi_grp,inline = revengrsi_ghost_inline)
-revengrsi_ghost_oversold_threshold = input.float(30,'Oversold',group = revengrsi_grp,inline = revengrsi_ghost_inline)
-revengrsi_ghost_overbought_threshold = input.float(70,'Overbought',group = revengrsi_grp,inline = revengrsi_ghost_inline)
-revengrsi_multi_middle_inline = 'Alternate middle multi-length'
-revengrsi_multi_middle_enable = input.bool(true,revengrsi_multi_middle_inline,group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
-revengrsi_multi_middle_len1 = input.int(129,'',group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
-revengrsi_multi_middle_len2 = input.int(305,'',group = revengrsi_grp,inline = revengrsi_multi_middle_inline)
+revengrsi_ghost_len = input.int(9,'Length (0 to disable)',group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_ghost_bullish_threshold = input.float(80,'Bullish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_ghost_bearish_threshold = input.float(20,'Bearish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 
-equilibrium_threshold = reverse_engineering_rsi(revengrsi_len,50)
-equilibrium_plt = plot(revengrsi_enable ? equilibrium_threshold : na,'Equilibrium Threshold', color = color.new(color.silver,70),style = plot.style_circles,force_overlay = true)
+equilibrium1_threshold = revengrsi_len1 > 0 ? reverse_engineering_rsi(revengrsi_len1,50) : na
+equilibrium2_threshold = revengrsi_len2 > 0 ? reverse_engineering_rsi(revengrsi_len2,50) : na
+equilibrium3_threshold = revengrsi_len3 > 0 ? reverse_engineering_rsi(revengrsi_len3,50) : na
 
-ghost_overbought_threshold = reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_overbought_threshold, high)
-ghost_oversold_threshold = reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_oversold_threshold,low)
+equilibrium1_plt = plot(revengrsi_enable ? equilibrium1_threshold : na,'Equilibrium Threshold (length #1)', color = color.new(color.silver,revengrsi_transp),style = plot.style_circles,force_overlay = true)
+equilibrium2_plt = plot(revengrsi_enable ? equilibrium2_threshold : na,'Equilibrium Threshold (length #2)',color=color.new(color.silver,revengrsi_transp),linewidth = 2,force_overlay = true)
+equilibrium3_plt = plot(revengrsi_enable ? equilibrium3_threshold : na,'Equilibrium Threshold (length #3)',color=color.new(color.silver,revengrsi_transp),linewidth = 3,force_overlay = true)
 
-ghost_overbought_plt = plot(revengrsi_enable and revengrsi_ghost_enable ? ghost_overbought_threshold : na,'Ghost Overbought Threshold', color = color.new(color.red,80),force_overlay = true)
-ghost_oversold_plt = plot(revengrsi_enable and revengrsi_ghost_enable ? ghost_oversold_threshold : na,'Ghost Oversold Threshold', color = color.new(color.green,80),force_overlay = true)
+ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bullish_threshold, high) : na
+ghost_bearish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bearish_threshold,low) : na
 
-equilibrium_multi1 = revengrsi_enable and revengrsi_multi_middle_enable ? reverse_engineering_rsi(revengrsi_multi_middle_len1,50) : na
-equilibrium_multi2 = revengrsi_enable and revengrsi_multi_middle_enable ? reverse_engineering_rsi(revengrsi_multi_middle_len2,50) : na
-
-equilibrium_multi1_plt = plot(revengrsi_enable and revengrsi_multi_middle_enable ? equilibrium_multi1 : na,'Multi middle #1',color=color.new(color.silver,80),linewidth = 2,force_overlay = true)
-equilibrium_multi2_plt = plot(revengrsi_enable and revengrsi_multi_middle_enable ? equilibrium_multi2 : na,'Multi middle #2',color=color.new(color.silver,85),linewidth = 3,force_overlay = true)
+ghost_bullish_plt = plot(revengrsi_enable ? ghost_bullish_threshold : na,'Ghost Bullish Threshold', color = color.new(color.red,revengrsi_transp),force_overlay = true)
+ghost_bearish_plt = plot(revengrsi_enable ? ghost_bearish_threshold : na,'Ghost Bearish Threshold', color = color.new(color.green,revengrsi_transp),force_overlay = true)
 
 // Bollinger Bands
 //-------------------------------------------------------------------------------

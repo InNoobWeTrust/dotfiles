@@ -76,6 +76,7 @@ rli_len = input.int(14,'Relative Liquidity Index length',group = liquidity_grp)
 low_liquidity_color = input.color(color.new(color.maroon,80),'Low liquidity area color',group = liquidity_grp)
 high_liquidity_color = input.color(color.new(color.teal,80),'High liquidity area color',group = liquidity_grp)
 show_chart_background = input.bool(true,'Show gradient background on chart',group = liquidity_grp)
+no_background_till_thresholds = input.bool(true, "No background color until threshold exceeded", group = liquidity_grp)
 
 climax_candle_grp = '► Climax candle'
 climax_candle_enable = input.bool(true,'Enable',tooltip = 'Highlight price ranges of candles that reach highest/lowest point during high liquidity zones',group = climax_candle_grp)
@@ -98,7 +99,8 @@ overbought_area_color = rsi >= index_high_threshold ? overbought_color : na
 rli = relative_liquidity_index(atr_len,rli_len)
 low_liquidity_area_color = rli <= index_low_threshold ? low_liquidity_color : na
 high_liquidity_area_color = rli >= index_high_threshold ? high_liquidity_color : na
-rli_bg_color = color.from_gradient(rli,0,100,low_liquidity_color,high_liquidity_color)
+rli_color = color.from_gradient(rli,0,100,low_liquidity_color,high_liquidity_color)
+rli_bg_color = not no_background_till_thresholds or (rli <= index_low_threshold or rli >= index_high_threshold) ? rli_color : color(na)
 
 // Climax candles
 var ClimaxCandle[] candles = array.new<ClimaxCandle>()
@@ -142,7 +144,7 @@ plot(rsi,'Oversold',oversold_area_color,style = plot.style_area,histbase = index
 plot(rsi,'Overbought',overbought_area_color,style = plot.style_area,histbase = index_high_threshold)
 
 // RLI
-plot(rli, 'Relative Liquidity Index',color = color.new(rli_bg_color,0),linewidth = 2,force_overlay = false)
+plot(rli, 'Relative Liquidity Index',color = color.new(rli_color,0),linewidth = 2,force_overlay = false)
 plot(rli,'Time of low liquidity',low_liquidity_area_color,style = plot.style_area,histbase = index_low_threshold)
 plot(rli,'Time of high liquidity',high_liquidity_area_color,style = plot.style_area,histbase = index_high_threshold)
 
