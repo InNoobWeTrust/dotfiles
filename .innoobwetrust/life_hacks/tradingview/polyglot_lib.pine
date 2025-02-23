@@ -375,7 +375,7 @@ key_gap_threshold = input.float(2.618, 'ATR mult',group = key_gap_grp)
 key_gap_cap = input.float(4.236, 'ATR upper cap',group = key_gap_grp)
 key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1,group = key_gap_grp)
 key_gap_buffer = input.int(64, 'Buffer', minval = 0, group = key_gap_grp)
-key_gap_plot_last = input.int(10, 'Plot last', minval = 0, group = key_gap_grp)
+key_gap_plot_last = input.int(16, 'Plot last', minval = 0, group = key_gap_grp)
 key_gap_gradient_inline = 'Key gap gradient'
 key_gap_gradient_low = input.color(color.new(color.aqua, 95), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
 key_gap_gradient_high = input.color(color.new(color.teal, 90), '', group = key_gap_grp, inline = key_gap_gradient_inline)
@@ -474,9 +474,9 @@ if index_tb_enable
 //-------------------------------------------------------------------------------
 revengrsi_grp = '► Reverse Engineering RSI'
 revengrsi_enable = input.bool(true,'Enable',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
-revengrsi_transp = input.int(70, "Transparency",group = revengrsi_grp)
+revengrsi_transp = input.int(65, "Transparency",group = revengrsi_grp)
 revengrsi_len1 = input.int(17,'Length 1 (0 to disable)',group = revengrsi_grp)
-revengrsi_len2 = input.int(129,'Length 2 (0 to disable)',group = revengrsi_grp)
+revengrsi_len2 = input.int(0,'Length 2 (0 to disable)',group = revengrsi_grp)
 revengrsi_len3 = input.int(0,'Length 3 (0 to disable)',group = revengrsi_grp)
 revengrsi_ghost_inline = 'Ghost high/low'
 revengrsi_ghost_len = input.int(9,'Length (0 to disable)',group = revengrsi_grp,inline = revengrsi_ghost_inline)
@@ -506,9 +506,9 @@ bb_len_inline = 'Length'
 bbf_len = input.int(34,bb_len_inline,group = bb_grp,inline = bb_len_inline)
 bbs_len = input.int(89,'',group = bb_grp,inline = bb_len_inline)
 bb_mult = input.float(2,'Mult',group = bb_grp)
-bbf_color = input.color(color.new(color.aqua,92),'Fast color',group = bb_grp)
-bbs_color = input.color(color.new(color.yellow,92),'Slow color',group = bb_grp)
-bb_line_transp = input.int(92,'BB line transparency',minval=0,maxval=100,group = bb_grp)
+bbf_color = input.color(color.new(color.aqua,85),'Fast color',group = bb_grp)
+bbs_color = input.color(color.new(color.yellow,85),'Slow color',group = bb_grp)
+bb_line_transp = input.int(85,'BB line transparency',minval=0,maxval=100,group = bb_grp)
 [bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,bbf_len,bb_mult)
 [bbs_m,bbs_u,bbs_l] = ta.bb(bb_src,bbs_len,bb_mult)
 
