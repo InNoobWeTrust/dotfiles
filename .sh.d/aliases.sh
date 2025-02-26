@@ -155,6 +155,10 @@ usable pkgx && \
         if ! usable zellij; then
             alias zellij='pkgx zellij'
         fi
+        ## File manager
+        if ! usable yazi; then
+            alias yazi='pkgx yazi'
+        fi
         ## Code editors
         if ! usable nvim; then
             alias nvim='pkgx +neovim.io nvim'
