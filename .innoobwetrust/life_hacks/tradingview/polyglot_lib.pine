@@ -114,8 +114,8 @@ export display_rsi_table(int rsi_len = 14, simple int rsi_ma_len = 14, MaT rsi_m
 		rsi <= 30 => color.red
 		=> color.gray
 	rsi_sma_color = switch
-		rsi_ma >= 65 => color.teal
-		rsi_ma <= 35 => color.orange
+		rsi_ma >= 60 => color.teal
+		rsi_ma <= 40 => color.orange
 		=> color.silver
 	table.cell(rsi_tb,0,0,'RSI',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
 	table.cell(rsi_tb,0,1,str.format('{0,number}',rsi),bgcolor=color.new(color.silver, transp = 80),text_color=rsi_color)
@@ -144,16 +144,16 @@ export display_index_table(int index_len = 14, simple int ma_len = 14, MaT ma_ty
 		rsi <= 30 => color.green
 		=> color.gray
 	rsi_ma_color = switch
-		rsi_ma >= 65 => color.yellow
-		rsi_ma <= 35 => color.lime
+		rsi_ma >= 60 => color.yellow
+		rsi_ma <= 40 => color.lime
 		=> color.silver
 	rli_color = switch
 		rli >= 70 => color.teal
 		rli <= 30 => color.maroon
 		=> color.gray
 	rli_ma_color = switch
-		rli_ma >= 65 => color.aqua
-		rli_ma <= 35 => color.orange
+		rli_ma >= 60 => color.aqua
+		rli_ma <= 40 => color.orange
 		=> color.silver
 	table.cell(index_tb,1,0,'Index',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
 	table.cell(index_tb,2,0,'MA',text_color=color.gray,bgcolor=color.new(color.silver, transp = 80))
@@ -351,8 +351,8 @@ rli_low_color = input.color(color.new(color.red,25),'Low liquidity color',group 
 rli_high_color = input.color(color.new(color.teal,25),'High liquidity color',group = rli_grp)
 rli_gradient_bg_enable = input.bool(true,'Show gradient background',group = rli_grp)
 rli_gradient_bg_transparency = input.int(90,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
-rli_gradient_ignore_lowerbound = input.float(30, "Ignore low RLI gradient until this value", group = rli_grp)
-rli_gradient_ignore_upperbound = input.float(70, "Ignore high RLI gradient until this value", group = rli_grp)
+rli_gradient_ignore_upperbound = input.float(80, "Ignore high RLI gradient until this value", group = rli_grp)
+rli_gradient_ignore_lowerbound = input.float(20, "Ignore low RLI gradient until this value", group = rli_grp)
 
 rli = relative_liquidity_index(rli_atr_len,rli_len)
 shifted_rli = rli - 50
