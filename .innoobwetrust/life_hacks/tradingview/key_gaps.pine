@@ -17,18 +17,24 @@ key_gap_atr_len = input.int(34, 'base ATR length')
 key_gap_threshold = input.float(2.618, 'ATR mult')
 key_gap_cap = input.float(4.236, 'ATR upper cap')
 key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1)
-key_gap_buffer = input.int(64, 'Buffer', minval = 0)
+key_gap_buffer = input.int(128, 'Buffer', minval = 0)
 key_gap_plot_last = input.int(5, 'Plot last', minval = 0)
 key_gap_gradient_inline = 'Key gap gradient'
-key_gap_gradient_low = input.color(color.new(color.aqua, 95), key_gap_gradient_inline, inline = key_gap_gradient_inline)
-key_gap_gradient_high = input.color(color.new(color.teal, 90), '', inline = key_gap_gradient_inline)
+key_gap_gradient_low = input.color(color.new(color.aqua, 88), key_gap_gradient_inline, inline = key_gap_gradient_inline)
+key_gap_gradient_high = input.color(color.new(color.teal, 85), '', inline = key_gap_gradient_inline)
 key_gap_inverse_gradient = input.bool(true, "Inverse gradient based on candle color")
+key_gap_marks_grp = '▶️ Key gap marks'
+key_gap_marks_span = input.float(0.236, 'Span width (multiply with stdev of buffer, 0 to disable)', minval=0, group = key_gap_marks_grp)
+key_gap_marks_offset = input.int(4, 'Marks offset', group = key_gap_marks_grp)
+key_gap_marks_width = input.int(4, 'Marks width', group = key_gap_marks_grp)
+key_gap_marks_color = input.color(color.new(color.orange,70), 'Marks color', group = key_gap_marks_grp)
 
 //===============================================================================
 // Global vars
 //===============================================================================
 var array<plot_lib.TfBarZone> key_gaps = array.new<plot_lib.TfBarZone>(key_gap_buffer, na)
 var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlot>(key_gap_plot_last, na)
+var array<float> key_levels = array.new<float>()
 
 //===============================================================================
 // Calculation
@@ -45,11 +51,15 @@ candle_is_key = key_gap_candle_spread_mult >= key_gap_threshold and math.abs(com
 if candle_is_key and key_gap_buffer > 0
 	// Remove old gaps
 	key_gaps.shift()
+	while key_levels.size() > key_gap_buffer * 2
+		key_levels.shift()
 
 	tf_secs = timeframe.in_seconds()
 	bar = plot_lib.TfBar.new(open, high, low, close, time, time_close)
 	bar_zone = plot_lib.TfBarZone.new(tf_secs, bar)
 	key_gaps.push(bar_zone)
+	key_levels.push(low)
+	key_levels.push(high)
 
 	if key_gap_enable and key_gap_plot_last > 0
 		// Remove and clear old plots
@@ -63,3 +73,28 @@ if candle_is_key and key_gap_buffer > 0
 			clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
 		plt = plot_lib.plot_tf_zone(bar_zone, clr)
 		key_gaps_plt.push(plt)
+
+// Sort key levels
+key_levels.sort(order = order.ascending)
+var key_level_lines = array.new<line>()
+
+if key_gap_marks_span > 0 and barstate.islast
+	for l in key_level_lines
+		l.delete()
+	key_level_lines.clear()
+
+	delta = key_gap_marks_span * key_levels.stdev()
+	min_idx = key_levels.binary_search_leftmost(close - delta)
+	max_idx = key_levels.binary_search_leftmost(close + delta)
+	for idx = min_idx to max_idx
+		level = key_levels.get(idx)
+		l = line.new(x1 = bar_index + key_gap_marks_offset,
+					 y1 = level,
+					 x2 = bar_index + key_gap_marks_offset + key_gap_marks_width,
+					 y2 = level,
+					 xloc = xloc.bar_index,
+					 color = key_gap_marks_color,
+					 style = line.style_solid,
+					 width = 2,
+					 force_overlay = true)
+		key_level_lines.push(l)
