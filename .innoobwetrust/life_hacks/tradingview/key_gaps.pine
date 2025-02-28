@@ -78,7 +78,7 @@ if candle_is_key and key_gap_buffer > 0
 key_levels.sort(order = order.ascending)
 var key_level_lines = array.new<line>()
 
-if key_gap_marks_span > 0 and barstate.islast
+if key_gap_marks_span > 0 and key_levels.size() > 0 and barstate.islast
 	for l in key_level_lines
 		l.delete()
 	key_level_lines.clear()
