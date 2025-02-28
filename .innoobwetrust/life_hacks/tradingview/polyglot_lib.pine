@@ -502,11 +502,12 @@ if index_tb_enable
 //-------------------------------------------------------------------------------
 revengrsi_grp = '► Reverse Engineering RSI'
 revengrsi_transp = input.int(65, "Transparency",group = revengrsi_grp)
-revengrsi_len1 = input.int(17,'Length 1 (0 to disable)',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
-revengrsi_len2 = input.int(45,'Length 2 (0 to disable)',group = revengrsi_grp)
-revengrsi_len3 = input.int(0,'Length 3 (0 to disable)',group = revengrsi_grp)
-revengrsi_ghost_inline = 'Ghost high/low'
-revengrsi_ghost_len = input.int(0,'Length (0 to disable)',group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_len_inline = 'Lengths (0 to disable)'
+revengrsi_len1 = input.int(129,revengrsi_len_inline,group = revengrsi_grp,inline = revengrsi_len_inline,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
+revengrsi_len2 = input.int(0,'',group = revengrsi_grp,inline = revengrsi_len_inline)
+revengrsi_len3 = input.int(0,'',group = revengrsi_grp,inline = revengrsi_len_inline)
+revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
+revengrsi_ghost_len = input.int(0,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bullish_threshold = input.float(80,'Bullish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bearish_threshold = input.float(20,'Bearish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 
@@ -527,69 +528,46 @@ ghost_bearish_plt = plot(ghost_bearish_threshold,'Ghost Bearish Threshold', colo
 // Bollinger Bands Remix
 //-------------------------------------------------------------------------------
 bb_grp = '► Bollinger Bands Remix'
-bb_enable = input.bool(true,'Enable',group = bb_grp)
 bb_src = input.source(close,'Source',group = bb_grp)
-bb_len_inline = 'Length (0 to disable)'
+bb_len_inline = 'Lengths (0 to disable)'
 bbf_len = input.int(34,bb_len_inline,group = bb_grp,inline = bb_len_inline)
 bbs_len = input.int(89,'',group = bb_grp,inline = bb_len_inline)
-bb_mult_inline = 'Mult'
-bb_mult = input.float(2,bb_mult_inline,group = bb_grp, inline = bb_mult_inline)
+bb_mult_inline = 'Mult (0 to disable)'
+bb_mult_primary = input.float(2,bb_mult_inline,group = bb_grp, inline = bb_mult_inline)
 bb_mult_secondary = input.float(3,'',group = bb_grp, inline = bb_mult_inline)
-bb_color_inline = 'BB colors'
+bb_color_inline = 'BB base/cloud colors (opacity 0% to hide clouds)'
 bbf_color = input.color(color.new(color.aqua,90),'Fast',group = bb_grp, inline = bb_color_inline)
-bbs_color = input.color(color.new(color.yellow,90),'Slow',group = bb_grp, inline = bb_color_inline)
-bb_line_transp = input.int(80,'BB line transparency',minval=0,maxval=100,group = bb_grp)
+bbs_color = input.color(color.new(color.orange,90),'Slow',group = bb_grp, inline = bb_color_inline)
+bb_mid_transp = input.int(65,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
+bb_border_transp = input.int(80,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
 
-[bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,math.max(1, bbf_len),bb_mult)
-[bbf_m2,bbf_u2,bbf_l2] = ta.bb(bb_src,math.max(1, bbf_len),bb_mult_secondary)
+[bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_primary))
+[bbf_m2,bbf_u2,bbf_l2] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_secondary))
 
-[bbs_m,bbs_u,bbs_l] = ta.bb(bb_src,math.max(1, bbs_len),bb_mult)
-[bbs_m2,bbs_u2,bbs_l2] = ta.bb(bb_src,math.max(1, bbs_len),bb_mult_secondary)
+[bbs_m,bbs_u,bbs_l] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_primary))
+[bbs_m2,bbs_u2,bbs_l2] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_secondary))
 
-bbf_u_plt = plot(bbf_len > 0 ? bbf_u : na, 'BB fast upperband',color = color.new(bbf_color,bb_line_transp),force_overlay = true)
-bbf_l_plt = plot(bbf_len > 0 ? bbf_l : na, 'BB fast lowerband',color = color.new(bbf_color,bb_line_transp),force_overlay = true)
-bbs_u_plt = plot(bbs_len > 0 ? bbs_u : na, 'BB slow upperband',color = color.new(bbs_color,bb_line_transp),force_overlay = true)
-bbs_l_plt = plot(bbs_len > 0 ? bbs_l : na, 'BB slow lowerband',color = color.new(bbs_color,bb_line_transp),force_overlay = true)
-fill(bbf_u_plt,bbs_u_plt,bbf_u,bbs_u,bbf_color,bbs_color,'BB upper fill')
-fill(bbf_l_plt,bbs_l_plt,bbf_l,bbs_l,bbf_color,bbs_color,'BB lower fill')
+bbf_m_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_m : na, 'BB fast primary middle',color = color.new(bbf_color,bb_mid_transp),force_overlay = true)
+bbf_u_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_u : na, 'BB fast primary upperband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
+bbf_l_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_l : na, 'BB fast primary lowerband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
 
-bbf_u2_plt = plot(bbf_len > 0 ? bbf_u2 : na, 'BB fast secondary upperband',color = color.new(bbf_color,bb_line_transp),force_overlay = true)
-bbf_l2_plt = plot(bbf_len > 0 ? bbf_l2 : na, 'BB fast secondary lowerband',color = color.new(bbf_color,bb_line_transp),force_overlay = true)
-bbs_u2_plt = plot(bbs_len > 0 ? bbs_u2 : na, 'BB slow secondary upperband',color = color.new(bbs_color,bb_line_transp),force_overlay = true)
-bbs_l2_plt = plot(bbs_len > 0 ? bbs_l2 : na, 'BB slow secondary lowerband',color = color.new(bbs_color,bb_line_transp),force_overlay = true)
+bbs_m_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_m : na, 'BB slow primary middle',color = color.new(bbs_color,bb_mid_transp),force_overlay = true)
+bbs_u_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_u : na, 'BB slow primary upperband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
+bbs_l_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_l : na, 'BB slow primary lowerband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
+
+fill(bbf_u_plt,bbs_u_plt,bbf_u,bbs_u,bbf_color,bbs_color,'BB primary upper fill')
+fill(bbf_l_plt,bbs_l_plt,bbf_l,bbs_l,bbf_color,bbs_color,'BB secondary lower fill')
+
+bbf_m2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbs_m2 : na, 'BB fast secondary middle',color = color.new(bbf_color,bb_mid_transp),force_overlay = true)
+bbf_u2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_u2 : na, 'BB fast secondary upperband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
+bbf_l2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_l2 : na, 'BB fast secondary lowerband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
+
+bbs_m2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_m2 : na, 'BB slow secondary middle',color = color.new(bbs_color,bb_mid_transp),force_overlay = true)
+bbs_u2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_u2 : na, 'BB slow secondary upperband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
+bbs_l2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_l2 : na, 'BB slow secondary lowerband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
+
 fill(bbf_u2_plt,bbs_u2_plt,bbf_u2,bbs_u2,bbf_color,bbs_color,'BB secondary upper fill')
 fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bbf_color,bbs_color,'BB secondary lower fill')
-
-// MA
-//-------------------------------------------------------------------------------
-// ma_grp = '► Moving average'
-// ma_enable = input.bool(false, 'Enable',group = ma_grp)
-// ma_pair_inline = 'MA pair'
-// ma_type = input.enum(MaT.sma,ma_pair_inline,group = ma_grp,inline = ma_pair_inline)
-// ma_src = input.source(close,'',group = ma_grp,inline = ma_pair_inline)
-// ma_fast_len = input.int(34,'',group = ma_grp,inline = ma_pair_inline)
-// ma_slow_len = input.int(89,'',group = ma_grp,inline = ma_pair_inline)
-// ma_up_cloud_color = input.color(color.new(color.teal,85),'MA up cloud',group = ma_grp)
-// ma_down_cloud_color = input.color(color.new(color.red,85),'MA down cloud',group = ma_grp)
-
-// ma_fast = ma(ma_type,ma_src,ma_fast_len)
-// ma_slow = ma(ma_type,ma_src,ma_slow_len)
-// ma_diff = ma_fast - ma_slow
-
-// ma_rising = ta.rising(ma_slow,1)
-// ma_falling = ta.falling(ma_slow,1)
-// ma_converging = ta.falling(ma_diff,1)
-// ma_diverging = ta.rising(ma_diff,1)
-
-// ma_fast_plt = plot(ma_enable ? ma_fast : na,'MA fast',color.new(color.blue,95),force_overlay = true)
-// ma_slow_plt = plot(ma_enable ? ma_slow : na,'MA slow',color.new(color.orange,95),linewidth = 2,force_overlay = true)
-// fill(ma_fast_plt,ma_slow_plt,ma_diff >= 0 ? ma_up_cloud_color : ma_down_cloud_color)
-
-// test_ma = switch ma_diverging
-// 	true => low > ma_slow and high < ma_fast
-// 	false => high < ma_slow and low > ma_fast
-// // Colored background for candles that stuck between the ma lines
-// plotcandle(ma_enable and close >= open ? low : high,ma_enable and test_ma ? high : na,ma_enable and test_ma ? low : na,ma_enable and close>=open ? high : low,color=close>=open ? color.new(color.teal,70) : color.new(color.red,70),bordercolor = close>=open ? color.new(color.teal,70) : color.new(color.red,70),force_overlay = true)
 
 // Biased candle for reversal signal, atr signal low volatility environment that supports reversal
 //-------------------------------------------------------------------------------

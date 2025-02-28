@@ -34,7 +34,12 @@ key_gap_marks_color = input.color(color.new(color.orange,70), 'Marks color', gro
 //===============================================================================
 var array<plot_lib.TfBarZone> key_gaps = array.new<plot_lib.TfBarZone>(key_gap_buffer, na)
 var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlot>(key_gap_plot_last, na)
-var array<float> key_levels = array.new<float>()
+
+//===============================================================================
+// Temporary vars
+//===============================================================================
+
+key_levels = array.new<float>()
 
 //===============================================================================
 // Calculation
@@ -73,7 +78,11 @@ if candle_is_key and key_gap_buffer > 0
 			clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
 		plt = plot_lib.plot_tf_zone(bar_zone, clr)
 		key_gaps_plt.push(plt)
-
+// Key levels
+for zone in key_gaps
+	if not na(zone)
+		key_levels.push(zone.bar.l)
+		key_levels.push(zone.bar.h)
 // Sort key levels
 key_levels.sort(order = order.ascending)
 var key_level_lines = array.new<line>()

@@ -1,0 +1,58 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// ©  InNoobWeTrust
+
+//@version=6
+
+// @description Quadruple BB, mixing fast/slow and double mult. Can hide individual combinations via settings
+indicator("[innoobwetrust][indi] BB Remix", overlay = true)
+import TradingView/ta/9
+import forbidden_gun/commonlib/4
+import forbidden_gun/plot_lib/1
+
+//===============================================================================
+// Inputs
+//===============================================================================
+bb_src = input.source(close,'Source')
+bb_len_grp = '▶️ Lengths (0 to disable)'
+bbf_len = input.int(34,'Fast',group = bb_len_grp)
+bbs_len = input.int(89,'Slow',group = bb_len_grp)
+bb_mult_grp = '▶️ Mult (0 to disable)'
+bb_mult_primary = input.float(2,'Primary', group = bb_mult_grp)
+bb_mult_secondary = input.float(3,'Secondary', group = bb_mult_grp)
+bb_color_grp = '▶️ Base/cloud colors (opacity 0% to hide clouds)'
+bbf_color = input.color(color.new(color.aqua,90),'Fast', group = bb_color_grp)
+bbs_color = input.color(color.new(color.orange,90),'Slow', group = bb_color_grp)
+bb_mid_transp = input.int(65,'Middle lines transparency (100 to hide lines)',minval=0,maxval=100)
+bb_border_transp = input.int(80,'Border lines (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100)
+
+//===============================================================================
+// Testing
+//===============================================================================
+
+[bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_primary))
+[bbf_m2,bbf_u2,bbf_l2] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_secondary))
+
+[bbs_m,bbs_u,bbs_l] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_primary))
+[bbs_m2,bbs_u2,bbs_l2] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_secondary))
+
+bbf_m_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_m : na, 'BB fast primary middle',color = color.new(bbf_color,bb_mid_transp),force_overlay = true)
+bbf_u_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_u : na, 'BB fast primary upperband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
+bbf_l_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_l : na, 'BB fast primary lowerband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
+
+bbs_m_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_m : na, 'BB slow primary middle',color = color.new(bbs_color,bb_mid_transp),force_overlay = true)
+bbs_u_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_u : na, 'BB slow primary upperband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
+bbs_l_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_l : na, 'BB slow primary lowerband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
+
+fill(bbf_u_plt,bbs_u_plt,bbf_u,bbs_u,bbf_color,bbs_color,'BB primary upper fill')
+fill(bbf_l_plt,bbs_l_plt,bbf_l,bbs_l,bbf_color,bbs_color,'BB secondary lower fill')
+
+bbf_m2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbs_m2 : na, 'BB fast secondary middle',color = color.new(bbf_color,bb_mid_transp),force_overlay = true)
+bbf_u2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_u2 : na, 'BB fast secondary upperband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
+bbf_l2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_l2 : na, 'BB fast secondary lowerband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
+
+bbs_m2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_m2 : na, 'BB slow secondary middle',color = color.new(bbs_color,bb_mid_transp),force_overlay = true)
+bbs_u2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_u2 : na, 'BB slow secondary upperband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
+bbs_l2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_l2 : na, 'BB slow secondary lowerband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
+
+fill(bbf_u2_plt,bbs_u2_plt,bbf_u2,bbs_u2,bbf_color,bbs_color,'BB secondary upper fill')
+fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bbf_color,bbs_color,'BB secondary lower fill')
