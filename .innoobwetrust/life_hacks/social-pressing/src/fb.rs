@@ -17,21 +17,33 @@ async fn check_availability(client: &Client) -> Result<Element, CmdError> {
 }
 
 async fn get_account_report_btn(client: &Client) -> Result<Element, CmdError> {
-    let old_btn = client
+    let legacy_btn = client
         .wait()
         .at_most(Duration::from_secs(10))
         .for_element(Locator::Css(r#"div[aria-expanded="false"][aria-haspopup="menu"][role="button"][aria-label="See Options"]"#))
         .await;
 
-    if let Err(_) = old_btn {
-        return client
+    if legacy_btn.is_ok() {
+        return legacy_btn;
+    }
+
+    let old_btn = client
         .wait()
         .at_most(Duration::from_secs(10))
         .for_element(Locator::Css(r#"div[aria-expanded="false"][aria-haspopup="menu"][role="button"][aria-label="See options"]"#))
         .await;
+
+    if old_btn.is_ok() {
+        return old_btn;
     }
 
-    old_btn
+    let new_btn =  client
+        .wait()
+        .at_most(Duration::from_secs(10))
+        .for_element(Locator::Css(r#"div[aria-expanded="false"][aria-haspopup="menu"][role="button"][aria-label="Profile settings see more options"]"#))
+        .await;
+
+    new_btn
 }
 
 async fn get_posts_report_btns(client: &Client) -> Result<Vec<Element>, CmdError> {
