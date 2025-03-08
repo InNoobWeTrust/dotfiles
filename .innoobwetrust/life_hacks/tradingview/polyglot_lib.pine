@@ -24,6 +24,11 @@ export enum MaT
 	wma = 'WMA'
 	ema = 'EMA'
 
+export type KeyGap
+	plot_lib.TfBarZone zone
+	float spread
+	float relative_spread
+
 //===============================================================================
 // Functions
 //===============================================================================
@@ -375,22 +380,22 @@ key_gap_threshold = input.float(2.618, 'ATR mult',group = key_gap_grp)
 key_gap_cap = input.float(4.236, 'ATR upper cap',group = key_gap_grp)
 key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1,group = key_gap_grp)
 key_gap_buffer = input.int(128, 'Buffer', minval = 0, group = key_gap_grp)
-key_gap_plot_last = input.int(5, 'Plot last', minval = 0, group = key_gap_grp)
+key_gap_plot_last = input.int(3, 'Plot last (0 to disable)', minval = 0, group = key_gap_grp)
 key_gap_gradient_inline = 'Key gap gradient'
 key_gap_gradient_low = input.color(color.new(color.aqua, 88), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
 key_gap_gradient_high = input.color(color.new(color.teal, 85), '', group = key_gap_grp, inline = key_gap_gradient_inline)
 key_gap_inverse_gradient = input.bool(true, "Inverse gradient based on candle color", group = key_gap_grp)
-key_gap_marks_inline = 'Key gap marks'
-key_gap_marks_range = input.float(0.236, 'Marks span (multiply with stdev of buffer, 0 to disable)', minval=0, group = key_gap_grp, inline = key_gap_marks_inline)
-key_gap_marks_offset = input.int(4, 'Marks offset', group = key_gap_grp, inline = key_gap_marks_inline)
-key_gap_marks_width = input.int(4, 'Marks width', group = key_gap_grp, inline = key_gap_marks_inline)
-key_gap_marks_color = input.color(color.new(color.orange,70), 'Marks color', group = key_gap_grp, inline = key_gap_marks_inline)
+key_gap_heatmap_inline = 'Gap heatmap'
+key_gap_heatmap_span = input.float(2.618, 'Heatmap span (multiply with ATR, 0 to disable)', minval=0, group = key_gap_grp, inline = key_gap_heatmap_inline)
+key_gap_heatmap_offset = input.int(4, 'Heatmap offset', group = key_gap_grp, inline = key_gap_heatmap_inline)
+key_gap_heatmap_width = input.int(4, 'Heatmap width', group = key_gap_grp, inline = key_gap_heatmap_inline)
 
-var array<plot_lib.TfBarZone> key_gaps = array.new<plot_lib.TfBarZone>(key_gap_buffer, na)
+var array<KeyGap> key_gaps = array.new<KeyGap>(key_gap_buffer, na)
 var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlot>(key_gap_plot_last, na)
 
 key_gap_atr = ta.atr(key_gap_atr_len)
-key_gap_candle_spread_mult = (high - low) / key_gap_atr[1]
+key_gap_candle_spread = high - low
+key_gap_candle_spread_mult = key_gap_candle_spread / key_gap_atr[1]
 candle_is_key = key_gap_candle_spread_mult >= key_gap_threshold and math.abs(commonlib.bar_body_percent()) >= key_gap_body_percent
 
 if candle_is_key and key_gap_buffer > 0
@@ -400,7 +405,7 @@ if candle_is_key and key_gap_buffer > 0
 	tf_secs = timeframe.in_seconds()
 	bar = plot_lib.TfBar.new(open, high, low, close, time, time_close)
 	bar_zone = plot_lib.TfBarZone.new(tf_secs, bar)
-	key_gaps.push(bar_zone)
+	key_gaps.push(KeyGap.new(bar_zone, key_gap_candle_spread, key_gap_candle_spread_mult))
 
 	if key_gap_enable and key_gap_plot_last > 0
 		// Remove and clear old plots
@@ -416,34 +421,42 @@ if candle_is_key and key_gap_buffer > 0
 		key_gaps_plt.push(plt)
 
 key_levels = array.new<float>()
-for zone in key_gaps
-	if not na(zone)
-		key_levels.push(zone.bar.l)
-		key_levels.push(zone.bar.h)
+for gap in key_gaps
+	if not na(gap)
+		key_levels.push(gap.zone.bar.l)
+		key_levels.push(gap.zone.bar.h)
 key_levels.sort(order.ascending)
 
-var key_level_lines = array.new<line>()
+var array<box> key_level_boxes = array.new<box>()
 
-if key_gap_marks_range > 0 and key_levels.size() > 0 and barstate.islast
-	for l in key_level_lines
-		l.delete()
-	key_level_lines.clear()
+if key_gap_heatmap_span > 0 and barstate.islast
+	for b in key_level_boxes
+		b.delete()
+	key_level_boxes.clear()
 
-	delta = key_gap_marks_range * key_levels.stdev()
-	min_idx = key_levels.binary_search_leftmost(close - delta)
-	max_idx = key_levels.binary_search_leftmost(close + delta)
-	for idx = min_idx to max_idx
-		level = key_levels.get(idx)
-		l = line.new(x1 = bar_index + key_gap_marks_offset,
-					 y1 = level,
-					 x2 = bar_index + key_gap_marks_offset + key_gap_marks_width,
-					 y2 = level,
+	delta = key_gap_heatmap_span * key_gap_atr
+	min_price = close - delta
+	max_price = close + delta
+
+	for gap in key_gaps
+		if na(gap) or gap.zone.bar.h <= min_price or max_price <= gap.zone.bar.l
+			continue
+
+		clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
+		if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
+			// Invert the color
+			clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
+		b = box.new(left = bar_index + key_gap_heatmap_offset,
+					 top = gap.zone.bar.h,
+					 right = bar_index + key_gap_heatmap_offset + key_gap_heatmap_width,
+					 bottom = gap.zone.bar.l,
+					 border_color = color(na),
+					 border_width = 2,
+					 border_style = line.style_solid,
 					 xloc = xloc.bar_index,
-					 color = key_gap_marks_color,
-					 style = line.style_solid,
-					 width = 2,
+					 bgcolor = clr,
 					 force_overlay = true)
-		key_level_lines.push(l)
+		key_level_boxes.push(b)
 
 // Biased candle
 //-------------------------------------------------------------------------------
