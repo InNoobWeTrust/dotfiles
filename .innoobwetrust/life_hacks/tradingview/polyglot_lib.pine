@@ -379,16 +379,16 @@ key_gap_atr_len = input.int(34, 'base ATR length', group = key_gap_grp)
 key_gap_threshold = input.float(2.618, 'ATR mult',group = key_gap_grp)
 key_gap_cap = input.float(4.236, 'ATR upper cap',group = key_gap_grp)
 key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1,group = key_gap_grp)
-key_gap_buffer = input.int(128, 'Buffer', minval = 0, group = key_gap_grp)
+key_gap_buffer = input.int(512, 'Buffer', minval = 0, group = key_gap_grp)
 key_gap_plot_last = input.int(3, 'Plot last (0 to disable)', minval = 0, group = key_gap_grp)
 key_gap_gradient_inline = 'Key gap gradient'
 key_gap_gradient_low = input.color(color.new(color.aqua, 88), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
 key_gap_gradient_high = input.color(color.new(color.teal, 85), '', group = key_gap_grp, inline = key_gap_gradient_inline)
 key_gap_inverse_gradient = input.bool(true, "Inverse gradient based on candle color", group = key_gap_grp)
 key_gap_heatmap_inline = 'Gap heatmap'
-key_gap_heatmap_span = input.float(2.618, 'Heatmap span (multiply with ATR, 0 to disable)', minval=0, group = key_gap_grp, inline = key_gap_heatmap_inline)
-key_gap_heatmap_offset = input.int(4, 'Heatmap offset', group = key_gap_grp, inline = key_gap_heatmap_inline)
-key_gap_heatmap_width = input.int(4, 'Heatmap width', group = key_gap_grp, inline = key_gap_heatmap_inline)
+key_gap_heatmap_span = input.float(3.618, 'Heatmap span (multiply with ATR, 0 to disable)', minval=0, group = key_gap_grp, inline = key_gap_heatmap_inline)
+key_gap_heatmap_offset = input.int(2, 'Heatmap offset', group = key_gap_grp, inline = key_gap_heatmap_inline)
+key_gap_heatmap_width = input.int(6, 'Heatmap width', group = key_gap_grp, inline = key_gap_heatmap_inline)
 
 var array<KeyGap> key_gaps = array.new<KeyGap>(key_gap_buffer, na)
 var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlot>(key_gap_plot_last, na)
@@ -464,15 +464,16 @@ biased_candle_grp = '► Biased candle'
 biased_candle_enable = input.bool(true,'Enable',group = biased_candle_grp)
 
 [top_wick, bottom_wick, body] = candle_split_percent(open,high,low,close)
-candle_wick_bias = bottom_wick >= 0.5 ? 1 : top_wick >= 0.5 ? -1 : na
-candle_bias = (ohlc4 - low) / (high - low)
-candle_bias_rising = ta.rising(ohlc4,1)
-candle_bias_falling = ta.falling(ohlc4,1)
+candle_wick_bias = bottom_wick >= 0.236 ? 1 : top_wick >= 0.236 ? -1 : na
+candle_bias = (hlc3 - low) / (high - low)
+candle_bias_rising = ta.rising(hlc3[1],1)
+candle_bias_falling = ta.falling(hlc3[1],1)
 candle_rising = candle_wick_bias > 0 and candle_bias >= 0.5
 candle_falling = candle_wick_bias < 0 and candle_bias < 0.5
+stronger_candle = (high - low) / (high[1] - low[1]) >= 1.5
 
-candle_strictly_rising = candle_rising and candle_bias_falling
-candle_strictly_falling = candle_falling and candle_bias_rising
+candle_strictly_rising = candle_rising and candle_bias_falling and stronger_candle
+candle_strictly_falling = candle_falling and candle_bias_rising and stronger_candle
 
 // plot(not candle_rising and not candle_falling ? ohlc4 : na,'Price balance',style = plot.style_linebr,linewidth = 2, color = color.silver,force_overlay = true)
 plotshape(biased_candle_enable and candle_strictly_rising,'Biased candle rising',style=shape.triangleup,location=location.belowbar,color=color.green,force_overlay = true)
