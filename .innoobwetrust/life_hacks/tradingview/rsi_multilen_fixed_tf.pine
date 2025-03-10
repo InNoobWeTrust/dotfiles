@@ -3,6 +3,7 @@
 
 //@version=6
 indicator("RSI multi-length fixed timeframe", overlay = false)
+import TradingView/ta/9
 
 //===============================================================================
 // Types
@@ -10,7 +11,7 @@ indicator("RSI multi-length fixed timeframe", overlay = false)
 enum MaT
 	sma = 'SMA'
 	wma = 'WMA'
-	ema = 'ema'
+	ema = 'EMA'
 
 //===============================================================================
 // Functions
@@ -37,27 +38,16 @@ rsi_grp = '► RSI'
 rsi_src = input.source(close,'RSI source',group = rsi_grp)
 rsi_len = input.int(14,'RSI length',group = rsi_grp)
 rsi_ma_inline = 'RSI MA'
-rsi_ma_type = input.enum(MaT.sma,rsi_ma_inline,group = rsi_grp,inline = rsi_ma_inline)
+rsi_ma_type = input.enum(MaT.wma,rsi_ma_inline,group = rsi_grp,inline = rsi_ma_inline)
 rsi_ma_len = input.int(9,'',group = rsi_grp,inline = rsi_ma_inline)
-oversold_color = input.color(color.new(color.green,50),'Oversold area color',group = rsi_grp)
-overbought_color = input.color(color.new(color.red,50),'Overbought area color',group = rsi_grp)
+bearish_color = input.color(color.new(color.red,50),'Bearish area color',group = rsi_grp)
+bullish_color = input.color(color.new(color.green,50),'Bullish area color',group = rsi_grp)
 
-bg_grp = '► Oversold/overbought chart background'
-bg_enable = input.bool(false,'Enable',group = bg_grp)
-bg_color_inline = 'Background colors (oversold/overbought)'
-bg_overbought_color = input.color(color.new(color.orange,90),bg_color_inline,group = bg_grp,inline = bg_color_inline)
-bg_oversold_color = input.color(color.new(color.aqua,90),'',group = bg_grp,inline = bg_color_inline)
-
-cross_grp = '► Cross signal background'
-cross_signal_line = input.string('MA','Signal line',options = ['RSI','MA'],group = cross_grp)
-cross_high_inline = 'High threshold'
-cross_high_enable = input.bool(true,cross_high_inline,group = cross_grp,inline = cross_high_inline)
-cross_high_threshold = input.int(60,'',group = cross_grp,inline = cross_high_inline)
-cross_high_bg_color = input.color(color.new(color.maroon,25),'',group = cross_grp,inline = cross_high_inline)
-cross_low_inline = 'Low threshold'
-cross_low_enable = input.bool(true,cross_low_inline,group = cross_grp,inline = cross_low_inline)
-cross_low_threshold = input.int(40,'',group = cross_grp,inline = cross_low_inline)
-cross_low_bg_color = input.color(color.new(color.navy,25),'',group = cross_grp,inline = cross_low_inline)
+bg_grp = '► Bullish/bearish chart background'
+bg_enable = input.bool(true,'Enable',group = bg_grp)
+bg_color_inline = 'Background colors (bullish/bearish)'
+bg_bullish_color = input.color(color.new(color.aqua,90),bg_color_inline,group = bg_grp,inline = bg_color_inline)
+bg_bearish_color = input.color(color.new(color.orange,90),'',group = bg_grp,inline = bg_color_inline)
 
 multilen_grp = '► Multi-length'
 multilen_tf = input.timeframe('5','Base',group = multilen_grp)
@@ -67,6 +57,19 @@ multilen_color = input.color(color.new(color.aqua,85),'Color',group = multilen_g
 multilen_avg_inline = 'Multi-length Average'
 multilen_avg_enable = input.bool(true,multilen_avg_inline,group = multilen_grp,inline = multilen_avg_inline)
 multilen_avg_color = input.color(color.new(color.teal,70),'',group = multilen_grp,inline = multilen_avg_inline)
+
+spike_grp = '► Spike detection background'
+spike_signal_line = input.string('Multi-length Base','Signal line',options = ['RSI','MA','Multi-length Base','Multi-length Average'],group = spike_grp)
+spike_theshold_high_inline = 'High threshold'
+spike_cross_high_enable = input.bool(true,spike_theshold_high_inline,group = spike_grp,inline = spike_theshold_high_inline)
+spike_cross_high_threshold = input.int(60,'',group = spike_grp,inline = spike_theshold_high_inline)
+spike_cross_high_bg_color = input.color(color.new(color.maroon,25),'',group = spike_grp,inline = spike_theshold_high_inline)
+spike_cross_low_inline = 'Low threshold'
+spike_cross_low_enable = input.bool(true,spike_cross_low_inline,group = spike_grp,inline = spike_cross_low_inline)
+spike_cross_low_threshold = input.int(40,'',group = spike_grp,inline = spike_cross_low_inline)
+spike_cross_low_bg_color = input.color(color.new(color.navy,25),'',group = spike_grp,inline = spike_cross_low_inline)
+spike_only_correction_wave = input.bool(true,'Only correction wave (main line stays outside thresholds)',group = spike_grp)
+spike_main_line = input.string('MA','Main line',options = ['RSI','MA','Multi-length Base','Multi-length Average'],group = spike_grp)
 
 //===============================================================================
 // Pre-calculated
@@ -80,17 +83,10 @@ var multilen_scale = multilen_tf_secs / tf_secs
 
 // RSI
 rsi = ta.rsi(rsi_src,rsi_len)
+rsi_ma = ma(rsi_ma_type,rsi,rsi_ma_len)
 tf_rsi = request.security(syminfo.tickerid,tf,rsi)
-tf_rsi_ma = ma(rsi_ma_type,tf_rsi,rsi_ma_len)
-oversold_area_color = tf_rsi <= threshold_low_limit ? oversold_color : na
-overbought_area_color = tf_rsi >= threshold_high_limit ? overbought_color : na
-
-// Cross
-cross_signal = switch cross_signal_line
-	'RSI' => tf_rsi
-	'MA' => tf_rsi_ma
-signal_cross_high = ta.cross(cross_signal,cross_high_threshold)
-signal_cross_low = ta.cross(cross_signal,cross_low_threshold)
+bullish_area_color = rsi >= threshold_high_limit ? bullish_color : na
+bearish_area_color = rsi <= threshold_low_limit ? bearish_color : na
 
 // Multilen RSI
 multi_rsi_data = array.new<float>(4,0.)
@@ -100,16 +96,52 @@ multi_rsi_data.set(2,request.security(syminfo.tickerid,multilen_tf,ta.rsi(rsi_sr
 multi_rsi_data.set(3,request.security(syminfo.tickerid,multilen_tf,ta.rsi(rsi_src,rsi_len * 4)))
 
 multi_rsi_avg = multi_rsi_data.avg()
+
+// Cross
+cross_signal = switch spike_signal_line
+	'RSI' => rsi
+	'MA' => rsi_ma
+	'Multi-length Base' => tf_rsi
+	'Multi-length Average' => multi_rsi_avg
+cross_signal_is_mtf = switch spike_signal_line
+	'RSI' => false
+	'MA' => false
+	'Multi-length Base' => true
+	'Multi-length Average' => true
+signal_cross_high = cross_signal_is_mtf ? request.security(syminfo.tickerid,multilen_tf, cross_signal >= spike_cross_high_threshold) : cross_signal >= spike_cross_high_threshold
+signal_cross_low = cross_signal_is_mtf ? request.security(syminfo.tickerid,multilen_tf, cross_signal <= spike_cross_low_threshold) : cross_signal <= spike_cross_low_threshold
+
+cross_main = switch spike_main_line
+	'RSI' => rsi
+	'MA' => rsi_ma
+	'Multi-length Base' => tf_rsi
+	'Multi-length Average' => multi_rsi_avg
+main_crossover_high = ta.crossover(cross_main,spike_cross_high_threshold)
+main_crossunder_low = ta.crossunder(cross_main,spike_cross_low_threshold)
+
+main_lowest_since_crossover = ta.lowestSince(main_crossover_high,cross_main)
+main_highest_since_crossunder = ta.highestSince(main_crossunder_low,cross_main)
+
+main_remain_high = spike_cross_high_threshold <= main_lowest_since_crossover
+main_remain_low = main_highest_since_crossunder <= spike_cross_low_threshold
+
+if spike_only_correction_wave
+	signal_cross_high := signal_cross_high and main_remain_low
+	signal_cross_low := signal_cross_low and main_remain_high
+
+signal_cross_or_remain_high = signal_cross_high or (spike_cross_high_threshold <= cross_signal and cross_signal <= threshold_high_limit)
+signal_cross_or_remain_low = signal_cross_low or (threshold_low_limit <= cross_signal and cross_signal <= spike_cross_low_threshold)
+
 //===============================================================================
 // Visual calculation
 //===============================================================================
 chart_bg_color = switch
-	bg_enable and tf_rsi <= threshold_low_limit => bg_oversold_color
-	bg_enable and tf_rsi >= threshold_high_limit => bg_overbought_color
+	bg_enable and tf_rsi <= threshold_low_limit => bg_bearish_color
+	bg_enable and tf_rsi >= threshold_high_limit => bg_bullish_color
 	=> color(na)
 bg_color = switch
-	cross_high_enable and signal_cross_high => cross_high_bg_color
-	cross_low_enable and signal_cross_low => cross_low_bg_color
+	spike_cross_high_enable and signal_cross_high => spike_cross_high_bg_color
+	spike_cross_low_enable and signal_cross_low => spike_cross_low_bg_color
 	=> color(na)
 
 //===============================================================================
@@ -124,14 +156,14 @@ fill(low_line,middle_line,threshold_color_middle_low)
 fill(high_line,middle_line,threshold_color_middle_high)
 
 // Cross thresholds
-cross_high_line = hline(cross_high_enable ? cross_high_threshold : na,'Cross high threshold',linestyle = hline.style_dotted,color = color.new(color.gray,70))
-cross_low_line = hline(cross_low_enable ? cross_low_threshold : na,'Cross low threshold',linestyle = hline.style_dotted,color = color.new(color.gray,70))
+cross_high_line = hline(spike_cross_high_enable ? spike_cross_high_threshold : na,'Cross high threshold',linestyle = hline.style_dotted,color = color.new(color.gray,70))
+cross_low_line = hline(spike_cross_low_enable ? spike_cross_low_threshold : na,'Cross low threshold',linestyle = hline.style_dotted,color = color.new(color.gray,70))
 
 // RSI
-plot(tf_rsi,'RSI',color.purple,force_overlay = false)
-plot(tf_rsi_ma,'RSI MA', color.yellow,force_overlay = false)
-plot(rsi,'Oversold',oversold_area_color,style = plot.style_area,histbase = threshold_low_limit)
-plot(rsi,'Overbought',overbought_area_color,style = plot.style_area,histbase = threshold_high_limit)
+plot(rsi,'RSI',color.purple,force_overlay = false)
+plot(rsi_ma,'RSI MA', color.yellow,force_overlay = false)
+plot(rsi,'Oversold',bearish_area_color,style = plot.style_area,histbase = threshold_low_limit)
+plot(rsi,'Overbought',bullish_area_color,style = plot.style_area,histbase = threshold_high_limit)
 
 // Chart background
 bgcolor(chart_bg_color,force_overlay = true)

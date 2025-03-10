@@ -322,12 +322,16 @@ trcd_fast_len = input.int(34,'TR fast length',group = trcd_grp)
 trcd_slow_len = input.int(144,'TR slow length',group = trcd_grp)
 trcd_sig_len = input.int(9,'TR signal length',group = trcd_grp)
 
-[trcd,tr_sig,tr_hist] = ta.macd(ta.tr(true),trcd_fast_len,trcd_slow_len,trcd_sig_len)
+tr = ta.tr(true)
+[trcd,tr_sig,tr_hist] = ta.macd(tr,trcd_fast_len,trcd_slow_len,trcd_sig_len)
 
 tr_rising = ta.rising(tr_hist,1)
 tr_falling = ta.falling(tr_hist,1)
 tr_converging = ta.falling(math.abs(tr_hist),1)
 tr_diverging = ta.rising(math.abs(tr_hist),1)
+
+biased_tr = math.sign(close - open) != 0 ? tr * math.sign(close - open) : tr
+biased_tr_rma = ta.rma(biased_tr, trcd_sig_len)
 
 trcd_areacolor = switch trcd >=0
 	true => color.new(color.teal,70)
@@ -338,12 +342,17 @@ trcd_diffcolor = switch tr_hist > 0
 trcd_histcolor = switch tr_hist > 0
 	true => tr_diverging ? color.new(color.teal,40) : color.new(color.lime,40)
 	false => tr_diverging ? color.new(color.red,40) : color.new(color.orange,40)
+biased_tr_rma_color = switch biased_tr_rma > 0
+	true => color.new(color.teal, 50)
+	false => color.new(color.maroon, 50)
+
 trcd_plt = plot(trcd, 'TRCD',color=color(na),linewidth = 1,force_overlay = false)
-trcd_fillplt = plot(trcd >= 0 ? math.min(trcd,tr_sig) : math.max(trcd,tr_sig), 'TRCD area filling',color=trcd_areacolor,style = plot.style_histogram,force_overlay = false)
+// trcd_fillplt = plot(trcd >= 0 ? math.min(trcd,tr_sig) : math.max(trcd,tr_sig), 'TRCD area filling',color=trcd_areacolor,style = plot.style_histogram,force_overlay = false)
 tr_sig_plt = plot(tr_sig, 'TR signal',color=color(na),linewidth = 1,force_overlay = false)
 fill(trcd_plt,tr_sig_plt,trcd_diffcolor,'TR convergence divergence')
+plot(tr_hist,'TR hist',color=trcd_histcolor,style = plot.style_columns,force_overlay = false)
 
-tr_hist_plt = plot(tr_hist,'TR hist',color=trcd_histcolor,style = plot.style_columns,force_overlay = false)
+plot(biased_tr_rma, 'MA of Biased TR', color = biased_tr_rma_color, style = plot.style_histogram, force_overlay = false)
 
 // RLI
 //-------------------------------------------------------------------------------
