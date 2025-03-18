@@ -3,7 +3,7 @@
 
 //@version=6
 
-// @description TODO: add library description here
+// @description helper library for common plotting needs
 library("plot_lib", overlay = false)
 
 //===============================================================================
@@ -68,10 +68,14 @@ export clear_position_plot(PositionPlot pos_plt) =>
 // @function Plot the price zone of TfBar
 // @param z Zone data of TfBar
 // @param clr Color for the zone
-export plot_tf_zone(TfBarZone z, color clr) =>
+export plot_tf_zone(TfBarZone z, color clr, bool extend_right = false) =>
+	bar_duration = time_close - time
+	bars_back = int((time - z.bar.t_o) / bar_duration)
+	left = time - bars_back * bar_duration
+	right = time_close
     // Line for high value
-    h = line.new(time, z.bar.h, time_close, z.bar.h, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
-    l = line.new(time, z.bar.l, time_close, z.bar.l, xloc = xloc.bar_time,extend = extend.right, color = clr, style = line.style_solid, force_overlay = true)
+    h = line.new(left, z.bar.h, right, z.bar.h, xloc = xloc.bar_time,extend = extend_right ? extend.right : extend.none, color = clr, style = line.style_solid, force_overlay = true)
+    l = line.new(left, z.bar.l, right, z.bar.l, xloc = xloc.bar_time,extend = extend_right ? extend.right : extend.none, color = clr, style = line.style_solid, force_overlay = true)
     f = linefill.new(h,l,clr)
     TfBarZonePlot.new(h,l,f)
 

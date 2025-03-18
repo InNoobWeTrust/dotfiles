@@ -7,7 +7,7 @@
 library("polyglot_lib", overlay = false)
 import TradingView/ta/9
 import forbidden_gun/commonlib/4
-import forbidden_gun/plot_lib/1
+import forbidden_gun/plot_lib/3
 
 //===============================================================================
 // Constants
@@ -343,8 +343,8 @@ trcd_histcolor = switch tr_hist > 0
 	true => tr_diverging ? color.new(color.teal,40) : color.new(color.lime,40)
 	false => tr_diverging ? color.new(color.red,40) : color.new(color.orange,40)
 biased_tr_rma_color = switch biased_tr_rma > 0
-	true => color.new(color.teal, 50)
-	false => color.new(color.maroon, 50)
+	true => color.new(color.teal, 30)
+	false => color.new(color.maroon, 30)
 
 trcd_plt = plot(trcd, 'TRCD',color=color(na),linewidth = 1,force_overlay = false)
 // trcd_fillplt = plot(trcd >= 0 ? math.min(trcd,tr_sig) : math.max(trcd,tr_sig), 'TRCD area filling',color=trcd_areacolor,style = plot.style_histogram,force_overlay = false)
@@ -397,10 +397,14 @@ key_gap_inverse_gradient = input.bool(true, "Inverse gradient based on candle co
 key_gap_heatmap_inline = 'Gap heatmap'
 key_gap_heatmap_span = input.float(3.618, 'Heatmap span (multiply with ATR, 0 to disable)', minval=0, group = key_gap_grp, inline = key_gap_heatmap_inline)
 key_gap_heatmap_offset = input.int(2, 'Heatmap offset', group = key_gap_grp, inline = key_gap_heatmap_inline)
-key_gap_heatmap_width = input.int(6, 'Heatmap width', group = key_gap_grp, inline = key_gap_heatmap_inline)
+key_gap_heatmap_width = input.int(8, 'Heatmap width', group = key_gap_grp, inline = key_gap_heatmap_inline)
 
+// Global vars
 var array<KeyGap> key_gaps = array.new<KeyGap>(key_gap_buffer, na)
 var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlot>(key_gap_plot_last, na)
+var array<box> key_level_boxes = array.new<box>()
+
+// Calculations
 
 key_gap_atr = ta.atr(key_gap_atr_len)
 key_gap_candle_spread = high - low
@@ -416,19 +420,6 @@ if candle_is_key and key_gap_buffer > 0
 	bar_zone = plot_lib.TfBarZone.new(tf_secs, bar)
 	key_gaps.push(KeyGap.new(bar_zone, key_gap_candle_spread, key_gap_candle_spread_mult))
 
-	if key_gap_enable and key_gap_plot_last > 0
-		// Remove and clear old plots
-		oldest_zone_plt = key_gaps_plt.shift()
-		if not na(oldest_zone_plt)
-			plot_lib.clear_tf_zone(oldest_zone_plt)
-
-		clr = color.from_gradient(key_gap_candle_spread_mult, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
-		if key_gap_inverse_gradient and close < open
-			// Invert the color
-			clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
-		plt = plot_lib.plot_tf_zone(bar_zone, clr)
-		key_gaps_plt.push(plt)
-
 key_levels = array.new<float>()
 for gap in key_gaps
 	if not na(gap)
@@ -436,36 +427,53 @@ for gap in key_gaps
 		key_levels.push(gap.zone.bar.h)
 key_levels.sort(order.ascending)
 
-var array<box> key_level_boxes = array.new<box>()
+// Plot
 
-if key_gap_heatmap_span > 0 and barstate.islast
-	for b in key_level_boxes
-		b.delete()
-	key_level_boxes.clear()
+if barstate.islast 
+	if key_gap_enable and key_gap_plot_last > 0
+		// Remove and clear old plots
+		while key_gaps_plt.size() > 0
+			oldest_zone_plt = key_gaps_plt.shift()
+			if not na(oldest_zone_plt)
+				plot_lib.clear_tf_zone(oldest_zone_plt)
 
-	delta = key_gap_heatmap_span * key_gap_atr
-	min_price = close - delta
-	max_price = close + delta
+		for idx = key_gaps.size() - key_gap_plot_last to key_gaps.size() - 1
+			gap = key_gaps.get(idx)
+			clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
+			if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
+				// Invert the color
+				clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
+			plt = plot_lib.plot_tf_zone(gap.zone, clr)
+			key_gaps_plt.push(plt)
 
-	for gap in key_gaps
-		if na(gap) or gap.zone.bar.h <= min_price or max_price <= gap.zone.bar.l
-			continue
+	if key_gap_heatmap_span > 0
+		for b in key_level_boxes
+			b.delete()
+		key_level_boxes.clear()
 
-		clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
-		if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
-			// Invert the color
-			clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
-		b = box.new(left = bar_index + key_gap_heatmap_offset,
-					 top = gap.zone.bar.h,
-					 right = bar_index + key_gap_heatmap_offset + key_gap_heatmap_width,
-					 bottom = gap.zone.bar.l,
-					 border_color = color(na),
-					 border_width = 2,
-					 border_style = line.style_solid,
-					 xloc = xloc.bar_index,
-					 bgcolor = clr,
-					 force_overlay = true)
-		key_level_boxes.push(b)
+		delta = key_gap_heatmap_span * key_gap_atr
+		min_price = close - delta
+		max_price = close + delta
+
+		for gap in key_gaps
+			if na(gap) or gap.zone.bar.h <= min_price or max_price <= gap.zone.bar.l
+				continue
+
+			clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
+			if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
+				// Invert the color
+				clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
+			b = box.new(left = bar_index + key_gap_heatmap_offset,
+						 top = gap.zone.bar.h,
+						 right = bar_index + key_gap_heatmap_offset + key_gap_heatmap_width,
+						 bottom = gap.zone.bar.l,
+						 border_color = color(na),
+						 border_width = 2,
+						 border_style = line.style_solid,
+						 xloc = xloc.bar_index,
+						 bgcolor = clr,
+						 force_overlay = true)
+			key_level_boxes.push(b)
 
 // Biased candle
 //-------------------------------------------------------------------------------
@@ -526,7 +534,7 @@ if index_tb_enable
 revengrsi_grp = '► Reverse Engineering RSI'
 revengrsi_transp = input.int(65, "Transparency",group = revengrsi_grp)
 revengrsi_len_inline = 'Lengths (0 to disable)'
-revengrsi_len1 = input.int(129,revengrsi_len_inline,group = revengrsi_grp,inline = revengrsi_len_inline,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
+revengrsi_len1 = input.int(0,revengrsi_len_inline,group = revengrsi_grp,inline = revengrsi_len_inline,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
 revengrsi_len2 = input.int(0,'',group = revengrsi_grp,inline = revengrsi_len_inline)
 revengrsi_len3 = input.int(0,'',group = revengrsi_grp,inline = revengrsi_len_inline)
 revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
