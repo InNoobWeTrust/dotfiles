@@ -60,14 +60,15 @@ multilen_avg_color = input.color(color.new(color.teal,70),'',group = multilen_gr
 
 spike_grp = '► Spike detection background'
 spike_signal_line = input.string('Multi-length Base','Signal line',options = ['RSI','MA','Multi-length Base','Multi-length Average'],group = spike_grp)
-spike_theshold_high_inline = 'High threshold'
-spike_cross_high_enable = input.bool(true,spike_theshold_high_inline,group = spike_grp,inline = spike_theshold_high_inline)
-spike_cross_high_threshold = input.int(60,'',group = spike_grp,inline = spike_theshold_high_inline)
-spike_cross_high_bg_color = input.color(color.new(color.maroon,25),'',group = spike_grp,inline = spike_theshold_high_inline)
+spike_cross_high_inline = 'High threshold'
+spike_cross_high_enable = input.bool(true,spike_cross_high_inline,group = spike_grp,inline = spike_cross_high_inline)
+spike_cross_high_threshold = input.int(60,'',group = spike_grp,inline = spike_cross_high_inline)
+spike_cross_high_bg_color = input.color(color.new(color.maroon,25),'',group = spike_grp,inline = spike_cross_high_inline)
 spike_cross_low_inline = 'Low threshold'
 spike_cross_low_enable = input.bool(true,spike_cross_low_inline,group = spike_grp,inline = spike_cross_low_inline)
 spike_cross_low_threshold = input.int(40,'',group = spike_grp,inline = spike_cross_low_inline)
 spike_cross_low_bg_color = input.color(color.new(color.navy,25),'',group = spike_grp,inline = spike_cross_low_inline)
+spike_only_crossing = input.bool(true, 'Highligh only crossing point', group = spike_grp)
 spike_only_correction_wave = input.bool(true,'Only correction wave (main line stays outside thresholds)',group = spike_grp)
 spike_main_line = input.string('MA','Main line',options = ['RSI','MA','Multi-length Base','Multi-length Average'],group = spike_grp)
 
@@ -108,8 +109,15 @@ cross_signal_is_mtf = switch spike_signal_line
 	'MA' => false
 	'Multi-length Base' => true
 	'Multi-length Average' => true
-signal_cross_high = cross_signal_is_mtf ? request.security(syminfo.tickerid,multilen_tf, cross_signal >= spike_cross_high_threshold) : cross_signal >= spike_cross_high_threshold
-signal_cross_low = cross_signal_is_mtf ? request.security(syminfo.tickerid,multilen_tf, cross_signal <= spike_cross_low_threshold) : cross_signal <= spike_cross_low_threshold
+cross_high_signal_expr = switch spike_only_crossing
+	false => cross_signal >= spike_cross_high_threshold
+	true => ta.crossover(cross_signal, spike_cross_high_threshold)
+cross_low_signal_expr = switch spike_only_crossing
+	false => cross_signal <= spike_cross_low_threshold
+	true => ta.crossunder(cross_signal, spike_cross_low_threshold)
+
+signal_cross_high = cross_signal_is_mtf ? request.security(syminfo.tickerid,multilen_tf, cross_high_signal_expr) : cross_high_signal_expr
+signal_cross_low = cross_signal_is_mtf ? request.security(syminfo.tickerid,multilen_tf, cross_low_signal_expr) : cross_low_signal_expr
 
 cross_main = switch spike_main_line
 	'RSI' => rsi
