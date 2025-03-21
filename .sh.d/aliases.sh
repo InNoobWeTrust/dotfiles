@@ -182,6 +182,9 @@ usable pkgx && \
         if ! usable uv; then
             alias uv='pkgx uv'
             alias uvx='pkgx uvx'
+            if ! usable python; then
+                alias python='uv run python'
+            fi
         fi
         ## Nodejs package manager
         if ! usable npm; then
