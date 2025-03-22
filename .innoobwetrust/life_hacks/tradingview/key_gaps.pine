@@ -85,6 +85,10 @@ if barstate.islast
 
 		for idx = key_gaps.size() - key_gap_plot_last to key_gaps.size() - 1
 			gap = key_gaps.get(idx)
+			// Skip empty slots in Buffer
+			if na(gap)
+				continue
+
 			clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
 			if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
 				// Invert the color

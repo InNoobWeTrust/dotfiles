@@ -337,8 +337,8 @@ trcd_areacolor = switch trcd >=0
 	true => color.new(color.teal,70)
 	false => color.new(color.red,70)
 trcd_diffcolor = switch tr_hist > 0
-	true => color.new(color.aqua,80)
-	false => color.new(color.yellow,80)
+	true => color.new(color.aqua,70)
+	false => color.new(color.yellow,70)
 trcd_histcolor = switch tr_hist > 0
 	true => tr_diverging ? color.new(color.teal,40) : color.new(color.lime,40)
 	false => tr_diverging ? color.new(color.red,40) : color.new(color.orange,40)
@@ -361,8 +361,8 @@ rli_grp = '► Scaled Relative Liquidity Index'
 rli_enable = input.bool(true,'Enable',group = rli_grp)
 rli_atr_len = input.int(34,"RLI's ATR length",group = rli_grp)
 rli_len = input.int(14,'RLI length',group = rli_grp)
-rli_low_color = input.color(color.new(color.red,25),'Low liquidity color',group = rli_grp)
-rli_high_color = input.color(color.new(color.teal,25),'High liquidity color',group = rli_grp)
+rli_low_color = input.color(color.new(color.red,50),'Low liquidity color',group = rli_grp)
+rli_high_color = input.color(color.new(color.teal,50),'High liquidity color',group = rli_grp)
 rli_gradient_bg_enable = input.bool(true,'Show gradient background',group = rli_grp)
 rli_gradient_bg_transparency = input.int(90,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
 rli_gradient_ignore_upperbound = input.float(80, "Ignore high RLI gradient until this value", group = rli_grp)
@@ -439,6 +439,10 @@ if barstate.islast
 
 		for idx = key_gaps.size() - key_gap_plot_last to key_gaps.size() - 1
 			gap = key_gaps.get(idx)
+			// Skip empty slots in buffer
+			if na(gap)
+				continue
+
 			clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
 			if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
 				// Invert the color
@@ -567,10 +571,10 @@ bb_mult_inline = 'Mult (0 to disable)'
 bb_mult_primary = input.float(2,bb_mult_inline,group = bb_grp, inline = bb_mult_inline)
 bb_mult_secondary = input.float(3,'',group = bb_grp, inline = bb_mult_inline)
 bb_color_inline = 'BB base/cloud colors (opacity 0% to hide clouds)'
-bbf_color = input.color(color.new(color.aqua,90),'Fast',group = bb_grp, inline = bb_color_inline)
-bbs_color = input.color(color.new(color.orange,90),'Slow',group = bb_grp, inline = bb_color_inline)
-bb_mid_transp = input.int(65,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
-bb_border_transp = input.int(80,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
+bbf_color = input.color(color.new(color.aqua,92),'Fast',group = bb_grp, inline = bb_color_inline)
+bbs_color = input.color(color.new(color.orange,92),'Slow',group = bb_grp, inline = bb_color_inline)
+bb_mid_transp = input.int(90,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
+bb_border_transp = input.int(95,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
 
 [bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_primary))
 [bbf_m2,bbf_u2,bbf_l2] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_secondary))
