@@ -318,8 +318,8 @@ export support_breakout(float support) =>
 //-------------------------------------------------------------------------------
 trcd_grp = '► True Range Convergence Divergence'
 
-trcd_fast_len = input.int(34,'TR fast length',group = trcd_grp)
-trcd_slow_len = input.int(144,'TR slow length',group = trcd_grp)
+trcd_fast_len = input.int(16,'TR fast length',group = trcd_grp)
+trcd_slow_len = input.int(42,'TR slow length',group = trcd_grp)
 trcd_sig_len = input.int(9,'TR signal length',group = trcd_grp)
 
 tr = ta.tr(true)
@@ -359,14 +359,14 @@ plot(biased_tr_rma, 'MA of Biased TR', color = biased_tr_rma_color, style = plot
 rli_grp = '► Scaled Relative Liquidity Index'
 
 rli_enable = input.bool(true,'Enable',group = rli_grp)
-rli_atr_len = input.int(34,"RLI's ATR length",group = rli_grp)
-rli_len = input.int(14,'RLI length',group = rli_grp)
+rli_atr_len = input.int(16,"RLI's ATR length",group = rli_grp)
+rli_len = input.int(9,'RLI length',group = rli_grp)
 rli_low_color = input.color(color.new(color.red,50),'Low liquidity color',group = rli_grp)
 rli_high_color = input.color(color.new(color.teal,50),'High liquidity color',group = rli_grp)
 rli_gradient_bg_enable = input.bool(true,'Show gradient background',group = rli_grp)
 rli_gradient_bg_transparency = input.int(90,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
-rli_gradient_ignore_upperbound = input.float(80, "Ignore high RLI gradient until this value", group = rli_grp)
-rli_gradient_ignore_lowerbound = input.float(20, "Ignore low RLI gradient until this value", group = rli_grp)
+rli_gradient_ignore_upperbound = input.float(75, "Ignore high RLI gradient until this value", group = rli_grp)
+rli_gradient_ignore_lowerbound = input.float(25, "Ignore low RLI gradient until this value", group = rli_grp)
 
 rli = relative_liquidity_index(rli_atr_len,rli_len)
 shifted_rli = rli - 50
@@ -384,7 +384,7 @@ bgcolor(rli_bg_color,force_overlay = true)
 //-------------------------------------------------------------------------------
 key_gap_grp = '► Key gaps'
 key_gap_enable = input.bool(true, 'Enable', group = key_gap_grp)
-key_gap_atr_len = input.int(34, 'base ATR length', group = key_gap_grp)
+key_gap_atr_len = input.int(16, 'base ATR length', group = key_gap_grp)
 key_gap_threshold = input.float(2.618, 'ATR mult',group = key_gap_grp)
 key_gap_cap = input.float(4.236, 'ATR upper cap',group = key_gap_grp)
 key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1,group = key_gap_grp)
@@ -512,7 +512,7 @@ var table lvrg_tb = na
 
 // Update leverage table
 if lvrg_tb_enable
-	lvrg_tb := display_lvrg_table(atr_len = trcd_slow_len, mult = lvrg_tb_mult,pos = lvrg_tb_position,overlay = lvrg_tb_overlay)
+	lvrg_tb := display_lvrg_table(atr_len = trcd_fast_len, mult = lvrg_tb_mult,pos = lvrg_tb_position,overlay = lvrg_tb_overlay)
 
 // RSI + RLI (Relative Liquidity Index) table
 //-------------------------------------------------------------------------------
@@ -520,11 +520,11 @@ index_tb_grp = '► Index table'
 index_tb_enable = input.bool(true,'Enable',group = index_tb_grp)
 index_tb_position = input.string(position.bottom_left,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = index_tb_grp)
 index_tb_overlay = input.bool(true,'Overlay',group = index_tb_grp)
-index_len = input.int(14,'Index length',group = index_tb_grp)
+index_len = input.int(16,'Index length',group = index_tb_grp)
 index_ma_inline = 'Index MA'
 index_ma_type = input.enum(MaT.sma,index_ma_inline,group = index_tb_grp,inline = index_ma_inline)
-index_ma_len = input.int(14,'',group = index_tb_grp,inline = index_ma_inline)
-index_atr_len = input.int(34,'Index ATR length',group = index_tb_grp)
+index_ma_len = input.int(9,'',group = index_tb_grp,inline = index_ma_inline)
+index_atr_len = input.int(16,'Index ATR length',group = index_tb_grp)
 
 
 var table index_tb = na
@@ -565,16 +565,16 @@ ghost_bearish_plt = plot(ghost_bearish_threshold,'Ghost Bearish Threshold', colo
 bb_grp = '► Bollinger Bands Remix'
 bb_src = input.source(close,'Source',group = bb_grp)
 bb_len_inline = 'Lengths (0 to disable)'
-bbf_len = input.int(34,bb_len_inline,group = bb_grp,inline = bb_len_inline)
-bbs_len = input.int(89,'',group = bb_grp,inline = bb_len_inline)
+bbf_len = input.int(16,bb_len_inline,group = bb_grp,inline = bb_len_inline)
+bbs_len = input.int(42,'',group = bb_grp,inline = bb_len_inline)
 bb_mult_inline = 'Mult (0 to disable)'
 bb_mult_primary = input.float(2,bb_mult_inline,group = bb_grp, inline = bb_mult_inline)
 bb_mult_secondary = input.float(3,'',group = bb_grp, inline = bb_mult_inline)
 bb_color_inline = 'BB base/cloud colors (opacity 0% to hide clouds)'
-bbf_color = input.color(color.new(color.aqua,92),'Fast',group = bb_grp, inline = bb_color_inline)
-bbs_color = input.color(color.new(color.orange,92),'Slow',group = bb_grp, inline = bb_color_inline)
-bb_mid_transp = input.int(90,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
-bb_border_transp = input.int(95,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
+bbf_color = input.color(color.new(color.aqua,90),'Fast',group = bb_grp, inline = bb_color_inline)
+bbs_color = input.color(color.new(color.orange,90),'Slow',group = bb_grp, inline = bb_color_inline)
+bb_mid_transp = input.int(85,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
+bb_border_transp = input.int(85,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
 
 [bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_primary))
 [bbf_m2,bbf_u2,bbf_l2] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_secondary))
@@ -609,7 +609,7 @@ fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bbf_color,bbs_color,'BB secondary lower
 position_grp = '► Long/Short entries'
 position_enable = input.bool(true,'Enable',group = position_grp)
 
-pos_atr = ta.atr(34)
+pos_atr = ta.atr(16)
 pos_rsi = ta.rsi(close,index_len)
 pos_rli = relative_liquidity_index(index_atr_len,index_len)
 pos_rsi_high = pos_rsi > 60
@@ -640,7 +640,7 @@ rr = long_signal or short_signal ? (tp - close) / (close - sl) : na
 desired_winrate = 0.5
 desired_rr = desired_winrate / (1 - desired_winrate)
 is_satisfactory_rr = math.abs(rr) >= desired_rr
-[lvrg,max_endurable_spread, _] = estimate_leverage(89,0.2,3)
+[lvrg,max_endurable_spread, _] = estimate_leverage(34,0.2,3)
 is_safe_sl = math.abs(close - sl) < max_endurable_spread
 
 scalp_entry_up = long_signal and is_satisfactory_rr and is_safe_sl
