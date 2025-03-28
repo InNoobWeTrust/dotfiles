@@ -27,23 +27,25 @@ key_gap_atr_len = input.int(34, 'base ATR length')
 key_gap_threshold = input.float(2.618, 'ATR mult')
 key_gap_cap = input.float(4.236, 'ATR upper cap')
 key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1)
-key_gap_buffer = input.int(128, 'Buffer', minval = 0)
-key_gap_plot_last = input.int(3, 'Plot last (0 to disable)', minval = 0)
+key_gap_buffer = input.int(512, 'Buffer', minval = 0)
 key_gap_gradient_inline = 'Key gap gradient'
-key_gap_gradient_low = input.color(color.new(color.aqua, 88), key_gap_gradient_inline, inline = key_gap_gradient_inline)
-key_gap_gradient_high = input.color(color.new(color.teal, 85), '', inline = key_gap_gradient_inline)
+key_gap_gradient_low = input.color(color.new(color.aqua, 92), key_gap_gradient_inline, inline = key_gap_gradient_inline)
+key_gap_gradient_high = input.color(color.new(color.teal, 88), '', inline = key_gap_gradient_inline)
 key_gap_inverse_gradient = input.bool(true, "Inverse gradient based on candle color")
 key_gap_heatmap_grp = '▶️ Gap heatmap'
 key_gap_heatmap_span = input.float(2.618, 'Heatmap span (multiply with ATR, 0 to disable)', minval=0, group = key_gap_heatmap_grp)
 key_gap_heatmap_offset = input.int(4, 'Heatmap offset', group = key_gap_heatmap_grp)
 key_gap_heatmap_width = input.int(4, 'Heatmap width', group = key_gap_heatmap_grp)
+key_gap_zone = '▶️ Gap zones'
+key_gap_zone_count = input.int(5, 'Plot last (0 to disable)', minval = 0, group = key_gap_zone)
+key_gap_zone_span = input.float(3.618, 'Zone span (only plot zones within span, 0 to disable)', minval=0, group = key_gap_zone)
 
 //===============================================================================
 // Global vars
 //===============================================================================
 
 var array<KeyGap> key_gaps = array.new<KeyGap>(key_gap_buffer, na)
-var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlot>(key_gap_plot_last, na)
+var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlot>(key_gap_zone_count, na)
 var array<box> key_level_boxes = array.new<box>()
 
 //===============================================================================
@@ -76,17 +78,27 @@ key_levels.sort(order.ascending)
 //===============================================================================
 
 if barstate.islast 
-	if key_gap_enable and key_gap_plot_last > 0
+	if key_gap_enable and key_gap_zone_count > 0
 		// Remove and clear old plots
 		while key_gaps_plt.size() > 0
 			oldest_zone_plt = key_gaps_plt.shift()
 			if not na(oldest_zone_plt)
 				plot_lib.clear_tf_zone(oldest_zone_plt)
 
-		for idx = key_gaps.size() - key_gap_plot_last to key_gaps.size() - 1
+		delta = key_gap_heatmap_span * key_gap_atr
+		min_price = close - delta
+		max_price = close + delta
+
+		for idx = key_gaps.size() - 1 to 0
+			if key_gaps_plt.size() > key_gap_zone_count
+				break
+
 			gap = key_gaps.get(idx)
-			// Skip empty slots in Buffer
+			// Skip empty slots in buffer
 			if na(gap)
+				continue
+			// Skip zones not within span
+			if key_gap_zone_span > 0 and (gap.zone.bar.h <= min_price or max_price <= gap.zone.bar.l)
 				continue
 
 			clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
