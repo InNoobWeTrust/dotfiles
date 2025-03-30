@@ -333,12 +333,12 @@ tr_diverging = ta.rising(math.abs(tr_hist),1)
 biased_tr = math.sign(close - open) != 0 ? tr * math.sign(close - open) : tr
 biased_tr_rma = ta.rma(biased_tr, trcd_sig_len)
 
-trcd_areacolor = switch trcd >=0
-	true => color.new(color.teal,70)
-	false => color.new(color.red,70)
-trcd_diffcolor = switch tr_hist > 0
-	true => color.new(color.aqua,70)
-	false => color.new(color.yellow,70)
+// trcd_areacolor = switch trcd >=0
+// 	true => color.new(color.teal,70)
+// 	false => color.new(color.red,70)
+// trcd_diffcolor = switch tr_hist > 0
+// 	true => color.new(color.aqua,70)
+// 	false => color.new(color.yellow,70)
 trcd_histcolor = switch tr_hist > 0
 	true => tr_diverging ? color.new(color.teal,40) : color.new(color.lime,40)
 	false => tr_diverging ? color.new(color.red,40) : color.new(color.orange,40)
@@ -346,10 +346,10 @@ biased_tr_rma_color = switch biased_tr_rma > 0
 	true => color.new(color.teal, 30)
 	false => color.new(color.maroon, 30)
 
-trcd_plt = plot(trcd, 'TRCD',color=color(na),linewidth = 1,force_overlay = false)
+// trcd_plt = plot(trcd, 'TRCD',color=color(na),linewidth = 1,force_overlay = false)
 // trcd_fillplt = plot(trcd >= 0 ? math.min(trcd,tr_sig) : math.max(trcd,tr_sig), 'TRCD area filling',color=trcd_areacolor,style = plot.style_histogram,force_overlay = false)
-tr_sig_plt = plot(tr_sig, 'TR signal',color=color(na),linewidth = 1,force_overlay = false)
-fill(trcd_plt,tr_sig_plt,trcd_diffcolor,'TR convergence divergence')
+// tr_sig_plt = plot(tr_sig, 'TR signal',color=color(na),linewidth = 1,force_overlay = false)
+// fill(trcd_plt,tr_sig_plt,trcd_diffcolor,'TR convergence divergence')
 plot(tr_hist,'TR hist',color=trcd_histcolor,style = plot.style_columns,force_overlay = false)
 
 plot(biased_tr_rma, 'MA of Biased TR', color = biased_tr_rma_color, style = plot.style_histogram, force_overlay = false)
@@ -390,8 +390,8 @@ key_gap_cap = input.float(4.236, 'ATR upper cap',group = key_gap_grp)
 key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1,group = key_gap_grp)
 key_gap_buffer = input.int(512, 'Buffer', minval = 0, group = key_gap_grp)
 key_gap_gradient_inline = 'Key gap gradient'
-key_gap_gradient_low = input.color(color.new(color.aqua, 88), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
-key_gap_gradient_high = input.color(color.new(color.teal, 85), '', group = key_gap_grp, inline = key_gap_gradient_inline)
+key_gap_gradient_low = input.color(color.new(color.aqua, 92), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
+key_gap_gradient_high = input.color(color.new(color.teal, 88), '', group = key_gap_grp, inline = key_gap_gradient_inline)
 key_gap_inverse_gradient = input.bool(true, "Inverse gradient based on candle color", group = key_gap_grp)
 key_gap_heatmap_inline = 'Gap heatmap'
 key_gap_heatmap_span = input.float(3.618, 'Heatmap span (multiply with ATR, 0 to disable)', minval=0, group = key_gap_grp, inline = key_gap_heatmap_inline)
@@ -439,6 +439,10 @@ if barstate.islast
 			if not na(oldest_zone_plt)
 				plot_lib.clear_tf_zone(oldest_zone_plt)
 
+		delta = key_gap_heatmap_span * key_gap_atr
+		min_price = close - delta
+		max_price = close + delta
+
 		for idx = key_gaps.size() - 1 to 0
 			if key_gaps_plt.size() > key_gap_zone_count
 				break
@@ -448,12 +452,8 @@ if barstate.islast
 			if na(gap)
 				continue
 			// Skip zones not within span
-			if key_gap_zone_span > 0
-				delta = key_gap_heatmap_span * key_gap_atr
-				min_price = close - delta
-				max_price = close + delta
-				if gap.zone.bar.h <= min_price or max_price <= gap.zone.bar.l
-					continue
+			if key_gap_zone_span > 0 and (gap.zone.bar.h <= min_price or max_price <= gap.zone.bar.l)
+				continue
 
 			clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
 			if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
@@ -528,22 +528,22 @@ if lvrg_tb_enable
 
 // RSI + RLI (Relative Liquidity Index) table
 //-------------------------------------------------------------------------------
-index_tb_grp = '► Index table'
-index_tb_enable = input.bool(true,'Enable',group = index_tb_grp)
-index_tb_position = input.string(position.bottom_left,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = index_tb_grp)
-index_tb_overlay = input.bool(true,'Overlay',group = index_tb_grp)
-index_len = input.int(16,'Index length',group = index_tb_grp)
-index_ma_inline = 'Index MA'
-index_ma_type = input.enum(MaT.sma,index_ma_inline,group = index_tb_grp,inline = index_ma_inline)
-index_ma_len = input.int(9,'',group = index_tb_grp,inline = index_ma_inline)
-index_atr_len = input.int(16,'Index ATR length',group = index_tb_grp)
+// index_tb_grp = '► Index table'
+// index_tb_enable = input.bool(true,'Enable',group = index_tb_grp)
+// index_tb_position = input.string(position.bottom_left,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = index_tb_grp)
+// index_tb_overlay = input.bool(true,'Overlay',group = index_tb_grp)
+// index_len = input.int(16,'Index length',group = index_tb_grp)
+// index_ma_inline = 'Index MA'
+// index_ma_type = input.enum(MaT.sma,index_ma_inline,group = index_tb_grp,inline = index_ma_inline)
+// index_ma_len = input.int(9,'',group = index_tb_grp,inline = index_ma_inline)
+// index_atr_len = input.int(16,'Index ATR length',group = index_tb_grp)
 
 
-var table index_tb = na
+// var table index_tb = na
 
-// Update leverage table
-if index_tb_enable
-	index_tb := display_index_table(index_len = index_len,ma_len = index_ma_len,ma_type = index_ma_type,atr_len = index_atr_len,pos = index_tb_position,overlay = index_tb_overlay)
+// // Update leverage table
+// if index_tb_enable
+// 	index_tb := display_index_table(index_len = index_len,ma_len = index_ma_len,ma_type = index_ma_type,atr_len = index_atr_len,pos = index_tb_position,overlay = index_tb_overlay)
 
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
@@ -551,20 +551,20 @@ revengrsi_grp = '► Reverse Engineering RSI'
 revengrsi_transp = input.int(65, "Transparency",group = revengrsi_grp)
 revengrsi_len_inline = 'Lengths (0 to disable)'
 revengrsi_len1 = input.int(0,revengrsi_len_inline,group = revengrsi_grp,inline = revengrsi_len_inline,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
-revengrsi_len2 = input.int(0,'',group = revengrsi_grp,inline = revengrsi_len_inline)
-revengrsi_len3 = input.int(0,'',group = revengrsi_grp,inline = revengrsi_len_inline)
+// revengrsi_len2 = input.int(0,'',group = revengrsi_grp,inline = revengrsi_len_inline)
+// revengrsi_len3 = input.int(0,'',group = revengrsi_grp,inline = revengrsi_len_inline)
 revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
 revengrsi_ghost_len = input.int(0,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bullish_threshold = input.float(80,'Bullish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bearish_threshold = input.float(20,'Bearish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 
 equilibrium1_threshold = revengrsi_len1 > 0 ? reverse_engineering_rsi(revengrsi_len1,50) : na
-equilibrium2_threshold = revengrsi_len2 > 0 ? reverse_engineering_rsi(revengrsi_len2,50) : na
-equilibrium3_threshold = revengrsi_len3 > 0 ? reverse_engineering_rsi(revengrsi_len3,50) : na
+// equilibrium2_threshold = revengrsi_len2 > 0 ? reverse_engineering_rsi(revengrsi_len2,50) : na
+// equilibrium3_threshold = revengrsi_len3 > 0 ? reverse_engineering_rsi(revengrsi_len3,50) : na
 
 equilibrium1_plt = plot(equilibrium1_threshold,'Equilibrium Threshold (length #1)', color = color.new(color.silver,revengrsi_transp),style = plot.style_circles,force_overlay = true)
-equilibrium2_plt = plot(equilibrium2_threshold,'Equilibrium Threshold (length #2)',color=color.new(color.silver,revengrsi_transp),linewidth = 2,force_overlay = true)
-equilibrium3_plt = plot(equilibrium3_threshold,'Equilibrium Threshold (length #3)',color=color.new(color.silver,revengrsi_transp),linewidth = 3,force_overlay = true)
+// equilibrium2_plt = plot(equilibrium2_threshold,'Equilibrium Threshold (length #2)',color=color.new(color.silver,revengrsi_transp),linewidth = 2,force_overlay = true)
+// equilibrium3_plt = plot(equilibrium3_threshold,'Equilibrium Threshold (length #3)',color=color.new(color.silver,revengrsi_transp),linewidth = 3,force_overlay = true)
 
 ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bullish_threshold, high) : na
 ghost_bearish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bearish_threshold,low) : na
@@ -583,16 +583,23 @@ bb_mult_inline = 'Mult (0 to disable)'
 bb_mult_primary = input.float(2,bb_mult_inline,group = bb_grp, inline = bb_mult_inline)
 bb_mult_secondary = input.float(3,'',group = bb_grp, inline = bb_mult_inline)
 bb_color_inline = 'BB base/cloud colors (opacity 0% to hide clouds)'
-bbf_color = input.color(color.new(color.aqua,90),'Fast',group = bb_grp, inline = bb_color_inline)
-bbs_color = input.color(color.new(color.orange,90),'Slow',group = bb_grp, inline = bb_color_inline)
+bbf_color = input.color(color.new(#d79921,90),'Fast',group = bb_grp, inline = bb_color_inline)
+bbs_color = input.color(color.new(#3c3836,90),'Slow',group = bb_grp, inline = bb_color_inline)
 bb_mid_transp = input.int(85,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
-bb_border_transp = input.int(85,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
+bb_border_transp = input.int(90,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
+bb_skeleton_transp = input.int(85, 'BB cloud skeleton transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
 
 [bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_primary))
 [bbf_m2,bbf_u2,bbf_l2] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_secondary))
 
 [bbs_m,bbs_u,bbs_l] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_primary))
 [bbs_m2,bbs_u2,bbs_l2] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_secondary))
+
+bba_u = math.avg(bbf_u,bbs_u)
+bba_l = math.avg(bbf_l,bbs_l)
+bba_u2 = math.avg(bbf_u2,bbs_u2)
+bba_l2 = math.avg(bbf_l2,bbs_l2)
+bba_color = color.from_gradient(0.5,0,1,color.new(bbf_color,bb_skeleton_transp),color.new(bbs_color,bb_skeleton_transp))
 
 bbf_m_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_m : na, 'BB fast primary middle',color = color.new(bbf_color,bb_mid_transp),force_overlay = true)
 bbf_u_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_u : na, 'BB fast primary upperband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
@@ -616,14 +623,20 @@ bbs_l2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_l2 : na, 'BB slow 
 fill(bbf_u2_plt,bbs_u2_plt,bbf_u2,bbs_u2,bbf_color,bbs_color,'BB secondary upper fill')
 fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bbf_color,bbs_color,'BB secondary lower fill')
 
+// Average upper/lower
+plot(bbf_len + bbs_len > 0 and bb_mult_primary > 0 ? bba_u : na, 'BB average primary upperband',color = bba_color,force_overlay = true)
+plot(bbf_len + bbs_len > 0 and bb_mult_primary > 0 ? bba_l : na, 'BB average primary lowerband',color = bba_color,force_overlay = true)
+plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_u2 : na, 'BB average secondary upperband',color = bba_color,force_overlay = true)
+plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_l2 : na, 'BB average secondary lowerband',color = bba_color,force_overlay = true)
+
 // Biased candle for reversal signal, atr signal low volatility environment that supports reversal
 //-------------------------------------------------------------------------------
 position_grp = '► Long/Short entries'
 position_enable = input.bool(true,'Enable',group = position_grp)
 
-pos_atr = ta.atr(16)
-pos_rsi = ta.rsi(close,index_len)
-pos_rli = relative_liquidity_index(index_atr_len,index_len)
+pos_atr = ta.atr(rli_atr_len)
+pos_rsi = ta.rsi(close,rli_atr_len)
+pos_rli = relative_liquidity_index(rli_atr_len,rli_len)
 pos_rsi_high = pos_rsi > 60
 pos_rsi_low = pos_rsi < 40
 high_liquidity = pos_rli > 60
