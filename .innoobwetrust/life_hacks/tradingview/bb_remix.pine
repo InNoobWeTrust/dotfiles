@@ -13,20 +13,23 @@ import forbidden_gun/plot_lib/1
 // Inputs
 //===============================================================================
 bb_src = input.source(close,'Source')
-bb_len_grp = '▶️ Lengths (0 to disable)'
-bbf_len = input.int(34,'Fast',group = bb_len_grp)
-bbs_len = input.int(89,'Slow',group = bb_len_grp)
-bb_mult_grp = '▶️ Mult (0 to disable)'
-bb_mult_primary = input.float(2,'Primary', group = bb_mult_grp)
-bb_mult_secondary = input.float(3,'Secondary', group = bb_mult_grp)
-bb_color_grp = '▶️ Base/cloud colors (opacity 0% to hide clouds)'
-bbf_color = input.color(color.new(color.aqua,90),'Fast', group = bb_color_grp)
-bbs_color = input.color(color.new(color.orange,90),'Slow', group = bb_color_grp)
-bb_mid_transp = input.int(65,'Middle lines transparency (100 to hide lines)',minval=0,maxval=100)
-bb_border_transp = input.int(80,'Border lines (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100)
+bb_len_grp = '► Lengths (0 to disable)'
+bbf_len = input.int(16,'Fast',group = bb_len_grp)
+bbs_len = input.int(42,'Slow',group = bb_len_grp)
+bb_mult_grp = '► Mult (0 to disable)'
+bb_mult_primary = input.float(2,'Inner', group = bb_mult_grp)
+bb_mult_secondary = input.float(3,'Outer', group = bb_mult_grp)
+bb_color_grp = '► BB cloud gradient colors (opacity 0% to hide clouds)'
+bb_inner_color = input.color(color.new(#d79921,88),'Inner', group = bb_color_grp)
+bb_outer_color = input.color(color.new(#4e4542,90),'Outer', group = bb_color_grp)
+bb_mid_transp = input.int(80,'BB mid transparency (100 to hide lines)',minval=0,maxval=100)
+bb_border_transp = input.int(88,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100)
+bb_cloud_trend_colors_grp = '► BB cloud trend colors (upper/lower)'
+bb_cloud_trend_upper = input.color(color.new(#5a7dc3, 70),'Upper',group = bb_cloud_trend_colors_grp)
+bb_cloud_trend_lower = input.color(color.new(#b94444, 70),'Lower',group = bb_cloud_trend_colors_grp)
 
 //===============================================================================
-// Testing
+// Calculations
 //===============================================================================
 
 [bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_primary))
@@ -35,24 +38,57 @@ bb_border_transp = input.int(80,'Border lines (upper/lower) transparency (100 to
 [bbs_m,bbs_u,bbs_l] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_primary))
 [bbs_m2,bbs_u2,bbs_l2] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_secondary))
 
-bbf_m_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_m : na, 'BB fast primary middle',color = color.new(bbf_color,bb_mid_transp),force_overlay = true)
-bbf_u_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_u : na, 'BB fast primary upperband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
-bbf_l_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_l : na, 'BB fast primary lowerband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
+bba_u = math.avg(bbf_u,bbs_u)
+bba_l = math.avg(bbf_l,bbs_l)
+bba_u2 = math.avg(bbf_u2,bbs_u2)
+bba_l2 = math.avg(bbf_l2,bbs_l2)
+// Band trend
+bba_u_rising = ta.rising(bba_u,2)
+bba_l_falling = ta.falling(bba_l,2)
+bba_ucolor = bba_u_rising and low > bbs_m ? bb_cloud_trend_upper : color(na)
+bba_lcolor = bba_l_falling and high < bbs_m ? bb_cloud_trend_lower : color(na)
 
-bbs_m_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_m : na, 'BB slow primary middle',color = color.new(bbs_color,bb_mid_transp),force_overlay = true)
-bbs_u_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_u : na, 'BB slow primary upperband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
-bbs_l_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_l : na, 'BB slow primary lowerband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
+// Band acceleration cross
+bbu_primary_crossover = ta.crossover(bbf_u,bbs_u)
+bbu_secondary_crossover = ta.crossover(bbf_u2,bbs_u2)
+bbl_primary_crossunder = ta.crossunder(bbf_l,bbs_l)
+bbl_secondary_crossunder = ta.crossunder(bbf_l2,bbs_l2)
 
-fill(bbf_u_plt,bbs_u_plt,bbf_u,bbs_u,bbf_color,bbs_color,'BB primary upper fill')
-fill(bbf_l_plt,bbs_l_plt,bbf_l,bbs_l,bbf_color,bbs_color,'BB secondary lower fill')
+// Long/Short signals
+bb_long_entry1 = bbu_primary_crossover and bba_u_rising and low > bbs_m and high > bba_u
+bb_long_entry2 = bbu_secondary_crossover and bba_u_rising and low > bbs_m and high > bba_u
+bb_short_entry1 = bbl_primary_crossunder and bba_l_falling and high < bbs_m and low < bba_l
+bb_short_entry2 = bbl_secondary_crossunder and bba_l_falling and high < bbs_m and low < bba_l
 
-bbf_m2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbs_m2 : na, 'BB fast secondary middle',color = color.new(bbf_color,bb_mid_transp),force_overlay = true)
-bbf_u2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_u2 : na, 'BB fast secondary upperband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
-bbf_l2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_l2 : na, 'BB fast secondary lowerband',color = color.new(bbf_color,bb_border_transp),force_overlay = true)
+//===============================================================================
+// Plot
+//===============================================================================
 
-bbs_m2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_m2 : na, 'BB slow secondary middle',color = color.new(bbs_color,bb_mid_transp),force_overlay = true)
-bbs_u2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_u2 : na, 'BB slow secondary upperband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
-bbs_l2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_l2 : na, 'BB slow secondary lowerband',color = color.new(bbs_color,bb_border_transp),force_overlay = true)
+bbf_m_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_m : na, 'BB fast middle',color = color.new(bb_inner_color,bb_mid_transp),force_overlay = true)
+bbs_m_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_m : na, 'BB slow middle',color = color.new(bb_outer_color,bb_mid_transp),force_overlay = true)
 
-fill(bbf_u2_plt,bbs_u2_plt,bbf_u2,bbs_u2,bbf_color,bbs_color,'BB secondary upper fill')
-fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bbf_color,bbs_color,'BB secondary lower fill')
+bbf_u_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_u : na, 'BB fast primary upperband',color = color.new(bb_inner_color,bb_border_transp),force_overlay = true)
+bbf_l_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_l : na, 'BB fast primary lowerband',color = color.new(bb_inner_color,bb_border_transp),force_overlay = true)
+bbs_u_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_u : na, 'BB slow primary upperband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
+bbs_l_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_l : na, 'BB slow primary lowerband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
+
+fill(bbf_u_plt,bbs_u_plt,bbf_u,bbs_u,bb_inner_color,bb_outer_color,'BB primary upper fill')
+fill(bbf_l_plt,bbs_l_plt,bbf_l,bbs_l,bb_inner_color,bb_outer_color,'BB secondary lower fill')
+
+bbf_u2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_u2 : na, 'BB fast secondary upperband',color = color.new(bb_inner_color,bb_border_transp),force_overlay = true)
+bbf_l2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_l2 : na, 'BB fast secondary lowerband',color = color.new(bb_inner_color,bb_border_transp),force_overlay = true)
+bbs_u2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_u2 : na, 'BB slow secondary upperband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
+bbs_l2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_l2 : na, 'BB slow secondary lowerband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
+
+fill(bbf_u2_plt,bbs_u2_plt,bbf_u2,bbs_u2,bb_inner_color,bb_outer_color,'BB secondary upper fill')
+fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bb_inner_color,bb_outer_color,'BB secondary lower fill')
+
+// Average upper/lower
+plot(bbf_len + bbs_len > 0 and bb_mult_primary > 0 ? bba_u : na, 'BB average primary upperband',color = bba_ucolor, force_overlay = true)
+plot(bbf_len + bbs_len > 0 and bb_mult_primary > 0 ? bba_l : na, 'BB average primary lowerband',color = bba_lcolor, force_overlay = true)
+plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_u2 : na, 'BB average secondary upperband',color = bba_ucolor, force_overlay = true)
+plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_l2 : na, 'BB average secondary lowerband',color = bba_lcolor, force_overlay = true)
+
+// Long/Short labels
+plotchar(bb_long_entry1 or bb_long_entry2 ? bba_u : na, 'BB long entry', 'L', location = location.belowbar, color = color.green, size = size.auto, force_overlay = true)
+plotchar(bb_short_entry1 or bb_short_entry2 ? bba_l : na, 'BB short entry', 'S', location = location.abovebar, color = color.red, size = size.auto, force_overlay = true)
