@@ -614,10 +614,8 @@ bbl_primary_crossunder = ta.crossunder(bbf_l,bbs_l)
 bbl_secondary_crossunder = ta.crossunder(bbf_l2,bbs_l2)
 
 // Long/Short signals
-bb_long_entry1 = bbu_primary_crossover and bba_u_rising and low > bbs_m and high > bba_u
-bb_long_entry2 = bbu_secondary_crossover and bba_u_rising and low > bbs_m and high > bba_u
-bb_short_entry1 = bbl_primary_crossunder and bba_l_falling and high < bbs_m and low < bba_l
-bb_short_entry2 = bbl_secondary_crossunder and bba_l_falling and high < bbs_m and low < bba_l
+bb_long_entry = bbu_primary_crossover and bbu_secondary_crossover and bba_u_rising and low > bbs_m and high > bba_u
+bb_short_entry = bbl_primary_crossunder and bbl_secondary_crossunder and bba_l_falling and high < bbs_m and low < bba_l
 
 bbf_m_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_m : na, 'BB fast middle',color = color.new(bb_inner_color,bb_mid_transp),force_overlay = true)
 bbs_m_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_m : na, 'BB slow middle',color = color.new(bb_outer_color,bb_mid_transp),force_overlay = true)
@@ -645,8 +643,8 @@ plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_u2 : na, 'BB average 
 plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_l2 : na, 'BB average secondary lowerband',color = bba_lcolor, force_overlay = true)
 
 // Long/Short labels
-plotchar(bb_long_entry1 or bb_long_entry2 ? bba_u : na, 'BB long entry', 'L', location = location.belowbar, color = color.green, size = size.auto, force_overlay = true)
-plotchar(bb_short_entry1 or bb_short_entry2 ? bba_l : na, 'BB short entry', 'S', location = location.abovebar, color = color.red, size = size.auto, force_overlay = true)
+plotchar(bb_long_entry ? bba_u : na, 'BB long entry', 'L', location = location.belowbar, color = color.green, size = size.auto, force_overlay = true)
+plotchar(bb_short_entry ? bba_l : na, 'BB short entry', 'S', location = location.abovebar, color = color.red, size = size.auto, force_overlay = true)
 
 // Biased candle for reversal signal, atr signal low volatility environment that supports reversal
 //-------------------------------------------------------------------------------
