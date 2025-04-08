@@ -6,7 +6,7 @@
 // @description TODO: add library description here
 library("polyglot_lib", overlay = false)
 import TradingView/ta/9
-import forbidden_gun/commonlib/4
+import forbidden_gun/commonlib/5
 import forbidden_gun/plot_lib/3
 
 //===============================================================================
@@ -72,11 +72,11 @@ export relative_liquidity_index(int atr_len, int rli_len) =>
 // @function Calculate safe leverage based on ATR and the percentage of acceptable SL
 // @param atr_len The length to calculate ATR
 // @param sl_percent The percentage of acceptable SL
-// @param mult The ATR multiplier to account for lateness in entry price
+// @param tolerance The percentage tolerance relative to ATR to account for lateness in entry price
 // @returns The tuple of: leverage rounded up to whole number, max_endurable_spread, max_endurable_percent
-export estimate_leverage(int atr_len = 14, float sl_percent = 0.2, float mult = 1.5) =>
+export estimate_leverage(int atr_len = 14, float sl_percent = 0.1, float tolerance = 0.5) =>
 	spread_osc = ta.atr(atr_len)
-	max_endurable_spread = spread_osc * mult
+	max_endurable_spread = spread_osc * (1 + tolerance)
 	max_endurable_percent = max_endurable_spread / close
 	max_leverage = sl_percent / max_endurable_percent
 	// Return max leverage as whole number
@@ -85,20 +85,22 @@ export estimate_leverage(int atr_len = 14, float sl_percent = 0.2, float mult = 
 // @function Display leverage, ATR, and the percentage of acceptable SL
 // @param atr_len The length to calculate ATR
 // @param sl_percent The percentage of acceptable SL
-// @param mult The ATR multiplier to account for lateness in entry price
+// @param tolerance The percentage tolerance relative to ATR to account for lateness in entry price
 // @param pos The position to display the table
 // @returns The table
-export display_lvrg_table(int atr_len = 14, float sl_percent = 0.2, float mult = 1.5, string pos = position.bottom_right, bool overlay = true) =>
-	lvrg_tb = overlay ? table.new(pos,2,3,force_overlay = true) : table.new(pos,2,3,force_overlay = false)
-	[lvrg, _, _] = estimate_leverage(atr_len,sl_percent,mult)
+export display_lvrg_table(int atr_len = 14, float sl_percent = 0.1, float tolerance = 0.5, string pos = position.bottom_right, bool overlay = true) =>
+	lvrg_tb = overlay ? table.new(pos,2,4,force_overlay = true) : table.new(pos,2,4,force_overlay = false)
+	[lvrg, _, _] = estimate_leverage(atr_len,sl_percent,tolerance)
 	atr = ta.atr(atr_len)
 	atr_percent = atr / close
 	table.cell(lvrg_tb,0,0,'SL',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
 	table.cell(lvrg_tb,1,0,str.format('{0,number,percent}',sl_percent),bgcolor=color.new(color.gray, transp = 80),text_color=color.red)
-	table.cell(lvrg_tb,0,1,'ATR',text_color=color.gray,bgcolor=color.new(color.silver, transp = 80))
-	table.cell(lvrg_tb,1,1,str.format('{0,number,#.##}%',atr_percent*100),bgcolor=color.new(color.silver, transp = 80),text_color=color.yellow)
-	table.cell(lvrg_tb,0,2,'Lvrg',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
-	table.cell(lvrg_tb,1,2,str.format('x{0,number,integer}',lvrg),bgcolor=color.new(color.gray, transp = 80),text_color=color.aqua)
+	table.cell(lvrg_tb,0,1,'Tol',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(lvrg_tb,1,1,str.format('{0,number,percent}',tolerance),bgcolor=color.new(color.gray, transp = 80),text_color=color.blue)
+	table.cell(lvrg_tb,0,2,'ATR',text_color=color.gray,bgcolor=color.new(color.silver, transp = 80))
+	table.cell(lvrg_tb,1,2,str.format('{0,number,#.##}%',atr_percent*100),bgcolor=color.new(color.silver, transp = 80),text_color=color.yellow)
+	table.cell(lvrg_tb,0,3,'Lvrg',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
+	table.cell(lvrg_tb,1,3,str.format('x{0,number,integer}',lvrg),bgcolor=color.new(color.gray, transp = 80),text_color=color.aqua)
 	// Return the table id to manage drawings
 	lvrg_tb
 
@@ -390,16 +392,16 @@ key_gap_cap = input.float(4.236, 'ATR upper cap',group = key_gap_grp)
 key_gap_body_percent = input.float(0.618, 'Min body percent', minval=0, maxval=1,group = key_gap_grp)
 key_gap_buffer = input.int(512, 'Buffer', minval = 0, group = key_gap_grp)
 key_gap_gradient_inline = 'Key gap gradient'
-key_gap_gradient_low = input.color(color.new(color.aqua, 92), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
-key_gap_gradient_high = input.color(color.new(color.teal, 88), '', group = key_gap_grp, inline = key_gap_gradient_inline)
+key_gap_gradient_low = input.color(color.new(color.aqua, 90), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
+key_gap_gradient_high = input.color(color.new(color.teal, 85), '', group = key_gap_grp, inline = key_gap_gradient_inline)
 key_gap_inverse_gradient = input.bool(true, "Inverse gradient based on candle color", group = key_gap_grp)
 key_gap_heatmap_inline = 'Gap heatmap'
-key_gap_heatmap_span = input.float(3.618, 'Heatmap span (multiply with ATR, 0 to disable)', minval=0, group = key_gap_grp, inline = key_gap_heatmap_inline)
+key_gap_heatmap_span = input.float(3.618, 'Heatmap span (0 to disable)', minval=0, tooltip = 'Multiply with ATR, only plot within this span and visible price range', group = key_gap_grp, inline = key_gap_heatmap_inline)
 key_gap_heatmap_offset = input.int(4, 'Heatmap offset', group = key_gap_grp, inline = key_gap_heatmap_inline)
 key_gap_heatmap_width = input.int(6, 'Heatmap width', group = key_gap_grp, inline = key_gap_heatmap_inline)
 key_gap_zone = 'Gap zones'
 key_gap_zone_count = input.int(5, 'Plot last (0 to disable)', minval = 0, group = key_gap_grp, inline = key_gap_zone)
-key_gap_zone_span = input.float(3.618, 'Zone span (only plot zones within span, 0 to disable)', minval=0, group = key_gap_grp, inline = key_gap_zone)
+key_gap_zone_span = input.float(3.618, 'Zone span (0 to disable)', minval=0, tooltip = 'Multiply with ATR, only plot within this span and visible price range', group = key_gap_grp, inline = key_gap_zone)
 
 // Global vars
 var array<KeyGap> key_gaps = array.new<KeyGap>(key_gap_buffer, na)
@@ -429,8 +431,8 @@ for gap in key_gaps
 		key_levels.push(gap.zone.bar.h)
 key_levels.sort(order.ascending)
 
+[visible_low, visible_high] = commonlib.visible_price_range()
 // Plot
-
 if barstate.islast 
 	if key_gap_enable and key_gap_zone_count > 0
 		// Remove and clear old plots
@@ -438,58 +440,59 @@ if barstate.islast
 			oldest_zone_plt = key_gaps_plt.shift()
 			if not na(oldest_zone_plt)
 				plot_lib.clear_tf_zone(oldest_zone_plt)
-
-		delta = key_gap_heatmap_span * key_gap_atr
-		min_price = close - delta
-		max_price = close + delta
-
-		for idx = key_gaps.size() - 1 to 0
-			if key_gaps_plt.size() > key_gap_zone_count
-				break
-
-			gap = key_gaps.get(idx)
-			// Skip empty slots in buffer
-			if na(gap)
-				continue
-			// Skip zones not within span
-			if key_gap_zone_span > 0 and (gap.zone.bar.h <= min_price or max_price <= gap.zone.bar.l)
-				continue
-
-			clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
-			if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
-				// Invert the color
-				clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
-			plt = plot_lib.plot_tf_zone(gap.zone, clr)
-			key_gaps_plt.push(plt)
-
-	if key_gap_heatmap_span > 0
+	if key_gap_enable and key_gap_heatmap_span > 0
 		for b in key_level_boxes
 			b.delete()
 		key_level_boxes.clear()
 
-		delta = key_gap_heatmap_span * key_gap_atr
-		min_price = close - delta
-		max_price = close + delta
+	zone_delta = key_gap_zone_span * key_gap_atr
+	zone_min = close - zone_delta
+	zone_max = close + zone_delta
+	
+	heatmap_delta = key_gap_heatmap_span * key_gap_atr
+	heatmap_min = close - heatmap_delta
+	heatmap_max = close + heatmap_delta
 
-		for gap in key_gaps
-			if na(gap) or gap.zone.bar.h <= min_price or max_price <= gap.zone.bar.l
-				continue
+	for idx = key_gaps.size() - 1 to 0
+		gap = key_gaps.get(idx)
+		// Skip empty slots in buffer
+		if na(gap)
+			continue
+		
+		// Skip zones not within visible price range
+		if gap.zone.bar.l < visible_low or visible_high < gap.zone.bar.h
+			continue
 
-			clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
-			if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
-				// Invert the color
-				clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
-			b = box.new(left = bar_index + key_gap_heatmap_offset,
-						 top = gap.zone.bar.h,
-						 right = bar_index + key_gap_heatmap_offset + key_gap_heatmap_width,
-						 bottom = gap.zone.bar.l,
-						 border_color = color(na),
-						 border_width = 2,
-						 border_style = line.style_solid,
-						 xloc = xloc.bar_index,
-						 bgcolor = clr,
-						 force_overlay = true)
-			key_level_boxes.push(b)
+		// Plot zones
+		if key_gap_enable and key_gap_zone_count > 0 and key_gaps_plt.size() <= key_gap_zone_count
+			// Skip zones not within span
+			if zone_min <= gap.zone.bar.h and gap.zone.bar.l <= zone_max
+				clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
+				if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
+					// Invert the color
+					clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
+				plt = plot_lib.plot_tf_zone(gap.zone, clr)
+				key_gaps_plt.push(plt)
+
+		// Plot heatmap
+		if key_gap_enable and key_gap_heatmap_span > 0
+			// Skip zones not within span
+			if heatmap_min <= gap.zone.bar.h and gap.zone.bar.l <= heatmap_max
+				clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
+				if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
+					// Invert the color
+					clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
+				b = box.new(left = bar_index + key_gap_heatmap_offset,
+							 top = gap.zone.bar.h,
+							 right = bar_index + key_gap_heatmap_offset + key_gap_heatmap_width,
+							 bottom = gap.zone.bar.l,
+							 border_color = color(na),
+							 border_width = 2,
+							 border_style = line.style_solid,
+							 xloc = xloc.bar_index,
+							 bgcolor = clr,
+							 force_overlay = true)
+				key_level_boxes.push(b)
 
 // Biased candle
 //-------------------------------------------------------------------------------
@@ -516,7 +519,8 @@ plotshape(biased_candle_enable and candle_strictly_falling,'Biased candle fallin
 //-------------------------------------------------------------------------------
 lvrg_tb_grp = '► Leverage table'
 lvrg_tb_enable = input.bool(true,'Enable',group = lvrg_tb_grp)
-lvrg_tb_mult = input.float(2,'Multiplier',group = lvrg_tb_grp)
+lvrg_tb_mult = input.float(0.5,'Slippage tolerance percentage',group = lvrg_tb_grp)
+lvrg_tb_sl = input.float(0.1, 'SL percentage', minval=0.01,maxval=1,group=lvrg_tb_grp)
 lvrg_tb_position = input.string(position.top_right,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = lvrg_tb_grp)
 lvrg_tb_overlay = input.bool(true,'Overlay',group = lvrg_tb_grp)
 
@@ -524,7 +528,7 @@ var table lvrg_tb = na
 
 // Update leverage table
 if lvrg_tb_enable
-	lvrg_tb := display_lvrg_table(atr_len = trcd_fast_len, mult = lvrg_tb_mult,pos = lvrg_tb_position,overlay = lvrg_tb_overlay)
+	lvrg_tb := display_lvrg_table(atr_len = trcd_fast_len, sl_percent = lvrg_tb_sl, tolerance = lvrg_tb_mult,pos = lvrg_tb_position,overlay = lvrg_tb_overlay)
 
 // RSI + RLI (Relative Liquidity Index) table
 //-------------------------------------------------------------------------------
@@ -583,13 +587,13 @@ bb_mult_inline = 'Mult (0 to disable)'
 bb_mult_primary = input.float(2,bb_mult_inline,group = bb_grp, inline = bb_mult_inline)
 bb_mult_secondary = input.float(3,'',group = bb_grp, inline = bb_mult_inline)
 bb_color_inline = 'BB cloud gradient colors (opacity 0% to hide clouds)'
-bb_inner_color = input.color(color.new(#d79921,88),'Inner',group = bb_grp, inline = bb_color_inline)
-bb_outer_color = input.color(color.new(#4e4542,90),'Outer',group = bb_grp, inline = bb_color_inline)
-bb_mid_transp = input.int(80,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
+bb_inner_color = input.color(color.new(#da9f2a, 88),'Inner',group = bb_grp, inline = bb_color_inline)
+bb_outer_color = input.color(color.new(#675a56, 90),'Outer',group = bb_grp, inline = bb_color_inline)
+bb_mid_transp = input.int(70,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
 bb_border_transp = input.int(88,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
 bb_cloud_trend_colors_inline = 'BB cloud trend colors (upper/lower)'
-bb_cloud_trend_upper = input.color(color.new(#5a7dc3, 70),bb_cloud_trend_colors_inline,group = bb_grp,inline = bb_cloud_trend_colors_inline)
-bb_cloud_trend_lower = input.color(color.new(#b94444, 70),'',group = bb_grp,inline = bb_cloud_trend_colors_inline)
+bb_cloud_trend_upper = input.color(color.new(#688acd, 70),bb_cloud_trend_colors_inline,group = bb_grp,inline = bb_cloud_trend_colors_inline)
+bb_cloud_trend_lower = input.color(color.new(#c55353, 70),'',group = bb_grp,inline = bb_cloud_trend_colors_inline)
 
 [bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_primary))
 [bbf_m2,bbf_u2,bbf_l2] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_secondary))

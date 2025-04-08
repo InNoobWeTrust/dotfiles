@@ -6,8 +6,8 @@
 // @description InNoobWeTrust's commonlib
 library("commonlib")
 
-// @function calculate percentage of candle's wick
-// @returns the wick's percentage
+// @function calculate percentage of candle's wick which is longer
+// @returns the wick's percentage, negative value if wick is lower wick
 export bar_wick_percent() =>
 	spread = high - low
     upper_wick = open < close ? high - close : high - open
@@ -17,15 +17,28 @@ export bar_wick_percent() =>
     bias * (max_wick == lower_wick ? 1.0 : -1.0)
 
 // @function calculate percentage of candle's body
-// @returns the body's percentage
+// @returns the body's percentage, negative value if close price is lower than open
 export bar_body_percent() =>
     spread = high - low
     body = (close - open) / spread
     body
 
+// @function Calculate the skewness of the bar as length percentage from the longer edge
+// @returns the skewness in percentage, negative value means downard
 export bar_skewness_percent() =>
     wick = bar_wick_percent()
     body = bar_body_percent()
     switch math.sign(wick * body)
         1. => wick + body
         -1. => wick
+
+// @function Calculate visible price range
+// @returns tuple of [lowest, highest] price within visible range
+export visible_price_range() =>
+	period_ms = timeframe.in_seconds() * 1000
+	lookback = chart.right_visible_bar_time - chart.left_visible_bar_time
+	left_bars = math.round(lookback / period_ms)
+	l = ta.lowest(left_bars)
+	h = ta.highest(left_bars)
+	// Return lowest and highest visible price
+	[l, h]

@@ -6,7 +6,7 @@
 // @description TODO: add library description here
 indicator("[innoobwetrust][indi] key gaps", overlay = true)
 import TradingView/ta/9
-import forbidden_gun/commonlib/4
+import forbidden_gun/commonlib/5
 import forbidden_gun/plot_lib/3
 
 
@@ -33,12 +33,12 @@ key_gap_gradient_low = input.color(color.new(color.aqua, 92), key_gap_gradient_i
 key_gap_gradient_high = input.color(color.new(color.teal, 88), '', inline = key_gap_gradient_inline)
 key_gap_inverse_gradient = input.bool(true, "Inverse gradient based on candle color")
 key_gap_heatmap_grp = '▶️ Gap heatmap'
-key_gap_heatmap_span = input.float(2.618, 'Heatmap span (multiply with ATR, 0 to disable)', minval=0, group = key_gap_heatmap_grp)
+key_gap_heatmap_span = input.float(2.618, 'Heatmap span (0 to disable)', minval=0, tooltip = 'Multiply with ATR, only plot within this span and visible price range', group = key_gap_heatmap_grp)
 key_gap_heatmap_offset = input.int(4, 'Heatmap offset', group = key_gap_heatmap_grp)
 key_gap_heatmap_width = input.int(4, 'Heatmap width', group = key_gap_heatmap_grp)
 key_gap_zone = '▶️ Gap zones'
 key_gap_zone_count = input.int(5, 'Plot last (0 to disable)', minval = 0, group = key_gap_zone)
-key_gap_zone_span = input.float(3.618, 'Zone span (only plot zones within span, 0 to disable)', minval=0, group = key_gap_zone)
+key_gap_zone_span = input.float(3.618, 'Zone span (0 to disable)', minval=0, tooltip = 'Multiply with ATR, only plot within this span and visible price range', group = key_gap_zone)
 
 //===============================================================================
 // Global vars
@@ -52,6 +52,7 @@ var array<box> key_level_boxes = array.new<box>()
 // Calculation
 //===============================================================================
 
+[visible_low, visible_high] = commonlib.visible_price_range()
 key_gap_atr = ta.atr(key_gap_atr_len)
 key_gap_candle_spread = high - low
 key_gap_candle_spread_mult = key_gap_candle_spread / key_gap_atr[1]
@@ -84,55 +85,56 @@ if barstate.islast
 			oldest_zone_plt = key_gaps_plt.shift()
 			if not na(oldest_zone_plt)
 				plot_lib.clear_tf_zone(oldest_zone_plt)
-
-		delta = key_gap_heatmap_span * key_gap_atr
-		min_price = close - delta
-		max_price = close + delta
-
-		for idx = key_gaps.size() - 1 to 0
-			if key_gaps_plt.size() > key_gap_zone_count
-				break
-
-			gap = key_gaps.get(idx)
-			// Skip empty slots in buffer
-			if na(gap)
-				continue
-			// Skip zones not within span
-			if key_gap_zone_span > 0 and (gap.zone.bar.h <= min_price or max_price <= gap.zone.bar.l)
-				continue
-
-			clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
-			if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
-				// Invert the color
-				clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
-			plt = plot_lib.plot_tf_zone(gap.zone, clr)
-			key_gaps_plt.push(plt)
-
-	if key_gap_heatmap_span > 0
+	if key_gap_enable and key_gap_heatmap_span > 0
 		for b in key_level_boxes
 			b.delete()
 		key_level_boxes.clear()
 
-		delta = key_gap_heatmap_span * key_gap_atr
-		min_price = close - delta
-		max_price = close + delta
+	zone_delta = key_gap_zone_span * key_gap_atr
+	zone_min = close - zone_delta
+	zone_max = close + zone_delta
+	
+	heatmap_delta = key_gap_heatmap_span * key_gap_atr
+	heatmap_min = close - heatmap_delta
+	heatmap_max = close + heatmap_delta
 
-		for gap in key_gaps
-			if na(gap) or gap.zone.bar.h <= min_price or max_price <= gap.zone.bar.l
-				continue
+	for idx = key_gaps.size() - 1 to 0
+		gap = key_gaps.get(idx)
+		// Skip empty slots in buffer
+		if na(gap)
+			continue
+		
+		// Skip zones not within visible price range
+		if gap.zone.bar.l < visible_low or visible_high < gap.zone.bar.h
+			continue
 
-			clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
-			if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
-				// Invert the color
-				clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
-			b = box.new(left = bar_index + key_gap_heatmap_offset,
-						 top = gap.zone.bar.h,
-						 right = bar_index + key_gap_heatmap_offset + key_gap_heatmap_width,
-						 bottom = gap.zone.bar.l,
-						 border_color = color(na),
-						 border_width = 2,
-						 border_style = line.style_solid,
-						 xloc = xloc.bar_index,
-						 bgcolor = clr,
-						 force_overlay = true)
-			key_level_boxes.push(b)
+		// Plot zones
+		if key_gap_enable and key_gap_zone_count > 0 and key_gaps_plt.size() <= key_gap_zone_count
+			// Skip zones not within span
+			if zone_min <= gap.zone.bar.h and gap.zone.bar.l <= zone_max
+				clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
+				if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
+					// Invert the color
+					clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
+				plt = plot_lib.plot_tf_zone(gap.zone, clr)
+				key_gaps_plt.push(plt)
+
+		// Plot heatmap
+		if key_gap_enable and key_gap_heatmap_span > 0
+			// Skip zones not within span
+			if heatmap_min <= gap.zone.bar.h and gap.zone.bar.l <= heatmap_max
+				clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
+				if key_gap_inverse_gradient and gap.zone.bar.c < gap.zone.bar.o
+					// Invert the color
+					clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
+				b = box.new(left = bar_index + key_gap_heatmap_offset,
+							 top = gap.zone.bar.h,
+							 right = bar_index + key_gap_heatmap_offset + key_gap_heatmap_width,
+							 bottom = gap.zone.bar.l,
+							 border_color = color(na),
+							 border_width = 2,
+							 border_style = line.style_solid,
+							 xloc = xloc.bar_index,
+							 bgcolor = clr,
+							 force_overlay = true)
+				key_level_boxes.push(b)
