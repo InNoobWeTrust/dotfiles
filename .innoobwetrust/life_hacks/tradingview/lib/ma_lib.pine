@@ -6,10 +6,34 @@
 // @description Calculations and structures around MA lines
 library("ma_lib")
 
+//===============================================================================
+// Types
+//===============================================================================
+
+export enum MaT
+	sma = 'SMA'
+	wma = 'WMA'
+	ema = 'EMA'
+
 export type MaStructure
 	float src
 	float ma_fast
 	float ma_slow
+
+//===============================================================================
+// Functions
+//===============================================================================
+
+// @function calculate moving average
+// @param t type of moving average
+// @param src the series to calculate
+// @param len averaging length
+// @returns the moving average series
+export ma(MaT t, float src, simple int len) =>
+	switch t
+		MaT.sma => ta.sma(src,len)
+		MaT.wma => ta.wma(src,len)
+		MaT.ema => ta.ema(src,len)
 
 // @function calculate market structure based on source (OHLC) and 2 MA lines
 // @param src source value (OHLC)
