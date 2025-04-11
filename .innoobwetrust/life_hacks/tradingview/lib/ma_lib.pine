@@ -1,7 +1,7 @@
 // This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © InNoobWeTrust
 
-//@version=5
+//@version=6
 
 // @description Calculations and structures around MA lines
 library("ma_lib")
