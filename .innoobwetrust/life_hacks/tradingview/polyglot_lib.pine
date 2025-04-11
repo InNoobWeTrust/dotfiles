@@ -88,7 +88,7 @@ export estimate_leverage(int atr_len = 14, float sl_percent = 0.1, float toleran
 // @param tolerance The percentage tolerance relative to ATR to account for lateness in entry price
 // @param pos The position to display the table
 // @returns The table
-export display_lvrg_table(int atr_len = 14, float sl_percent = 0.1, float tolerance = 0.5, string pos = position.bottom_right, bool overlay = true) =>
+export display_lvrg_table(int atr_len = 14, float sl_percent = 0.1, float tolerance = 0.5, string pos = position.bottom_left, bool overlay = true) =>
 	lvrg_tb = overlay ? table.new(pos,2,4,force_overlay = true) : table.new(pos,2,4,force_overlay = false)
 	[lvrg, _, _] = estimate_leverage(atr_len,sl_percent,tolerance)
 	atr = ta.atr(atr_len)
@@ -323,6 +323,8 @@ trcd_grp = '► True Range Convergence Divergence'
 trcd_fast_len = input.int(16,'TR fast length',group = trcd_grp)
 trcd_slow_len = input.int(42,'TR slow length',group = trcd_grp)
 trcd_sig_len = input.int(9,'TR signal length',group = trcd_grp)
+trcd_bias_len = input.int(9,'TRCD bias length',group = trcd_grp)
+trcd_bias_signal_len = input.int(16,'TRCD bias signal length',group = trcd_grp)
 
 tr = ta.tr(true)
 [trcd,tr_sig,tr_hist] = ta.macd(tr,trcd_fast_len,trcd_slow_len,trcd_sig_len)
@@ -333,7 +335,10 @@ tr_converging = ta.falling(math.abs(tr_hist),1)
 tr_diverging = ta.rising(math.abs(tr_hist),1)
 
 biased_tr = math.sign(close - open) != 0 ? tr * math.sign(close - open) : tr
-biased_tr_rma = ta.rma(biased_tr, trcd_sig_len)
+biased_tr_ma = ta.rma(biased_tr, trcd_bias_len)
+biased_tr_ma_signal = ta.ema(biased_tr_ma, trcd_bias_signal_len)
+biased_tr_crossover_zero = ta.crossover(biased_tr_ma_signal,0)
+biased_tr_crossunder_zero = ta.crossunder(biased_tr_ma_signal,0)
 
 // trcd_areacolor = switch trcd >=0
 // 	true => color.new(color.teal,70)
@@ -344,9 +349,12 @@ biased_tr_rma = ta.rma(biased_tr, trcd_sig_len)
 trcd_histcolor = switch tr_hist > 0
 	true => tr_diverging ? color.new(color.teal,40) : color.new(color.lime,40)
 	false => tr_diverging ? color.new(color.red,40) : color.new(color.orange,40)
-biased_tr_rma_color = switch biased_tr_rma > 0
+biased_tr_color = switch biased_tr_ma > 0
 	true => color.new(color.teal, 30)
 	false => color.new(color.maroon, 30)
+biased_tr_signal_color = switch biased_tr_ma_signal > 0
+	true => color.new(color.green, 70)
+	false => color.new(color.red, 70)
 
 // trcd_plt = plot(trcd, 'TRCD',color=color(na),linewidth = 1,force_overlay = false)
 // trcd_fillplt = plot(trcd >= 0 ? math.min(trcd,tr_sig) : math.max(trcd,tr_sig), 'TRCD area filling',color=trcd_areacolor,style = plot.style_histogram,force_overlay = false)
@@ -354,8 +362,9 @@ biased_tr_rma_color = switch biased_tr_rma > 0
 // fill(trcd_plt,tr_sig_plt,trcd_diffcolor,'TR convergence divergence')
 plot(tr_hist,'TR hist',color=trcd_histcolor,style = plot.style_columns,force_overlay = false)
 
-plot(biased_tr_rma, 'MA of Biased TR', color = biased_tr_rma_color, style = plot.style_histogram, force_overlay = false)
-
+plot(biased_tr_ma, 'MA fast of Biased TR', color = biased_tr_color, style = plot.style_histogram, force_overlay = false)
+plot(biased_tr_ma_signal, 'MA slow of Biased TR', color = biased_tr_signal_color, style = plot.style_area, force_overlay = false)
+bgcolor(biased_tr_crossover_zero ? color.new(color.teal,80) : biased_tr_crossunder_zero ? color.new(color.red,80) : color(na))
 // RLI
 //-------------------------------------------------------------------------------
 rli_grp = '► Scaled Relative Liquidity Index'
@@ -623,8 +632,8 @@ bbl_primary_crossunder = ta.crossunder(bbf_l,bbs_l)
 bbl_secondary_crossunder = ta.crossunder(bbf_l2,bbs_l2)
 
 // Long/Short signals
-bb_long_entry = bbu_primary_crossover and bbu_secondary_crossover and bba_u_rising and low > bbs_m and high > bba_u
-bb_short_entry = bbl_primary_crossunder and bbl_secondary_crossunder and bba_l_falling and high < bbs_m and low < bba_l
+bb_long_entry = bbu_primary_crossover and bbu_secondary_crossover and bba_u_rising and low > bbs_m and high > bba_u2
+bb_short_entry = bbl_primary_crossunder and bbl_secondary_crossunder and bba_l_falling and high < bbs_m and low < bba_l2
 
 bbf_m_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_m : na, 'BB fast middle',color = color.new(bb_inner_color,bb_mid_transp),force_overlay = true)
 bbs_m_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_m : na, 'BB slow middle',color = color.new(bb_outer_color,bb_mid_transp),force_overlay = true)
@@ -652,8 +661,8 @@ plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_u2 : na, 'BB average 
 plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_l2 : na, 'BB average secondary lowerband',color = bba_lcolor, force_overlay = true)
 
 // Long/Short labels
-plotchar(bb_long_entry ? bba_u : na, 'BB long entry', 'L', location = location.belowbar, color = color.green, size = size.auto, force_overlay = true)
-plotchar(bb_short_entry ? bba_l : na, 'BB short entry', 'S', location = location.abovebar, color = color.red, size = size.auto, force_overlay = true)
+plotchar(bb_long_entry ? bba_u : na, 'BB long entry', 'L', location = location.belowbar, color = color.rgb(157, 225, 159), size = size.tiny, force_overlay = true)
+plotchar(bb_short_entry ? bba_l : na, 'BB short entry', 'S', location = location.abovebar, color = color.rgb(201, 134, 134), size = size.tiny, force_overlay = true)
 
 // Biased candle for reversal signal, atr signal low volatility environment that supports reversal
 //-------------------------------------------------------------------------------
