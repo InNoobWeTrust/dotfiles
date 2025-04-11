@@ -395,6 +395,7 @@ key_gap_gradient_inline = 'Key gap gradient'
 key_gap_gradient_low = input.color(color.new(color.aqua, 90), key_gap_gradient_inline, group = key_gap_grp, inline = key_gap_gradient_inline)
 key_gap_gradient_high = input.color(color.new(color.teal, 85), '', group = key_gap_grp, inline = key_gap_gradient_inline)
 key_gap_inverse_gradient = input.bool(true, "Inverse gradient based on candle color", group = key_gap_grp)
+key_gap_visible_range_tolerance = input.float(0.382, "Visible range tolerance (0 to disable)", group = key_gap_grp)
 key_gap_heatmap_inline = 'Gap heatmap'
 key_gap_heatmap_span = input.float(3.618, 'Heatmap span (0 to disable)', minval=0, tooltip = 'Multiply with ATR, only plot within this span and visible price range', group = key_gap_grp, inline = key_gap_heatmap_inline)
 key_gap_heatmap_offset = input.int(4, 'Heatmap offset', group = key_gap_grp, inline = key_gap_heatmap_inline)
@@ -432,8 +433,20 @@ for gap in key_gaps
 key_levels.sort(order.ascending)
 
 [visible_low, visible_high] = commonlib.visible_price_range()
+visible_range_delta = key_gap_visible_range_tolerance * (visible_high - visible_low)
+visible_tolerance_low = visible_low - visible_range_delta
+visible_tolerance_high = visible_high + visible_range_delta
+
 // Plot
 if barstate.islast 
+	zone_delta = key_gap_zone_span * key_gap_atr
+	zone_min = close - zone_delta
+	zone_max = close + zone_delta
+	
+	heatmap_delta = key_gap_heatmap_span * key_gap_atr
+	heatmap_min = close - heatmap_delta
+	heatmap_max = close + heatmap_delta
+
 	if key_gap_enable and key_gap_zone_count > 0
 		// Remove and clear old plots
 		while key_gaps_plt.size() > 0
@@ -445,22 +458,14 @@ if barstate.islast
 			b.delete()
 		key_level_boxes.clear()
 
-	zone_delta = key_gap_zone_span * key_gap_atr
-	zone_min = close - zone_delta
-	zone_max = close + zone_delta
-	
-	heatmap_delta = key_gap_heatmap_span * key_gap_atr
-	heatmap_min = close - heatmap_delta
-	heatmap_max = close + heatmap_delta
-
 	for idx = key_gaps.size() - 1 to 0
 		gap = key_gaps.get(idx)
 		// Skip empty slots in buffer
 		if na(gap)
 			continue
 		
-		// Skip zones not within visible price range
-		if gap.zone.bar.l < visible_low or visible_high < gap.zone.bar.h
+		// Skip zones not within visible tolerance price range
+		if key_gap_visible_range_tolerance > 0 and (gap.zone.bar.l < visible_tolerance_low or visible_tolerance_high < gap.zone.bar.h)
 			continue
 
 		// Plot zones
@@ -521,7 +526,7 @@ lvrg_tb_grp = '► Leverage table'
 lvrg_tb_enable = input.bool(true,'Enable',group = lvrg_tb_grp)
 lvrg_tb_mult = input.float(0.5,'Slippage tolerance percentage',group = lvrg_tb_grp)
 lvrg_tb_sl = input.float(0.1, 'SL percentage', minval=0.01,maxval=1,group=lvrg_tb_grp)
-lvrg_tb_position = input.string(position.top_right,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = lvrg_tb_grp)
+lvrg_tb_position = input.string(position.bottom_left,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = lvrg_tb_grp)
 lvrg_tb_overlay = input.bool(true,'Overlay',group = lvrg_tb_grp)
 
 var table lvrg_tb = na
