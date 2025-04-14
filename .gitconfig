@@ -25,3 +25,5 @@
   path = ~/.gitconfig.d/.work.gitconfig
 [includeIf "gitdir:~/Developer/rex/"]
   path = ~/.gitconfig.d/.work.collab.gitconfig
+[help]
+	autocorrect = 20
