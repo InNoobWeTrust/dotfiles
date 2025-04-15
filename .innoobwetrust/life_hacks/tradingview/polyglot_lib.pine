@@ -3,7 +3,7 @@
 
 //@version=6
 
-// @description TODO: add library description here
+// @description Multiple utilities in one
 library("polyglot_lib", overlay = false)
 import TradingView/ta/9
 import forbidden_gun/commonlib/5
@@ -96,7 +96,7 @@ export display_lvrg_table(int atr_len = 14, float sl_percent = 0.1, float tolera
 	table.cell(lvrg_tb,0,0,'SL',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
 	table.cell(lvrg_tb,1,0,str.format('{0,number,percent}',sl_percent),bgcolor=color.new(color.gray, transp = 80),text_color=color.red)
 	table.cell(lvrg_tb,0,1,'Tol',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
-	table.cell(lvrg_tb,1,1,str.format('{0,number,percent}',tolerance),bgcolor=color.new(color.gray, transp = 80),text_color=color.blue)
+	table.cell(lvrg_tb,1,1,str.format('{0,number,#.##}%',tolerance*100),bgcolor=color.new(color.gray, transp = 80),text_color=color.blue)
 	table.cell(lvrg_tb,0,2,'ATR',text_color=color.gray,bgcolor=color.new(color.silver, transp = 80))
 	table.cell(lvrg_tb,1,2,str.format('{0,number,#.##}%',atr_percent*100),bgcolor=color.new(color.silver, transp = 80),text_color=color.yellow)
 	table.cell(lvrg_tb,0,3,'Lvrg',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
@@ -316,64 +316,46 @@ export support_breakout(float support) =>
 // Testing
 //===============================================================================
 
-// TR convergence divergence + bands
+// True Range Bias oscillator
 //-------------------------------------------------------------------------------
-trcd_grp = '► True Range Convergence Divergence'
+trb_grp = '► True Range Bias oscillator'
 
-trcd_fast_len = input.int(16,'TR fast length',group = trcd_grp)
-trcd_slow_len = input.int(42,'TR slow length',group = trcd_grp)
-trcd_sig_len = input.int(9,'TR signal length',group = trcd_grp)
-trcd_bias_len = input.int(9,'TRCD bias length',group = trcd_grp)
-trcd_bias_signal_len = input.int(16,'TRCD bias signal length',group = trcd_grp)
+trb_bias_len = input.int(9,'Bias length',group = trb_grp)
+trb_bias_fast_len = input.int(16,'Fast length',group = trb_grp)
+trb_bias_slow_len = input.int(42,'Slow length',group = trb_grp)
 
 tr = ta.tr(true)
-[trcd,tr_sig,tr_hist] = ta.macd(tr,trcd_fast_len,trcd_slow_len,trcd_sig_len)
-
-tr_rising = ta.rising(tr_hist,1)
-tr_falling = ta.falling(tr_hist,1)
-tr_converging = ta.falling(math.abs(tr_hist),1)
-tr_diverging = ta.rising(math.abs(tr_hist),1)
-
 biased_tr = math.sign(close - open) != 0 ? tr * math.sign(close - open) : tr
-biased_tr_ma = ta.rma(biased_tr, trcd_bias_len)
-biased_tr_ma_signal = ta.ema(biased_tr_ma, trcd_bias_signal_len)
-biased_tr_crossover_zero = ta.crossover(biased_tr_ma_signal,0)
-biased_tr_crossunder_zero = ta.crossunder(biased_tr_ma_signal,0)
+biased_tr_rma = ta.rma(biased_tr, trb_bias_len)
+biased_tr_rma_fast = ta.ema(biased_tr_rma, trb_bias_fast_len)
+biased_tr_rma_slow = ta.ema(biased_tr_rma, trb_bias_slow_len)
+biased_tr_crossover_zero = ta.crossover(biased_tr_rma_fast,0)
+biased_tr_crossunder_zero = ta.crossunder(biased_tr_rma_fast,0)
 
-// trcd_areacolor = switch trcd >=0
-// 	true => color.new(color.teal,70)
-// 	false => color.new(color.red,70)
-// trcd_diffcolor = switch tr_hist > 0
-// 	true => color.new(color.aqua,70)
-// 	false => color.new(color.yellow,70)
-trcd_histcolor = switch tr_hist > 0
-	true => tr_diverging ? color.new(color.teal,40) : color.new(color.lime,40)
-	false => tr_diverging ? color.new(color.red,40) : color.new(color.orange,40)
-biased_tr_color = switch biased_tr_ma > 0
-	true => color.new(color.teal, 30)
-	false => color.new(color.maroon, 30)
-biased_tr_signal_color = switch biased_tr_ma_signal > 0
+biased_tr_color = switch biased_tr_rma > 0
+	true => color.new(color.teal, 50)
+	false => color.new(color.maroon, 50)
+biased_tr_rma_fast_color = switch biased_tr_rma_fast > 0
 	true => color.new(color.green, 70)
 	false => color.new(color.red, 70)
+biased_tr_rma_slow_color = switch biased_tr_rma_slow > 0
+	true => color.new(color.aqua, 70)
+	false => color.new(color.orange, 70)
 
-// trcd_plt = plot(trcd, 'TRCD',color=color(na),linewidth = 1,force_overlay = false)
-// trcd_fillplt = plot(trcd >= 0 ? math.min(trcd,tr_sig) : math.max(trcd,tr_sig), 'TRCD area filling',color=trcd_areacolor,style = plot.style_histogram,force_overlay = false)
-// tr_sig_plt = plot(tr_sig, 'TR signal',color=color(na),linewidth = 1,force_overlay = false)
-// fill(trcd_plt,tr_sig_plt,trcd_diffcolor,'TR convergence divergence')
-plot(tr_hist,'TR hist',color=trcd_histcolor,style = plot.style_columns,force_overlay = false)
-
-plot(biased_tr_ma, 'MA fast of Biased TR', color = biased_tr_color, style = plot.style_histogram, force_overlay = false)
-plot(biased_tr_ma_signal, 'MA slow of Biased TR', color = biased_tr_signal_color, style = plot.style_area, force_overlay = false)
+plot(biased_tr_rma, 'RMA of Biased TR', color = biased_tr_color, style = plot.style_histogram, force_overlay = false)
+plot(biased_tr_rma_fast, 'EMA fast of Biased TR', color = biased_tr_rma_fast_color, style = plot.style_columns, force_overlay = false)
+plot(biased_tr_rma_slow, 'EMA slow of Biased TR', color = biased_tr_rma_slow_color, style = plot.style_area, force_overlay = false)
 bgcolor(biased_tr_crossover_zero ? color.new(color.teal,80) : biased_tr_crossunder_zero ? color.new(color.red,80) : color(na))
-// RLI
+
+// Scaled Relative Liquidity Index
 //-------------------------------------------------------------------------------
 rli_grp = '► Scaled Relative Liquidity Index'
 
 rli_enable = input.bool(true,'Enable',group = rli_grp)
 rli_atr_len = input.int(16,"RLI's ATR length",group = rli_grp)
 rli_len = input.int(9,'RLI length',group = rli_grp)
-rli_low_color = input.color(color.new(color.red,50),'Low liquidity color',group = rli_grp)
-rli_high_color = input.color(color.new(color.teal,50),'High liquidity color',group = rli_grp)
+rli_low_color = input.color(color.new(color.red,25),'Low liquidity color',group = rli_grp)
+rli_high_color = input.color(color.new(color.teal,25),'High liquidity color',group = rli_grp)
 rli_gradient_bg_enable = input.bool(true,'Show gradient background',group = rli_grp)
 rli_gradient_bg_transparency = input.int(90,'Gradient transparency',minval=0,maxval=100,group = rli_grp)
 rli_gradient_ignore_upperbound = input.float(75, "Ignore high RLI gradient until this value", group = rli_grp)
@@ -381,7 +363,7 @@ rli_gradient_ignore_lowerbound = input.float(25, "Ignore low RLI gradient until 
 
 rli = relative_liquidity_index(rli_atr_len,rli_len)
 shifted_rli = rli - 50
-scaled_rli = shifted_rli * math.max(math.abs(trcd),math.abs(tr_sig)) / 50
+scaled_rli = shifted_rli * biased_tr_rma / 50
 
 rli_atr = ta.atr(rli_atr_len)
 
@@ -543,7 +525,7 @@ plotshape(biased_candle_enable and candle_strictly_falling,'Biased candle fallin
 //-------------------------------------------------------------------------------
 lvrg_tb_grp = '► Leverage table'
 lvrg_tb_enable = input.bool(true,'Enable',group = lvrg_tb_grp)
-lvrg_tb_mult = input.float(0.5,'Slippage tolerance percentage',group = lvrg_tb_grp)
+lvrg_tb_mult = input.float(0.618,'Slippage tolerance percentage',group = lvrg_tb_grp)
 lvrg_tb_sl = input.float(0.1, 'SL percentage', minval=0.01,maxval=1,group=lvrg_tb_grp)
 lvrg_tb_position = input.string(position.bottom_left,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = lvrg_tb_grp)
 lvrg_tb_overlay = input.bool(true,'Overlay',group = lvrg_tb_grp)
@@ -552,53 +534,25 @@ var table lvrg_tb = na
 
 // Update leverage table
 if lvrg_tb_enable
-	lvrg_tb := display_lvrg_table(atr_len = trcd_fast_len, sl_percent = lvrg_tb_sl, tolerance = lvrg_tb_mult,pos = lvrg_tb_position,overlay = lvrg_tb_overlay)
-
-// RSI + RLI (Relative Liquidity Index) table
-//-------------------------------------------------------------------------------
-// index_tb_grp = '► Index table'
-// index_tb_enable = input.bool(true,'Enable',group = index_tb_grp)
-// index_tb_position = input.string(position.bottom_left,'Position',options = [position.bottom_center,position.bottom_left,position.bottom_right,position.middle_center,position.middle_left,position.middle_right,position.top_center,position.top_left,position.top_right],group = index_tb_grp)
-// index_tb_overlay = input.bool(true,'Overlay',group = index_tb_grp)
-// index_len = input.int(16,'Index length',group = index_tb_grp)
-// index_ma_inline = 'Index MA'
-// index_ma_type = input.enum(MaT.sma,index_ma_inline,group = index_tb_grp,inline = index_ma_inline)
-// index_ma_len = input.int(9,'',group = index_tb_grp,inline = index_ma_inline)
-// index_atr_len = input.int(16,'Index ATR length',group = index_tb_grp)
-
-
-// var table index_tb = na
-
-// // Update leverage table
-// if index_tb_enable
-// 	index_tb := display_index_table(index_len = index_len,ma_len = index_ma_len,ma_type = index_ma_type,atr_len = index_atr_len,pos = index_tb_position,overlay = index_tb_overlay)
+	lvrg_tb := display_lvrg_table(atr_len = rli_atr_len, sl_percent = lvrg_tb_sl, tolerance = lvrg_tb_mult,pos = lvrg_tb_position,overlay = lvrg_tb_overlay)
 
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
 revengrsi_grp = '► Reverse Engineering RSI'
 revengrsi_transp = input.int(65, "Transparency",group = revengrsi_grp)
-revengrsi_len_inline = 'Lengths (0 to disable)'
-revengrsi_len1 = input.int(0,revengrsi_len_inline,group = revengrsi_grp,inline = revengrsi_len_inline,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
-// revengrsi_len2 = input.int(0,'',group = revengrsi_grp,inline = revengrsi_len_inline)
-// revengrsi_len3 = input.int(0,'',group = revengrsi_grp,inline = revengrsi_len_inline)
+revengrsi_len = input.int(0,'Length',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
 revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
 revengrsi_ghost_len = input.int(0,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bullish_threshold = input.float(80,'Bullish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bearish_threshold = input.float(20,'Bearish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 
-equilibrium1_threshold = revengrsi_len1 > 0 ? reverse_engineering_rsi(revengrsi_len1,50) : na
-// equilibrium2_threshold = revengrsi_len2 > 0 ? reverse_engineering_rsi(revengrsi_len2,50) : na
-// equilibrium3_threshold = revengrsi_len3 > 0 ? reverse_engineering_rsi(revengrsi_len3,50) : na
-
-equilibrium1_plt = plot(equilibrium1_threshold,'Equilibrium Threshold (length #1)', color = color.new(color.silver,revengrsi_transp),style = plot.style_circles,force_overlay = true)
-// equilibrium2_plt = plot(equilibrium2_threshold,'Equilibrium Threshold (length #2)',color=color.new(color.silver,revengrsi_transp),linewidth = 2,force_overlay = true)
-// equilibrium3_plt = plot(equilibrium3_threshold,'Equilibrium Threshold (length #3)',color=color.new(color.silver,revengrsi_transp),linewidth = 3,force_overlay = true)
-
+equilibrium = revengrsi_len > 0 ? reverse_engineering_rsi(revengrsi_len,50) : na
 ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bullish_threshold, high) : na
 ghost_bearish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bearish_threshold,low) : na
 
-ghost_bullish_plt = plot(ghost_bullish_threshold,'Ghost Bullish Threshold', color = color.new(color.red,revengrsi_transp),force_overlay = true)
-ghost_bearish_plt = plot(ghost_bearish_threshold,'Ghost Bearish Threshold', color = color.new(color.green,revengrsi_transp),force_overlay = true)
+plot(equilibrium,'Equilibrium', color = color.new(color.silver,revengrsi_transp),style = plot.style_circles,force_overlay = true)
+plot(ghost_bullish_threshold,'Ghost Bullish Threshold', color = color.new(color.red,revengrsi_transp),force_overlay = true)
+plot(ghost_bearish_threshold,'Ghost Bearish Threshold', color = color.new(color.green,revengrsi_transp),force_overlay = true)
 
 // Bollinger Bands Remix
 //-------------------------------------------------------------------------------
