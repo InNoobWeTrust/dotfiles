@@ -329,8 +329,14 @@ biased_tr = math.sign(close - open) != 0 ? tr * math.sign(close - open) : tr
 biased_tr_rma = ta.rma(biased_tr, trb_bias_len)
 biased_tr_rma_fast = ta.ema(biased_tr_rma, trb_bias_fast_len)
 biased_tr_rma_slow = ta.ema(biased_tr_rma, trb_bias_slow_len)
-biased_tr_crossover_zero = ta.crossover(biased_tr_rma_fast,0)
-biased_tr_crossunder_zero = ta.crossunder(biased_tr_rma_fast,0)
+biased_tr_fast_crossover = ta.crossover(biased_tr_rma_fast,0)
+biased_tr_fast_crossunder = ta.crossunder(biased_tr_rma_fast,0)
+biased_tr_slow_crossover = ta.crossover(biased_tr_rma_slow,0)
+biased_tr_slow_crossunder = ta.crossunder(biased_tr_rma_slow,0)
+bias_circle = switch
+	biased_tr_slow_crossover => 0
+	biased_tr_slow_crossunder => 0
+	=> na
 
 biased_tr_color = switch biased_tr_rma > 0
 	true => color.new(color.teal, 50)
@@ -341,11 +347,20 @@ biased_tr_rma_fast_color = switch biased_tr_rma_fast > 0
 biased_tr_rma_slow_color = switch biased_tr_rma_slow > 0
 	true => color.new(color.aqua, 70)
 	false => color.new(color.orange, 70)
+bias_bg = switch
+	biased_tr_fast_crossover => color.new(color.teal,80)
+	biased_tr_fast_crossunder => color.new(color.maroon,80)
+	=> color(na)
+bias_circle_color = switch
+	biased_tr_slow_crossover => color.new(color.green,50)
+	biased_tr_slow_crossunder => color.new(color.red,50)
+	=> color(na)
 
 plot(biased_tr_rma, 'RMA of Biased TR', color = biased_tr_color, style = plot.style_histogram, force_overlay = false)
 plot(biased_tr_rma_fast, 'EMA fast of Biased TR', color = biased_tr_rma_fast_color, style = plot.style_columns, force_overlay = false)
 plot(biased_tr_rma_slow, 'EMA slow of Biased TR', color = biased_tr_rma_slow_color, style = plot.style_area, force_overlay = false)
-bgcolor(biased_tr_crossover_zero ? color.new(color.teal,80) : biased_tr_crossunder_zero ? color.new(color.red,80) : color(na))
+bgcolor(bias_bg, title = 'Bias fast cross')
+plotshape(bias_circle,'Bias slow cross',style = shape.circle,location = location.absolute,color = bias_circle_color,size = size.small)
 
 // Scaled Relative Liquidity Index
 //-------------------------------------------------------------------------------
@@ -538,21 +553,21 @@ if lvrg_tb_enable
 
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
-revengrsi_grp = '► Reverse Engineering RSI'
-revengrsi_transp = input.int(65, "Transparency",group = revengrsi_grp)
-revengrsi_len = input.int(0,'Length',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
-revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
-revengrsi_ghost_len = input.int(0,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
-revengrsi_ghost_bullish_threshold = input.float(80,'Bullish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
-revengrsi_ghost_bearish_threshold = input.float(20,'Bearish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
+// revengrsi_grp = '► Reverse Engineering RSI'
+// revengrsi_transp = input.int(65, "Transparency",group = revengrsi_grp)
+// revengrsi_len = input.int(0,'Length',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
+// revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
+// revengrsi_ghost_len = input.int(0,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
+// revengrsi_ghost_bullish_threshold = input.float(80,'Bullish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
+// revengrsi_ghost_bearish_threshold = input.float(20,'Bearish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 
-equilibrium = revengrsi_len > 0 ? reverse_engineering_rsi(revengrsi_len,50) : na
-ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bullish_threshold, high) : na
-ghost_bearish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bearish_threshold,low) : na
+// equilibrium = revengrsi_len > 0 ? reverse_engineering_rsi(revengrsi_len,50) : na
+// ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bullish_threshold, high) : na
+// ghost_bearish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bearish_threshold,low) : na
 
-plot(equilibrium,'Equilibrium', color = color.new(color.silver,revengrsi_transp),style = plot.style_circles,force_overlay = true)
-plot(ghost_bullish_threshold,'Ghost Bullish Threshold', color = color.new(color.red,revengrsi_transp),force_overlay = true)
-plot(ghost_bearish_threshold,'Ghost Bearish Threshold', color = color.new(color.green,revengrsi_transp),force_overlay = true)
+// plot(equilibrium,'Equilibrium', color = color.new(color.silver,revengrsi_transp),style = plot.style_circles,force_overlay = true)
+// plot(ghost_bullish_threshold,'Ghost Bullish Threshold', color = color.new(color.red,revengrsi_transp),force_overlay = true)
+// plot(ghost_bearish_threshold,'Ghost Bearish Threshold', color = color.new(color.green,revengrsi_transp),force_overlay = true)
 
 // Bollinger Bands Remix
 //-------------------------------------------------------------------------------
