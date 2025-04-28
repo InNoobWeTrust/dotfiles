@@ -640,8 +640,8 @@ plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_u2 : na, 'BB average 
 plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_l2 : na, 'BB average secondary lowerband',color = bba_lcolor, force_overlay = true)
 
 // Long/Short labels
-plotchar(bb_long_entry ? bba_u : na, 'BB long entry', 'L', location = location.belowbar, color = color.rgb(157, 225, 159), size = size.tiny, force_overlay = true)
-plotchar(bb_short_entry ? bba_l : na, 'BB short entry', 'S', location = location.abovebar, color = color.rgb(201, 134, 134), size = size.tiny, force_overlay = true)
+plotshape(bb_long_entry ? bba_u : na, 'BB long entry',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.large, force_overlay = true)
+plotshape(bb_short_entry ? bba_l : na, 'BB short entry',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.large, force_overlay = true)
 
 // Biased candle for reversal signal, atr signal low volatility environment that supports reversal
 //-------------------------------------------------------------------------------
