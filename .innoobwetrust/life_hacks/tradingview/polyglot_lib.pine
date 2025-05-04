@@ -5,7 +5,7 @@
 
 // @description Multiple utilities in one
 library("polyglot_lib", overlay = false)
-import TradingView/ta/9
+import TradingView/ta/10
 import forbidden_gun/commonlib/5
 import forbidden_gun/plot_lib/3
 
@@ -551,23 +551,40 @@ var table lvrg_tb = na
 if lvrg_tb_enable
 	lvrg_tb := display_lvrg_table(atr_len = rli_atr_len, sl_percent = lvrg_tb_sl, tolerance = lvrg_tb_mult,pos = lvrg_tb_position,overlay = lvrg_tb_overlay)
 
+// ATR bands
+//-------------------------------------------------------------------------------
+atrband_grp = '► ATR bands'
+atrband_len = input.float(42,'Length',group = atrband_grp)
+atrband_mult = input.float(1.618,'Mult (0 to disable)',group = atrband_grp)
+atrband_color_inline = 'Colors (upper/lower)'
+atrband_upper_color = input.color(color.new(color.green,80),atrband_color_inline,group = atrband_grp,inline = atrband_color_inline)
+atrband_lower_color = input.color(color.new(color.red,80),atrband_color_inline,group = atrband_grp,inline = atrband_color_inline)
+
+atrband_atr = ta.atr2(atrband_len)
+atrband_osc = atrband_atr[1] * atrband_mult
+atrband_upper = atrband_osc != 0 ? close[1] + atrband_osc : na
+atrband_lower = atrband_osc != 0 ? close[1] - atrband_osc : na
+
+plot(atrband_upper,'ATR band upper', color = atrband_upper_color, linewidth = 2,force_overlay = true)
+plot(atrband_lower,'ATR band lower', color = atrband_lower_color, linewidth = 2,force_overlay = true)
+
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
-// revengrsi_grp = '► Reverse Engineering RSI'
-// revengrsi_transp = input.int(65, "Transparency",group = revengrsi_grp)
-// revengrsi_len = input.int(0,'Length',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
-// revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
-// revengrsi_ghost_len = input.int(0,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
-// revengrsi_ghost_bullish_threshold = input.float(80,'Bullish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
-// revengrsi_ghost_bearish_threshold = input.float(20,'Bearish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_grp = '► Reverse Engineering RSI'
+revengrsi_transp = input.int(70, "Transparency",group = revengrsi_grp)
+revengrsi_len = input.int(0,'Length (0 to disable)',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
+revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
+revengrsi_ghost_len = input.int(0,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_ghost_bullish_threshold = input.float(70,'Bullish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_ghost_bearish_threshold = input.float(30,'Bearish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 
-// equilibrium = revengrsi_len > 0 ? reverse_engineering_rsi(revengrsi_len,50) : na
-// ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bullish_threshold, high) : na
-// ghost_bearish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bearish_threshold,low) : na
+equilibrium = revengrsi_len > 0 ? reverse_engineering_rsi(revengrsi_len,50) : na
+ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bullish_threshold, high) : na
+ghost_bearish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bearish_threshold,low) : na
 
-// plot(equilibrium,'Equilibrium', color = color.new(color.silver,revengrsi_transp),style = plot.style_circles,force_overlay = true)
-// plot(ghost_bullish_threshold,'Ghost Bullish Threshold', color = color.new(color.red,revengrsi_transp),force_overlay = true)
-// plot(ghost_bearish_threshold,'Ghost Bearish Threshold', color = color.new(color.green,revengrsi_transp),force_overlay = true)
+plot(equilibrium,'Equilibrium', color = color.new(color.silver,revengrsi_transp),style = plot.style_circles,force_overlay = true)
+plot(ghost_bullish_threshold,'Ghost Bullish Threshold', color = color.new(color.blue,revengrsi_transp), linewidth = 2,force_overlay = true)
+plot(ghost_bearish_threshold,'Ghost Bearish Threshold', color = color.new(color.orange,revengrsi_transp), linewidth = 2,force_overlay = true)
 
 // Bollinger Bands Remix
 //-------------------------------------------------------------------------------
@@ -584,9 +601,9 @@ bb_inner_color = input.color(color.new(#da9f2a, 88),'Inner',group = bb_grp, inli
 bb_outer_color = input.color(color.new(#675a56, 90),'Outer',group = bb_grp, inline = bb_color_inline)
 bb_mid_transp = input.int(70,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
 bb_border_transp = input.int(88,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
-bb_cloud_trend_colors_inline = 'BB cloud trend colors (upper/lower)'
-bb_cloud_trend_upper = input.color(color.new(#688acd, 70),bb_cloud_trend_colors_inline,group = bb_grp,inline = bb_cloud_trend_colors_inline)
-bb_cloud_trend_lower = input.color(color.new(#c55353, 70),'',group = bb_grp,inline = bb_cloud_trend_colors_inline)
+bb_cloud_trend_colors_inline = 'BB cloud trend colors (up/down)'
+bb_cloud_trend_up = input.color(color.new(#4d9c6d, 80),bb_cloud_trend_colors_inline,group = bb_grp,inline = bb_cloud_trend_colors_inline)
+bb_cloud_trend_dwn = input.color(color.new(#da0d0d, 80),'',group = bb_grp,inline = bb_cloud_trend_colors_inline)
 
 [bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_primary))
 [bbf_m2,bbf_u2,bbf_l2] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_secondary))
@@ -594,6 +611,13 @@ bb_cloud_trend_lower = input.color(color.new(#c55353, 70),'',group = bb_grp,inli
 [bbs_m,bbs_u,bbs_l] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_primary))
 [bbs_m2,bbs_u2,bbs_l2] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_secondary))
 
+// BB base colors
+bb_inner_mid_color = color.new(bb_inner_color,bb_mid_transp)
+bb_outer_mid_color = color.new(bb_outer_color,bb_mid_transp)
+bb_inner_border_color = color.new(bb_inner_color,bb_border_transp)
+bb_outer_border_color = color.new(bb_outer_color,bb_border_transp)
+
+// BB average
 bba_u = math.avg(bbf_u,bbs_u)
 bba_l = math.avg(bbf_l,bbs_l)
 bba_u2 = math.avg(bbf_u2,bbs_u2)
@@ -601,8 +625,10 @@ bba_l2 = math.avg(bbf_l2,bbs_l2)
 // Band trend
 bba_u_rising = ta.rising(bba_u,2)
 bba_l_falling = ta.falling(bba_l,2)
-bba_ucolor = bba_u_rising and low > bbs_m ? bb_cloud_trend_upper : color(na)
-bba_lcolor = bba_l_falling and high < bbs_m ? bb_cloud_trend_lower : color(na)
+bb_inner_upper_color = bba_u_rising and low > bbs_m ? bb_cloud_trend_up : bb_inner_color
+bb_outer_upper_color = bba_u_rising and low > bbs_m ? bb_cloud_trend_up : bb_outer_color
+bb_inner_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_dwn : bb_inner_color
+bb_outer_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_dwn : bb_outer_color
 
 // Band acceleration cross
 bbu_primary_crossover = ta.crossover(bbf_u,bbs_u)
@@ -614,30 +640,24 @@ bbl_secondary_crossunder = ta.crossunder(bbf_l2,bbs_l2)
 bb_long_entry = bbu_primary_crossover and bbu_secondary_crossover and bba_u_rising and low > bbs_m and high > bba_u2
 bb_short_entry = bbl_primary_crossunder and bbl_secondary_crossunder and bba_l_falling and high < bbs_m and low < bba_l2
 
-bbf_m_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_m : na, 'BB fast middle',color = color.new(bb_inner_color,bb_mid_transp),force_overlay = true)
-bbs_m_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_m : na, 'BB slow middle',color = color.new(bb_outer_color,bb_mid_transp),force_overlay = true)
+bbf_m_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_m : na, 'BB fast middle',color = bb_inner_mid_color,force_overlay = true)
+bbs_m_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_m : na, 'BB slow middle',color = bb_outer_mid_color,force_overlay = true)
 
-bbf_u_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_u : na, 'BB fast primary upperband',color = color.new(bb_inner_color,bb_border_transp),force_overlay = true)
-bbf_l_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_l : na, 'BB fast primary lowerband',color = color.new(bb_inner_color,bb_border_transp),force_overlay = true)
-bbs_u_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_u : na, 'BB slow primary upperband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
-bbs_l_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_l : na, 'BB slow primary lowerband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
+bbf_u_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_u : na, 'BB fast primary upperband',color = bb_inner_border_color,force_overlay = true)
+bbf_l_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_l : na, 'BB fast primary lowerband',color = bb_inner_border_color,force_overlay = true)
+bbs_u_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_u : na, 'BB slow primary upperband',color = bb_outer_border_color,force_overlay = true)
+bbs_l_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_l : na, 'BB slow primary lowerband',color = bb_outer_border_color,force_overlay = true)
 
-fill(bbf_u_plt,bbs_u_plt,bbf_u,bbs_u,bb_inner_color,bb_outer_color,'BB primary upper fill')
-fill(bbf_l_plt,bbs_l_plt,bbf_l,bbs_l,bb_inner_color,bb_outer_color,'BB secondary lower fill')
+fill(bbf_u_plt,bbs_u_plt,bbf_u,bbs_u,bb_inner_upper_color,bb_outer_upper_color,'BB primary upper fill')
+fill(bbf_l_plt,bbs_l_plt,bbf_l,bbs_l,bb_inner_lower_color,bb_outer_lower_color,'BB secondary lower fill')
 
-bbf_u2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_u2 : na, 'BB fast secondary upperband',color = color.new(bb_inner_color,bb_border_transp),force_overlay = true)
-bbf_l2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_l2 : na, 'BB fast secondary lowerband',color = color.new(bb_inner_color,bb_border_transp),force_overlay = true)
-bbs_u2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_u2 : na, 'BB slow secondary upperband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
-bbs_l2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_l2 : na, 'BB slow secondary lowerband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
+bbf_u2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_u2 : na, 'BB fast secondary upperband',color = bb_inner_border_color,force_overlay = true)
+bbf_l2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_l2 : na, 'BB fast secondary lowerband',color = bb_inner_border_color,force_overlay = true)
+bbs_u2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_u2 : na, 'BB slow secondary upperband',color = bb_outer_border_color,force_overlay = true)
+bbs_l2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_l2 : na, 'BB slow secondary lowerband',color = bb_outer_border_color,force_overlay = true)
 
-fill(bbf_u2_plt,bbs_u2_plt,bbf_u2,bbs_u2,bb_inner_color,bb_outer_color,'BB secondary upper fill')
-fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bb_inner_color,bb_outer_color,'BB secondary lower fill')
-
-// Average upper/lower
-plot(bbf_len + bbs_len > 0 and bb_mult_primary > 0 ? bba_u : na, 'BB average primary upperband',color = bba_ucolor, force_overlay = true)
-plot(bbf_len + bbs_len > 0 and bb_mult_primary > 0 ? bba_l : na, 'BB average primary lowerband',color = bba_lcolor, force_overlay = true)
-plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_u2 : na, 'BB average secondary upperband',color = bba_ucolor, force_overlay = true)
-plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_l2 : na, 'BB average secondary lowerband',color = bba_lcolor, force_overlay = true)
+fill(bbf_u2_plt,bbs_u2_plt,bbf_u2,bbs_u2,bb_inner_upper_color,bb_outer_upper_color,'BB secondary upper fill')
+fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bb_inner_lower_color,bb_outer_lower_color,'BB secondary lower fill')
 
 // Long/Short labels
 plotshape(bb_long_entry ? bba_u : na, 'BB long entry',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.large, force_overlay = true)

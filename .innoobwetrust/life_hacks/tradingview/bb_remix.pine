@@ -5,7 +5,7 @@
 
 // @description Quadruple BB, mixing fast/slow and double mult. Can hide individual combinations via settings
 indicator("[innoobwetrust][indi] BB Remix", overlay = true)
-import TradingView/ta/9
+import TradingView/ta/10
 import forbidden_gun/commonlib/4
 import forbidden_gun/plot_lib/1
 
@@ -24,9 +24,9 @@ bb_inner_color = input.color(color.new(#d79921,88),'Inner', group = bb_color_grp
 bb_outer_color = input.color(color.new(#4e4542,90),'Outer', group = bb_color_grp)
 bb_mid_transp = input.int(80,'BB mid transparency (100 to hide lines)',minval=0,maxval=100)
 bb_border_transp = input.int(88,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100)
-bb_cloud_trend_colors_grp = '► BB cloud trend colors (upper/lower)'
-bb_cloud_trend_upper = input.color(color.new(#5a7dc3, 70),'Upper',group = bb_cloud_trend_colors_grp)
-bb_cloud_trend_lower = input.color(color.new(#b94444, 70),'Lower',group = bb_cloud_trend_colors_grp)
+bb_cloud_trend_colors_grp = '► BB cloud trend colors (up/down)'
+bb_cloud_trend_up = input.color(color.new(#4d9c6d, 70),'Up',group = bb_cloud_trend_colors_grp)
+bb_cloud_trend_dwn = input.color(color.new(#da0d0d, 70),'Down',group = bb_cloud_trend_colors_grp)
 
 //===============================================================================
 // Calculations
@@ -38,6 +38,13 @@ bb_cloud_trend_lower = input.color(color.new(#b94444, 70),'Lower',group = bb_clo
 [bbs_m,bbs_u,bbs_l] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_primary))
 [bbs_m2,bbs_u2,bbs_l2] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_secondary))
 
+// BB base colors
+bb_inner_mid_color = color.new(bb_inner_color,bb_mid_transp)
+bb_outer_mid_color = color.new(bb_outer_color,bb_mid_transp)
+bb_inner_border_color = color.new(bb_inner_color,bb_border_transp)
+bb_outer_border_color = color.new(bb_outer_color,bb_border_transp)
+
+// BB average
 bba_u = math.avg(bbf_u,bbs_u)
 bba_l = math.avg(bbf_l,bbs_l)
 bba_u2 = math.avg(bbf_u2,bbs_u2)
@@ -45,8 +52,10 @@ bba_l2 = math.avg(bbf_l2,bbs_l2)
 // Band trend
 bba_u_rising = ta.rising(bba_u,2)
 bba_l_falling = ta.falling(bba_l,2)
-bba_ucolor = bba_u_rising and low > bbs_m ? bb_cloud_trend_upper : color(na)
-bba_lcolor = bba_l_falling and high < bbs_m ? bb_cloud_trend_lower : color(na)
+bb_inner_upper_color = bba_u_rising and low > bbs_m ? bb_cloud_trend_up : bb_inner_color
+bb_outer_upper_color = bba_u_rising and low > bbs_m ? bb_cloud_trend_up : bb_outer_color
+bb_inner_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_dwn : bb_inner_color
+bb_outer_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_dwn : bb_outer_color
 
 // Band acceleration cross
 bbu_primary_crossover = ta.crossover(bbf_u,bbs_u)
@@ -55,10 +64,8 @@ bbl_primary_crossunder = ta.crossunder(bbf_l,bbs_l)
 bbl_secondary_crossunder = ta.crossunder(bbf_l2,bbs_l2)
 
 // Long/Short signals
-bb_long_entry1 = bbu_primary_crossover and bba_u_rising and low > bbs_m and high > bba_u
-bb_long_entry2 = bbu_secondary_crossover and bba_u_rising and low > bbs_m and high > bba_u
-bb_short_entry1 = bbl_primary_crossunder and bba_l_falling and high < bbs_m and low < bba_l
-bb_short_entry2 = bbl_secondary_crossunder and bba_l_falling and high < bbs_m and low < bba_l
+bb_long_entry = bbu_primary_crossover and bbu_secondary_crossover and bba_u_rising and low > bbs_m and high > bba_u2
+bb_short_entry = bbl_primary_crossunder and bbl_secondary_crossunder and bba_l_falling and high < bbs_m and low < bba_l2
 
 //===============================================================================
 // Plot
@@ -72,23 +79,17 @@ bbf_l_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_l : na, 'BB fast prim
 bbs_u_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_u : na, 'BB slow primary upperband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
 bbs_l_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_l : na, 'BB slow primary lowerband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
 
-fill(bbf_u_plt,bbs_u_plt,bbf_u,bbs_u,bb_inner_color,bb_outer_color,'BB primary upper fill')
-fill(bbf_l_plt,bbs_l_plt,bbf_l,bbs_l,bb_inner_color,bb_outer_color,'BB secondary lower fill')
+fill(bbf_u_plt,bbs_u_plt,bbf_u,bbs_u,bb_inner_upper_color,bb_outer_upper_color,'BB primary upper fill')
+fill(bbf_l_plt,bbs_l_plt,bbf_l,bbs_l,bb_inner_lower_color,bb_outer_lower_color,'BB secondary lower fill')
 
 bbf_u2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_u2 : na, 'BB fast secondary upperband',color = color.new(bb_inner_color,bb_border_transp),force_overlay = true)
 bbf_l2_plt = plot(bbf_len > 0 and bb_mult_secondary > 0 ? bbf_l2 : na, 'BB fast secondary lowerband',color = color.new(bb_inner_color,bb_border_transp),force_overlay = true)
 bbs_u2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_u2 : na, 'BB slow secondary upperband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
 bbs_l2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_l2 : na, 'BB slow secondary lowerband',color = color.new(bb_outer_color,bb_border_transp),force_overlay = true)
 
-fill(bbf_u2_plt,bbs_u2_plt,bbf_u2,bbs_u2,bb_inner_color,bb_outer_color,'BB secondary upper fill')
-fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bb_inner_color,bb_outer_color,'BB secondary lower fill')
-
-// Average upper/lower
-plot(bbf_len + bbs_len > 0 and bb_mult_primary > 0 ? bba_u : na, 'BB average primary upperband',color = bba_ucolor, force_overlay = true)
-plot(bbf_len + bbs_len > 0 and bb_mult_primary > 0 ? bba_l : na, 'BB average primary lowerband',color = bba_lcolor, force_overlay = true)
-plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_u2 : na, 'BB average secondary upperband',color = bba_ucolor, force_overlay = true)
-plot(bbf_len + bbs_len > 0 and bb_mult_secondary > 0 ? bba_l2 : na, 'BB average secondary lowerband',color = bba_lcolor, force_overlay = true)
+fill(bbf_u2_plt,bbs_u2_plt,bbf_u2,bbs_u2,bb_inner_upper_color,bb_outer_upper_color,'BB secondary upper fill')
+fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bb_inner_lower_color,bb_outer_lower_color,'BB secondary lower fill')
 
 // Long/Short labels
-plotchar(bb_long_entry1 or bb_long_entry2 ? bba_u : na, 'BB long entry', 'L', location = location.belowbar, color = color.green, size = size.auto, force_overlay = true)
-plotchar(bb_short_entry1 or bb_short_entry2 ? bba_l : na, 'BB short entry', 'S', location = location.abovebar, color = color.red, size = size.auto, force_overlay = true)
+plotshape(bb_long_entry ? bba_u : na, 'BB long entry',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.large, force_overlay = true)
+plotshape(bb_short_entry ? bba_l : na, 'BB short entry',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.large, force_overlay = true)
