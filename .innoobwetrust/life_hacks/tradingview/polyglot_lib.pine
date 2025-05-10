@@ -80,7 +80,7 @@ export estimate_leverage(int atr_len = 14, float sl_percent = 0.1, float toleran
 	max_endurable_percent = max_endurable_spread / close
 	max_leverage = sl_percent / max_endurable_percent
 	// Return max leverage as whole number
-	[math.ceil(max_leverage), max_endurable_spread, max_endurable_percent]
+	[math.floor(max_leverage), max_endurable_spread, max_endurable_percent]
 
 // @function Display leverage, ATR, and the percentage of acceptable SL
 // @param atr_len The length to calculate ATR
@@ -601,9 +601,11 @@ bb_inner_color = input.color(color.new(#da9f2a, 88),'Inner',group = bb_grp, inli
 bb_outer_color = input.color(color.new(#675a56, 90),'Outer',group = bb_grp, inline = bb_color_inline)
 bb_mid_transp = input.int(70,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
 bb_border_transp = input.int(88,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
-bb_cloud_trend_colors_inline = 'BB cloud trend colors (up/down)'
-bb_cloud_trend_up = input.color(color.new(#4d9c6d, 80),bb_cloud_trend_colors_inline,group = bb_grp,inline = bb_cloud_trend_colors_inline)
-bb_cloud_trend_dwn = input.color(color.new(#da0d0d, 80),'',group = bb_grp,inline = bb_cloud_trend_colors_inline)
+bb_cloud_trend_colors_inline = 'BB cloud trend colors'
+bb_cloud_trend_inner_up = input.color(color.new(#4d9c6d, 80),'Up inner gradient',group = bb_grp,inline = bb_cloud_trend_colors_inline)
+bb_cloud_trend_outer_up = input.color(color.new(#353091, 70),'Up outer gradient',group = bb_grp,inline = bb_cloud_trend_colors_inline)
+bb_cloud_trend_inner_dwn = input.color(color.new(#cb7015, 80),'Down inner gradient',group = bb_grp,inline = bb_cloud_trend_colors_inline)
+bb_cloud_trend_outer_dwn = input.color(color.new(#a70808, 70),'Down outer gradient',group = bb_grp,inline = bb_cloud_trend_colors_inline)
 
 [bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_primary))
 [bbf_m2,bbf_u2,bbf_l2] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_secondary))
@@ -625,10 +627,10 @@ bba_l2 = math.avg(bbf_l2,bbs_l2)
 // Band trend
 bba_u_rising = ta.rising(bba_u,2)
 bba_l_falling = ta.falling(bba_l,2)
-bb_inner_upper_color = bba_u_rising and low > bbs_m ? bb_cloud_trend_up : bb_inner_color
-bb_outer_upper_color = bba_u_rising and low > bbs_m ? bb_cloud_trend_up : bb_outer_color
-bb_inner_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_dwn : bb_inner_color
-bb_outer_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_dwn : bb_outer_color
+bb_inner_upper_color = bba_u_rising and low > bbs_m ? bb_cloud_trend_inner_up : bb_inner_color
+bb_outer_upper_color = bba_u_rising and low > bbs_m ? bb_cloud_trend_outer_up : bb_outer_color
+bb_inner_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_inner_dwn : bb_inner_color
+bb_outer_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_outer_dwn : bb_outer_color
 
 // Band acceleration cross
 bbu_primary_crossover = ta.crossover(bbf_u,bbs_u)
