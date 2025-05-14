@@ -1,0 +1,27 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © forbidden_gun
+
+//@version=6
+
+// @description crypto asset capitalization
+indicator("crypto_cap", overlay = false)
+
+//===============================================================================
+// Inputs
+//===============================================================================
+src = input.source(close,'Source')
+
+//===============================================================================
+// Calculations
+//===============================================================================
+
+total = request.security("CRYPTOCAP:TOTAL",timeframe.period,src)
+sym_d = request.security("CRYPTOCAP:" + syminfo.basecurrency + ".D",timeframe.period,src)
+
+sym_cap = total * sym_d
+
+//===============================================================================
+// Plots
+//===============================================================================
+
+plot(sym_cap, "Symbol's cap", color.rgb(77, 77, 169, 50), style = plot.style_area)
