@@ -324,8 +324,12 @@ trb_bias_len = input.int(9,'Bias length',group = trb_grp)
 trb_bias_fast_len = input.int(16,'Fast length',group = trb_grp)
 trb_bias_slow_len = input.int(42,'Slow length',group = trb_grp)
 
-tr = ta.tr(true)
-biased_tr = math.sign(close - open) != 0 ? tr * math.sign(close - open) : tr
+bar_balance = close - open
+bull_pwr = math.max(high - open, high - close[1])
+bear_pwr = math.max(open - low, close[1] - low)
+biased_tr = bar_balance + bull_pwr - bear_pwr
+// tr = ta.tr(true)
+// biased_tr = math.sign(close - open) != 0 ? tr * math.sign(close - open) : tr
 biased_tr_rma = ta.rma(biased_tr, trb_bias_len)
 biased_tr_rma_fast = ta.ema(biased_tr_rma, trb_bias_fast_len)
 biased_tr_rma_slow = ta.ema(biased_tr_rma, trb_bias_slow_len)
