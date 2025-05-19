@@ -343,21 +343,21 @@ bias_circle = switch
 	=> na
 
 biased_tr_color = switch biased_tr_rma > 0
-	true => color.new(color.teal, 50)
-	false => color.new(color.maroon, 50)
+	true => color.new(color.teal, 20)
+	false => color.new(color.maroon, 20)
 biased_tr_rma_fast_color = switch biased_tr_rma_fast > 0
 	true => color.new(color.green, 70)
 	false => color.new(color.red, 70)
 biased_tr_rma_slow_color = switch biased_tr_rma_slow > 0
-	true => color.new(color.aqua, 70)
-	false => color.new(color.orange, 70)
+	true => color.new(color.aqua, 80)
+	false => color.new(color.orange, 80)
 bias_bg = switch
 	biased_tr_fast_crossover => color.new(color.teal,80)
 	biased_tr_fast_crossunder => color.new(color.maroon,80)
 	=> color(na)
 bias_circle_color = switch
-	biased_tr_slow_crossover => color.new(color.green,50)
-	biased_tr_slow_crossunder => color.new(color.red,50)
+	biased_tr_slow_crossover => color.new(color.green,70)
+	biased_tr_slow_crossunder => color.new(color.red,70)
 	=> color(na)
 
 plot(biased_tr_rma, 'RMA of Biased TR', color = biased_tr_color, style = plot.style_histogram, force_overlay = false)
