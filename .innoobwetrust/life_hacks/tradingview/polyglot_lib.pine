@@ -578,7 +578,7 @@ revengrsi_grp = '► Reverse Engineering RSI'
 revengrsi_transp = input.int(70, "Transparency",group = revengrsi_grp)
 revengrsi_len = input.int(0,'Length (0 to disable)',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
 revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
-revengrsi_ghost_len = input.int(0,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_ghost_len = input.int(9,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bullish_threshold = input.float(70,'Bullish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bearish_threshold = input.float(30,'Bearish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 
