@@ -6,7 +6,7 @@
 // @description Multiple utilities in one
 library("polyglot_lib", overlay = false)
 import TradingView/ta/10
-import forbidden_gun/commonlib/5
+import forbidden_gun/commonlib/6
 import forbidden_gun/plot_lib/3
 
 //===============================================================================
@@ -324,13 +324,10 @@ trb_bias_len = input.int(9,'Bias length',group = trb_grp)
 trb_bias_fast_len = input.int(16,'Fast length',group = trb_grp)
 trb_bias_slow_len = input.int(42,'Slow length',group = trb_grp)
 
-bar_balance = close - open
-bull_pwr = math.max(high - open, high - close[1])
-bear_pwr = math.max(open - low, close[1] - low)
-biased_tr = bar_balance + bull_pwr - bear_pwr
+[bar_pwr, bar_bias] = commonlib.bar_structure()
 // tr = ta.tr(true)
-// biased_tr = math.sign(close - open) != 0 ? tr * math.sign(close - open) : tr
-biased_tr_rma = ta.rma(biased_tr, trb_bias_len)
+// bar_bias = math.sign(close - open) != 0 ? tr * math.sign(close - open) : tr
+biased_tr_rma = ta.rma(bar_bias, trb_bias_len)
 biased_tr_rma_fast = ta.ema(biased_tr_rma, trb_bias_fast_len)
 biased_tr_rma_slow = ta.ema(biased_tr_rma, trb_bias_slow_len)
 biased_tr_fast_crossover = ta.crossover(biased_tr_rma_fast,0)
@@ -360,6 +357,7 @@ bias_circle_color = switch
 	biased_tr_slow_crossunder => color.new(color.red,70)
 	=> color(na)
 
+plot(bar_pwr, 'Bar Power', color = color.new(biased_tr_color,90), style = plot.style_line, force_overlay = true) // Almost invisible, plot to use as source for other indicators
 plot(biased_tr_rma, 'RMA of Biased TR', color = biased_tr_color, style = plot.style_histogram, force_overlay = false)
 plot(biased_tr_rma_fast, 'EMA fast of Biased TR', color = biased_tr_rma_fast_color, style = plot.style_columns, force_overlay = false)
 plot(biased_tr_rma_slow, 'EMA slow of Biased TR', color = biased_tr_rma_slow_color, style = plot.style_area, force_overlay = false)
