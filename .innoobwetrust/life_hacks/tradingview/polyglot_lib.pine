@@ -313,18 +313,22 @@ export support_breakout(float support) =>
     high < support and high[1] >= support
 
 //===============================================================================
+// Precalculated
+//===============================================================================
+
+[bar_pwr, bar_bias] = commonlib.bar_structure()
+
+//===============================================================================
 // Testing
 //===============================================================================
 
 // True Range Bias oscillator
 //-------------------------------------------------------------------------------
 trb_grp = '► True Range Bias oscillator'
-
 trb_bias_len = input.int(9,'Bias length',group = trb_grp)
 trb_bias_fast_len = input.int(16,'Fast length',group = trb_grp)
 trb_bias_slow_len = input.int(42,'Slow length',group = trb_grp)
 
-[bar_pwr, bar_bias] = commonlib.bar_structure()
 // tr = ta.tr(true)
 // bar_bias = math.sign(close - open) != 0 ? tr * math.sign(close - open) : tr
 biased_tr_rma = ta.rma(bar_bias, trb_bias_len)
@@ -367,7 +371,6 @@ plotshape(bias_circle,'Bias slow cross',style = shape.circle,location = location
 // Scaled Relative Liquidity Index
 //-------------------------------------------------------------------------------
 rli_grp = '► Scaled Relative Liquidity Index'
-
 rli_enable = input.bool(true,'Enable',group = rli_grp)
 rli_atr_len = input.int(16,"RLI's ATR length",group = rli_grp)
 rli_len = input.int(9,'RLI length',group = rli_grp)
@@ -573,15 +576,25 @@ plot(atrband_lower,'ATR band lower', color = atrband_lower_color, linewidth = 2,
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
 revengrsi_grp = '► Reverse Engineering RSI'
-revengrsi_transp = input.int(70, "Transparency",group = revengrsi_grp)
-revengrsi_len = input.int(0,'Length (0 to disable)',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
+revengrsi_transp = input.int(50, "Transparency",group = revengrsi_grp)
+revengrsi_src = input.string('pow', 'Source', options = ['open','high','low','close','hl2','hlc3','ohlc4','pow'],group = revengrsi_grp)
+revengrsi_len = input.int(14,'Length (0 to disable)',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
 revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
 revengrsi_ghost_len = input.int(9,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bullish_threshold = input.float(70,'Bullish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bearish_threshold = input.float(30,'Bearish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 
-equilibrium = revengrsi_len > 0 ? reverse_engineering_rsi(revengrsi_len,50) : na
-ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bullish_threshold, high) : na
+equilibrium_src = switch revengrsi_src
+	'open' => open
+	'high' => high
+	'low' => low
+	'close' => close
+	'hl2' => hl2
+	'hlc3' => hlc3
+	'ohlc4' => ohlc4
+	'pow' => bar_pwr
+equilibrium = revengrsi_len > 0 ? reverse_engineering_rsi(revengrsi_len,50,equilibrium_src) : na
+ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bullish_threshold,high) : na
 ghost_bearish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bearish_threshold,low) : na
 
 plot(equilibrium,'Equilibrium', color = color.new(color.silver,revengrsi_transp),style = plot.style_circles,force_overlay = true)
@@ -601,7 +614,7 @@ bb_mult_secondary = input.float(3,'',group = bb_grp, inline = bb_mult_inline)
 bb_color_inline = 'BB cloud gradient colors (opacity 0% to hide clouds)'
 bb_inner_color = input.color(color.new(#da9f2a, 88),'Inner',group = bb_grp, inline = bb_color_inline)
 bb_outer_color = input.color(color.new(#675a56, 90),'Outer',group = bb_grp, inline = bb_color_inline)
-bb_mid_transp = input.int(70,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
+bb_mid_transp = input.int(100,'BB mid transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
 bb_border_transp = input.int(88,'BB border (upper/lower) transparency (100 to hide lines)',minval=0,maxval=100,group = bb_grp)
 bb_cloud_trend_colors_inline = 'BB cloud trend colors'
 bb_cloud_trend_inner_up = input.color(color.new(#4d9c6d, 80),'Up inner gradient',group = bb_grp,inline = bb_cloud_trend_colors_inline)
