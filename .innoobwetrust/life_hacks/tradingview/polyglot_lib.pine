@@ -604,7 +604,7 @@ plot(ghost_bearish_threshold,'Ghost Bearish Threshold', color = color.new(color.
 // Bollinger Bands Remix
 //-------------------------------------------------------------------------------
 bb_grp = '► Bollinger Bands Remix'
-bb_src = input.source(close,'Source',group = bb_grp)
+bb_src = input.string('pow','Source',options = ['open','high','low','close','hl2','hlc3','ohlc4','pow'],group = bb_grp)
 bb_len_inline = 'Lengths (0 to disable)'
 bbf_len = input.int(16,bb_len_inline,group = bb_grp,inline = bb_len_inline)
 bbs_len = input.int(42,'',group = bb_grp,inline = bb_len_inline)
@@ -622,11 +622,20 @@ bb_cloud_trend_outer_up = input.color(color.new(#353091, 70),'Up outer gradient'
 bb_cloud_trend_inner_dwn = input.color(color.new(#cb7015, 80),'Down inner gradient',group = bb_grp,inline = bb_cloud_trend_colors_inline)
 bb_cloud_trend_outer_dwn = input.color(color.new(#a70808, 70),'Down outer gradient',group = bb_grp,inline = bb_cloud_trend_colors_inline)
 
-[bbf_m,bbf_u,bbf_l] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_primary))
-[bbf_m2,bbf_u2,bbf_l2] = ta.bb(bb_src,math.max(1, bbf_len),math.max(1,bb_mult_secondary))
+bb_val_src = switch bb_src
+	'open' => open
+	'high' => high
+	'low' => low
+	'close' => close
+	'hl2' => hl2
+	'hlc3' => hlc3
+	'ohlc4' => ohlc4
+	'pow' => bar_pwr
+[bbf_m,bbf_u,bbf_l] = ta.bb(bb_val_src,math.max(1, bbf_len),math.max(1,bb_mult_primary))
+[bbf_m2,bbf_u2,bbf_l2] = ta.bb(bb_val_src,math.max(1, bbf_len),math.max(1,bb_mult_secondary))
 
-[bbs_m,bbs_u,bbs_l] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_primary))
-[bbs_m2,bbs_u2,bbs_l2] = ta.bb(bb_src,math.max(1, bbs_len),math.max(1,bb_mult_secondary))
+[bbs_m,bbs_u,bbs_l] = ta.bb(bb_val_src,math.max(1, bbs_len),math.max(1,bb_mult_primary))
+[bbs_m2,bbs_u2,bbs_l2] = ta.bb(bb_val_src,math.max(1, bbs_len),math.max(1,bb_mult_secondary))
 
 // BB base colors
 bb_inner_mid_color = color.new(bb_inner_color,bb_mid_transp)
