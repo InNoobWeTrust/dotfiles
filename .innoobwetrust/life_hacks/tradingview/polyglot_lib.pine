@@ -567,11 +567,14 @@ atrband_lower_color = input.color(color.new(color.red,80),atrband_color_inline,g
 
 atrband_atr = ta.atr2(atrband_len)
 atrband_osc = atrband_atr[1] * atrband_mult
-atrband_upper = atrband_osc != 0 ? close[1] + atrband_osc : na
-atrband_lower = atrband_osc != 0 ? close[1] - atrband_osc : na
+atrband_upper = atrband_osc != 0 ? high[1] + atrband_osc : na
+atrband_lower = atrband_osc != 0 ? low[1] - atrband_osc : na
 
 plot(atrband_upper,'ATR band upper', color = atrband_upper_color, linewidth = 2,force_overlay = true)
 plot(atrband_lower,'ATR band lower', color = atrband_lower_color, linewidth = 2,force_overlay = true)
+
+plotshape(close > atrband_upper  ? high : na, 'Buying climax',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.large, force_overlay = true)
+plotshape(close < atrband_lower ? low : na, 'Selling climax',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.large, force_overlay = true)
 
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
@@ -604,13 +607,13 @@ plot(ghost_bearish_threshold,'Ghost Bearish Threshold', color = color.new(color.
 // Bollinger Bands Remix
 //-------------------------------------------------------------------------------
 bb_grp = '► Bollinger Bands Remix'
-bb_src = input.string('pow','Source',options = ['open','high','low','close','hl2','hlc3','ohlc4','pow'],group = bb_grp)
+bb_src = input.string('close','Source',options = ['open','high','low','close','hl2','hlc3','ohlc4','pow'],group = bb_grp)
 bb_len_inline = 'Lengths (0 to disable)'
 bbf_len = input.int(16,bb_len_inline,group = bb_grp,inline = bb_len_inline)
 bbs_len = input.int(42,'',group = bb_grp,inline = bb_len_inline)
 bb_mult_inline = 'Mult (0 to disable)'
-bb_mult_primary = input.float(2,bb_mult_inline,group = bb_grp, inline = bb_mult_inline)
-bb_mult_secondary = input.float(3,'',group = bb_grp, inline = bb_mult_inline)
+bb_mult_primary = input.float(0,bb_mult_inline,group = bb_grp, inline = bb_mult_inline)
+bb_mult_secondary = input.float(0,'',group = bb_grp, inline = bb_mult_inline)
 bb_color_inline = 'BB cloud gradient colors (opacity 0% to hide clouds)'
 bb_inner_color = input.color(color.new(#da9f2a, 88),'Inner',group = bb_grp, inline = bb_color_inline)
 bb_outer_color = input.color(color.new(#675a56, 90),'Outer',group = bb_grp, inline = bb_color_inline)
@@ -657,14 +660,14 @@ bb_inner_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_inner_dwn
 bb_outer_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_outer_dwn : bb_outer_color
 
 // Band acceleration cross
-bbu_primary_crossover = ta.crossover(bbf_u,bbs_u)
-bbu_secondary_crossover = ta.crossover(bbf_u2,bbs_u2)
-bbl_primary_crossunder = ta.crossunder(bbf_l,bbs_l)
-bbl_secondary_crossunder = ta.crossunder(bbf_l2,bbs_l2)
+// bbu_primary_crossover = ta.crossover(bbf_u,bbs_u)
+// bbu_secondary_crossover = ta.crossover(bbf_u2,bbs_u2)
+// bbl_primary_crossunder = ta.crossunder(bbf_l,bbs_l)
+// bbl_secondary_crossunder = ta.crossunder(bbf_l2,bbs_l2)
 
 // Long/Short signals
-bb_long_entry = bbu_primary_crossover and bbu_secondary_crossover and bba_u_rising and low > bbs_m and high > bba_u2
-bb_short_entry = bbl_primary_crossunder and bbl_secondary_crossunder and bba_l_falling and high < bbs_m and low < bba_l2
+// bb_long_entry = bbu_primary_crossover and bbu_secondary_crossover and bba_u_rising and low > bbs_m and high > bba_u2
+// bb_short_entry = bbl_primary_crossunder and bbl_secondary_crossunder and bba_l_falling and high < bbs_m and low < bba_l2
 
 bbf_m_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_m : na, 'BB fast middle',color = bb_inner_mid_color,force_overlay = true)
 bbs_m_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_m : na, 'BB slow middle',color = bb_outer_mid_color,force_overlay = true)
@@ -685,9 +688,9 @@ bbs_l2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_l2 : na, 'BB slow 
 fill(bbf_u2_plt,bbs_u2_plt,bbf_u2,bbs_u2,bb_inner_upper_color,bb_outer_upper_color,'BB secondary upper fill')
 fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bb_inner_lower_color,bb_outer_lower_color,'BB secondary lower fill')
 
-// Long/Short labels
-plotshape(bb_long_entry ? bba_u : na, 'BB long entry',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.large, force_overlay = true)
-plotshape(bb_short_entry ? bba_l : na, 'BB short entry',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.large, force_overlay = true)
+// Long/Short highlight
+// plotshape(bb_long_entry ? bba_u : na, 'BB long entry',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.large, force_overlay = true)
+// plotshape(bb_short_entry ? bba_l : na, 'BB short entry',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.large, force_overlay = true)
 
 // Biased candle for reversal signal, atr signal low volatility environment that supports reversal
 //-------------------------------------------------------------------------------
