@@ -46,6 +46,7 @@ var array<KeyGap> key_gaps = array.new<KeyGap>(key_gap_buffer, na)
 var array<float> key_gap_highs = array.new<float>(key_gap_buffer, na)
 var array<float> key_gap_lows = array.new<float>(key_gap_buffer, na)
 var array<plot_lib.TfBarZonePlot> key_gaps_plt = array.new<plot_lib.TfBarZonePlot>(key_gap_zone_count, na)
+var array<box> key_wicks_plt = array.new<box>(key_gap_zone_count, na)
 var array<box> key_level_boxes = array.new<box>()
 
 //===============================================================================
@@ -85,6 +86,10 @@ if barstate.islast
 			oldest_zone_plt = key_gaps_plt.shift()
 			if not na(oldest_zone_plt)
 				plot_lib.clear_tf_zone(oldest_zone_plt)
+			oldest_wick_plt = key_wicks_plt.shift()
+			if not na(oldest_wick_plt)
+				oldest_wick_plt.delete()
+
 	for b in key_level_boxes
 		b.delete()
 	key_level_boxes.clear()
@@ -135,6 +140,18 @@ if barstate.islast
 				clr := color.rgb(255 - color.r(clr), 255 - color.g(clr), 255 - color.b(clr), color.t(clr))
 			plt = plot_lib.plot_tf_zone(gap.zone, clr)
 			key_gaps_plt.push(plt)
+			wick_box = box.new(left = gap.zone.bar.t_o,
+								 top = gap.zone.bar.c > gap.zone.bar.o ? gap.zone.bar.o : gap.zone.bar.h,
+								 right = time_close,
+								 bottom = gap.zone.bar.c > gap.zone.bar.o ? gap.zone.bar.l : gap.zone.bar.o,
+								 border_color = clr,
+								 border_width = 2,
+								 border_style = line.style_solid,
+								 extend = extend.none,
+								 xloc = xloc.bar_time,
+								 bgcolor = clr,
+								 force_overlay = true)
+			key_wicks_plt.push(wick_box)
 
 		// Plot heatmap
 		clr = color.from_gradient(gap.relative_spread, key_gap_threshold, key_gap_cap, key_gap_gradient_low, key_gap_gradient_high)
