@@ -322,51 +322,40 @@ export support_breakout(float support) =>
 // Testing
 //===============================================================================
 
-// True Range Bias oscillator
+// Structure Power Oscillator
 //-------------------------------------------------------------------------------
-trb_grp = '► True Range Bias oscillator'
-trb_bias_len = input.int(9,'Bias length',group = trb_grp)
-trb_bias_fast_len = input.int(16,'Fast length',group = trb_grp)
-trb_bias_slow_len = input.int(42,'Slow length',group = trb_grp)
+spo_grp = '► Structure Power Oscillator'
+spo_bias_len = input.int(9,'Bias length',group = spo_grp)
+spo_bias_fast_len = input.int(16,'Fast length',group = spo_grp)
+spo_bias_slow_len = input.int(42,'Slow length',group = spo_grp)
+spo_rssi_len = input.int(14,'RSSI length', group = spo_grp)
+spo_rssi_bullish = input.float(60,'RSSI Bullish Threshold',group = spo_grp)
+spo_rssi_bearish = input.float(40,'RSSI Bearish Threshold',group = spo_grp)
 
-// tr = ta.tr(true)
-// bar_bias = math.sign(close - open) != 0 ? tr * math.sign(close - open) : tr
-biased_tr_rma = ta.rma(bar_bias, trb_bias_len)
-biased_tr_rma_fast = ta.ema(biased_tr_rma, trb_bias_fast_len)
-biased_tr_rma_slow = ta.ema(biased_tr_rma, trb_bias_slow_len)
-biased_tr_fast_crossover = ta.crossover(biased_tr_rma_fast,0)
-biased_tr_fast_crossunder = ta.crossunder(biased_tr_rma_fast,0)
-biased_tr_slow_crossover = ta.crossover(biased_tr_rma_slow,0)
-biased_tr_slow_crossunder = ta.crossunder(biased_tr_rma_slow,0)
-bias_circle = switch
-	biased_tr_slow_crossover => 0
-	biased_tr_slow_crossunder => 0
-	=> na
+bar_bias_rma = ta.rma(bar_bias, spo_bias_len)
+bar_bias_ma_fast = ta.ema(bar_bias_rma, spo_bias_fast_len)
+bar_bias_ma_slow = ta.ema(bar_bias_rma, spo_bias_slow_len)
+rssi = ta.rsi(bar_pwr,spo_rssi_len)
 
-biased_tr_color = switch biased_tr_rma > 0
+biased_tr_color = switch bar_bias_rma > 0
 	true => color.new(color.teal, 20)
 	false => color.new(color.maroon, 20)
-biased_tr_rma_fast_color = switch biased_tr_rma_fast > 0
+biased_tr_rma_fast_color = switch bar_bias_ma_fast > 0
 	true => color.new(color.green, 70)
 	false => color.new(color.red, 70)
-biased_tr_rma_slow_color = switch biased_tr_rma_slow > 0
+biased_tr_rma_slow_color = switch bar_bias_ma_slow > 0
 	true => color.new(color.aqua, 80)
 	false => color.new(color.orange, 80)
 bias_bg = switch
-	biased_tr_fast_crossover => color.new(color.teal,80)
-	biased_tr_fast_crossunder => color.new(color.maroon,80)
-	=> color(na)
-bias_circle_color = switch
-	biased_tr_slow_crossover => color.new(color.green,70)
-	biased_tr_slow_crossunder => color.new(color.red,70)
+	rssi >= spo_rssi_bullish => color.new(color.teal,80)
+	rssi <= spo_rssi_bearish => color.new(color.maroon,80)
 	=> color(na)
 
-plot(bar_pwr, 'Bar Power', color = color.new(biased_tr_color,90), style = plot.style_line, force_overlay = true) // Almost invisible, plot to use as source for other indicators
-plot(biased_tr_rma, 'RMA of Biased TR', color = biased_tr_color, style = plot.style_histogram, force_overlay = false)
-plot(biased_tr_rma_fast, 'EMA fast of Biased TR', color = biased_tr_rma_fast_color, style = plot.style_columns, force_overlay = false)
-plot(biased_tr_rma_slow, 'EMA slow of Biased TR', color = biased_tr_rma_slow_color, style = plot.style_area, force_overlay = false)
-bgcolor(bias_bg, title = 'Bias fast cross')
-plotshape(bias_circle,'Bias slow cross',style = shape.circle,location = location.absolute,color = bias_circle_color,size = size.small)
+plot(bar_pwr, 'Bar Power', color = color.new(biased_tr_color,80), style = plot.style_line, force_overlay = true) // Almost invisible, plot to use as source for other indicators
+plot(bar_bias_rma, 'Bias RMA', color = biased_tr_color, style = plot.style_histogram, force_overlay = false)
+plot(bar_bias_ma_fast, 'Bias MA fast', color = biased_tr_rma_fast_color, style = plot.style_columns, force_overlay = false)
+plot(bar_bias_ma_slow, 'Bias MA slow', color = biased_tr_rma_slow_color, style = plot.style_area, force_overlay = false)
+bgcolor(bias_bg, title = 'Bias Bullish/Bearish')
 
 // Scaled Relative Liquidity Index
 //-------------------------------------------------------------------------------
@@ -383,7 +372,7 @@ rli_gradient_ignore_lowerbound = input.float(25, "Ignore low RLI gradient until 
 
 rli = relative_liquidity_index(rli_atr_len,rli_len)
 shifted_rli = rli - 50
-scaled_rli = shifted_rli * biased_tr_rma / 50
+scaled_rli = shifted_rli * bar_bias_rma / 50
 
 rli_atr = ta.atr(rli_atr_len)
 
@@ -589,8 +578,8 @@ atrband_lower = atrband_osc != 0 ? low[1] - atrband_osc : na
 plot(atrband_upper,'ATR band upper', color = atrband_upper_color, linewidth = 2,force_overlay = true)
 plot(atrband_lower,'ATR band lower', color = atrband_lower_color, linewidth = 2,force_overlay = true)
 
-plotshape(close > atrband_upper  ? high : na, 'Buying climax',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.large, force_overlay = true)
-plotshape(close < atrband_lower ? low : na, 'Selling climax',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.large, force_overlay = true)
+plotshape(close > atrband_upper  ? high : na, 'Buying climax',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.normal, force_overlay = true)
+plotshape(close < atrband_lower ? low : na, 'Selling climax',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.normal, force_overlay = true)
 
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
@@ -600,6 +589,7 @@ revengrsi_src = input.string('pow', 'Source', options = ['open','high','low','cl
 revengrsi_len = input.int(14,'Length (0 to disable)',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
 revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
 revengrsi_ghost_len = input.int(9,revengrsi_ghost_inline,group = revengrsi_grp,inline = revengrsi_ghost_inline)
+revengrsi_ghost_src = input.string('high/low','Source',options = ['open','high/low','close','hl2','hlc3','ohlc4','pow'],group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bullish_threshold = input.float(70,'Bullish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 revengrsi_ghost_bearish_threshold = input.float(30,'Bearish',group = revengrsi_grp,inline = revengrsi_ghost_inline)
 
@@ -613,8 +603,24 @@ equilibrium_src = switch revengrsi_src
 	'ohlc4' => ohlc4
 	'pow' => bar_pwr
 equilibrium = revengrsi_len > 0 ? reverse_engineering_rsi(revengrsi_len,50,equilibrium_src) : na
-ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bullish_threshold,high) : na
-ghost_bearish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bearish_threshold,low) : na
+ghost_upper_src = switch revengrsi_ghost_src
+	'open' => open
+	'high/low' => high
+	'close' => close
+	'hl2' => hl2
+	'hlc3' => hlc3
+	'ohlc4' => ohlc4
+	'pow' => bar_pwr
+ghost_lower_src = switch revengrsi_ghost_src
+	'open' => open
+	'high/low' => low
+	'close' => close
+	'hl2' => hl2
+	'hlc3' => hlc3
+	'ohlc4' => ohlc4
+	'pow' => bar_pwr
+ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bullish_threshold,ghost_upper_src) : na
+ghost_bearish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bearish_threshold,ghost_lower_src) : na
 
 plot(equilibrium,'Equilibrium', color = color.new(color.silver,revengrsi_transp),style = plot.style_circles,force_overlay = true)
 plot(ghost_bullish_threshold,'Ghost Bullish Threshold', color = color.new(color.blue,revengrsi_transp), linewidth = 2,force_overlay = true)
