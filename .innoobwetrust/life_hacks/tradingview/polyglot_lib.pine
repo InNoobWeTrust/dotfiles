@@ -336,6 +336,8 @@ bar_bias_rma = ta.rma(bar_bias, spo_bias_len)
 bar_bias_ma_fast = ta.ema(bar_bias_rma, spo_bias_fast_len)
 bar_bias_ma_slow = ta.ema(bar_bias_rma, spo_bias_slow_len)
 rssi = ta.rsi(bar_pwr,spo_rssi_len)
+bar_pwr_reversion = open - bar_bias_rma
+bias_reversion_value = ta.sma(bar_pwr_reversion, spo_bias_len)
 
 biased_tr_color = switch bar_bias_rma > 0
 	true => color.new(color.teal, 20)
@@ -351,7 +353,8 @@ bias_bg = switch
 	rssi <= spo_rssi_bearish => color.new(color.maroon,80)
 	=> color(na)
 
-plot(bar_pwr, 'Bar Power', color = color.new(biased_tr_color,80), style = plot.style_line, force_overlay = true) // Almost invisible, plot to use as source for other indicators
+// plot(bar_pwr, 'Bar Power', color = color.new(biased_tr_color,80), style = plot.style_line, force_overlay = true) // Almost invisible, plot to use as source for other indicators
+plot(bias_reversion_value, 'Bias Reversion Value', color = color.new(color.purple,50), linewidth = 2, style = plot.style_line, force_overlay = true)
 plot(bar_bias_rma, 'Bias RMA', color = biased_tr_color, style = plot.style_histogram, force_overlay = false)
 plot(bar_bias_ma_fast, 'Bias MA fast', color = biased_tr_rma_fast_color, style = plot.style_columns, force_overlay = false)
 plot(bar_bias_ma_slow, 'Bias MA slow', color = biased_tr_rma_slow_color, style = plot.style_area, force_overlay = false)
@@ -567,24 +570,24 @@ atrband_grp = '► ATR bands'
 atrband_len = input.float(42,'Length',group = atrband_grp)
 atrband_mult = input.float(1.618,'Mult (0 to disable)',group = atrband_grp)
 atrband_color_inline = 'Colors (upper/lower)'
-atrband_upper_color = input.color(color.new(color.green,80),atrband_color_inline,group = atrband_grp,inline = atrband_color_inline)
-atrband_lower_color = input.color(color.new(color.red,80),atrband_color_inline,group = atrband_grp,inline = atrband_color_inline)
+atrband_upper_color = input.color(color.new(color.green,50),atrband_color_inline,group = atrband_grp,inline = atrband_color_inline)
+atrband_lower_color = input.color(color.new(color.red,50),atrband_color_inline,group = atrband_grp,inline = atrband_color_inline)
 
 atrband_atr = ta.atr2(atrband_len)
 atrband_osc = atrband_atr[1] * atrband_mult
 atrband_upper = atrband_osc != 0 ? high[1] + atrband_osc : na
 atrband_lower = atrband_osc != 0 ? low[1] - atrband_osc : na
 
-plot(atrband_upper,'ATR band upper', color = atrband_upper_color, linewidth = 2,force_overlay = true)
-plot(atrband_lower,'ATR band lower', color = atrband_lower_color, linewidth = 2,force_overlay = true)
+plot(atrband_upper,'ATR band upper', color = atrband_upper_color, linewidth = 1,force_overlay = true)
+plot(atrband_lower,'ATR band lower', color = atrband_lower_color, linewidth = 1,force_overlay = true)
 
-plotshape(close > atrband_upper  ? high : na, 'Buying climax',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.normal, force_overlay = true)
-plotshape(close < atrband_lower ? low : na, 'Selling climax',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.normal, force_overlay = true)
+plotshape(close >= atrband_upper  ? high : na, 'Buying climax',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.normal, force_overlay = true)
+plotshape(close <= atrband_lower ? low : na, 'Selling climax',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.normal, force_overlay = true)
 
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
 revengrsi_grp = '► Reverse Engineering RSI'
-revengrsi_transp = input.int(50, "Transparency",group = revengrsi_grp)
+revengrsi_transp = input.int(80, "Transparency",group = revengrsi_grp)
 revengrsi_src = input.string('pow', 'Source', options = ['open','high','low','close','hl2','hlc3','ohlc4','pow'],group = revengrsi_grp)
 revengrsi_len = input.int(14,'Length (0 to disable)',group = revengrsi_grp,tooltip = 'Ref: https://c.mql5.com/forextsd/forum/138/reverse_engineering_rsi.pdf')
 revengrsi_ghost_inline = 'Ghost high/low (0 to disable)'
@@ -623,8 +626,8 @@ ghost_bullish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(reve
 ghost_bearish_threshold = revengrsi_ghost_len > 0 ? reverse_engineering_rsi(revengrsi_ghost_len,revengrsi_ghost_bearish_threshold,ghost_lower_src) : na
 
 plot(equilibrium,'Equilibrium', color = color.new(color.silver,revengrsi_transp),style = plot.style_circles,force_overlay = true)
-plot(ghost_bullish_threshold,'Ghost Bullish Threshold', color = color.new(color.blue,revengrsi_transp), linewidth = 2,force_overlay = true)
-plot(ghost_bearish_threshold,'Ghost Bearish Threshold', color = color.new(color.orange,revengrsi_transp), linewidth = 2,force_overlay = true)
+plot(ghost_bullish_threshold,'Ghost Bullish Threshold', color = color.new(color.blue,revengrsi_transp), linewidth = 5,force_overlay = true)
+plot(ghost_bearish_threshold,'Ghost Bearish Threshold', color = color.new(color.orange,revengrsi_transp), linewidth = 5,force_overlay = true)
 
 // Bollinger Bands Remix
 //-------------------------------------------------------------------------------
@@ -681,16 +684,6 @@ bb_outer_upper_color = bba_u_rising and low > bbs_m ? bb_cloud_trend_outer_up : 
 bb_inner_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_inner_dwn : bb_inner_color
 bb_outer_lower_color = bba_l_falling and high < bbs_m ? bb_cloud_trend_outer_dwn : bb_outer_color
 
-// Band acceleration cross
-// bbu_primary_crossover = ta.crossover(bbf_u,bbs_u)
-// bbu_secondary_crossover = ta.crossover(bbf_u2,bbs_u2)
-// bbl_primary_crossunder = ta.crossunder(bbf_l,bbs_l)
-// bbl_secondary_crossunder = ta.crossunder(bbf_l2,bbs_l2)
-
-// Long/Short signals
-// bb_long_entry = bbu_primary_crossover and bbu_secondary_crossover and bba_u_rising and low > bbs_m and high > bba_u2
-// bb_short_entry = bbl_primary_crossunder and bbl_secondary_crossunder and bba_l_falling and high < bbs_m and low < bba_l2
-
 bbf_m_plt = plot(bbf_len > 0 and bb_mult_primary > 0 ? bbf_m : na, 'BB fast middle',color = bb_inner_mid_color,force_overlay = true)
 bbs_m_plt = plot(bbs_len > 0 and bb_mult_primary > 0 ? bbs_m : na, 'BB slow middle',color = bb_outer_mid_color,force_overlay = true)
 
@@ -709,77 +702,3 @@ bbs_l2_plt = plot(bbs_len > 0 and bb_mult_secondary > 0 ? bbs_l2 : na, 'BB slow 
 
 fill(bbf_u2_plt,bbs_u2_plt,bbf_u2,bbs_u2,bb_inner_upper_color,bb_outer_upper_color,'BB secondary upper fill')
 fill(bbf_l2_plt,bbs_l2_plt,bbf_l2,bbs_l2,bb_inner_lower_color,bb_outer_lower_color,'BB secondary lower fill')
-
-// Long/Short highlight
-// plotshape(bb_long_entry ? bba_u : na, 'BB long entry',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.large, force_overlay = true)
-// plotshape(bb_short_entry ? bba_l : na, 'BB short entry',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.large, force_overlay = true)
-
-// Biased candle for reversal signal, atr signal low volatility environment that supports reversal
-//-------------------------------------------------------------------------------
-position_grp = '► Long/Short entries'
-position_enable = input.bool(false,'Enable',group = position_grp)
-
-pos_atr = ta.atr(rli_atr_len)
-pos_rsi = ta.rsi(close,rli_atr_len)
-pos_rli = relative_liquidity_index(rli_atr_len,rli_len)
-pos_rsi_high = pos_rsi > 60
-pos_rsi_low = pos_rsi < 40
-high_liquidity = pos_rli > 60
-high_spread = (high - low) / pos_atr[1] >= 1.618
-
-// Signal + liquidity + spread
-signal_filter = position_enable and high_spread
-long_signal = signal_filter and candle_rising
-short_signal = signal_filter and candle_falling
-
-nearest_lower_price = 0.5 * low
-nearest_higher_price = 1.618 * high
-
-key_levels = array.new<float>()
-
-if position_enable
-	for gap in key_gaps
-		if not na(gap)
-			key_levels.push(gap.zone.bar.l)
-			key_levels.push(gap.zone.bar.h)
-	key_levels.sort(order.ascending)
-
-if key_levels.size() > 0
-	nearest_lower_level = key_levels.get(key_levels.binary_search_leftmost(bbf_l))
-	nearest_higher_level = key_levels.get(key_levels.binary_search_rightmost(bbf_u) - 1)
-
-	if nearest_lower_price < nearest_lower_level
-		nearest_lower_price := nearest_lower_level
-	if nearest_higher_price > nearest_higher_level
-		nearest_higher_price := nearest_higher_level
-
-sl = long_signal ? math.min(low - 1.5 * pos_atr, nearest_lower_price) : short_signal ? math.max(high + 1.5 * pos_atr, nearest_higher_price) : na
-tp = long_signal ? nearest_higher_price : short_signal ? nearest_lower_price : na
-
-rr = long_signal or short_signal ? (tp - close) / (close - sl) : na
-desired_winrate = 0.5
-desired_rr = desired_winrate / (1 - desired_winrate)
-is_satisfactory_rr = math.abs(rr) >= desired_rr
-[lvrg,max_endurable_spread, _] = estimate_leverage(34,0.2,3)
-is_safe_sl = math.abs(close - sl) < max_endurable_spread
-
-scalp_entry_up = long_signal and is_satisfactory_rr and is_safe_sl
-scalp_entry_down = short_signal and is_satisfactory_rr and is_safe_sl
-
-// plotchar(scalp_entry_up,'Biased candle rising',char='L',location=location.belowbar,size = size.tiny,color=color.green,force_overlay = true)
-// plotchar(scalp_entry_down,'Biased candle falling',char='S',location=location.abovebar,size = size.tiny,color=color.red,force_overlay = true)
-
-// var PositionPlot[] pos_plts = array.new<PositionPlot>()
-if scalp_entry_up or scalp_entry_down
-	label.new(x=bar_index, y = scalp_entry_down ? low : high,text = str.format('x{0,number,integer}',lvrg),xloc = xloc.bar_index,yloc = scalp_entry_up ? yloc.belowbar : yloc.abovebar,color=scalp_entry_up ? color.green : color.red,style = label.style_text_outline,size=size.small,force_overlay = true)
-	plt = plot_lib.plot_position_entry(tp,sl,3)
-	log_msg = if scalp_entry_up
-		str.format('Long: {0,number}, TP: {1,number}, SL: {2,number}, RR: {3,number,percent}',close,tp,sl,rr)
-	else if scalp_entry_down
-		str.format('Short: {0,number}, TP: {1,number}, SL: {2,number}, RR: {3,number,percent}',close,tp,sl,rr)
-	log.info(log_msg)
-	alert(log_msg)
-	// array.push(pos_plts, plt)
-	// if pos_plts.size() > 10
-	// 	old_plt = array.shift(pos_plts)
-	// 	clear_position_plot(old_plt)
