@@ -578,11 +578,20 @@ atrband_osc = atrband_atr[1] * atrband_mult
 atrband_upper = atrband_osc != 0 ? high[1] + atrband_osc : na
 atrband_lower = atrband_osc != 0 ? low[1] - atrband_osc : na
 
+atrband_buying_climax = ta.crossover(atrband_lower, bias_reversion_value)
+atrband_selling_climax = ta.crossunder(atrband_upper, bias_reversion_value)
+
+atrband_reversion = switch
+	atrband_buying_climax[1] and bias_reversion_value < atrband_lower => bias_reversion_value - atrband_lower
+	atrband_selling_climax[1] and bias_reversion_value > atrband_upper => bias_reversion_value - atrband_upper
+	=> na
+
 plot(atrband_upper,'ATR band upper', color = atrband_upper_color, linewidth = 1,force_overlay = true)
 plot(atrband_lower,'ATR band lower', color = atrband_lower_color, linewidth = 1,force_overlay = true)
 
 plotshape(close >= atrband_upper  ? high : na, 'Buying climax',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.normal, force_overlay = true)
 plotshape(close <= atrband_lower ? low : na, 'Selling climax',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.normal, force_overlay = true)
+plotarrow(atrband_reversion, 'ATR Band Reversion', color.rgb(150,225,150, 25),color.rgb(220, 80, 80, 25), force_overlay = true)
 
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
@@ -606,6 +615,7 @@ equilibrium_src = switch revengrsi_src
 	'ohlc4' => ohlc4
 	'pow' => bar_pwr
 equilibrium = revengrsi_len > 0 ? reverse_engineering_rsi(revengrsi_len,50,equilibrium_src) : na
+
 ghost_upper_src = switch revengrsi_ghost_src
 	'open' => open
 	'high/low' => high
