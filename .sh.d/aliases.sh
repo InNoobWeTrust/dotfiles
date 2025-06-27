@@ -218,6 +218,8 @@ usable npx && \
         alias httpyac='npx httpyac'
         # run commands from markdown files
         alias runme='npx runme'
+        # Gemini-cli
+        alias gemini='npx https://github.com/google-gemini/gemini-cli'
     }
 
 usable python3 && \
