@@ -371,9 +371,9 @@ alias install-jls='mkdir -p ~/.local/eclipse.jdt.ls/ && curl -s http://download.
 ################### Rust #######################
 
 # install rustup
-alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal --component rls rust-analysis rust-src clippy rustfmt --target wasm32-unknown-unknown -v'
+alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal -v'
 
-alias install-rustup-noprompt='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal --component rls rust-analysis rust-src clippy rustfmt --target wasm32-unknown-unknown -v -y'
+alias install-rustup-noprompt='install-rustup -y'
 
 # automate rustup update
 alias update-rustup='usable rustup && rustup update'
