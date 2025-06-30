@@ -105,9 +105,9 @@ gitlab_push_mr_create() {
 # # usage: batch_open [file_contain_links] [batch_size] [start]
 batch_open() {
     f=${1:-links.txt}
-    size=${2:-25}
+    size=${2:-10}
     start=${3:-1}
-    browser=${4:-firefox}
+    browser=${4:-Microsoft Edge}
     content=($(grep -o 'http[s]\?://[^ ]\+' "$f"))
     len=${#content[@]}
 
