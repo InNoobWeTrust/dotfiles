@@ -77,7 +77,7 @@ export relative_liquidity_index(int atr_len, int rli_len) =>
 export estimate_leverage(int atr_len = 14, float sl_percent = 0.1, float tolerance = 0.5) =>
 	spread_osc = ta.atr(atr_len)
 	max_endurable_spread = spread_osc * (1 + tolerance)
-	max_endurable_percent = max_endurable_spread / close
+	max_endurable_percent = max_endurable_spread / open
 	max_leverage = sl_percent / max_endurable_percent
 	// Return max leverage as whole number
 	[math.floor(max_leverage), max_endurable_spread, max_endurable_percent]
@@ -92,7 +92,7 @@ export display_lvrg_table(int atr_len = 14, float sl_percent = 0.1, float tolera
 	lvrg_tb = overlay ? table.new(pos,2,4,force_overlay = true) : table.new(pos,2,4,force_overlay = false)
 	[lvrg, _, _] = estimate_leverage(atr_len,sl_percent,tolerance)
 	atr = ta.atr(atr_len)
-	atr_percent = atr / close
+	atr_percent = atr / open
 	table.cell(lvrg_tb,0,0,'SL',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
 	table.cell(lvrg_tb,1,0,str.format('{0,number,percent}',sl_percent),bgcolor=color.new(color.gray, transp = 80),text_color=color.red)
 	table.cell(lvrg_tb,0,1,'Tol',text_color=color.gray,bgcolor=color.new(color.gray, transp = 80))
@@ -567,31 +567,34 @@ if lvrg_tb_enable
 // ATR bands
 //-------------------------------------------------------------------------------
 atrband_grp = '► ATR bands'
-atrband_len = input.float(42,'Length',group = atrband_grp)
+atrband_len = input.int(42,'Length',group = atrband_grp)
 atrband_mult = input.float(1.618,'Mult (0 to disable)',group = atrband_grp)
 atrband_color_inline = 'Colors (upper/lower)'
 atrband_upper_color = input.color(color.new(color.green,50),atrband_color_inline,group = atrband_grp,inline = atrband_color_inline)
 atrband_lower_color = input.color(color.new(color.red,50),atrband_color_inline,group = atrband_grp,inline = atrband_color_inline)
 
-atrband_atr = ta.atr2(atrband_len)
-atrband_osc = atrband_atr[1] * atrband_mult
-atrband_upper = atrband_osc != 0 ? high[1] + atrband_osc : na
-atrband_lower = atrband_osc != 0 ? low[1] - atrband_osc : na
+atrband_atr = ta.atr(atrband_len)
+atrband_osc = atrband_atr * atrband_mult
+atrband_upper = atrband_osc != 0 ? open + atrband_osc : na
+atrband_lower = atrband_osc != 0 ? open - atrband_osc : na
 
 atrband_buying_climax = ta.crossover(atrband_lower, bias_reversion_value)
 atrband_selling_climax = ta.crossunder(atrband_upper, bias_reversion_value)
 
 atrband_reversion = switch
-	atrband_buying_climax[1] and bias_reversion_value < atrband_lower => bias_reversion_value - atrband_lower
-	atrband_selling_climax[1] and bias_reversion_value > atrband_upper => bias_reversion_value - atrband_upper
+	bias_reversion_value <= atrband_lower => 100 * (bias_reversion_value - atrband_lower) / atrband_osc
+	bias_reversion_value >= atrband_upper => 100 * (bias_reversion_value - atrband_upper) / atrband_osc
 	=> na
+
+if barstate.isconfirmed and not na(atrband_reversion) and math.abs(atrband_reversion) > 1e-3
+	log.info("ATR reversion: {0}", atrband_reversion)
 
 plot(atrband_upper,'ATR band upper', color = atrband_upper_color, linewidth = 1,force_overlay = true)
 plot(atrband_lower,'ATR band lower', color = atrband_lower_color, linewidth = 1,force_overlay = true)
 
 plotshape(close >= atrband_upper  ? high : na, 'Buying climax',style = shape.circle,location = location.absolute, color = color.rgb(157, 225, 159, 70), size = size.normal, force_overlay = true)
 plotshape(close <= atrband_lower ? low : na, 'Selling climax',style = shape.circle,location = location.absolute, color = color.rgb(201, 134, 134, 70), size = size.normal, force_overlay = true)
-plotarrow(atrband_reversion, 'ATR Band Reversion', color.rgb(150,225,150, 25),color.rgb(220, 80, 80, 25), force_overlay = true)
+plotarrow((atrband_reversion > 50 and rssi < 46) or (atrband_reversion < -50 and rssi > 54) ? atrband_reversion : na, 'ATR Band Reversion', color.rgb(150,225,150, 25),color.rgb(220, 80, 80, 25), force_overlay = true)
 
 // Overbought/Oversold price by reverse engineering RSI
 //-------------------------------------------------------------------------------
