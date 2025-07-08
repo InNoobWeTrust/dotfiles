@@ -6,6 +6,7 @@ export with_starship=true
 # Set home for cargo of rust
 export RUSTUP_HOME="$HOME/.local/rustup"
 export CARGO_HOME="$HOME/.local/cargo"
+export CARGO_INSTALL_ROOT="$HOME/.local/cargo"
 # Set home for go lang
 export GOPATH="$HOME/.local/go"
 # Set pub cache dir for dart
