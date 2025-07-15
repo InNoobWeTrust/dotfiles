@@ -326,26 +326,25 @@ export support_breakout(float support) =>
 //-------------------------------------------------------------------------------
 spo_grp = '► Structure Power Oscillator'
 spo_bias_len = input.int(9,'Bias length',group = spo_grp)
-spo_bias_fast_len = input.int(16,'Fast length',group = spo_grp)
-spo_bias_slow_len = input.int(42,'Slow length',group = spo_grp)
+spo_bias_sma_len = input.int(16,'SMA length',group = spo_grp)
 spo_rssi_len = input.int(14,'RSSI length', group = spo_grp)
 spo_rssi_bullish = input.float(60,'RSSI Bullish Threshold',group = spo_grp)
 spo_rssi_bearish = input.float(40,'RSSI Bearish Threshold',group = spo_grp)
 
 bar_bias_rma = ta.rma(bar_bias, spo_bias_len)
-bar_bias_ma_fast = ta.ema(bar_bias_rma, spo_bias_fast_len)
-bar_bias_ma_slow = ta.ema(bar_bias_rma, spo_bias_slow_len)
+bar_bias_sma = ta.sma(bar_bias_rma, spo_bias_sma_len)
+bar_bias_dir = 3 * bar_bias_rma - 2 * bar_bias_sma
 rssi = ta.rsi(bar_pwr,spo_rssi_len)
 bar_pwr_reversion = open - bar_bias_rma
 bias_reversion_value = ta.sma(bar_pwr_reversion, spo_bias_len)
 
-biased_tr_color = switch bar_bias_rma > 0
+bias_rma_color = switch bar_bias_rma > 0
 	true => color.new(color.teal, 20)
 	false => color.new(color.maroon, 20)
-biased_tr_rma_fast_color = switch bar_bias_ma_fast > 0
+bias_sma_color = switch bar_bias_sma > 0
 	true => color.new(color.green, 70)
 	false => color.new(color.red, 70)
-biased_tr_rma_slow_color = switch bar_bias_ma_slow > 0
+bias_dir_color = switch bar_bias_dir > 0
 	true => color.new(color.aqua, 80)
 	false => color.new(color.orange, 80)
 bias_bg = switch
@@ -353,11 +352,11 @@ bias_bg = switch
 	rssi <= spo_rssi_bearish => color.new(color.maroon,80)
 	=> color(na)
 
-// plot(bar_pwr, 'Bar Power', color = color.new(biased_tr_color,80), style = plot.style_line, force_overlay = true) // Almost invisible, plot to use as source for other indicators
+// plot(bar_pwr, 'Bar Power', color = color.new(bias_rma_color,80), style = plot.style_line, force_overlay = true) // Almost invisible, plot to use as source for other indicators
 plot(bias_reversion_value, 'Bias Reversion Value', color = color.new(color.purple,50), linewidth = 2, style = plot.style_line, force_overlay = true)
-plot(bar_bias_rma, 'Bias RMA', color = biased_tr_color, style = plot.style_histogram, force_overlay = false)
-plot(bar_bias_ma_fast, 'Bias MA fast', color = biased_tr_rma_fast_color, style = plot.style_columns, force_overlay = false)
-plot(bar_bias_ma_slow, 'Bias MA slow', color = biased_tr_rma_slow_color, style = plot.style_area, force_overlay = false)
+plot(bar_bias_rma, 'Bias RMA', color = bias_rma_color, style = plot.style_histogram, force_overlay = false)
+plot(bar_bias_sma, 'Bias SMA', color = bias_sma_color, style = plot.style_columns, force_overlay = false)
+plot(bar_bias_dir, 'Bias Direction', color = bias_dir_color, style = plot.style_area, force_overlay = false)
 bgcolor(bias_bg, title = 'Bias Bullish/Bearish')
 
 // Scaled Relative Liquidity Index
@@ -650,8 +649,8 @@ bb_len_inline = 'Lengths (0 to disable)'
 bbf_len = input.int(16,bb_len_inline,group = bb_grp,inline = bb_len_inline)
 bbs_len = input.int(42,'',group = bb_grp,inline = bb_len_inline)
 bb_mult_inline = 'Mult (0 to disable)'
-bb_mult_primary = input.float(0,bb_mult_inline,group = bb_grp, inline = bb_mult_inline)
-bb_mult_secondary = input.float(0,'',group = bb_grp, inline = bb_mult_inline)
+bb_mult_primary = input.float(2,bb_mult_inline,group = bb_grp, inline = bb_mult_inline)
+bb_mult_secondary = input.float(3,'',group = bb_grp, inline = bb_mult_inline)
 bb_color_inline = 'BB cloud gradient colors (opacity 0% to hide clouds)'
 bb_inner_color = input.color(color.new(#da9f2a, 88),'Inner',group = bb_grp, inline = bb_color_inline)
 bb_outer_color = input.color(color.new(#675a56, 90),'Outer',group = bb_grp, inline = bb_color_inline)
