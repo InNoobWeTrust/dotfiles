@@ -2337,7 +2337,7 @@ The script should do this: \(ai.prompt)</string>
 	<key>RestoreWindowsToSameSpaces</key>
 	<true/>
 	<key>ShowFullScreenTabBar</key>
-	<false/>
+	<true/>
 	<key>SmartPlacement</key>
 	<true/>
 	<key>SoundForEsc</key>

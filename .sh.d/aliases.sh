@@ -401,6 +401,9 @@ alias install-zoxide='curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/z
 ## Terminal multiplexer
 alias install-zellij-cargo='cargo install --locked zellij'
 
+## AI Agent CLI
+alias install-opencode='curl -fsSL https://raw.githubusercontent.com/opencode-ai/opencode/refs/heads/main/install | bash'
+
 ############################# Custom ##########################################
 # Import custom alias
 # shellcheck source=/dev/null

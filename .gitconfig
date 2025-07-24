@@ -1,7 +1,10 @@
 [core]
   editor = nvim
 [credential]
-  helper = manager
+	helper = manager-core
+	helper = manager
+	helper = osxkeychain
+	helper = wincred
 [merge]
   tool = nvim
 [mergetool]
@@ -25,5 +28,9 @@
   path = ~/.gitconfig.d/.work.gitconfig
 [includeIf "gitdir:~/Developer/rex/"]
   path = ~/.gitconfig.d/.work.collab.gitconfig
+[includeIf "gitdir:~/Developer/inter-k/"]
+  path = ~/.gitconfig.d/.interk.gitconfig
 [help]
 	autocorrect = 20
+[credential "https://dev.azure.com"]
+	useHttpPath = true
