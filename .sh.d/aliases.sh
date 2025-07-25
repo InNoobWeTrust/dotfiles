@@ -402,7 +402,7 @@ alias install-zoxide='curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/z
 alias install-zellij-cargo='cargo install --locked zellij'
 
 ## AI Agent CLI
-alias install-opencode='curl -fsSL https://raw.githubusercontent.com/opencode-ai/opencode/refs/heads/main/install | bash'
+alias install-opencode='curl -fsSL https://opencode.ai/install | bash'
 
 ############################# Custom ##########################################
 # Import custom alias
