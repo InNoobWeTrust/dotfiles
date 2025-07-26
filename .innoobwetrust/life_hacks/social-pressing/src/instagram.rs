@@ -45,54 +45,34 @@ async fn choose_report_option(client: &Client, target: &str) -> Result<bool, Cmd
         .await
         .unwrap_or_default();
 
-    let specific_reasons = client
-        .find_all(Locator::Css(
-            r#"fieldset > div > div[role="button"][tabindex="0"]"#,
-        ))
-        .await
-        .unwrap_or_default();
+    if reasons.len() == 0 {
+        warn!(
+            target = target,
+            "No report option found, proceeding to submit..."
+        );
+        return Ok(true);
+    }
 
     let mut filtered_reasons = Vec::new();
     let mut filtered_reasons_str = Vec::new();
 
-    match (reasons.len() > 0, specific_reasons.len() > 0) {
-        (true, false) => {
-            for reason in reasons {
-                if !reason.is_displayed().await? {
-                    continue;
-                }
-                let reason_str = reason.text().await?;
-                if [
-                    "It's pretending to be someone else".to_lowercase(),
-                    "They may be under the age of 13".to_lowercase(),
-                    "Intellectual property violation".to_lowercase(),
-                ]
-                .iter()
-                .any(|r| reason_str.trim().to_lowercase().contains(r))
-                {
-                    continue;
-                }
-                filtered_reasons.push(reason);
-                filtered_reasons_str.push(reason_str);
-            }
+    for reason in reasons {
+        if !reason.is_displayed().await? {
+            continue;
         }
-        (false, true) => {
-            for reason in specific_reasons {
-                if !reason.is_displayed().await? {
-                    continue;
-                }
-                let reason_str = reason.text().await?;
-                filtered_reasons.push(reason);
-                filtered_reasons_str.push(reason_str);
-            }
+        let reason_str = reason.text().await?;
+        if [
+            "It's pretending to be someone else".to_lowercase(),
+            "They may be under the age of 13".to_lowercase(),
+            "Intellectual property violation".to_lowercase(),
+        ]
+        .iter()
+        .any(|r| reason_str.trim().to_lowercase().contains(r))
+        {
+            continue;
         }
-        _ => {
-            warn!(
-                target = target,
-                "No report option found, proceeding to submit..."
-            );
-            return Ok(true);
-        }
+        filtered_reasons.push(reason);
+        filtered_reasons_str.push(reason_str);
     }
 
     if filtered_reasons.len() == 0 {
@@ -109,7 +89,11 @@ async fn choose_report_option(client: &Client, target: &str) -> Result<bool, Cmd
     let chosen_report = filtered_reasons.choose(&mut rand::rng()).unwrap();
     let reason = chosen_report.text().await?;
 
-    info!(target = target, "Choosing reason {reason:?}...");
+    info!(
+        target = target,
+        step = "option",
+        "Choosing reason {reason:?}..."
+    );
 
     mouse_move_to_element(client, chosen_report).await?;
     perform_click(client, chosen_report).await?;
@@ -123,18 +107,22 @@ async fn report_process(
     target: &str,
     menu_btn: &Element,
 ) -> Result<bool, CmdError> {
-    debug!(target = target, "Clicking 'menu' button...");
+    debug!(target = target, step = "menu", "Clicking 'menu' button...");
     perform_click(client, menu_btn).await?;
     delay(None);
 
     let mut menu_items = client
-        .find_all(Locator::Css(r#"div[role="dialog"] > button[tabindex="0"]"#))
+        .find_all(Locator::Css(r#"div[role="dialog"] button[tabindex="0"]"#))
         .await?;
     menu_items.shuffle(&mut rand::rng());
     for item in menu_items {
         let item_text = item.text().await?;
         if item_text.to_lowercase().contains("report") {
-            debug!(target = target, "Clicking '{item_text}' button...");
+            debug!(
+                target = target,
+                step = "report",
+                "Clicking '{item_text}' button..."
+            );
             perform_click(client, &item).await?;
             break;
         }
@@ -154,7 +142,11 @@ async fn report_process(
     for item in menu_items {
         let item_text = item.text().await?;
         if item_text.to_lowercase().contains("report account") {
-            debug!(target = target, "Clicking '{item_text}' button...");
+            debug!(
+                target = target,
+                step = "report account",
+                "Clicking '{item_text}' button..."
+            );
             perform_click(client, &item).await?;
             break;
         }
@@ -178,25 +170,23 @@ async fn report_process(
 
         // Try pressing submit after every choice made
         let mut is_finished = false;
-        for btn_css in [
-            r#"div[role="dialog"] > div > div > div > div > div > div > button[type="button"]"#, // Submit report
-            r#"div[role="dialog"] > div > div > div > div > div > div > div:nth-child(4) > button[type="button"]"#, // Close
-        ] {
-            match client.find(Locator::Css(btn_css)).await {
-                Ok(btn) => {
-                    if btn.attr("disabled").await?.is_some() {
-                        // Skip if button is disabled
-                        continue;
-                    }
-                    let btn_text = btn.text().await?;
-                    debug!(target = target, "Clicking {btn_text}");
-                    mouse_move_to_element(client, &btn).await?;
-                    perform_click(client, &btn).await?;
-                    delay(None);
-                    is_finished = true;
+        match client
+            .find(Locator::Css(r#"div[role="dialog"] button[type="button"]"#))
+            .await
+        {
+            Ok(btn) => {
+                if btn.attr("disabled").await?.is_some() {
+                    // Skip if button is disabled
+                    continue;
                 }
-                _ => (),
+                let btn_text = btn.text().await?;
+                debug!(target = target, "Clicking {btn_text}");
+                mouse_move_to_element(client, &btn).await?;
+                perform_click(client, &btn).await?;
+                delay(None);
+                is_finished = true;
             }
+            _ => (),
         }
 
         if is_finished {

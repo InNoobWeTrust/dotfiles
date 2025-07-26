@@ -63,7 +63,15 @@ struct GeckoDriver {
 
 impl GeckoDriver {
     pub fn new(port: usize) -> Result<Self, Box<dyn Error>> {
-        let proc = Subprocess::new("geckodriver", &vec!["-p".to_string(), port.to_string(), "--log".to_string(), "fatal".to_string()])?;
+        let proc = Subprocess::new(
+            "geckodriver",
+            &vec![
+                "-p".to_string(),
+                port.to_string(),
+                "--log".to_string(),
+                "fatal".to_string(),
+            ],
+        )?;
 
         debug!(%port, "starting geckodriver...");
         // Sleep for 3 seconds, waiting webdriver
