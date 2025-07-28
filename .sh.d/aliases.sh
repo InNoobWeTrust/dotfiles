@@ -178,6 +178,14 @@ usable pkgx && \
         if ! usable btm; then
             alias btm='pkgx btm'
         fi
+        ## Docker management
+        if ! usable lazydocker; then
+            alias lazydocker='pkgx lazydocker'
+        fi
+        ## Git management
+        if ! usable lazygit; then
+            alias lazygit='pkgx lazygit'
+        fi
         ## Modern python package manager
         if ! usable uv; then
             alias uv='pkgx uv'

@@ -1,5 +1,3 @@
-[core]
-  editor = nvim
 [credential]
 	helper = manager-core
 	helper = manager
