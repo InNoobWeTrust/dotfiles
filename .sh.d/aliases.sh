@@ -185,9 +185,9 @@ usable pkgx && \
             if ! usable python; then
                 alias python='uv run python'
             fi
-            if ! usable platformio; then
-                alias platformio='uvx platformio'
-            fi
+        fi
+        if ! usable platformio; then
+            alias platformio='uvx platformio'
         fi
         ## Nodejs package manager
         if ! usable npm; then
