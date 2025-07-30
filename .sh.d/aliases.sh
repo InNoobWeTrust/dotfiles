@@ -186,6 +186,10 @@ usable pkgx && \
         if ! usable lazygit; then
             alias lazygit='pkgx lazygit'
         fi
+        ## GNU Make
+        if ! usable make; then
+            alias make='pkgx make'
+        fi
         ## Modern python package manager
         if ! usable uv; then
             alias uv='pkgx uv'
