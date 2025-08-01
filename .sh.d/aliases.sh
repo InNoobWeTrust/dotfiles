@@ -190,6 +190,10 @@ usable pkgx && \
         if ! usable make; then
             alias make='pkgx make'
         fi
+        ## Terraform
+        if ! usable terraform; then
+            alias terraform='pkgx terraform'
+        fi
         ## Modern python package manager
         if ! usable uv; then
             alias uv='pkgx uv'
