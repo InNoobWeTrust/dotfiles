@@ -143,6 +143,7 @@ usable docker && \
         alias selenium-docker='docker run --rm -d -p 4444:4444 --shm-size 2g --name selenium selenium/standalone-chrome:latest'
         # Selenium chromium on ARM
         alias selenium-arm-docker='docker run --rm -d -p 4444:4444 --shm-size 2g --name selenium seleniarm/standalone-chromium'
+        alias docker-cleanup='yes | docker system prune -a --volumes && yes | docker builder prune -a'
     }
 
 usable pkgx && \
