@@ -234,12 +234,19 @@ usable npx && \
     {
         alias http-server='npx http-server'
         alias remixd='npx @remix-project/remixd'
-        # Execute http files
+        # Execute http files (http requests)
         alias httpyac='npx httpyac'
         # run commands from markdown files
         alias runme='npx runme'
         # Gemini-cli
         alias gemini='npx https://github.com/google-gemini/gemini-cli'
+    }
+
+## Node-builtin package management for javascript
+usable corepack && \
+    {
+        alias yarn='corepack yarn'
+        alias pnpm='corepack pnpm'
     }
 
 usable python3 && \
