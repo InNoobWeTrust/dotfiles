@@ -84,6 +84,7 @@ usable open && \
 usable curl && \
     {
         alias netmux='bash <(curl -L zellij.dev/launch)'
+        alias http-proxy='curl --location "https://api.proxyscrape.com/v4/free-proxy-list/get?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=all&skip=0&limit=1"'
     }
 
 # Git utilities
