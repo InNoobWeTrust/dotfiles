@@ -200,12 +200,6 @@ usable pkgx && \
         if ! usable uv; then
             alias uv='pkgx uv'
             alias uvx='pkgx uvx'
-            if ! usable python; then
-                alias python='uv run python'
-            fi
-        fi
-        if ! usable platformio; then
-            alias platformio='uvx platformio'
         fi
         ## Nodejs package manager
         if ! usable npm; then
@@ -253,6 +247,17 @@ usable corepack && \
 usable python3 && \
     {
         alias py-http-server='python3 -m http.server'
+    }
+
+usable uv && \
+    {
+        ! usable python && alias python='uv run python'
+    }
+
+usable uvx && \
+    {
+        ! usable marimo && alias marimo='uvx marimo'
+        ! usable platformio && alias platformio='uvx platformio'
     }
 
 # Find using ripgrep
