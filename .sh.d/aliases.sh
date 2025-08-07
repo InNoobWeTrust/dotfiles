@@ -150,78 +150,44 @@ usable docker && \
 usable pkgx && \
     {
         ## Advance devcontainer
-        if ! usable devpod; then
-            alias devpod='pkgx devpod'
-        fi
+        ! usable devpod && alias devpod='pkgx devpod'
         ## Terminal multiplexer
-        if ! usable zellij; then
-            alias zellij='pkgx zellij'
-        fi
+        ! usable zellij && alias zellij='pkgx zellij'
         ## File manager
-        if ! usable yazi; then
-            alias yazi='pkgx yazi'
-        fi
+        ! usable yazi && alias yazi='pkgx yazi'
         ## Code editors
-        if ! usable nvim; then
-            alias nvim='pkgx +neovim.io nvim'
-        fi
-        if ! usable hx; then
-            alias hx='pkgx hx'
-        fi
+        ! usable nvim && alias nvim='pkgx +neovim.io nvim'
+        ! usable hx && alias hx='pkgx hx'
         ## Text document viewer
-        if ! usable bat; then
-            alias bat='pkgx bat'
-        fi
+        ! usable bat && alias bat='pkgx bat'
         ## Listing files
-        if ! usable exa; then
-            alias exa='pkgx exa'
-        fi
+        ! usable exa && alias exa='pkgx exa'
         ## System monitor
-        if ! usable btm; then
-            alias btm='pkgx btm'
-        fi
+        ! usable btm && alias btm='pkgx btm'
         ## Docker management
-        if ! usable lazydocker; then
-            alias lazydocker='pkgx lazydocker'
-        fi
+        ! usable lazydocker && alias lazydocker='pkgx lazydocker'
         ## Git management
-        if ! usable lazygit; then
-            alias lazygit='pkgx lazygit'
-        fi
+        ! usable lazygit && alias lazygit='pkgx lazygit'
         ## GNU Make
-        if ! usable make; then
-            alias make='pkgx make'
-        fi
+        ! usable make && alias make='pkgx make'
         ## Terraform
-        if ! usable terraform; then
-            alias terraform='pkgx terraform'
-        fi
+        ! usable terraform && alias terraform='pkgx terraform'
+        ## K8s
+        ! usable kubectl && alias kubectl='pkgx kubectl'
+        ## Lightweight kubernetes
+        ! usable kind && alias kind='pkgx kind'
         ## Modern python package manager
-        if ! usable uv; then
-            alias uv='pkgx uv'
-            alias uvx='pkgx uvx'
-        fi
+        ! usable uv && alias uv='pkgx uv' && alias uvx='pkgx uvx'
         ## Nodejs package manager
-        if ! usable npm; then
-            alias npm='pkgx npm'
-            alias npx='pkgx npx'
-        fi
+        ! usable npm && alias npm='pkgx npm' &&  alias npx='pkgx npx'
         ## Jupyter notebook
-        if ! usable jupyter; then
-            alias jupyter='pkgx jupyter'
-        fi
+        ! usable jupyter && alias jupyter='pkgx jupyter'
         ## yt-dlp
-        if ! usable yt-dlp; then
-            alias yt-dlp='pkgx yt-dlp'
-        fi
+        ! usable yt-dlp && alias yt-dlp='pkgx yt-dlp'
         ## curl
-        if ! usable curl; then
-            alias curl='pkgx curl'
-        fi
+        ! usable curl && alias curl='pkgx curl'
         ## wget
-        if ! usable wget; then
-            alias wget='pkgx wget'
-        fi
+        ! usable wget && alias wget='pkgx wget'
     }
 
 # Node utilities
