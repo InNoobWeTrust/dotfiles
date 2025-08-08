@@ -172,6 +172,8 @@ usable pkgx && \
         ! usable make && alias make='pkgx make'
         ## Terraform
         ! usable terraform && alias terraform='pkgx terraform'
+        ## Helm
+        ! usable helm && alias helm='pkgx helm'
         ## K8s
         ! usable kubectl && alias kubectl='pkgx kubectl'
         ## Lightweight kubernetes
