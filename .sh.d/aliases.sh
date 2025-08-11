@@ -205,6 +205,10 @@ usable npx && \
         alias runme='npx runme'
         # Gemini-cli
         alias gemini='npx https://github.com/google-gemini/gemini-cli'
+        # Claude code
+        alias claude='npx @anthropic-ai/claude-code'
+        # OpenAI Codex
+        alias codex='npx @openai/codex'
     }
 
 ## Node-builtin package management for javascript
