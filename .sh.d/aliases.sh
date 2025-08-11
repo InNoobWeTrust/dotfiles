@@ -176,6 +176,8 @@ usable pkgx && \
         ! usable helm && alias helm='pkgx helm'
         ## K8s
         ! usable kubectl && alias kubectl='pkgx kubectl'
+        ## K9s
+        ! usable k9s && alias k9s='pkgx k9s'
         ## Lightweight kubernetes
         ! usable kind && alias kind='pkgx kind'
         ## Modern python package manager
