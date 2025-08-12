@@ -42,9 +42,9 @@ alias env_friendly='friendly_builtin=true'
 alias godmode='env_rainbow env_friendly env_starship reload-shell'
 
 # install starship prompt
-alias install-starship='mkdir -p ~/.local/$USER/bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/$USER/bin --platform unknown-liux-gnu'
+usable curl && alias install-starship='mkdir -p ~/.local/$USER/bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/$USER/bin --platform unknown-liux-gnu'
 alias install-starship-cargo='cargo install starship'
-alias install-starship-x86='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ starship'
+usable curl && alias install-starship-x86='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ starship'
 
 ########################## Life hacks #########################################
 # Add an "alert" alias for long running commands.  Use like so:
@@ -78,13 +78,6 @@ alias cron-routine='cron_routine'
 usable open && \
     {
         alias batch-open='batch_open'
-    }
-
-# Quick terminal multiplexer
-usable curl && \
-    {
-        alias netmux='bash <(curl -L zellij.dev/launch)'
-        alias http-proxy='curl --location "https://api.proxyscrape.com/v4/free-proxy-list/get?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=all&skip=0&limit=1"'
     }
 
 # Git utilities
@@ -125,26 +118,37 @@ usable colima && \
 usable docker && \
     {
         # Web browser in terminal
-        alias browsh-docker='docker run -it --rm browsh/browsh'
+        alias browsh-docker='docker run --name browsh --rm -it browsh/browsh'
         # IDE on browser
-        alias theia-docker='docker run -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
+        alias theia-docker='docker run --name theia -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
         # Full VsCode over browser
-        alias code-server-docker='docker run -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
+        alias code-server-docker='docker run --name code-server -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
         # Swagger api documentation generator
-        alias swagger-docker='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
+        alias swagger-docker='docker run --name swagger --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
         # MongoDB
-        alias mongo-docker='docker run --rm -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=root --name mongo mongo:latest'
+        alias mongo-docker='docker run --name mongo --rm -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=root mongo:latest'
         # MySQL
-        alias mysql-docker='docker run --rm -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root --name mysql mysql:latest'
+        alias mysql-docker='docker run --name mysql --rm -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:latest'
         # PySpark notebook
-        alias sparkbook-docker='docker run --rm -d -p 8888:8888 -v "$(pwd):/home/jovyan/work" --name pyspark jupyter/pyspark-notebook:latest'
+        alias sparkbook-docker='docker run --name pyspark --rm -d -p 8888:8888 -v "$(pwd):/home/jovyan/work" jupyter/pyspark-notebook:latest'
         # Google's colab runtime
-        alias colab-docker='docker run --rm -d -p 9000:8080 -v "$(pwd):/content" --name colab us-docker.pkg.dev/colab-images/public/runtime'
+        alias colab-docker='docker run --name colab --rm -d -p 9000:8080 -v "$(pwd):/content" us-docker.pkg.dev/colab-images/public/runtime'
         # Selenium chromium
-        alias selenium-docker='docker run --rm -d -p 4444:4444 --shm-size 2g --name selenium selenium/standalone-chrome:latest'
+        alias selenium-docker='docker run --name selenium --rm -d -p 4444:4444 --shm-size 2g selenium/standalone-chrome:latest'
         # Selenium chromium on ARM
-        alias selenium-arm-docker='docker run --rm -d -p 4444:4444 --shm-size 2g --name selenium seleniarm/standalone-chromium'
+        alias selenium-arm-docker='docker run --name selenium --rm -d -p 4444:4444 --shm-size 2g seleniarm/standalone-chromium'
+        # Convert markdown to pdf
+        alias mdpdfinator-docker='docker run --name mdpdfinator --rm -v ${PWD}:/app yjpictures/mdpdfinator'
+        # Rancher
+        alias rancher-docker='docker run --name rancher --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher'
+        # Cleanup docker data and cache
         alias docker-cleanup='yes | docker system prune -a --volumes && yes | docker builder prune -a'
+    }
+
+usable x && \
+    {
+        ## File manager
+        ! usable yazi && alias yazi='pkgx yazi'
     }
 
 usable pkgx && \
@@ -194,13 +198,25 @@ usable pkgx && \
         ! usable wget && alias wget='pkgx wget'
     }
 
+usable curl && \
+    {
+        # Quick terminal multiplexer
+        alias netmux='bash <(curl -L zellij.dev/launch)'
+        # Get random proxy
+        alias http-proxy='curl --location "https://api.proxyscrape.com/v4/free-proxy-list/get?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=all&skip=0&limit=1"'
+    }
+
 # Node utilities
 usable npx && \
     {
+        # http server
         alias http-server='npx http-server'
+        # Smart contract development
         alias remixd='npx @remix-project/remixd'
         # Execute http files (http requests)
         alias httpyac='npx httpyac'
+        # Serve live rendered markdown files
+        alias markserv='npx markserv'
         # run commands from markdown files
         alias runme='npx runme'
         # Gemini-cli
@@ -272,7 +288,7 @@ usable neovide && \
 
 ############################### PATH management ###############################
 
-alias install-pathman='curl -s https://webinstall.dev/pathman | bash'
+usable curl && alias install-pathman='curl -s https://webinstall.dev/pathman | bash'
 
 alias install-pathman-npm='npm install -g pathman'
 
@@ -298,22 +314,27 @@ alias update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && ap
 # Update possible tools (normal mode)
 alias update-tooling='(update-rustup) || (update-pyenv) || (update-conda) || (update-brew)'
 
+#################### X ########################
+
+usable curl && alias install-x='eval "$(curl https://get.x-cmd.com)"'
+
 #################### Pkgx ######################
-alias install-pkgx='curl -fsS https://pkgx.sh | sh'
+
+usable curl && alias install-pkgx='curl -fsS https://pkgx.sh | sh'
 
 #################### Brew ######################
 
-alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"'
+usable curl && alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"'
 
 alias update-brew='usable brew && brew update && brew upgrade'
 
 #################### Sdkman ####################
 
-alias install-sdkman='mkdir -p $HOME/.local && export SDKMAN_DIR="$HOME/.local/sdkman" && curl -s "https://get.sdkman.io" | bash'
+usable curl && alias install-sdkman='mkdir -p $HOME/.local && export SDKMAN_DIR="$HOME/.local/sdkman" && curl -s "https://get.sdkman.io" | bash'
 
 ################# Cheat sheet ##################
 
-alias install-cheat-sh='mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/:cht.sh > $HOME/.local/$USER/bin/cht.sh && chmod +x $HOME/.local/$USER/bin/cht.sh'
+usable curl && alias install-cheat-sh='mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/:cht.sh > $HOME/.local/$USER/bin/cht.sh && chmod +x $HOME/.local/$USER/bin/cht.sh'
 
 ################### Python #####################
 
@@ -325,7 +346,7 @@ alias update-pip='usable pip && pip install -U $(pip list | tail -n +3 | cut -d 
 alias update-user-pip='usable pip && pip install -U --user $(pip list | tail -n +3 | cut -d " " -f 1 | tr "\n" " ")'
 
 # install pyenv
-alias install-pyenv='curl https://pyenv.run | bash'
+usable curl && alias install-pyenv='curl https://pyenv.run | bash'
 
 # update pyenv
 alias update-pyenv='usable pyenv && pyenv update'
@@ -334,51 +355,51 @@ alias update-pyenv='usable pyenv && pyenv update'
 alias install-pipx='python3 -m pip install -U pipx && python3 -m pipx ensurepath'
 
 # install poetry
-alias install-poetry='curl -sSL https://install.python-poetry.org | python -'
+usable curl && alias install-poetry='curl -sSL https://install.python-poetry.org | python -'
 alias install-poetry-by-pipx='pipx install poetry'
 
 # install micromamba
-alias install-micromamba='usable curl && "${SHELL}" <(curl -L micro.mamba.pm/install.sh)'
+usable curl && alias install-micromamba='usable curl && "${SHELL}" <(curl -L micro.mamba.pm/install.sh)'
 alias update-micromamba='usable micromamba && micromamba self-update'
 
 ################### NodeJs #####################
 
 # install nvm
-alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash -s -- --no-use'
+usable curl && alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash -s -- --no-use'
 
 # automate nvm update node
 alias update-nvm='usable nvm && nvm install node --reinstall-packages-from=node -y && nvm use default'
 
 # install volta
-alias install-volta='mkdir -p $VOLTA_HOME && curl https://get.volta.sh | bash -s -- --skip-setup'
+usable curl && alias install-volta='mkdir -p $VOLTA_HOME && curl https://get.volta.sh | bash -s -- --skip-setup'
 
-alias install-bun='usable bash && usable curl && BUN_INSTALL="$HOME/.local/bun" bash <(curl -fsSL https://bun.sh/install)'
+usable curl && alias install-bun='usable bash && usable curl && BUN_INSTALL="$HOME/.local/bun" bash <(curl -fsSL https://bun.sh/install)'
 
 # cleanup unused version of node
 alias cleanup-nvm='nvm ls --no-colors | grep -o "^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*" | tr -d "[[:blank:]]v" | xargs -I % $SHELL -c ". $NVM_DIR/nvm.sh && nvm uninstall %"'
 
 ################### PHP ########################
 
-alias install-convertio='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/convertio https://api.convertio.co/convertio && chmod +x ~/.local/$USER/bin/convertio'
+usable curl && alias install-convertio='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/convertio https://api.convertio.co/convertio && chmod +x ~/.local/$USER/bin/convertio'
 
 ################### Editor #####################
 
 # Update stable build of neovim
-alias install-nvim-stable='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage && chmod +x ~/.local/$USER/bin/nvim'
+usable curl && alias install-nvim-stable='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage && chmod +x ~/.local/$USER/bin/nvim'
 
 # Update nightly build of neovim
-alias install-nvim-nightly='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
+usable curl && alias install-nvim-nightly='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
 
 # Update code-server
-alias install-code-server='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards "**/code-server" --strip-components 1'
+usable curl && alias install-code-server='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards "**/code-server" --strip-components 1'
 
 # Download latest eclipse jdt language server
-alias install-jls='mkdir -p ~/.local/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/eclipse.jdt.ls/'
+usable curl && alias install-jls='mkdir -p ~/.local/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/eclipse.jdt.ls/'
 
 ################### Rust #######################
 
 # install rustup
-alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal -v'
+usable curl && alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal -v'
 
 alias install-rustup-noprompt='install-rustup -y'
 
@@ -403,13 +424,17 @@ alias install-nushell-cargo='cargo install --locked nu'
 alias install-nushell-npm='npm install -g nushell'
 
 ## Smarter cd by using zoxide
-alias install-zoxide='curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh'
+usable curl && alias install-zoxide='curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh'
 
 ## Terminal multiplexer
 alias install-zellij-cargo='cargo install --locked zellij'
 
 ## AI Agent CLI
-alias install-opencode='curl -fsSL https://opencode.ai/install | bash'
+usable curl && alias install-opencode='curl -fsSL https://opencode.ai/install | bash'
+
+################ DevSecMLOps ###################
+
+alias install-garden='curl -sL https://get.garden.io/install.sh | bash'
 
 ############################# Custom ##########################################
 # Import custom alias
