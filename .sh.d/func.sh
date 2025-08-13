@@ -107,7 +107,7 @@ batch_open() {
     f=${1:-links.txt}
     size=${2:-10}
     start=${3:-1}
-    browser=${4:-Microsoft Edge}
+    browser=${4:-firefox}
     content=($(grep -o 'http[s]\?://[^ ]\+' "$f"))
     len=${#content[@]}
 
