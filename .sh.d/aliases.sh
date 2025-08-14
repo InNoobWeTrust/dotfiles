@@ -217,6 +217,8 @@ usable npx && \
         alias httpyac='npx httpyac'
         # Serve live rendered markdown files
         alias markserv='npx markserv'
+        # Render markdown to html
+        alias marked='npx marked'
         # run commands from markdown files
         alias runme='npx runme'
         # Gemini-cli
