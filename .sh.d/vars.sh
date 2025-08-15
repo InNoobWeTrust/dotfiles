@@ -2,7 +2,6 @@
 
 export use_color=true
 export friendly_builtin=true
-export with_starship=true
 # Set home for cargo of rust
 export RUSTUP_HOME="$HOME/.local/rustup"
 export CARGO_HOME="$HOME/.local/cargo"

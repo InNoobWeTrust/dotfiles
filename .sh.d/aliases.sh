@@ -29,23 +29,6 @@ fi
 # Reload shell
 alias reload-shell='exec $SHELL -l'
 
-# Activate starship prompt
-alias env_starship='with_starship=true'
-
-# Force colorful prompt for current session
-alias env_rainbow='use_color=true'
-
-# Force friendly builtin for current session
-alias env_friendly='friendly_builtin=true'
-
-# Force all enhancements for current session
-alias godmode='env_rainbow env_friendly env_starship reload-shell'
-
-# install starship prompt
-usable curl && alias install-starship='mkdir -p ~/.local/$USER/bin && curl -fsSL https://starship.rs/install.sh | bash -s -- --bin-dir ~/.local/$USER/bin --platform unknown-liux-gnu'
-alias install-starship-cargo='cargo install starship'
-usable curl && alias install-starship-x86='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/starship/starship/releases/latest | grep "browser_download_url.*starship-x86_64-unknown-linux-gnu.tar.gz" | head -n1 | cut -d : -f 2,3 | tr -d \" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ starship'
-
 ########################## Life hacks #########################################
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
