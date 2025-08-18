@@ -29,6 +29,6 @@
 [includeIf "gitdir:~/Developer/inter-k/"]
   path = ~/.gitconfig.d/.interk.gitconfig
 [help]
-	autocorrect = 20
+	autocorrect = 10
 [credential "https://dev.azure.com"]
 	useHttpPath = true

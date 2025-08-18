@@ -106,6 +106,8 @@ usable docker && \
         alias theia-docker='docker run --name theia -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
         # Full VsCode over browser
         alias code-server-docker='docker run --name code-server -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
+        # Postman alike interminal
+    alias atac-docker='docker run --name atac --rm -it -v ${PWD}:/app juliencaposiena/atac'
         # Swagger api documentation generator
         alias swagger-docker='docker run --name swagger --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
         # MongoDB
