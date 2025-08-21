@@ -78,9 +78,10 @@ usable git && \
 # MicroK8s
 usable microk8s && \
     {
-        alias microk8s-kubectl='microk8s kubectl'
+        alias kubectl='microk8s kubectl'
+        alias helm='microk8s helm'
         # Selenium chromium on ARM
-        alias selenium-arm-mircrok8s='microk8s-kubectl run selenium --image=seleniarm/standalone-chromium --port=4444 && mkctl expose pod selenium --type NodePort --port 4444 --target-port 4444'
+        alias selenium-arm-mircrok8s='microk8s kubectl run selenium --image=seleniarm/standalone-chromium --port=4444 && mkctl expose pod selenium --type NodePort --port 4444 --target-port 4444'
     }
 
 # Colima (container runtime on Mac/Linux with minimal setup)
