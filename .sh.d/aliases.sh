@@ -422,7 +422,9 @@ usable curl && alias install-opencode='curl -fsSL https://opencode.ai/install | 
 
 ################ DevSecMLOps ###################
 
-alias install-garden='curl -sL https://get.garden.io/install.sh | bash'
+! usable pkgx && usable curl && alias install-k3s='curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.24.10+k3s1" sh -s - server --cluster-init'
+usable pkgx && alias install-k3s='pkgx k3sup install --local --k3s-version v1.24.10+k3s1'
+usable curl && alias install-garden='curl -sL https://get.garden.io/install.sh | bash'
 
 ############################# Custom ##########################################
 # Import custom alias
