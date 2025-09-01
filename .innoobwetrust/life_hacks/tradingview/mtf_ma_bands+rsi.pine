@@ -1,0 +1,294 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © InNoobWeTrust
+
+//@version=6
+indicator("MTF MA bands + RSI", overlay=false)
+
+//=============================================================================
+// MTF MA bands
+//=============================================================================
+
+// Types
+//-----------------------------------------------------------------------------{
+enum MaType
+    sma = 'SMA'
+    wma = 'WMA'
+    ema = 'EMA'
+
+type MaTf
+    bool enable
+    string tf
+    MaType t
+    int len
+    float ma
+    float ma_filled
+    float h_ma
+    float h_ma_filled
+    float l_ma
+    float l_ma_filled
+    color clr
+    color band_clr
+//-----------------------------------------------------------------------------}
+
+// Const
+//-----------------------------------------------------------------------------{
+const int TF_SIZE = 7
+//-----------------------------------------------------------------------------{
+
+// Helper functions
+//-----------------------------------------------------------------------------{
+ma(MaType t, src, int len) =>
+    switch t
+        MaType.sma => ta.sma(src, len)
+        MaType.wma => ta.wma(src, len)
+        MaType.ema => ta.ema(src, len)
+
+ma_tf(series string tf, MaType t, src, int len) =>
+    request.security(syminfo.tickerid, tf, ma(t, src, len))
+//-----------------------------------------------------------------------------}
+
+// Input
+//-----------------------------------------------------------------------------{
+ma1_grp = '► MA1'
+ma1_enable = input.bool(true, 'Enable', group = ma1_grp)
+ma1_type = input.enum(MaType.ema, 'MA type', group = ma1_grp)
+ma1_len = input.int(34, 'Length', group = ma1_grp)
+ma1_color = input.color(color.new(#FFD921,50), 'Color', group = ma1_grp)
+ma1_band_color = input.color(color.new(#FFD921,80), 'Band Color', group = ma1_grp)
+ma1_tf = input.timeframe('', 'Timeframe', group = ma1_grp)
+
+ma2_grp = '► MA2'
+ma2_enable = input.bool(true, 'Enable', group = ma2_grp)
+ma2_type = input.enum(MaType.ema, 'MA type', group = ma2_grp)
+ma2_len = input.int(34, 'Length', group = ma2_grp)
+ma2_color = input.color(color.new(#DDA059,50), 'Color', group = ma2_grp)
+ma2_band_color = input.color(color.new(#DDA059,80), 'Band Color', group = ma2_grp)
+ma2_tf = input.timeframe('5', 'Timeframe', group = ma2_grp)
+
+ma3_grp = '► MA3'
+ma3_enable = input.bool(true, 'Enable', group = ma3_grp)
+ma3_type = input.enum(MaType.ema, 'MA type', group = ma3_grp)
+ma3_len = input.int(34, 'Length', group = ma3_grp)
+ma3_color = input.color(color.new(#AA585B,50), 'Color', group = ma3_grp)
+ma3_band_color = input.color(color.new(#AA585B,80), 'Band Color', group = ma3_grp)
+ma3_tf = input.timeframe('30', 'Timeframe', group = ma3_grp)
+
+ma4_grp = '► MA4'
+ma4_enable = input.bool(true, 'Enable', group = ma4_grp)
+ma4_type = input.enum(MaType.ema, 'MA type', group = ma4_grp)
+ma4_len = input.int(34, 'Length', group = ma4_grp)
+ma4_color = input.color(color.new(#B52121,50), 'Color', group = ma4_grp)
+ma4_band_color = input.color(color.new(#B52121,80), 'Band Color', group = ma4_grp)
+ma4_tf = input.timeframe('240', 'Timeframe', group = ma4_grp)
+
+ma5_grp = '► MA5'
+ma5_enable = input.bool(true, 'Enable', group = ma5_grp)
+ma5_type = input.enum(MaType.ema, 'MA type', group = ma5_grp)
+ma5_len = input.int(34, 'Length', group = ma5_grp)
+ma5_color = input.color(color.new(#6B3710,50), 'Color', group = ma5_grp)
+ma5_band_color = input.color(color.new(#6B3710,80), 'Band Color', group = ma5_grp)
+ma5_tf = input.timeframe('D', 'Timeframe', group = ma5_grp)
+
+rsi_grp = '► RSI'
+rsiLengthInput = input.int(14, minval=1, title="RSI Length", group=rsi_grp)
+rsiSourceInput = input.source(close, "Source", group=rsi_grp)
+calculateDivergence = input.bool(false, title="Calculate Divergence", group=rsi_grp, display = display.data_window, tooltip = "Calculating divergences is needed in order for divergence alerts to fire.")
+//-----------------------------------------------------------------------------}
+
+// Calculation
+//-----------------------------------------------------------------------------{
+
+// Constructor
+newMa(int idx) =>
+    enable = switch idx
+        0 => ma1_enable
+        1 => ma2_enable
+        2 => ma3_enable
+        3 => ma4_enable
+        4 => ma5_enable
+    tf = switch idx
+        0 => ma1_tf
+        1 => ma2_tf
+        2 => ma3_tf
+        3 => ma4_tf
+        4 => ma5_tf
+    t = switch idx
+        0 => ma1_type
+        1 => ma2_type
+        2 => ma3_type
+        3 => ma4_type
+        4 => ma5_type
+    len = switch idx
+        0 => ma1_len
+        1 => ma2_len
+        2 => ma3_len
+        3 => ma4_len
+        4 => ma5_len
+    clr = switch idx
+        0 => ma1_color
+        1 => ma2_color
+        2 => ma3_color
+        3 => ma4_color
+        4 => ma5_color
+    band_clr = switch idx
+        0 => ma1_band_color
+        1 => ma2_band_color
+        2 => ma3_band_color
+        3 => ma4_band_color
+        4 => ma5_band_color
+    ma = enable ? ma_tf(tf,t,close,len) : na
+    ma_filled = ta.valuewhen(not na(ma), ma, 0)
+    h_ma = enable ? ma_tf(tf,t,high,len) : na
+    h_ma_filled = ta.valuewhen(not na(h_ma), h_ma, 0)
+    l_ma = enable ? ma_tf(tf,t,low,len) : na
+    l_ma_filled = ta.valuewhen(not na(l_ma), l_ma, 0)
+    MaTf.new(enable,tf,t,len,ma,ma_filled,h_ma,h_ma_filled,l_ma,l_ma_filled,clr,band_clr)
+
+// EMA data
+MaTf[] ma_data = array.new<MaTf>()
+ma_data.push(newMa(0))
+ma_data.push(newMa(1))
+ma_data.push(newMa(2))
+ma_data.push(newMa(3))
+ma_data.push(newMa(4))
+
+// RSI
+change = ta.change(rsiSourceInput)
+up = ta.rma(math.max(change, 0), rsiLengthInput)
+down = ta.rma(-math.min(change, 0), rsiLengthInput)
+rsi = down == 0 ? 100 : up == 0 ? 0 : 100 - (100 / (1 + up / down))
+
+// Divergence
+lookbackRight = 5
+lookbackLeft = 5
+rangeUpper = 60
+rangeLower = 5
+bearColor = color.red
+bullColor = color.green
+textColor = color.white
+noneColor = color.new(color.white, 100)
+
+_inRange(bool cond) =>
+    bars = ta.barssince(cond)
+    rangeLower <= bars and bars <= rangeUpper
+
+plFound = false
+phFound = false
+
+bullCond = false
+bearCond = false
+
+rsiLBR = rsi[lookbackRight]
+
+if calculateDivergence
+    //------------------------------------------------------------------------------
+    // Regular Bullish
+    // rsi: Higher Low
+    plFound := not na(ta.pivotlow(rsi, lookbackLeft, lookbackRight))
+    rsiHL = rsiLBR > ta.valuewhen(plFound, rsiLBR, 1) and _inRange(plFound[1])
+    // Price: Lower Low
+    lowLBR = low[lookbackRight]
+    priceLL = lowLBR < ta.valuewhen(plFound, lowLBR, 1)
+    bullCond := priceLL and rsiHL and plFound
+
+    //------------------------------------------------------------------------------
+    // Regular Bearish
+    // rsi: Lower High
+    phFound := not na(ta.pivothigh(rsi, lookbackLeft, lookbackRight))
+    rsiLH = rsiLBR < ta.valuewhen(phFound, rsiLBR, 1) and _inRange(phFound[1])
+    // Price: Higher High
+    highLBR = high[lookbackRight]
+    priceHH = highLBR > ta.valuewhen(phFound, highLBR, 1)
+    bearCond := priceHH and rsiLH and phFound
+//-----------------------------------------------------------------------------}
+
+// Plot
+//-----------------------------------------------------------------------------{
+
+// MA1
+ma1 = ma_data.get(0)
+ma1_plt = plot(ma1.ma_filled,'MA1',ma1.clr,force_overlay = true)
+ma1_h_plt = plot(ma1.h_ma_filled,'MA1 high',ma1.band_clr,force_overlay = true)
+ma1_l_plt = plot(ma1.l_ma_filled,'MA1 low',ma1.band_clr,force_overlay = true)
+fill(ma1_h_plt,ma1_l_plt,ma1.band_clr)
+
+// MA2
+ma2 = ma_data.get(1)
+ma2_plt = plot(ma2.ma_filled,'MA2',ma2.clr,force_overlay = true)
+ma2_h_plt = plot(ma2.h_ma_filled,'MA2 high',ma2.band_clr,force_overlay = true)
+ma2_l_plt = plot(ma2.l_ma_filled,'MA2 low',ma2.band_clr,force_overlay = true)
+fill(ma2_h_plt,ma2_l_plt,ma2.band_clr)
+
+// MA3
+ma3 = ma_data.get(2)
+ma3_plt = plot(ma3.ma_filled,'MA3',ma3.clr,force_overlay = true)
+ma3_h_plt = plot(ma3.h_ma_filled,'MA3 high',ma3.band_clr,force_overlay = true)
+ma3_l_plt = plot(ma3.l_ma_filled,'MA3 low',ma3.band_clr,force_overlay = true)
+fill(ma3_h_plt,ma3_l_plt,ma3.band_clr)
+
+// MA4
+ma4 = ma_data.get(3)
+ma4_plt = plot(ma4.ma_filled,'MA4',ma4.clr,force_overlay = true)
+ma4_h_plt = plot(ma4.h_ma_filled,'MA4 high',ma4.band_clr,force_overlay = true)
+ma4_l_plt = plot(ma4.l_ma_filled,'MA4 low',ma4.band_clr,force_overlay = true)
+fill(ma4_h_plt,ma4_l_plt,ma4.band_clr)
+
+// MA5
+ma5 = ma_data.get(4)
+ma5_plt = plot(ma5.ma_filled,'MA4',ma5.clr,force_overlay = true)
+ma5_h_plt = plot(ma5.h_ma_filled,'MA4 high',ma5.band_clr,force_overlay = true)
+ma5_l_plt = plot(ma5.l_ma_filled,'MA4 low',ma5.band_clr,force_overlay = true)
+fill(ma5_h_plt,ma5_l_plt,ma5.band_clr)
+
+// RSI
+rsiPlot = plot(rsi, "RSI", color=#7E57C2)
+rsiUpperBand = hline(70, "RSI Upper Band", color=#787B86)
+midline = hline(50, "RSI Middle Band", color=color.new(#787B86, 50))
+rsiLowerBand = hline(30, "RSI Lower Band", color=#787B86)
+fill(rsiUpperBand, rsiLowerBand, color=color.rgb(126, 87, 194, 90), title="RSI Background Fill")
+midLinePlot = plot(50, color = na, editable = false, display = display.none)
+fill(rsiPlot, midLinePlot, 100, 70, top_color = color.new(color.green, 0), bottom_color = color.new(color.green, 100),  title = "Overbought Gradient Fill")
+fill(rsiPlot, midLinePlot, 30,  0,  top_color = color.new(color.red, 100), bottom_color = color.new(color.red, 0),      title = "Oversold Gradient Fill")
+
+// Divergence
+plot(
+     plFound   ? rsiLBR : na,
+     offset    = -lookbackRight,
+     title     = "Regular Bullish",
+     linewidth = 2,
+     color     = (bullCond ? bullColor : noneColor),
+     display   = display.pane,
+     editable  = calculateDivergence)
+
+plotshape(
+     bullCond  ? rsiLBR : na,
+     offset    = -lookbackRight,
+     title     = "Regular Bullish Label",
+     text      = " Bull ",
+     style     = shape.labelup,
+     location  = location.absolute,
+     color     = bullColor,
+     textcolor = textColor,
+     display   = display.pane,
+     editable  = calculateDivergence)
+
+plot(
+     phFound   ? rsiLBR : na,
+     offset    = -lookbackRight,
+     title     = "Regular Bearish",
+     linewidth = 2,
+     color     = (bearCond ? bearColor : noneColor),
+     display   = display.pane,
+     editable  = calculateDivergence)
+
+plotshape(
+     bearCond  ? rsiLBR : na,
+     offset    = -lookbackRight,
+     title     = "Regular Bearish Label",
+     text      = " Bear ",
+     style     = shape.labeldown,
+     location  = location.absolute,
+     color     = bearColor,
+     textcolor = textColor,
+     display   = display.pane,
+     editable  = calculateDivergence)
