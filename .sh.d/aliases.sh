@@ -154,6 +154,9 @@ usable pkgx && \
         ! usable exa && alias exa='pkgx exa'
         ## System monitor
         ! usable btm && alias btm='pkgx btm'
+        ## Docker
+        ! usable docker && alias docker='pkgx docker'
+        ! usable docker-compose && alias docker-compose='pkgx docker-compose'
         ## Docker management
         ! usable lazydocker && alias lazydocker='pkgx lazydocker'
         ## Git management

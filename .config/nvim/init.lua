@@ -297,7 +297,9 @@ require("lazy").setup({
 						'jsonls',
 						'ts_ls',
 						'lua_ls',
+						'pylsp',
 						'pyright',
+						'ruff',
 						'sqlls',
 						'stylelint_lsp',
 						'tailwindcss',
@@ -322,7 +324,7 @@ require("lazy").setup({
 						end,
 						-- Next, you can provide a dedicated handler for specific servers.
 						-- For example, a handler override for the `rust_analyzer`:
-						["rust_analyzer"] = function()
+						['rust_analyzer'] = function()
 							require('lspconfig').rust_analyzer.setup {
 								settings = {
 									['rust-analyzer'] = {
@@ -331,13 +333,33 @@ require("lazy").setup({
 										},
 										diagnostics = {
 											enable = false,
-										}
+										},
 									}
 								}
 							}
 						end,
-						["denols"] = function()
-							require("rust-tools").setup {}
+						['denols'] = function()
+							require('rust-tools').setup {}
+						end,
+						['pylsp'] = function()
+							require('lspconfig').pylsp.setup {
+								on_attach = function(client, bufnr)
+									client.server_capabilities.documentFormattingProvider = false
+								end,
+								settings = {
+									['pylsp'] = {
+										checkOnSave = {
+											enable = false,
+										},
+										formatOnSave = {
+											enable = false,
+										},
+										diagnostics = {
+											enable = false,
+										},
+									}
+								},
+							}
 						end,
 					},
 				}
@@ -482,29 +504,31 @@ require("lazy").setup({
 			"olimorris/codecompanion.nvim",
 			opts = {
 				adapters = {
-					groq = function()
-						return require('codecompanion.adapters').extend('openai', {
-							name = 'groq',
-							url = "https://api.groq.com/openai/v1/chat/completions",
-							env = {
-								api_key = "GROQ_API_KEY",
-							},
-							schema = {
-								model = {
-									default = "gemma2-9b-it",
-									choices = {
-										"gemma2-9b-it",
-										"llama-3.3-70b-versatile",
-										"Llama-3.1-8b-instant",
-										"Llama-guard-3-8b",
-										"llama3-70b-8192",
-										"llama3-8b-8192",
-										"mixtral-8x7b-32768",
+					http = {
+						groq = function()
+							return require('codecompanion.adapters').extend('openai', {
+								name = 'groq',
+								url = "https://api.groq.com/openai/v1/chat/completions",
+								env = {
+									api_key = "GROQ_API_KEY",
+								},
+								schema = {
+									model = {
+										default = "gemma2-9b-it",
+										choices = {
+											"gemma2-9b-it",
+											"llama-3.3-70b-versatile",
+											"Llama-3.1-8b-instant",
+											"Llama-guard-3-8b",
+											"llama3-70b-8192",
+											"llama3-8b-8192",
+											"mixtral-8x7b-32768",
+										},
 									},
 								},
-							},
-						})
-					end,
+							})
+						end,
+					}
 				},
 				strategies = {
 					chat = {
