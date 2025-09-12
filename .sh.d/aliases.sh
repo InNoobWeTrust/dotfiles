@@ -127,6 +127,8 @@ usable docker && \
         alias mdpdfinator-docker='docker run --name mdpdfinator --rm -v ${PWD}:/app yjpictures/mdpdfinator'
         # Rancher
         alias rancher-docker='docker run --name rancher --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher'
+        # Gitleaks
+        alias gitleaks-docker='docker run -v "$(realpath .):/$(basename $(realpath .))" zricethezav/gitleaks:latest "dir" "/$(basename $(realpath .))" "-v"'
         # Cleanup docker data and cache
         alias docker-cleanup='yes | docker system prune -a --volumes && yes | docker builder prune -a'
     }
