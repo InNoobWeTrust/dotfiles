@@ -298,7 +298,6 @@ require("lazy").setup({
 						'ts_ls',
 						'lua_ls',
 						'pylsp',
-						'pyright',
 						'ruff',
 						'sqlls',
 						'stylelint_lsp',

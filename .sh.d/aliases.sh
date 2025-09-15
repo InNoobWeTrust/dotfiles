@@ -47,6 +47,7 @@ alias gacha='printf "Lower limit: "; read low; printf "Upper limit: "; read high
 # Random string generators
 alias alnumer='cat /dev/random | base64 | tr -cd "[:alnum:]" | head -c'
 alias hexer='cat /dev/random | base64 | tr -cd "[0-9a-fA-F]" | head -c'
+alias passgen="tr -dc 'A-Za-z0-9!@#$%^&*()_+-=[]{}|;:,.<>?' < /dev/urandom | head -c"
 
 # Create tmpdir and cd into it
 alias isekai='cd `mktemp -d`'
