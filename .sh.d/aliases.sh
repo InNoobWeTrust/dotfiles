@@ -188,6 +188,8 @@ usable pkgx && \
         ! usable curl && alias curl='pkgx curl'
         ## wget
         ! usable wget && alias wget='pkgx wget'
+        ## cloudflared
+        ! usable cloudflared && alias cloudflared='pkgx cloudflared'
     }
 
 usable curl && \
