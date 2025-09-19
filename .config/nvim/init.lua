@@ -314,17 +314,17 @@ require("lazy").setup({
 							-- Prevent some LSP servers from autostart
 							local no_autostart = { 'deno', 'denols' }
 							local no_single_file_support = { 'rust_analyzer' }
-							require("lspconfig")[server_name].setup {
+							vim.lsp.config(server_name, {
 								autostart = not no_autostart[server_name],
 								single_file_support = not no_single_file_support[server_name],
 								-- advertise capabilities to language servers.
 								capabilities = capabilities,
-							}
+							})
 						end,
 						-- Next, you can provide a dedicated handler for specific servers.
 						-- For example, a handler override for the `rust_analyzer`:
 						['rust_analyzer'] = function()
-							require('lspconfig').rust_analyzer.setup {
+							vim.lsp.config('rust_analyzer', {
 								settings = {
 									['rust-analyzer'] = {
 										checkOnSave = {
@@ -335,13 +335,13 @@ require("lazy").setup({
 										},
 									}
 								}
-							}
+							})
 						end,
 						['denols'] = function()
 							require('rust-tools').setup {}
 						end,
 						['pylsp'] = function()
-							require('lspconfig').pylsp.setup {
+							vim.lsp.config('pylsp', {
 								on_attach = function(client, bufnr)
 									client.server_capabilities.documentFormattingProvider = false
 								end,
@@ -358,7 +358,7 @@ require("lazy").setup({
 										},
 									}
 								},
-							}
+							})
 						end,
 					},
 				}
@@ -389,7 +389,7 @@ require("lazy").setup({
 				})
 
 				-- Setup LSP servers not included by default in navigator.lua
-				require("lspconfig").bacon_ls.setup({
+				vim.lsp.config('bacon_ls', {
 					init_options = {
 						updateOnSave = true,
 						updateOnSaveWaitMillis = 1000,
