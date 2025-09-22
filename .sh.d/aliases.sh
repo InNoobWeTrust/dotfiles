@@ -130,6 +130,8 @@ usable docker && \
         alias rancher-docker='docker run --name rancher --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher'
         # Gitleaks
         alias gitleaks-docker='docker run -v "$(realpath .):/$(basename $(realpath .))" zricethezav/gitleaks:latest "dir" "/$(basename $(realpath .))" "-v"'
+        # Docling-serve
+        alias docling-docker='docker run --rm -it --name docling-serve -p 5001:5001 -e DOCLING_SERVE_ENABLE_UI=1 quay.io/docling-project/docling-serve'
         # Cleanup docker data and cache
         alias docker-cleanup='yes | docker system prune -a --volumes && yes | docker builder prune -a'
     }
