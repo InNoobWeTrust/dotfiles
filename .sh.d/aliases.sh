@@ -155,6 +155,8 @@ usable pkgx && \
         ! usable hx && alias hx='pkgx hx'
         ## Text document viewer
         ! usable bat && alias bat='pkgx bat'
+        ## Datafile transform
+        ! usable dasel && alias dasel='pkgx dasel'
         ## Listing files
         ! usable exa && alias exa='pkgx exa'
         ## System monitor
