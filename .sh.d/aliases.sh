@@ -324,7 +324,7 @@ usable curl && alias install-pkgx='curl -fsS https://pkgx.sh | sh'
 
 #################### Brew ######################
 
-usable curl && alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"'
+usable curl && alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
 
 alias update-brew='usable brew && brew update && brew upgrade'
 
@@ -431,6 +431,8 @@ alias install-zellij-cargo='cargo install --locked zellij'
 
 ## AI Agent CLI
 usable curl && alias install-opencode='curl -fsSL https://opencode.ai/install | bash'
+
+usable curl && alias install-amazon-q='isekai && curl --proto "=https" --tlsv1.2 -Sf --progress-bar "https://desktop-release.q.us-east-1.amazonaws.com/latest/q-x86_64-linux-musl.zip" -o "q.zip" && unzip q.zip && ./q/install.sh'
 
 ################ DevSecMLOps ###################
 
