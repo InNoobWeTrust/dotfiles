@@ -285,25 +285,37 @@ require("lazy").setup({
 				require("mason").setup()
 				require("mason-lspconfig").setup {
 					ensure_installed = {
+						--- Code quality/security
+						'codebook',
+						'grammarly',
+						'sourcery',
+						--- DB
+						'sqlls',
+						--- Neovim
+						'lua_ls',
+						'vimls',
+						--- DevOps
 						'bashls',
+						'docker_compose_language_service',
+						'dockerls',
+						'terraformls',
+						'tflint',
+						'yamlls',
+						--- HTML/CSS/JS/TS/JSON
 						'cssls',
 						'cssmodules_ls',
-						'dockerls',
-						'docker_compose_language_service',
 						'emmet_ls',
 						'eslint',
-						'grammarly',
 						'html',
 						'jsonls',
-						'ts_ls',
-						'lua_ls',
-						'pylsp',
-						'ruff',
-						'sqlls',
 						'stylelint_lsp',
+						'ts_ls',
 						'tailwindcss',
-						'vimls',
-						'yamlls',
+						'vue_ls',
+						'vuels',
+						--- Python
+						'basedpyright',
+						'ruff',
 					},
 					--automatic_installation = true,
 					handlers = {
@@ -339,26 +351,6 @@ require("lazy").setup({
 						end,
 						['denols'] = function()
 							require('rust-tools').setup {}
-						end,
-						['pylsp'] = function()
-							vim.lsp.config('pylsp', {
-								on_attach = function(client, bufnr)
-									client.server_capabilities.documentFormattingProvider = false
-								end,
-								settings = {
-									['pylsp'] = {
-										checkOnSave = {
-											enable = false,
-										},
-										formatOnSave = {
-											enable = false,
-										},
-										diagnostics = {
-											enable = false,
-										},
-									}
-								},
-							})
 						end,
 					},
 				}
@@ -513,15 +505,23 @@ require("lazy").setup({
 								},
 								schema = {
 									model = {
-										default = "gemma2-9b-it",
+										default = "groq/compound",
 										choices = {
-											"gemma2-9b-it",
+											"groq/compound",
+											"groq/compound-mini",
+											"allam-2-7b",
+											"meta-llama/llama-prompt-guard-2-86m",
+											"moonshotai/kimi-k2-instruct-0905",
+											"meta-llama/llama-4-scout-17b-16e-instruct",
+											"qwen/qwen3-32b",
+											"llama-3.1-8b-instant",
+											"meta-llama/llama-4-maverick-17b-128e-instruct",
+											"meta-llama/llama-guard-4-12b",
+											"moonshotai/kimi-k2-instruct",
+											"openai/gpt-oss-20b",
+											"openai/gpt-oss-120b",
 											"llama-3.3-70b-versatile",
-											"Llama-3.1-8b-instant",
-											"Llama-guard-3-8b",
-											"llama3-70b-8192",
-											"llama3-8b-8192",
-											"mixtral-8x7b-32768",
+											"meta-llama/llama-prompt-guard-2-22m",
 										},
 									},
 								},
@@ -531,10 +531,10 @@ require("lazy").setup({
 				},
 				strategies = {
 					chat = {
-						adapter = "groq",
+						adapter = "gemini",
 					},
 					inline = {
-						adapter = "groq",
+						adapter = "gemini",
 					},
 				},
 				opts = {
