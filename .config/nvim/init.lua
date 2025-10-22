@@ -316,6 +316,7 @@ require("lazy").setup({
 						--- Python
 						'basedpyright',
 						'ruff',
+						'ty',
 					},
 					--automatic_installation = true,
 					handlers = {
@@ -911,13 +912,13 @@ require("lazy").setup({
 			lazy = false,
 			priority = 1000,
 			config = function()
-				cmd [[highlight Normal ctermbg=none ctermfg=white guibg=none]]
 				g.gruvbox_italic = 1
 				g.gruvbox_contrast_dark = 'hard'
 				g.gruvbox_invert_tabline = 1
 				g.gruvbox_invert_indent_guides = 1
 				g.gruvbox_transparent_bg = 1
 				cmd [[colorscheme gruvbox]]
+				cmd [[highlight Normal ctermbg=none ctermfg=white guibg=none]]
 			end,
 		},
 	},
