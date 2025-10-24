@@ -157,13 +157,15 @@ usable pkgx && \
         ! usable bat && alias bat='pkgx bat'
         ## Datafile transform
         ! usable dasel && alias dasel='pkgx dasel'
+        ## SQLite
+        ! usable sqlite3 && alias sqlite3='pkgx sqlite3'
         ## Listing files
         ! usable exa && alias exa='pkgx exa'
         ## System monitor
         ! usable btm && alias btm='pkgx btm'
         ## Docker
         ! usable docker && alias docker='pkgx docker'
-        ! usable docker-compose && alias docker-compose='pkgx docker-compose'
+        ! usable docker-compose && ! docker compose version >/dev/null 2>&1 && alias docker-compose='pkgx docker-compose'
         ## Docker management
         ! usable lazydocker && alias lazydocker='pkgx lazydocker'
         ## Git management
