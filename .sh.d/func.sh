@@ -228,6 +228,13 @@ ex ()
     fi
 }
 
+#
+# # tiktok_id - Get TikTok ID from username
+# # usage: tiktok_id [username]
+tiktok_id() {
+    curl -s "https://www.tiktok.com/@$1" | sed -n 's/.*"userInfo":{"user":{"id":"\([^"]*\)".*/\1/p'
+}
+
 # Custom functions
 # shellcheck source=/dev/null
 [ -r "$CONF_SH_DIR/func.user.sh" ] && . "$CONF_SH_DIR/func.user.sh"
