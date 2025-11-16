@@ -3,7 +3,7 @@ use fantoccini::{elements::Element, error::CmdError, Client, Locator};
 use rand::prelude::*;
 use tracing::{debug, error, info, warn};
 
-use crate::driver::{mouse_move_to_element, perform_click};
+use crate::driver::ClientActionExt;
 use crate::utils::delay;
 
 async fn get_account_report_btn(client: &Client) -> Result<Element, CmdError> {
@@ -95,8 +95,8 @@ async fn choose_report_option(client: &Client, target: &str) -> Result<bool, Cmd
         "Choosing reason {reason:?}..."
     );
 
-    mouse_move_to_element(client, chosen_report).await?;
-    perform_click(client, chosen_report).await?;
+    client.mouse_move_to_element(chosen_report).await?;
+    client.perform_click(chosen_report).await?;
     delay(None);
 
     Ok(false)
@@ -108,7 +108,7 @@ async fn report_process(
     menu_btn: &Element,
 ) -> Result<bool, CmdError> {
     debug!(target = target, step = "menu", "Clicking 'menu' button...");
-    perform_click(client, menu_btn).await?;
+    client.perform_click(menu_btn).await?;
     delay(None);
 
     let mut menu_items = client
@@ -123,7 +123,7 @@ async fn report_process(
                 step = "report",
                 "Clicking '{item_text}' button..."
             );
-            perform_click(client, &item).await?;
+            client.perform_click(&item).await?;
             break;
         }
     }
@@ -147,7 +147,7 @@ async fn report_process(
                 step = "report account",
                 "Clicking '{item_text}' button..."
             );
-            perform_click(client, &item).await?;
+            client.perform_click(&item).await?;
             break;
         }
     }
@@ -181,8 +181,8 @@ async fn report_process(
                 }
                 let btn_text = btn.text().await?;
                 debug!(target = target, "Clicking {btn_text}");
-                mouse_move_to_element(client, &btn).await?;
-                perform_click(client, &btn).await?;
+                client.mouse_move_to_element(&btn).await?;
+                client.perform_click(&btn).await?;
                 delay(None);
                 is_finished = true;
             }

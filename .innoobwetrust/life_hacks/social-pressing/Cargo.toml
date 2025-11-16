@@ -7,8 +7,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chrono = "0.4.38"
 clap = { version = "4.5.7", features = ["derive", "env"] }
-fantoccini = "0.19.3"
+fantoccini = "0.22.0"
 futures = "0.3.30"
 humantime = "2.1.0"
 rand = "0.9.0"

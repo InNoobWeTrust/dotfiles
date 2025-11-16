@@ -7,6 +7,9 @@ pub enum Domain {
     Instagram,
 }
 
+unsafe impl Sync for Domain {}
+unsafe impl Send for Domain {}
+
 impl fmt::Display for Domain {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {

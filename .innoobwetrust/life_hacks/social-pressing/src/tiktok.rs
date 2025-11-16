@@ -4,7 +4,7 @@ use futures::future;
 use rand::prelude::*;
 use tracing::{debug, info, warn};
 
-use crate::driver::{mouse_move_to_element, perform_click};
+use crate::driver::ClientActionExt;
 use crate::utils::delay;
 
 pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
@@ -63,8 +63,8 @@ pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
     }
     let more_btn = more_btn?;
     debug!(%target, "Clicking 'more' button...");
-    mouse_move_to_element(client, &more_btn).await?;
-    perform_click(client, &more_btn).await?;
+    client.mouse_move_to_element(&more_btn).await?;
+    client.perform_click(&more_btn).await?;
     delay(None);
 
     let report_btn = client
@@ -104,8 +104,8 @@ pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
                         let formatted_reason = format!("{:?}", reason);
                         info!(%target, reason = %formatted_reason, "Choosing reason...");
                     }
-                    mouse_move_to_element(client, &chosen_report).await?;
-                    perform_click(client, &chosen_report).await?;
+                    client.mouse_move_to_element(&chosen_report).await?;
+                    client.perform_click(&chosen_report).await?;
                     delay(None);
                     break;
                 }
@@ -119,8 +119,8 @@ pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
             r#"form[data-e2e="report-form"] > div:last-child > div:last-child > button"#,
         ))
         .await?;
-    mouse_move_to_element(client, &submit_btn).await?;
-    perform_click(client, &submit_btn).await?;
+    client.mouse_move_to_element(&submit_btn).await?;
+    client.perform_click(&submit_btn).await?;
     delay(None);
     debug!(%target, "Finishing...");
     let finish_btn = client
@@ -128,8 +128,8 @@ pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
             r#"div[data-e2e="report-form"] > div > button:last-child"#,
         ))
         .await?;
-    mouse_move_to_element(client, &finish_btn).await?;
-    perform_click(client, &finish_btn).await?;
+    client.mouse_move_to_element(&finish_btn).await?;
+    client.perform_click(&finish_btn).await?;
     delay(None);
 
     Ok(false)

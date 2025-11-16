@@ -3,7 +3,7 @@ use fantoccini::{elements::Element, error::CmdError, Client, Locator};
 use rand::prelude::*;
 use tracing::{debug, error, info, warn};
 
-use crate::driver::{mouse_move_to_element, mouse_scroll, perform_click};
+use crate::driver::ClientActionExt;
 use crate::utils::delay;
 
 async fn check_availability(client: &Client) -> Result<Element, CmdError> {
@@ -49,10 +49,10 @@ async fn get_account_report_btn(client: &Client) -> Result<Element, CmdError> {
 async fn get_posts_report_btns(client: &Client) -> Result<Vec<Element>, CmdError> {
     // Scroll 3 pages to get recent posts
     for _ in 1..=3 {
-        mouse_scroll(client, 0, 720).await?;
+        client.mouse_scroll(0, 720).await?;
     }
     // Scroll back to top
-    mouse_scroll(client, 0, -720 * 3).await?;
+    client.mouse_scroll(0, -720 * 3).await?;
     client
         .find_all(Locator::Css(r#"div[aria-expanded="false"][aria-haspopup="menu"][role="button"][aria-label="Actions for this post"]"#))
         .await
@@ -83,7 +83,7 @@ async fn report_process(
     menu_btn: &Element,
 ) -> Result<bool, CmdError> {
     debug!(%target, "Clicking 'menu' button...");
-    perform_click(client, menu_btn).await?;
+    client.perform_click(menu_btn).await?;
     delay(None);
 
     let mut menu_items = client
@@ -94,7 +94,7 @@ async fn report_process(
         let item_text = item.text().await?;
         if item_text.to_lowercase().contains("report") {
             debug!(%target, %item_text, "Clicking button...");
-            perform_click(client, &item).await?;
+            client.perform_click(&item).await?;
             break;
         }
     }
@@ -149,8 +149,8 @@ async fn report_process(
                 let reason = chosen_report.text().await?;
                 let reason_str = format!("{:?}", reason);
                 info!(%target, reason = %reason_str, "Choosing reason...");
-                mouse_move_to_element(client, chosen_report).await?;
-                perform_click(client, chosen_report).await?;
+                client.mouse_move_to_element(chosen_report).await?;
+                client.perform_click(chosen_report).await?;
                 delay(None);
 
                 let mut is_done = false;
@@ -164,8 +164,8 @@ async fn report_process(
                             let btn_text = btn.text().await?;
                             let btn_text_str = format!("{:?}", btn_text);
                             debug!(%target, btn_text = %btn_text_str, "Clicking");
-                            mouse_move_to_element(client, &btn).await?;
-                            perform_click(client, &btn).await?;
+                            client.mouse_move_to_element(&btn).await?;
+                            client.perform_click(&btn).await?;
                             delay(None);
                             is_done = true;
                         }
