@@ -210,30 +210,30 @@ usable curl && \
 usable npx && \
     {
         # http server
-        alias http-server='npx http-server'
+        ! usable http-server && alias http-server='npx http-server'
         # Smart contract development
-        alias remixd='npx @remix-project/remixd'
+        ! usable remixd && alias remixd='npx @remix-project/remixd'
         # Execute http files (http requests)
-        alias httpyac='npx httpyac'
+        ! usable httpyac && lias httpyac='npx httpyac'
         # Serve live rendered markdown files
-        alias markserv='npx markserv'
+        ! usable markserv && alias markserv='npx markserv'
         # Render markdown to html
-        alias marked='npx marked'
+        ! usable marked && alias marked='npx marked'
         # run commands from markdown files
-        alias runme='npx runme'
+        ! usable runme && alias runme='npx runme'
         # Gemini-cli
-        alias gemini='npx @google/gemini-cli'
+        ! usable gemini && alias gemini='npx @google/gemini-cli'
         # Claude code
-        alias claude='npx @anthropic-ai/claude-code'
+        ! usable claude && alias claude='npx @anthropic-ai/claude-code'
         # OpenAI Codex
-        alias codex='npx @openai/codex'
+        ! usable codex && alias codex='npx @openai/codex'
     }
 
 ## Node-builtin package management for javascript
 usable corepack && \
     {
-        alias yarn='corepack yarn'
-        alias pnpm='corepack pnpm'
+        ! usable yarn && alias yarn='corepack yarn'
+        ! usable pnpm && alias pnpm='corepack pnpm'
     }
 
 usable python3 && \
