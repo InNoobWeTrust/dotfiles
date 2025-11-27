@@ -374,9 +374,9 @@ require("lazy").setup({
 					mason = true,
 					lsp = {
 						diagnostic = {
-							virtual_text = false,
-							underline = false,
-							signs = true,
+							virtual_text = true,
+							underline = true,
+							signs = false,
 						},
 					},
 				})
