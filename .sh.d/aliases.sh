@@ -328,7 +328,7 @@ usable curl && alias install-pkgx='curl -fsS https://pkgx.sh | sh'
 
 usable curl && alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
 
-alias update-brew='usable brew && brew update && brew upgrade'
+alias update-brew='usable brew && yes | brew update && yes | brew upgrade'
 
 #################### Sdkman ####################
 

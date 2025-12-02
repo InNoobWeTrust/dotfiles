@@ -7,15 +7,28 @@
 // custom settings, run `zed: open default settings` from the
 // command palette
 {
-  "assistant": {
+  /* Duplicated key auto-commented: "agent": {
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "gpt-5-mini"
+    },
+    "model_parameters": []
+  }, */
+  "git": {
+    "inline_blame": {
+      "show_commit_summary": true
+    }
+  },
+  "agent": {
+    "always_allow_tool_actions": true,
+    "default_profile": "write",
     "default_model": {
       "provider": "ollama",
       "model": "llama-2-13b-chat"
     },
-    "version": "2"
   },
   "features": {
-    "inline_completion_provider": "supermaven"
+    "edit_prediction_provider": "supermaven"
   },
   "vim_mode": true,
   "telemetry": {
