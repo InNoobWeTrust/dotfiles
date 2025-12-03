@@ -161,6 +161,8 @@ usable pkgx && \
         ! usable sqlite3 && alias sqlite3='pkgx sqlite3'
         ## Listing files
         ! usable exa && alias exa='pkgx exa'
+        ## Trash
+        ! usable trash && alias trash='pkgx trash'
         ## System monitor
         ! usable btm && alias btm='pkgx btm'
         ## Docker

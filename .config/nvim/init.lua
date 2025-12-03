@@ -532,10 +532,14 @@ require("lazy").setup({
 				},
 				strategies = {
 					chat = {
-						adapter = "gemini",
+						--adapter = "gemini",
+						adapter = "copilot",
+						model = "gpt-4.1",
 					},
 					inline = {
-						adapter = "gemini",
+						--adapter = "gemini",
+						adapter = "copilot",
+						model = "gpt-4.1",
 					},
 				},
 				opts = {
