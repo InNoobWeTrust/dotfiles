@@ -111,7 +111,7 @@ map("n", "<S-tab>", ":bp<cr>", { desc = "buffer goto prev" })
 --map('n', '<c-s-tab>', ':tabprevious<cr>', { noremap = false })
 --map('n', '<leader><leader><tab>', ':tabprevious<cr>', { noremap = false })
 -- Key mapping for native LSP
-map('n', 'ff', '<cmd>lua vim.lsp.buf.format()<cr>')
+--map('n', 'ff', '<cmd>lua vim.lsp.buf.format()<cr>')
 -- Misc
 map("i", "<C-b>", "<ESC>^i", { desc = "move beginning of line" })
 map("i", "<C-e>", "<End>", { desc = "move end of line" })
@@ -330,8 +330,6 @@ require("lazy").setup({
 							vim.lsp.config(server_name, {
 								autostart = not no_autostart[server_name],
 								single_file_support = not no_single_file_support[server_name],
-								-- advertise capabilities to language servers.
-								capabilities = capabilities,
 							})
 						end,
 						-- Next, you can provide a dedicated handler for specific servers.
@@ -430,8 +428,11 @@ require("lazy").setup({
 					ft('rust'):fmt('rustfmt')
 				end
 				-- Python
-				if fn.executable('ruff') == 1 then
-					ft('python'):fmt('ruff')
+				if fn.executable('uvx') == 1 then
+					ft('python'):fmt({
+						cmd = 'uvx',
+						args = {'ruff', 'format'},
+					})
 				end
 				-- Lint protobuf
 				if fn.executable('buf') == 1 then
@@ -454,7 +455,14 @@ require("lazy").setup({
 					auto_lint = true,
 					-- how frequently can linters be called
 					lint_interval = 1000,
+					-- show diagnostic after format done
+					refresh_diagnostic = true,
+					-- always save file after call Guard fmt
+					always_save = false,
 				}
+
+				-- Key mapping for guard.nvim
+				map('n', 'ff', '<cmd>Guard fmt<cr>')
 			end,
 		},
 		-- Debugger
