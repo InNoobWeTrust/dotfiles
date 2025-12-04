@@ -216,13 +216,15 @@ usable npx && \
         # Smart contract development
         ! usable remixd && alias remixd='npx @remix-project/remixd'
         # Execute http files (http requests)
-        ! usable httpyac && lias httpyac='npx httpyac'
+        ! usable httpyac && alias httpyac='npx httpyac'
         # Serve live rendered markdown files
         ! usable markserv && alias markserv='npx markserv'
         # Render markdown to html
         ! usable marked && alias marked='npx marked'
         # run commands from markdown files
         ! usable runme && alias runme='npx runme'
+        # Copilot CLI
+        ! usable copilot && alias copilot='npx @github/copilot'
         # Gemini-cli
         ! usable gemini && alias gemini='npx @google/gemini-cli'
         # Claude code
