@@ -433,7 +433,7 @@ require("lazy").setup({
 				if fn.executable('uvx') == 1 then
 					ft('python'):fmt({
 						cmd = 'uvx',
-						args = {'ruff', 'format'},
+						args = { 'ruff', 'format', fn.expand('%') },
 					})
 				end
 				-- Lint protobuf
