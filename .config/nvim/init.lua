@@ -285,6 +285,8 @@ require("lazy").setup({
 				require("mason").setup()
 				require("mason-lspconfig").setup {
 					ensure_installed = {
+						--- LLM
+						'copilot',
 						--- Code quality/security
 						'codebook',
 						'grammarly',
