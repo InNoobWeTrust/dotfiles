@@ -17,7 +17,25 @@ use std::{
     fs::File,
     process::{Child, Command, Stdio},
 };
+
+#[cfg(unix)]
+use std::os::unix::process::CommandExt;
+
 use std::{ops::Deref, path::Path};
+
+#[cfg(unix)]
+extern "C" {
+    // Minimal C bindings used to create a new session (setsid) and to send
+    // signals to a process group (kill with a negative pid). This avoids
+    // adding an external dependency just for a couple of libc calls.
+    fn setsid() -> i32;
+    fn kill(pid: i32, sig: i32) -> i32;
+}
+
+#[cfg(unix)]
+const SIGTERM: i32 = 15;
+#[cfg(unix)]
+const SIGKILL: i32 = 9;
 
 use crate::constants::Domain;
 
@@ -34,11 +52,88 @@ impl Deref for Subprocess {
 
 impl Drop for Subprocess {
     fn drop(&mut self) {
-        for _ in 0..3 {
-            if self.0.kill().is_ok() {
+        // If the child has already exited, try_wait will reap it for us.
+        match self.0.try_wait() {
+            Ok(Some(status)) => {
+                debug!(%status, "subprocess already exited (reaped)");
                 return;
             }
-            std::thread::sleep(Duration::from_millis(500));
+            Ok(None) => {
+                debug!(
+                    pid = self.0.id(),
+                    "subprocess still running; proceeding to terminate"
+                );
+            }
+            Err(e) => {
+                warn!(error = %e, "error while checking subprocess status; will attempt to kill");
+            }
+        }
+
+        // Try graceful termination of the whole process group on Unix first.
+        // This helps ensure browsers (child processes spawned by the driver)
+        // are also terminated.
+        #[cfg(unix)]
+        {
+            let pid = self.0.id() as i32;
+            debug!(%pid, "sending SIGTERM to process group");
+            // send SIGTERM to the process group (-pid); check return value (best-effort)
+            unsafe {
+                let r = kill(-pid, SIGTERM);
+                if r != 0 {
+                    warn!(%pid, ret = r, "failed to send SIGTERM to group (best-effort)");
+                }
+            }
+        }
+
+        // Also attempt to politely terminate the child itself (cross-platform).
+        if let Err(e) = self.0.kill() {
+            debug!(error = %e, "failed to send kill() to subprocess (might have exited)");
+        } else {
+            debug!(pid = self.0.id(), "sent kill() to subprocess (best-effort)");
+        }
+
+        // Poll for exit for a short while (non-blocking).
+        for _ in 0..20 {
+            match self.0.try_wait() {
+                Ok(Some(status)) => {
+                    debug!(%status, "subprocess exited after termination signal");
+                    return;
+                }
+                Ok(None) => {
+                    // still running, keep waiting
+                }
+                Err(e) => {
+                    warn!(error = %e, "error while polling subprocess; continuing");
+                }
+            }
+            std::thread::sleep(Duration::from_millis(100));
+        }
+
+        // Escalate: force-kill the child process itself (best-effort).
+        debug!(pid = self.0.id(), "escalating: sending SIGKILL / kill()");
+        #[cfg(unix)]
+        {
+            let pid = self.0.id() as i32;
+            unsafe {
+                let r = kill(-pid, SIGKILL);
+                if r != 0 {
+                    warn!(%pid, ret = r, "failed to send SIGKILL to group (best-effort)");
+                }
+            }
+        }
+
+        if let Err(e) = self.0.kill() {
+            warn!(error = %e, "failed to force-kill child with kill()");
+        }
+
+        // Final attempt: block until we can reap the child so it doesn't remain a zombie.
+        match self.0.wait() {
+            Ok(status) => {
+                debug!(%status, "subprocess reaped successfully in Drop");
+            }
+            Err(e) => {
+                warn!(error = %e, "final wait to reap subprocess failed");
+            }
         }
     }
 }
@@ -57,12 +152,30 @@ impl Subprocess {
             }
             None => (Stdio::inherit(), Stdio::inherit()),
         };
-        let child = Command::new(cmd)
+        let mut cmd_builder = Command::new(cmd);
+        cmd_builder
             .args(args)
             .stdin(Stdio::null())
             .stdout(pipe_out)
-            .stderr(pipe_err)
-            .spawn()?;
+            .stderr(pipe_err);
+
+        // On Unix create a new session (process group) so driver and any browsers
+        // it spawns belong to a distinct group. This makes it possible to signal
+        // the whole group during cleanup (see Drop above).
+        #[cfg(unix)]
+        {
+            // SAFETY: `pre_exec` is unsafe because it runs in the child process
+            // before exec. We only call `setsid()` which is async-signal-safe and
+            // therefore appropriate here.
+            unsafe {
+                cmd_builder.pre_exec(|| {
+                    setsid();
+                    Ok(())
+                });
+            }
+        }
+
+        let child = cmd_builder.spawn()?;
         Ok(Subprocess(child))
     }
 }

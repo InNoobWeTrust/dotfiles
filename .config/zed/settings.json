@@ -20,11 +20,12 @@
     }
   },
   "agent": {
+    "use_modifier_to_send": true,
     "always_allow_tool_actions": true,
     "default_profile": "write",
     "default_model": {
-      "provider": "ollama",
-      "model": "llama-2-13b-chat"
+      "provider": "copilot_chat",
+      "model": "oswe-vscode-prime"
     },
   },
   "features": {
@@ -34,8 +35,8 @@
   "telemetry": {
     "metrics": false
   },
-  "ui_font_size": 16,
-  "buffer_font_size": 16,
+  "ui_font_size": 16.0,
+  "buffer_font_size": 14.0,
   "theme": {
     "mode": "system",
     "light": "Gruvbox Light Hard",
