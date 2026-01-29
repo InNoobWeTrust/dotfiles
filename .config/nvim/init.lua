@@ -289,7 +289,6 @@ require("lazy").setup({
 						'copilot',
 						--- Code quality/security
 						'codebook',
-						'grammarly',
 						'sourcery',
 						--- DB
 						'sqlls',
