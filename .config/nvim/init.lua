@@ -543,12 +543,12 @@ require("lazy").setup({
 					chat = {
 						--adapter = "gemini",
 						adapter = "copilot",
-						model = "gpt-4.1",
+						model = "gpt-5-mini",
 					},
 					inline = {
 						--adapter = "gemini",
 						adapter = "copilot",
-						model = "gpt-4.1",
+						model = "gpt-5-mini",
 					},
 				},
 				opts = {

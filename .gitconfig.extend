@@ -26,7 +26,7 @@
   path = ~/.gitconfig.d/.work.gitconfig
 [includeIf "gitdir:~/Developer/rex/"]
   path = ~/.gitconfig.d/.work.collab.gitconfig
-[includeIf "gitdir:~/Developer/inter-k/"]
+[includeIf "gitdir:~/Developer/interk/"]
   path = ~/.gitconfig.d/.interk.gitconfig
 [help]
 	autocorrect = 10
