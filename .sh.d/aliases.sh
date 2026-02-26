@@ -231,6 +231,8 @@ usable npx && \
         ! usable claude && alias claude='npx @anthropic-ai/claude-code'
         # OpenAI Codex
         ! usable codex && alias codex='npx @openai/codex'
+        # Kilo code
+        ! usable kilo && alias kilo="npx @kilocode/cli"
         # Tree-sitter CLI
         ! usable tree-sitter && alias tree-sitter='npx tree-sitter-cli'
     }
