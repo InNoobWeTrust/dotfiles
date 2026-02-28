@@ -235,6 +235,7 @@ usable npx && \
         ! usable kilo && alias kilo="npx @kilocode/cli"
         # Agent skills manager
         ! usable openskills && alias openskills="npx openskills"
+        ! usable skillfish && alias skillfish="npx skillfish"
         # Tree-sitter CLI
         ! usable tree-sitter && alias tree-sitter='npx tree-sitter-cli'
     }
@@ -373,6 +374,9 @@ alias install-poetry-by-pipx='pipx install poetry'
 # install micromamba
 usable curl && alias install-micromamba='usable curl && "${SHELL}" <(curl -L micro.mamba.pm/install.sh)'
 alias update-micromamba='usable micromamba && micromamba self-update'
+
+# Nice interface for coding Agent
+usable uv && alias install-toad='uv tool install -U batrachian-toad --python 3.14'
 
 ################### NodeJs #####################
 
