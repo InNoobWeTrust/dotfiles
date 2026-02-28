@@ -233,6 +233,8 @@ usable npx && \
         ! usable codex && alias codex='npx @openai/codex'
         # Kilo code
         ! usable kilo && alias kilo="npx @kilocode/cli"
+        # Agent skills manager
+        ! usable openskills && alias openskills="npx openskills"
         # Tree-sitter CLI
         ! usable tree-sitter && alias tree-sitter='npx tree-sitter-cli'
     }
