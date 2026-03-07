@@ -234,6 +234,7 @@ usable npx && \
         # Kilo code
         ! usable kilo && alias kilo="npx @kilocode/cli"
         # Agent skills manager
+        ! usable skills && alias skills="npx skills"
         ! usable openskills && alias openskills="npx openskills"
         ! usable skillfish && alias skillfish="npx skillfish"
         # Tree-sitter CLI
