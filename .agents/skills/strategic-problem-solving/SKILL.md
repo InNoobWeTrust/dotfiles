@@ -1,219 +1,191 @@
 ---
 name: strategic-problem-solving
-description: Strategic and Systematic Thinking for Problem-Solving
+description: Strategic and Systematic Thinking for Problem-Solving. Use this skill whenever you need to debug a tricky bug, investigate a failure, perform root cause analysis, make an architectural decision, untangle a complex multi-concern situation, or when you find yourself going in circles without making progress. Also use it when a user reports vague symptoms, recurring issues, or asks "why does this keep happening." If you're stuck and unsure what to try next, this skill will give you a structured way forward.
 ---
 
-# Strategic and Systematic Thinking for Problem-Solving
+# Strategic Problem-Solving
 
-## When to use this skill
-A methodology for tackling any problem — bugs, design flaws, performance issues, architectural decisions, or unknown failures — using proven frameworks from Lean, Six Sigma, military strategy, and systems thinking. Apply this skill whenever you need to **define a problem clearly**, **find its root cause**, or **develop and validate a solution**.
+Tackle any problem — bugs, design flaws, performance issues, architectural decisions, or unknown failures — using structured frameworks rather than trial and error.
 
----
+## The Three Phases
 
-## Meta-Process: The Three Phases
-
-Every problem-solving effort flows through three phases. Pick the right framework(s) for each phase based on the situation.
+Every problem-solving effort flows through three phases. Pick the right framework for each.
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  PHASE 1        │     │  PHASE 2        │     │  PHASE 3        │
-│  DEFINE         │────▶│  ANALYZE        │────▶│  SOLVE & ACT    │
-│                 │     │                 │     │                 │
-│  5W             │     │  5 Whys         │     │  5 Hows         │
-│  Kepner-Tregoe  │     │  Ishikawa       │     │  OODA Loop      │
-│  Situation      │     │  Iceberg Model  │     │  PDCA           │
-│  Appraisal      │     │  First          │     │  A3 Thinking    │
-│                 │     │  Principles     │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
+DEFINE  ──────►  ANALYZE  ──────►  SOLVE & ACT
+(What's the      (Why is it        (How do we
+ problem?)        happening?)       fix it?)
 ```
 
----
+## Framework Selection
 
-## Framework Selection Guide
-
-| Problem Type | Recommended Frameworks | Why |
+| Situation | Use | Phase |
 |---|---|---|
-| **Unknown / vague symptom** | 5W → 5 Whys | Define first, then drill to root cause |
-| **Multiple possible causes** | Ishikawa (Fishbone) | Visually map and categorize all candidates |
-| **Recurring / systemic issue** | Iceberg Model | Look beyond events to structures & mental models |
-| **Challenging assumptions** | First Principles | Strip away convention, rebuild from truths |
-| **Urgent / real-time incident** | OODA Loop | Rapid observe-orient-decide-act cycles |
-| **Process improvement** | PDCA or DMAIC | Iterative, data-driven improvement |
-| **Need a single-page summary** | A3 Thinking | Structured report for stakeholder alignment |
-| **Complex, multi-concern mess** | Kepner-Tregoe SA → PA | Separate concerns, prioritize, then analyze |
+| Vague or unclear symptom | **5W** → **5 Whys** | Define → Analyze |
+| Multiple possible causes | **Ishikawa (Fishbone)** | Analyze |
+| Recurring / systemic issue | **Iceberg Model** | Analyze |
+| Stuck on assumptions | **First Principles** | Analyze |
+| Urgent, live incident | **OODA Loop** | Solve |
+| Iterative process improvement | **PDCA** | Solve |
+| Need a stakeholder report | **A3 Report** | Solve |
+| Complex multi-concern mess | **Kepner-Tregoe SA** → split and prioritize | Define |
 
 ---
 
-## Phase 1 — Problem Definition
+## Phase 1 — Define the Problem
 
-### 1. The 5W Framework (Who / What / Where / When / Why)
+### 5W Framework
 
-* **Purpose**: Establish a complete, unambiguous problem statement before diving into analysis.
-* **Execution**:
-    * **Who** — Who is affected? Who reported it? Who owns the system?
-    * **What** — What exactly is happening? What are the symptoms? What is the expected behavior?
-    * **Where** — Where does it occur? (file, module, environment, geography)
-    * **When** — When did it start? Is it intermittent or constant? Any temporal patterns?
-    * **Why** — Why does it matter? What is the business/user impact?
-* **Output**: A crisp problem statement: *"[Who] is experiencing [What] in [Where] since [When] because [initial Why], impacting [impact]."*
+Establish a complete problem statement before analyzing anything.
 
-### 2. Kepner-Tregoe Situation Appraisal
+1. **Who** — Who is affected? Who reported it?
+2. **What** — What exactly is happening vs. what's expected?
+3. **Where** — Where does it occur? (file, module, environment)
+4. **When** — When did it start? Intermittent or constant? Any temporal patterns?
+5. **Why it matters** — What's the impact?
 
-* **Purpose**: When facing a complex, messy situation with multiple concerns, separate and prioritize them before analyzing.
-* **Execution**:
-    1. **List concerns** — Enumerate all threats, issues, and opportunities.
-    2. **Separate & clarify** — Break compound issues into distinct, single concerns.
-    3. **Set priority** — Rank by urgency (time pressure), seriousness (impact), and growth (will it worsen?).
-    4. **Plan next steps** — For each concern, decide: Does it need Problem Analysis, Decision Analysis, or Potential Problem Analysis?
-* **When to use**: You're overwhelmed by a tangle of issues and don't know where to start.
+Produce a crisp statement: *"[Who] experiences [What] in [Where] since [When], causing [impact]."*
 
----
+### Kepner-Tregoe Situation Appraisal
 
-## Phase 2 — Root Cause Analysis
+Use when facing a tangle of issues and you don't know where to start.
 
-### 3. The 5 Whys
-
-* **Origin**: Sakichi Toyoda, Toyota Production System.
-* **Purpose**: Drill past symptoms to the root cause by iteratively asking "Why?".
-* **Execution**:
-    1. State the problem clearly (use your 5W output).
-    2. Ask: **"Why is this happening?"** — Answer with facts, not assumptions.
-    3. Take that answer and ask **"Why?"** again.
-    4. Repeat until you reach a cause that, if fixed, would prevent recurrence (typically 3–7 iterations).
-* **Rules**:
-    * Each answer must be grounded in evidence/data.
-    * If the chain branches (multiple causes), follow each branch.
-    * Stop when you reach a cause you can directly act on.
-* **Pitfall**: Stopping too early (symptom-level) or going too deep (philosophical/unhelpful).
-
-### 4. Ishikawa / Fishbone Diagram
-
-* **Origin**: Kaoru Ishikawa, quality management.
-* **Purpose**: Systematically brainstorm and categorize all *possible* causes when the root cause is unclear and there are many candidates.
-* **Execution**:
-    1. Place the **problem** at the "head" of the fish.
-    2. Draw major category "bones" using the **6 Ms**:
-        * **Methods** — processes, procedures, workflows
-        * **Machines** — tools, infrastructure, hardware, software dependencies
-        * **Materials** — data, inputs, configurations, dependencies
-        * **Manpower** — skills, knowledge, staffing, communication
-        * **Measurement** — metrics, monitoring, observability gaps
-        * **Mother Nature (Environment)** — OS, network, cloud region, external services
-    3. For each category, brainstorm specific possible causes as sub-branches.
-    4. Evaluate each candidate against evidence to narrow down the true root cause.
-* **When to use**: Multiple people have different theories; you need a structured brainstorm.
-
-### 5. Systems Thinking — Iceberg Model
-
-* **Purpose**: Look beyond the visible event to find the deeper systemic forces at play. Especially useful for *recurring* problems.
-* **Four Levels** (from surface to depth):
-
-    | Level | Question | Example |
-    |---|---|---|
-    | **Events** | What just happened? | "Deploy failed at 3 AM" |
-    | **Patterns** | What trends recur? | "Deploys fail every time after a config change" |
-    | **Structures** | What systems/processes produce the pattern? | "No automated config validation in the pipeline" |
-    | **Mental Models** | What beliefs/assumptions allow the structure to persist? | "We trust devs to manually verify configs" |
-
-* **Execution**:
-    1. Describe the **event** (the surface symptom).
-    2. Look for **patterns** — has this happened before? When?
-    3. Identify the **structures** (code architecture, processes, org design) that produce the pattern.
-    4. Uncover the **mental models** (assumptions, cultural beliefs) that sustain those structures.
-    5. Intervene at the deepest feasible level for maximum leverage.
-* **Key insight**: Fixing events = firefighting. Changing structures/mental models = prevention.
-
-### 6. First Principles Thinking
-
-* **Origin**: Aristotle; popularized by Elon Musk.
-* **Purpose**: Break free from conventional assumptions. Decompose the problem to its irreducible truths and reason up from there.
-* **Execution**:
-    1. **Identify and question every assumption** — "Why do we believe X must be this way?"
-    2. **Decompose to fundamental truths** — What are the basic, undeniable facts? (physics, math, API contracts, language specs)
-    3. **Reconstruct from scratch** — Given only these truths, what is the optimal solution? Ignore how it's "always been done."
-* **When to use**:
-    * You're stuck because "that's just how it works."
-    * Existing solutions feel arbitrarily constrained.
-    * You need a breakthrough, not an incremental fix.
-* **Example**: Instead of "this library is slow, find a faster one," ask "what computation do we actually need? Can we avoid the computation entirely?"
+1. **List all concerns** — enumerate every threat, issue, and opportunity.
+2. **Separate** — break compound issues into single, distinct concerns.
+3. **Prioritize** — rank each by urgency (time pressure), seriousness (impact), and growth (will it worsen?).
+4. **Route** — for each concern, decide: does it need root cause analysis, a decision, or risk prevention?
 
 ---
 
-## Phase 3 — Solution & Action
+## Phase 2 — Find the Root Cause
 
-### 7. The 5 Hows
+### 5 Whys
 
-* **Purpose**: Once you've identified the root cause (via 5 Whys), develop a concrete solution by iteratively asking "How?".
-* **Execution**:
-    1. Start with the root cause: **"How can we fix [root cause]?"**
-    2. Take that answer and ask: **"How do we implement that?"**
-    3. Repeat until you have actionable, specific steps that someone can execute immediately.
-    4. Each "How" should be more concrete than the last.
-* **Output**: A ladder from abstract solution → concrete implementation steps.
+Drill past symptoms to the root cause.
 
-### 8. OODA Loop (Observe → Orient → Decide → Act)
+1. State the problem clearly (use your 5W output).
+2. Ask: **"Why is this happening?"** — answer with facts, not assumptions.
+3. Take that answer and ask **"Why?"** again.
+4. Repeat 3–7 times until you reach a cause you can directly act on.
+5. If the chain branches (multiple causes), follow each branch.
 
-* **Origin**: Colonel John Boyd, USAF.
-* **Purpose**: Rapid decision-making under uncertainty. Ideal for live incidents, debugging sessions, or any situation where conditions change fast.
-* **Execution**:
-    * **Observe** — Gather information: logs, metrics, user reports, reproduction steps. Cast a wide net.
-    * **Orient** — Analyze what you've observed. Filter through your knowledge, past experience, and mental models. Identify biases. Form a hypothesis.
-    * **Decide** — Choose a course of action. Treat it as a *hypothesis* to test, not a final commitment.
-    * **Act** — Execute quickly. Then loop back to **Observe** to see the effect.
-* **Key principle**: Speed of iteration beats perfection. A fast OODA loop beats a slow, thorough one.
-* **When to use**: Production incidents, time-sensitive bugs, unfamiliar territory where you need to learn by doing.
+**Watch out**: stopping too early (symptom-level fix) or going too deep (philosophical, not actionable).
 
-### 9. PDCA (Plan → Do → Check → Act)
+### Ishikawa (Fishbone) Diagram
 
-* **Origin**: Shewhart/Deming Cycle, Total Quality Management.
-* **Purpose**: Continuous, iterative improvement. More deliberate than OODA — use when you have time to measure and reflect.
-* **Execution**:
-    * **Plan** — Define the objective, hypothesize the solution, design the experiment/change, define success metrics.
-    * **Do** — Implement the change on a small scale (feature flag, staging env, single module).
-    * **Check** — Measure results against your success metrics. Did it work? Any side effects?
-    * **Act** — If successful, standardize and expand. If not, analyze why and start a new Plan.
-* **When to use**: Refactoring, performance tuning, process improvement, any change where you can iterate safely.
+Systematically brainstorm and categorize all possible causes when the root cause is unclear.
 
-### 10. A3 Thinking (Single-Page Problem-Solving Report)
+Place the **problem** at the head. Draw branches for each category:
 
-* **Origin**: Toyota Production System.
-* **Purpose**: Force clarity by constraining the entire problem → analysis → solution narrative to a single structured report. Excellent for communicating with stakeholders.
-* **Sections**:
-    1. **Background** — Why does this problem matter?
-    2. **Current Condition** — What is happening now? (data, facts, observations)
-    3. **Goal / Target Condition** — What should be happening?
-    4. **Root Cause Analysis** — Why is the current state different from the goal? (use 5 Whys / Ishikawa here)
-    5. **Countermeasures** — Proposed changes, with owners and deadlines.
-    6. **Implementation Plan** — Specific steps, timeline, responsibilities.
-    7. **Follow-up** — How will we verify success? When will we check?
-* **When to use**: You need to present a problem and proposed solution to a team or decision-maker.
+| Category | Check for |
+|---|---|
+| **Methods** | Flawed processes, missing steps, wrong workflows |
+| **Machines** | Tool bugs, infrastructure issues, hardware, dependency problems |
+| **Materials** | Bad data, wrong inputs, config errors, corrupted dependencies |
+| **Manpower** | Knowledge gaps, miscommunication, missing documentation |
+| **Measurement** | Missing metrics, misleading logs, observability gaps |
+| **Environment** | OS differences, network issues, cloud region, external service outages |
+
+For each category, brainstorm specific possible causes. Evaluate each against evidence to narrow down.
+
+### Iceberg Model
+
+Look beyond the visible event to find deeper systemic forces. Use for *recurring* problems.
+
+Work through four levels, from surface to depth:
+
+1. **Event** — What just happened? (the immediate symptom)
+2. **Pattern** — Has this happened before? What trends recur?
+3. **Structure** — What systems, processes, or code architecture produce this pattern?
+4. **Mental Model** — What beliefs or assumptions allow the structure to persist?
+
+Intervene at the deepest feasible level. Fixing events = firefighting. Changing structures = prevention.
+
+### First Principles Thinking
+
+Break free from assumptions. Use when you're stuck because "that's just how it works."
+
+1. **Question every assumption** — "Why do we believe X must be this way?"
+2. **Decompose to fundamental truths** — What are the undeniable facts? (physics, math, API contracts, spec guarantees)
+3. **Reconstruct from scratch** — Given only these truths, what's the optimal solution? Ignore how it's "always been done."
+
+Example: Instead of "this library is slow, find a faster one," ask "what computation do we actually need? Can we avoid it entirely?"
 
 ---
 
-## Executable Template: Problem-Solving Report
+## Phase 3 — Solve & Act
 
-*The agent should fill this out when systematically tackling a problem.*
+### 5 Hows
+
+Once you know the root cause, develop a concrete solution.
+
+1. **"How can we fix [root cause]?"** → Solution direction
+2. **"How do we implement that?"** → Specific approach
+3. **"How do we execute?"** → Concrete steps
+4. **"How do we verify?"** → Test or metric
+5. **"How do we prevent recurrence?"** → Systemic change
+
+Each "How" should be more concrete than the last — ladder from abstract to executable.
+
+### OODA Loop (Observe → Orient → Decide → Act)
+
+Rapid decision-making under uncertainty. Use for live incidents, active debugging, or unfamiliar territory.
+
+- **Observe** — Gather information: logs, metrics, user reports, reproduction steps. Cast a wide net.
+- **Orient** — Analyze observations. Form a hypothesis. Identify your biases.
+- **Decide** — Choose a course of action. Treat it as a hypothesis to test, not a final commitment.
+- **Act** — Execute quickly. Loop back to Observe to see the effect.
+
+Speed of iteration beats perfection. A fast OODA loop beats a slow, thorough one.
+
+### PDCA (Plan → Do → Check → Act)
+
+Deliberate iterative improvement. Use when you have time to measure and reflect.
+
+- **Plan** — Define the objective, hypothesize the solution, design the experiment, define success metrics.
+- **Do** — Implement on a small scale (feature flag, staging env, single module).
+- **Check** — Measure results against success metrics. Any side effects?
+- **Act** — If successful, standardize and expand. If not, analyze why and start a new Plan.
+
+### A3 Report
+
+Force clarity by constraining the entire narrative to a single structured report. Use when communicating to stakeholders.
+
+Fill in these sections, keeping each brief:
+1. **Background** — Why does this problem matter?
+2. **Current Condition** — What is happening now? (data, facts)
+3. **Target Condition** — What should be happening?
+4. **Root Cause** — Why the gap? (use 5 Whys or Ishikawa)
+5. **Countermeasures** — Proposed changes with owners and deadlines.
+6. **Implementation Plan** — Specific steps, timeline, responsibilities.
+7. **Follow-up** — How will you verify success? When?
+
+---
+
+## Problem-Solving Report Template
+
+Fill this out when systematically tackling a problem.
 
 ```markdown
 # Problem-Solving Report: [Title]
 
 ## 1. Problem Definition (5W)
-- **Who:** [Who is affected / who reported it]
-- **What:** [Exact symptoms and expected behavior]
-- **Where:** [Location — file, module, environment]
-- **When:** [When it started, frequency, temporal pattern]
-- **Why it matters:** [Business/user impact]
-- **Problem Statement:** "[Who] experiences [What] in [Where] since [When], causing [impact]."
+- **Who:** [affected / reporter]
+- **What:** [symptoms vs. expected behavior]
+- **Where:** [file, module, environment]
+- **When:** [start, frequency, pattern]
+- **Impact:** [business/user impact]
+- **Statement:** "[Who] experiences [What] in [Where] since [When], causing [impact]."
 
 ## 2. Root Cause Analysis
-### Method Used: [5 Whys / Ishikawa / Iceberg / First Principles]
+### Method: [5 Whys / Ishikawa / Iceberg / First Principles]
 
 #### If 5 Whys:
-1. Why? → [Answer 1]
-2. Why? → [Answer 2]
-3. Why? → [Answer 3]
-4. Why? → [Answer 4]
-5. Why? → **Root Cause: [Answer 5]**
+1. Why? → [Answer]
+2. Why? → [Answer]
+3. Why? → [Answer]
+4. Why? → [Answer]
+5. Why? → **Root Cause: [Answer]**
 
 #### If Ishikawa:
 | Category | Possible Causes | Evidence | Verdict |
@@ -226,57 +198,43 @@ Every problem-solving effort flows through three phases. Pick the right framewor
 | Environment | | | |
 
 #### If Iceberg:
-- **Event:** [What happened]
-- **Pattern:** [Recurring trend]
-- **Structure:** [System/process causing pattern]
-- **Mental Model:** [Belief sustaining the structure]
+- **Event:** [what happened]
+- **Pattern:** [recurring trend]
+- **Structure:** [system causing pattern]
+- **Mental Model:** [belief sustaining it]
 
-**Confirmed Root Cause:** [Statement]
+**Root Cause:** [confirmed statement]
 
-## 3. Solution Development (5 Hows)
-1. How to fix root cause? → [Solution direction]
-2. How to implement? → [Specific approach]
-3. How to execute? → [Concrete steps]
-4. How to verify? → [Test/metric]
-5. How to prevent recurrence? → [Systemic change]
+## 3. Solution (5 Hows)
+1. How to fix? → [direction]
+2. How to implement? → [approach]
+3. How to execute? → [steps]
+4. How to verify? → [test/metric]
+5. How to prevent? → [systemic change]
 
 ## 4. Action Plan
-| Step | Action | Owner | Timeline | Status |
+| # | Action | Owner | Timeline | Done? |
 |---|---|---|---|---|
 | 1 | | | | [ ] |
 | 2 | | | | [ ] |
-| 3 | | | | [ ] |
 
-## 5. Verification & Follow-up
-- **Success Metric:** [How we know it's fixed]
-- **Check Date:** [When to verify]
-- **Lessons Learned:** [What to carry forward]
+## 5. Verification
+- **Success Metric:** [how we know it's fixed]
+- **Check Date:** [when to verify]
+- **Lessons Learned:** [what to carry forward]
 ```
 
 ---
 
-## Quick Reference: When Am I Done?
+## Done Checklist
 
-- [ ] Problem is **defined** clearly (someone uninvolved could understand it)
-- [ ] Root cause is **confirmed** with evidence (not just a theory)
-- [ ] Solution **addresses the root cause**, not just the symptom
-- [ ] Action plan has **concrete steps** with owners and timelines
-- [ ] **Verification** plan exists to confirm the fix worked
-- [ ] **Prevention** measures are in place to stop recurrence
+- [ ] Problem **defined clearly** (someone uninvolved could understand it)
+- [ ] Root cause **confirmed with evidence** (not just a theory)
+- [ ] Solution addresses the **root cause**, not just the symptom
+- [ ] Action plan has **concrete steps**
+- [ ] **Verification plan** exists
+- [ ] **Prevention measures** in place
 
 ---
 
-## References & Origins
-
-| Framework | Origin | Key Source |
-|---|---|---|
-| 5W | Journalism / general inquiry | Classical methodology |
-| 5 Whys | Sakichi Toyoda, Toyota | [businessmap.io](https://businessmap.io/lean-management/improvement/5-whys-analysis) |
-| 5 Hows | Lean / ASQ | [asq.org](https://asq.org) |
-| Ishikawa / Fishbone | Kaoru Ishikawa, 1960s | [asq.org/quality-resources](https://asq.org/quality-resources/fishbone) |
-| PDCA | Shewhart / Deming | [asq.org/quality-resources](https://asq.org/quality-resources/pdca-cycle) |
-| OODA Loop | Col. John Boyd, USAF | [fs.blog](https://fs.blog/ooda-loop/) |
-| Kepner-Tregoe | Kepner & Tregoe, 1960s | [kepner-tregoe.com](https://kepner-tregoe.com) |
-| A3 Thinking | Toyota Production System | [lean.org](https://lean.org) |
-| First Principles | Aristotle / Elon Musk | [fs.blog](https://fs.blog/first-principles/) |
-| Iceberg Model | Systems Thinking | [untools.co](https://untools.co/iceberg-model) |
+For framework origins and academic references, see `references/origins.md`.

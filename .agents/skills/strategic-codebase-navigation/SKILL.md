@@ -1,84 +1,143 @@
 ---
 name: strategic-codebase-navigation
-description: Strategic Navigation of Massive Codebases
+description: Strategic navigation of large, unfamiliar codebases. Use this skill whenever you need to understand an unfamiliar codebase, find where to make a change in a large project, trace how a feature works end-to-end, plan a migration or large refactor, or map system architecture. Also use it when you're lost in a big repo and don't know where to start, or when a user asks you to work on a codebase you haven't seen before.
 ---
 
-# Strategic Navigation of Massive Codebases
+# Strategic Codebase Navigation
 
-## When to use this skill
-A specialized methodology for an agent to analyze, navigate, and modify large-scale software projects without requiring a full system audit. This skill focuses on **behavioral tracing**, **logic isolation**, and **architectural mapping** for both feature-level development and system-level migration.
+Navigate large, unfamiliar codebases efficiently without trying to understand everything at once.
 
----
+## Quick Start: Pick Your Strategy
 
-## Core Navigation Strategies
-
-### 1. The "Logic Bubble" Isolation (Feature-Level)
-* **Concept**: Avoid "analysis paralysis" by refusing to map the entire system. Define a strict boundary around the immediate task.
-* **Execution**:
-    * Identify the **Entry Point** (where data or a command enters).
-    * Identify the **Exit Point** (where the result is output).
-    * Focus exclusively on the transformation logic between these points.
-
-### 2. Boundary & Registration Tracing (Architecture-Level)
-* **Concept**: To understand high-level architecture, find the "Glue" code. Large systems use **Registration Patterns** rather than direct calls.
-* **Execution**:
-    * **Find the Manager**: Search for keywords like `Register`, `Factory`, `Manager`, or `Provider`.
-    * **Identify the Contract**: Find the interface or abstract class that modules must implement to be recognized.
-    * **Map the Lifecycle**: Trace when a module is loaded vs. initialized to find the true dependency graph.
-
-### 3. Structural Pattern Matching (Clone & Mutate)
-* **Concept**: Follow existing internal "boilerplate." Do not write new features from scratch.
-* **Execution**: Find a similar feature, analyze its registration, copy the structure, and swap the internal logic.
-
-### 4. Metadata & Module Auditing (Structural Mapping)
-* **Concept**: Use build configuration files as a schematic.
-* **Execution**: Identify "Leaf" modules (no incoming dependencies) vs. "Core" modules. Start migration/mapping from Leaf modules upward.
+```
+What do you need to do?
+│
+├── Make a specific change ──────────► "Logic Bubble" Isolation (#1)
+│   (fix a bug, add a feature)
+│
+├── Understand the architecture ─────► Boundary & Registration Tracing (#2)
+│   (how does this system work?)
+│
+├── Add something similar to ────────► Structural Pattern Matching (#3)
+│   what already exists
+│
+└── Plan a migration or map ─────────► Metadata & Module Auditing (#4)
+    the full dependency graph
+```
 
 ---
 
-## High-Level Task Workflows
+## Strategy 1: "Logic Bubble" Isolation
 
-### Task: Architecture Mapping (for Migration)
-1. **Identify the Core**: Find the module with the most incoming dependencies.
-2. **Trace the Interface**: Find the base class all business logic inherits from.
-3. **Audit the Boilerplate**: Determine the minimum code for a "Hello World" module.
-4. **Isolate Side Effects**: Identify where code touches Databases, APIs, or File Systems.
+**Use when**: You need to make a targeted change (fix a bug, add a feature) and don't need to understand the whole system.
+
+1. **Find the Entry Point** — where does data or a command enter the flow you care about?
+   - Search for route handlers, CLI argument parsers, event listeners, or message handlers related to the feature.
+   - Use `grep_search` for API endpoints, function names, or error messages from the bug report.
+
+2. **Find the Exit Point** — where does the result get output?
+   - Trace from the entry point forward: what gets returned, written to disk, sent over the network, or rendered?
+
+3. **Draw the boundary** — everything between entry and exit is your "bubble." Ignore everything outside it.
+   - Read only the files and functions in the bubble. Resist the urge to explore beyond.
+   - Use `view_file_outline` to skim files and identify relevant functions without reading everything.
+
+4. **Make your change** within the bubble. Test at the entry and exit points.
 
 ---
 
-## Executable Template: Architecture Discovery Report
-*The agent should fill this out when first analyzing a new codebase.*
+## Strategy 2: Boundary & Registration Tracing
+
+**Use when**: You need to understand the high-level architecture — how modules connect, what the extension points are, how things get wired together.
+
+1. **Find the "Glue" code** — large systems use registration patterns, not direct calls.
+   - Search for keywords: `Register`, `Factory`, `Provider`, `Manager`, `Plugin`, `Module`, `Handler`, `Middleware`.
+   - Use `grep_search` with patterns like `register`, `factory`, `createModule`, `addPlugin`.
+
+2. **Identify the Contract** — find the interface or abstract class that modules must implement.
+   - Look at what the registration function accepts. That's the contract.
+   - Use `view_code_item` to inspect the base class or interface.
+
+3. **Map the Lifecycle** — trace when modules are loaded vs. initialized.
+   - Search for initialization sequences: `init`, `setup`, `bootstrap`, `configure`.
+   - This reveals the true dependency graph (load order = dependency order).
+
+4. **Document what you find** using the Architecture Discovery Report template below.
+
+---
+
+## Strategy 3: Structural Pattern Matching (Clone & Mutate)
+
+**Use when**: You need to add something similar to what already exists (new endpoint, new command, new module).
+
+1. **Find the closest existing example** — search for a feature similar to what you're building.
+   - Use `find_by_name` and `grep_search` to locate similar modules, handlers, or components.
+
+2. **Analyze its registration** — how does the existing feature register itself with the system?
+   - What files does it touch? What config entries does it need? What interfaces does it implement?
+
+3. **Copy the structure** — duplicate the existing feature's files.
+
+4. **Swap the internal logic** — replace the business logic while keeping the registration boilerplate identical.
+
+5. **Verify registration** — confirm the new module is picked up by the system the same way the original was.
+
+---
+
+## Strategy 4: Metadata & Module Auditing
+
+**Use when**: Planning a migration, mapping the full dependency graph, or understanding which modules can be changed safely.
+
+1. **Start with build configuration** — treat `package.json`, `Cargo.toml`, `build.gradle`, `CMakeLists.txt`, etc. as your schematic.
+   - Use `find_by_name` to locate all build/config files.
+
+2. **Classify modules**:
+   - **Leaf modules** — no other modules depend on them. Safe to change or migrate first.
+   - **Core modules** — many modules depend on them. Change last, with extreme care.
+   - Use `grep_search` to trace imports/dependencies between modules.
+
+3. **Start from the leaves** — migrate or refactor leaf modules first, working inward toward the core.
+
+4. **Map side effects** — identify where code touches databases, APIs, file systems, or external services. These are your risk boundaries.
+
+---
+
+## Architecture Discovery Report Template
+
+Fill this out when first analyzing a new codebase.
 
 ```markdown
 # Architecture Discovery Report: [Project Name]
 
-## 1. System "Kernel" Identification
+## 1. System Core
 - **Core Module Location:** [Path]
 - **Primary Responsibility:** [e.g., Data routing, Engine kernel]
 - **Evidence:** [List modules depending on this Core]
 
-## 2. The "Handshake" (Registration Contract)
+## 2. Registration Contract
 - **Registration Manager:** [e.g., ModuleManager.cpp, registry.py]
 - **Base Interface/Class:** [The class business logic must inherit from]
-- **Required Boilerplate:** - [ ] Method A: [Name]
-    - [ ] Registration macro/string: [Example]
+- **Required Boilerplate:**
+    - [ ] Method: [Name]
+    - [ ] Registration call: [Example]
 
 ## 3. Dependency Hierarchy
-- **Leaf Modules (Start here):** [Modules with no incoming dependencies]
-- **Middleware/Bridge Modules:** [Connections between Core and Logic]
+- **Leaf Modules (safe to change first):** [Modules with no incoming deps]
+- **Core Modules (change last):** [Modules everything depends on]
 
 ## 4. Side-Effect Boundaries
 - **I/O & Persistence:** [Filesystem, Database classes]
 - **Network/API Layer:** [Socket handlers, REST clients]
+- **External Services:** [Third-party APIs, message queues]
 
-## 5. Smallest Possible Verification (The "Four-Line" Test)
+## 5. Smallest Verification Test
 - **Test Location:** [File path]
 - **Proposed Change:** [e.g., Change a log string]
-- **Verification:** [How to see the change in live app]
+- **How to verify:** [How to see the change in the live app]
+```
 
 ---
 
-## Reference & Origin
-* **Source Material**: *Navigating Large Codebases - Instructor's Guide with Marc Olano*
+## Reference
+* **Source Material**: *Navigating Large Codebases — Instructor's Guide with Marc Olano*
 * **Primary URL**: https://www.youtube.com/watch?v=YZdVfKJNLfk
-* **Context**: Professional strategies for managing extreme code complexity and system-level modifications.
