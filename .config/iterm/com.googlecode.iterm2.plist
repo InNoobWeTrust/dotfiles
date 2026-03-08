@@ -6,12 +6,28 @@
 	<string>Return commands suitable for copy/pasting into \(shell) on \(uname). Do NOT include commentary NOR Markdown triple-backtick code blocks as your whole response will be copied into my terminal automatically.
 
 The script should do this: \(ai.prompt)</string>
+	<key>AIFeatureFunctionCalling</key>
+	<true/>
+	<key>AIFeatureHostedCodeInterpeter</key>
+	<true/>
+	<key>AIFeatureHostedFileSearch</key>
+	<true/>
+	<key>AIFeatureHostedWebSearch</key>
+	<true/>
+	<key>AIFeatureStreamingResponses</key>
+	<true/>
+	<key>AITermAPI</key>
+	<integer>2</integer>
+	<key>AIVectorStore</key>
+	<integer>1</integer>
 	<key>AiMaxTokens</key>
-	<integer>8000</integer>
+	<integer>1000000</integer>
 	<key>AiModel</key>
-	<string>llama-3.1-8b-instant</string>
+	<string>gpt-4.1</string>
+	<key>AiResponseMaxTokens</key>
+	<integer>32768</integer>
 	<key>AitermURL</key>
-	<string>https://api.groq.com/openai/v1/chat/completions</string>
+	<string>https://api.openai.com/v1/responses</string>
 	<key>AllowClipboardAccess</key>
 	<true/>
 	<key>AutoCommandHistory</key>
@@ -364,6 +380,8 @@ The script should do this: \(ai.prompt)</string>
 	</dict>
 	<key>Default Bookmark Guid</key>
 	<string>1E7BAED3-5833-4724-AAB4-62589FAF3E43</string>
+	<key>Default Browser Profile Guid</key>
+	<string>CBF720D9-E062-4724-9080-6A2F4F0E98C5</string>
 	<key>DisableTransparencyForKeyWindow</key>
 	<false/>
 	<key>DoubleClickPerformsSmartSelection</key>
