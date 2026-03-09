@@ -108,15 +108,18 @@ batch_open() {
     size=${2:-10}
     start=${3:-1}
     browser=${4:-firefox}
-    content=($(grep -o 'http[s]\?://[^ ]\+' "$f"))
-    len=${#content[@]}
+    links_all=$(grep -Eo 'https?://[^ ]+' "$f" 2>/dev/null || true)
+    len=$(printf '%s\n' "$links_all" | awk 'NF {c++} END {print c+0}')
+
+    [ "$len" -eq 0 ] && return 0
 
     for s in $(seq "$start" "$size" "$len"); do
         echo "$s"+"$size":
-        links=$(printf '%s\n' "${content[@]}" | tail -n +"$s" | head -n "$size")
+        links=$(printf '%s\n' "$links_all" | awk 'NF' | tail -n +"$s" | head -n "$size")
         echo "$links"
-        read -n 1
-        echo "$links" | xargs open -a "$browser"
+        printf 'Press ENTER to continue...'
+        IFS= read -r _
+        printf '%s\n' "$links" | xargs open -a "$browser"
     done
 }
 
@@ -124,10 +127,18 @@ batch_open() {
 # # mux - pickup terminal multiplexer or download and execute one
 # # usage: mux [zellij_args]
 mux() {
-    if $(usable zellij); then
+    if usable zellij; then
         zellij "$@"
     else
-        bash <(curl -L zellij.dev/launch) "$@"
+        tmp_script=$(mktemp)
+        curl -fsSL zellij.dev/launch > "$tmp_script" || {
+            rm -f "$tmp_script"
+            return 1
+        }
+        bash "$tmp_script" "$@"
+        rc=$?
+        rm -f "$tmp_script"
+        return "$rc"
     fi
 }
 
@@ -138,12 +149,12 @@ cron_routine() {
     SCRIPT=${1:-cron.sh}
     RUNS=${2:-5}
     MIN_STEP=${3:-3}
-    MIN=$(($RANDOM % 60))
-    HOURS=$(seq 0 $MIN_STEP 23 | shuf | head -n $RUNS | sort --general-numeric-sort | tr '\n' ' ' | sed -e 's/[[:space:]]$//' | tr ' ' ',')
+    MIN=$(awk 'BEGIN{srand(); print int(rand()*60)}')
+    HOURS=$(seq 0 "$MIN_STEP" 23 | shuf | head -n "$RUNS" | sort -n | tr '\n' ' ' | sed -e 's/[[:space:]]$//' | tr ' ' ',')
 
     CONF="$MIN\t$HOURS\t*\t*\t*\tcd $PWD && /usr/bin/env -S bash -l -c 'CRON=true LOGLEVEL=DEBUG ./$SCRIPT > ./out.log 2>> ./error.log'"
 
-    echo -e $CONF
+    printf '%b\n' "$CONF"
 }
 
 #
@@ -233,6 +244,20 @@ ex ()
 # # usage: tiktok_id [username]
 tiktok_id() {
     curl -s "https://www.tiktok.com/@$1" | sed -n 's/.*"userInfo":{"user":{"id":"\([^"]*\)".*/\1/p'
+}
+
+#
+# # setup_remote_user - Provision a remote user without remembering script path
+# # usage: setup_remote_user [script_args]
+setup_remote_user() {
+    script_path="$CONF_SH_DIR/utils/setup_user.sh"
+
+    [ ! -r "$script_path" ] && {
+        echo "setup_remote_user script not found: $script_path" >&2
+        return 1
+    }
+
+    /usr/bin/env sh "$script_path" "$@"
 }
 
 # Custom functions

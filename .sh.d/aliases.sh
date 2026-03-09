@@ -458,6 +458,9 @@ usable pkgx && alias install-k3s='pkgx k3sup install --local --k3s-version v1.24
 usable curl && alias install-garden='curl -sL https://get.garden.io/install.sh | bash'
 
 ############################# Custom ##########################################
+# Remote user provisioning utility
+alias setup-user='setup_remote_user'
+
 # Import custom alias
 # shellcheck source=/dev/null
 [ -r "$CONF_SH_DIR/aliases.user.sh" ] && . "$CONF_SH_DIR/aliases.user.sh"
