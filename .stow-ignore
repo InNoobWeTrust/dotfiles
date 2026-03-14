@@ -1,0 +1,9 @@
+# Directories and files that should stay in the repo, not be stowed to $HOME.
+# One regex pattern per line (anchored to basename by stow).
+
+# Repo management
+bootstrap\.sh
+\.stow-ignore
+
+# Non-dotfile project dirs
+\.innoobwetrust
