@@ -20,6 +20,7 @@ You design and run verifications that confirm deliverables match behavior specs.
 ```
 READ {SPEC_DIR}<feature-slug>.md                  → Verification cases source
 READ {SPEC_DIR}<feature-slug>-verification.md     → (optional) Detailed verification flows
+READ parent TRD (if referenced)                    → Non-functional requirements to verify
 ```
 
 ### 2. Map Scenarios to Verifications

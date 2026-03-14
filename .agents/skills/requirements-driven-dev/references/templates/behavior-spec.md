@@ -4,6 +4,10 @@
 > **Owner**: <human name>
 > **Created**: <YYYY-MM-DD>
 
+## Parent TRD (optional)
+
+`{TRD_DIR}<component-slug>.md` — <which TRD section this spec addresses>
+
 ## Description
 
 <1-3 sentences: what this feature does and why it matters to the user/business>

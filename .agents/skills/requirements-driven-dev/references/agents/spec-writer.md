@@ -22,6 +22,7 @@ that will drive AI execution.
 ### 1. Understand the Request
 
 When human says they want a new feature:
+- Check: Is there a parent TRD? If so, read `{TRD_DIR}<component-slug>.md` first for architectural context
 - Ask: "What problem does this solve for the user?"
 - Ask: "What does success look like?" (observable outcome)
 - Ask: "What should NOT happen?" (error cases)

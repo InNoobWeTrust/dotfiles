@@ -19,6 +19,9 @@ Every behavior spec MUST contain these sections in order:
 ```markdown
 # Feature: <Title>
 
+## Parent TRD (optional)
+{TRD_DIR}<component-slug>.md — <which TRD section this spec addresses>
+
 ## Description
 <1-3 sentences: what this feature does and why it matters>
 
@@ -64,5 +67,6 @@ Every behavior spec MUST contain these sections in order:
 
 ## Linking
 
+- Reference parent TRD: `Parent: {TRD_DIR}<component-slug>.md`
 - Reference related specs: `See also: {SPEC_DIR}user-auth.md`
 - Reference changelog: `Implemented in: {CHANGELOG_DIR}20260303_user-login.md`

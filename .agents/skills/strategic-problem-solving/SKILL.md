@@ -1,6 +1,6 @@
 ---
 name: strategic-problem-solving
-description: Strategic and Systematic Thinking for Problem-Solving. Use this skill whenever you need to debug a tricky bug, investigate a failure, perform root cause analysis, make an architectural decision, untangle a complex multi-concern situation, or when you find yourself going in circles without making progress. Also use it when a user reports vague symptoms, recurring issues, or asks "why does this keep happening." If you're stuck and unsure what to try next, this skill will give you a structured way forward.
+description: Strategic and Systematic Thinking for Problem-Solving. Use this skill whenever you need to debug a tricky bug, investigate a failure, perform root cause analysis, make an architectural decision, untangle a complex multi-concern situation, or when you find yourself going in circles without making progress. Also use it when a user reports vague symptoms, recurring issues, or asks "why does this keep happening." If you're stuck and unsure what to try next, this skill will give you a structured way forward. After solving, use Phase 4 to challenge your own solution from first principles before committing to it.
 ---
 
 # Strategic Problem-Solving
@@ -12,9 +12,9 @@ Tackle any problem — bugs, design flaws, performance issues, architectural dec
 Every problem-solving effort flows through three phases. Pick the right framework for each.
 
 ```
-DEFINE  ──────►  ANALYZE  ──────►  SOLVE & ACT
-(What's the      (Why is it        (How do we
- problem?)        happening?)       fix it?)
+DEFINE  ──────►  ANALYZE  ──────►  SOLVE & ACT  ──────►  CHALLENGE
+(What's the      (Why is it        (How do we            (Will this
+ problem?)        happening?)       fix it?)              hold up?)
 ```
 
 ## Framework Selection
@@ -162,6 +162,61 @@ Fill in these sections, keeping each brief:
 
 ---
 
+## Phase 4 — Challenge & Validate
+
+Before committing to a solution, challenge it from first principles. The goal is
+to find weaknesses now, not 6 months later when they're expensive to fix.
+
+For the full adversarial challenge protocol — including attack vectors, debate
+format, and verdict system — read `references/adversarial-protocol.md`.
+
+### Applying the Protocol to Solutions
+
+After arriving at a solution (Phase 3), apply the adversarial protocol in
+**Mode 2 (Self-Challenge)**:
+
+1. **Run a pre-mortem**: Assume the solution has failed 6 months from now.
+   Work backwards to find why.
+2. **Challenge across attack vectors**: Assumptions, Evidence, Alternatives,
+   Longevity, Failure Modes, Scope (see protocol for detailed prompts).
+3. **Surface tensions inline**: Show trade-offs, assumptions at risk,
+   reversibility, and alternatives you rejected.
+4. **For high-stakes solutions**, produce a formal Internal Dissent block:
+   ```
+   ⚠️ Internal Challenge:
+   Why this approach might fail: [specific failure scenario]
+   My defense: [why I believe it holds despite this]
+   Assumption to monitor: [what to watch for that would invalidate this]
+   ```
+
+### Solution-Specific Questions
+
+Beyond the general attack vectors, ask:
+
+- Does this fix the **root cause** or just the symptom?
+- What happens if the **same problem recurs** after this fix?
+- Is this solution **proportional** to the problem's severity?
+- Could we **defer** this and solve a simpler version first?
+
+### Challenge Verdict
+
+```markdown
+## Solution Challenge: [Title]
+
+**Proposed solution**: [summary]
+**Pre-mortem result**: [what could go wrong in 6 months]
+**Challenges found**: <N>
+
+### Concerns
+1. [attack vector] <concern> — <severity: blocking / warning / minor>
+
+### Verdict
+PROCEED / REVISE / RETHINK
+```
+
+If challenges are blocking, revise the solution and re-challenge. Loop until
+the solution withstands scrutiny.
+
 ## Problem-Solving Report Template
 
 Fill this out when systematically tackling a problem.
@@ -231,6 +286,7 @@ Fill this out when systematically tackling a problem.
 - [ ] Problem **defined clearly** (someone uninvolved could understand it)
 - [ ] Root cause **confirmed with evidence** (not just a theory)
 - [ ] Solution addresses the **root cause**, not just the symptom
+- [ ] Solution **challenged from first principles** (Phase 4)
 - [ ] Action plan has **concrete steps**
 - [ ] **Verification plan** exists
 - [ ] **Prevention measures** in place

@@ -76,7 +76,7 @@ Covers all scenarios from specs/user-onboarding.md
 
 1. **One logical change per commit** — don't mix feature + refactor
 2. **Changelog file must exist** before commit is made
-3. **Spec reference** — if the commit implements a BDD spec, mention it in body
+3. **Spec reference** — if the commit implements a BDD spec, mention it in body. Optionally reference the parent TRD and PRD for traceability
 4. **Co-authored** — when AI produces deliverables and human reviews, use:
    ```
    Co-authored-by: AI Agent <...>

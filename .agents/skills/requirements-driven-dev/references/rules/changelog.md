@@ -19,7 +19,7 @@ teams to trace work across time and validate scope adherence.
   - `feature-slug` — lowercase, hyphen-separated, matches `{SPEC_DIR}<feature-slug>.md`
   - Full example: `20260303_jwt-refresh.md`
 - **One file per feature** — created when the first artifact for that feature is modified, appended for each subsequent change
-- **Maps 1:1 to a BDD spec** — `{SPEC_DIR}jwt-refresh.md` → `{CHANGELOG_DIR}20260303_jwt-refresh.md`
+- **Maps 1:1 to a requirements document** — typically a BDD spec (`{SPEC_DIR}jwt-refresh.md` → `{CHANGELOG_DIR}20260303_jwt-refresh.md`), but can also track PRD or TRD work
 - **Date prefix enables milestone filtering** — collect changelogs by time range for release notes
 
 ## Required Content
@@ -27,7 +27,7 @@ teams to trace work across time and validate scope adherence.
 ```markdown
 # Changelog: <Feature Name>
 
-**Spec**: {SPEC_DIR}<feature-slug>.md
+**Requirement**: {SPEC_DIR}<feature-slug>.md (or {PRD_DIR}/<TRD_DIR} as applicable)
 **Status**: completed | in-progress | blocked
 
 ---
@@ -63,12 +63,12 @@ teams to trace work across time and validate scope adherence.
 
 ## Rules
 
-1. **One changelog per feature (BDD spec)** — each spec has exactly one changelog file
+1. **One changelog per feature** — each requirements document (BDD spec, TRD, or PRD) has exactly one changelog file
 2. **Append, never overwrite** — each modification adds a `## Session: <YYYY-MM-DDTHH:MM>` entry at the bottom
 3. **Create on first modification** — when the first artifact for a feature is modified, create the changelog
 4. **Update immediately after changes** — record each Added/Modified/Removed action to keep scope current
 5. **Be compact** — each session entry should be 5-10 lines (focus on what changed, not why it was changed)
-6. **Reference the BDD spec** — link to `{SPEC_DIR}<feature-slug>.md` for behavior context
+6. **Reference the requirements document** — link to `{SPEC_DIR}<feature-slug>.md` (or `{PRD_DIR}` / `{TRD_DIR}`) for context
 7. **Never delete** — changelogs are append-only audit history
 8. **Session timestamp for traceability** — the `YYYY-MM-DDTHH:MM` enables tracing scope changes back to exact moment
 

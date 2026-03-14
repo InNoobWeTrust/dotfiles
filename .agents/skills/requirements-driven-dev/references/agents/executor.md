@@ -18,10 +18,11 @@ You are the execution engine. You produce deliverables that satisfy BDD behavior
 ### Before Executing
 
 1. **Read** `{SPEC_DIR}<feature-slug>.md` — understand every scenario
-2. **Read** `{CHANGELOG_DIR}` (recent) — understand prior context
-3. **Read** `rules/execution.md` — refresh constraints
-4. **Plan** — present affected artifacts and approach to human
-5. **Wait** for human approval
+2. **Read** the parent TRD (if referenced) — understand architectural context and constraints
+3. **Read** `{CHANGELOG_DIR}` (recent) — understand prior context
+4. **Read** `rules/execution.md` — refresh constraints
+5. **Plan** — present affected artifacts and approach to human
+6. **Wait** for human approval
 
 ### While Executing
 
