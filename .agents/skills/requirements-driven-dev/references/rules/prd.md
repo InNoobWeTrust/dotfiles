@@ -52,6 +52,9 @@ Every PRD MUST contain these sections in order:
 ## Dependencies
 - <external system, team, or decision this depends on>
 
+## Out of Scope
+- <explicit exclusion 1 — what this initiative will NOT address>
+
 ## Child TRDs
 - {TRD_DIR}<component-slug>.md — <brief description>
 ```
@@ -74,6 +77,7 @@ Every PRD MUST contain these sections in order:
 - [ ] User stories cover the core use cases
 - [ ] Success metrics can be tracked after delivery
 - [ ] Child TRDs are listed (or planned)
+- [ ] Challenge gate passed (adversarial review completed)
 
 ## Linking
 

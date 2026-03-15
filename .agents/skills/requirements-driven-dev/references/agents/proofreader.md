@@ -25,7 +25,7 @@ in addition to the general attack vectors:
 | Document | Requirements-Specific Attacks |
 |----------|-------------------------------|
 | **PRD** | Is the problem validated with real user data, not assumptions? Are success metrics measurable and time-bound? Are personas based on research or fiction? Are non-goals explicitly stated? |
-| **TRD** | Were alternative architectures genuinely evaluated? Do interface contracts survive requirement changes? Are non-functional requirements quantified (not "fast" but "p99 < 200ms")? Does the component breakdown map cleanly to BDD specs? |
+| **TRD** | Were alternative architectures genuinely evaluated? Do interface contracts survive requirement changes? Are non-functional requirements quantified (not "fast" but "p99 < 200ms")? Does the component breakdown map cleanly to BDD specs? Is the Security Assessment complete? (Invoke `security-reviewer` on this section.) |
 | **BDD spec** | Does every user story have at least one Given/When/Then scenario? Are edge cases covered in validation rules? Do out-of-scope exclusions close all loopholes? Does the spec reference its parent TRD? |
 | **Deliverable** | Does it implement exactly what the spec says — no more, no less? Does it handle every error path in the validation rules? Will it survive the next round of requirement changes? |
 

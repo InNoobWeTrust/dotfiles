@@ -8,10 +8,11 @@ description: Rules governing how AI produces and modifies deliverables.
 ## Core Principles
 
 1. **Spec-Driven**: Only produce what's defined in `{SPEC_DIR}<feature-slug>.md`. BDD specs cascade from TRDs and PRDs — when in doubt, check the parent TRD for architectural context. If still unsure, ask.
-2. **Defensive by Default**: All deliverables must handle errors and edge cases gracefully.
-3. **Single Responsibility**: One artifact = one concern. No monoliths.
-4. **Minimal Diff**: Make the smallest change that satisfies the spec. Don't refactor unrelated areas.
-5. **Readable > Clever**: Prefer clarity over cleverness. Work product is read 10x more than written.
+2. **Context-Aware**: Load `project-context.md` (if it exists) before starting. Follow its technology stack, conventions, and rules for consistency across sessions.
+3. **Defensive by Default**: All deliverables must handle errors and edge cases gracefully.
+4. **Single Responsibility**: One artifact = one concern. No monoliths.
+5. **Minimal Diff**: Make the smallest change that satisfies the spec. Don't refactor unrelated areas.
+6. **Readable > Clever**: Prefer clarity over cleverness. Work product is read 10x more than written.
 
 ## Organization
 

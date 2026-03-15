@@ -67,10 +67,51 @@ Errors:
 |-------|------|-------------|-------------|
 | <field> | <type> | <constraints> | <description> |
 
+## Security Assessment
+
+> Apply `security-reviewer` skill to this section. Do not skip.
+
+### Authentication & Authorization
+
+- **Auth model**: <e.g., JWT + refresh tokens, OAuth2, API keys, mTLS>
+- **Access control**: <RBAC / ABAC / ACL — what roles exist, what each can access>
+- **Session management**: <session lifetime, invalidation, concurrent session policy>
+- **Privilege boundaries**: <what separates user-level from admin-level, how escalation is prevented>
+
+### Data Protection
+
+- **Data classification**: <what data is sensitive — PII, credentials, financial, health>
+- **Encryption at rest**: <algorithm, key management, rotation policy>
+- **Encryption in transit**: <TLS version, certificate management>
+- **Data retention & deletion**: <what is kept, for how long, how deletion is enforced>
+- **Secrets management**: <how credentials, API keys, tokens are stored — never hardcoded>
+
+### Input Validation & Injection Prevention
+
+- **Input boundaries**: <what inputs exist, how each is validated/sanitized>
+- **Injection vectors**: <SQL, XSS, command injection, path traversal — how each is mitigated>
+- **File uploads** (if applicable): <size limits, type validation, storage isolation>
+
+### Infrastructure & Configuration
+
+- **Network boundaries**: <what is exposed, what is internal-only, firewall rules>
+- **Default credentials**: <are all defaults changed? Are ports locked down?>
+- **Container/deployment security** (if applicable): <image scanning, least-privilege, read-only fs>
+
+### Supply Chain & Dependencies
+
+- **Dependency policy**: <pinned versions? lockfile enforced? CVE scanning?>
+- **Third-party integrations**: <what external services are trusted, what data is shared>
+
+### Failure Modes
+
+- **Fail-closed vs fail-open**: <what happens when auth/validation/external services fail>
+- **Audit logging**: <what security events are logged, where, retention>
+- **Incident response**: <how security incidents are detected and escalated>
+
 ## Non-Functional Requirements
 
 - **Performance**: <specific targets, e.g., "p95 latency < 200ms at 1000 rps">
-- **Security**: <auth model, data encryption, access control requirements>
 - **Scalability**: <expected load, growth projections, horizontal/vertical strategy>
 - **Observability**: <logging, monitoring, alerting, SLO targets>
 - **Reliability**: <uptime target, failure modes, recovery strategy>
@@ -87,6 +128,7 @@ Errors:
 > **Date**: <YYYY-MM-DD>
 
 This TRD must survive adversarial challenge before advancing to BDD specs.
+The challenge MUST include a security-reviewer pass on the Security Assessment section.
 Record all challenges and their outcomes below for traceability.
 
 ### Debate Record

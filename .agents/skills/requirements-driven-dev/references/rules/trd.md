@@ -54,9 +54,18 @@ whatever is relevant to the domain.>
 
 ## Non-Functional Requirements
 - **Performance**: <specific targets, e.g., "p95 latency < 200ms">
-- **Security**: <auth model, data protection requirements>
 - **Scalability**: <expected load, growth projections>
 - **Observability**: <logging, monitoring, alerting needs>
+
+## Security Assessment
+> Apply security-reviewer skill to this section.
+
+### Authentication & Authorization
+### Data Protection
+### Input Validation & Injection Prevention
+### Infrastructure & Configuration
+### Supply Chain & Dependencies
+### Failure Modes
 
 ## Child BDD Specs
 - {SPEC_DIR}<feature-slug>.md — <brief description of the verifiable behavior>
@@ -68,9 +77,10 @@ whatever is relevant to the domain.>
 2. **Every section traces to a PRD goal** — if a component doesn't serve a product goal, question whether it belongs
 3. **Architecture decisions use ADR format** — context, decision, rationale, alternatives. This avoids "we just chose X" without reasoning
 4. **Non-functional requirements must be specific** — "fast" is meaningless; "p95 < 200ms at 1000 rps" is testable
-5. **Interfaces are contracts** — define them clearly enough that two teams could build against them independently
-6. **Versioned** — if architecture changes, update the TRD first, then cascade to BDD specs
-7. **Immutable during execution** — once BDD specs are approved, freeze the TRD for that iteration
+5. **Security is mandatory, not optional** — the Security Assessment section must be filled for every TRD. Invoke the `security-reviewer` skill to audit it. An empty or hand-waved security section blocks the challenge gate
+6. **Interfaces are contracts** — define them clearly enough that two teams could build against them independently
+7. **Versioned** — if architecture changes, update the TRD first, then cascade to BDD specs
+8. **Immutable during execution** — once BDD specs are approved, freeze the TRD for that iteration
 
 ## Quality Checklist
 
@@ -79,6 +89,8 @@ whatever is relevant to the domain.>
 - [ ] Alternatives were considered for non-trivial decisions
 - [ ] Interfaces are defined clearly (inputs, outputs, error cases)
 - [ ] Non-functional requirements have concrete targets
+- [ ] Security Assessment is complete — all 6 subsections addressed
+- [ ] Security Assessment has been reviewed by `security-reviewer`
 - [ ] Child BDD specs are listed (or planned)
 - [ ] No product-level concerns (those belong in the PRD)
 

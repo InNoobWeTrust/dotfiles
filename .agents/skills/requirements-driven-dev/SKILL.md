@@ -69,7 +69,8 @@ requirements-driven-dev/
 ├── SKILL.md                      # This file — entry point & overview
 └── references/
     ├── core/
-    │   └── lifecycle.md          # Core lifecycle protocol (always active)
+    │   ├── lifecycle.md          # Core lifecycle protocol (always active)
+    │   └── adversarial-protocol.md  # Synced adversarial challenge protocol (from adversarial-reviewer)
     ├── rules/
     │   ├── prd.md                # PRD authoring rules
     │   ├── trd.md                # TRD authoring rules
@@ -214,4 +215,4 @@ Add to your project's `AGENT.md`:
 
 ---
 
-*This skill is self-contained and portable. No external dependencies. No language assumptions.*
+*This skill is self-contained and portable. No language assumptions. Integrates with `adversarial-reviewer` and `security-reviewer` skills when available.*

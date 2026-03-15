@@ -46,6 +46,9 @@ Every behavior spec MUST contain these sections in order:
 
 ## Out of Scope
 - <explicit exclusion 1>
+
+## Dependencies
+- <other spec or artifact this depends on>
 ```
 
 ## Authoring Rules
@@ -64,6 +67,7 @@ Every behavior spec MUST contain these sections in order:
 - [ ] Edge cases are covered (empty input, max limits, concurrent access)
 - [ ] Error states have clear expected behavior
 - [ ] No ambiguous words ("properly", "correctly", "as expected" — replace with specifics)
+- [ ] Challenge gate passed (adversarial review completed)
 
 ## Linking
 

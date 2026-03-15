@@ -216,11 +216,15 @@ From the PRD, derive **how** to build it architecturally:
 
 #### ⚔ Challenge Gate: TRD
 
-Before advancing to BDD specs, the TRD must survive adversarial challenge:
+Before advancing to BDD specs, the TRD must survive adversarial challenge.
+The challenge MUST include a `security-reviewer` pass on the Security Assessment section.
+
 - Were alternative architectures genuinely evaluated?
 - Do interface contracts survive requirement changes?
 - Are non-functional requirements quantified (not "fast" but "p99 < 200ms")?
 - Does the component breakdown map cleanly to BDD specs?
+- Is the Security Assessment complete (auth, data protection, input validation, infra, supply chain, failure modes)?
+- Are there unaddressed attack surfaces?
 
 ### Step 0.3: BDD Decomposition
 
@@ -372,6 +376,8 @@ ACCEPTED / REVISE / ESCALATE
 See `references/core/adversarial-protocol.md` for the full adversarial
 challenge protocol, including attack vectors, debate rules, and the
 dissenting progress mechanism for impasses.
+
+---
 
 ## 7. VALIDATION GATE
 
