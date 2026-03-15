@@ -40,18 +40,25 @@ has no definable requirements, or when the user explicitly opts out.
 
 ## Quick Start
 
-1. **Define product requirements** → Write a PRD using the template
-2. **Define technical requirements** → Derive a TRD from the PRD
-3. **Define behavior specs** → Split TRD concerns into BDD specs
-4. **AI executes** — AI reads BDD spec, produces deliverables
-5. **AI verifies** — AI designs verifications from spec
-6. **AI proofreads** — Specialist skills review for domain quality
-7. **Human validates** — Review, feedback, adjust
-8. **Commit** — Record changelog, structured commit message
+### Full Flow (complex features)
 
-> **Shortcut**: For small features, you can start directly at step 3 (BDD spec)
-> without writing a PRD/TRD. The cascade is valuable for complex features
-> where multiple concerns need to be split and tracked.
+1. **Research** (optional) → Investigate domain, market, technical feasibility
+2. **Define product requirements** → Write a PRD using the template
+3. **Define technical requirements** → Derive a TRD from the PRD
+4. **Define behavior specs** → Split TRD concerns into BDD specs
+5. **AI executes** — AI reads BDD spec + project-context, produces deliverables
+6. **AI verifies** — AI designs verifications from spec
+7. **⚔ Adversarial challenge** — Challenge deliverables from first principles
+8. **Human validates** — Review, feedback, adjust
+9. **Commit** — Record changelog, structured commit message
+
+Adversarial challenge gates (⚔) run at every phase transition: after Research,
+after PRD, after TRD, after BDD specs, and after deliverables.
+
+### Quick Flow (small/well-understood changes)
+
+Skip to step 4 (BDD spec or inline task) → Execute → Verify → Commit.
+Use for bug fixes, small features, config changes.
 
 ---
 
@@ -82,14 +89,15 @@ requirements-driven-dev/
         ├── spec-writer.md        # Assists human in writing BDD behavior specs
         ├── executor.md           # AI executor — produces deliverables from spec
         ├── verifier.md           # AI verifier — designs verifications from spec
-        ├── proofreader.md        # Specialist domain review before validation
+        ├── proofreader.md        # Adversarial challenger — domain review using adversarial-protocol
         └── reviewer.md           # Quality gate — spec compliance review
 ```
 
 ## Knowledge Modules
 
 ### Core Protocol
-- [lifecycle](references/core/lifecycle.md) — The always-on lifecycle: Requirements Cascade → Backlog → Execute → Verify → Proofread → Validate → Changelog → Commit
+- [lifecycle](references/core/lifecycle.md) — The always-on lifecycle: Research → Requirements Cascade → Backlog → Execute → Verify → ⚔ Challenge → Validate → Changelog → Commit
+- [adversarial-protocol](references/core/adversarial-protocol.md) — Synced adversarial challenge protocol (from adversarial-reviewer)
 
 ### Rules
 - [prd](references/rules/prd.md) — PRD authoring: required sections, quality checklist
@@ -113,7 +121,7 @@ requirements-driven-dev/
 - [spec-writer](references/agents/spec-writer.md) — Helps human write clear, testable BDD specs
 - [executor](references/agents/executor.md) — Produces deliverables strictly from spec
 - [verifier](references/agents/verifier.md) — Designs and runs verifications from BDD spec
-- [proofreader](references/agents/proofreader.md) — Specialist domain review using relevant skills
+- [proofreader](references/agents/proofreader.md) — Adversarial challenger using adversarial-protocol for domain review
 - [reviewer](references/agents/reviewer.md) — Quality gate: spec compliance + deliverable quality
 
 ---

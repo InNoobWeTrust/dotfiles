@@ -20,63 +20,169 @@ and governs how every task flows from product idea to committed deliverable.
 | **Spec Author** | Human + AI | Write BDD behavior specs from TRDs |
 | **Executor** | AI Agent | Produce deliverables, implement changes |
 | **Verifier** | AI Agent | Design & run verifications based on behavior specs |
-| **Proofreader** | AI Agent | Adversarial challenger — debates choices from first principles |
+| **Challenger** | AI Agent | Adversarial reviewer — challenges choices from first principles at every phase gate |
 | **Reviewer** | AI Agent + Human | Review quality, adherence to spec |
 
 ---
 
-## 2. THE LIFECYCLE
+## 2. FLOW SELECTION
+
+Before starting, assess the scope to determine which flow to follow.
+
+### Full Flow
+
+Use for: new features, large refactors, multi-component changes, anything
+with unclear requirements or significant risk.
 
 ```
-┌───────────────────────────────────────────────────────────────┐
-│                REQUIREMENTS CASCADE (Phase 0)                 │
-│                                                               │
-│  ┌─────────┐    ┌─────────┐    ┌─────────────┐                │
-│  │   PRD   │───▶│   TRD   │───▶│  BDD Specs  │                │
-│  │ (1..N)  │    │ (1..N)  │    │   (1..N)    │                │
-│  └─────────┘    └─────────┘    └──────┬──────┘                │
-│   what/why       how/arch       verifiable                    │
-│                                 behaviors                     │
-└────────────────────────────────────────┼──────────────────────┘
-                                         ▼
-┌──────────────┐
-│  1. BACKLOG  │  BDD spec ready in {SPEC_DIR}<feature-slug>.md
-└──────┬───────┘
-       ▼
-┌──────────────┐
-│  2. EXECUTE  │  AI reads spec → produces deliverables
-└──────┬───────┘
-       ▼
-┌──────────────┐
-│  3. VERIFY   │  AI designs verifications from spec's expected behavior
-└──────┬───────┘
-       ▼
-┌────────────────┐
-│ 4. PROOFREAD   │  Adversarial challenge — debate choices from first principles
-└──────┬─────────┘
-       ▼
-┌──────────────────┐
-│  5. VALIDATE     │  Run verifications → check against acceptance criteria
-└──────┬───────────┘
-       │
-       ├── PASS ──► 6. CHANGELOG → 7. COMMIT
-       │
-       └── FAIL ──► Human feedback → AI adjusts → back to step 2, 3, or 4
+Research (optional) → PRD → TRD → BDD Specs → Execute → Verify → Validate → Commit
 ```
 
-### Shortcut for Small Changes
+Adversarial challenges at every phase transition (see Section 3).
 
-For small features or quick tasks, the requirements cascade is optional.
-You can start directly at step 1 (Backlog) by writing a BDD spec without
-a PRD or TRD. The cascade adds the most value for complex features where
-multiple concerns need to be split, tracked, and coordinated.
+### Quick Flow
+
+Use for: bug fixes, small features, well-understood changes, config tweaks.
+
+```
+BDD Spec (or inline task description) → Execute → Verify → Validate → Commit
+```
+
+Skip the requirements cascade. Start directly at the BDD spec or even
+a clear task description if the scope is trivially small.
+
+### How to Decide
+
+| Signal | Flow |
+|--------|------|
+| Requirements are unclear or debatable | Full |
+| Multiple components or teams affected | Full |
+| Architecture decisions needed | Full |
+| New product or major initiative | Full (with Research phase) |
+| Bug fix with clear reproduction steps | Quick |
+| Small feature with obvious scope | Quick |
+| Config/dependency change | Quick |
+| User explicitly says "just do it" | Quick |
+
+When in doubt, start Quick and escalate to Full if complexity emerges.
 
 ---
 
-## 3. REQUIREMENTS CASCADE — Phase 0
+## 3. THE LIFECYCLE
+
+```
+                    ┌───────────────────────────────────────────────────┐
+                    │         RESEARCH (Phase R — Optional)             │
+                    │  Domain research, market research, technical      │
+                    │  feasibility → Research Brief                     │
+                    └───────────────────────┬───────────────────────────┘
+                                            ▼
+                              ┌──── ⚔ Challenge Gate ────┐
+                              └──────────┬───────────────┘
+                                         ▼
+┌───────────────────────────────────────────────────────────────────────┐
+│              REQUIREMENTS CASCADE (Phase 0)                           │
+│                                                                       │
+│  ┌─────────┐  ⚔  ┌─────────┐  ⚔  ┌─────────────┐                      │
+│  │   PRD   │────▶│   TRD   │────▶│  BDD Specs  │                      │
+│  │ (1..N)  │     │ (1..N)  │     │   (1..N)    │                      │
+│  └─────────┘     └─────────┘     └──────┬──────┘                      │
+│   what/why        how/arch        verifiable                          │
+│                                   behaviors                           │
+└──────────────────────────────────────────┼────────────────────────────┘
+                                           ▼
+                                 ┌──── ⚔ Challenge Gate ────┐
+                                 └──────────┬───────────────┘
+                                            ▼
+                                 ┌──────────────┐
+                                 │  1. BACKLOG  │  BDD spec in {SPEC_DIR}
+                                 └──────┬───────┘
+                                        ▼
+                            ┌────────────────────────┐
+                            │  Load: project-context │  (if exists)
+                            └────────────┬───────────┘
+                                         ▼
+                                 ┌──────────────┐
+                                 │  2. EXECUTE  │  AI reads spec → produces deliverables
+                                 └──────┬───────┘
+                                        ▼
+                                 ┌──────────────┐
+                                 │  3. VERIFY   │  AI designs verifications from spec
+                                 └──────┬───────┘
+                                        ▼
+                            ┌────────────────────────┐
+                            │  4. ⚔ CHALLENGE GATE  │  Adversarial review of deliverables
+                            └────────────┬───────────┘
+                                         ▼
+                              ┌──────────────────┐
+                              │  5. VALIDATE     │  Run verifications → acceptance criteria
+                              └──────┬───────────┘
+                                     │
+                                     ├── PASS ──► 6. CHANGELOG → 7. COMMIT
+                                     │
+                                     └── FAIL ──► Feedback → back to step 2, 3, or 4
+```
+
+**⚔ = Adversarial Challenge Gate** — apply the adversarial-reviewer protocol
+(see `references/core/adversarial-protocol.md` for the full protocol).
+
+---
+
+## R. RESEARCH PHASE (Optional)
+
+Before writing requirements, investigate what you don't know. This phase
+prevents building the wrong thing.
+
+### When to Research
+
+- New product domain you haven't worked in before
+- Entering a competitive market — need to understand what exists
+- Technical feasibility is uncertain
+- Stakeholder assumptions haven't been validated
+
+### Research Areas
+
+| Area | Questions |
+|------|-----------|
+| **Domain** | What problem are we actually solving? Who has this problem? How do they solve it today? |
+| **Market** | What alternatives exist? What works? What doesn't? What gaps remain? |
+| **Technical** | Is this feasible with current tech? What are the constraints? What's been tried before? |
+| **User** | Who are the real users? What do they actually need (vs what we think they need)? |
+
+### Output
+
+Produce a **research brief** saved to `{PRD_DIR}research/<topic-slug>.md`.
+This feeds into the PRD as evidence for the problem statement and solution direction.
+
+### ⚔ Challenge Gate: Research
+
+Apply the adversarial protocol to the research brief before using it as
+input for the PRD:
+
+- **Assumptions**: What did the research assume that could be wrong?
+- **Evidence**: Is the data representative? Could it be cherry-picked?
+- **Alternatives**: Did the research explore enough alternatives?
+- **Scope**: Is the problem statement too broad or too narrow?
+
+---
+
+## 0. REQUIREMENTS CASCADE
 
 The cascade flows from high-level product intent down to verifiable behaviors.
 Each level adds specificity and narrows scope.
+
+### Context Chaining Rule
+
+> **Each phase must load and reference the output of the previous phase.**
+> This is not optional — it prevents drift between levels.
+
+- Before writing a TRD → **read the approved PRD first**
+- Before writing BDD specs → **read the approved TRD first**
+- Before implementing → **read the approved BDD spec and project-context**
+- Before verifying → **read the spec and the deliverable together**
+
+If a previous phase's output doesn't exist, **stop and produce it first**
+(or use Quick Flow if the work is simple enough to skip the cascade).
 
 ### Step 0.1: PRD (Product Requirements)
 
@@ -86,7 +192,16 @@ The PRD captures **what** to build and **why**:
 - **Owner**: Human (Product Owner) — AI may draft, human must approve
 - **Template**: See `templates/prd.md`
 - **Rules**: See `rules/prd.md`
+- **Input**: Research brief (if Phase R was done), or domain knowledge
 - **Output**: A clear product intent with measurable goals, user stories, and scope
+
+#### ⚔ Challenge Gate: PRD
+
+Before advancing to TRD, the PRD must survive adversarial challenge:
+- Is the problem validated with real data, not assumptions?
+- Are success metrics measurable and time-bound?
+- Are personas based on research or fiction?
+- Are non-goals explicitly stated?
 
 ### Step 0.2: TRD (Technical Requirements)
 
@@ -96,8 +211,16 @@ From the PRD, derive **how** to build it architecturally:
 - **Owner**: Human + AI — AI proposes architecture, human approves decisions
 - **Template**: See `templates/trd.md`
 - **Rules**: See `rules/trd.md`
-- **Input**: Parent PRD
+- **Input**: **Load the approved PRD.** The TRD must reference every PRD requirement.
 - **Output**: Architecture decisions, components, interfaces, non-functional requirements
+
+#### ⚔ Challenge Gate: TRD
+
+Before advancing to BDD specs, the TRD must survive adversarial challenge:
+- Were alternative architectures genuinely evaluated?
+- Do interface contracts survive requirement changes?
+- Are non-functional requirements quantified (not "fast" but "p99 < 200ms")?
+- Does the component breakdown map cleanly to BDD specs?
 
 ### Step 0.3: BDD Decomposition
 
@@ -107,8 +230,16 @@ From the TRD, split concerns into individual **BDD behavior specs**:
 - **Owner**: Human + AI — co-authored, human approves
 - **Template**: See `templates/behavior-spec.md`
 - **Rules**: See `rules/bdd.md`
-- **Input**: Parent TRD
+- **Input**: **Load the approved TRD.** Every spec must trace to a TRD component.
 - **Output**: Verifiable Given/When/Then scenarios for each feature
+
+#### ⚔ Challenge Gate: BDD Specs
+
+Before entering the backlog, BDD specs must survive adversarial challenge:
+- Does every user story have at least one Given/When/Then scenario?
+- Are edge cases covered in validation rules?
+- Do out-of-scope exclusions close all loopholes?
+- Does the spec reference its parent TRD?
 
 ### Traceability
 
@@ -126,7 +257,7 @@ test cases, or from a failing test up to the business goal it serves.
 ## 4. BEHAVIOR SPEC — The Source of Truth for Execution
 
 Once the cascade produces BDD specs, each spec becomes the source of truth
-for its feature. Everything from here follows the existing execution lifecycle.
+for its feature. Everything from here follows the execution lifecycle.
 
 Every feature starts as a markdown file in the spec directory:
 
@@ -150,8 +281,10 @@ Every feature starts as a markdown file in the spec directory:
 
 When AI receives a task:
 
-### Step A: Read the Spec
-- Load `{SPEC_DIR}<feature-slug>.md`
+### Step A: Load Context
+
+- Load `{SPEC_DIR}<feature-slug>.md` — the BDD spec
+- Load `project-context.md` if it exists — technology stack, conventions, rules
 - If spec is missing or incomplete → **STOP** and ask human to complete it
 - Never infer behavior that isn't written in the spec
 
@@ -164,6 +297,7 @@ When AI receives a task:
 ### Step C: Execute
 - Produce **only** what the spec defines
 - Follow execution rules in `rules/execution.md`
+- Follow patterns and conventions from `project-context.md`
 - Use defensive practices (error handling, validation, fallbacks)
 - Single responsibility per artifact — no monoliths
 
@@ -195,18 +329,13 @@ AI designs verifications based on the behavior spec, not the deliverables:
 
 ---
 
-## 6.5. PROOFREAD GATE
+## 6.5. ⚔ CHALLENGE GATE — Deliverables
 
-> Nothing gets accepted until the writer wins the debate.
+> Nothing gets accepted unchallenged.
 
-After verifications pass but before the validation gate, run all documents and
-deliverables through an **adversarial challenge** — a structured debate where the
-proofreader attacks every choice from first principles and the writer must defend.
-
-The proofreader thinks 6-12 months ahead for the product owner. It is data-driven,
-ignores industry trends and groupthink, and will not accept "best practice" as
-justification. It challenges assumptions, demands evidence, stress-tests alternatives,
-and probes failure modes.
+After verifications pass but before the validation gate, run deliverables
+through an adversarial challenge using the protocol in
+`references/core/adversarial-protocol.md`.
 
 ### When to Challenge
 
@@ -217,38 +346,32 @@ and probes failure modes.
 
 ### How It Works
 
-1. **Load the document** — identify its type (PRD, TRD, BDD spec, deliverable)
+1. **Load the artifact** — identify its type (PRD, TRD, BDD spec, deliverable)
 2. **Decompose from first principles** — strip away solutions, find the core problem
-3. **Generate challenges** using 6 attack vectors: assumptions, evidence, alternatives,
-   longevity, edge cases, and scope
-4. **Debate** — present challenges; writer must defend with reasoning and data
-5. **Verdict** — document is ACCEPTED (writer won), REVISE (proofreader won), or
+3. **Generate challenges** using attack vectors: assumptions, evidence, alternatives,
+   longevity, edge cases, UX, and scope
+4. **Debate** — present challenges; writer must defend with reasoning and evidence
+5. **Verdict** — artifact is ACCEPTED (writer won), REVISE (challenger won), or
    ESCALATE (impasse, needs Product Owner ruling)
 
-### Debate Rules
-
-- Writer must respond to every challenge with reasoning, not assertions
-- "Because X does it" is never acceptable — demand first-principles reasoning
-- Data beats opinion — if both sides present data, the better data wins
-- Unresolved challenges **block** the document from advancing
-- Impasses escalate to the Product Owner for final ruling
-
-### Proofread Verdict Format
+### Verdict Format
 
 ```markdown
-## Proofread Verdict: <Feature>
+## Challenge Verdict: <Artifact>
 
 **Challenges raised**: <N>
-**Writer victories**: <N>
-**Proofreader victories**: <N> (must revise)
-**Escalated**: <N>
+**Author victories**: <N>
+**Challenger victories**: <N> (must revise)
+**Escalated/Dissented**: <N>
 
 ### Overall Verdict
 
 ACCEPTED / REVISE / ESCALATE
 ```
 
-See `agents/proofreader.md` for the full adversarial challenge protocol.
+See `references/core/adversarial-protocol.md` for the full adversarial
+challenge protocol, including attack vectors, debate rules, and the
+dissenting progress mechanism for impasses.
 
 ## 7. VALIDATION GATE
 
@@ -312,10 +435,47 @@ When transitioning between agents or sessions:
 1. **Read** the feature's changelog: `{CHANGELOG_DIR}*_<feature-slug>.md` for full history
 2. **Read** the relevant `{SPEC_DIR}<feature-slug>.md` spec
 3. **Read** the parent TRD and PRD (if they exist) for broader context
-4. **Check** current verification results for the feature
-5. **Resume** from where the last session left off
+4. **Read** `project-context.md` for technology stack and conventions
+5. **Check** current verification results for the feature
+6. **Resume** from where the last session left off
 
 This ensures continuity even when context is lost.
+
+---
+
+## 11. PROJECT CONTEXT
+
+Recommended for any project that will have multiple implementation sessions.
+
+The `project-context.md` file acts as a **living constitution** — it captures
+technology stack, conventions, and rules that all implementation workflows
+should follow for consistency.
+
+### When to Create
+
+- **New projects**: Create after the TRD/architecture phase to capture decisions
+- **Existing projects**: Generate from the codebase to capture established patterns
+- **Anytime**: When you notice agents making inconsistent decisions across stories
+
+### Location
+
+`docs/project-context.md` (or project convention)
+
+### What Goes In It
+
+- **Technology stack & versions** — Languages, frameworks, databases, infrastructure
+- **Code conventions** — Naming, structure, patterns, anti-patterns
+- **Critical implementation rules** — e.g., "all errors must be typed",
+  "no ORM, raw SQL only", "tests co-located with source"
+- **Architecture decisions** — Key choices and their rationale
+
+### Lifecycle
+
+This is a **living document**. Update it when:
+- Architecture decisions change
+- New conventions are established
+- Patterns evolve during implementation
+- Agents make decisions that conflict with project norms
 
 ---
 

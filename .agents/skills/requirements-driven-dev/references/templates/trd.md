@@ -80,6 +80,34 @@ Errors:
 - `{SPEC_DIR}<feature-slug>.md` — <brief description of the verifiable behavior>
 - `{SPEC_DIR}<feature-slug>.md` — <brief description of the verifiable behavior>
 
+## ⚔ Challenge Gate
+
+> **Status**: pending | passed | revisions-needed
+> **Challenger**: <agent or human name>
+> **Date**: <YYYY-MM-DD>
+
+This TRD must survive adversarial challenge before advancing to BDD specs.
+Record all challenges and their outcomes below for traceability.
+
+### Debate Record
+
+| # | Vector | Challenge | Response | Verdict |
+|---|--------|-----------|----------|---------|
+| 1 | <assumptions / evidence / alternatives / longevity / edge cases / scope> | <the challenge raised> | <author's defense with reasoning and evidence> | <author-won / challenger-won / escalated> |
+| 2 | | | | |
+
+### Challenge Summary
+
+- **Challenges raised**: <N>
+- **Author victories**: <N>
+- **Challenger victories**: <N> (must revise before advancing)
+- **Escalated**: <N> (needs Product Owner ruling)
+- **Overall verdict**: ACCEPTED / REVISE / ESCALATE
+
+### Revisions Made (if any)
+
+- <what was changed in response to challenge, with rationale>
+
 ## Notes
 
 - <Additional context, diagrams, references to external documentation>
