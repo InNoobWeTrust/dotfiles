@@ -237,6 +237,8 @@ usable npx && \
         ! usable skills && alias skills="npx skills"
         ! usable openskills && alias openskills="npx openskills"
         ! usable skillfish && alias skillfish="npx skillfish"
+        # AI-Agile Development
+        ! usable starter-bmad-method && alias starter-bmad-method="npx bmad-method install"
         # Tree-sitter CLI
         ! usable tree-sitter && alias tree-sitter='npx tree-sitter-cli'
     }
