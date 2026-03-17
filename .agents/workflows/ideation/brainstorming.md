@@ -28,6 +28,10 @@ Before generating ideas, ensure the problem is well-defined.
 3. **Define success** — what does a good answer look like?
 4. **Identify assumptions** — what are we taking for granted that could be wrong?
 
+> **If the problem involves a tricky bug, complex debugging, or root cause analysis**, consider using the `strategic-problem-solving` skill for structured frameworks (5 Whys, Ishikawa, First Principles) before brainstorming solutions.
+
+> **If the problem requires understanding unfamiliar code or architecture**, consider using the `strategic-codebase-navigation` skill to map the relevant codebase before brainstorming solutions.
+
 Output: A clear problem statement and success criteria.
 
 ---
@@ -117,11 +121,12 @@ For complex problems, apply multiple perspectives to the top ideas:
 
 - **Product Owner**: Does this solve a real user problem?
 - **Architect**: Is this technically feasible? What are the constraints?
-- **Security**: What could go wrong from a security standpoint?
-- **Devil's Advocate**: Why will this fail? (Apply adversarial-reviewer lens)
+- **Security**: What could go wrong from a security standpoint? (Apply `security-reviewer` lens if available)
+- **Devil's Advocate**: Why will this fail? (Apply `adversarial-reviewer` lens)
 - **User**: Would I actually use this? Is it intuitive?
 
-This is the "Party Mode" pattern — get multiple viewpoints before committing.
+> **Tip**: In project-specific copies, replace generic roles with team-specific ones
+> and reference relevant project skills where applicable.
 
 ---
 

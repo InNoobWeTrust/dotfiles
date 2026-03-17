@@ -1,4 +1,4 @@
-<!-- synced-from: adversarial-reviewer/SKILL.md | last-synced: 2026-03-15 02:37 -->
+]633;E;{ echo '<!-- synced-from: adversarial-reviewer/SKILL.md | last-synced: 2026-03-17 04:57 -->'\x3b echo ''\x3b cat /home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/adversarial-reviewer/SKILL.md\x3b } > /home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/requirements-driven-dev/references/core/adversarial-protocol.md;087495d8-3920-4777-b837-6ad6ebb0fdd1]633;C<!-- synced-from: adversarial-reviewer/SKILL.md | last-synced: 2026-03-17 04:57 -->
 
 ---
 name: adversarial-reviewer
@@ -207,6 +207,45 @@ questions than a technical spec review.
 - Could this be split into something smaller that ships sooner?
 - What's the cost of NOT doing this?
 
+### Documentation-Specific Attack Vectors
+
+Use these when reviewing **document-type artifacts** — design docs, specs,
+runbooks, guidelines, instructional content, and any artifact meant to be
+followed by humans or AI agents:
+
+#### Attack Vector: Single Source of Truth
+
+- Is the same concept, rule, or convention stated in multiple documents?
+- If duplicated, which is the authoritative source? Do others reference it or restate it?
+- When the source changes, will the copies drift and become contradictory?
+- Could duplicated content be replaced with a cross-reference?
+
+#### Attack Vector: Context Fitness
+
+- Was this content adapted for its target context, or blindly copied from another source?
+- Are examples, terminology, and references relevant to this project's domain?
+- Does a question or guideline make sense for this product type?
+  (e.g., "mobile support?" for an internal desktop tool, "scale to millions?" for a 10-user system)
+- Does this document reference skills, files, commands, or APIs that don't actually exist in this repository?
+
+#### Attack Vector: Codebase Consistency
+
+- Do code examples match the actual project conventions? (sync vs. async, naming, import styles)
+- Are file paths, command invocations, and tooling references accurate and current?
+- Would someone following these examples produce code that passes the project's linter and tests?
+
+#### Attack Vector: Delegation vs. Restatement
+
+- Does this document restate content that already lives in an authoritative source?
+- Would a change to the source be automatically picked up, or would this document also need updating?
+- Can inline instructions be replaced with a reference to the source?
+
+#### Attack Vector: Staleness Risk
+
+- Does this document reference specific file paths, version numbers, URLs, or configurations?
+- How likely are those references to become outdated? Is there a mechanism to detect drift?
+- Are there TODO/placeholder sections that will be forgotten?
+
 ### 3. The Debate
 
 Present challenges to the author as a structured debate. Each challenge
@@ -218,7 +257,7 @@ must be specific, answerable, and cite the exact section being challenged.
 ## Challenge: <Title>
 
 **Target**: <section/line being challenged>
-**Attack vector**: <assumptions / evidence / alternatives / longevity / edge cases / UX / scope>
+**Attack vector**: <assumptions / evidence / alternatives / longevity / edge cases / UX / scope / single-source-of-truth / context-fitness / codebase-consistency / delegation-vs-restatement / staleness-risk>
 
 **Challenge**: <specific, pointed question or objection>
 
