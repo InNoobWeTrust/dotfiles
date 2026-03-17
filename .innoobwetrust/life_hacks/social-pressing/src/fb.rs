@@ -53,9 +53,38 @@ async fn get_posts_report_btns(client: &Client) -> Result<Vec<Element>, CmdError
     }
     // Scroll back to top
     client.mouse_scroll(0, -720 * 3).await?;
-    client
-        .find_all(Locator::Css(r#"div[aria-expanded="false"][aria-haspopup="menu"][role="button"][aria-label="Actions for this post"]"#))
-        .await
+
+    // Try multiple possible selectors with retries to handle lazy-loaded DOM
+    let selectors = [
+        r#"div[aria-expanded="false"][aria-haspopup="menu"][role="button"][aria-label="Actions for this post"]"#,
+        r#"div[aria-haspopup="menu"][role="button"][aria-label="Actions for this post"]"#,
+        r#"div[role="button"][aria-label="Actions for this post"]"#,
+    ];
+
+    for attempt in 1..=3 {
+        for selector in &selectors {
+            let results = client.find_all(Locator::Css(selector)).await;
+            match results {
+                Ok(ref elements) if !elements.is_empty() => {
+                    info!(
+                        count = elements.len(),
+                        attempt,
+                        selector,
+                        "Found post report buttons"
+                    );
+                    return results;
+                }
+                _ => continue,
+            }
+        }
+        if attempt < 3 {
+            debug!(attempt, "No post buttons found, waiting before retry...");
+            delay(None);
+        }
+    }
+
+    warn!("No post action buttons found after all attempts");
+    Ok(vec![])
 }
 
 async fn is_temporary_limited(client: &Client) -> Result<bool, CmdError> {
@@ -86,6 +115,9 @@ async fn report_process(
     client.perform_click(menu_btn).await?;
     delay(None);
 
+    let mut found_report = false;
+
+    // Try standard menuitem selector first (works for profile menus)
     let mut menu_items = client
         .find_all(Locator::Css(r#"div[role=menuitem]"#))
         .await?;
@@ -95,8 +127,37 @@ async fn report_process(
         if item_text.to_lowercase().contains("report") {
             debug!(%target, %item_text, "Clicking button...");
             client.perform_click(&item).await?;
+            found_report = true;
             break;
         }
+    }
+
+    // Fallback: post menus may use different structure (no role=menuitem)
+    if !found_report {
+        debug!(%target, "No menuitem with 'report' found, trying fallback selectors...");
+        // Try finding "Report post" via role=menu children
+        let fallback_selectors = [
+            r#"div[role="menu"] div[role="button"]"#,
+            r#"div[role="menu"] div[tabindex]"#,
+        ];
+        'outer: for selector in &fallback_selectors {
+            if let Ok(items) = client.find_all(Locator::Css(selector)).await {
+                for item in items {
+                    if let Ok(text) = item.text().await {
+                        if text.to_lowercase().contains("report") {
+                            debug!(%target, %text, selector, "Clicking button (fallback)...");
+                            client.perform_click(&item).await?;
+                            found_report = true;
+                            break 'outer;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if !found_report {
+        warn!(%target, "Could not find 'Report' option in menu");
     }
     delay(None);
 
@@ -201,12 +262,16 @@ pub async fn report(client: &Client, target: &str) -> Result<bool, CmdError> {
         }
     }
 
-    let posts_report_btn = get_posts_report_btns(client).await;
-    if let Err(e) = posts_report_btn {
+    let posts_report_btns = get_posts_report_btns(client).await;
+    if let Err(e) = posts_report_btns {
         warn!(%target, error = %e, "Found no post to report");
         return Ok(false);
     }
-    for menu_btn in posts_report_btn? {
+    let posts_report_btns = posts_report_btns?;
+    if posts_report_btns.is_empty() {
+        debug!(%target, "No post action buttons found on profile");
+    }
+    for menu_btn in posts_report_btns {
         match report_process(client, target, &menu_btn).await {
             Ok(is_temporary_limited) => {
                 if is_temporary_limited {

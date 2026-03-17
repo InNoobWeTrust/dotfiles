@@ -244,6 +244,10 @@ Before entering the backlog, BDD specs must survive adversarial challenge:
 - Are edge cases covered in validation rules?
 - Do out-of-scope exclusions close all loopholes?
 - Does the spec reference its parent TRD?
+- **Scope drift check (early)**: Re-read the PRD's Problem Statement. Does
+  the sum of all BDD specs directly solve that root problem? Or have the
+  specs drifted toward adjacent concerns that feel productive but don't
+  address the core *why*?
 
 ### Traceability
 
@@ -389,6 +393,19 @@ Before any deliverable is considered "done":
 | Deliverables match spec | Manual review | Human |
 | No regressions | Full verification suite | AI |
 | Changelog recorded | File exists in `{CHANGELOG_DIR}` | AI |
+| **Goal alignment** | PRD problem statement check | Human + AI |
+
+### Scope Drift Check (Final Confirmation)
+
+Before shipping, re-read the PRD's Problem Statement and ask:
+- Does the delivered work directly solve the root problem stated there?
+- Has the ratio of infrastructure to user-facing value become lopsided?
+- Could the user get value from what exists right now without further work?
+- Would deploying now and iterating be faster than continuing to polish?
+
+If the answer to any of these suggests drift, raise it. Shipping imperfect
+work that solves the root problem beats shipping perfect infrastructure
+that hasn't been validated in the real world.
 
 ### Fail → Feedback Loop
 

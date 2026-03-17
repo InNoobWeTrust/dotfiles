@@ -205,6 +205,28 @@ questions than a technical spec review.
 - Could this be split into something smaller that ships sooner?
 - What's the cost of NOT doing this?
 
+#### Attack Vector: Goal Alignment / Scope Drift
+
+Scope *creep* adds things not in the PRD. Scope *drift* is subtler — you're
+building exactly what was planned, but the work has lost connection to the
+root problem the PRD was written to solve. The *how* swallows the *why*.
+
+- Re-read the PRD's Problem Statement. Does the current work directly
+  address that problem? Or is it solving an adjacent, less important problem?
+- Has the ratio of infrastructure/documentation to user-facing value delivery
+  become lopsided? (Building plumbing that nobody validates with real usage.)
+- Could the user get value from what exists RIGHT NOW, without the current
+  work item? If so, why aren't we shipping first?
+- Are we polishing specs, fixing inconsistencies, or debating edge cases
+  when the core system hasn't been validated in the real world yet?
+- Would a stranger reading the PRD and then looking at the current sprint
+  say "yes, this is clearly solving that problem" — or would they be confused?
+
+**Apply twice**: once early (after BDD specs — before committing to a
+large execution plan) and once late (after implementation — before calling
+the feature "done"). Early catches planning drift. Late catches execution
+drift.
+
 ### Documentation-Specific Attack Vectors
 
 Use these when reviewing **document-type artifacts** — design docs, specs,
@@ -232,6 +254,16 @@ followed by humans or AI agents:
 - Are file paths, command invocations, and tooling references accurate and current?
 - Would someone following these examples produce code that passes the project's linter and tests?
 
+#### Attack Vector: Magic Numbers in Generated Artifacts
+
+- Do prompts, templates, config files, or generated content contain hardcoded
+  values that are configurable elsewhere? (thresholds, limits, ranges, timeouts)
+- If the source-of-truth value changes (in config, env vars, or code), will
+  the artifact silently become inconsistent?
+- Should the value be a template variable, referencing the single source?
+- Watch especially for: tier/threshold boundaries, retry counts, buffer sizes,
+  token limits, and any numeric literal that appears in prose or instructions.
+
 #### Attack Vector: Delegation vs. Restatement
 
 - Does this document restate content that already lives in an authoritative source?
@@ -255,7 +287,7 @@ must be specific, answerable, and cite the exact section being challenged.
 ## Challenge: <Title>
 
 **Target**: <section/line being challenged>
-**Attack vector**: <assumptions / evidence / alternatives / longevity / edge cases / UX / scope / single-source-of-truth / context-fitness / codebase-consistency / delegation-vs-restatement / staleness-risk>
+**Attack vector**: <assumptions / evidence / alternatives / longevity / edge cases / UX / scope / goal-alignment / single-source-of-truth / context-fitness / codebase-consistency / magic-numbers / delegation-vs-restatement / staleness-risk>
 
 **Challenge**: <specific, pointed question or objection>
 
