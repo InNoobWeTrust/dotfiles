@@ -9,6 +9,11 @@ description: >
 Screen candidates against a job description using trait-based evaluation,
 OSINT-powered background verification, and dual-sided risk assessment.
 
+> **⚠️ Jurisdiction Notice**: This workflow references sources and practices
+> that vary by country (company registries, labor law, privacy regulations).
+> Adapt the OSINT sources and risk categories to your local legal context.
+> When in doubt, consult local employment law before investigating.
+
 ## Inputs
 
 Provide the following before starting:
@@ -16,6 +21,7 @@ Provide the following before starting:
 - **Job description** — the role being hired for
 - **Hiring context** (optional) — team vision, management preferences,
   cultural priorities, growth plans
+- **Jurisdiction** (recommended) — country/region for legal context
 - **CVs** — one of:
   - A directory path containing CV files
   - Individual file paths referenced directly

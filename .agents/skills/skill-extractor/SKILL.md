@@ -19,7 +19,12 @@ Your job is to be the agent's "skill radar" — always watching for moments wher
 
 ## When to Suggest Extraction
 
-Evaluate every substantial conversation against these three signal categories. If a conversation scores high on **two or more categories**, suggest extraction.
+**Quick heuristic**: A conversation is "substantial" if it took >10 back-and-forth
+turns OR involved debugging/research OR produced a non-obvious solution.
+When in doubt, run the full evaluation below.
+
+Evaluate against these three signal categories. If a conversation scores
+high on **two or more categories**, suggest extraction.
 
 ### 1. Conversation Complexity Signals
 

@@ -84,6 +84,15 @@ The AI facilitates using the chosen technique:
 3. When energy drops, switch technique or take a different angle
 4. Mark ideas that spark energy — those are worth exploring
 
+### Exit & Resume
+
+Sessions can be interrupted. Handle gracefully:
+
+- **Early exit**: User says "let's stop here" → save current state, skip to Output
+- **Pause**: User gets called away → save all ideas so far with a "Session paused" note
+- **Pivot**: User realizes problem is wrong → go back to Phase 1, reframe problem
+- **Resume**: When returning, summarize where you left off and offer to continue or restart
+
 ---
 
 ## Phase 4: Organize and Prioritize

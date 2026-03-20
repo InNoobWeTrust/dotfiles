@@ -52,6 +52,36 @@
 
 - <other spec or artifact this depends on — e.g., "Requires specs/user-auth.md">
 
+---
+
+## Traceability Matrix
+
+> **Purpose**: Track coverage from scenario → implementation → verification.
+> Agents update this section as work progresses. Gaps block commit.
+
+| # | Scenario | Impl Status | Impl Artifact | Test Status | Test Artifact | Notes |
+|---|----------|-------------|---------------|-------------|---------------|-------|
+| 1 | <scenario name> | ⬚ | — | ⬚ | — | |
+| 2 | <scenario name> | ⬚ | — | ⬚ | — | |
+| 3 | <scenario name> | ⬚ | — | ⬚ | — | |
+
+**Status legend**: ⬚ pending · ◐ partial · ✓ complete · ⊘ N/A (out of scope)
+
+### Gap Summary
+
+- **Scenarios total**: <N>
+- **Implemented**: <N> / <N>
+- **Tested**: <N> / <N>
+- **Blocking gaps**: <list any scenarios missing impl or test>
+
+### Update Protocol
+
+1. **Executor**: After implementing a scenario, update `Impl Status` → `✓` and fill `Impl Artifact`
+2. **Verifier**: After writing tests, update `Test Status` → `✓` and fill `Test Artifact`
+3. **Before commit**: Run gap check — all scenarios must be `✓` or `⊘`, no `⬚` or `◐`
+
+---
+
 ## ⚔ Challenge Gate
 
 > **Status**: pending | passed | revisions-needed

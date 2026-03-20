@@ -1,22 +1,6 @@
-]633;E;{ echo '<!-- synced-from: adversarial-reviewer/SKILL.md | last-synced: 2026-03-17 04:57 -->'\x3b echo ''\x3b cat /home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/adversarial-reviewer/SKILL.md\x3b } > /home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/requirements-driven-dev/references/core/adversarial-protocol.md;087495d8-3920-4777-b837-6ad6ebb0fdd1]633;C<!-- synced-from: adversarial-reviewer/SKILL.md | last-synced: 2026-03-17 04:57 -->
+<!-- synced-from: adversarial-reviewer/SKILL.md | last-synced: 2026-03-20 07:33 -->
+<!-- Note: YAML frontmatter stripped; this is a reference copy, not an activatable skill -->
 
----
-name: adversarial-reviewer
-description: >
-  Adversarial first-principles challenger for any document, decision, design,
-  or proposal. Use this skill whenever the user asks you to review, challenge,
-  critique, stress-test, or play devil's advocate on anything — PRDs, technical
-  designs, architecture decisions, business proposals, specs, plans, code reviews,
-  or any written artifact. Also use when the user says things like "poke holes in
-  this", "what am I missing", "is this a good idea", "convince me this is wrong",
-  "what could go wrong", or "debate this with me". Activate even when the user
-  just asks for a "review" — a proper review IS an adversarial challenge.
-  ALSO activate proactively: when producing your own work (code, plans, designs,
-  recommendations), self-apply the adversarial lens before presenting. When
-  participating in conversation and you spot unchallenged assumptions,
-  weak reasoning, or risky decisions, raise constructive challenges without
-  being asked. This is a thinking discipline, not just a review tool.
----
 
 # Adversarial Reviewer
 
@@ -192,13 +176,38 @@ questions than a technical spec review.
 - What happens at 10x the expected scale?
 - What happens when the user does something unexpected?
 
-#### Attack Vector: User Experience
+#### Attack Vector: Usability (UX / DevX)
+
+Usability often determines whether something gets adopted. Challenge it early.
+
+- Is this interface (UI, API, library, code contract) a pleasure to use?
+- Can a user accomplish their goal with minimal friction and cognitive load?
+- Does this follow the principle of least surprise? Are names, parameters,
+  and behaviors intuitive?
+- Are error messages actionable? Do they tell the user what went wrong AND
+  how to fix it?
+- Is the happy path obvious and edge cases handled gracefully?
+- Does this require reading documentation to use correctly, or is it
+  self-documenting?
+- Are there unnecessary steps, configurations, or boilerplate?
+- Does this fit naturally into existing workflows, or does it force users
+  to adapt to it?
+- What's the time-to-first-success for a new user? Can it be shortened?
+
+For **visual interfaces** specifically:
 
 - What does the empty state, loading state, and error state look like?
 - What happens for a screen-reader user or motor-impaired user?
 - Is the user forced to remember information across screens or steps?
 - Does the information hierarchy guide the eye to what matters most?
 - Does this work on mobile? On slow connections?
+
+For **developer-facing interfaces** specifically:
+
+- Is this something you'd enjoy using in your own code?
+- Would you curse at it at 2 AM during an incident?
+- Are the abstractions at the right level — not too high, not too low?
+- Is debugging easy when things go wrong?
 
 #### Attack Vector: Scope & Complexity
 
@@ -257,7 +266,7 @@ must be specific, answerable, and cite the exact section being challenged.
 ## Challenge: <Title>
 
 **Target**: <section/line being challenged>
-**Attack vector**: <assumptions / evidence / alternatives / longevity / edge cases / UX / scope / single-source-of-truth / context-fitness / codebase-consistency / delegation-vs-restatement / staleness-risk>
+**Attack vector**: <usability / assumptions / evidence / alternatives / longevity / edge-cases / scope / single-source-of-truth / context-fitness / codebase-consistency / delegation-vs-restatement / staleness-risk>
 
 **Challenge**: <specific, pointed question or objection>
 

@@ -394,6 +394,7 @@ Before any deliverable is considered "done":
 | No regressions | Full verification suite | AI |
 | Changelog recorded | File exists in `{CHANGELOG_DIR}` | AI |
 | **Goal alignment** | PRD problem statement check | Human + AI |
+| **Traceability matrix complete** | Gap check | AI |
 
 ### Scope Drift Check (Final Confirmation)
 
@@ -414,6 +415,62 @@ If validation fails:
 2. AI adjusts deliverables or verifications accordingly
 3. Re-validate
 4. Repeat until all checks pass
+
+---
+
+## 7.5 TRACEABILITY & GAP DETECTION
+
+> **Law**: No commit with uncovered scenarios. Every scenario must be implemented and tested.
+
+### The Traceability Matrix
+
+Every BDD spec contains a **Traceability Matrix** section (see `templates/behavior-spec.md`).
+This matrix tracks coverage from scenario → implementation → verification.
+
+| # | Scenario | Impl Status | Impl Artifact | Test Status | Test Artifact |
+|---|----------|-------------|---------------|-------------|---------------|
+| 1 | Valid login | ✓ | `src/auth/login.ts` | ✓ | `tests/auth/login.test.ts` |
+| 2 | Wrong password | ✓ | `src/auth/login.ts` | ⬚ | — |
+| 3 | Account locked | ⬚ | — | ⬚ | — |
+
+**Status legend**: ⬚ pending · ◐ partial · ✓ complete · ⊘ N/A (out of scope)
+
+### Gap Detection
+
+Run gap detection **before commit** and **during review** using the automated script:
+
+```bash
+# Check a single spec
+.agents/scripts/gap-check.sh docs/specs/my-feature.md
+
+# Check all specs in a directory
+.agents/scripts/gap-check.sh docs/specs/
+
+# Check default SPEC_DIR
+.agents/scripts/gap-check.sh
+```
+
+The script parses Traceability Matrices and reports:
+- `CLEAR` — all scenarios complete, ready to commit
+- `GAPS` — lists missing implementations or tests
+- `SKIP` — no matrix found (spec may be draft or exempt)
+
+**Exit codes**: 0 = no gaps, 1 = gaps found (blocks commit)
+
+### Agent Responsibilities
+
+| Agent | Traceability Duty |
+|-------|-------------------|
+| **Executor** | After implementing a scenario, update matrix: `Impl Status` → `✓`, fill `Impl Artifact` |
+| **Verifier** | After writing tests, update matrix: `Test Status` → `✓`, fill `Test Artifact` |
+| **Reviewer** | Run `gap-check.sh`, block if exit code is 1 |
+
+### Handling Intentional Gaps
+
+Some scenarios may be intentionally deferred:
+- Mark as `⊘ N/A` with a note explaining why (e.g., "deferred to v2")
+- Add to "Out of Scope" section for consistency
+- Human must approve any `⊘` status
 
 ---
 

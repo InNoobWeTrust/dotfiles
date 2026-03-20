@@ -116,9 +116,15 @@ In conversation, immediately flag:
 
 ## Calibrating Intensity
 
-| Context | Intensity |
-|---------|-----------|
-| **Public-facing code** | Maximum — every vector, every path |
-| **Internal tools** | High — auth, secrets, data exposure |
-| **Config changes** | Medium — secrets, permissions, defaults |
-| **Documentation** | Low — check for leaked internals only |
+Not all attack vectors apply to all artifacts. Use context to focus:
+
+| Context | Intensity | Focus Vectors |
+|---------|-----------|---------------|
+| **Public-facing code** | Maximum | All vectors — auth, input validation, infra, supply chain |
+| **Internal tools** | High | Auth, secrets, data exposure (skip supply chain unless high-risk deps) |
+| **Config changes** | Medium | Secrets, permissions, defaults (skip input validation) |
+| **Documentation** | Low | Leaked internals only (skip most vectors) |
+| **Dependencies update** | Medium | Supply chain, known CVEs (skip auth/input) |
+
+When in doubt, ask: *"What's the blast radius if this is compromised?"*
+High blast radius = more vectors. Low blast radius = fewer vectors.

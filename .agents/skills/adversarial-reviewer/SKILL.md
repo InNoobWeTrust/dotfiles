@@ -190,13 +190,38 @@ questions than a technical spec review.
 - What happens at 10x the expected scale?
 - What happens when the user does something unexpected?
 
-#### Attack Vector: User Experience
+#### Attack Vector: Usability (UX / DevX)
+
+Usability often determines whether something gets adopted. Challenge it early.
+
+- Is this interface (UI, API, library, code contract) a pleasure to use?
+- Can a user accomplish their goal with minimal friction and cognitive load?
+- Does this follow the principle of least surprise? Are names, parameters,
+  and behaviors intuitive?
+- Are error messages actionable? Do they tell the user what went wrong AND
+  how to fix it?
+- Is the happy path obvious and edge cases handled gracefully?
+- Does this require reading documentation to use correctly, or is it
+  self-documenting?
+- Are there unnecessary steps, configurations, or boilerplate?
+- Does this fit naturally into existing workflows, or does it force users
+  to adapt to it?
+- What's the time-to-first-success for a new user? Can it be shortened?
+
+For **visual interfaces** specifically:
 
 - What does the empty state, loading state, and error state look like?
 - What happens for a screen-reader user or motor-impaired user?
 - Is the user forced to remember information across screens or steps?
 - Does the information hierarchy guide the eye to what matters most?
 - Does this work on mobile? On slow connections?
+
+For **developer-facing interfaces** specifically:
+
+- Is this something you'd enjoy using in your own code?
+- Would you curse at it at 2 AM during an incident?
+- Are the abstractions at the right level — not too high, not too low?
+- Is debugging easy when things go wrong?
 
 #### Attack Vector: Scope & Complexity
 
@@ -287,7 +312,7 @@ must be specific, answerable, and cite the exact section being challenged.
 ## Challenge: <Title>
 
 **Target**: <section/line being challenged>
-**Attack vector**: <assumptions / evidence / alternatives / longevity / edge cases / UX / scope / goal-alignment / single-source-of-truth / context-fitness / codebase-consistency / magic-numbers / delegation-vs-restatement / staleness-risk>
+**Attack vector**: <usability / assumptions / evidence / alternatives / longevity / edge-cases / scope / single-source-of-truth / context-fitness / codebase-consistency / delegation-vs-restatement / staleness-risk>
 
 **Challenge**: <specific, pointed question or objection>
 

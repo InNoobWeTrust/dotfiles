@@ -49,16 +49,25 @@ has no definable requirements, or when the user explicitly opts out.
 5. **AI executes** — AI reads BDD spec + project-context, produces deliverables
 6. **AI verifies** — AI designs verifications from spec
 7. **⚔ Adversarial challenge** — Challenge deliverables from first principles
-8. **Human validates** — Review, feedback, adjust
-9. **Commit** — Record changelog, structured commit message
+8. **Gap check** — Verify all scenarios are implemented and tested
+9. **Human validates** — Review, feedback, adjust
+10. **Commit** — Record changelog, structured commit message
 
 Adversarial challenge gates (⚔) run at every phase transition: after Research,
 after PRD, after TRD, after BDD specs, and after deliverables.
+
+**Traceability**: Each BDD spec has a Traceability Matrix that tracks which
+scenarios are implemented and tested. Agents update this as they work.
+Gaps block commit — no scenario left behind.
 
 ### Quick Flow (small/well-understood changes)
 
 Skip to step 4 (BDD spec or inline task) → Execute → Verify → Commit.
 Use for bug fixes, small features, config changes.
+
+**Traceability in Quick Flow**: If you write a BDD spec, maintain the matrix.
+If the task is trivially small (inline description, no formal spec), traceability
+is optional — but if gaps emerge later, escalate to Full Flow.
 
 ---
 

@@ -49,7 +49,27 @@ Every behavior spec MUST contain these sections in order:
 
 ## Dependencies
 - <other spec or artifact this depends on>
+
+## Traceability Matrix
+(see lifecycle.md section 7.5 for format and rules)
+
+## ⚔ Challenge Gate
+<debate record>
 ```
+
+## Traceability Matrix
+
+> For the full protocol, see `core/lifecycle.md` section 7.5.
+
+The Traceability Matrix is defined in the behavior-spec template. Key rules:
+
+1. **Initialize on spec creation** — add a row for each scenario with `⬚ pending`
+2. **Executor updates** — after implementing, set `Impl Status` → `✓`
+3. **Verifier updates** — after writing tests, set `Test Status` → `✓`
+4. **Commit gate** — run `.agents/scripts/gap-check.sh` before commit
+5. **Human approves `⊘`** — only human can mark a scenario as N/A
+
+**Status legend**: `⬚` pending · `◐` partial · `✓` complete · `⊘` N/A
 
 ## Authoring Rules
 

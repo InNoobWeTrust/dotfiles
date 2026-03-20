@@ -1,22 +1,6 @@
-<!-- synced-from: adversarial-reviewer/SKILL.md | last-synced: 2026-03-15 02:37 -->
+<!-- synced-from: adversarial-reviewer/SKILL.md | last-synced: 2026-03-20 07:33 -->
+<!-- Note: YAML frontmatter stripped; this is a reference copy, not an activatable skill -->
 
----
-name: adversarial-reviewer
-description: >
-  Adversarial first-principles challenger for any document, decision, design,
-  or proposal. Use this skill whenever the user asks you to review, challenge,
-  critique, stress-test, or play devil's advocate on anything — PRDs, technical
-  designs, architecture decisions, business proposals, specs, plans, code reviews,
-  or any written artifact. Also use when the user says things like "poke holes in
-  this", "what am I missing", "is this a good idea", "convince me this is wrong",
-  "what could go wrong", or "debate this with me". Activate even when the user
-  just asks for a "review" — a proper review IS an adversarial challenge.
-  ALSO activate proactively: when producing your own work (code, plans, designs,
-  recommendations), self-apply the adversarial lens before presenting. When
-  participating in conversation and you spot unchallenged assumptions,
-  weak reasoning, or risky decisions, raise constructive challenges without
-  being asked. This is a thinking discipline, not just a review tool.
----
 
 # Adversarial Reviewer
 
@@ -192,7 +176,25 @@ questions than a technical spec review.
 - What happens at 10x the expected scale?
 - What happens when the user does something unexpected?
 
-#### Attack Vector: User Experience
+#### Attack Vector: Usability (UX / DevX)
+
+Usability often determines whether something gets adopted. Challenge it early.
+
+- Is this interface (UI, API, library, code contract) a pleasure to use?
+- Can a user accomplish their goal with minimal friction and cognitive load?
+- Does this follow the principle of least surprise? Are names, parameters,
+  and behaviors intuitive?
+- Are error messages actionable? Do they tell the user what went wrong AND
+  how to fix it?
+- Is the happy path obvious and edge cases handled gracefully?
+- Does this require reading documentation to use correctly, or is it
+  self-documenting?
+- Are there unnecessary steps, configurations, or boilerplate?
+- Does this fit naturally into existing workflows, or does it force users
+  to adapt to it?
+- What's the time-to-first-success for a new user? Can it be shortened?
+
+For **visual interfaces** specifically:
 
 - What does the empty state, loading state, and error state look like?
 - What happens for a screen-reader user or motor-impaired user?
@@ -200,12 +202,58 @@ questions than a technical spec review.
 - Does the information hierarchy guide the eye to what matters most?
 - Does this work on mobile? On slow connections?
 
+For **developer-facing interfaces** specifically:
+
+- Is this something you'd enjoy using in your own code?
+- Would you curse at it at 2 AM during an incident?
+- Are the abstractions at the right level — not too high, not too low?
+- Is debugging easy when things go wrong?
+
 #### Attack Vector: Scope & Complexity
 
 - Is this solving the right problem at the right level of abstraction?
 - Is this over-engineered for the actual need?
 - Could this be split into something smaller that ships sooner?
 - What's the cost of NOT doing this?
+
+### Documentation-Specific Attack Vectors
+
+Use these when reviewing **document-type artifacts** — design docs, specs,
+runbooks, guidelines, instructional content, and any artifact meant to be
+followed by humans or AI agents:
+
+#### Attack Vector: Single Source of Truth
+
+- Is the same concept, rule, or convention stated in multiple documents?
+- If duplicated, which is the authoritative source? Do others reference it or restate it?
+- When the source changes, will the copies drift and become contradictory?
+- Could duplicated content be replaced with a cross-reference?
+
+#### Attack Vector: Context Fitness
+
+- Was this content adapted for its target context, or blindly copied from another source?
+- Are examples, terminology, and references relevant to this project's domain?
+- Does a question or guideline make sense for this product type?
+  (e.g., "mobile support?" for an internal desktop tool, "scale to millions?" for a 10-user system)
+- Does this document reference skills, files, commands, or APIs that don't actually exist in this repository?
+
+#### Attack Vector: Codebase Consistency
+
+- Do code examples match the actual project conventions? (sync vs. async, naming, import styles)
+- Are file paths, command invocations, and tooling references accurate and current?
+- Would someone following these examples produce code that passes the project's linter and tests?
+
+#### Attack Vector: Delegation vs. Restatement
+
+- Does this document restate content that already lives in an authoritative source?
+- Would a change to the source be automatically picked up, or would this document also need updating?
+- Can inline instructions be replaced with a reference to the source?
+
+#### Attack Vector: Staleness Risk
+
+- Does this document reference specific file paths, version numbers, URLs, or configurations?
+- How likely are those references to become outdated? Is there a mechanism to detect drift?
+- Are there TODO/placeholder sections that will be forgotten?
 
 ### 3. The Debate
 
@@ -218,7 +266,7 @@ must be specific, answerable, and cite the exact section being challenged.
 ## Challenge: <Title>
 
 **Target**: <section/line being challenged>
-**Attack vector**: <assumptions / evidence / alternatives / longevity / edge cases / UX / scope>
+**Attack vector**: <usability / assumptions / evidence / alternatives / longevity / edge-cases / scope / single-source-of-truth / context-fitness / codebase-consistency / delegation-vs-restatement / staleness-risk>
 
 **Challenge**: <specific, pointed question or objection>
 

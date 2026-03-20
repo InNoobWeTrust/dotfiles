@@ -33,14 +33,14 @@ What do you need to do?
 
 1. **Find the Entry Point** — where does data or a command enter the flow you care about?
    - Search for route handlers, CLI argument parsers, event listeners, or message handlers related to the feature.
-   - Use `grep_search` for API endpoints, function names, or error messages from the bug report.
+   - Use content search (grep, ripgrep, or agent search tools) for API endpoints, function names, or error messages.
 
 2. **Find the Exit Point** — where does the result get output?
    - Trace from the entry point forward: what gets returned, written to disk, sent over the network, or rendered?
 
 3. **Draw the boundary** — everything between entry and exit is your "bubble." Ignore everything outside it.
    - Read only the files and functions in the bubble. Resist the urge to explore beyond.
-   - Use `view_file_outline` to skim files and identify relevant functions without reading everything.
+   - Use file outline tools or IDE symbols to skim files without reading everything.
 
 4. **Make your change** within the bubble. Test at the entry and exit points.
 
@@ -52,11 +52,11 @@ What do you need to do?
 
 1. **Find the "Glue" code** — large systems use registration patterns, not direct calls.
    - Search for keywords: `Register`, `Factory`, `Provider`, `Manager`, `Plugin`, `Module`, `Handler`, `Middleware`.
-   - Use `grep_search` with patterns like `register`, `factory`, `createModule`, `addPlugin`.
+   - Use content search with patterns like `register`, `factory`, `createModule`, `addPlugin`.
 
 2. **Identify the Contract** — find the interface or abstract class that modules must implement.
    - Look at what the registration function accepts. That's the contract.
-   - Use `view_code_item` to inspect the base class or interface.
+   - Use code navigation (go-to-definition, symbol search) to inspect the base class or interface.
 
 3. **Map the Lifecycle** — trace when modules are loaded vs. initialized.
    - Search for initialization sequences: `init`, `setup`, `bootstrap`, `configure`.
@@ -71,7 +71,7 @@ What do you need to do?
 **Use when**: You need to add something similar to what already exists (new endpoint, new command, new module).
 
 1. **Find the closest existing example** — search for a feature similar to what you're building.
-   - Use `find_by_name` and `grep_search` to locate similar modules, handlers, or components.
+   - Use file search and content search to locate similar modules, handlers, or components.
 
 2. **Analyze its registration** — how does the existing feature register itself with the system?
    - What files does it touch? What config entries does it need? What interfaces does it implement?

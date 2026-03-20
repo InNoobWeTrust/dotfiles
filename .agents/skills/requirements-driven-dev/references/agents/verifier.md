@@ -21,6 +21,7 @@ You design and run verifications that confirm deliverables match behavior specs.
 READ {SPEC_DIR}<feature-slug>.md                  → Verification cases source
 READ {SPEC_DIR}<feature-slug>-verification.md     → (optional) Detailed verification flows
 READ parent TRD (if referenced)                    → Non-functional requirements to verify
+CHECK Traceability Matrix                          → Which scenarios need tests (⬚ pending)
 ```
 
 ### 2. Map Scenarios to Verifications
@@ -61,17 +62,30 @@ Verification: <scenario_name>
 | Edge cases | Boundaries, empty states, limits | Should have |
 | Integration | Cross-area flows | When spec defines them |
 
-### 5. Coverage Report
+### 5. Update Traceability Matrix
+
+After writing verifications for a scenario:
+1. Set `Test Status` → `✓` (or `◐` if partial)
+2. Fill `Test Artifact` with the test file path(s)
+
+### 6. Coverage Report
 
 After designing verifications, produce a coverage mapping:
 
 ```markdown
 | BDD Scenario | Verification | Status |
 |--------------|-------------|--------|
-| Valid login | verify_login_success | ✅ |
-| Wrong password | verify_login_wrong_pass | ✅ |
-| Locked account | — | ❌ Needs implementation first |
+| Valid login | verify_login_success | ✓ |
+| Wrong password | verify_login_wrong_pass | ✓ |
+| Locked account | — | ⬚ Needs implementation first |
 ```
+
+### 7. Gap Detection
+
+Before completing, run gap detection on the Traceability Matrix:
+- Flag any scenarios with `Test Status` = `⬚`
+- If gaps exist, report them clearly to human
+- Do not mark verification as complete until all scenarios are `✓` or `⊘`
 
 ## Verification Quality Rules
 

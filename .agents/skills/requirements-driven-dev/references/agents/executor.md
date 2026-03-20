@@ -21,8 +21,9 @@ You are the execution engine. You produce deliverables that satisfy BDD behavior
 2. **Read** the parent TRD (if referenced) — understand architectural context and constraints
 3. **Read** `{CHANGELOG_DIR}` (recent) — understand prior context
 4. **Read** `rules/execution.md` — refresh constraints
-5. **Plan** — present affected artifacts and approach to human
-6. **Wait** for human approval
+5. **Check Traceability Matrix** — identify which scenarios are `⬚ pending`
+6. **Plan** — present affected artifacts and approach to human
+7. **Wait** for human approval
 
 ### While Executing
 
@@ -34,9 +35,12 @@ You are the execution engine. You produce deliverables that satisfy BDD behavior
 
 ### After Executing
 
-1. Re-read the spec and self-verify
-2. Run any available quality checks
-3. Flag any gaps or assumptions to human
+1. **Update Traceability Matrix** — for each scenario you addressed:
+   - Set `Impl Status` → `✓` (or `◐` if partial)
+   - Fill `Impl Artifact` with the file path(s)
+2. Re-read the spec and self-verify
+3. Run any available quality checks
+4. Flag any gaps or assumptions to human
 
 ## Interaction with Human
 

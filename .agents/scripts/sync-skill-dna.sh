@@ -49,8 +49,10 @@ for SOURCE_REL in $(jq -r '.sources | keys[]' "$MANIFEST"); do
         mkdir -p "$(dirname "$CONSUMER")"
         {
           echo "<!-- synced-from: $SOURCE_REL | last-synced: $(date '+%Y-%m-%d %H:%M') -->"
+          echo "<!-- Note: YAML frontmatter stripped; this is a reference copy, not an activatable skill -->"
           echo ""
-          cat "$SOURCE"
+          # Strip YAML frontmatter (lines between --- markers at start of file)
+          awk 'BEGIN{skip=0} /^---$/{if(NR==1){skip=1;next}else if(skip){skip=0;next}} !skip{print}' "$SOURCE"
         } > "$CONSUMER"
         echo "  -> Created: $CONSUMER_REL"
         SYNC_COUNT=$((SYNC_COUNT + 1))
@@ -59,9 +61,10 @@ for SOURCE_REL in $(jq -r '.sources | keys[]' "$MANIFEST"); do
       continue
     fi
 
-    # Compare content (skip the version header line in consumer)
-    CONSUMER_CONTENT=$(tail -n +3 "$CONSUMER")
-    SOURCE_CONTENT=$(cat "$SOURCE")
+    # Compare content (skip the version header lines in consumer)
+    CONSUMER_CONTENT=$(tail -n +4 "$CONSUMER")
+    # Strip YAML frontmatter from source for comparison
+    SOURCE_CONTENT=$(awk 'BEGIN{skip=0} /^---$/{if(NR==1){skip=1;next}else if(skip){skip=0;next}} !skip{print}' "$SOURCE")
 
     if [ "$CONSUMER_CONTENT" != "$SOURCE_CONTENT" ]; then
       SYNCED_DATE=$(head -1 "$CONSUMER" | sed -n 's/.*last-synced: \(.*\) -->/\1/p')
@@ -84,8 +87,10 @@ for SOURCE_REL in $(jq -r '.sources | keys[]' "$MANIFEST"); do
       if [ "$MODE" = "--apply" ]; then
         {
           echo "<!-- synced-from: $SOURCE_REL | last-synced: $(date '+%Y-%m-%d %H:%M') -->"
+          echo "<!-- Note: YAML frontmatter stripped; this is a reference copy, not an activatable skill -->"
           echo ""
-          cat "$SOURCE"
+          # Strip YAML frontmatter
+          awk 'BEGIN{skip=0} /^---$/{if(NR==1){skip=1;next}else if(skip){skip=0;next}} !skip{print}' "$SOURCE"
         } > "$CONSUMER"
         echo "  -> Synced: $CONSUMER_REL"
         SYNC_COUNT=$((SYNC_COUNT + 1))
