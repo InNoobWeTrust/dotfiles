@@ -13,8 +13,8 @@ local cmd = vim.cmd -- vim commands
 local diagnostic = vim.diagnostic -- vim diagnostic
 local lsp = vim.lsp -- vim lsp
 local win = fn.has("win16") or fn.has("win32") or fn.has("win64")
-local linux = fn.has("unix") and not fn.system("uname -s") == "Darwin"
-local mac = fn.has("unix") and fn.system("uname -s") == "Darwin"
+local linux = fn.has("unix") and not (fn.system("uname -s"):gsub("\n", "") == "Darwin")
+local mac = fn.has("unix") and fn.system("uname -s"):gsub("\n", "") == "Darwin"
 ------------------------------------------------ End aliases
 
 ---------------------------------------------------- General
@@ -162,7 +162,7 @@ local autocmds = {
 	reload_vimrc = {
 		-- Reload vim config automatically
 		{ "BufWritePost", [[$VIM_PATH/{*.vim,*.yaml,vimrc} nested source $MYVIMRC | redraw]] },
-		{ "BufWritePre",  "$MYIMRC",       eloadConfig()" },
+		{ "BufWritePre",  "$MYVIMRC",      "lua ReloadConfig()" },
 	},
 	terminal_job = {
 		--{ 'TermOpen', '*', [[tnoremap <buffer> <Esc> <c-\><c-n>]] };
@@ -179,7 +179,7 @@ local autocmds = {
 	--    { 'InsertEnter', '*', 'setlocal nohlsearch' };
 	--};
 	lua_highlight = {
-		{ "TextYankPost", "*", [[silent! lua vim.highlight.on_yank() {higroup='IncSearch', timeout=400}]] },
+		{ "TextYankPost", "*", [[silent! lua vim.highlight.on_yank({higroup='IncSearch', timeout=400})]] },
 	},
 	--ansi_esc_log = {
 	--    { 'BufEnter', '*.log', ':AnsiEsc' };
@@ -221,7 +221,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	if vim.v.shell_error ~= 0 then
 		vim.api.nvim_echo({
 			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-			{ out,         Msg" },
+			{ out,         "ErrorMsg" },
 			{ "\nPress any key to exit..." },
 		}, true, {})
 		vim.fn.getchar()
@@ -331,8 +331,8 @@ require("lazy").setup({
 						-- a dedicated handler.
 						function(server_name) -- default handler (optional)
 							-- Prevent some LSP servers from autostart
-							local no_autostart = { "deno", "denols" }
-							local no_single_file_support = { "rust_analyzer" }
+							local no_autostart = { deno = true, denols = true }
+							local no_single_file_support = { rust_analyzer = true }
 							vim.lsp.config(server_name, {
 								autostart = not no_autostart[server_name],
 								single_file_support = not no_single_file_support[server_name],
@@ -353,9 +353,6 @@ require("lazy").setup({
 									},
 								},
 							})
-						end,
-						["denols"] = function()
-							require("rust-tools").setup({})
 						end,
 					},
 				})
