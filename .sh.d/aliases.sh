@@ -290,6 +290,9 @@ usable nvim && \
         alias nvim-remote='nvim --server localhost:6666'
     }
 
+# Chrome debug
+alias chrome-debug='chrome_debug'
+
 usable ssh && \
     {
         alias nvim-ssh-server='nvim_ssh_server '
@@ -462,6 +465,9 @@ usable curl && alias install-garden='curl -sL https://get.garden.io/install.sh |
 ############################# Custom ##########################################
 # Remote user provisioning utility
 alias setup-user='setup_remote_user'
+
+# Sync Antigravity chat history from remote machine
+alias ag-sync='antigravity_sync'
 
 # Import custom alias
 # shellcheck source=/dev/null

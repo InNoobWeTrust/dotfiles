@@ -260,6 +260,96 @@ setup_remote_user() {
     /usr/bin/env sh "$script_path" "$@"
 }
 
+#
+# # chrome_debug - Start Chrome with a debug port
+# # usage: chrome_debug [port]
+chrome_debug() {
+    port=${1:-9222}
+    case "$(uname -s)" in
+        Darwin)
+            chrome_bin="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+            ;;
+        Linux)
+            for cmd in google-chrome google-chrome-stable chromium-browser chromium; do
+                if command -v "$cmd" >/dev/null 2>&1; then
+                    chrome_bin=$(command -v "$cmd")
+                    break
+                fi
+            done
+            ;;
+    esac
+
+    if [ -n "$chrome_bin" ] && [ -x "$chrome_bin" ]; then
+        # Shift the first argument (port) if it was provided
+        [ -n "$1" ] && shift
+        "$chrome_bin" --remote-debugging-port="$port" --user-data-dir="$(mktemp -d)" "$@"
+    else
+        echo "Chrome or Chromium not found"
+        return 1
+    fi
+}
+
+#
+# # antigravity_sync - Sync Antigravity chat history from a remote machine
+# # usage: antigravity_sync <remote> [--full] [--dry-run]
+# #   remote  : SSH destination, e.g. user@host or an SSH config alias
+# #   --full  : Also sync browser_recordings (can be >1 GB)
+# #   --dry-run : Preview what would be transferred without actually syncing
+antigravity_sync() {
+    remote=""
+    full=false
+    dry_run=false
+
+    for arg in "$@"; do
+        case "$arg" in
+            --full)    full=true ;;
+            --dry-run) dry_run=true ;;
+            -*)        echo "Unknown flag: $arg" >&2; return 1 ;;
+            *)         remote="$arg" ;;
+        esac
+    done
+
+    if [ -z "$remote" ]; then
+        echo "Usage: antigravity_sync <remote> [--full] [--dry-run]" >&2
+        echo "  remote  : SSH destination (e.g. user@host or SSH alias)" >&2
+        echo "  --full  : Include browser_recordings (~1 GB+)" >&2
+        echo "  --dry-run : Preview changes without syncing" >&2
+        return 1
+    fi
+
+    src="$remote:~/.gemini/antigravity/"
+    dst="$HOME/.gemini/antigravity/"
+
+    # Ensure local destination exists
+    mkdir -p "$dst"
+
+    # Build rsync args using positional params (POSIX-safe, no word-split issues)
+    set -- -avz --progress \
+        --exclude=scratch/ \
+        --exclude=mcp_config.json \
+        --exclude=installation_id
+    [ "$full" = false ] && set -- "$@" --exclude=browser_recordings/
+    [ "$dry_run" = true ] && set -- "$@" --dry-run
+
+    echo "Syncing Antigravity history from $remote ..."
+    [ "$full" = false ] && echo "  (skipping browser_recordings -- use --full to include)"
+    [ "$dry_run" = true ] && echo "  (dry-run mode -- no files will be changed)"
+    echo ""
+
+    rsync "$@" "$src" "$dst"
+    rc=$?
+
+    if [ $rc -eq 0 ]; then
+        echo ""
+        echo "✅ Sync complete. Restart Antigravity to pick up the new history."
+    else
+        echo ""
+        echo "❌ Sync failed (rsync exit code: $rc)" >&2
+    fi
+
+    return $rc
+}
+
 # Custom functions
 # shellcheck source=/dev/null
 [ -r "$CONF_SH_DIR/func.user.sh" ] && . "$CONF_SH_DIR/func.user.sh"
