@@ -290,38 +290,52 @@ chrome_debug() {
 }
 
 #
-# # antigravity_sync - Sync Antigravity chat history from a remote machine
-# # usage: antigravity_sync <remote> [--full] [--dry-run]
+# # antigravity_sync - Sync Antigravity chat history with a remote machine
+# # usage: antigravity_sync <remote> [--push] [--full] [--dry-run]
 # #   remote  : SSH destination, e.g. user@host or an SSH config alias
+# #   --push  : Push local history TO the remote (default: pull FROM remote)
 # #   --full  : Also sync browser_recordings (can be >1 GB)
 # #   --dry-run : Preview what would be transferred without actually syncing
 antigravity_sync() {
     remote=""
     full=false
     dry_run=false
+    push=false
 
     for arg in "$@"; do
         case "$arg" in
             --full)    full=true ;;
             --dry-run) dry_run=true ;;
+            --push)    push=true ;;
             -*)        echo "Unknown flag: $arg" >&2; return 1 ;;
             *)         remote="$arg" ;;
         esac
     done
 
     if [ -z "$remote" ]; then
-        echo "Usage: antigravity_sync <remote> [--full] [--dry-run]" >&2
-        echo "  remote  : SSH destination (e.g. user@host or SSH alias)" >&2
-        echo "  --full  : Include browser_recordings (~1 GB+)" >&2
+        echo "Usage: antigravity_sync <remote> [--push] [--full] [--dry-run]" >&2
+        echo "  remote    : SSH destination (e.g. user@host or SSH alias)" >&2
+        echo "  --push    : Push local history TO the remote (default: pull)" >&2
+        echo "  --full    : Include browser_recordings (~1 GB+)" >&2
         echo "  --dry-run : Preview changes without syncing" >&2
         return 1
     fi
 
-    src="$remote:~/.gemini/antigravity/"
-    dst="$HOME/.gemini/antigravity/"
+    local_dir="$HOME/.gemini/antigravity/"
+    remote_dir="$remote:~/.gemini/antigravity/"
 
-    # Ensure local destination exists
-    mkdir -p "$dst"
+    if [ "$push" = true ]; then
+        src="$local_dir"
+        dst="$remote_dir"
+        direction="to"
+    else
+        src="$remote_dir"
+        dst="$local_dir"
+        direction="from"
+    fi
+
+    # Ensure local destination exists (for pull) or source exists (for push)
+    mkdir -p "$local_dir"
 
     # Build rsync args using positional params (POSIX-safe, no word-split issues)
     set -- -avz --progress \
@@ -331,7 +345,8 @@ antigravity_sync() {
     [ "$full" = false ] && set -- "$@" --exclude=browser_recordings/
     [ "$dry_run" = true ] && set -- "$@" --dry-run
 
-    echo "Syncing Antigravity history from $remote ..."
+    echo "Syncing Antigravity history $direction $remote ..."
+    [ "$push" = true ] && echo "  (pushing local → remote)"
     [ "$full" = false ] && echo "  (skipping browser_recordings -- use --full to include)"
     [ "$dry_run" = true ] && echo "  (dry-run mode -- no files will be changed)"
     echo ""
