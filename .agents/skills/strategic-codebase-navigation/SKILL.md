@@ -139,5 +139,22 @@ Fill this out when first analyzing a new codebase.
 ---
 
 ## Reference
+
 * **Source Material**: *Navigating Large Codebases — Instructor's Guide with Marc Olano*
 * **Primary URL**: https://www.youtube.com/watch?v=YZdVfKJNLfk
+
+---
+
+## What's Next?
+
+After mapping the codebase:
+
+- **Implementing changes?** → Use `requirements-driven-dev` for structured execution
+- **Found a bug during navigation?** → Use `strategic-problem-solving` for root cause analysis
+- **Planning a refactor?** → Use Strategy 4 output to prioritize modules, then `requirements-driven-dev` for implementation
+
+## Related Skills
+
+- **`strategic-problem-solving`** — For debugging and root cause analysis after navigation reveals issues.
+- **`requirements-driven-dev`** — For structured implementation after understanding the codebase.
+- **`edge-case-hunter`** — For auditing code paths discovered during navigation.

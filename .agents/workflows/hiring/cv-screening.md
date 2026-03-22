@@ -21,7 +21,9 @@ Provide the following before starting:
 - **Job description** — the role being hired for
 - **Hiring context** (optional) — team vision, management preferences,
   cultural priorities, growth plans
-- **Jurisdiction** (recommended) — country/region for legal context
+- **Jurisdiction** (recommended) — country/region for legal context.
+  If not specified, **ask before proceeding** — OSINT sources and risk
+  categories vary significantly by region.
 - **CVs** — one of:
   - A directory path containing CV files
   - Individual file paths referenced directly
@@ -143,6 +145,9 @@ The company posting the role may not be what it claims. Verify independently:
 
 ### Risks for You (Hiring Partner)
 
+> **Skip this section if you are the direct hiring party.** This applies only
+> to recruiters, consultants, or intermediaries.
+
 If you are consulting or intermediating, these risks apply to your position:
 
 | Risk Category | What to Look For |
@@ -156,7 +161,10 @@ If you are consulting or intermediating, these risks apply to your position:
 
 ## Phase 5: Produce Evaluation Report
 
-For each candidate, produce a markdown report in the CV directory.
+For each candidate, produce a markdown report.
+
+- If CVs were provided as files → save reports in the same CV directory
+- If CVs were pasted inline → save reports to agent artifacts
 
 ### Report Structure
 
@@ -200,3 +208,11 @@ Specific interview questions to probe unresolved concerns.
 - A human reviewer will fact-check your work — do not fabricate or embellish
 - When uncertain, say so explicitly rather than hedging with vague language
 - Include links or quote sources for every OSINT finding
+
+## Data Retention
+
+- Delete candidate evaluation reports after the hiring decision is finalized
+- Do not retain OSINT findings beyond the active screening period
+- Check local privacy regulations (e.g., GDPR, CCPA) for mandatory retention
+  limits and deletion requirements
+- If storing reports in shared systems, apply need-to-know access controls

@@ -282,7 +282,7 @@ chrome_debug() {
     if [ -n "$chrome_bin" ] && [ -x "$chrome_bin" ]; then
         # Shift the first argument (port) if it was provided
         [ -n "$1" ] && shift
-        "$chrome_bin" --remote-debugging-port="$port" --user-data-dir="$(mktemp -d)" "$@"
+        "$chrome_bin" --remote-debugging-port="$port" --user-data-dir="$HOME/.local/chrome/user_data" "$@"
     else
         echo "Chrome or Chromium not found"
         return 1

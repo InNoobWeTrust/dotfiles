@@ -1,6 +1,6 @@
 ---
 name: strategic-problem-solving
-description: Strategic and Systematic Thinking for Problem-Solving. Use this skill whenever you need to debug a tricky bug, investigate a failure, perform root cause analysis, make an architectural decision, untangle a complex multi-concern situation, or when you find yourself going in circles without making progress. Also use it when a user reports vague symptoms, recurring issues, or asks "why does this keep happening." If you're stuck and unsure what to try next, this skill will give you a structured way forward. After solving, use Phase 4 to challenge your own solution from first principles before committing to it.
+description: Strategic and Systematic Thinking for Problem-Solving. Use this skill whenever you need to debug a tricky bug, investigate a failure, perform root cause analysis, make an architectural decision, untangle a complex multi-concern situation, or when you find yourself going in circles without making progress. Also use it when a user reports vague symptoms, recurring issues, or asks "why does this keep happening." If you're stuck and unsure what to try next, this skill will give you a structured way forward. After solving, use Phase 4 to challenge your own solution from first principles before committing to it. Also includes advanced elicitation — structured LLM self-improvement through named reasoning methods. Activate when AI-generated output feels shallow or generic, or when the user says "go deeper", "rethink this", "try a different angle", "what am I missing", "stress test this thinking", "pre-mortem", "red team this", "inversion", "first principles", or "socratic questioning". Activate proactively at decision points in requirements-driven-dev workflows (after PRD, TRD, BDD spec generation) to offer the user a chance to push the output further before moving on.
 ---
 
 # Strategic Problem-Solving
@@ -19,16 +19,16 @@ DEFINE  ──────►  ANALYZE  ──────►  SOLVE & ACT  ─�
 
 ## Framework Selection
 
-| Situation | Use | Phase |
-|---|---|---|
-| Vague or unclear symptom | **5W** → **5 Whys** | Define → Analyze |
-| Multiple possible causes | **Ishikawa (Fishbone)** | Analyze |
-| Recurring / systemic issue | **Iceberg Model** | Analyze |
-| Stuck on assumptions | **First Principles** | Analyze |
-| Urgent, live incident | **OODA Loop** | Solve |
-| Iterative process improvement | **PDCA** | Solve |
-| Need a stakeholder report | **A3 Report** | Solve |
-| Complex multi-concern mess | **Kepner-Tregoe SA** → split and prioritize | Define |
+| Situation                     | Use                                         | Phase            |
+| ----------------------------- | ------------------------------------------- | ---------------- |
+| Vague or unclear symptom      | **5W** → **5 Whys**                         | Define → Analyze |
+| Multiple possible causes      | **Ishikawa (Fishbone)**                     | Analyze          |
+| Recurring / systemic issue    | **Iceberg Model**                           | Analyze          |
+| Stuck on assumptions          | **First Principles**                        | Analyze          |
+| Urgent, live incident         | **OODA Loop**                               | Solve            |
+| Iterative process improvement | **PDCA**                                    | Solve            |
+| Need a stakeholder report     | **A3 Report**                               | Solve            |
+| Complex multi-concern mess    | **Kepner-Tregoe SA** → split and prioritize | Define           |
 
 ---
 
@@ -44,7 +44,7 @@ Establish a complete problem statement before analyzing anything.
 4. **When** — When did it start? Intermittent or constant? Any temporal patterns?
 5. **Why it matters** — What's the impact?
 
-Produce a crisp statement: *"[Who] experiences [What] in [Where] since [When], causing [impact]."*
+Produce a crisp statement: _"[Who] experiences [What] in [Where] since [When], causing [impact]."_
 
 ### Kepner-Tregoe Situation Appraisal
 
@@ -58,6 +58,11 @@ Use when facing a tangle of issues and you don't know where to start.
 ---
 
 ## Phase 2 — Find the Root Cause
+
+> 💡 **Elicitation opportunity**: After analysis, consider running a named
+> elicitation method to push deeper. See [elicitation-methods](references/elicitation-methods.md)
+> for the full library. Good starters: Socratic Questioning for requirements,
+> Constraint Removal for stuck situations.
 
 ### 5 Whys
 
@@ -77,20 +82,20 @@ Systematically brainstorm and categorize all possible causes when the root cause
 
 Place the **problem** at the head. Draw branches for each category:
 
-| Category | Check for |
-|---|---|
-| **Methods** | Flawed processes, missing steps, wrong workflows |
-| **Machines** | Tool bugs, infrastructure issues, hardware, dependency problems |
-| **Materials** | Bad data, wrong inputs, config errors, corrupted dependencies |
-| **Manpower** | Knowledge gaps, miscommunication, missing documentation |
-| **Measurement** | Missing metrics, misleading logs, observability gaps |
+| Category        | Check for                                                              |
+| --------------- | ---------------------------------------------------------------------- |
+| **Methods**     | Flawed processes, missing steps, wrong workflows                       |
+| **Machines**    | Tool bugs, infrastructure issues, hardware, dependency problems        |
+| **Materials**   | Bad data, wrong inputs, config errors, corrupted dependencies          |
+| **Manpower**    | Knowledge gaps, miscommunication, missing documentation                |
+| **Measurement** | Missing metrics, misleading logs, observability gaps                   |
 | **Environment** | OS differences, network issues, cloud region, external service outages |
 
 For each category, brainstorm specific possible causes. Evaluate each against evidence to narrow down.
 
 ### Iceberg Model
 
-Look beyond the visible event to find deeper systemic forces. Use for *recurring* problems.
+Look beyond the visible event to find deeper systemic forces. Use for _recurring_ problems.
 
 Work through four levels, from surface to depth:
 
@@ -152,6 +157,7 @@ Deliberate iterative improvement. Use when you have time to measure and reflect.
 Force clarity by constraining the entire narrative to a single structured report. Use when communicating to stakeholders.
 
 Fill in these sections, keeping each brief:
+
 1. **Background** — Why does this problem matter?
 2. **Current Condition** — What is happening now? (data, facts)
 3. **Target Condition** — What should be happening?
@@ -166,6 +172,11 @@ Fill in these sections, keeping each brief:
 
 Before committing to a solution, challenge it from first principles. The goal is
 to find weaknesses now, not 6 months later when they're expensive to fix.
+
+> 💡 **Elicitation opportunity**: After your initial challenge, consider running
+> additional elicitation methods for deeper scrutiny. See
+> [elicitation-methods](references/elicitation-methods.md). Good starters:
+> Pre-mortem Analysis, Inversion, Red Team vs Blue Team.
 
 For the full adversarial challenge protocol — including attack vectors, debate
 format, and verdict system — read `references/adversarial-protocol.md`.
@@ -208,9 +219,11 @@ Beyond the general attack vectors, ask:
 **Challenges found**: <N>
 
 ### Concerns
+
 1. [attack vector] <concern> — <severity: blocking / warning / minor>
 
 ### Verdict
+
 PROCEED / REVISE / RETHINK
 ```
 
@@ -225,6 +238,7 @@ Fill this out when systematically tackling a problem.
 # Problem-Solving Report: [Title]
 
 ## 1. Problem Definition (5W)
+
 - **Who:** [affected / reporter]
 - **What:** [symptoms vs. expected behavior]
 - **Where:** [file, module, environment]
@@ -233,9 +247,11 @@ Fill this out when systematically tackling a problem.
 - **Statement:** "[Who] experiences [What] in [Where] since [When], causing [impact]."
 
 ## 2. Root Cause Analysis
+
 ### Method: [5 Whys / Ishikawa / Iceberg / First Principles]
 
 #### If 5 Whys:
+
 1. Why? → [Answer]
 2. Why? → [Answer]
 3. Why? → [Answer]
@@ -243,16 +259,18 @@ Fill this out when systematically tackling a problem.
 5. Why? → **Root Cause: [Answer]**
 
 #### If Ishikawa:
-| Category | Possible Causes | Evidence | Verdict |
-|---|---|---|---|
-| Methods | | | |
-| Machines | | | |
-| Materials | | | |
-| Manpower | | | |
-| Measurement | | | |
-| Environment | | | |
+
+| Category    | Possible Causes | Evidence | Verdict |
+| ----------- | --------------- | -------- | ------- |
+| Methods     |                 |          |         |
+| Machines    |                 |          |         |
+| Materials   |                 |          |         |
+| Manpower    |                 |          |         |
+| Measurement |                 |          |         |
+| Environment |                 |          |         |
 
 #### If Iceberg:
+
 - **Event:** [what happened]
 - **Pattern:** [recurring trend]
 - **Structure:** [system causing pattern]
@@ -261,6 +279,7 @@ Fill this out when systematically tackling a problem.
 **Root Cause:** [confirmed statement]
 
 ## 3. Solution (5 Hows)
+
 1. How to fix? → [direction]
 2. How to implement? → [approach]
 3. How to execute? → [steps]
@@ -268,12 +287,14 @@ Fill this out when systematically tackling a problem.
 5. How to prevent? → [systemic change]
 
 ## 4. Action Plan
-| # | Action | Owner | Timeline | Done? |
-|---|---|---|---|---|
-| 1 | | | | [ ] |
-| 2 | | | | [ ] |
+
+| #   | Action | Owner | Timeline | Done? |
+| --- | ------ | ----- | -------- | ----- |
+| 1   |        |       |          | [ ]   |
+| 2   |        |       |          | [ ]   |
 
 ## 5. Verification
+
 - **Success Metric:** [how we know it's fixed]
 - **Check Date:** [when to verify]
 - **Lessons Learned:** [what to carry forward]
@@ -294,3 +315,12 @@ Fill this out when systematically tackling a problem.
 ---
 
 For framework origins and academic references, see `references/origins.md`.
+
+For the advanced elicitation methods library (structured second passes using
+named reasoning methods), see [elicitation-methods](references/elicitation-methods.md).
+
+## Related Skills
+
+- **`strategic-codebase-navigation`** — Use before this skill when the problem involves unfamiliar code. Navigate first, then debug.
+- **`edge-case-hunter`** — Use after solving to verify no unhandled paths remain in the fix.
+- **`adversarial-reviewer`** — Phase 4 of this skill applies adversarial challenge; the standalone skill provides a deeper protocol.

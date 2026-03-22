@@ -40,11 +40,17 @@ to **your own** config file, adapting the format as needed.
 
 ## Agent config reference
 
+> [!WARNING]
+> Agent config paths change between versions, and new agents appear frequently.
+> If your config path isn't listed or doesn't work, ask the user.
+
 | Agent | Config path | Merge strategy |
-|---|---|---|
+| --- | --- | --- |
 | Claude Code | `~/.claude.json` | Merge `mcpServers` key, preserve other settings |
 | Gemini CLI | `~/.gemini/settings.json` | Merge `mcpServers` key, preserve other settings |
 | GitHub Copilot | `~/.copilot/mcp-config.json` | Standalone `{ "mcpServers": ... }` file |
+| Antigravity | Check agent docs | Merge `mcpServers` key if supported |
+| Cursor | `~/.cursor/mcp.json` | Standalone `{ "mcpServers": ... }` file |
 
 > [!NOTE]
 > If you are an agent **not listed** above, ask the user where your MCP config

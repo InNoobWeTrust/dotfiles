@@ -7,6 +7,7 @@
 #   .agents/scripts/gap-check.sh                       # Check default SPEC_DIR
 #
 # Parses BDD specs for Traceability Matrix and reports gaps.
+# Matrix format defined in: skills/requirements-driven-dev/references/templates/behavior-spec.md
 # Exit code: 0 = no gaps, 1 = gaps found, 2 = error
 
 set -eu
@@ -74,16 +75,16 @@ check_spec() {
       # Extract test status (column 5)
       TEST_STATUS=$(echo "$line" | cut -d'|' -f6 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
       
-      # Check statuses (✓ or ⊘ = complete, ⬚ or ◐ = incomplete)
+      # Check statuses (✓/✔/☑ or ⊘ = complete, ⬚/☐ or ◐ = incomplete)
       IMPL_OK=0
       TEST_OK=0
       
       case "$IMPL_STATUS" in
-        *✓*|*⊘*) IMPL_OK=1; IMPL_COMPLETE=$((IMPL_COMPLETE + 1)) ;;
+        *✓*|*✔*|*☑*|*⊘*) IMPL_OK=1; IMPL_COMPLETE=$((IMPL_COMPLETE + 1)) ;;
       esac
       
       case "$TEST_STATUS" in
-        *✓*|*⊘*) TEST_OK=1; TEST_COMPLETE=$((TEST_COMPLETE + 1)) ;;
+        *✓*|*✔*|*☑*|*⊘*) TEST_OK=1; TEST_COMPLETE=$((TEST_COMPLETE + 1)) ;;
       esac
       
       # Record gaps
@@ -111,7 +112,7 @@ check_spec() {
     echo "${RED}GAPS${NC}: $SPEC_NAME"
     echo "  Implemented: $IMPL_COMPLETE/$SCENARIOS_TOTAL"
     echo "  Tested: $TEST_COMPLETE/$SCENARIOS_TOTAL"
-    printf "$GAPS"
+    printf '%s' "$GAPS"
     return 1
   fi
 }

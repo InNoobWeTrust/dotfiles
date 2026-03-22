@@ -19,12 +19,13 @@ description: >
 > **Philosophy**: Humans own requirements. AI owns execution. Verification proves correctness.
 
 A complete, self-contained methodology where:
+
 - **Humans act as Product Owners** — defining requirements at every level, validating outcomes
 - **AI acts as Executor & Verifier** — producing deliverables, running verifications
 - **Requirements cascade** from high-level product vision down to verifiable behaviors:
-  - **PRD** (Product Requirement Document) — *what* to build and *why*
-  - **TRD** (Technical Requirement Document) — *how* to build it architecturally
-  - **BDD spec** (Behavior Specification) — *verifiable behaviors* that drive execution
+  - **PRD** (Product Requirement Document) — _what_ to build and _why_
+  - **TRD** (Technical Requirement Document) — _how_ to build it architecturally
+  - **BDD spec** (Behavior Specification) — _verifiable behaviors_ that drive execution
 - **Changelogs** track which artifacts were added/modified/removed
 
 ## Activation Signals
@@ -40,17 +41,43 @@ has no definable requirements, or when the user explicitly opts out.
 
 ## Quick Start
 
-### Full Flow (complex features)
+### Scale-Adaptive Routing
+
+Before starting, assess scope to pick the right track. Agent auto-suggests;
+user can override.
+
+| Track        | When                         | What You Do                                                                  |
+| ------------ | ---------------------------- | ---------------------------------------------------------------------------- |
+| **Quick**    | 1-2 stories, well-understood | Skip to BDD spec → Execute → Verify → Commit                                 |
+| **Standard** | 3-8 stories, single epic     | PRD → TRD → BDD → Execute (Full Flow below)                                  |
+| **Deep**     | 8+ stories, multi-epic       | Full Flow + architecture/solutioning phase, ADRs, project-context generation |
+
+**Signals for each track**:
+
+- Quick: bug fix, config change, small feature, "I know exactly what to build"
+- Standard: new feature, moderate complexity, single team
+- Deep: platform-level work, cross-cutting concerns, multiple teams/agents
+
+> Story count is guidance, not a gate. A 2-story database migration may need
+> the Deep track while an 8-story UI reskin may only need Standard. Let
+> complexity signals override the numbers.
+
+### Full Flow (Standard/Deep tracks)
 
 1. **Research** (optional) → Investigate domain, market, technical feasibility
 2. **Define product requirements** → Write a PRD using the template
+   - 💡 _Optional_: Run `advanced-elicitation` to push the PRD deeper
+   - 💡 _Optional_: Use `party-mode` for multi-stakeholder perspective
 3. **Define technical requirements** → Derive a TRD from the PRD
+   - 💡 _Optional_: Run `advanced-elicitation` on architecture decisions
 4. **Define behavior specs** → Split TRD concerns into BDD specs
 5. **AI executes** — AI reads BDD spec + project-context, produces deliverables
 6. **AI verifies** — AI designs verifications from spec
 7. **⚔ Adversarial challenge** — Challenge deliverables from first principles
+   - Use the [review orchestrator](../../workflows/skills/review.md) to auto-select the right reviewers
 8. **Gap check** — Verify all scenarios are implemented and tested
 9. **Human validates** — Review, feedback, adjust
+   - 💡 _Optional_: Run `editorial-reviewer` to polish docs before sharing
 10. **Commit** — Record changelog, structured commit message
 
 Adversarial challenge gates (⚔) run at every phase transition: after Research,
@@ -60,14 +87,24 @@ after PRD, after TRD, after BDD specs, and after deliverables.
 scenarios are implemented and tested. Agents update this as they work.
 Gaps block commit — no scenario left behind.
 
-### Quick Flow (small/well-understood changes)
+### Quick Flow (Quick track)
 
 Skip to step 4 (BDD spec or inline task) → Execute → Verify → Commit.
 Use for bug fixes, small features, config changes.
 
+**Failure Layer Diagnosis**: If verification fails, determine where the failure
+entered before patching:
+
+- **Intent failure** → Requirements were wrong → go back to PRD/TRD
+- **Spec failure** → BDD spec was incomplete → fix spec, then re-execute
+- **Implementation failure** → Code bug → patch locally
+
+Only truly local problems get patched locally. Don't fix spec-level failures
+with code-level patches.
+
 **Traceability in Quick Flow**: If you write a BDD spec, maintain the matrix.
 If the task is trivially small (inline description, no formal spec), traceability
-is optional — but if gaps emerge later, escalate to Full Flow.
+is optional — but if gaps emerge later, escalate to Standard/Deep track.
 
 ---
 
@@ -106,18 +143,22 @@ requirements-driven-dev/
 ## Knowledge Modules
 
 ### Core Protocol
+
 - [lifecycle](references/core/lifecycle.md) — The always-on lifecycle: Research → Requirements Cascade → Backlog → Execute → Verify → ⚔ Challenge → Validate → Changelog → Commit
 - [adversarial-protocol](references/core/adversarial-protocol.md) — Synced adversarial challenge protocol (from adversarial-reviewer)
 
 ### Rules
+
 - [prd](references/rules/prd.md) — PRD authoring: required sections, quality checklist
 - [trd](references/rules/trd.md) — TRD authoring: required sections, traceability to PRD
 - [bdd](references/rules/bdd.md) — BDD spec authoring: Gherkin format, required sections, quality checklist
 - [changelog](references/rules/changelog.md) — Artifact change tracking: one file per feature, append-only sessions
 - [execution](references/rules/execution.md) — AI execution constraints: spec-driven, defensive, minimal diff
 - [commit](references/rules/commit.md) — Git convention: conventional commits with changelog reference
+- [project-context](references/rules/project-context.md) — Per-project AI constitution: tech stack, rules, conventions
 
 ### Templates
+
 - [prd](references/templates/prd.md) — Product requirement document template
 - [trd](references/templates/trd.md) — Technical requirement document template
 - [behavior-spec](references/templates/behavior-spec.md) — Given/When/Then feature spec template
@@ -140,16 +181,26 @@ requirements-driven-dev/
 
 This skill uses **configurable directories** for requirement documents and changelog files. By default:
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `{PRD_DIR}` | `docs/prds/` | Product requirement documents — one `.md` per product/initiative |
-| `{TRD_DIR}` | `docs/trds/` | Technical requirement documents — one `.md` per component/system |
-| `{SPEC_DIR}` | `docs/specs/` | Behavior specs — one `.md` per feature |
-| `{CHANGELOG_DIR}` | `docs/changelogs/` | Artifact scope tracker — one file per feature |
+| Variable          | Default            | Purpose                                                          |
+| ----------------- | ------------------ | ---------------------------------------------------------------- |
+| `{PRD_DIR}`       | `docs/prds/`       | Product requirement documents — one `.md` per product/initiative |
+| `{TRD_DIR}`       | `docs/trds/`       | Technical requirement documents — one `.md` per component/system |
+| `{SPEC_DIR}`      | `docs/specs/`      | Behavior specs — one `.md` per feature                           |
+| `{CHANGELOG_DIR}` | `docs/changelogs/` | Artifact scope tracker — one file per feature                    |
 
 ### Project-specific overrides
 
-The host project's agent config (e.g., `AGENT.md`) should declare:
+Before using defaults, **check existing project conventions first**:
+
+1. **Scan for existing directories** — Look for `docs/`, `specs/`, `prds/`,
+   `.specs/`, `requirements/`, or similar directories already in the project
+2. **Check agent config files** — Read `AGENT.md`, `.cursorrules`,
+   `CLAUDE.md`, `.gemini/`, or similar config files for declared paths
+3. **Infer from existing artifacts** — If PRDs already exist somewhere,
+   use that location
+4. **Fall back to defaults** — Only if no convention is detected
+
+When declaring overrides explicitly, add to any project-level agent config:
 
 ```markdown
 ## Requirements-Driven Dev Configuration
@@ -160,11 +211,13 @@ The host project's agent config (e.g., `AGENT.md`) should declare:
 - **Changelog directory**: `docs/changelogs/`
 ```
 
-If no override is provided, the skill uses the defaults above.
+If no override is provided and no convention detected, the skill uses
+the defaults above.
 
 ### Additional project overrides
 
 The host project may also configure:
+
 - **Verification tools** — e.g., pytest, vitest, manual checklist, etc.
 - **Source layout** — where deliverables live
 - **Commit convention extensions** — additional `type` values
@@ -224,4 +277,4 @@ Add to your project's `AGENT.md`:
 
 ---
 
-*This skill is self-contained and portable. No language assumptions. Integrates with `adversarial-reviewer` and `security-reviewer` skills when available.*
+_This skill is self-contained and portable. No language assumptions. Integrates with `adversarial-reviewer` and `security-reviewer` skills when available._

@@ -1,4 +1,4 @@
-<!-- synced-from: adversarial-reviewer/SKILL.md | last-synced: 2026-03-20 07:33 -->
+<!-- synced-from: adversarial-reviewer/SKILL.md | last-synced: 2026-03-22 21:10 -->
 <!-- Note: YAML frontmatter stripped; this is a reference copy, not an activatable skill -->
 
 
@@ -59,20 +59,20 @@ Assumption to monitor: [what to watch for that would invalidate this]
 For routine work, surface tensions inline using these patterns:
 
 **Trade-offs**: Show what you chose and why, and what you gave up.
-> *"I chose a relational DB over a document store because the data is heavily
-> relational. Trade-off: schema migrations will be needed as the model evolves."*
+> _"I chose a relational DB over a document store because the data is heavily
+> relational. Trade-off: schema migrations will be needed as the model evolves."_
 
 **Assumptions at risk**: Flag assumptions that, if wrong, would change the answer.
-> *"This assumes traffic stays under 10k req/s. If we hit viral growth,
-> the single-writer pattern becomes a bottleneck."*
+> _"This assumes traffic stays under 10k req/s. If we hit viral growth,
+> the single-writer pattern becomes a bottleneck."_
 
 **Reversibility**: Note how expensive it is to undo.
-> *"This API contract will be hard to change once external consumers depend
-> on it. Worth extra scrutiny on the field naming."*
+> _"This API contract will be hard to change once external consumers depend
+> on it. Worth extra scrutiny on the field naming."_
 
 **Alternatives rejected**: Show you considered other paths.
-> *"Considered event sourcing but rejected it — the audit trail requirement
-> doesn't justify the operational complexity for our team size."*
+> _"Considered event sourcing but rejected it — the audit trail requirement
+> doesn't justify the operational complexity for our team size."_
 
 Decisions presented with visible reasoning are stronger, not weaker. But
 visible reasoning is not the same as visible challenge — you must genuinely
@@ -91,8 +91,8 @@ challenge without being asked**:
 - Design choices that won't age well
 
 Frame proactive challenges as questions, not accusations:
-*"Before we proceed — have we considered what happens when X?"* not
-*"This is wrong because X."*
+_"Before we proceed — have we considered what happens when X?"_ not
+_"This is wrong because X."_
 
 #### When NOT to Challenge Proactively
 
@@ -216,6 +216,28 @@ For **developer-facing interfaces** specifically:
 - Could this be split into something smaller that ships sooner?
 - What's the cost of NOT doing this?
 
+#### Attack Vector: Goal Alignment / Scope Drift
+
+Scope _creep_ adds things not in the PRD. Scope _drift_ is subtler — you're
+building exactly what was planned, but the work has lost connection to the
+root problem the PRD was written to solve. The _how_ swallows the _why_.
+
+- Re-read the PRD's Problem Statement. Does the current work directly
+  address that problem? Or is it solving an adjacent, less important problem?
+- Has the ratio of infrastructure/documentation to user-facing value delivery
+  become lopsided? (Building plumbing that nobody validates with real usage.)
+- Could the user get value from what exists RIGHT NOW, without the current
+  work item? If so, why aren't we shipping first?
+- Are we polishing specs, fixing inconsistencies, or debating edge cases
+  when the core system hasn't been validated in the real world yet?
+- Would a stranger reading the PRD and then looking at the current sprint
+  say "yes, this is clearly solving that problem" — or would they be confused?
+
+**Apply twice**: once early (after BDD specs — before committing to a
+large execution plan) and once late (after implementation — before calling
+the feature "done"). Early catches planning drift. Late catches execution
+drift.
+
 ### Documentation-Specific Attack Vectors
 
 Use these when reviewing **document-type artifacts** — design docs, specs,
@@ -242,6 +264,16 @@ followed by humans or AI agents:
 - Do code examples match the actual project conventions? (sync vs. async, naming, import styles)
 - Are file paths, command invocations, and tooling references accurate and current?
 - Would someone following these examples produce code that passes the project's linter and tests?
+
+#### Attack Vector: Magic Numbers in Generated Artifacts
+
+- Do prompts, templates, config files, or generated content contain hardcoded
+  values that are configurable elsewhere? (thresholds, limits, ranges, timeouts)
+- If the source-of-truth value changes (in config, env vars, or code), will
+  the artifact silently become inconsistent?
+- Should the value be a template variable, referencing the single source?
+- Watch especially for: tier/threshold boundaries, retry counts, buffer sizes,
+  token limits, and any numeric literal that appears in prose or instructions.
 
 #### Attack Vector: Delegation vs. Restatement
 
@@ -289,8 +321,8 @@ must be specific, answerable, and cite the exact section being challenged.
 5. **Unresolved challenges** block the artifact from being accepted
 6. **Dissenting progress** — if author and reviewer reach impasse in a 1-on-1
    setting with no higher authority to escalate to, the author may proceed
-   but the reviewer must record a formal dissent: *"Proceeding at author's
-   decision. Dissent: [concern]. Re-evaluate when [trigger condition]."*
+   but the reviewer must record a formal dissent: _"Proceeding at author's
+   decision. Dissent: [concern]. Re-evaluate when [trigger condition]."_
    This preserves the challenge without creating deadlock.
 7. **Escalation** — when a decision-maker is available (stakeholder, product
    owner, tech lead), unresolved impasses escalate to them for final ruling

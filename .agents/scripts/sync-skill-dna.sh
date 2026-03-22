@@ -61,10 +61,22 @@ for SOURCE_REL in $(jq -r '.sources | keys[]' "$MANIFEST"); do
       continue
     fi
 
-    # Compare content (skip the version header lines in consumer)
-    CONSUMER_CONTENT=$(tail -n +4 "$CONSUMER")
-    # Strip YAML frontmatter from source for comparison
-    SOURCE_CONTENT=$(awk 'BEGIN{skip=0} /^---$/{if(NR==1){skip=1;next}else if(skip){skip=0;next}} !skip{print}' "$SOURCE")
+    # Compare content (skip the synced-from header lines in consumer)
+    # Detect header size: count lines before first non-comment, non-blank line
+    HEADER_LINES=0
+    while IFS= read -r hline; do
+      case "$hline" in
+        "<!--"*|"")
+          HEADER_LINES=$((HEADER_LINES + 1))
+          ;;
+        *)
+          break
+          ;;
+      esac
+    done < "$CONSUMER"
+    CONSUMER_CONTENT=$(tail -n +$((HEADER_LINES + 1)) "$CONSUMER" | sed '/./,$!d')
+    # Strip YAML frontmatter from source for comparison, plus leading blank lines
+    SOURCE_CONTENT=$(awk 'BEGIN{skip=0} /^---$/{if(NR==1){skip=1;next}else if(skip){skip=0;next}} !skip{print}' "$SOURCE" | sed '/./,$!d')
 
     if [ "$CONSUMER_CONTENT" != "$SOURCE_CONTENT" ]; then
       SYNCED_DATE=$(head -1 "$CONSUMER" | sed -n 's/.*last-synced: \(.*\) -->/\1/p')
@@ -73,9 +85,8 @@ for SOURCE_REL in $(jq -r '.sources | keys[]' "$MANIFEST"); do
 
       if [ "$MODE" = "--diff" ]; then
         # Write to temp files for portable diff
-        TMPDIR="${TMPDIR:-/tmp}"
-        TMP_CONSUMER="$TMPDIR/skill-dna-consumer.$$"
-        TMP_SOURCE="$TMPDIR/skill-dna-source.$$"
+        TMP_CONSUMER=$(mktemp)
+        TMP_SOURCE=$(mktemp)
         echo "$CONSUMER_CONTENT" > "$TMP_CONSUMER"
         echo "$SOURCE_CONTENT" > "$TMP_SOURCE"
         echo "  --- Diff ---"

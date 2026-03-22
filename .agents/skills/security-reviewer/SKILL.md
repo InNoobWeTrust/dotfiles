@@ -100,15 +100,17 @@ standard adversarial verdict format.
 ### Mode 2 (Self-Challenge)
 
 When producing code, configs, or infrastructure changes:
+
 - Scan your own output for hardcoded secrets, leaked paths, or overly
   permissive defaults before presenting
 - Flag any security-relevant assumptions:
-  > *"This endpoint is unauthenticated. Assumption: it's behind a VPN.
-  > If exposed publicly, add auth middleware."*
+  > _"This endpoint is unauthenticated. Assumption: it's behind a VPN.
+  > If exposed publicly, add auth middleware."_
 
 ### Mode 3 (Proactive)
 
 In conversation, immediately flag:
+
 - Hardcoded secrets, absolute paths, or system info in files bound for git
 - Missing input validation or injection vectors in code snippets
 - Overly permissive IAM roles, firewall rules, or CORS policies
@@ -126,5 +128,10 @@ Not all attack vectors apply to all artifacts. Use context to focus:
 | **Documentation** | Low | Leaked internals only (skip most vectors) |
 | **Dependencies update** | Medium | Supply chain, known CVEs (skip auth/input) |
 
-When in doubt, ask: *"What's the blast radius if this is compromised?"*
+When in doubt, ask: _"What's the blast radius if this is compromised?"_
 High blast radius = more vectors. Low blast radius = fewer vectors.
+
+## Related Skills
+
+- **`adversarial-reviewer`** — General-purpose adversarial challenge protocol. Security-reviewer adds security-specific attack vectors on top of it.
+- **`edge-case-hunter`** — Unhandled paths often overlap with security vulnerabilities. Run both for security-critical code.

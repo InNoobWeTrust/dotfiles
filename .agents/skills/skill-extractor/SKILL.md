@@ -147,7 +147,15 @@ Transform the specific solution into a general skill:
 - Add decision points where the approach might differ based on circumstances
 - Include examples from the conversation but frame them as illustrations, not templates
 
-### 3. Delegate to Skill-Creator
+### 3. Check for Overlap
+
+Before creating a new skill, search existing skills for similar functionality:
+
+- Read the `description` field in every existing `SKILL.md` frontmatter
+- If an existing skill covers 70%+ of the same ground, propose **extending** it instead of creating a new one
+- If partial overlap exists, propose the new skill with a clear "Related Skills" cross-reference
+
+### 4. Delegate to Skill-Creator
 
 Hand off to the `skill-creator` skill for the full creation workflow:
 

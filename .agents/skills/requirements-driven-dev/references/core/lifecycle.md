@@ -51,6 +51,9 @@ BDD Spec (or inline task description) → Execute → Verify → Validate → Co
 Skip the requirements cascade. Start directly at the BDD spec or even
 a clear task description if the scope is trivially small.
 
+**Exception**: If the change touches security, authentication, authorization,
+or data handling, apply the ⚔ Challenge Gate regardless of flow size.
+
 ### How to Decide
 
 | Signal | Flow |
@@ -71,56 +74,10 @@ When in doubt, start Quick and escalate to Full if complexity emerges.
 ## 3. THE LIFECYCLE
 
 ```
-                    ┌───────────────────────────────────────────────────┐
-                    │         RESEARCH (Phase R — Optional)             │
-                    │  Domain research, market research, technical      │
-                    │  feasibility → Research Brief                     │
-                    └───────────────────────┬───────────────────────────┘
-                                            ▼
-                              ┌──── ⚔ Challenge Gate ────┐
-                              └──────────┬───────────────┘
-                                         ▼
-┌───────────────────────────────────────────────────────────────────────┐
-│              REQUIREMENTS CASCADE (Phase 0)                           │
-│                                                                       │
-│  ┌─────────┐  ⚔  ┌─────────┐  ⚔  ┌─────────────┐                      │
-│  │   PRD   │────▶│   TRD   │────▶│  BDD Specs  │                      │
-│  │ (1..N)  │     │ (1..N)  │     │   (1..N)    │                      │
-│  └─────────┘     └─────────┘     └──────┬──────┘                      │
-│   what/why        how/arch        verifiable                          │
-│                                   behaviors                           │
-└──────────────────────────────────────────┼────────────────────────────┘
-                                           ▼
-                                 ┌──── ⚔ Challenge Gate ────┐
-                                 └──────────┬───────────────┘
-                                            ▼
-                                 ┌──────────────┐
-                                 │  1. BACKLOG  │  BDD spec in {SPEC_DIR}
-                                 └──────┬───────┘
-                                        ▼
-                            ┌────────────────────────┐
-                            │  Load: project-context │  (if exists)
-                            └────────────┬───────────┘
-                                         ▼
-                                 ┌──────────────┐
-                                 │  2. EXECUTE  │  AI reads spec → produces deliverables
-                                 └──────┬───────┘
-                                        ▼
-                                 ┌──────────────┐
-                                 │  3. VERIFY   │  AI designs verifications from spec
-                                 └──────┬───────┘
-                                        ▼
-                            ┌────────────────────────┐
-                            │  4. ⚔ CHALLENGE GATE  │  Adversarial review of deliverables
-                            └────────────┬───────────┘
-                                         ▼
-                              ┌──────────────────┐
-                              │  5. VALIDATE     │  Run verifications → acceptance criteria
-                              └──────┬───────────┘
-                                     │
-                                     ├── PASS ──► 6. CHANGELOG → 7. COMMIT
-                                     │
-                                     └── FAIL ──► Feedback → back to step 2, 3, or 4
+Research (opt) → ⚔ → PRD → ⚔ → TRD → ⚔ → BDD Specs → ⚔ → Backlog
+  → Load project-context → Execute → Verify → ⚔ Challenge → Validate
+  → PASS → Changelog → Commit
+  → FAIL → Feedback → back to Execute/Verify/Challenge
 ```
 
 **⚔ = Adversarial Challenge Gate** — apply the adversarial-reviewer protocol
@@ -247,7 +204,7 @@ Before entering the backlog, BDD specs must survive adversarial challenge:
 - **Scope drift check (early)**: Re-read the PRD's Problem Statement. Does
   the sum of all BDD specs directly solve that root problem? Or have the
   specs drifted toward adjacent concerns that feel productive but don't
-  address the core *why*?
+  address the core _why_?
 
 ### Traceability
 
@@ -282,6 +239,42 @@ Every feature starts as a markdown file in the spec directory:
 4. **Scenarios** — Given/When/Then acceptance criteria
 5. **Validation rules** — Business constraints, edge cases
 6. **Out of scope** — Explicit exclusions to prevent scope creep
+
+---
+
+## 4.5. PROJECT CONTEXT
+
+Recommended for any project that will have multiple implementation sessions.
+
+The `project-context.md` file acts as a **living constitution** — it captures
+technology stack, conventions, and rules that all implementation workflows
+should follow for consistency.
+
+### When to Create
+
+- **New projects**: Create after the TRD/architecture phase to capture decisions
+- **Existing projects**: Generate from the codebase to capture established patterns
+- **Anytime**: When you notice agents making inconsistent decisions across stories
+
+### Location
+
+`docs/project-context.md` (or project convention)
+
+### What Goes In It
+
+- **Technology stack & versions** — Languages, frameworks, databases, infrastructure
+- **Code conventions** — Naming, structure, patterns, anti-patterns
+- **Critical implementation rules** — e.g., "all errors must be typed",
+  "no ORM, raw SQL only", "tests co-located with source"
+- **Architecture decisions** — Key choices and their rationale
+
+### Lifecycle
+
+This is a **living document**. Update it when:
+- Architecture decisions change
+- New conventions are established
+- Patterns evolve during implementation
+- Agents make decisions that conflict with project norms
 
 ---
 
@@ -523,40 +516,4 @@ This ensures continuity even when context is lost.
 
 ---
 
-## 11. PROJECT CONTEXT
-
-Recommended for any project that will have multiple implementation sessions.
-
-The `project-context.md` file acts as a **living constitution** — it captures
-technology stack, conventions, and rules that all implementation workflows
-should follow for consistency.
-
-### When to Create
-
-- **New projects**: Create after the TRD/architecture phase to capture decisions
-- **Existing projects**: Generate from the codebase to capture established patterns
-- **Anytime**: When you notice agents making inconsistent decisions across stories
-
-### Location
-
-`docs/project-context.md` (or project convention)
-
-### What Goes In It
-
-- **Technology stack & versions** — Languages, frameworks, databases, infrastructure
-- **Code conventions** — Naming, structure, patterns, anti-patterns
-- **Critical implementation rules** — e.g., "all errors must be typed",
-  "no ORM, raw SQL only", "tests co-located with source"
-- **Architecture decisions** — Key choices and their rationale
-
-### Lifecycle
-
-This is a **living document**. Update it when:
-- Architecture decisions change
-- New conventions are established
-- Patterns evolve during implementation
-- Agents make decisions that conflict with project norms
-
----
-
-*This protocol has the highest authority in the agent system.*
+_This protocol has the highest authority in the agent system._

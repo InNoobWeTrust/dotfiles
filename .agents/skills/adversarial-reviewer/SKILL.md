@@ -73,20 +73,20 @@ Assumption to monitor: [what to watch for that would invalidate this]
 For routine work, surface tensions inline using these patterns:
 
 **Trade-offs**: Show what you chose and why, and what you gave up.
-> *"I chose a relational DB over a document store because the data is heavily
-> relational. Trade-off: schema migrations will be needed as the model evolves."*
+> _"I chose a relational DB over a document store because the data is heavily
+> relational. Trade-off: schema migrations will be needed as the model evolves."_
 
 **Assumptions at risk**: Flag assumptions that, if wrong, would change the answer.
-> *"This assumes traffic stays under 10k req/s. If we hit viral growth,
-> the single-writer pattern becomes a bottleneck."*
+> _"This assumes traffic stays under 10k req/s. If we hit viral growth,
+> the single-writer pattern becomes a bottleneck."_
 
 **Reversibility**: Note how expensive it is to undo.
-> *"This API contract will be hard to change once external consumers depend
-> on it. Worth extra scrutiny on the field naming."*
+> _"This API contract will be hard to change once external consumers depend
+> on it. Worth extra scrutiny on the field naming."_
 
 **Alternatives rejected**: Show you considered other paths.
-> *"Considered event sourcing but rejected it — the audit trail requirement
-> doesn't justify the operational complexity for our team size."*
+> _"Considered event sourcing but rejected it — the audit trail requirement
+> doesn't justify the operational complexity for our team size."_
 
 Decisions presented with visible reasoning are stronger, not weaker. But
 visible reasoning is not the same as visible challenge — you must genuinely
@@ -105,8 +105,8 @@ challenge without being asked**:
 - Design choices that won't age well
 
 Frame proactive challenges as questions, not accusations:
-*"Before we proceed — have we considered what happens when X?"* not
-*"This is wrong because X."*
+_"Before we proceed — have we considered what happens when X?"_ not
+_"This is wrong because X."_
 
 #### When NOT to Challenge Proactively
 
@@ -232,9 +232,9 @@ For **developer-facing interfaces** specifically:
 
 #### Attack Vector: Goal Alignment / Scope Drift
 
-Scope *creep* adds things not in the PRD. Scope *drift* is subtler — you're
+Scope _creep_ adds things not in the PRD. Scope _drift_ is subtler — you're
 building exactly what was planned, but the work has lost connection to the
-root problem the PRD was written to solve. The *how* swallows the *why*.
+root problem the PRD was written to solve. The _how_ swallows the _why_.
 
 - Re-read the PRD's Problem Statement. Does the current work directly
   address that problem? Or is it solving an adjacent, less important problem?
@@ -335,8 +335,8 @@ must be specific, answerable, and cite the exact section being challenged.
 5. **Unresolved challenges** block the artifact from being accepted
 6. **Dissenting progress** — if author and reviewer reach impasse in a 1-on-1
    setting with no higher authority to escalate to, the author may proceed
-   but the reviewer must record a formal dissent: *"Proceeding at author's
-   decision. Dissent: [concern]. Re-evaluate when [trigger condition]."*
+   but the reviewer must record a formal dissent: _"Proceeding at author's
+   decision. Dissent: [concern]. Re-evaluate when [trigger condition]."_
    This preserves the challenge without creating deadlock.
 7. **Escalation** — when a decision-maker is available (stakeholder, product
    owner, tech lead), unresolved impasses escalate to them for final ruling

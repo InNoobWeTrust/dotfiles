@@ -79,7 +79,7 @@ The AI facilitates using the chosen technique:
 
 ### Session Flow
 
-1. Set a target: aim for 15-30 raw ideas before filtering
+1. Set a target: aim for 10-20 raw ideas before filtering
 2. Go fast — capture everything, no editing
 3. When energy drops, switch technique or take a different angle
 4. Mark ideas that spark energy — those are worth exploring
@@ -90,7 +90,7 @@ Sessions can be interrupted. Handle gracefully:
 
 - **Early exit**: User says "let's stop here" → save current state, skip to Output
 - **Pause**: User gets called away → save all ideas so far with a "Session paused" note
-- **Pivot**: User realizes problem is wrong → go back to Phase 1, reframe problem
+- **Pivot**: User realizes problem is wrong → **save current ideas first** (some may transfer to the reframed problem), then go back to Phase 1
 - **Resume**: When returning, summarize where you left off and offer to continue or restart
 
 ---
@@ -133,6 +133,9 @@ For complex problems, apply multiple perspectives to the top ideas:
 - **Security**: What could go wrong from a security standpoint? (Apply `security-reviewer` lens if available)
 - **Devil's Advocate**: Why will this fail? (Apply `adversarial-reviewer` lens)
 - **User**: Would I actually use this? Is it intuitive?
+
+> **Tip**: For deeper multi-persona deliberation with sustained back-and-forth,
+> use the `party-mode` workflow instead of this lightweight pass.
 
 > **Tip**: In project-specific copies, replace generic roles with team-specific ones
 > and reference relevant project skills where applicable.
