@@ -5,13 +5,10 @@ description: >
   requirements (PRD) to technical requirements (TRD) to behavior specs (BDD)
   to execution and delivery. Activate whenever the user wants to plan features,
   write product requirements, define technical architecture, author behavior
-  specs, implement, verify, or commit work. Also activate when the user
-  mentions PRDs, TRDs, technical design docs, behavior specs, acceptance
-  criteria, Given/When/Then scenarios, user stories, changelogs, or structured
-  commits — even if they don't explicitly say "requirements-driven". Use this
-  skill for any feature work that benefits from a requirements-first approach,
-  including non-software domains like process design, policy writing, or
-  content creation.
+  specs, implement, verify, or commit work. Also activate for PRDs, TRDs,
+  technical design docs, behavior specs, acceptance criteria, Given/When/Then
+  scenarios, user stories, changelogs, or structured commits — even without
+  explicitly saying "requirements-driven".
 ---
 
 # Requirements-Driven Development Skill
@@ -41,6 +38,16 @@ has no definable requirements, or when the user explicitly opts out.
 
 ## Quick Start
 
+### Where to Start
+
+| User says... | Start here |
+| --- | --- |
+| "Plan a feature" / "I have an idea" | PRD → read `references/rules/prd.md` + `references/templates/prd.md` |
+| "I have a PRD already" | TRD → read `references/rules/trd.md` + `references/templates/trd.md` |
+| "Write specs" / "behavior specs" | BDD → read `references/rules/bdd.md` + `references/templates/behavior-spec.md` |
+| "Just build this" (clear task) | Quick track → BDD spec or inline task → Execute |
+| "Review this spec" / "challenge" | ⚔ Challenge gate → read `references/core/adversarial-protocol.md` |
+
 ### Scale-Adaptive Routing
 
 Before starting, assess scope to pick the right track. Agent auto-suggests;
@@ -66,10 +73,10 @@ user can override.
 
 1. **Research** (optional) → Investigate domain, market, technical feasibility
 2. **Define product requirements** → Write a PRD using the template
-   - 💡 _Optional_: Run `advanced-elicitation` to push the PRD deeper
-   - 💡 _Optional_: Use `party-mode` for multi-stakeholder perspective
+   - 💡 _Optional_: Run advanced elicitation (see `../../skills/strategic-problem-solving/references/elicitation-methods.md`) to push the PRD deeper
+   - 💡 _Optional_: Use party-mode (see `../../workflows/ideation/party-mode.md`) for multi-stakeholder perspective
 3. **Define technical requirements** → Derive a TRD from the PRD
-   - 💡 _Optional_: Run `advanced-elicitation` on architecture decisions
+    - 💡 _Optional_: Run advanced elicitation on architecture decisions
 4. **Define behavior specs** → Split TRD concerns into BDD specs
 5. **AI executes** — AI reads BDD spec + project-context, produces deliverables
 6. **AI verifies** — AI designs verifications from spec
@@ -179,51 +186,11 @@ requirements-driven-dev/
 
 ## Configuration
 
-This skill uses **configurable directories** for requirement documents and changelog files. By default:
+This skill uses configurable directories for requirement documents and
+changelog files. See `references/rules/config.md` for directory defaults,
+project-specific overrides, and how to detect existing conventions.
 
-| Variable          | Default            | Purpose                                                          |
-| ----------------- | ------------------ | ---------------------------------------------------------------- |
-| `{PRD_DIR}`       | `docs/prds/`       | Product requirement documents — one `.md` per product/initiative |
-| `{TRD_DIR}`       | `docs/trds/`       | Technical requirement documents — one `.md` per component/system |
-| `{SPEC_DIR}`      | `docs/specs/`      | Behavior specs — one `.md` per feature                           |
-| `{CHANGELOG_DIR}` | `docs/changelogs/` | Artifact scope tracker — one file per feature                    |
-
-### Project-specific overrides
-
-Before using defaults, **check existing project conventions first**:
-
-1. **Scan for existing directories** — Look for `docs/`, `specs/`, `prds/`,
-   `.specs/`, `requirements/`, or similar directories already in the project
-2. **Check agent config files** — Read `AGENT.md`, `.cursorrules`,
-   `CLAUDE.md`, `.gemini/`, or similar config files for declared paths
-3. **Infer from existing artifacts** — If PRDs already exist somewhere,
-   use that location
-4. **Fall back to defaults** — Only if no convention is detected
-
-When declaring overrides explicitly, add to any project-level agent config:
-
-```markdown
-## Requirements-Driven Dev Configuration
-
-- **PRD directory**: `docs/prds/`
-- **TRD directory**: `docs/trds/`
-- **Spec directory**: `docs/specs/`
-- **Changelog directory**: `docs/changelogs/`
-```
-
-If no override is provided and no convention detected, the skill uses
-the defaults above.
-
-### Additional project overrides
-
-The host project may also configure:
-
-- **Verification tools** — e.g., pytest, vitest, manual checklist, etc.
-- **Source layout** — where deliverables live
-- **Commit convention extensions** — additional `type` values
-- **Domain-specific execution rules** — extend `references/rules/execution.md`
-
-These overrides live in the project's own agent config, not in this skill.
+Default directories: `docs/prds/`, `docs/trds/`, `docs/specs/`, `docs/changelogs/`.
 
 ---
 

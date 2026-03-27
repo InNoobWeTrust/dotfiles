@@ -66,7 +66,7 @@ What do you need to do?
 
 ---
 
-## Strategy 3: Structural Pattern Matching (Clone & Mutate)
+## Strategy 3: Clone & Mutate
 
 **Use when**: You need to add something similar to what already exists (new endpoint, new command, new module).
 
@@ -140,8 +140,27 @@ Fill this out when first analyzing a new codebase.
 
 ## Reference
 
-* **Source Material**: *Navigating Large Codebases — Instructor's Guide with Marc Olano*
-* **Primary URL**: https://www.youtube.com/watch?v=YZdVfKJNLfk
+Methodology inspired by Marc Olano's approach to navigating large codebases,
+emphasizing boundary tracing and registration pattern discovery over
+exhaustive reading.
+
+---
+
+## When to Stop Navigating
+
+Navigation is a means to an end. Once you've identified the files relevant
+to your task, stop mapping and start working. A complete codebase understanding
+is rarely needed — just enough to make your change safely.
+
+**Signs you should stop:**
+- You've found the entry and exit points for your change (Strategy 1)
+- You've mapped the registration contract and can mimic it (Strategy 2/3)
+- You've classified modules into leaf vs core (Strategy 4)
+
+**Signs you're over-navigating:**
+- You're reading files "just in case"
+- You've been mapping for longer than the task itself should take
+- You're exploring modules unrelated to your change
 
 ---
 

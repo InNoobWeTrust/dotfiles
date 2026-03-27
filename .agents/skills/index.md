@@ -13,6 +13,7 @@ Quick reference for all available skills. Generated for agent discovery.
 | **skill-extractor** | End of substantial conversations, "that was tricky", "let's remember this", "we should save this" | `skills/skill-extractor/SKILL.md` |
 | **strategic-codebase-navigation** | Unfamiliar codebase, "where do I start", trace a feature, plan migration, map architecture | `skills/strategic-codebase-navigation/SKILL.md` |
 | **strategic-problem-solving** | Debug, root cause, "why does this keep happening", "go deeper", "first principles", "inversion" | `skills/strategic-problem-solving/SKILL.md` |
+| **ui-ux** | Design systems, component styling, "modern"/"premium" look, WCAG accessibility, design tokens, responsive design | `skills/ui-ux/SKILL.md` |
 
 ## Review Orchestration
 
@@ -22,3 +23,14 @@ For automated reviewer selection, see [review.md](../workflows/skills/review.md)
 
 Shared protocols across skills are tracked in [skill-dna-manifest.json](skill-dna-manifest.json).
 Sync with [sync-skill-dna workflow](../workflows/skills/sync-skill-dna.md).
+
+## Remote Skills
+
+Skills sourced from external GitHub repos are tracked in [remote-skills-manifest.json](remote-skills-manifest.json).
+Sync with [sync-remote-skills workflow](../workflows/skills/sync-remote-skills.md).
+
+Currently synced remote skills:
+
+| Skill | Source | Branch |
+| --- | --- | --- |
+| **skill-creator** | [anthropics/skills](https://github.com/anthropics/skills) `skills/skill-creator` | `main` |

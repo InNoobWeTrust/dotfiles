@@ -112,7 +112,7 @@ check_spec() {
     echo "${RED}GAPS${NC}: $SPEC_NAME"
     echo "  Implemented: $IMPL_COMPLETE/$SCENARIOS_TOTAL"
     echo "  Tested: $TEST_COMPLETE/$SCENARIOS_TOTAL"
-    printf '%s' "$GAPS"
+    printf '%b' "$GAPS"
     return 1
   fi
 }

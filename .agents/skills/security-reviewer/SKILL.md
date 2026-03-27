@@ -18,9 +18,21 @@ description: >
 Apply the **adversarial first-principles protocol** from
 `references/adversarial-protocol.md` with a security-specific lens.
 
-Read that protocol first. It defines the Core Law, three modes of operation,
-mindset, general attack vectors, debate format, and verdict system. Everything
-below adds security-specific context on top of that protocol.
+## Quick Reference (Standalone Mode)
+
+For quick security checks, you can work standalone using these essentials
+from the adversarial protocol:
+
+- **Core Law**: Nothing gets accepted unchallenged. Every decision deserves
+  scrutiny proportional to its blast radius.
+- **Three modes**: (1) Explicit review when asked, (2) Self-challenge on your
+  own output before presenting, (3) Proactive flagging in conversation.
+- **Debate format**: Each challenge targets a specific section, names the attack
+  vector, states why it matters in 6-12 months, and gets a verdict
+  (ACCEPTED / NEEDS WORK / ESCALATE).
+
+For the complete adversarial protocol — including all general attack vectors,
+full debate rules, and verdict system — read `references/adversarial-protocol.md`.
 
 ## Security Mindset
 
@@ -135,3 +147,4 @@ High blast radius = more vectors. Low blast radius = fewer vectors.
 
 - **`adversarial-reviewer`** — General-purpose adversarial challenge protocol. Security-reviewer adds security-specific attack vectors on top of it.
 - **`edge-case-hunter`** — Unhandled paths often overlap with security vulnerabilities. Run both for security-critical code.
+- **`ui-ux`** — For accessibility and input validation on visual interfaces, complement security review with UI/UX review.

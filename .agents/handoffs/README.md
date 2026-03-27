@@ -1,6 +1,7 @@
 # Handoffs
 
 Cross-session, cross-device, cross-agent context persistence.
+Works with any AI coding agent — Claude Code, Copilot, Cursor, Kilo, Gemini CLI, etc.
 
 When a session ends, the agent writes what the next session needs to know.
 When a session starts, the agent reads what the previous session left behind.
@@ -109,3 +110,8 @@ files by default — they are ephemeral personal context:
 
 To share handoffs with a team (e.g., onboarding, leave handoff), remove the
 ignore rule and commit specific handoff files.
+
+## Related
+
+- Rule: `.agents/rules/handoff.md` — always-on session start/save behavior
+- Workflow: `.agents/workflows/context/handoff.md` — step-by-step save/restore procedure

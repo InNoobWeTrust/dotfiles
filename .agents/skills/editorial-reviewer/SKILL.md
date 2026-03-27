@@ -34,6 +34,11 @@ adversarial review (which targets reasoning/logic/design quality).
 | "This needs a full editorial pass" | Structure first, then Prose |
 | "Quick polish before sharing" | Prose only |
 
+**Mixed-mode workflow**: When running both modes ("full editorial pass"),
+complete the Structure review first. Then apply Prose review only to
+sections that survived — skip anything marked CUT or QUESTION, since those
+need author input before polishing.
+
 ---
 
 ## Mode 1: Prose Review
@@ -137,3 +142,5 @@ prose review (structure first, then polish).
 ## Related Skills
 
 - **`adversarial-reviewer`** — Challenges reasoning and logic quality. Editorial-reviewer addresses communication clarity — different axis.
+- **`requirements-driven-dev`** — Step 9 of the Full Flow suggests editorial review before sharing with stakeholders.
+- **`skill-extractor`** — After substantial editorial work, consider whether the editing patterns are worth capturing as a skill.

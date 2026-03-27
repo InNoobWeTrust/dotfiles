@@ -36,6 +36,7 @@ to **your own** config file, adapting the format as needed.
 | Claude Desktop (macOS) | `~/Library/Application Support/Claude/claude_desktop_config.json` | Merge `mcpServers` key, preserve other settings |
 | Gemini CLI             | `~/.gemini/settings.json`                                         | Merge `mcpServers` key, preserve other settings |
 | GitHub Copilot         | `~/.copilot/mcp-config.json`                                      | Standalone `{ "mcpServers": ... }` file         |
+| Kilo Code              | Project `.kilo/mcp.json` or global `~/.config/kilo/mcp.json`     | Standalone `{ "mcpServers": ... }` file         |
 | Antigravity            | Check agent docs                                                  | Merge `mcpServers` key if supported             |
 | Cursor                 | `~/.cursor/mcp.json`                                              | Standalone `{ "mcpServers": ... }` file         |
 

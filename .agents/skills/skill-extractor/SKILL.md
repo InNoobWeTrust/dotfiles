@@ -1,6 +1,14 @@
 ---
 name: skill-extractor
-description: Detect when a conversation has produced valuable, hard-won knowledge worth capturing as a reusable skill. Use this skill at the END of every substantial conversation — especially after long debugging sessions, complex multi-step workflows, non-obvious discoveries, novel integrations, or any task where multiple attempts were needed before success. Also trigger when the user says things like "that was tricky", "let's remember this", "we should save this approach", or when you notice you've solved a similar problem before. This is a background awareness skill — always be watching for extraction opportunities so valuable patterns are never lost.
+description: >
+  Detect when a conversation has produced valuable, reusable knowledge worth
+  capturing as a skill. Use at the end of every substantial conversation —
+  especially after long debugging sessions, complex multi-step workflows,
+  non-obvious discoveries, or tasks where multiple attempts preceded success.
+  Also trigger when the user says "that was tricky", "let's remember this",
+  "we should save this approach", or when you notice you've solved a similar
+  problem before. This is a background awareness skill — always watch for
+  extraction opportunities so valuable patterns are never lost.
 ---
 
 # Skill Extractor
@@ -155,27 +163,31 @@ Before creating a new skill, search existing skills for similar functionality:
 - If an existing skill covers 70%+ of the same ground, propose **extending** it instead of creating a new one
 - If partial overlap exists, propose the new skill with a clear "Related Skills" cross-reference
 
-### 4. Delegate to Skill-Creator
+### 4. Create the Skill
 
-Hand off to the `skill-creator` skill for the full creation workflow:
+Hand off to the `skill-creator` skill for the full creation workflow. Pass
+along the distilled knowledge as the skill's content. Stay involved to ensure
+the extracted knowledge is accurately represented.
 
-- Pass along the distilled knowledge as the skill's content
-- The skill-creator handles structure, testing, description optimization
-- Stay involved to ensure the extracted knowledge is accurately represented
+**If skill-creator is unavailable**, draft the skill inline:
+- Create `<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`)
+- Write the markdown body following the distilled knowledge from steps 1-3
+- Include a Related Skills section cross-referencing relevant existing skills
 
 ---
 
-## Background Awareness Checklist
+## Background Awareness
 
-At natural conversation boundaries (task completion, end of session), quickly assess:
+At natural conversation boundaries (task completion, end of session), quickly
+run through the signal categories above:
 
-- [ ] Was this conversation substantially challenging?
-- [ ] Did we discover something non-obvious?
-- [ ] Would this approach help in future similar tasks?
-- [ ] Does an existing skill already cover this?
-- [ ] Is the user in a state to consider extraction?
+1. Was this conversation substantially challenging? (Complexity signals)
+2. Did we discover something non-obvious? (Novelty signals)
+3. Would this approach help in future similar tasks? (Reusability signals)
+4. Does an existing skill already cover this? (Check skill library)
+5. Is the user in a state to consider extraction? (Read the room)
 
-If the first three are yes and the last two are no → suggest extraction.
+If 1-3 are yes and 4-5 are no → suggest extraction.
 
 ---
 
@@ -190,3 +202,8 @@ Categories of skills that are especially valuable to capture:
 - **Setup workflows** — complex multi-step environment or project configuration
 - **Domain-specific patterns** — approaches unique to the user's field or stack
 - **Workaround recipes** — solutions for known bugs or limitations in tools
+
+## Related Skills
+
+- **`adversarial-reviewer`** — Before extracting, challenge whether the knowledge is actually generalizable and novel.
+- **`editorial-reviewer`** — Polish the extracted skill's prose for clarity before finalizing.

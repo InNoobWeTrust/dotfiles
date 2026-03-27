@@ -1,0 +1,14 @@
+{
+  "$schema": "Remote skills manifest — maps local skill directories to their upstream GitHub sources",
+  "remotes": {
+    "skill-creator": {
+      "owner": "anthropics",
+      "repo": "skills",
+      "path": "skills/skill-creator",
+      "branch": "main",
+      "local_path": "skill-creator",
+      "last_synced_sha": "98a510d1cfef9f82c3b1eec200229ca68725e613",
+      "last_synced_at": "2026-03-27T15:34:17Z"
+    }
+  }
+}

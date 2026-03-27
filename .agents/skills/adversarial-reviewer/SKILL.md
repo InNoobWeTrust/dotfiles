@@ -2,18 +2,12 @@
 name: adversarial-reviewer
 description: >
   Adversarial first-principles challenger for any document, decision, design,
-  or proposal. Use this skill whenever the user asks you to review, challenge,
+  or proposal. Use this skill whenever the user asks to review, challenge,
   critique, stress-test, or play devil's advocate on anything — PRDs, technical
-  designs, architecture decisions, business proposals, specs, plans, code reviews,
-  or any written artifact. Also use when the user says things like "poke holes in
-  this", "what am I missing", "is this a good idea", "convince me this is wrong",
-  "what could go wrong", or "debate this with me". Activate even when the user
-  just asks for a "review" — a proper review IS an adversarial challenge.
-  ALSO activate proactively: when producing your own work (code, plans, designs,
-  recommendations), self-apply the adversarial lens before presenting. When
-  participating in conversation and you spot unchallenged assumptions,
-  weak reasoning, or risky decisions, raise constructive challenges without
-  being asked. This is a thinking discipline, not just a review tool.
+  designs, architecture decisions, business proposals, specs, plans, or code.
+  Also use when the user says "poke holes in this", "what am I missing",
+  "is this a good idea", "what could go wrong", or "debate this with me".
+  Activate even for plain "review" requests — a proper review IS adversarial.
 ---
 
 # Adversarial Reviewer
@@ -254,52 +248,11 @@ drift.
 
 ### Documentation-Specific Attack Vectors
 
-Use these when reviewing **document-type artifacts** — design docs, specs,
-runbooks, guidelines, instructional content, and any artifact meant to be
-followed by humans or AI agents:
-
-#### Attack Vector: Single Source of Truth
-
-- Is the same concept, rule, or convention stated in multiple documents?
-- If duplicated, which is the authoritative source? Do others reference it or restate it?
-- When the source changes, will the copies drift and become contradictory?
-- Could duplicated content be replaced with a cross-reference?
-
-#### Attack Vector: Context Fitness
-
-- Was this content adapted for its target context, or blindly copied from another source?
-- Are examples, terminology, and references relevant to this project's domain?
-- Does a question or guideline make sense for this product type?
-  (e.g., "mobile support?" for an internal desktop tool, "scale to millions?" for a 10-user system)
-- Does this document reference skills, files, commands, or APIs that don't actually exist in this repository?
-
-#### Attack Vector: Codebase Consistency
-
-- Do code examples match the actual project conventions? (sync vs. async, naming, import styles)
-- Are file paths, command invocations, and tooling references accurate and current?
-- Would someone following these examples produce code that passes the project's linter and tests?
-
-#### Attack Vector: Magic Numbers in Generated Artifacts
-
-- Do prompts, templates, config files, or generated content contain hardcoded
-  values that are configurable elsewhere? (thresholds, limits, ranges, timeouts)
-- If the source-of-truth value changes (in config, env vars, or code), will
-  the artifact silently become inconsistent?
-- Should the value be a template variable, referencing the single source?
-- Watch especially for: tier/threshold boundaries, retry counts, buffer sizes,
-  token limits, and any numeric literal that appears in prose or instructions.
-
-#### Attack Vector: Delegation vs. Restatement
-
-- Does this document restate content that already lives in an authoritative source?
-- Would a change to the source be automatically picked up, or would this document also need updating?
-- Can inline instructions be replaced with a reference to the source?
-
-#### Attack Vector: Staleness Risk
-
-- Does this document reference specific file paths, version numbers, URLs, or configurations?
-- How likely are those references to become outdated? Is there a mechanism to detect drift?
-- Are there TODO/placeholder sections that will be forgotten?
+For document-type artifacts (design docs, specs, runbooks, guidelines,
+instructional content), apply the additional vectors in
+`references/doc-attack-vectors.md`. These cover: Single Source of Truth,
+Context Fitness, Codebase Consistency, Magic Numbers, Delegation vs.
+Restatement, and Staleness Risk.
 
 ### 3. The Debate
 
@@ -402,3 +355,9 @@ Not every challenge needs maximum aggression. Calibrate based on stakes:
 | **Low** | Quick sanity check — flag obvious concerns only | Documentation updates, config changes, minor fixes |
 
 When in doubt, default to **medium**. The author can always ask you to go harder.
+
+## Related Skills
+
+- **`edge-case-hunter`** — Orthogonal: method-driven path enumeration vs attitude-driven challenge. Use together for maximum coverage.
+- **`security-reviewer`** — Applies this adversarial protocol with security-specific attack vectors.
+- **`editorial-reviewer`** — Communication clarity (different axis from reasoning quality).

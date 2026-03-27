@@ -56,6 +56,7 @@ For each path, check against these **edge classes**:
 | **Arithmetic overflow** | Integer limits, float precision, division by zero |
 | **Implicit type coercion** | String ↔ number, truthy/falsy, loose equality |
 | **Race conditions** | Concurrent access, TOCTOU, shared mutable state |
+| **Async / concurrency** | Unhandled promise rejections, callback ordering, deadlocks, missing cancellation tokens |
 | **Timeout / deadline gaps** | Missing timeouts, no retry limits, no cancellation |
 | **Resource exhaustion** | Unbounded allocations, missing cleanup, connection leaks |
 | **State corruption** | Partial updates without rollback, interrupted sequences |
@@ -70,17 +71,9 @@ For each identified edge case:
 
 ### Step 4: Report Only Unhandled Paths
 
-Each finding must include:
-
-```json
-{
-  "location": "file:line or function name",
-  "edge_class": "one of the edge classes above",
-  "trigger_condition": "specific input or state that triggers this path",
-  "guard_snippet": "suggested guard code (1-3 lines)",
-  "potential_consequence": "what happens if this path is hit unguarded"
-}
-```
+Each finding must include: location (file:line or function), edge class,
+specific trigger condition, a suggested guard snippet (1-3 lines), and
+the potential consequence if the path is hit unguarded.
 
 ---
 

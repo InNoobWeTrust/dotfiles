@@ -1,6 +1,14 @@
 ---
 name: strategic-problem-solving
-description: Strategic and Systematic Thinking for Problem-Solving. Use this skill whenever you need to debug a tricky bug, investigate a failure, perform root cause analysis, make an architectural decision, untangle a complex multi-concern situation, or when you find yourself going in circles without making progress. Also use it when a user reports vague symptoms, recurring issues, or asks "why does this keep happening." If you're stuck and unsure what to try next, this skill will give you a structured way forward. After solving, use Phase 4 to challenge your own solution from first principles before committing to it. Also includes advanced elicitation — structured LLM self-improvement through named reasoning methods. Activate when AI-generated output feels shallow or generic, or when the user says "go deeper", "rethink this", "try a different angle", "what am I missing", "stress test this thinking", "pre-mortem", "red team this", "inversion", "first principles", or "socratic questioning". Activate proactively at decision points in requirements-driven-dev workflows (after PRD, TRD, BDD spec generation) to offer the user a chance to push the output further before moving on.
+description: >
+  Strategic and systematic thinking for problem-solving. Use this skill to
+  debug tricky bugs, investigate failures, perform root cause analysis, make
+  architectural decisions, or untangle complex multi-concern situations. Also
+  use when stuck going in circles, when a user reports vague or recurring
+  symptoms, or asks "why does this keep happening." Includes advanced
+  elicitation methods (structured reasoning second passes) — activate when
+  output feels shallow, or the user says "go deeper", "rethink this",
+  "first principles", "pre-mortem", "red team this", or "inversion".
 ---
 
 # Strategic Problem-Solving
@@ -170,39 +178,18 @@ Fill in these sections, keeping each brief:
 
 ## Phase 4 — Challenge & Validate
 
-Before committing to a solution, challenge it from first principles. The goal is
-to find weaknesses now, not 6 months later when they're expensive to fix.
+Before committing to a solution, apply the adversarial self-challenge protocol
+from `references/adversarial-protocol.md` (Mode 2: Self-Challenge). This means:
+running a pre-mortem, challenging across all attack vectors, and surfacing
+tensions inline.
 
 > 💡 **Elicitation opportunity**: After your initial challenge, consider running
-> additional elicitation methods for deeper scrutiny. See
-> [elicitation-methods](references/elicitation-methods.md). Good starters:
-> Pre-mortem Analysis, Inversion, Red Team vs Blue Team.
-
-For the full adversarial challenge protocol — including attack vectors, debate
-format, and verdict system — read `references/adversarial-protocol.md`.
-
-### Applying the Protocol to Solutions
-
-After arriving at a solution (Phase 3), apply the adversarial protocol in
-**Mode 2 (Self-Challenge)**:
-
-1. **Run a pre-mortem**: Assume the solution has failed 6 months from now.
-   Work backwards to find why.
-2. **Challenge across attack vectors**: Assumptions, Evidence, Alternatives,
-   Longevity, Failure Modes, Scope (see protocol for detailed prompts).
-3. **Surface tensions inline**: Show trade-offs, assumptions at risk,
-   reversibility, and alternatives you rejected.
-4. **For high-stakes solutions**, produce a formal Internal Dissent block:
-   ```
-   ⚠️ Internal Challenge:
-   Why this approach might fail: [specific failure scenario]
-   My defense: [why I believe it holds despite this]
-   Assumption to monitor: [what to watch for that would invalidate this]
-   ```
+> Pre-mortem Analysis, Inversion, or Red Team vs Blue Team from
+> [elicitation-methods](references/elicitation-methods.md) for deeper scrutiny.
 
 ### Solution-Specific Questions
 
-Beyond the general attack vectors, ask:
+Beyond the general attack vectors, also ask:
 
 - Does this fix the **root cause** or just the symptom?
 - What happens if the **same problem recurs** after this fix?
@@ -211,7 +198,7 @@ Beyond the general attack vectors, ask:
 
 ### Challenge Verdict
 
-```markdown
+````markdown
 ## Solution Challenge: [Title]
 
 **Proposed solution**: [summary]
@@ -225,10 +212,19 @@ Beyond the general attack vectors, ask:
 ### Verdict
 
 PROCEED / REVISE / RETHINK
-```
+````
 
-If challenges are blocking, revise the solution and re-challenge. Loop until
-the solution withstands scrutiny.
+If challenges are blocking, revise the solution and re-challenge.
+
+## Done Checklist
+
+- [ ] Problem **defined clearly** (someone uninvolved could understand it)
+- [ ] Root cause **confirmed with evidence** (not just a theory)
+- [ ] Solution addresses the **root cause**, not just the symptom
+- [ ] Solution **challenged from first principles** (Phase 4)
+- [ ] Action plan has **concrete steps**
+- [ ] **Verification plan** exists
+- [ ] **Prevention measures** in place
 
 ## Problem-Solving Report Template
 
@@ -299,18 +295,6 @@ Fill this out when systematically tackling a problem.
 - **Check Date:** [when to verify]
 - **Lessons Learned:** [what to carry forward]
 ```
-
----
-
-## Done Checklist
-
-- [ ] Problem **defined clearly** (someone uninvolved could understand it)
-- [ ] Root cause **confirmed with evidence** (not just a theory)
-- [ ] Solution addresses the **root cause**, not just the symptom
-- [ ] Solution **challenged from first principles** (Phase 4)
-- [ ] Action plan has **concrete steps**
-- [ ] **Verification plan** exists
-- [ ] **Prevention measures** in place
 
 ---
 
