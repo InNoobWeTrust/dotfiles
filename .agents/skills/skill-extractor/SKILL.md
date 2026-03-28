@@ -6,9 +6,11 @@ description: >
   especially after long debugging sessions, complex multi-step workflows,
   non-obvious discoveries, or tasks where multiple attempts preceded success.
   Also trigger when the user says "that was tricky", "let's remember this",
-  "we should save this approach", or when you notice you've solved a similar
-  problem before. This is a background awareness skill — always watch for
-  extraction opportunities so valuable patterns are never lost.
+  "we should save this approach", "save this for later", "turn this into a
+  skill", or when you notice you've solved a similar problem before. This is
+  a background awareness skill — always watch for extraction opportunities so
+  valuable patterns are never lost. Activate proactively at conversation
+  boundaries when the session involved significant learning.
 ---
 
 # Skill Extractor

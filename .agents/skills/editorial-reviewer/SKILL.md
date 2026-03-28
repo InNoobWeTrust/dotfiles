@@ -6,9 +6,12 @@ description: >
   specs/PRDs for readability, or preparing documents for stakeholders. Also
   activate when the user says "make this clearer", "tighten this up",
   "editorial review", "copy edit", "restructure this doc", "too long",
-  "hard to follow", or "polish this". Has two modes: prose (fix communication
-  issues) and structure (propose cuts, merges, moves). Use prose mode for
-  sentence-level clarity. Use structure mode for document-level organization.
+  "hard to follow", "polish this", "improve writing", "simplify this",
+  "clean up this doc", or "make it more readable". Has two modes: prose (fix
+  communication issues) and structure (propose cuts, merges, moves). Use prose
+  mode for sentence-level clarity. Use structure mode for document-level
+  organization. Activate proactively when producing stakeholder-facing docs
+  that haven't been polished.
 ---
 
 # Editorial Reviewer

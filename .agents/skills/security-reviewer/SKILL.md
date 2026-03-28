@@ -6,7 +6,8 @@ description: >
   auditing configs for leaked secrets, evaluating auth/authz designs, checking
   infrastructure for misconfigurations, or assessing supply chain risks. Also
   activate when the user says "is this secure", "check for vulnerabilities",
-  "security review", "audit this", "what could an attacker do", or "harden this".
+  "security review", "audit this", "what could an attacker do", "harden this",
+  "security audit", "pentest", "secure this code", or "check for leaks".
   Activate proactively: when producing code, configs, or infrastructure changes,
   scan for security issues before presenting. When spotting hardcoded secrets,
   overly permissive defaults, or missing input validation in conversation,

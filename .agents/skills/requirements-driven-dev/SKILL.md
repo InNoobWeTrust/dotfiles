@@ -7,8 +7,11 @@ description: >
   write product requirements, define technical architecture, author behavior
   specs, implement, verify, or commit work. Also activate for PRDs, TRDs,
   technical design docs, behavior specs, acceptance criteria, Given/When/Then
-  scenarios, user stories, changelogs, or structured commits — even without
-  explicitly saying "requirements-driven".
+  scenarios, user stories, changelogs, structured commits, or when the user
+  says "plan a feature", "design a system", "spec this out", "write a PRD",
+  "what's the architecture", or "break this into stories" — even without
+  explicitly saying "requirements-driven". Activate proactively when you
+  detect multi-step feature work that would benefit from structured specs.
 ---
 
 # Requirements-Driven Development Skill
@@ -74,7 +77,7 @@ user can override.
 1. **Research** (optional) → Investigate domain, market, technical feasibility
 2. **Define product requirements** → Write a PRD using the template
    - 💡 _Optional_: Run advanced elicitation (see `../../skills/strategic-problem-solving/references/elicitation-methods.md`) to push the PRD deeper
-   - 💡 _Optional_: Use party-mode (see `../../workflows/ideation/party-mode.md`) for multi-stakeholder perspective
+   - 💡 _Optional_: Use multi-stakeholder ideation techniques for diverse perspectives
 3. **Define technical requirements** → Derive a TRD from the PRD
     - 💡 _Optional_: Run advanced elicitation on architecture decisions
 4. **Define behavior specs** → Split TRD concerns into BDD specs

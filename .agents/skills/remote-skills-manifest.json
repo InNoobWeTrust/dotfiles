@@ -10,5 +10,29 @@
       "last_synced_sha": "98a510d1cfef9f82c3b1eec200229ca68725e613",
       "last_synced_at": "2026-03-27T15:34:17Z"
     }
+  },
+  "data_sources": {
+    "ui-ux": [
+      {
+        "name": "ui-ux-pro-max",
+        "owner": "nextlevelbuilder",
+        "repo": "ui-ux-pro-max-skill",
+        "path": "cli/assets/data",
+        "branch": "main",
+        "cache_env": "UI_UX_CACHE",
+        "default_cache": ".cache/ui-ux-skill"
+      }
+    ],
+    "video-production": [
+      {
+        "name": "story-to-animation-2026",
+        "owner": "ducloc99",
+        "repo": "story-to-animation-2026",
+        "path": "skills",
+        "branch": "main",
+        "cache_env": "VIDEO_PROD_CACHE",
+        "default_cache": ".cache/video-production-skill"
+      }
+    ]
   }
 }

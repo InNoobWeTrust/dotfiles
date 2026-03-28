@@ -14,6 +14,7 @@ Quick reference for all available skills. Generated for agent discovery.
 | **strategic-codebase-navigation** | Unfamiliar codebase, "where do I start", trace a feature, plan migration, map architecture | `skills/strategic-codebase-navigation/SKILL.md` |
 | **strategic-problem-solving** | Debug, root cause, "why does this keep happening", "go deeper", "first principles", "inversion" | `skills/strategic-problem-solving/SKILL.md` |
 | **ui-ux** | Design systems, component styling, "modern"/"premium" look, WCAG accessibility, design tokens, responsive design | `skills/ui-ux/SKILL.md` |
+| **video-production** | "make a video", "create an animation", "generate a story", "storyboard this", "render a movie" | `skills/video-production/SKILL.md` |
 
 ## Review Orchestration
 

@@ -3,11 +3,14 @@ name: adversarial-reviewer
 description: >
   Adversarial first-principles challenger for any document, decision, design,
   or proposal. Use this skill whenever the user asks to review, challenge,
-  critique, stress-test, or play devil's advocate on anything — PRDs, technical
-  designs, architecture decisions, business proposals, specs, plans, or code.
-  Also use when the user says "poke holes in this", "what am I missing",
-  "is this a good idea", "what could go wrong", or "debate this with me".
-  Activate even for plain "review" requests — a proper review IS adversarial.
+  critique, stress-test, defend, validate, or play devil's advocate on anything
+  — PRDs, technical designs, architecture decisions, business proposals, specs,
+  plans, or code. Also use when the user says "poke holes in this", "what am I
+  missing", "is this a good idea", "what could go wrong", "debate this with me",
+  "stress test this", "defend this decision", "is this valid", or "challenge my
+  assumptions". Activate even for plain "review" requests — a proper review IS
+  adversarial. Activate proactively when you spot weak reasoning, unchallenged
+  assumptions, or decisions being made without evidence.
 ---
 
 # Adversarial Reviewer
