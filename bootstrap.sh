@@ -1,6 +1,13 @@
 #!/usr/bin/env -S ${SHELL} -l
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [ -n "${BASH_SOURCE[0]:-}" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+elif [ -n "${ZSH_VERSION:-}" ]; then
+    # shellcheck disable=SC2296
+    SCRIPT_DIR="$(cd "$(dirname "${(%):-%x}")" && pwd)"
+else
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+fi
 
 # Install pkgx if not already there (skip on Termux — no /usr access)
 if [ -z "$TERMUX_VERSION" ]; then
