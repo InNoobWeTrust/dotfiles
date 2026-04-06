@@ -15,6 +15,7 @@ Quick reference for all available skills. Generated for agent discovery.
 | **strategic-problem-solving** | Debug, root cause, "why does this keep happening", "go deeper", "first principles", "inversion" | `skills/strategic-problem-solving/SKILL.md` |
 | **ui-ux** | Design systems, component styling, "modern"/"premium" look, WCAG accessibility, design tokens, responsive design | `skills/ui-ux/SKILL.md` |
 | **video-production** | "make a video", "create an animation", "generate a story", "storyboard this", "render a movie" | `skills/video-production/SKILL.md` |
+| **codex-reviewer** | "/codex review", "cho codex xem", "hỏi codex", "nhờ codex review", second opinion from GPT-5.4 xhigh | `skills/codex-reviewer/SKILL.md` |
 
 ## Review Orchestration
 
