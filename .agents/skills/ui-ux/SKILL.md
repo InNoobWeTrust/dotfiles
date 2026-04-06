@@ -90,3 +90,7 @@ These patterns demonstrate high variance/motion combinations:
 2. **Accessibility First**: WCAG AA is the absolute baseline.
 3. **Context-Aware**: Respect existing tech stack (Tailwind vs Vanilla CSS).
 4. **Audit Before Action**: Briefly state design rationale before making changes.
+
+## Related Skills
+
+- **`ai-ui-generation`**: Use alongside this skill when the user wants to work through Google Stitch, pencil.dev, v0, Lovable, screenshot-to-code tools, or any workflow where an external AI tool generates the first UI draft and the repo needs structured integration afterward.

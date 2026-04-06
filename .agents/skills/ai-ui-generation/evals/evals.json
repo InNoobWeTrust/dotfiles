@@ -1,0 +1,38 @@
+{
+  "skill_name": "ai-ui-generation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need a Google Stitch prompt for a Next.js billing dashboard for finance managers. It needs a left sidebar, KPI cards, invoice table, filters, pagination, and clear loading/empty/error states. After the prompt, give me the integration plan for our React codebase.",
+      "expected_output": "A complete blueprint and Stitch-ready prompt followed by a concrete integration handoff for a React/Next.js dashboard.",
+      "files": [],
+      "expectations": [
+        "The response defines application scope, key states, data requirements, and layout regions before or within the prompt package.",
+        "The response includes a prompt suitable for an external AI UI tool rather than only describing design ideas abstractly.",
+        "The response includes post-export integration guidance covering componentization, data binding, and missing UI states."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have an exported HTML/CSS mockup from pencil.dev for an internal CRM. Help me turn it into a React implementation plan with dynamic bindings for tabs, modals, and lead status updates. I also want a QA checklist for responsive behavior and API failures.",
+      "expected_output": "A refactor and integration plan that treats the external export as a starting artifact, not as final application code.",
+      "files": [],
+      "expectations": [
+        "The response treats generated HTML/CSS as an intermediate artifact that must be split into project-native components.",
+        "The response identifies real state or data-binding concerns such as tabs, modal state, list data, or mutations.",
+        "The response includes a QA checklist that covers responsive behavior plus loading, empty, validation, or API failure states."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Turn this screenshot-driven concept into a prompt package for Stitch or v0 for a CRM lead-detail page. Preserve our left nav and existing color tokens, add an activity timeline and notes drawer, and specify what should stay stable versus what can be redesigned.",
+      "expected_output": "A prompt package that uses the screenshot as a reference constraint and clearly separates fixed product constraints from redesign freedom.",
+      "files": [],
+      "expectations": [
+        "The response explicitly uses screenshots or existing UI references as context to preserve visual consistency.",
+        "The response distinguishes stable constraints from redesignable areas instead of treating the whole page as greenfield.",
+        "The response specifies exact layout regions, components, and interaction behavior for the generated UI."
+      ]
+    }
+  ]
+}
