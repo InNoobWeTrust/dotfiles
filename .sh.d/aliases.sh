@@ -152,7 +152,7 @@ usable pkgx && \
         ! usable yazi && alias yazi='pkgx yazi'
         ## Code editors
         ! usable nvim && alias nvim='pkgx +neovim.io nvim'
-        ! usable hx && alias hx='pkgx hx'
+        ! usable hx && alias hx='pkgx +helix-editor.com hx'
         ## Text document viewer
         ! usable bat && alias bat='pkgx bat'
         ## Datafile transform
