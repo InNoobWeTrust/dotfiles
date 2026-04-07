@@ -456,6 +456,8 @@ usable curl && alias install-opencode='curl -fsSL https://opencode.ai/install | 
 
 usable curl && alias install-amazon-q='isekai && curl --proto "=https" --tlsv1.2 -Sf --progress-bar "https://desktop-release.q.us-east-1.amazonaws.com/latest/q-x86_64-linux-musl.zip" -o "q.zip" && unzip q.zip && ./q/install.sh'
 
+usable curl && alias install-omnara='curl -fsSL https://omnara.com/install.sh | bash'
+
 ################ DevSecMLOps ###################
 
 ! usable pkgx && usable curl && alias install-k3s='curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.24.10+k3s1" sh -s - server --cluster-init'
