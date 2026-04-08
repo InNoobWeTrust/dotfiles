@@ -1,0 +1,19 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "mcp": {
+    "chrome-devtools": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--no-usage-statistics",
+        "--browser-url=http://localhost:19222"
+      ],
+      "enabled": true
+    }
+  },
+  "permission": {
+    "bash": "allow"
+  }
+}

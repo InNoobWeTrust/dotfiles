@@ -1,0 +1,13 @@
+# Claude/Kilo temp files
+backups/
+cache/
+file-history/
+history.jsonl
+plans/
+projects/
+session-env/
+sessions/
+shell-snapshots/
+node_modules
+bun.lock
+package.json
