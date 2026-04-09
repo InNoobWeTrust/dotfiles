@@ -44,6 +44,6 @@ The host project may also configure:
 - **Verification tools** — e.g., pytest, vitest, manual checklist, etc.
 - **Source layout** — where deliverables live
 - **Commit convention extensions** — additional `type` values
-- **Domain-specific execution rules** — extend `references/rules/execution.md`
+- **Domain-specific execution rules** — extend `.agents/rules/requirements-driven-dev/execution.md`
 
 These overrides live in the project's own agent config, not in this skill.

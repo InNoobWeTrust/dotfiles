@@ -1,7 +1,7 @@
 ---
 description: >
   Auto-select and run the right combination of reviewers based on what's being
-  reviewed. Use this workflow whenever you need a review and aren't sure which
+  reviewed. Use this command whenever you need a review and aren't sure which
   reviewer(s) to use, or when you want comprehensive multi-lens coverage. Also
   activate when the user says "review this", "full review", "check this",
   "quality check", "review and fix", or "fix everything". Routes to
@@ -32,7 +32,7 @@ Automatically select and run the right reviewers for the artifact under review.
 | **Config / infra** | `security-reviewer` → `edge-case-hunter` | Security first, then boundary conditions |
 | **BDD specs / test plans** | `adversarial-reviewer` → `edge-case-hunter` | Coverage gaps, then path tracing |
 | **API contracts** | `adversarial-reviewer` → `security-reviewer` → `edge-case-hunter` | Design, then security, then boundaries |
-| **Skill / workflow definitions** | `adversarial-reviewer` → `editorial-reviewer` (structure) | Challenge logic, then clarity |
+| **Skill / command definitions** | `adversarial-reviewer` → `editorial-reviewer` (structure) | Challenge logic, then clarity |
 
 **Mixed artifacts**: If an artifact matches multiple types (e.g., a TRD with code
 snippets), take the **union** of reviewers from all matching rows. Run in order
@@ -176,11 +176,11 @@ After the loop completes, present a summary (not the full review):
 
 ## Integration
 
-This workflow is suggested by `requirements-driven-dev` at review gates (step 7).
+This command is suggested by `requirements-driven-dev` at review gates (step 7).
 It can also be invoked directly at any time.
 
 Fix mode is especially useful for:
 
 - Post-refactor cleanup across many files
-- Skill/workflow directory maintenance
+- Skill/command directory maintenance
 - Pre-commit quality gates where you want autonomous cleanup

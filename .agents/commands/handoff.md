@@ -8,7 +8,7 @@ description: >
   For auto-save triggers, see .agents/rules/handoff.md.
 ---
 
-# Handoff Workflow
+# Handoff Command
 
 Persist session context so any agent on any device can resume where you left off.
 

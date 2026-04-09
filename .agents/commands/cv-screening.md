@@ -4,12 +4,12 @@ description: >
   traits/personas crafted from the JD and management's vision.
 ---
 
-# CV Screening Workflow
+# CV Screening Command
 
 Screen candidates against a job description using trait-based evaluation,
 OSINT-powered background verification, and dual-sided risk assessment.
 
-> **⚠️ Jurisdiction Notice**: This workflow references sources and practices
+> **⚠️ Jurisdiction Notice**: This command references sources and practices
 > that vary by country (company registries, labor law, privacy regulations).
 > Adapt the OSINT sources and risk categories to your local legal context.
 > When in doubt, consult local employment law before investigating.

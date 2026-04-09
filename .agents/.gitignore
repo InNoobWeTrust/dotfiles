@@ -5,9 +5,12 @@ file-history/
 history.jsonl
 plans/
 projects/
+paste-cache/
+plugins/
 session-env/
 sessions/
 shell-snapshots/
+settings.local.json
 node_modules
 bun.lock
 package.json

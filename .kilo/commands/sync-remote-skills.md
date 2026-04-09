@@ -25,7 +25,7 @@ Fetch and update skills sourced from external GitHub repositories. Uses the GitH
 .agents/scripts/sync-remote-skills.sh --apply --force
 ```
 
-4. After syncing, review the updated skill files for any breaking changes or new capabilities that may affect dependent workflows.
+4. After syncing, review the updated skill files for any breaking changes or new capabilities that may affect dependent commands.
 
 ## Configuration
 
@@ -58,9 +58,9 @@ Remote skill sources are defined in `.agents/skills/remote-skills-manifest.json`
 - Uses unauthenticated GitHub API by default (60 requests/hour). Set `GITHUB_TOKEN` environment variable for 5000 req/hr.
 - The `last_synced_sha` field tracks the remote directory tree SHA. When the remote SHA changes, the skill is flagged as having drift.
 - On `--apply`, the local skill directory is **fully replaced** with the remote contents. Local modifications will be overwritten.
-- This workflow is separate from the local DNA sync (`sync-skill-dna.sh`) which handles source→consumer protocol copies within the repo.
+- This command is separate from the local DNA sync (`sync-skill-dna.sh`) which handles source→consumer protocol copies within the repo.
 
-## Related Workflows
+## Related Commands
 
 - [Sync Skill DNA](./sync-skill-dna.md) — local source→consumer protocol sync
 - [Skill Review](./review.md) — post-sync review checklist

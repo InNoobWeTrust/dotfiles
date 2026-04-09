@@ -10,10 +10,7 @@
         "--no-usage-statistics",
         "--browser-url=http://localhost:19222"
       ],
-      "enabled": true
+      "enabled": false
     }
-  },
-  "permission": {
-    "bash": "allow"
   }
 }

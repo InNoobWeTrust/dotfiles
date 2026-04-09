@@ -20,17 +20,17 @@ Quick reference for all available skills. Generated for agent discovery.
 
 ## Review Orchestration
 
-For automated reviewer selection, see [review.md](../workflows/skills/review.md).
+For automated reviewer selection, see [review.md](../commands/review.md).
 
 ## Skill DNA
 
 Shared protocols across skills are tracked in [skill-dna-manifest.json](skill-dna-manifest.json).
-Sync with [sync-skill-dna workflow](../workflows/skills/sync-skill-dna.md).
+Sync with the [sync-skill-dna command](../commands/sync-skill-dna.md).
 
 ## Remote Skills
 
 Skills sourced from external GitHub repos are tracked in [remote-skills-manifest.json](remote-skills-manifest.json).
-Sync with [sync-remote-skills workflow](../workflows/skills/sync-remote-skills.md).
+Sync with the [sync-remote-skills command](../commands/sync-remote-skills.md).
 
 Currently synced remote skills:
 

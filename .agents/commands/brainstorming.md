@@ -6,7 +6,7 @@ description: >
   not generator — your ideas, structured exploration.
 ---
 
-# Brainstorming Workflow
+# Brainstorming Command
 
 AI-facilitated creative session using proven ideation techniques.
 Every idea comes from you — the AI creates conditions for insight.
@@ -135,7 +135,7 @@ For complex problems, apply multiple perspectives to the top ideas:
 - **User**: Would I actually use this? Is it intuitive?
 
 > **Tip**: For deeper multi-persona deliberation with sustained back-and-forth,
-> use the `party-mode` workflow instead of this lightweight pass.
+> use the `party-mode` command instead of this lightweight pass.
 
 > **Tip**: In project-specific copies, replace generic roles with team-specific ones
 > and reference relevant project skills where applicable.

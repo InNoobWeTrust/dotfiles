@@ -14,23 +14,23 @@ All major workstreams complete:
 
 1. ✅ **Round 2 review fixes** — 9 findings fixed + 3 bonus lint fixes
 2. ✅ **Fix mode** — Added to `review.md`, tested on itself
-3. ✅ **Handoff system** — Directory structure, workflow, rule, and demo created
+3. ✅ **Handoff system** — Directory structure, command, rule, and demo created
 4. ✅ **MCP Sync Refactoring** — Synced `.agents` from `remote host`, refactored `sync-mcp.md` to be agent-native, removed shell script.
 
 ## Key Decisions
 
-- **Fix mode** added to existing `review.md` workflow (not a new skill)
+- **Fix mode** added to existing `review.md` command (not a new skill)
 - **Self-orientation step** (step 0) in fix mode loop — re-read planning notes each cycle
 - **Agent-agnostic language** throughout — "your planning notes" not "task.md"
 - **Handoff naming**: `<branch-slug>--<topic-slug>.md` with `--` separator
 - **Handoff lifecycle**: auto-save + manual; archive by moving to `archive/`
-- **Three-layer design**: rule (always loaded) → workflow (on demand) → README (reference)
+- **Three-layer design**: rule (always loaded) → command (on demand) → README (reference)
 - **Self-contained principle**: handoffs must inline all context from agent-internal
   artifacts — never assume next session has access to your storage
 - **sync-skill-dna.sh bug fixed** — false-positive drift from blank line mismatch,
   fixed with `sed '/./,$!d'`
 - **skill-creator is untouchable** — copied as-is from Claude skills
-- **MCP Sync Workflow**: Deprecated `sync-mcp.sh` bash script in favor of agent-native JSON parsing and merging. Absolute paths required in canonical `mcp.json`.
+- **MCP Sync command**: Deprecated `sync-mcp.sh` bash script in favor of agent-native JSON parsing and merging. Absolute paths required in canonical `mcp.json`.
 
 ## Blockers
 
@@ -38,7 +38,7 @@ None.
 
 ## Next Steps
 
-- Remove auto-activate language from `handoff.md` workflow description
+- Remove auto-activate language from `handoff.md` command description
   (redundant now that `.agents/rules/handoff.md` handles auto-triggers)
 - Table alignment (MD060) across `.agents/*.md` — ~50 tables, cosmetic
 - Consider handoff integration with `requirements-driven-dev` lifecycle gates
@@ -46,7 +46,7 @@ None.
 ## Open Questions
 
 - Should handoffs include conversation summaries or just task-level context?
-- Does the three-layer design (rules → workflows → docs) need documenting
+- Does the three-layer design (rules → commands → docs) need documenting
   as a general `.agents` convention?
 
 ## Recent Changes
@@ -57,22 +57,22 @@ None.
 
 - `.agents/handoffs/README.md` — Discovery protocol, file format, naming, lifecycle
 - `.agents/handoffs/archive/.gitkeep` — Empty dir placeholder
-- `.agents/workflows/context/handoff.md` — Save/restore/archive workflow
+- `.agents/commands/handoff.md` — Save/restore/archive command
 - `.agents/rules/handoff.md` — Always-loaded rule for auto-save triggers and startup check
 
 **Modified files:**
 
-- `.agents/workflows/skills/review.md` — Fix mode, self-orientation, agent-agnostic language
+- `.agents/commands/review.md` — Fix mode, self-orientation, agent-agnostic language
 - `.agents/skills/adversarial-reviewer/SKILL.md` — Italic syntax (10 instances)
 - `.agents/skills/security-reviewer/SKILL.md` — Related Skills, italics, blank lines
 - `.agents/skills/editorial-reviewer/SKILL.md` — Related Skills section
 - `.agents/skills/requirements-driven-dev/references/core/lifecycle.md` — Italic fixes
 - `.agents/scripts/sync-skill-dna.sh` — False-positive drift detection fix
 - `.agents/scripts/gap-check.sh` — Safe printf format
-- `.agents/workflows/doc-management/shard-doc.md` — Step numbering fix
-- `.agents/workflows/mcp/sync-mcp.md` — Complete rewrite to be agent-native, resolving multiple edge cases flagged by adversarial review.
-- `.agents/workflows/sync-mcp.md` & `.agents/scripts/sync-mcp.sh` — Deleted in favor of the new structure.
-- `.agents/rules/handoff.md` & `.agents/workflows/context/handoff.md` — Synced updates from `remote host`.
+- `.agents/commands/shard-doc.md` — Step numbering fix
+- `.agents/commands/sync-mcp.md` — Complete rewrite to be agent-native, resolving multiple edge cases flagged by adversarial review.
+- Legacy `sync-mcp` workflow path and `.agents/scripts/sync-mcp.sh` — Deleted in favor of the new structure.
+- `.agents/rules/handoff.md` & `.agents/commands/handoff.md` — Synced updates from `remote host`.
 
 ---
 
@@ -96,7 +96,7 @@ Directory of scoped handoff files at `.agents/handoffs/` with:
 | Layer | File | Loaded | Purpose |
 |---|---|---|---|
 | Rule | `.agents/rules/handoff.md` | Always | Startup check + auto-save triggers |
-| Workflow | `.agents/workflows/context/handoff.md` | On demand | Detailed save/restore/archive steps |
+| Command | `.agents/commands/handoff.md` | On demand | Detailed save/restore/archive steps |
 | Convention | `.agents/handoffs/README.md` | On demand | File format, naming, lifecycle |
 
 ### Concurrency model

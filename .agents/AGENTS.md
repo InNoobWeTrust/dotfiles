@@ -27,15 +27,16 @@ Default to human-in-the-loop collaboration.
 Before starting a task, check whether reusable guidance already exists in this directory.
 
 - Skills live in `skills/`.
+- Agents live in `agents/`.
 - Rules live in `rules/`.
-- Workflows live in `workflows/`.
+- Commands live in `commands/`.
 
 Use the most specific matching guidance first.
-Combine multiple skills or workflows only when that improves the result.
+Combine multiple skills or commands only when that improves the result.
 
 ## Skill Routing
 
-If the request matches a reusable capability, consult `skills/index.md` and then load the relevant `SKILL.md`.
+If the request matches a reusable capability, consult `skills/index.md`, `agents/`, and the relevant rule/command directories before writing new guidance.
 
 Examples:
 - review, critique, stress-test: use reviewer skills
@@ -43,15 +44,15 @@ Examples:
 - unfamiliar repo, migration, large change: use codebase navigation skills
 - UI polish, design system, accessibility: use UI/UX skill
 
-## Workflow Routing
+## Command Routing
 
-If the request sounds like a repeated multi-step procedure, consult `workflows/index.md`.
+If the request sounds like a repeated multi-step procedure, consult `commands/index.md`.
 
 Common cases:
-- review / audit / check: `workflows/skills/review.md`
-- handoff / checkpoint: `workflows/context/handoff.md`
-- brainstorm / ideation: `workflows/ideation/brainstorming.md`
-- sync MCP config: `workflows/mcp/sync-mcp.md`
+- review / audit / check: `commands/review.md`
+- handoff / checkpoint: `commands/handoff.md`
+- brainstorm / ideation: `commands/brainstorming.md`
+- sync MCP config: `commands/sync-mcp.md`
 
 ## Project Context
 

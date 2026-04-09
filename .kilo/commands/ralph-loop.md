@@ -339,7 +339,7 @@ Ralph works with any AI CLI tool using bash loops:
 | Task | Use | Alternative |
 |------|-----|-------------|
 | Implement feature until tests pass | Ralph | Single-shot prompting |
-| Review + fix all findings | Review workflow | Ralph (Ralph is overkill for single-pass fixes) |
+| Review + fix all findings | Review command | Ralph (Ralph is overkill for single-pass fixes) |
 | Migrate 50 files | Ralph | Single-shot prompting (will fail) |
 | Understand unfamiliar codebase | Codebase navigation | Ralph (no clear completion criteria) |
 | Design architecture | None | Human deliberation |

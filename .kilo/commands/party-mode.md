@@ -19,7 +19,7 @@ build on each other's ideas — facilitator orchestrates.
 - Brainstorming sessions (as expansion of `brainstorming.md` Multi-Perspective Mode)
 - Any decision that benefits from diverse viewpoints
 
-> **This is always optional.** Other workflows may suggest party mode at decision
+> **This is always optional.** Other commands may suggest party mode at decision
 > points, but it is never required.
 
 ---
@@ -134,7 +134,7 @@ Facilitator produces:
 
 ## Integration Points
 
-This workflow can be invoked from:
+This command can be invoked from:
 - `brainstorming.md` Phase 5 (Multi-Perspective Mode) 
 - `requirements-driven-dev` after PRD or TRD generation
 - Any decision point where you'd benefit from cross-functional deliberation

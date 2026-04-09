@@ -45,9 +45,9 @@ has no definable requirements, or when the user explicitly opts out.
 
 | User says... | Start here |
 | --- | --- |
-| "Plan a feature" / "I have an idea" | PRD → read `references/rules/prd.md` + `references/templates/prd.md` |
-| "I have a PRD already" | TRD → read `references/rules/trd.md` + `references/templates/trd.md` |
-| "Write specs" / "behavior specs" | BDD → read `references/rules/bdd.md` + `references/templates/behavior-spec.md` |
+| "Plan a feature" / "I have an idea" | PRD → read `../../rules/requirements-driven-dev/prd.md` + `references/templates/prd.md` |
+| "I have a PRD already" | TRD → read `../../rules/requirements-driven-dev/trd.md` + `references/templates/trd.md` |
+| "Write specs" / "behavior specs" | BDD → read `../../rules/requirements-driven-dev/bdd.md` + `references/templates/behavior-spec.md` |
 | "Just build this" (clear task) | Quick track → BDD spec or inline task → Execute |
 | "Review this spec" / "challenge" | ⚔ Challenge gate → read `references/core/adversarial-protocol.md` |
 
@@ -84,7 +84,7 @@ user can override.
 5. **AI executes** — AI reads BDD spec + project-context, produces deliverables
 6. **AI verifies** — AI designs verifications from spec
 7. **⚔ Adversarial challenge** — Challenge deliverables from first principles
-   - Use the [review orchestrator](../../workflows/skills/review.md) to auto-select the right reviewers
+   - Use the [review orchestrator](../../commands/review.md) to auto-select the right reviewers
 8. **Gap check** — Verify all scenarios are implemented and tested
 9. **Human validates** — Review, feedback, adjust
    - 💡 _Optional_: Run `editorial-reviewer` to polish docs before sharing
@@ -122,49 +122,54 @@ is optional — but if gaps emerge later, escalate to Standard/Deep track.
 
 ```
 requirements-driven-dev/
-├── SKILL.md                      # This file — entry point & overview
+├── SKILL.md                                   # This file — entry point & overview
+├── ../../agents/                               # Top-level subagents for Claude/Kilo discovery
+│   ├── requirements-prd-writer.md
+│   ├── requirements-trd-writer.md
+│   ├── requirements-spec-writer.md
+│   ├── requirements-executor.md
+│   ├── requirements-verifier.md
+│   ├── requirements-proofreader.md
+│   └── requirements-reviewer.md
+├── ../../commands/                             # Top-level reusable commands
+│   ├── review.md
+│   └── requirements-lifecycle.md
+├── ../../rules/requirements-driven-dev/        # Top-level reusable rules
+│   ├── prd.md
+│   ├── trd.md
+│   ├── bdd.md
+│   ├── changelog.md
+│   ├── execution.md
+│   ├── commit.md
 └── references/
     ├── core/
-    │   ├── lifecycle.md          # Core lifecycle protocol (always active)
-    │   └── adversarial-protocol.md  # Synced adversarial challenge protocol (from adversarial-reviewer)
+    │   └── adversarial-protocol.md             # Synced adversarial challenge protocol
     ├── rules/
-    │   ├── prd.md                # PRD authoring rules
-    │   ├── trd.md                # TRD authoring rules
-    │   ├── bdd.md                # BDD spec authoring rules
-    │   ├── changelog.md          # Changelog file convention
-    │   ├── execution.md          # AI execution discipline
-    │   └── commit.md             # Git commit convention
-    ├── templates/
-    │   ├── prd.md                # Template for PRDs
-    │   ├── trd.md                # Template for TRDs
-    │   ├── behavior-spec.md      # Template for BDD behavior specs
-    │   ├── verification-spec.md  # Template for verification plans
-    │   └── changelog-entry.md    # Template for changelog entries
-    └── agents/
-        ├── prd-writer.md         # Assists human in writing PRDs
-        ├── trd-writer.md         # Assists human in writing TRDs
-        ├── spec-writer.md        # Assists human in writing BDD behavior specs
-        ├── executor.md           # AI executor — produces deliverables from spec
-        ├── verifier.md           # AI verifier — designs verifications from spec
-        ├── proofreader.md        # Adversarial challenger — domain review using adversarial-protocol
-        └── reviewer.md           # Quality gate — spec compliance review
+    │   ├── project-context.md                  # Per-project context convention
+    │   └── config.md                           # Directory/config override reference
+    └── templates/
+        ├── prd.md                              # Template for PRDs
+        ├── trd.md                              # Template for TRDs
+        ├── behavior-spec.md                    # Template for BDD behavior specs
+        ├── verification-spec.md                # Template for verification plans
+        └── changelog-entry.md                  # Template for changelog entries
 ```
 
 ## Knowledge Modules
 
 ### Core Protocol
 
-- [lifecycle](references/core/lifecycle.md) — The always-on lifecycle: Research → Requirements Cascade → Backlog → Execute → Verify → ⚔ Challenge → Validate → Changelog → Commit
+- [requirements-lifecycle](../../commands/requirements-lifecycle.md) — The lifecycle command: Research → Requirements Cascade → Backlog → Execute → Verify → ⚔ Challenge → Validate → Changelog → Commit
 - [adversarial-protocol](references/core/adversarial-protocol.md) — Synced adversarial challenge protocol (from adversarial-reviewer)
 
 ### Rules
 
-- [prd](references/rules/prd.md) — PRD authoring: required sections, quality checklist
-- [trd](references/rules/trd.md) — TRD authoring: required sections, traceability to PRD
-- [bdd](references/rules/bdd.md) — BDD spec authoring: Gherkin format, required sections, quality checklist
-- [changelog](references/rules/changelog.md) — Artifact change tracking: one file per feature, append-only sessions
-- [execution](references/rules/execution.md) — AI execution constraints: spec-driven, defensive, minimal diff
-- [commit](references/rules/commit.md) — Git convention: conventional commits with changelog reference
+- [prd](../../rules/requirements-driven-dev/prd.md) — PRD authoring: required sections, quality checklist
+- [trd](../../rules/requirements-driven-dev/trd.md) — TRD authoring: required sections, traceability to PRD
+- [bdd](../../rules/requirements-driven-dev/bdd.md) — BDD spec authoring: Gherkin format, required sections, quality checklist
+- [changelog](../../rules/requirements-driven-dev/changelog.md) — Artifact change tracking: one file per feature, append-only sessions
+- [execution](../../rules/requirements-driven-dev/execution.md) — AI execution constraints: spec-driven, defensive, minimal diff
+- [commit](../../rules/requirements-driven-dev/commit.md) — Git convention: conventional commits with changelog reference
 - [project-context](references/rules/project-context.md) — Per-project AI constitution: tech stack, rules, conventions
 
 ### Templates
@@ -177,13 +182,13 @@ requirements-driven-dev/
 
 ### Agents (Specialist Roles)
 
-- [prd-writer](references/agents/prd-writer.md) — Helps human define product requirements
-- [trd-writer](references/agents/trd-writer.md) — Helps human derive technical requirements from PRD
-- [spec-writer](references/agents/spec-writer.md) — Helps human write clear, testable BDD specs
-- [executor](references/agents/executor.md) — Produces deliverables strictly from spec
-- [verifier](references/agents/verifier.md) — Designs and runs verifications from BDD spec
-- [proofreader](references/agents/proofreader.md) — Adversarial challenger using adversarial-protocol for domain review
-- [reviewer](references/agents/reviewer.md) — Quality gate: spec compliance + deliverable quality
+- [requirements-prd-writer](../../agents/requirements-prd-writer.md) — Helps human define product requirements
+- [requirements-trd-writer](../../agents/requirements-trd-writer.md) — Helps human derive technical requirements from PRD
+- [requirements-spec-writer](../../agents/requirements-spec-writer.md) — Helps human write clear, testable BDD specs
+- [requirements-executor](../../agents/requirements-executor.md) — Produces deliverables strictly from spec
+- [requirements-verifier](../../agents/requirements-verifier.md) — Designs and runs verifications from BDD spec
+- [requirements-proofreader](../../agents/requirements-proofreader.md) — Adversarial challenger using adversarial-protocol for domain review
+- [requirements-reviewer](../../agents/requirements-reviewer.md) — Quality gate: spec compliance + deliverable quality
 
 ---
 
@@ -199,14 +204,25 @@ Default directories: `docs/prds/`, `docs/trds/`, `docs/specs/`, `docs/changelogs
 
 ## Integration Pattern
 
-### Standalone (new project)
+### Standalone (shared top-level config)
 
 ```
 your-project/
-├── .agent/
-│   ├── AGENT.md                        # Your project-level config
+├── .agents/
+│   ├── AGENTS.md
+│   ├── agents/
+│   │   └── requirements-*.md
+│   ├── commands/
+│   │   └── requirements-lifecycle.md
+│   ├── rules/
+│   │   └── requirements-driven-dev/
 │   └── skills/
-│       └── requirements-driven-dev/    # ← Drop this folder here (or symlink)
+│       └── requirements-driven-dev/
+├── .claude -> .agents                  # Claude sees promoted agents/rules/commands
+├── .kilo/
+│   ├── agent -> ../.agents/agents      # Kilo auto-discovers the promoted agents
+│   └── commands/
+│       └── requirements-lifecycle.md   # Optional Kilo mirror of top-level commands
 ├── docs/
 │   ├── prds/
 │   │   └── <product>.md
@@ -217,16 +233,19 @@ your-project/
 │   └── changelogs/
 ```
 
-### Alongside existing agent config
+### Legacy compatibility
 
 ```
 your-project/
-├── .agent/
-│   ├── AGENT.md                        # Existing config (untouched)
-│   ├── rules/                          # Existing rules (untouched)
+├── .agents/
+│   ├── AGENTS.md
+│   ├── agents/
+│   ├── rules/
+│   ├── commands/
 │   └── skills/
-│       ├── existing-skill/             # Existing skills (untouched)
-│       └── requirements-driven-dev/    # ← Added, no clash
+│       └── requirements-driven-dev/
+├── .agent/                             # Optional legacy alias if your tooling still expects it
+│   └── ...
 ├── docs/
 │   ├── prds/
 │   ├── trds/
@@ -234,15 +253,15 @@ your-project/
 │   └── changelogs/
 ```
 
-### Activate from host AGENT.md
+### Activate from host `AGENTS.md`
 
-Add to your project's `AGENT.md`:
+Add to your project's `AGENTS.md`:
 
 ```markdown
 ## Active Skills
 
-- **Requirements Workflow**: `.agent/skills/requirements-driven-dev/SKILL.md`
-  Read the skill's core protocol and follow it for all feature work.
+- **Requirements-Driven Dev**: `.agents/skills/requirements-driven-dev/SKILL.md`
+  Read the skill's lifecycle command and follow it for all feature work.
 ```
 
 ---

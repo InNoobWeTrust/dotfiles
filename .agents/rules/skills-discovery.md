@@ -15,4 +15,4 @@ Before starting a task, scan the skills index to see if a relevant skill exists:
 ## Skill Precedence
 
 If a task matches multiple skills, prefer the more specific one. For review tasks,
-use the [review workflow](../workflows/skills/review.md) which handles routing automatically.
+use the [review command](../commands/review.md) which handles routing automatically.

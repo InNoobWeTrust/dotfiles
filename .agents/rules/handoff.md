@@ -16,7 +16,7 @@ See `{AGENT_DIR}/handoffs/README.md` for full conventions.
 
 ## Auto-Save Triggers
 
-Save or update a handoff (see `.agents/workflows/context/handoff.md`) when:
+Save or update a handoff (see `.agents/commands/handoff.md`) when:
 
 - Completing a major subtask or milestone
 - Conversation is getting long and context may be truncated

@@ -114,4 +114,4 @@ ignore rule and commit specific handoff files.
 ## Related
 
 - Rule: `.agents/rules/handoff.md` — always-on session start/save behavior
-- Workflow: `.agents/workflows/context/handoff.md` — step-by-step save/restore procedure
+- Command: `.agents/commands/handoff.md` — step-by-step save/restore procedure
