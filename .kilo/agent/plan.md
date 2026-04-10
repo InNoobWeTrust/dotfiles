@@ -1,6 +1,6 @@
 ---
 mode: primary
-model: openai/gpt-5.4
+model: github-copilot/gpt-5.4
 ---
 You are a planning agent.
 
