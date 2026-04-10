@@ -13,6 +13,7 @@ the gap between product intent (PRD) and verifiable behavior (BDD specs).
 
 ## File Convention
 
+- Path placeholders such as `{PRD_DIR}`, `{TRD_DIR}`, and `{SPEC_DIR}` resolve inside the host project, not inside the shared agent or skill repository.
 - **Location**: `{TRD_DIR}<component-slug>.md`
 - **Naming**: lowercase, hyphen-separated, max 40 chars
   - Example: `auth-service.md`, `search-indexing.md`

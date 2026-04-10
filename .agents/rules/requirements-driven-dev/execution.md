@@ -7,8 +7,12 @@ description: Rules governing how AI produces and modifies deliverables.
 
 ## Core Principles
 
-1. **Spec-Driven**: Only produce what's defined in `{SPEC_DIR}<feature-slug>.md`. BDD specs cascade from TRDs and PRDs — when in doubt, check the parent TRD for architectural context. If still unsure, ask.
-2. **Context-Aware**: Load `project-context.md` (if it exists) before starting. Follow its technology stack, conventions, and rules for consistency across sessions.
+1. **Spec-Driven**: Only produce what's defined in `{SPEC_DIR}<feature-slug>.md`. Path placeholders resolve inside the host project, not inside the shared agent or skill repository. BDD specs cascade from TRDs and PRDs — when in doubt, check the parent TRD for architectural context. If still unsure, ask.
+2. **Context-Aware**: Before starting, look for guidance in the host project in this order:
+   - **Primary**: `project-context.md`
+   - **Fallback**: project instruction files such as `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, or equivalent tool-specific guidance
+   - If the sources conflict, follow the higher-priority source above
+   - Use the selected guidance to determine paths, technology choices, naming, testing, and workflow conventions
 3. **Defensive by Default**: All deliverables must handle errors and edge cases gracefully.
 4. **Single Responsibility**: One artifact = one concern. No monoliths.
 5. **Minimal Diff**: Make the smallest change that satisfies the spec. Don't refactor unrelated areas.

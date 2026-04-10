@@ -7,6 +7,7 @@ description: Rules for authoring and maintaining BDD behavior specs.
 
 ## File Convention
 
+- Path placeholders such as `{TRD_DIR}`, `{SPEC_DIR}`, and `{CHANGELOG_DIR}` resolve inside the host project, not inside the shared agent or skill repository.
 - **Location**: `{SPEC_DIR}<feature-slug>.md`
 - **Naming**: lowercase, hyphen-separated, max 40 chars
   - Example: `user-login.md`, `project-search-filter.md`
@@ -59,14 +60,14 @@ Every behavior spec MUST contain these sections in order:
 
 ## Traceability Matrix
 
-> For the full protocol, see `.agents/commands/requirements-lifecycle.md` section 7.5.
+> For the full protocol, see the `requirements-lifecycle` command guide, section 7.5.
 
 The Traceability Matrix is defined in the behavior-spec template. Key rules:
 
 1. **Initialize on spec creation** — add a row for each scenario with `⬚ pending`
 2. **Executor updates** — after implementing, set `Impl Status` → `✓`
 3. **Verifier updates** — after writing tests, set `Test Status` → `✓`
-4. **Commit gate** — run `.agents/scripts/gap-check.sh` before commit
+4. **Commit gate** — run `gap-check.sh` before commit
 5. **Human approves `⊘`** — only human can mark a scenario as N/A
 
 **Status legend**: `⬚` pending · `◐` partial · `✓` complete · `⊘` N/A

@@ -47,6 +47,9 @@ The affected module or area:
 Every commit **must** include a `[changelog: <filename>]` line that references
 the changelog file in `{CHANGELOG_DIR}`.
 
+`{CHANGELOG_DIR}` and other path placeholders resolve inside the host project,
+not inside the shared agent or skill repository.
+
 ## Examples
 
 ```
@@ -55,7 +58,7 @@ feat(auth): add JWT token refresh endpoint
 [changelog: 20260303_jwt-refresh.md]
 
 Implements automatic token refresh when access token expires.
-Based on specs/jwt-refresh.md scenarios.
+Based on `{SPEC_DIR}jwt-refresh.md` scenarios.
 ```
 
 ```
@@ -69,7 +72,7 @@ docs(onboarding): add user onboarding guide
 
 [changelog: 20260310_onboarding-guide.md]
 
-Covers all scenarios from specs/user-onboarding.md
+Covers all scenarios from `{SPEC_DIR}user-onboarding.md`
 ```
 
 ## Rules

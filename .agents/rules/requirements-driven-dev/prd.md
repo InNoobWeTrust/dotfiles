@@ -12,6 +12,7 @@ everything downstream. It is the highest-level requirements document in the casc
 
 ## File Convention
 
+- Path placeholders such as `{PRD_DIR}` and `{TRD_DIR}` resolve inside the host project, not inside the shared agent or skill repository.
 - **Location**: `{PRD_DIR}<product-slug>.md`
 - **Naming**: lowercase, hyphen-separated, max 40 chars
   - Example: `user-onboarding.md`, `payment-system.md`

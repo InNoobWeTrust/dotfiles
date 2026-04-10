@@ -13,6 +13,7 @@ teams to trace work across time and validate scope adherence.
 
 ## File Convention
 
+- Path placeholders such as `{SPEC_DIR}`, `{PRD_DIR}`, `{TRD_DIR}`, and `{CHANGELOG_DIR}` resolve inside the host project, not inside the shared agent or skill repository.
 - **Location**: `{CHANGELOG_DIR}`
 - **Naming**: `<yyyymmdd>_<feature-slug>.md`
   - `yyyymmdd` — date the feature work **started** (e.g., `20260303`)
