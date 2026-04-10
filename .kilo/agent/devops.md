@@ -1,4 +1,5 @@
 ---
+description: Deployment, infrastructure, CI/CD, and runtime operations
 mode: primary
 model: github-copilot/claude-sonnet-4.6
 ---

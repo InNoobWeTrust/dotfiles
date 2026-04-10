@@ -1,0 +1,1 @@
+../commands/sync-skill-dna.md

@@ -1,4 +1,5 @@
 ---
+description: Qwen-powered serious coding and implementation
 mode: primary
-model: kilo/qwen/qwen3.6-plus
+model: litellm/qwen/qwen3.6-plus
 ---

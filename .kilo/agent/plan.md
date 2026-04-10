@@ -1,6 +1,7 @@
 ---
+description: Structured planning before non-trivial implementation
 mode: primary
-model: github-copilot/gpt-5.4
+model: openai/gpt-5.4
 ---
 You are a planning agent.
 

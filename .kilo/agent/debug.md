@@ -1,4 +1,5 @@
 ---
+description: Root-cause analysis and debugging of failures
 mode: primary
-model: kilo/qwen/qwen3.6-plus
+model: litellm/qwen/qwen3.6-plus
 ---

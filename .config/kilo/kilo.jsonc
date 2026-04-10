@@ -1,5 +1,46 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
+  "small_model": "kilo/kilo-auto/free",
+  "provider": {
+    "vllm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "vllm",
+      "options": {
+        "baseURL": "${KILO_PROVIDER_VLLM_BASE_URL}"
+      },
+      "models": {
+        "kCode": {}
+      }
+    },
+    "litellm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "litellm",
+      "options": {
+        "baseURL": "${KILO_PROVIDER_LITELLM_BASE_URL}"
+      },
+      "models": {
+        "all-proxy-models": {},
+        "qwen/qwen3.6-plus": {},
+        "openai/chatbot-5.3-codex": {},
+        "openai/chatbot-5.4": {},
+        "openai/chatbot-5.3-instant": {},
+        "openai/chatbot-5.4-pro": {},
+        "openai/chatbot-5.3-chat-latest": {},
+        "MiniMax-M2.7-highspeed": {
+          "options": {
+            "reasoning_effort": "xhigh",
+          }
+        },
+        "openai/chatbot-5.3-codex-spark": {},
+        "kilo-auto/free": {},
+        "kilo-auto/balanced": {
+          "options": {
+            "reasoning_effort": "high"
+          }
+        },
+      }
+    }
+  },
   "mcp": {
     "chrome-devtools": {
       "type": "local",
@@ -12,5 +53,40 @@
       ],
       "enabled": false
     }
-  }
+  },
+  "permission": {
+    "git status*": "allow",
+    "git diff*": "allow",
+    "git log*": "allow",
+    "git show*": "allow",
+    "git branch*": "allow",
+    "git remote*": "allow",
+    "git rev-parse*": "allow",
+    "git ls-files*": "allow",
+    "git fetch*": "ask",
+    "git add*": "deny",
+    "git commit*": "deny",
+    "git push*": "deny",
+    "git reset*": "deny",
+    "git restore*": "deny",
+    "git checkout*": "deny",
+    "git switch*": "deny",
+    "git merge*": "deny",
+    "git rebase*": "deny",
+    "git cherry-pick*": "deny",
+    "git revert*": "deny",
+    "git stash*": "deny",
+    "git clean*": "deny",
+    "git tag*": "deny",
+    "git submodule*": "deny",
+    "gh pr create*": "deny",
+    "gh pr merge*": "deny",
+    "gh repo sync*": "deny",
+    "sh -c *git *": "deny",
+    "bash -c *git *": "deny",
+    "zsh -c *git *": "deny",
+  },
+  "instructions": [
+    "~/.agents/instructions/git-safety.md"
+  ],
 }

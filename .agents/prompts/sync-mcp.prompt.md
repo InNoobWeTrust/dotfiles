@@ -1,0 +1,1 @@
+../commands/sync-mcp.md

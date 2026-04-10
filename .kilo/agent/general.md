@@ -1,4 +1,5 @@
 ---
+description: General-purpose coding with Copilot Grok
 mode: primary
-model: kilo/kilo-auto/balanced
+model: github-copilot/grok-code-fast-1
 ---

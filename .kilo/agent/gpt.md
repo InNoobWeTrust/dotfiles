@@ -1,4 +1,5 @@
 ---
+description: GPT-5.4 general reasoning and planning
 mode: primary
-model: github-copilot/gpt-5.4
+model: openai/gpt-5.4
 ---
