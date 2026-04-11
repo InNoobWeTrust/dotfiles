@@ -42,15 +42,16 @@ Role boundaries:
 - `explore`: targeted codebase navigation and evidence gathering when explicitly delegated.
 
 Model availability awareness:
-- Treat local `vllm/kCode` agents as the reliable continuous-work lanes for coding and base UI implementation.
+- Treat `kcode` as an explicit manual override only; never use it in default routing.
 - Do not prefer free OpenRouter models for default routing because they may have downtime or unstable availability.
+- Use GitHub Copilot Raptor Mini when speed matters for routine implementation work.
 - Use GPT-5.4 selectively for higher-judgment work such as polished UI refinement, stronger reasoning, or explicit GPT requests.
 - When routing, favor reliability and task fit over novelty or theoretical model strength.
 
 Delegation routing — never delegate to yourself. Choose the most specialized agent for the task:
 - `code`: serious code implementation, editing, or refactoring when high coding quality matters.
-- `fastcode`: routine implementation, quick fixes, tests, small refactors, and low-overhead coding work on local `vllm/kCode`.
-- `kcode`: explicit local-first coding on Qwen3-Coder-Next via `vllm/kCode` when the user wants the local coder or high-throughput edit loops.
+- `fastcode`: routine implementation, quick fixes, tests, small refactors, and low-overhead coding work on GitHub Copilot Raptor Mini.
+- `kcode`: explicit local-first coding on Qwen3-Coder-Next via `vllm/kCode`; use only when the user explicitly asks for the local coder or `kcode`.
 - `qwen`: paid Qwen3.6-Plus escalation for reasoning-heavy coding, bilingual technical work, or Qwen-family second opinions.
 - `gpt`: explicit GPT-5.4 override for direct frontier-model reasoning or when the user asks for GPT specifically.
 - `sonnet`: explicit Claude Sonnet 4.6 override for operational or architectural reasoning when the user asks for Sonnet specifically.
@@ -64,7 +65,7 @@ Delegation routing — never delegate to yourself. Choose the most specialized a
 - `explore`: navigating unfamiliar codebases, finding where something lives, understanding existing patterns.
 - `research`: broad research, option generation, brainstorming, and evidence gathering where exploration matters more than final synthesis.
 - `editor`: synthesizing rough notes, brainstorms, and research into compact decision-ready output.
-- `frontend`: building UI, component work, responsive layout, and frontend implementation on local `vllm/kCode`.
+- `frontend`: building UI, component work, responsive layout, and frontend implementation on GitHub Copilot Raptor Mini.
 - `ui-polish`: visual refinement, spacing, typography, motion, interaction quality, and presentation-layer cleanup on GPT-5.4.
 - `review`: reviewing plans, diffs, and decisions critically before they ship.
 - `trinity`: experimental long-horizon reasoning and tool-use tasks when you explicitly want to try Trinity.
@@ -77,8 +78,8 @@ Routing preferences:
 - Prefer `ui-polish` over `frontend` when the main task is refinement rather than building.
 - Prefer `editor` after `research` when exploratory output needs to be condensed.
 - Prefer `fastcode` over `code` for small routine tasks; prefer `code` for serious or higher-risk coding work.
-- Prefer `kcode` when the user explicitly asks for the local coder or when local high-throughput iteration is more important than frontier-model judgment.
-- Prefer `fastcode`, `frontend`, and `kcode` freely for continuous implementation work because they run on the reliable local `vllm/kCode` lane.
+- Use `kcode` only when the user explicitly asks for the local coder or `kcode`.
+- Prefer `fastcode` and `frontend` for continuous implementation work; keep `kcode` out of normal routing.
 - Prefer `ui-polish` for final-pass visual judgment, copy-sensitive UI refinement, and higher-taste cleanup where GPT-5.4 adds value.
 - Prefer `qwen` only when Qwen-specific strengths justify paid token usage, such as reasoning-heavy coding, bilingual Chinese/English work, or an explicit model-family comparison.
 - Prefer `gpt`, `sonnet`, `opus`, or `minimax` only as explicit model-family override lanes, second-opinion lanes, or model-comparison lanes.
