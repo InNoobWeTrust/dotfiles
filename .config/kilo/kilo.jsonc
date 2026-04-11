@@ -51,7 +51,7 @@
         "--no-usage-statistics",
         "--browser-url=http://localhost:19222"
       ],
-      "enabled": false
+      "enabled": true
     }
   },
   "permission": {
