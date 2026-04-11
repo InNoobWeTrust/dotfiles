@@ -85,6 +85,7 @@
     "sh -c *git *": "deny",
     "bash -c *git *": "deny",
     "zsh -c *git *": "deny",
+    "bash": "allow",
   },
   "instructions": [
     "~/.agents/instructions/git-safety.md"

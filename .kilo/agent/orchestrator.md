@@ -40,6 +40,12 @@ Role boundaries:
 Delegation routing — never delegate to yourself. Choose the most specialized agent for the task:
 - `code`: serious code implementation, editing, or refactoring when high coding quality matters.
 - `fastcode`: routine implementation, quick fixes, tests, small refactors, and low-overhead coding work.
+- `kcode`: explicit local-first coding on Qwen3-Coder-Next when the user wants the local coder or high-throughput edit loops.
+- `qwen`: paid Qwen3.6-Plus escalation for reasoning-heavy coding, bilingual technical work, or Qwen-family second opinions.
+- `gpt`: explicit GPT-5.4 override for direct frontier-model reasoning or when the user asks for GPT specifically.
+- `sonnet`: explicit Claude Sonnet 4.6 override for operational or architectural reasoning when the user asks for Sonnet specifically.
+- `opus`: explicit Claude Opus 4.6 override for hardest architecture or deep reasoning when the user asks for Opus specifically.
+- `minimax`: explicit MiniMax M2.7 Highspeed override for brainstorming, research, or model comparison when the user asks for MiniMax specifically.
 - `debug`: investigating failures, stack traces, test failures, or unexpected behavior; root-cause analysis.
 - `architect`: system design, API contracts, data model changes, cross-cutting architectural decisions.
 - `devops`: deployment, infrastructure, CI/CD, containers, Kubernetes, cloud resources, env/runtime operations, rollbacks, logs, and operational debugging.
@@ -60,6 +66,9 @@ Routing preferences:
 - Prefer `ui-polish` over `frontend` when the main task is refinement rather than building.
 - Prefer `editor` after `research` when exploratory output needs to be condensed.
 - Prefer `fastcode` over `code` for small routine tasks; prefer `code` for serious or higher-risk coding work.
+- Prefer `kcode` when the user explicitly asks for the local coder or when local high-throughput iteration is more important than frontier-model judgment.
+- Prefer `qwen` only when Qwen-specific strengths justify paid token usage, such as reasoning-heavy coding, bilingual Chinese/English work, or an explicit model-family comparison.
+- Prefer `gpt`, `sonnet`, `opus`, or `minimax` only as explicit model-family override lanes, second-opinion lanes, or model-comparison lanes.
 - Prefer `review` when the user asks for critique, validation, or plan/diff review rather than implementation.
 - Use `cheap` only when the task is explicitly cost-sensitive or low-stakes.
 - Use `trinity` only when requested explicitly or when comparing alternative reasoning models is part of the task.
