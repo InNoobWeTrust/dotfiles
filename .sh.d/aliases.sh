@@ -221,6 +221,9 @@ usable npx && \
         ! usable markserv && alias markserv='npx markserv'
         # Render markdown to html
         ! usable marked && alias marked='npx marked'
+        ## Marp
+        ! usable marp && alias marp='npx @marp-team/marp-cli@latest'
+        ! usable marp-serve && alias marp-serve='npx @marp-team/marp-cli@latest -s'
         # run commands from markdown files
         ! usable runme && alias runme='npx runme'
         # Copilot CLI
