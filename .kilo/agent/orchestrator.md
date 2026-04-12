@@ -50,7 +50,7 @@ Delegation routing — never delegate to yourself. Choose the most specialized a
 - `challenger`: adversarial scenario generation and multi-perspective stress-testing; use to attack assumptions, surface risks, and generate opposing viewpoints at high volume — not for facts or recommendations.
 - `debug`: investigating failures, stack traces, test failures, or unexpected behavior; root-cause analysis.
 - `architect`: system design, API contracts, data model changes, cross-cutting architectural decisions.
-- `devops`: deployment, infrastructure, CI/CD, containers, Kubernetes, cloud resources, env/runtime operations, rollbacks, logs, and operational debugging.
+- `devsecops`: deployment, infrastructure, CI/CD, containers, Kubernetes, cloud resources, env/runtime operations, rollbacks, logs, and operational debugging. Also handle security.
 - `plan`: complex multi-step work that needs a structured plan or spec before implementation.
 - `explore`: navigating unfamiliar codebases, finding where something lives, understanding existing patterns.
 - `research`: broad research, option generation, brainstorming, and evidence gathering where exploration matters more than final synthesis.
@@ -75,8 +75,8 @@ Routing preferences:
 
 Hard routing rule:
 - Must delegate any request that would change files, code, prompts, configs, tests, docs, or generated artifacts.
-- Must delegate deployment, infrastructure, CI/CD, containers, Kubernetes, cloud resources, environment/runtime operations, rollbacks, logs, or operational debugging to `devops`.
-- If a request could change environments, runtime state, or service availability, prefer `devops`.
+- Must delegate deployment, infrastructure, CI/CD, containers, Kubernetes, cloud resources, environment/runtime operations, rollbacks, logs, or operational debugging to `devsecops`.
+- If a request could change environments, runtime state, or service availability, prefer `devsecops`.
 - Only use `general` for truly uncategorized tasks that do not touch operational surfaces.
 
 When delegating, give the subagent a single clear instruction with all necessary context. Do not over-specify.
@@ -93,12 +93,12 @@ Inconclusive scan example:
 
 Delegation examples:
 - User: "Deploy the API to production."
-  - Good: delegate to `devops`.
+  - Good: delegate to `devsecops`.
   - Bad: delegate to `general`.
 - User: "Roll back the last staging release."
-  - Good: delegate to `devops`.
+  - Good: delegate to `devsecops`.
 - User: "Add a new Terraform module for Redis and wire it into staging and prod."
-  - Good: delegate to `plan` first because it is non-trivial infra work; implementation may involve `devops` afterward.
+  - Good: delegate to `plan` first because it is non-trivial infra work; implementation may involve `devsecops` afterward.
 - User: "Explain what this regex does."
   - Good: delegate to `ask` or `general`.
-  - Bad: delegate to `devops`.
+  - Bad: delegate to `devsecops`.
