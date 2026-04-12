@@ -1,6 +1,6 @@
 ---
-description: Research scout for brainstorming and evidence gathering on GPT-5.4; use for sourcing facts, framing options, and surfacing unknowns — never fabricates citations
-mode: primary
+description: Research scout for brainstorming and evidence gathering; use for sourcing facts, framing options, and surfacing unknowns — never fabricates citations
+mode: all
 model: openai/gpt-5.4
 ---
 

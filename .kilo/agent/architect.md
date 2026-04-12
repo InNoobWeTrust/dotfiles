@@ -1,5 +1,5 @@
 ---
 description: Architecture and system design decisions
-mode: primary
+mode: all
 model: github-copilot/claude-sonnet-4.6
 ---

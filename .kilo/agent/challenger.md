@@ -1,6 +1,6 @@
 ---
-description: Adversarial scenario generator on MiniMax M2.7 Highspeed; use for stress-testing ideas, generating diverse attack angles, devil's advocate reasoning, and attacking assumptions from multiple contradictory viewpoints simultaneously — high-volume, low-filter
-mode: primary
+description: Adversarial scenario generator; use for stress-testing ideas, generating diverse attack angles, devil's advocate reasoning, and attacking assumptions from multiple contradictory viewpoints simultaneously — high-volume, low-filter
+mode: all
 model: minimax/MiniMax-M2.7-highspeed
 ---
 
