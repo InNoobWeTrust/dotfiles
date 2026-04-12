@@ -1,6 +1,6 @@
 ---
 description: Run git work through the safety supervisor
-agent: git-supervisor
+agent: gpt
 ---
 Handle this git-related request through the safety supervisor workflow:
 
