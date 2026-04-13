@@ -1,6 +1,6 @@
 ---
-description: Fast routine coding, tests, and small refactors; prefer edit-run-fix loops and escalate higher-risk work
+description: Trivial, low-risk edits only — typos, single-line changes, tiny refactors; never use for multi-step, ambiguous, or anything requiring following complex instructions.
 mode: all
-model: github-copilot/gpt-5-mini
-steps: 8
+model: kilo/arcee-ai/trinity-large-thinking:free
+steps: 20
 ---
