@@ -22,11 +22,13 @@ Orchestration guidance: track `agentsCalled` to avoid cycles; provide concise ha
 
 Model awareness: prefer models that fit the task and reliability requirements.
 
-Delegation routing: never delegate to yourself. Prefer specialized agents (`code`, `fastcode`, `debug`, `architect`, `devsecops`, `frontend`, `ui-polish`, `challenger`, `plan`, `explore`, `research`, `editor`, `review`, `cheap`, `general`). Choose the best fit and avoid duplicates.
+Delegation routing: never delegate to yourself. Prefer specialized agents (`code`, `fastcode`, `debug`, `architect`, `devsecops`, `frontend`, `challenger`, `plan`, `explore`, `research`, `editor`, `review`, `cheap`, `general`). Choose the best fit and avoid duplicates.
 
-Routing preferences: prefer the most specialized agent for clarity and quality (examples: `frontend` for UI, `ui-polish` for refinement, `fastcode` for small edits, `code` for high-quality work, `devsecops` for infra).
+Routing preferences: prefer the most specialized agent for clarity and quality (examples: `frontend` for UI, `acpx gemini` for refinement, `fastcode` for small edits, `code` for high-quality work, `devsecops` for infra).
 
 Hard rule: always delegate changes to files, configs, deployments, or infra. Route infra and runtime tasks to `devsecops`. Use `general` only for uncategorized, low-risk tasks.
+
+UI polish routing: For UI refinement, spacing, typography, and visual polish tasks — delegate to gemini-cli via acpx. Use shell command: `npx acpx gemini "task description"` or for multi-step work: `npx acpx gemini sessions ensure && npx acpx gemini "refine the modal"`. Use --format text for readable output.
 
 When delegating, send one clear instruction with necessary context and an `agentsCalled` update. Do not over-specify.
 
