@@ -93,6 +93,7 @@
     "bash": "allow",
   },
   "instructions": [
-    "~/.agents/instructions/git-safety.md"
+    "~/.agents/instructions/git-safety.md",
+    "~/.agents/instructions/process-management.md",
   ],
 }
