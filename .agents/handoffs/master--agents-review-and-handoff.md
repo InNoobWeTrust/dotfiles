@@ -29,7 +29,7 @@ All major workstreams complete:
   artifacts — never assume next session has access to your storage
 - **sync-skill-dna.sh bug fixed** — false-positive drift from blank line mismatch,
   fixed with `sed '/./,$!d'`
-- **skill-creator is untouchable** — copied as-is from Claude skills
+- **skill-creator is** — copied as-is from Claude skills
 - **MCP Sync command**: Deprecated `sync-mcp.sh` bash script in favor of agent-native JSON parsing and merging. Absolute paths required in canonical `mcp.json`.
 
 ## Blockers
@@ -143,4 +143,4 @@ Guardrails: max 3 cycles, respect exclusions, preserve author voice.
 | False-positive drift | sync-skill-dna.sh | `sed '/./,$!d'` |
 
 Intentionally skipped: MD060 tables (~50), MD040 template blocks,
-MD024 intentional duplicates, SCRIPT_DIR unused, skill-creator untouched.
+MD024 intentional duplicates, SCRIPT_DIR unused.

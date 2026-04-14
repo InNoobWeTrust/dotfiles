@@ -10,8 +10,8 @@ Quick reference for all available skills. Generated for agent discovery.
 | **editorial-reviewer** | "make this clearer", "tighten this up", "editorial review", "copy edit", "restructure this doc" | `skills/editorial-reviewer/SKILL.md` |
 | **requirements-driven-dev** | PRDs, TRDs, behavior specs, acceptance criteria, Given/When/Then, user stories, changelogs | `skills/requirements-driven-dev/SKILL.md` |
 | **security-reviewer** | "is this secure", "check for vulnerabilities", "security review", "audit this", "harden this" | `skills/security-reviewer/SKILL.md` |
-| **skill-creator** | Create a skill, edit a skill, run evals, benchmark, optimize description | `skills/skill-creator/SKILL.md` |
-| **skill-extractor** | End of substantial conversations, "that was tricky", "let's remember this", "we should save this" | `skills/skill-extractor/SKILL.md` |
+
+
 | **strategic-codebase-navigation** | Unfamiliar codebase, "where do I start", trace a feature, plan migration, map architecture | `skills/strategic-codebase-navigation/SKILL.md` |
 | **strategic-problem-solving** | Debug, root cause, "why does this keep happening", "go deeper", "first principles", "inversion" | `skills/strategic-problem-solving/SKILL.md` |
 | **ui-ux** | Design systems, component styling, "modern"/"premium" look, WCAG accessibility, design tokens, responsive design | `skills/ui-ux/SKILL.md` |
@@ -36,4 +36,4 @@ Currently synced remote skills:
 
 | Skill | Source | Branch |
 | --- | --- | --- |
-| **skill-creator** | [anthropics/skills](https://github.com/anthropics/skills) `skills/skill-creator` | `main` |
+

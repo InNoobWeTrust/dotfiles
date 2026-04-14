@@ -146,4 +146,4 @@ prose review (structure first, then polish).
 
 - **`adversarial-reviewer`** — Challenges reasoning and logic quality. Editorial-reviewer addresses communication clarity — different axis.
 - **`requirements-driven-dev`** — Step 9 of the Full Flow suggests editorial review before sharing with stakeholders.
-- **`skill-extractor`** — After substantial editorial work, consider whether the editing patterns are worth capturing as a skill.
+
