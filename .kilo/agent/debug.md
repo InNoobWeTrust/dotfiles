@@ -1,6 +1,7 @@
 ---
 description: Root-cause analysis and debugging of failures
 mode: primary
-model: alibaba/qwen3-coder-480b-a35b-instruct
+model: openai/gpt-5.4
+reasoningEffort: medium
 steps: 20
 ---

@@ -1,6 +1,7 @@
 ---
 description: Serious coding work requiring strong implementation quality
 mode: primary
-model: alibaba/qwen3-coder-480b-a35b-instruct
+model: openai/gpt-5.4
+reasoningEffort: medium
 steps: 25
 ---
