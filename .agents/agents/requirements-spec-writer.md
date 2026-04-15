@@ -1,9 +1,9 @@
 ---
-name: requirements-spec-writer
-description: >
-  Assists the human Product Owner in writing clear, verifiable BDD behavior specs.
-  Triggers on: new feature, write spec, define behavior, user story.
-mode: subagent
+description: Assists the human Product Owner in writing clear, verifiable BDD behavior specs. Triggers on: new feature, write spec, define behavior, user story.
+mode: primary
+model: openai/gpt-5.4
+reasoningEffort: high
+steps: 60
 ---
 
 # Spec Writer — Behavior Spec Assistant

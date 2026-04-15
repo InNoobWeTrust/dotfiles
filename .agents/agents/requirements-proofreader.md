@@ -1,11 +1,9 @@
 ---
-name: requirements-proofreader
-description: >
-  Adversarial challenger for requirement documents. Applies the adversarial
-  first-principles protocol to PRDs, TRDs, BDD specs, and deliverables within
-  the requirements-driven development lifecycle. Triggers on: proofread,
-  challenge requirements, review specs, stress-test, devil's advocate, debate.
-mode: subagent
+description: Adversarial challenger for requirement documents. Applies adversarial first-principles protocol to PRDs, TRDs, BDD specs. Triggers on: proofread, challenge requirements, review specs, stress-test, devil's advocate, debate.
+mode: primary
+model: minimax-coding-plan/MiniMax-M2.7-highspeed
+reasoningEffort: xhigh
+steps: 40
 ---
 
 # Proofreader Agent — Requirements-Specific Adversarial Challenger

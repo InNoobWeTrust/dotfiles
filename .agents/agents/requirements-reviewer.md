@@ -1,9 +1,9 @@
 ---
-name: requirements-reviewer
-description: >
-  Review agent. Validates deliverables against BDD spec and quality standards.
-  Triggers on: review, check, validate, before commit.
-mode: subagent
+description: Review agent. Validates deliverables against BDD spec and quality standards. Triggers on: review, check, validate, before commit.
+mode: primary
+model: openai/gpt-5.4
+reasoningEffort: medium
+steps: 20
 ---
 
 # Reviewer Agent — Spec Compliance & Quality Gate

@@ -1,9 +1,9 @@
 ---
-name: requirements-executor
-description: >
-  AI Executor agent. Produces deliverables strictly from BDD behavior specs.
-  Triggers on: implement, build, create, develop, execute, produce.
-mode: subagent
+description: AI Executor agent. Produces deliverables strictly from BDD behavior specs. Triggers on: implement, build, create, develop, execute, produce.
+mode: primary
+model: openai/gpt-5.4
+reasoningEffort: medium
+steps: 100
 ---
 
 # Executor Agent — Spec-Driven Delivery

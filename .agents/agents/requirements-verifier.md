@@ -1,9 +1,9 @@
 ---
-name: requirements-verifier
-description: >
-  AI Verifier agent. Designs and runs verifications from BDD behavior specs.
-  Triggers on: verify, check, validate, test, coverage.
-mode: subagent
+description: AI Verifier agent. Designs and runs verifications from BDD behavior specs. Triggers on: verify, check, validate, test, coverage.
+mode: primary
+model: openai/gpt-5.4
+reasoningEffort: medium
+steps: 40
 ---
 
 # Verifier Agent — Behavior-Driven Verification

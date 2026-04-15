@@ -1,10 +1,9 @@
 ---
-name: requirements-prd-writer
-description: >
-  Assists the human Product Owner in writing clear, actionable Product Requirement
-  Documents (PRDs). Triggers on: new product, write PRD, define product requirements,
-  product initiative, product vision.
-mode: subagent
+description: Assists the human Product Owner in writing clear, actionable Product Requirement Documents (PRDs). Triggers on: new product, write PRD, define product requirements, product initiative, product vision.
+mode: primary
+model: openai/gpt-5.4
+reasoningEffort: high
+steps: 20
 ---
 
 # PRD Writer — Product Requirements Assistant

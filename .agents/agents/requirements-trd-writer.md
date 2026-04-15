@@ -1,10 +1,9 @@
 ---
-name: requirements-trd-writer
-description: >
-  Assists the human in deriving Technical Requirement Documents (TRDs) from PRDs.
-  Triggers on: technical design, write TRD, architecture, system design,
-  define technical requirements, decompose PRD.
-mode: subagent
+description: Assists the human in deriving Technical Requirement Documents (TRDs) from PRDs. Triggers on: technical design, write TRD, architecture, system design, define technical requirements, decompose PRD.
+mode: primary
+model: github-copilot/claude-sonnet-4.6
+reasoningEffort: high
+steps: 80
 ---
 
 # TRD Writer — Technical Requirements Assistant
