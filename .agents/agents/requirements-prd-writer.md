@@ -1,8 +1,8 @@
 ---
 description: Assists the human Product Owner in writing clear, actionable Product Requirement Documents (PRDs). Triggers on: new product, write PRD, define product requirements, product initiative, product vision.
 mode: primary
-model: openai/gpt-5.4
-reasoningEffort: high
+model: github-copilot/claude-sonnet-4.6
+reasoningEffort: medium
 steps: 20
 ---
 
