@@ -5,6 +5,7 @@ Quick reference for reusable commands.
 | Command | Use Case | Path |
 | --- | --- | --- |
 | `review` | Route reviews and fix loops | `commands/review.md` |
+| `data-storytelling` | Turn data into goal-aligned narratives | `commands/data-storytelling.md` |
 | `requirements-lifecycle` | Run the requirements-driven-dev lifecycle | `commands/requirements-lifecycle.md` |
 | `brainstorming` | Facilitate ideation sessions | `commands/brainstorming.md` |
 | `party-mode` | Run multi-persona deliberation | `commands/party-mode.md` |

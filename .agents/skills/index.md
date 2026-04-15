@@ -6,6 +6,7 @@ Quick reference for all available skills. Generated for agent discovery.
 | --- | --- | --- |
 | **adversarial-reviewer** | Review, challenge, critique, stress-test, "poke holes", "what am I missing" | `skills/adversarial-reviewer/SKILL.md` |
 | **ai-ui-generation** | Google Stitch, Stitch with Google, pencil.dev, v0, Lovable, screenshot-to-code, wireframe-to-app, prompt package, exported HTML/CSS integration, AI mockup export refactor | `skills/ai-ui-generation/SKILL.md` |
+| **data-storytelling** | Data narrative, insight synthesis, goal-aligned analysis, audience-aware reporting, evidence-backed storytelling | `skills/data-storytelling/SKILL.md` |
 | **edge-case-hunter** | "find edge cases", "what did I miss", "boundary conditions", "unhandled paths", "off-by-one", "race condition" | `skills/edge-case-hunter/SKILL.md` |
 | **editorial-reviewer** | "make this clearer", "tighten this up", "editorial review", "copy edit", "restructure this doc" | `skills/editorial-reviewer/SKILL.md` |
 | **requirements-driven-dev** | PRDs, TRDs, behavior specs, acceptance criteria, Given/When/Then, user stories, changelogs | `skills/requirements-driven-dev/SKILL.md` |
@@ -36,4 +37,3 @@ Currently synced remote skills:
 
 | Skill | Source | Branch |
 | --- | --- | --- |
-

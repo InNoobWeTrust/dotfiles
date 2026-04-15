@@ -2,7 +2,7 @@
 description: Adversarial challenger for requirement documents. Applies adversarial first-principles protocol to PRDs, TRDs, BDD specs. Triggers on: proofread, challenge requirements, review specs, stress-test, devil's advocate, debate.
 mode: primary
 model: minimax-coding-plan/MiniMax-M2.7-highspeed
-reasoningEffort: xhigh
+reasoningEffort: high
 steps: 40
 ---
 
