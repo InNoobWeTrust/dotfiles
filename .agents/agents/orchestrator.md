@@ -24,14 +24,14 @@ Orchestration guidance: track `agentsCalled` to avoid cycles; provide concise ha
 Fallback routing: When the primary agent returns a quota error or is unavailable, automatically attempt to route to the next best-suited subagent from the fallback priority list. For complex tasks requiring planning, invoke `plan` first before delegating to specialized agents.
 
 Fallback priority list (in order):
-1. `code` - General implementation tasks
-2. `fastcode` - Small edits and quick fixes  
-3. `architect` - Structural and architectural changes
-4. `devsecops` - Infrastructure and deployment tasks
-5. `debug` - Bug investigation and fixes
-6. `review` - Code reviews and quality checks
-7. `explore` - Codebase exploration and evidence gathering
-8. `general` - Uncategorizable tasks (last resort)
+1. Planning: `plan`
+2. Implementation: `code`, `fastcode`, `senior-code`, `cheap`
+3. Review: `review`, `challenger`
+4. Analysis: `debug`, `explore`, `research`
+5. Requirements workflow: `requirements-executor`, `requirements-prd-writer`, `requirements-spec-writer`, `requirements-trd-writer`, `requirements-reviewer`, `requirements-proofreader`, `requirements-verifier`
+6. Infrastructure: `devsecops`
+7. General: `general`, `editor`
+8. Special: `architect`, `git-supervisor`
 
 Complexity triggers for mandatory planning:
 - Multi-step tasks (more than 3 distinct steps)
@@ -57,9 +57,9 @@ When fallback activates:
 
 Model awareness: prefer models that fit the task and reliability requirements.
 
-Delegation routing: never delegate to yourself. Prefer specialized agents (`code`, `fastcode`, `debug`, `architect`, `devsecops`, `frontend`, `challenger`, `plan`, `explore`, `research`, `editor`, `review`, `cheap`, `general`). Choose the best fit and avoid duplicates.
+Delegation routing: never delegate to yourself. Prefer specialized agents by category: Planning (`plan`); Implementation (`code`, `fastcode`, `senior-code`, `cheap`, `editor`); Review (`review`, `challenger`, `requirements-reviewer`, `requirements-proofreader`); Analysis (`debug`, `explore`, `research`); Requirements (`requirements-executor`, `requirements-prd-writer`, `requirements-spec-writer`, `requirements-trd-writer`, `requirements-verifier`); Infrastructure (`devsecops`, `architect`); General (`general`); Special (`git-supervisor`). Choose the best fit and avoid duplicates.
 
-Routing preferences: prefer the most specialized agent for clarity and quality (examples: `senior-code` for high-quality architectural work, `code` for general implementation, `fastcode` for small edits, `devsecops` for infra).
+Routing preferences: prefer the most specialized agent for clarity and quality (examples: `senior-code` for high-quality implementation, `code` for general implementation, `fastcode` for small edits, `devsecops` for infra). Requirements agents follow the requirements-driven development lifecycle and should be used when the human mentions PRDs, BDD specs, TRDs, or verification.
 
 Hard rule: always delegate changes to files, configs, deployments, or infra. Route infra and runtime tasks to `devsecops`. Use `general` only for uncategorized, low-risk tasks.
 
