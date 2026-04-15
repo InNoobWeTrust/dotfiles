@@ -212,38 +212,38 @@ usable curl && \
 usable npx && \
     {
         # http server
-        ! usable http-server && alias http-server='npx http-server'
+        ! usable http-server && alias http-server='npx --yes http-server'
         # Smart contract development
-        ! usable remixd && alias remixd='npx @remix-project/remixd'
+        ! usable remixd && alias remixd='npx --yes @remix-project/remixd'
         # Execute http files (http requests)
-        ! usable httpyac && alias httpyac='npx httpyac'
+        ! usable httpyac && alias httpyac='npx --yes httpyac'
         # Serve live rendered markdown files
-        ! usable markserv && alias markserv='npx markserv'
+        ! usable markserv && alias markserv='npx --yes markserv'
         # Render markdown to html
-        ! usable marked && alias marked='npx marked'
+        ! usable marked && alias marked='npx --yes marked'
         ## Marp
-        ! usable marp && alias marp='npx @marp-team/marp-cli@latest'
-        ! usable marp-serve && alias marp-serve='npx @marp-team/marp-cli@latest -s'
+        ! usable marp && alias marp='npx --yes @marp-team/marp-cli@latest'
+        ! usable marp-serve && alias marp-serve='npx --yes @marp-team/marp-cli@latest -s'
         # run commands from markdown files
-        ! usable runme && alias runme='npx runme'
+        ! usable runme && alias runme='npx --yes runme'
         # Copilot CLI
-        ! usable copilot && alias copilot='npx @github/copilot'
+        ! usable copilot && alias copilot='npx --yes @github/copilot'
         # Gemini-cli
-        ! usable gemini && alias gemini='npx @google/gemini-cli'
+        ! usable gemini && alias gemini='npx --yes @google/gemini-cli'
         # Claude code
-        ! usable claude && alias claude='npx @anthropic-ai/claude-code'
+        ! usable claude && alias claude='npx --yes @anthropic-ai/claude-code'
         # OpenAI Codex
-        ! usable codex && alias codex='npx @openai/codex'
+        ! usable codex && alias codex='npx --yes @openai/codex'
         # Kilo code
-        ! usable kilo && alias kilo="npx @kilocode/cli"
+        ! usable kilo && alias kilo="npx --yes @kilocode/cli"
         # Agent skills manager
-        ! usable skills && alias skills="npx skills"
-        ! usable openskills && alias openskills="npx openskills"
-        ! usable skillfish && alias skillfish="npx skillfish"
+        ! usable skills && alias skills="npx --yes skills"
+        ! usable openskills && alias openskills="npx --yes openskills"
+        ! usable skillfish && alias skillfish="npx --yes skillfish"
         # AI-Agile Development
-        ! usable starter-bmad-method && alias starter-bmad-method="npx bmad-method install"
+        ! usable starter-bmad-method && alias starter-bmad-method="npx --yes bmad-method install"
         # Tree-sitter CLI
-        ! usable tree-sitter && alias tree-sitter='npx tree-sitter-cli'
+        ! usable tree-sitter && alias tree-sitter='npx --yes tree-sitter-cli'
     }
 
 ## Node-builtin package management for javascript
