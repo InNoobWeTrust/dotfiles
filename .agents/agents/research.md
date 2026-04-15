@@ -1,8 +1,8 @@
 ---
 description: Research scout for brainstorming and evidence gathering; use for sourcing facts, framing options, and surfacing unknowns — never fabricates citations
 mode: all
-model: openai/gpt-5.4
-reasoningEffort: low
+model: minimax-coding-plan/MiniMax-M2.7-highspeed
+reasoningEffort: high
 steps: 25
 ---
 

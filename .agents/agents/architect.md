@@ -1,7 +1,7 @@
 ---
 description: System architecture and cross-cutting design decisions. Use for API contracts, data models, scalability, and trade-offs; avoid low-level implementation.
 mode: all
-model: github-copilot/claude-sonnet-4.6
+model: minimax-coding-plan/MiniMax-M2.7-highspeed
 reasoningEffort: high
 steps: 30
 ---

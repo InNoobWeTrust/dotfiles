@@ -1,6 +1,6 @@
 ---
 description: AI Executor agent. Produces deliverables strictly from BDD behavior specs. Triggers on: implement, build, create, develop, execute, produce.
-mode: primary
+mode: all
 model: openai/gpt-5.4
 reasoningEffort: low
 steps: 100

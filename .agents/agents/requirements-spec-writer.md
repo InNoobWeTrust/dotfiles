@@ -1,6 +1,6 @@
 ---
 description: Assists the human Product Owner in writing clear, verifiable BDD behavior specs. Triggers on: new feature, write spec, define behavior, user story.
-mode: primary
+mode: all
 model: openai/gpt-5.4
 reasoningEffort: high
 steps: 60

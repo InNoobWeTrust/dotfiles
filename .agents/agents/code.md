@@ -1,7 +1,7 @@
 ---
 description: Serious coding work requiring strong implementation quality
-mode: primary
+mode: all
 model: openai/gpt-5.4
-reasoningEffort: medium
+reasoningEffort: high
 steps: 25
 ---
