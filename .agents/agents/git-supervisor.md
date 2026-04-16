@@ -34,10 +34,10 @@ permission:
     git clean*: deny
     git submodule*: deny
     gh pr merge*: deny
-    git add *: allow
-    git commit *: allow
-    git push *: allow
-    *: ask
+    "git add *": allow
+    "git commit *": allow
+    "git push *": allow
+    "*": ask
 ---
 You are the repository's git safety supervisor.
 
