@@ -6,7 +6,7 @@ description: >
 
 # Data Storytelling Command
 
-Use the `data-storytelling` skill defined in `.agents/skills/data-storytelling/`.
+Use the `data-storytelling` skill.
 
 ## Inputs
 
@@ -22,8 +22,8 @@ Use the `data-storytelling` skill defined in `.agents/skills/data-storytelling/`
 
 ## Protocol
 
-1. Read `.agents/skills/data-storytelling/SKILL.md`.
-2. If goal framing is missing, prefer `strategic-problem-solving` and import `goal`, `key_results`, `audience`, `constraints`, and `assumptions`; otherwise use `.agents/skills/data-storytelling/references/questionnaire/goal-framing.md` to collect the missing equivalent fields.
+1. Read `data-storytelling` skill.
+2. If goal framing is missing, prefer `strategic-problem-solving` and import `goal`, `key_results`, `audience`, `constraints`, and `assumptions`; otherwise use `<data-storytelling-skill-dir>/references/questionnaire/goal-framing.md` to collect the missing equivalent fields.
 3. Recommend missing parameters without silently forcing them.
 4. If `threshold`, `mode`, or `template` is inferred, label it `[RECOMMENDED]` and stop for human confirmation before lens planning.
 5. Use `include_lenses` and `exclude_lenses` as the canonical lens override contract. In `mode:user-specified`, treat `include_lenses` as the requested working set.
@@ -37,7 +37,7 @@ Use the `data-storytelling` skill defined in `.agents/skills/data-storytelling/`
    - `skeptic-qa`
    - `audience-adapter`
    - `output-engine`
-7. Follow the canonical HITL state machine from `.agents/skills/data-storytelling/SKILL.md`.
+7. Follow the canonical HITL state machine from `data-storytelling` skill.
 8. Keep claims below the approved causal threshold and below the causal evidence gate.
 9. Accept feedback and revise according to the skill feedback contract.
 
