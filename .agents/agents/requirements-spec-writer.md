@@ -1,5 +1,5 @@
 ---
-description: Assists the human Product Owner in writing clear, verifiable BDD behavior specs. Triggers on: new feature, write spec, define behavior, user story.
+description: "Assists the human Product Owner in writing clear, verifiable BDD behavior specs. Triggers on: new feature, write spec, define behavior, user story."
 mode: all
 model: openai/gpt-5.4
 reasoningEffort: high

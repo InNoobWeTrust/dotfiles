@@ -1,5 +1,5 @@
 ---
-description: Assists the human in deriving Technical Requirement Documents (TRDs) from PRDs. Triggers on: technical design, write TRD, architecture, system design, define technical requirements, decompose PRD.
+description: "Assists the human in deriving Technical Requirement Documents (TRDs) from PRDs. Triggers on: technical design, write TRD, architecture, system design, define technical requirements, decompose PRD."
 mode: all
 model: github-copilot/claude-sonnet-4.6
 reasoningEffort: high

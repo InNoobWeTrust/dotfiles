@@ -1,6 +1,6 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
-  "default_agent": "ask",
+  "default_agent": "orchestrator",
   "small_model": "kilo/kilo-auto/free",
   "provider": {
     "vllm": {
@@ -21,7 +21,11 @@
       },
       "models": {
         "all-proxy-models": {},
-        "qwen/qwen3.6-plus": {},
+        "qwen/qwen3.6-plus": {
+          "options": {
+            "variant": "thinking",
+          }
+        },
         "openai/chatbot-5.3-codex": {},
         "openai/chatbot-5.4": {
           "options": {
@@ -90,7 +94,15 @@
     "sh -c *git *": "deny",
     "bash -c *git *": "deny",
     "zsh -c *git *": "deny",
-    "bash": "allow",
+    "bash": {
+      "*": "allow",
+      "git status *": "allow",
+      "git log *": "allow",
+      "git fetch *": "allow",
+      "git ls-files *": "allow",
+      "git show *": "allow",
+      "git diff *": "allow"
+    },
   },
   "instructions": [
     "~/.agents/instructions/git-safety.md",

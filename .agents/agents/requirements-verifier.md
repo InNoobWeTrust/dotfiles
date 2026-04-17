@@ -1,5 +1,5 @@
 ---
-description: AI Verifier agent. Designs and runs verifications from BDD behavior specs. Triggers on: verify, check, validate, test, coverage.
+description: "AI Verifier agent. Designs and runs verifications from BDD behavior specs. Triggers on: verify, check, validate, test, coverage."
 mode: all
 model: openai/gpt-5.4
 reasoningEffort: low
