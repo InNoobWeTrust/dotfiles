@@ -14,7 +14,7 @@ Turn the user's request into an explicit analysis brief that the rest of the ski
   - `audience`: string
   - `constraints`: string[] (optional)
   - `assumptions`: string[] (optional)
-- Answers from `questionnaire/goal-framing.md`, if used.
+- Answers from `../questionnaire/goal-framing.md`, if used.
 
 ## Procedure
 

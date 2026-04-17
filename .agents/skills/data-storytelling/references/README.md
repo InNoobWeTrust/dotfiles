@@ -17,15 +17,15 @@ Do not use it as a replacement for data plumbing, dashboard implementation, or f
 ## Invocation
 
 ```text
-/data-storytelling goal:"Reduce churn in SMB accounts" data:"warehouse model mart.account_retention" audience:"exec" threshold:4 mode:adaptive hitl_mode:checkpoint
+Analyze `warehouse model mart.account_retention` to help reduce churn in SMB accounts for an `exec` audience, using threshold `4`, `adaptive` mode, and `checkpoint` HITL mode.
 ```
 
 ```text
-/data-storytelling goal:"Find the biggest drivers of checkout abandonment" data:"weekly checkout funnel mart" audience:"analyst" mode:user-specified include_lenses:[comparison-period-over-period,comparison-segment-vs-segment,driver-factor-decomposition] exclude_lenses:[comparison-peer-benchmark]
+Find the biggest drivers of checkout abandonment in `weekly checkout funnel mart` for an `analyst` audience, using `user-specified` mode with `comparison-period-over-period`, `comparison-segment-vs-segment`, and `driver-factor-decomposition`, while excluding `comparison-peer-benchmark`.
 ```
 
 ```text
-/data-storytelling goal:"Summarize customer-facing reliability changes" data:"incident review export + SLA trend table" audience:"customer" mode:adaptive include_lenses:[trend-time-series,anomaly-context-breach-changepoint] hitl_mode:review-and-revise
+Summarize customer-facing reliability changes from `incident review export + SLA trend table` for a `customer` audience, using `adaptive` mode with `trend-time-series` and `anomaly-context-breach-changepoint`, in `review-and-revise` HITL mode.
 ```
 
 Accepted arguments:
@@ -40,9 +40,9 @@ Accepted arguments:
 - `include_lenses` (optional): array of lenses to force include.
 - `exclude_lenses` (optional): array of lenses to remove.
 
-Optional implementation parameters:
+Execution note:
 
-- If `threshold`, `mode`, or `template` is inferred instead of explicitly provided, the skill must mark the recommendation with `[RECOMMENDED]` and pause for human confirmation before lens planning.
+- If `threshold`, `mode`, or `template` is inferred instead of explicitly provided, mark the recommendation with `[RECOMMENDED]` and pause for human confirmation before lens planning.
 
 ## Workflow
 
@@ -179,7 +179,7 @@ Correction routing:
 | 5 | Causal (guarded) | "Backlog growth may have contributed to churn." |
 | 6 | Causal (strong) | "Backlog growth likely drove churn." |
 
-Levels 5 and 6 require the causal evidence gate from `index.md`.
+Levels 5 and 6 require the causal evidence gate from `../../SKILL.md` (`Causal Evidence Gate For Levels 5-6`).
 
 Accepted evidence classes for levels 5 and 6:
 
@@ -287,7 +287,7 @@ Expected behavior:
 ### Example 1: Executive Retention Story
 
 ```text
-/data-storytelling goal:"Understand the recent SMB churn increase" data:"retention dashboard export + support backlog table" audience:"exec" threshold:4 mode:adaptive
+Understand the recent SMB churn increase using `retention dashboard export + support backlog table` for an `exec` audience, with threshold `4` and `adaptive` mode.
 ```
 
 Expected output:
@@ -300,7 +300,7 @@ Expected output:
 ### Example 2: Open Exploration
 
 ```text
-/data-storytelling goal:"Find the most important changes in marketplace conversion last quarter" data:"conversion mart with weekly grain" audience:"analyst" mode:exhaustive hitl_mode:continuous-feedback
+Find the most important changes in marketplace conversion last quarter using `conversion mart with weekly grain` for an `analyst` audience, with `exhaustive` mode and `continuous-feedback` HITL mode.
 ```
 
 Expected output:
@@ -312,7 +312,7 @@ Expected output:
 ### Example 3: Operator Review
 
 ```text
-/data-storytelling goal:"Explain missed SLA performance and what to fix this week" data:"ticket SLA dataset" audience:"ops" threshold:3 include_lenses:[comparison-actual-vs-target,anomaly-context-breach-changepoint,root-cause-investigation]
+Explain missed SLA performance and what to fix this week using `ticket SLA dataset` for an `ops` audience, with threshold `3` and the lenses `comparison-actual-vs-target`, `anomaly-context-breach-changepoint`, and `root-cause-investigation`.
 ```
 
 Expected output:
@@ -324,7 +324,7 @@ Expected output:
 ### Example 4: User-Specified Lens Sweep
 
 ```text
-/data-storytelling goal:"Audit the biggest causes of renewal slippage" data:"renewals mart + CSAT table" audience:"analyst" mode:user-specified include_lenses:[comparison-segment-vs-segment,driver-factor-decomposition,distribution-concentration-gap] exclude_lenses:[comparison-peer-benchmark] hitl_mode:checkpoint
+Audit the biggest causes of renewal slippage using `renewals mart + CSAT table` for an `analyst` audience, in `user-specified` mode with `comparison-segment-vs-segment`, `driver-factor-decomposition`, and `distribution-concentration-gap`, excluding `comparison-peer-benchmark`, and using `checkpoint` HITL mode.
 ```
 
 Expected output:
@@ -337,5 +337,5 @@ Expected output:
 
 - The skill is tool-agnostic with respect to data access.
 - The user remains responsible for authorizing data access and supplying sources.
-- The implementation should emit intermediate artifacts cleanly enough for later UI or automation layers to consume.
-- Domain-specific lens packs should extend, not replace, the built-in contracts.
+- Emit intermediate artifacts cleanly enough for later UI or automation layers to consume.
+- Extend domain-specific lens packs without replacing the built-in contracts.

@@ -10,7 +10,33 @@ Challenge the draft narrative before it reaches the user so the output does not 
 - Ranked insights.
 - Story plan or rendered draft.
 - Approved threshold.
-- The causal evidence gate from `index.md` for levels 5 and 6.
+- The causal evidence gate from `../../SKILL.md` (`Causal Evidence Gate For Levels 5-6`) for levels 5 and 6.
+
+## Evidence Gate For Levels 5-6
+
+Accepted evidence classes:
+
+- Experimental evidence, including randomized or controlled tests.
+- Quasi-experimental evidence, including natural experiments or interrupted time series with a credible comparison group.
+- Instrumental variables.
+- Regression discontinuity.
+- Synthetic control.
+- Statistical matching or weighting approaches with sensitivity analysis.
+
+Required checks before a level 5 or 6 claim is allowed:
+
+- State the evidence class explicitly in the signal record.
+- Document the baseline or counterfactual used.
+- List the main confounders and explain how each was tested, controlled, or left unresolved.
+- Record robustness limits in `limitation_notes`.
+- Obtain explicit human approval for level 5 or 6 language.
+
+Escalation rules:
+
+- Observational correlation alone is capped at level 4.
+- Human approval does not override the evidence gate.
+- If the analysis is observational but uses one of the accepted quasi-experimental or matching designs with documented justification, level 5 or 6 may be considered subject to the full gate.
+- If the evidence is purely observational, do not emit level 5 or 6 language under any circumstance, including direct user override.
 
 ## Checklist
 

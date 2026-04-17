@@ -10,7 +10,18 @@ Run the selected lenses and produce evidence-backed candidate insights.
 - Data profile.
 - Lens plan.
 - Approved causal threshold.
-- The causal evidence gate from `index.md` for levels 5 and 6.
+- The causal evidence gate from `../../SKILL.md` (`Causal Evidence Gate For Levels 5-6`) for levels 5 and 6.
+
+## Minimal Causal Threshold Scale
+
+| Level | Label | Allowed phrasing | Minimum evidence bar |
+| --- | --- | --- | --- |
+| 1 | Descriptive | "X changed alongside Y" | Observation only |
+| 2 | Temporal | "X preceded Y" | Ordered sequence with timestamps |
+| 3 | Correlational | "X correlated with Y" | Stable association with stated limitations |
+| 4 | Inferential | "X may help explain Y" | Strong correlation plus mechanism or comparative support |
+| 5 | Causal (guarded) | "X may have contributed to Y" | Accepted evidence class, documented confounder analysis, human approval, and no observational-only fallback |
+| 6 | Causal (strong) | "X likely drove Y" | Experimental or strong quasi-experimental evidence, documented confounder analysis, counterfactual logic, human approval, and explicit caveat path |
 
 ## Procedure
 

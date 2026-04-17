@@ -12,6 +12,30 @@ Render the approved narrative in the most useful output format for the audience 
 - Audience adaptation guidance.
 - HITL mode.
 
+## Confidence Contract
+
+Every material claim carries a confidence profile separate from the causal threshold.
+
+Required fields:
+
+- `confidence_label`: `very_low`, `low`, `medium`, `high`, or `very_high`.
+- `confidence_score`: numeric score from `0.0` to `1.0`.
+- `confidence_basis`: short justification using data quality, sample sufficiency, baseline quality, and method fit.
+- `limitation_notes`: what weakens the claim.
+- `claim_ceiling`: maximum language allowed after confidence and threshold are combined.
+
+Rendering rules:
+
+- Render `confidence_label`, `confidence_basis`, and `claim_ceiling` for every material claim.
+- In multi-claim sections, attach those rendered fields per claim or per insight row; a single document-level confidence block is not sufficient.
+- Preserve `confidence_score` and `limitation_notes` in intermediate artifacts for ranking, caveats, and claim ceilings, but do not render them unless the selected template explicitly calls for them.
+
+Interpretation rules:
+
+- High confidence does not permit stronger language than the approved threshold.
+- Low confidence forces explicit caveats even at low thresholds.
+- Missing baselines or weak sample quality cap the claim at descriptive or temporal language.
+
 ## Procedure
 
 1. Choose the template if none was specified.
@@ -41,7 +65,7 @@ The final output must always contain:
 
 ## HITL Rules
 
-- Follow the canonical HITL state machine in `index.md`.
+- Follow the canonical HITL state machine in `../../SKILL.md` (`Canonical HITL State Machine`).
 - In `continuous-feedback`, emit short revision notes inline and only block when inferred parameters still need confirmation.
 - In `checkpoint`, pause after the first formatted draft for approval and do not skip any earlier required checkpoint.
 - In `review-and-revise`, produce a full draft after any required parameter confirmation, then include a `Revision summary` section on each new pass.

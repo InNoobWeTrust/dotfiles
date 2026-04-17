@@ -94,22 +94,17 @@ Fallback: if `strategic-problem-solving` was not run, or if any required field i
 
 ## Invocation Contract
 
-Command: `/data-storytelling`
-
-Arguments:
+When invoked for data storytelling, extract or request these fields:
 
 - `goal` (required unless supplied via prerequisite or questionnaire): objective, decision, or question.
 - `data` (required): description or reference to the data source(s).
 - `audience` (optional): `exec`, `analyst`, `ops`, `customer`, or freeform.
 - `threshold` (optional): causal claim ceiling from 1 to 6.
 - `mode` (optional): `adaptive`, `exhaustive`, or `user-specified`.
-
-Optional parameters:
-
-- `template`: recommended from goal plus audience if not specified.
-- `hitl_mode`: defaults to `continuous-feedback`.
-- `include_lenses`: array of lenses to force include.
-- `exclude_lenses`: array of lenses to remove.
+- `template` (optional): recommended from goal plus audience if not specified.
+- `hitl_mode` (optional): defaults to `continuous-feedback`.
+- `include_lenses` (optional): array of lenses to force include.
+- `exclude_lenses` (optional): array of lenses to remove.
 
 ## Operating Flow
 
@@ -270,7 +265,7 @@ If the user does not specify a format, the skill recommends one and builds it.
 
 ## Required Prompt Components
 
-The implementation must read the following prompt specs as distinct contracts:
+Use the following prompt specs as distinct execution guides while running the skill:
 
 - `references/prompts/goal-interpreter.md`
 - `references/prompts/data-profiler.md`
@@ -284,9 +279,9 @@ The implementation must read the following prompt specs as distinct contracts:
 
 ## Minimum Deliverable Behavior
 
-An implementation built from this spec must:
+When running this skill:
 
-- Accept the invocation contract.
+- Extract or request the invocation fields.
 - Recommend missing parameters without silently forcing them.
 - Run at least one comparison or trend lens when the data supports it.
 - Emit lens outputs with explicit `baseline_or_comparator` and `method_parameters` provenance.
@@ -304,6 +299,6 @@ An implementation built from this spec must:
 - `references/lenses/`: built-in lens definitions.
 - `assets/templates/`: output templates.
 
-## Approval Status
+## Run Status
 
-Status: approved for implementation as a skill skeleton specification.
+Status: self-contained standalone skill guidance; execute directly from this file and the referenced prompt components.
