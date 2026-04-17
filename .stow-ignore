@@ -7,3 +7,6 @@ bootstrap\.sh
 
 # Non-dotfile project dirs
 \.innoobwetrust
+
+# Misc
+.DS_Store

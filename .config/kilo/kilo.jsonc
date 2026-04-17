@@ -101,7 +101,8 @@
       "git fetch *": "allow",
       "git ls-files *": "allow",
       "git show *": "allow",
-      "git diff *": "allow"
+      "git diff *": "allow",
+      "echo *": "allow"
     },
   },
   "instructions": [
