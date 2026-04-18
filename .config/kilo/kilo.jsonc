@@ -65,7 +65,7 @@
         "--browser-url=http://localhost:19222"
       ],
       "enabled": true
-    }
+    },
   },
   "permission": {
     "git status*": "allow",
@@ -106,7 +106,8 @@
       "git ls-files *": "allow",
       "git show *": "allow",
       "git diff *": "allow",
-      "echo *": "allow"
+      "echo *": "allow",
+      "ls *": "allow"
     },
   },
   "instructions": [

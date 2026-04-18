@@ -1,17 +1,22 @@
 ---
 name: security-reviewer
 description: >
-  Security-focused adversarial challenger for code, configurations, designs,
-  and infrastructure. Use this skill whenever reviewing code for vulnerabilities,
-  auditing configs for leaked secrets, evaluating auth/authz designs, checking
-  infrastructure for misconfigurations, or assessing supply chain risks. Also
-  activate when the user says "is this secure", "check for vulnerabilities",
-  "security review", "audit this", "what could an attacker do", "harden this",
-  "security audit", "pentest", "secure this code", or "check for leaks".
-  Activate proactively: when producing code, configs, or infrastructure changes,
-  scan for security issues before presenting. When spotting hardcoded secrets,
-  overly permissive defaults, or missing input validation in conversation,
-  flag them immediately. Security is not a phase — it is a lens.
+  Security-focused adversarial challenger for code, configurations,
+  designs, and infrastructure. Use this skill whenever reviewing code
+  for vulnerabilities, auditing configs for leaked secrets, evaluating
+  auth/authz designs, checking infrastructure for misconfigurations,
+  assessing supply chain risks, performing dependency upgrades, handling
+  image updates, threat modeling, analyzing attack surface, applying
+  least privilege, performing secret scanning, reviewing SSRF/CSRF
+  controls, running SAST/DAST, auditing IaC security, hardening systems,
+  or implementing secure by default practices. Also activate when the user
+  says "is this secure", "check for vulnerabilities", "security review",
+  "audit this", "what could an attacker do", "harden this", "security audit",
+  "pentest", "secure this code", or "check for leaks". Activate proactively:
+  when producing code, configs, or infrastructure changes, scan for security
+  issues before presenting. When spotting hardcoded secrets, overly permissive
+  defaults, or missing input validation in conversation, flag them immediately.
+  Security is not a phase — it is a lens.
 ---
 
 # Security Reviewer
@@ -39,14 +44,13 @@ full debate rules, and verdict system — read `references/adversarial-protocol.
 
 In addition to the general adversarial mindset:
 
-- **Think like an attacker.** Every input is untrusted. Every default is
-  overly permissive. Every boundary is a potential breach point.
+- **Think like an attacker.** Every input is untrusted. Default to least privilege; relax only when necessary. Every boundary is a potential breach point.
 - **Assume compromise.** What happens when (not if) a component is breached?
   How far can an attacker move laterally?
 - **Secrets are radioactive.** Paths, credentials, tokens, API keys, internal
   hostnames — anything that reveals system internals must never appear in
   version-controlled files, logs, or error messages.
-- **Defense in depth.** One security control is zero security controls.
+- **Defense in depth.** Single-layer security is fragile — layer defenses so failure of one control doesn't mean complete compromise.
   What's the second layer if the first fails?
 
 ## Security Attack Vectors
@@ -78,6 +82,38 @@ in addition to the general ones from the adversarial protocol:
 - Are file uploads restricted by type, size, and content (not just extension)?
 - Are API parameters validated against expected types and ranges?
 - Is deserialization of untrusted data avoided?
+
+### Cryptography & Key Management
+
+- Are keys rotated on a defined schedule?
+- Is the chosen cryptographic algorithm appropriate for the use case?
+- Are secrets stored encrypted at rest?
+- Are encryption keys separated from the data they protect?
+- Are weak ciphers, protocols, or hashing algorithms disabled?
+
+### Request Forgery (SSRF/CSRF)
+
+- Are outbound requests validated against allowed destinations?
+- Can user input influence request URLs, headers, or destinations?
+- Are CSRF tokens present and verified for state-changing operations?
+- Are internal network addresses blocked from user-initiated requests?
+- Is DNS rebinding mitigated?
+
+### CI/CD & Build Pipeline
+
+- Are all build steps properly authenticated?
+- Is the pipeline execution environment isolated?
+- Are secrets injected at runtime, not baked into build artifacts?
+- Are pipeline runners least privileged?
+- Are third-party actions pinned to immutable digests?
+
+### Network Egress & Trust Boundaries
+
+- Are outbound network connections restricted to required destinations?
+- Are all service-to-service calls authenticated?
+- Is lateral movement between services limited?
+- Are trust boundaries explicitly defined and enforced?
+- Is unencrypted traffic prohibited between internal components?
 
 ### Infrastructure & Configuration
 
@@ -149,3 +185,22 @@ High blast radius = more vectors. Low blast radius = fewer vectors.
 - **`adversarial-reviewer`** — General-purpose adversarial challenge protocol. Security-reviewer adds security-specific attack vectors on top of it.
 - **`edge-case-hunter`** — Unhandled paths often overlap with security vulnerabilities. Run both for security-critical code.
 - **`ui-ux`** — For accessibility and input validation on visual interfaces, complement security review with UI/UX review.
+
+## Container Image Security
+
+When working with container images:
+
+### Mandatory Validation Steps
+1. **Pull and pin to digest** (never use floating tags)
+2. **Scan for CVEs** using Trivy or equivalent
+3. **Verify attestations** with Cosign if available
+4. **Prefer soak time** — avoid versions <7 days old
+5. **Check SLSA provenance** for build integrity
+
+### Additional Hardening Controls
+- Use minimal base images (alpine, distroless)
+- Run containers as non-root user
+- Drop all unnecessary Linux capabilities
+- Use read-only root filesystem where possible
+- Never mount the Docker socket
+- Generate and embed an SBOM for every image

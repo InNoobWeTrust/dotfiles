@@ -226,6 +226,8 @@ usable npx && \
         ! usable marp-serve && alias marp-serve='npx --yes @marp-team/marp-cli@latest -s'
         # run commands from markdown files
         ! usable runme && alias runme='npx --yes runme'
+        # MiniMax CLI
+        ! usable mmx-cli && alias mmx-cli='npx --yes mmx-cli'
         # Copilot CLI
         ! usable copilot && alias copilot='npx --yes @github/copilot'
         # Gemini-cli
