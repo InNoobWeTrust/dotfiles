@@ -60,17 +60,37 @@ Before rewriting code, perform a brief audit:
 
 ## Data Augmentation
 
-This skill can be enhanced with curated design data (palettes, component specs) synced from external repositories.
+This skill uses curated design data (palettes, component specs) synced as raw CSV files from external repositories.
+
+### Cache Location
+- `UI_UX_CACHE` or `~/.cache/ui-ux-skill/ui-ux-pro-max/`
+
+### Querying CSV Data
+
+Since CSVs are stored as-is (not converted to JSON), use these tools:
+
+**With csvkit:**
+```bash
+# Find palettes containing a specific color hex
+csvgrep -c color -m "#3B82F6" ~/.cache/ui-ux-skill/ui-ux-pro-max/*.csv
+
+# Search component specs
+csvsql --query "SELECT * FROM components WHERE type='button'" ~/.cache/ui-ux-skill/ui-ux-pro-max/components.csv
+```
+
+**With ripgrep (fast text search):**
+```bash
+# Find rows containing a keyword
+rg "glassmorphism" ~/.cache/ui-ux-skill/ui-ux-pro-max/
+
+# Search specific columns
+rg -N "backdrop-filter" ~/.cache/ui-ux-skill/ui-ux-pro-max/
+```
 
 ### Sync Command
-
 ```bash
 .agents/scripts/sync-remotes.sh --apply
 ```
-
-
-### Cache Location
-- `UI_UX_CACHE` or `~/.cache/ui-ux-skill`.
 
 ---
 

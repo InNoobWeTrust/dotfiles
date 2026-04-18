@@ -1,7 +1,7 @@
 ---
 description: Automatically select and run the right reviewers for the artifact under review.
 mode: all
-model: minimax/MiniMax-M2.7-highspeed
+model: minimax-coding-plan/MiniMax-M2.7-highspeed
 ---
 
 # Review Orchestrator

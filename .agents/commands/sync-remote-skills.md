@@ -12,17 +12,17 @@ Fetch and update skills sourced from external GitHub repositories. Uses the GitH
 
 1. Check for available updates (dry run):
 ```bash
-.agents/scripts/sync-remote-skills.sh
+.agents/scripts/sync-remotes.sh
 ```
 
 2. Pull updates from remote:
 ```bash
-.agents/scripts/sync-remote-skills.sh --apply
+.agents/scripts/sync-remotes.sh --apply
 ```
 
 3. Force re-download even if SHA matches:
 ```bash
-.agents/scripts/sync-remote-skills.sh --apply --force
+.agents/scripts/sync-remotes.sh --apply --force
 ```
 
 4. After syncing, review the updated skill files for any breaking changes or new capabilities that may affect dependent commands.
@@ -50,8 +50,7 @@ Remote skill sources are defined in `.agents/skills/remote-skills-manifest.json`
 ### Adding a new remote skill
 
 1. Add an entry to `remote-skills-manifest.json` under `remotes`
-2. Run `.agents/scripts/sync-remote-skills.sh --apply` to perform initial fetch
-3. Update `.agents/skills/index.md` with the new skill entry
+2. Run `.agents/scripts/sync-remotes.sh --apply` to perform initial fetch
 
 ## Notes
 

@@ -245,12 +245,14 @@ done
 ```
 
 ### With Git Commits
+
+**Git safety**: Never run `git add` or `git commit` directly. Delegate all git mutations to the `git-supervisor` agent.
+
 ```bash
 for i in $(seq 1 20); do
   cat TASK.md | claude -p "$(cat PROMPT.md)"
   ./verify.sh || continue
-  git add -A
-  git commit -m "Ralph iteration $i"
+  # Route to git-supervisor: "Stage all verified changes and commit: Ralph iteration $i"
   break
 done
 ```

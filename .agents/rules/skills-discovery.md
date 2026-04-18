@@ -5,12 +5,13 @@ This repo has agent skills at `{AGENT_DIR}/skills/`, where `{AGENT_DIR}` is
 
 ## When to Check
 
-Before starting a task, scan the skills index to see if a relevant skill exists:
+When starting a task, use dynamic discovery to find applicable skills:
 
-1. Read `{AGENT_DIR}/skills/index.md` for the full catalog
-2. Match the user's request against the **Triggers** column
-3. If a match is found, read the skill's `SKILL.md` and follow its instructions
-4. Multiple skills can be composed — e.g., `adversarial-reviewer` after `requirements-driven-dev`
+1. Scan `{AGENT_DIR}/skills/` directory to discover available skills
+2. Read each skill's `SKILL.md` to understand triggers and capabilities
+3. Match the user's request against skill descriptions
+4. If a match is found, follow the skill's instructions
+5. Multiple skills can be composed — e.g., `adversarial-reviewer` after `requirements-driven-dev`
 
 ## Skill Precedence
 

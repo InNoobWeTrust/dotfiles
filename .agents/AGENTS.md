@@ -27,7 +27,7 @@ Default to human-in-the-loop collaboration.
 Before starting a task, check whether reusable guidance already exists in this directory.
 
 - Skills live in `skills/`.
-- Agents live in `agents/`.
+- Agents live in `agents/` and are discovered automatically by supported tools — no manual listing required.
 - Rules live in `rules/`.
 - Commands live in `commands/`.
 
@@ -36,7 +36,7 @@ Combine multiple skills or commands only when that improves the result.
 
 ## Skill Routing
 
-If the request matches a reusable capability, consult `skills/index.md`, `agents/`, and the relevant rule/command directories before writing new guidance.
+If the request matches a reusable capability, consult `agents/` and the relevant rule/command directories before writing new guidance.
 
 Examples:
 - review, critique, stress-test: use reviewer skills

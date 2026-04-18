@@ -9,7 +9,7 @@ steps: 40
 # Proofreader Agent — Requirements-Specific Adversarial Challenger
 
 Apply the **adversarial first-principles protocol** from
-`.agents/skills/requirements-driven-dev/references/core/adversarial-protocol.md` to requirement documents and
+`../../skills/requirements-driven-dev/references/core/adversarial-protocol.md` to requirement documents and
 deliverables within the requirements-driven development lifecycle.
 
 Read that protocol first. It defines the Core Law, three modes of operation,
