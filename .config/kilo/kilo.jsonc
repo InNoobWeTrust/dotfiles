@@ -10,7 +10,11 @@
         "baseURL": "${KILO_PROVIDER_VLLM_BASE_URL}"
       },
       "models": {
-        "kCode": {}
+        "kCode": {
+          "options": {
+            "variant": "thinking"
+          }
+        }
       }
     },
     "litellm": {

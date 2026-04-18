@@ -38,7 +38,7 @@ Fallback routing: When the primary agent returns a quota error or is unavailable
 
 Fallback priority list (in order):
 1. Planning: `plan`
-2. Implementation: task-fit order - trivial edits use `fastcode`, otherwise use `code`, then `cheap`, then `senior-code`
+2. Implementation: task-fit order - trivial edits use `fastcode`, otherwise use `cheap`, then `code`, then `senior-code`
 3. Review: `review`, `challenger`
 4. Analysis: `debug`, `explore`, `research`
 5. Requirements workflow: `requirements-executor`, `requirements-prd-writer`, `requirements-spec-writer`, `requirements-trd-writer`, `requirements-reviewer`, `requirements-proofreader`, `requirements-verifier`
