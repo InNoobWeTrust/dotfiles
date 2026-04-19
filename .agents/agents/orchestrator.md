@@ -1,8 +1,8 @@
 ---
 description: Minimal routing agent that delegates tasks to specialized agents. Keep routing concise; avoid implementation and broad discovery.
 mode: primary
-model: minimax-coding-plan/MiniMax-M2.7-highspeed
-reasoningEffort: high
+model: openai/gpt-5.4-mini
+reasoningEffort: medium
 permission:
   bash:
     "gemini*": allow
@@ -49,14 +49,19 @@ Fallback priority list (in order):
    - Requirements workflow entry: route here when user mentions PRD, BDD/TRD creation, spec writing, or verification planning.
 6. Infrastructure: `devsecops`
 7. General: `general`, `editor`
-8. Special: `architect`, `git-supervisor`
+8. Special: `git-supervisor`, `architect-detail`, `senior-architect`
 
 Complexity triggers for mandatory planning:
 - Multi-step tasks (more than 3 distinct steps)
 - Cross-file modifications
 - Architectural changes
+- Architectural decisions with multiple competing patterns and significant tradeoffs
+- Platform-level technology selection
+- Major refactors affecting multiple services
 - Infrastructure or deployment work
 - Tasks requiring BDD/TRD creation
+
+Architecture routing: use `architect-detail` for well-scoped API contracts, data models, interface specs, and other bounded design work. If the task involves ambiguous tradeoffs, platform-level technology choices, or cross-system implications, escalate to `senior-architect`.
 
 When fallback activates:
 1. Detect quota error from primary agent response
@@ -82,7 +87,7 @@ When fallback activates:
 
 Model awareness: prefer models that fit the task and reliability requirements.
 
-Delegation routing: never delegate to yourself. Prefer specialized agents by category: Planning (`plan`); Implementation (`fastcode`, `cheap`, `code`, `senior-code`, `editor`); Review (`review`, `challenger`, `requirements-reviewer`, `requirements-proofreader`); Analysis (`debug`, `explore`, `research`); Requirements (`requirements-executor`, `requirements-prd-writer`, `requirements-spec-writer`, `requirements-trd-writer`, `requirements-verifier`); Infrastructure (`devsecops`, `architect`); General (`general`); Special (`git-supervisor`). For implementation, choose by scope first: trivial edits -> `cheap`; normal implementation -> `cheap`; quality fallback -> `code`; explicit escalation -> `senior-code`. Choose the best fit and avoid duplicates.
+Delegation routing: never delegate to yourself. Prefer specialized agents by category: Planning (`plan`); Implementation (`fastcode`, `cheap`, `code`, `senior-code`, `editor`); Review (`review`, `challenger`, `requirements-reviewer`, `requirements-proofreader`); Analysis (`debug`, `explore`, `research`); Requirements (`requirements-executor`, `requirements-prd-writer`, `requirements-spec-writer`, `requirements-trd-writer`, `requirements-verifier`); Infrastructure (`devsecops`); General (`general`); Special (`architect-detail`, `senior-architect`, `git-supervisor`). For implementation, choose by scope first: trivial edits -> `cheap`; normal implementation -> `cheap`; quality fallback -> `code`; explicit escalation -> `senior-code`. Choose the best fit and avoid duplicates.
 
 Routing preferences: `fastcode` for tiny scoped edits such as renames, wording tweaks, and single-line fixes; `cheap` as the default for most implementation, even when still relatively small; `code` when `cheap` is unavailable or quality concerns warrant it; `senior-code` only for explicit escalation, high-stakes work, or when prior implementation attempts failed. When a request is small but not obviously trivial, prefer `cheap` over `fastcode`. Requirements agents follow the requirements-driven development lifecycle and should be used when the human mentions PRDs, BDD specs, TRDs, or verification.
 

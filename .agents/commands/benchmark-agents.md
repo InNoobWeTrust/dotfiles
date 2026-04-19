@@ -108,7 +108,8 @@ Extract current model assignments from each agent's YAML frontmatter.
 Build a current-state matrix:
 | Agent | Current Model | Provider | Subscription |
 |-------|--------------|----------|--------------|
-| architect.md | provider/model-name | provider | plan or access path |
+| architect-detail.md | provider/model-name | provider | plan or access path |
+| senior-architect.md | provider/model-name | provider | plan or access path |
 | ... | ... | ... | ... |
 
 Also classify each agent by its practical role:
