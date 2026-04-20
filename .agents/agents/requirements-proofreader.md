@@ -3,7 +3,7 @@ description: "Adversarial challenger for requirement documents. Applies adversar
 mode: all
 model: minimax-coding-plan/MiniMax-M2.7-highspeed
 reasoningEffort: high
-steps: 40
+steps: 15
 ---
 
 # Proofreader Agent — Requirements-Specific Adversarial Challenger

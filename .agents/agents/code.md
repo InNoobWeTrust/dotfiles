@@ -1,7 +1,7 @@
 ---
-description: Serious coding work requiring strong implementation quality
+description: Serious coding work requiring strong implementation quality. Use small, well-scoped tasks only — this model hallucinates on long context. Prefer short focused sessions.
 mode: all
-model: openai/gpt-5.4-mini
+model: minimax-coding-plan/MiniMax-M2.7-highspeed
 reasoningEffort: high
-steps: 25
+steps: 15
 ---

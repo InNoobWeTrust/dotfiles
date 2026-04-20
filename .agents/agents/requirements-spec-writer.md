@@ -1,9 +1,9 @@
 ---
 description: "Assists the human Product Owner in writing clear, verifiable BDD behavior specs. Triggers on: new feature, write spec, define behavior, user story."
 mode: all
-model: openai/gpt-5.4
+model: minimax-coding-plan/MiniMax-M2.7-highspeed
 reasoningEffort: high
-steps: 60
+steps: 20
 ---
 
 # Spec Writer — Behavior Spec Assistant

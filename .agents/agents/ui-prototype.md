@@ -3,4 +3,5 @@ description: High-fidelity UI prototyping for layout, spacing, typography, and v
 mode: all
 model: minimax-coding-plan/MiniMax-M2.7-highspeed
 steps: 5
+reasoningEffort: high
 ---

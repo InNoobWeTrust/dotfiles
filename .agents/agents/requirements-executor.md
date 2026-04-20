@@ -1,9 +1,9 @@
 ---
 description: "AI Executor agent. Produces deliverables strictly from BDD behavior specs. Triggers on: implement, build, create, develop, execute, produce."
 mode: all
-model: openai/gpt-5.4-mini
+model: minimax-coding-plan/MiniMax-M2.7-highspeed
 reasoningEffort: low
-steps: 100
+steps: 15
 ---
 
 # Executor Agent — Spec-Driven Delivery

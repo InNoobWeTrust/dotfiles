@@ -1,7 +1,7 @@
 ---
 description: "Review agent. Validates deliverables against BDD spec and quality standards. Triggers on: review, check, validate, before commit."
 mode: all
-model: openai/gpt-5.4
+model: minimax-coding-plan/MiniMax-M2.7-highspeed
 reasoningEffort: medium
 steps: 20
 ---

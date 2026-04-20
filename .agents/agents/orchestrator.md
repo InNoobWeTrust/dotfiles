@@ -1,7 +1,7 @@
 ---
 description: Minimal routing agent that delegates tasks to specialized agents. Keep routing concise; avoid implementation and broad discovery.
 mode: primary
-model: openai/gpt-5.4-mini
+model: minimax-coding-plan/MiniMax-M2.7-highspeed
 reasoningEffort: medium
 permission:
   bash:

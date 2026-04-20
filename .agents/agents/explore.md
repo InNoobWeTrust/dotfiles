@@ -3,5 +3,5 @@ description: Targeted codebase exploration and evidence gathering; use for high-
 mode: all
 model: minimax-coding-plan/MiniMax-M2.5-highspeed
 reasoningEffort: high
-steps: 30
+steps: 15
 ---
