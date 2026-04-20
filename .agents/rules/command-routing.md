@@ -7,7 +7,7 @@ is `.agents/` or `.agent/` at the workspace root.
 
 When the user requests a multi-step procedure that sounds like it could be templated:
 
-1. Read `{AGENT_DIR}/commands/index.md` for the full catalog
+1. Check `~/.agents/commands/` for a matching command file
 2. If a matching command exists, follow its steps rather than improvising
 3. Commands may reference skills — load those skills as needed
 

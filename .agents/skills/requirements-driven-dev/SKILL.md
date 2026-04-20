@@ -118,6 +118,156 @@ is optional — but if gaps emerge later, escalate to Standard/Deep track.
 
 ---
 
+## Design Discipline (Before Implementation)
+
+> **Core Principle**: Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the human has approved it.
+
+**Note on Quick track**: Quick track (for trivially small tasks) still applies lightweight design thinking — a few sentences may suffice — but you MUST still present it and get approval. The Design Discipline applies to all tracks. The difference is only formality, not skippage.
+
+Every project goes through this process. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+
+### The Design Process
+
+1. **Explore project context** — check files, docs, recent commits
+2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
+3. **Propose 2-3 approaches** — with trade-offs and your recommendation
+4. **Present design** — in sections scaled to their complexity, get user approval after each section
+5. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`
+6. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope
+7. **Human reviews written spec** — ask human to review the spec file before proceeding
+8. **Transition to implementation** — invoke writing-plans or proceed to BDD spec
+
+### Key Principles
+
+- **One question at a time** - Don't overwhelm with multiple questions
+- **Multiple choice preferred** - Easier to answer than open-ended when possible
+- **YAGNI ruthlessly** - Remove unnecessary features from all designs
+- **Explore alternatives** - Always propose 2-3 approaches before settling
+- **Incremental validation** - Present design, get approval before moving on
+
+### Design Output Location
+
+Design documents: `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`
+
+---
+
+## Execution Discipline
+
+### Test-Driven Development (TDD)
+
+> **Iron Law**: NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST.
+
+Write the test first. Watch it fail. Write minimal code to pass. If you didn't watch the test fail, you don't know if it tests the right thing.
+
+**RED-GREEN-REFACTOR cycle:**
+
+1. **RED** — Write one minimal failing test showing desired behavior
+2. **Verify RED** — Confirm test fails for expected reason (feature missing, not typo)
+3. **GREEN** — Write simplest code to pass the test (no features beyond the test)
+4. **Verify GREEN** — Confirm test passes and other tests still pass
+5. **REFACTOR** — Clean up duplication, improve names (after green only)
+
+**When Stuck in RED**: If the test fails but you don't know why, simplify the test — assert on something smaller, closer to the metal. Hard-to-test usually means the interface is wrong; listen to the test and redesign the API before proceeding.
+
+**Violating the letter of the rules is violating the spirit of the rules.**
+
+**Common Rationalizations (STOP and start over):**
+
+| Excuse | Reality |
+|--------|---------|
+| "I'll test after" | Tests passing immediately prove nothing |
+| "Deleting X hours is wasteful" | Sunk cost fallacy. Keeping unverified code is technical debt |
+| "TDD is dogmatic" | TDD IS pragmatic — finds bugs before commit |
+| "This is different because..." | All mean: Delete code. Start over with TDD |
+
+### Verification Before Completion
+
+> **Iron Law**: NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE.
+
+Claiming work is complete without verification is dishonesty, not efficiency.
+
+**The Gate Function:**
+```
+BEFORE claiming any status or expressing satisfaction:
+1. IDENTIFY: What command proves this claim?
+2. RUN: Execute the FULL command (fresh, complete)
+3. READ: Full output, check exit code, count failures
+4. VERIFY: Does output confirm the claim?
+   - If NO: State actual status with evidence
+   - If YES: State claim WITH evidence
+5. ONLY THEN: Make the claim
+```
+
+**Red Flags - STOP:**
+- Using "should", "probably", "seems to"
+- Expressing satisfaction before verification ("Great!", "Perfect!", "Done!")
+- About to commit/push/PR without verification
+- Trusting agent success reports without independent verification
+
+---
+
+## Review Discipline
+
+### Code Review Workflow
+
+**When to request review:**
+- After each major task in a multi-step implementation
+- Before merge to main/base
+- When stuck (fresh perspective helps)
+
+**The Review Process:**
+
+1. **Prepare context** — What was implemented? What was the spec/requirement? Git SHAs (BASE_SHA and HEAD_SHA)
+2. **Dispatch reviewer** — Provide precise context: what changed, what it should do, what to evaluate
+3. **Act on feedback:**
+   - **Critical** — Fix immediately before proceeding
+   - **Important** — Fix before proceeding
+   - **Minor** — Note for later, track as tech debt
+4. **Push back if reviewer is wrong** — with technical reasoning and evidence
+
+**When receiving review:**
+- Verify before implementing — don't blindly accept suggestions
+- Ask clarifying questions when feedback is unclear
+- Push back with technical reasoning if reviewer is wrong
+- No performative agreement ("You're absolutely right!")
+- If you pushed back and were wrong: state the correction factually, fix it, move on
+
+**For external reviewers:**
+- Check: Technically correct for THIS codebase? Breaks existing functionality?
+- Check: Reason for current implementation? Works on all platforms/versions?
+- If suggestion seems wrong: push back with technical reasoning
+- If conflicts with human's architectural decisions: stop and discuss first
+
+---
+
+## Planning Discipline
+
+When you have a spec or requirements for a multi-step task:
+
+### Plan Structure
+
+Each plan must have:
+1. **Header** — Goal, Architecture, Tech Stack
+2. **Task list** — Bite-sized steps (2-5 minutes each)
+3. **Each task shows** — Exact files (create/modify/test), complete code examples, commands with expected output
+
+### Critical Requirements
+
+- **No placeholders** — TBD, TODO, "implement later" are failures
+- **Exact file paths always**
+- **Complete code in every step**
+- **DRY, YAGNI, TDD principles**
+- **Frequent commits**
+
+### Self-Review Before Execution
+
+Check:
+- [ ] Spec coverage — every requirement addressed
+- [ ] Placeholder scan — any TBD/TODO/undefined sections?
+- [ ] Type consistency — interfaces match across components?
+
+---
+
 ## Skill Structure
 
 ```

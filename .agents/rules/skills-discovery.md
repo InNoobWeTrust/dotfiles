@@ -1,13 +1,12 @@
 # Skills Discovery
 
-This repo has agent skills at `{AGENT_DIR}/skills/`, where `{AGENT_DIR}` is
-`.agents/` or `.agent/` at the workspace root.
+This repo has agent skills at `~/.agents/skills/`.
 
 ## When to Check
 
 When starting a task, use dynamic discovery to find applicable skills:
 
-1. Scan `{AGENT_DIR}/skills/` directory to discover available skills
+1. Scan `~/.agents/skills/` directory to discover available skills
 2. Read each skill's `SKILL.md` to understand triggers and capabilities
 3. Match the user's request against skill descriptions
 4. If a match is found, follow the skill's instructions

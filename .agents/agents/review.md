@@ -1,7 +1,7 @@
 ---
-description: Critical review of plans, diffs, and decisions; use for correctness, risk, maintainability, missing cases, and actionable findings rather than implementation. Use small, well-scoped tasks only — this model hallucinates on long context. Prefer short focused sessions.
+description: Critical review of plans, diffs, and decisions; use for correctness, risk, maintainability, missing cases, and actionable findings rather than implementation. Requires xhigh reasoning for critical analysis.
 mode: all
-model: minimax-coding-plan/MiniMax-M2.7-highspeed
-reasoningEffort: medium
+model: openai/gpt-5.4
+reasoningEffort: high
 steps: 15
 ---
