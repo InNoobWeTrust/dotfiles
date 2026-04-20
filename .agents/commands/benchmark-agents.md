@@ -100,6 +100,57 @@ If a provider offers both subscription bundles and pay-as-you-go, capture both:
 1. subscription price and request/usage caps
 2. pay-as-you-go token or request pricing
 
+### Step 1.5: Deep Per-Model Benchmark Research
+
+For each candidate model under consideration, fetch its individual model page on
+provider aggregators (e.g., OpenRouter model pages) to extract model-specific
+benchmark data that reveals strengths and weaknesses. This goes beyond aggregated
+rankings to give granular capability evidence.
+
+**What to extract per model:**
+
+1. **Provider-published benchmark claims** — Look for specific benchmark scores
+   explicitly listed on the model page, such as:
+   - SWE-Pro (software engineering benchmark)
+   - Terminal Bench (CLI/shell operation benchmark)
+   - GDPval-AA (general reasoning/analysis benchmark)
+   - MMLU, HumanEval, MATH, GSM8K, or other standard benchmarks
+   - Any proprietary or custom benchmarks the provider publishes
+
+2. **Benchmark evidence format** — Capture the exact metric and value:
+   - Percentage scores (e.g., "56.2% on SWE-Pro")
+   - ELO/ranking scores (e.g., "1495 ELO on GDPval-AA")
+   - Latency or throughput numbers (e.g., "tok/s" rankings)
+
+3. **Capability specialization** — Identify what the model is specifically
+   optimized for based on its benchmark profile:
+   - **Agentic workflow** — models strong on SWE-Pro, Terminal Bench, tool-use
+   - **Long-context reasoning** — models with high context limits and strong recall
+   - **Fast iteration** — models with high throughput and low latency
+   - **Multilingual** — models with strong non-English benchmarks
+   - **Cost-efficiency** — models with acceptable benchmarks at lower price points
+
+4. **Context and limitations** — Note any benchmark disclaimers:
+   - Whether benchmarks are evaluated on specific dataset versions
+   - Whether scores are from provider's own evaluation or third-party
+   - Any known limitations or evaluation methodology differences
+
+**Example benchmark profiles:**
+
+| Model | SWE-Pro | Terminal Bench | GDPval-AA | Context | Specialization |
+|-------|---------|----------------|-----------|---------|----------------|
+| MiniMax M2.6 | 56.2% | 57.0% | 1495 ELO | 196K | Agentic workflow, production tasks |
+| Model B | 48.1% | 41.3% | 1380 ELO | 128K | Balanced general purpose |
+| Model C | 62.1% | 52.0% | 1520 ELO | 32K | Coding-focused, premium tier |
+
+**Cross-reference with agent needs:**
+
+Match model benchmark profiles to agent requirements:
+- **code agent** → prioritize SWE-Pro, HumanEval, Terminal Bench scores
+- **orchestrator** → prioritize agentic benchmarks (SWE-Pro, tool-use), context length, throughput
+- **cheap agent** → prioritize cost-efficiency with acceptable benchmark floor
+- **research/explore** → prioritize reasoning benchmarks (MMLU, GSM8K, GDPval-AA)
+
 ### Step 2: Load Current Agent Configuration
 
 Read all files in `.agents/agents/` directory.
@@ -137,6 +188,7 @@ Quality Evidence may include:
 4. Provider-published coding index or equivalent
 5. Provider mode-share evidence for relevant task categories
 6. Provider-published benchmark claims if clearly labeled as such
+7. Per-model specific benchmarks (SWE-Pro, Terminal Bench, GDPval-AA, etc.) from provider model pages
 
 ### Step 4: Apply Constraint Filters
 
@@ -167,6 +219,8 @@ the current decision. Do not assume a fixed set of vendors.
 |-----------|---------|---------|---------|---------|---------|
 | Reasoning Benchmark | value | value | value | value | value |
 | Coding Benchmark | value | value | value | value | value |
+| SWE-Pro | value | value | value | value | value |
+| Terminal Bench | value | value | value | value | value |
 | Tool Calls | value | value | value | value | value |
 | Speed | value | value | value | value | value |
 | Context | value | value | value | value | value |
