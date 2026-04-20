@@ -14,28 +14,62 @@
 
 ## User Stories
 
-- As a **<role>**, I want to **<action>**, so that **<benefit>**.
-- As a **<role>**, I want to **<action>**, so that **<benefit>**.
+- [US-1] As a **<role>**, I want to **<action>**, so that **<benefit>**.
+- [US-2] As a **<role>**, I want to **<action>**, so that **<benefit>**.
 
 ## Scenarios
 
-### Scenario: <Happy path — descriptive name>
+### Scenario 1: <Happy path — descriptive name>
 
 - **Given** <precondition — system state before action>
 - **When** <user action or system event>
 - **Then** <expected observable outcome>
 
-### Scenario: <Alternative path — descriptive name>
+### Scenario 2: <Alternative path — descriptive name>
 
 - **Given** <precondition>
 - **When** <action>
 - **Then** <expected outcome>
 
-### Scenario: <Error path — descriptive name>
+### Scenario 3: <Error path — descriptive name>
 
 - **Given** <precondition>
 - **When** <action that should fail>
 - **Then** <expected error behavior, message, or state>
+
+## Use Case Mapping
+
+This section groups the scenarios into use cases to aid implementation planning. Each use case represents a distinct decision context and maps scenarios to components and phases.
+
+### Use Case Template
+
+```
+UC-<N>: <Use Case Name>
+<1-2 sentences: what decision context this supports>
+- **Covers**: Scenario <#> (<brief name>), Scenario <#> (<brief name>)
+- **Lives in**: <component or location>
+- **Status**: <implemented | partial | not implemented>
+- **Blockers**: <any dependencies or blocked items>
+```
+
+### Component Ownership
+
+```
+<Component> — Scenarios <#>, <#>, <#>. <1-sentence description of what it owns>.
+```
+
+### Phase Eligibility
+
+Identify which scenarios can be implemented without waiting for dependencies:
+
+- **Phase 1 eligible** (no blockers): <list scenarios>
+- **Blocked on**: <dependencies>
+
+### Recommended Implementation Order
+
+1. <priority 1 — scenario/use case with justification>
+2. <priority 2>
+3. ...
 
 ## Validation Rules
 
