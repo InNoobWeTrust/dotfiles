@@ -1,22 +1,38 @@
 ---
 description: >
-  Run the Swarm Orchestration Pipeline on raw input. Uses kilo-swarm as a
-  single-pass node runner and orchestrates phases, loops, and parallelism
-  directly. Activate when the user says "swarm", "run swarm", "orchestrate",
-  "swarm pipeline", or wants multi-agent consensus before generating output.
+  Run a swarm of multiple parallel agent nodes using the repo-local
+  kilo-swarm wrapper. Activate when the user says "swarm", "run swarm",
+  "multi-agent research", or wants diverse perspectives synthesized.
 ---
 
-# Swarm — Multi-Agent Orchestration Pipeline
+# Swarm — Multi-Agent Parallel Node Guidance
 
-`kilo-swarm` is a **single-pass node runner** — one call = one agent invocation
-returning JSON. The orchestrator (this session or a caller script) owns all
-phase logic, loops, retries, and parallelism.
+**A "swarm" means running MULTIPLE agents in parallel with different personas,
+then synthesizing their outputs.** A single agent call is NOT a swarm — it's
+just one node.
+
+`kilo-swarm` is a **node runner** — one call = one agent invocation returning
+JSON. To run a swarm, invoke multiple nodes in parallel, then merge the results.
+
+## Swarm Execution Pattern
+
+```
+1. Generate N diverse personas (e.g., "philosopher", "scientist", "artist")
+2. Invoke ALL nodes in parallel (same prompt, different personas)
+3. Collect all JSON responses
+4. Synthesize into unified output with a final swarm-node pass
+```
+
+**Critical:** Do NOT run a single node and call it a swarm. A swarm requires:
+- 3+ agents with distinct viewpoints/perspectives
+- Parallel execution (not sequential)
+- A synthesis step to merge divergent outputs
 
 ## kilo-swarm interface
 
 ```
-kilo-swarm -m MODEL -p PERSONA -i INPUT_FILE
-echo "input" | kilo-swarm -m MODEL -p PERSONA
+./.local/bin/kilo-swarm -m MODEL -p PERSONA -i INPUT_FILE
+echo "input" | ./.local/bin/kilo-swarm -m MODEL -p PERSONA
 ```
 
 | Flag | Required | Description |
@@ -28,10 +44,51 @@ echo "input" | kilo-swarm -m MODEL -p PERSONA
 
 **Output:** extracted JSON to stdout. Always exits 0; returns `{}` on empty/invalid response.
 
-## Domain configs
+## How To Run a Swarm
+
+### Step 1: Define Diverse Personas
+Generate 3-5 distinct viewpoints relevant to the task. Include web search
+capability if research requires current information:
+
+```bash
+-p 'You are a RESEARCHER. Search for information and return JSON...'
+```
+
+Examples:
+- Research: "historian", "economist", "ethicist", "engineer"
+- Creative: "poet", "critic", "technician", "audience member"
+- Analysis: "advocate", "skeptic", "analyst", "pragmatist"
+
+### Step 2: Run All Nodes in Parallel
+Invoke multiple `kilo-swarm` calls simultaneously, each with a different persona:
+
+```bash
+# Parallel node 1
+echo '{"topic":"..."}' | ./.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA1]. Return JSON: {...}'
+
+# Parallel node 2  
+echo '{"topic":"..."}' | ./.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA2]. Return JSON: {...}'
+
+# Parallel node 3
+echo '{"topic":"..."}' | ./.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA3]. Return JSON: {...}'
+```
+
+### Step 3: Synthesize
+Merge all node outputs into a final synthesis pass using a stronger model:
+
+```bash
+# Synthesis pass
+echo '{"node1":{...},"node2":{...},"node3":{...}}' | ./.local/bin/kilo-swarm -m "openai/gpt-5.4" -p 'You are a SYNTHESIS ENGINE. Merge these perspectives into unified output. Return JSON: {...}'
+```
+
+### Step 4: Return Results
+Present the synthesized output to the user with a brief explanation of the swarm approach.
+
+## Persona Library
 
 Domain configs live in `~/.agents/skills/swarm-orchestrator/references/`.
-Each JSON file defines all the personas for a pipeline:
+These files are useful as **persona libraries**. Copy or adapt the persona text
+you need for the current pass.
 
 | Domain | File | Pipeline |
 |--------|------|----------|
@@ -41,136 +98,100 @@ Each JSON file defines all the personas for a pipeline:
 | Product | `pm.json` | Product/Business → Spec → Features |
 | Slides | `slides.json` | Communications/Audience → Structure → Slides |
 
-### Domain JSON fields
+The config files may still use phase-oriented key names. Treat those as storage
+conventions only. This command does not require you to follow those phases.
 
-```
-phase1_a_label / phase1_a_persona / phase1_a_field
-phase1_b_label / phase1_b_persona / phase1_b_field
-phase2_forward_label / phase2_forward_persona
-phase2_review_label  / phase2_review_persona       → must output {approved, critical_vulnerabilities, edge_cases}
-phase2_revise_label  / phase2_revise_persona        → receives {current_design, qa_feedback}
-phase3_decompose_label / phase3_decompose_persona   → must output {tasks:[{id,title,file_path,...}]}
-phase3_maker_label     / phase3_maker_persona       → must output {file_path, code, ...}
-phase3_maker_fix_label / phase3_maker_fix_persona   → receives {task, previous_output, review_failures}
-phase3_breaker_label   / phase3_breaker_persona     → must output {passed, critical_failures, issues}; use __QA_CASES__ placeholder
-```
+When using this command, copy or adapt **one** persona from those files instead
+of trying to recreate the full pipeline mechanically.
 
-## Model selection — checkpoint before running
+## Hard-Coded Model Defaults
 
-Before invoking any `kilo-swarm` calls, present the following table to the
-user and **wait for confirmation or overrides**. Do not proceed until the user
-approves the model choices.
+Use fixed defaults and start immediately unless the user explicitly asks to
+override models.
 
-| Node | Phase | Task nature | Default model | Why |
-|------|-------|-------------|---------------|-----|
-| Ingest A + B | 1 — parallel research | Extraction, classification, no reasoning chain | `kilo/google/gemini-2.0-flash-lite-001` | Cheapest capable model; task is structured extraction not synthesis |
-| Forward (Synth) | 2 — design/spec | Synthesis, contradiction resolution, structured output | `kilo/google/gemini-2.5-flash-lite` | Needs reasoning; flash-lite hits cost/quality balance |
-| Review (QA/Critic) | 2 — adversarial | Negative-case generation, vulnerability spotting | `kilo/google/gemini-2.5-flash-lite` | Same tier as Forward; adversarial quality matters here |
-| Revise | 2 — revision | Targeted rewrite addressing specific failures | `kilo/google/gemini-2.5-flash-lite` | Continuity with Forward tier |
-| Decompose | 3 — planning | Task decomposition from locked spec | `kilo/google/gemini-2.5-flash-lite` | Structural reasoning; errors here cascade to all tasks |
-| Maker | 3 — execution | Produce output per task | `kilo/mistralai/devstral-small` | Domain-specific execution; cheap and task-focused |
-| Breaker | 3 — review | Verify maker output against QA cases | `kilo/mistralai/devstral-small` | Same tier as Maker; upgrade if review quality is weak |
-| Maker-Fix | 3 — retry | Targeted fix on rejected output | `kilo/mistralai/devstral-small` | Same tier as Maker |
+These defaults are intentionally opinionated for this repo's setup:
 
-**Present to user:**
+- They bias toward included or free models first.
+- They follow `.agents/benchmark-report-*.md` guidance to avoid burning
+  paid provider usage on high-frequency planning and routing work.
+- They reuse model families already present in `.agents/agents/`.
 
-> These are the default models for each swarm node. You can override any of
-> them. To research cheaper or better alternatives, run `/benchmark-agents`
-> with a focus on small/cheap models first.
->
-> | Node group | Model | Override? |
-> |------------|-------|-----------|
-> | Research (Phase 1) | `kilo/google/gemini-2.0-flash-lite-001` | |
-> | Spec/Decompose (Phase 2 + Phase 3 Decompose) | `kilo/google/gemini-2.5-flash-lite` | |
-> | Execution (Phase 3 Maker/Breaker) | `kilo/mistralai/devstral-small` | |
->
-> Confirm to proceed, or specify overrides.
+| Use case | Default model | Why |
+|----------|---------------|-----|
+| Broad intake / extraction | `kilo/x-ai/grok-code-fast-1:optimized:free` | Free and fast; good enough for lightweight structured extraction |
+| Planning / spec / recommendation JSON | `github-copilot/gpt-5-mini` | Included or unlimited in current setup; good quality floor for structured planning |
+| Heavier critical synthesis | `openai/gpt-5.4-mini` | Use when the one-pass result is important enough to justify a stronger model |
 
-Only start the orchestration loop after the user responds.
+If the user explicitly asks for fresher model research, use `/benchmark-agents`.
+Otherwise, keep these defaults and run.
 
-## Orchestration pattern
+## Examples
 
-The orchestrator reads the domain config, calls `kilo-swarm` for each node,
-and manages state between calls.
+### Proper Swarm (Multiple Parallel Nodes)
 
 ```bash
-DOMAIN=~/.agents/skills/swarm-orchestrator/references/code.json
-RM=kilo/google/gemini-2.0-flash-lite-001   # research model
-SM=kilo/google/gemini-2.5-flash-lite        # spec model
-CM=kilo/mistralai/devstral-small            # code model
+# Node 1: Economist (with web search for current data)
+echo '{"topic":"AI impact on jobs"}' | ./.local/bin/kilo-swarm \
+  -m "github-copilot/gpt-5-mini" \
+  -p 'You are an ECONOMIST with web search access. Search for recent data, then Return JSON: {"role":"economist","findings":["insight1","insight2","insight3"]}'
 
-# Phase 1 — parallel
-P1A=$(jq -r .phase1_a_persona "$DOMAIN")
-P1B=$(jq -r .phase1_b_persona "$DOMAIN")
-kilo-swarm -m "$RM" -p "$P1A" -i input.txt > p1a.json &
-kilo-swarm -m "$RM" -p "$P1B" -i input.txt > p1b.json &
-wait
+# Node 2: Ethicist (with web search for case studies)
+echo '{"topic":"AI impact on jobs"}' | ./.local/bin/kilo-swarm \
+  -m "github-copilot/gpt-5-mini" \
+  -p 'You are an ETHICIST with web search access. Search for relevant case studies, then Return JSON: {"role":"ethicist","findings":["insight1","insight2","insight3"]}'
 
-# Merge
-jq -s '.[0] * .[1]' p1a.json p1b.json > p1_merged.json
+# Node 3: Engineer (with web search for technical perspectives)
+echo '{"topic":"AI impact on jobs"}' | ./.local/bin/kilo-swarm \
+  -m "github-copilot/gpt-5-mini" \
+  -p 'You are an ENGINEER with web search access. Search for technical analysis, then Return JSON: {"role":"engineer","findings":["insight1","insight2","insight3"]}'
 
-# Phase 2 — forward pass
-P2F=$(jq -r .phase2_forward_persona "$DOMAIN")
-kilo-swarm -m "$SM" -p "$P2F" -i p1_merged.json > p2_forward.json
-
-# Phase 2 — review (loop up to 3x)
-P2R=$(jq -r .phase2_review_persona "$DOMAIN")
-P2V=$(jq -r .phase2_revise_persona "$DOMAIN")
-for i in 1 2 3; do
-  kilo-swarm -m "$SM" -p "$P2R" -i p2_forward.json > p2_review.json
-  approved=$(jq -r '.approved' p2_review.json)
-  crits=$(jq '.critical_vulnerabilities | length' p2_review.json)
-  [[ "$approved" == "true" || "$crits" == "0" ]] && break
-  jq -s '{current_design:.[0],qa_feedback:.[1]}' p2_forward.json p2_review.json > p2_feedback.json
-  kilo-swarm -m "$SM" -p "$P2V" -i p2_feedback.json > p2_forward.json
-done
-
-# Phase 3 — decompose
-P3D=$(jq -r .phase3_decompose_persona "$DOMAIN")
-kilo-swarm -m "$SM" -p "$P3D" -i p2_forward.json > tasks.json
-
-# Phase 3 — per-task maker + breaker (orchestrator loops over tasks)
-QA_CASES=$(jq '.edge_cases[:10]' p2_review.json)
-P3M=$(jq -r .phase3_maker_persona "$DOMAIN")
-P3B_TMPL=$(jq -r .phase3_breaker_persona "$DOMAIN")
-P3B="${P3B_TMPL//__QA_CASES__/$QA_CASES}"
-P3F=$(jq -r .phase3_maker_fix_persona "$DOMAIN")
-
-jq -c '.tasks[]' tasks.json | while read -r task; do
-  echo "$task" > task.json
-  kilo-swarm -m "$CM" -p "$P3M" -i task.json > maker.json
-  kilo-swarm -m "$CM" -p "$P3B" -i maker.json > breaker.json
-  passed=$(jq -r '.passed' breaker.json)
-  if [[ "$passed" != "true" ]]; then
-    jq -s '{task:.[0],previous_output:.[1],review_failures:.[2]}' \
-      task.json maker.json breaker.json > fix_input.json
-    kilo-swarm -m "$CM" -p "$P3F" -i fix_input.json > maker.json
-  fi
-  # save maker.json artifact...
-done
+# Synthesis pass
+echo '{"economist":{...},"ethicist":{...},"engineer":{...}}' | ./.local/bin/kilo-swarm \
+  -m "openai/gpt-5.4" \
+  -p 'Merge these perspectives into unified output. Return JSON: {"unified_answer":"","cross_cutting_themes":[],"practical_synthesis":""}'
 ```
 
-## Consensus check rules
+## Upgrade Guidance
 
-| Phase | Check | Orchestrator action |
-|-------|-------|---------------------|
-| Phase 1 | JSON parseable / non-empty | Re-call kilo-swarm (up to 2 times) |
-| Phase 2 | `review.approved == true` OR `critical_vulnerabilities == []` | Feed review back into forward agent (max 3 loops) |
-| Phase 3 | `breaker.passed == true` | Feed breaker report into maker-fix agent (max 2 retries) |
+| Use case | Default | Upgrade when |
+|----------|---------|--------------|
+| Broad extraction | `kilo/x-ai/grok-code-fast-1:optimized:free` | The input is dense, ambiguous, or repeatedly produces weak JSON |
+| Structured planning/recommendation | `github-copilot/gpt-5-mini` | The result is high-stakes or needs stronger long-form reasoning |
+| Critical single-pass synthesis | `openai/gpt-5.4` | The output quality matters more than cost or latency |
 
-## Model recommendations
+Manual upgrade options:
 
-> Run `/benchmark-agents` to get up-to-date alternatives. The defaults below
-> are starting points only — cheap models evolve fast.
+- Use `google/gemini-2.5-flash` when context size matters more than absolute
+  coding depth.
+- Use `openai/gpt-5.4` or `github-copilot/claude-sonnet-4.6` when the output is
+  critical enough to justify a stronger premium model.
+- Use `vllm/kCode` only for experimental ultra-cheap execution; it is not the
+  default quality floor.
 
-| Phase | Default | When to upgrade |
-|-------|---------|-----------------|
-| Research | `kilo/google/gemini-2.0-flash-lite-001` | Input is ambiguous or dense; upgrade to flash |
-| Spec | `kilo/google/gemini-2.5-flash-lite` | Design is complex or multi-system; upgrade to `gemini-2.5-flash` |
-| Execution | `kilo/mistralai/devstral-small` | Domain needs deeper reasoning; try `deepseek-chat-v3-0324` |
+## Common Mistakes to Avoid
+
+- ❌ **Running one node and calling it a swarm** — That's a single agent, not a swarm
+- ❌ **Running nodes sequentially** — Swarms require parallel execution for true diversity
+- ❌ **Skipping synthesis** — Multiple perspectives without synthesis produces disjointed output
+
+## Enabling Web Search for Research Tasks
+
+By default, `swarm-node` is analysis-only. For research tasks requiring current
+information, include web search capability in the persona:
+
+```bash
+# Example with web search enabled
+echo '{"topic":"..."}' | ./.local/bin/kilo-swarm \
+  -m "github-copilot/gpt-5-mini" \
+  -p 'You are a RESEARCHER with web search access. Search for relevant information, then Return JSON: {...}'
+```
+
+When instructed or when the task requires current/recent data, agents should use
+web search tools to gather evidence before returning findings.
 
 ## Limitations
 
 - Each `kilo-swarm` call is a new session — no shared memory between nodes
-- `swarm-node` agent has all write/bash tools denied — analysis only
+- `swarm-node` agent has write/bash tools denied by default — enable explicitly in persona if needed
 - `depends_on` task ordering is not enforced; orchestrator must handle if needed
+- Parallel execution is the orchestrator's responsibility — this command provides the primitive only

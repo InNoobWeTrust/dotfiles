@@ -109,6 +109,9 @@
       "echo *": "allow",
       "ls *": "allow"
     },
+    "recall": {
+      "search": "allow"
+    },
   },
   "instructions": [
     "~/.agents/instructions/git-safety.md",

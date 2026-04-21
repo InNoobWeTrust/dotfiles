@@ -47,10 +47,18 @@ done
 
 # Read stdin to a tmpfile if no -i given
 TMP_INPUT=""
+TMP_STDERR=""
+
+cleanup() {
+  [[ -n "$TMP_INPUT" ]] && rm -f "$TMP_INPUT"
+  [[ -n "$TMP_STDERR" ]] && rm -f "$TMP_STDERR"
+}
+
+trap cleanup EXIT
+
 if [[ -z "$INPUT_FILE" ]]; then
   [[ -t 0 ]] && { echo "ERROR: no -i FILE and no stdin" >&2; exit 1; }
   TMP_INPUT=$(mktemp)
-  trap 'rm -f "$TMP_INPUT"' EXIT
   cat > "$TMP_INPUT"
   INPUT_FILE="$TMP_INPUT"
 fi
@@ -58,16 +66,26 @@ fi
 [[ -f "$INPUT_FILE" ]] || { echo "ERROR: input file not found: $INPUT_FILE" >&2; exit 1; }
 
 if [[ "$DRY_RUN" == "true" ]]; then
-  echo "DRY-RUN: kilo run --auto --format json --agent swarm-node -m $MODEL -f $INPUT_FILE \"<persona>\"" >&2
+  echo "DRY-RUN: kilo run --auto --format json --agent swarm-node -m $MODEL -f $INPUT_FILE -- \"<persona>\"" >&2
   echo '{}'
   exit 0
 fi
 
 # Run and extract JSON
+TMP_STDERR=$(mktemp)
+set +e
 raw=$(kilo run --auto --format json --agent swarm-node \
   -m "$MODEL" \
   -f "$INPUT_FILE" \
-  "$PERSONA" 2>/dev/null) || true
+  -- \
+  "$PERSONA" 2>"$TMP_STDERR")
+kilo_status=$?
+set -e
+
+if [[ $kilo_status -ne 0 && -s "$TMP_STDERR" ]]; then
+  printf 'WARN: kilo run exited with status %s\n' "$kilo_status" >&2
+  printf '%s\n' "$(<"$TMP_STDERR")" >&2
+fi
 
 # Concatenate all text events from --format json output
 text=$(printf '%s\n' "$raw" | python3 -c "
