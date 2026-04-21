@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+# kilo-swarm — Single-pass swarm node runner
+#
+# Runs one kilo agent invocation with the swarm-node agent and outputs
+# extracted JSON. The orchestrator is responsible for phases, loops,
+# parallelism, and file management.
+#
+# Usage:
+#   kilo-swarm -m MODEL -p PERSONA -i INPUT_FILE
+#   echo "input" | kilo-swarm -m MODEL -p PERSONA
+#
+# Options:
+#   -m MODEL    model to use (required)
+#   -p PERSONA  persona/instruction string passed as the user message (required)
+#   -i FILE     input file attached via -f (default: stdin written to tmpfile)
+#   --dry-run   print the kilo command without executing
+#   -h          show this help
+#
+# Output: extracted JSON object to stdout; logs to stderr
+# Exit:   0 always — empty/invalid response emits {} to stdout
+
+set -euo pipefail
+
+MODEL=""
+PERSONA=""
+INPUT_FILE=""
+DRY_RUN=false
+
+usage() {
+  sed -n '3,18p' "$0" | sed 's/^# //' | sed 's/^#//'
+  exit 0
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -m) MODEL="$2";   shift 2 ;;
+    -p) PERSONA="$2"; shift 2 ;;
+    -i) INPUT_FILE="$2"; shift 2 ;;
+    --dry-run) DRY_RUN=true; shift ;;
+    -h|--help) usage ;;
+    *) echo "Unknown option: $1" >&2; exit 1 ;;
+  esac
+done
+
+[[ -z "$MODEL" ]]   && { echo "ERROR: -m MODEL is required" >&2; exit 1; }
+[[ -z "$PERSONA" ]] && { echo "ERROR: -p PERSONA is required" >&2; exit 1; }
+
+# Read stdin to a tmpfile if no -i given
+TMP_INPUT=""
+if [[ -z "$INPUT_FILE" ]]; then
+  [[ -t 0 ]] && { echo "ERROR: no -i FILE and no stdin" >&2; exit 1; }
+  TMP_INPUT=$(mktemp)
+  trap 'rm -f "$TMP_INPUT"' EXIT
+  cat > "$TMP_INPUT"
+  INPUT_FILE="$TMP_INPUT"
+fi
+
+[[ -f "$INPUT_FILE" ]] || { echo "ERROR: input file not found: $INPUT_FILE" >&2; exit 1; }
+
+if [[ "$DRY_RUN" == "true" ]]; then
+  echo "DRY-RUN: kilo run --auto --format json --agent swarm-node -m $MODEL -f $INPUT_FILE \"<persona>\"" >&2
+  echo '{}'
+  exit 0
+fi
+
+# Run and extract JSON
+raw=$(kilo run --auto --format json --agent swarm-node \
+  -m "$MODEL" \
+  -f "$INPUT_FILE" \
+  "$PERSONA" 2>/dev/null) || true
+
+# Concatenate all text events from --format json output
+text=$(printf '%s\n' "$raw" | python3 -c "
+import sys, json
+out = ''
+for line in sys.stdin:
+    line = line.strip()
+    if not line: continue
+    try:
+        e = json.loads(line)
+        if e.get('type') == 'text':
+            out += e.get('part', {}).get('text', '')
+    except Exception:
+        pass
+print(out.strip())
+")
+
+# Extract first valid JSON object or array from the text
+printf '%s\n' "$text" | python3 -c "
+import sys, re, json
+text = sys.stdin.read()
+for pat in [r'\`\`\`json\s*([\s\S]+?)\s*\`\`\`', r'\`\`\`\s*(\{[\s\S]+?\})\s*\`\`\`', r'\`\`\`\s*(\[[\s\S]+?\])\s*\`\`\`']:
+    m = re.search(pat, text)
+    if m:
+        try:
+            print(json.dumps(json.loads(m.group(1)), indent=2)); sys.exit(0)
+        except Exception:
+            pass
+for sc, ec in [('{','}'), ('[',']')]:
+    idx = text.find(sc)
+    if idx == -1: continue
+    depth = 0
+    for i in range(idx, len(text)):
+        if text[i] == sc: depth += 1
+        elif text[i] == ec:
+            depth -= 1
+            if depth == 0:
+                try:
+                    print(json.dumps(json.loads(text[idx:i+1]), indent=2)); sys.exit(0)
+                except Exception:
+                    break
+print('{}')
+"

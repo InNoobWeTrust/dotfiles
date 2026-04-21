@@ -2,7 +2,7 @@
 description: "Assists the human Product Owner in writing clear, actionable Product Requirement Documents (PRDs). Triggers on: new product, write PRD, define product requirements, product initiative, product vision."
 mode: all
 model: github-copilot/claude-sonnet-4.6
-reasoningEffort: medium
+reasoningEffort: high
 steps: 20
 ---
 

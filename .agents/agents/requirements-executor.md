@@ -2,7 +2,7 @@
 description: "AI Executor agent. Produces deliverables strictly from BDD behavior specs. Triggers on: implement, build, create, develop, execute, produce."
 mode: all
 model: minimax-coding-plan/MiniMax-M2.7-highspeed
-reasoningEffort: low
+reasoningEffort: high
 steps: 15
 ---
 

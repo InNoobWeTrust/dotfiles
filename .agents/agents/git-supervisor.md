@@ -2,7 +2,7 @@
 description: Safety gate for any git write operation. Use for staging, commits, pushes, branch prep, and git requests that could leak unrelated files or secrets.
 mode: all
 model: github-copilot/claude-sonnet-4.6
-reasoningEffort: low
+reasoningEffort: high
 steps: 20
 permission:
   bash:

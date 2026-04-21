@@ -55,11 +55,28 @@ Identify which benchmark and catalog sources are relevant to the providers under
 consideration. Use the minimum set of sources needed to compare the real options
 the user can actually choose from.
 
-Examples of valid sources:
-1. Aggregator benchmark/ranking sites
+**Standard benchmark/ranking sources** (mostly cover frontier/costly models):
+1. Aggregator benchmark/ranking sites (e.g. ArtificialAnalysis.ai)
 2. Provider-specific leaderboards or model catalogs
 3. Public pricing and plan pages
 4. Public documentation listing model availability and limits
+
+**Additional sources required when evaluating cheap/small models** — standard
+benchmarks under-represent this space. Always include at least 3 of these:
+
+| Source | What it covers |
+|--------|---------------|
+| Hugging Face Open LLM Leaderboard (v2) — `huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard` | Open-weight models of all sizes; filterable by parameter count; includes 1B–13B range |
+| LMSYS Chatbot Arena — `lmarena.ai` | Human preference ELO across all tiers including free/cheap; best proxy for real-world quality |
+| BigCode Leaderboard — `huggingface.co/spaces/bigcode/bigcode-models-leaderboard` | Coding-specific; covers small open-weight code models |
+| EvalPlus Leaderboard — `evalplus.github.io/leaderboard.html` | HumanEval+ and MBPP+ scores; includes open and small models |
+| OpenRouter model catalog — `openrouter.ai/models` | Lists all available models with pricing, context, and provider; filter by price to find cheap options |
+| OpenRouter free tier — `openrouter.ai/models?max_price=0` | Models available at $0/token; quality varies widely |
+| Together AI model catalog — `together.ai/models` | Many open-weight small models with pay-per-token pricing |
+| Groq model catalog — `console.groq.com/docs/models` or `groq.com/pricing` | Speed-optimized inference; often cheapest for latency-sensitive nodes |
+| Fireworks AI model catalog — `fireworks.ai/models` | Competitive pricing on open-weight models; good for batch/parallel workloads |
+| Ollama model library — `ollama.com/library` | Locally hosted models; zero marginal cost; quality depends on hardware |
+| LLM Pricing comparison — `llmpricecheck.com` or `deepinfra.com` | Cross-provider price comparison for the same model |
 
 If a source is dynamically rendered, use Chrome with remote debugging and wait
 for the full page render before extracting data.
@@ -81,6 +98,15 @@ When using a provider-specific leaderboard or catalog, capture:
 1. Top models overall
 2. Top models by relevant mode or task category
 3. Per-model metadata such as context, benchmark snippets, and published pricing
+
+**When the task explicitly involves cheap/small model selection** (e.g. swarm
+node selection, background agents, high-volume parallel tasks):
+
+- Filter all sources to models ≤ $0.50/M input tokens OR free
+- Include open-weight models runnable locally if the user has hardware
+- Note throughput (tok/s) — cheap models must be fast enough for parallel use
+- Note context window — swarm nodes often receive merged JSON; 32K minimum
+- Flag models with no public benchmark data as **unvalidated**
 
 Treat mode shares or usage shares as **real-world popularity data**, not as a
 direct substitute for quality benchmarks or user preference.

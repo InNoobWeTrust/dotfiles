@@ -2,7 +2,7 @@
 description: "AI Verifier agent. Designs and runs verifications from BDD behavior specs. Triggers on: verify, check, validate, test, coverage."
 mode: all
 model: minimax-coding-plan/MiniMax-M2.7-highspeed
-reasoningEffort: low
+reasoningEffort: high
 steps: 15
 ---
 
