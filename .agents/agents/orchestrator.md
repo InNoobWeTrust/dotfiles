@@ -5,19 +5,17 @@ model: minimax-coding-plan/MiniMax-M2.7-highspeed
 reasoningEffort: medium
 permission:
   bash:
-    "gemini*": allow
-    "npx acpx*": allow
-    "*": deny
+    "*": ask
   write:
-    "*": deny
+    "*": ask
   edit:
-    "*": deny
+    "*": ask
   create:
-    "*": deny
+    "*": ask
   delete:
-    "*": deny
+    "*": ask
   move:
-    "*": deny
+    "*": ask
   read:
     "*": allow
 ---
