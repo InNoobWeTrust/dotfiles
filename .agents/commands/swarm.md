@@ -38,6 +38,8 @@ JSON. To run a swarm, invoke multiple nodes in parallel, then merge the results.
 
 ## kilo-swarm interface
 
+**Architecture:** Kilo Code is the orchestrator — it manages phases, parallelism, merging, and retry loops. `kilo-swarm` is the atomic primitive: one call = one agent invocation.
+
 ```
 ~/.local/bin/kilo-swarm -m MODEL -p PERSONA -i INPUT_FILE
 echo "input" | ~/.local/bin/kilo-swarm -m MODEL -p PERSONA
@@ -48,9 +50,14 @@ echo "input" | ~/.local/bin/kilo-swarm -m MODEL -p PERSONA
 | `-m MODEL` | yes | Model identifier |
 | `-p PERSONA` | yes | Persona/instruction string (user message) |
 | `-i FILE` | no | Input file attached via `-f`; default: stdin |
-| `--dry-run` | no | Print command without executing |
+| `-t SECONDS` | no | Timeout for the kilo run call (0 = disabled) |
+| `--dry-run` | no | Print command + persona preview without executing |
+| `--verbose` | no | Emit extra debug info to stderr |
 
-**Output:** extracted JSON to stdout. Always exits 0; returns `{}` on empty/invalid response.
+**Output:** extracted JSON to stdout; logs to stderr.
+**Exit codes:** `0` = valid non-empty JSON extracted; `2` = phantom output — no valid JSON found (retry this node).
+
+**JSON extraction:** uses `json.JSONDecoder.raw_decode()` — handles nested structures and escaped strings correctly. Fenced code blocks (` ```json `) are tried first.
 
 ## How To Run a Swarm
 

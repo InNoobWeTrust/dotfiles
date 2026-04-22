@@ -158,3 +158,49 @@ Phase 1 and strongly recommended for Phase 2 and Phase 3 high-stakes passes.
 
 Once Phase 3 achieves a 100% pass rate from the Breaker agents, artifacts are saved
 to `OUTPUT_DIR/artifacts/`. A `summary.json` is written with run metadata.
+
+## 5. Anti-Pattern Guards
+
+Lessons from production multi-agent systems. Apply these unconditionally.
+
+### Contract-First Rule (Code Domain)
+**The plan is the product.** Phase 2 must produce concrete API contracts — actual
+function signatures with types, class shapes, and data model definitions — before
+distributing tasks. Brilliant agents building against a vague plan produce beautiful
+components that don't fit together. Phase 3 Decompose must inject the relevant
+contracts into each task so every Maker builds against defined interfaces, not guesses.
+
+> *"A brilliant plan with mediocre agents produces working code. A vague plan with
+> brilliant agents produces beautiful components that don't fit together."*
+
+### Phantom Agent Detection
+**Validate actions, not claims.** Agents will confidently report success with zero
+work done (empty `code`, `pass` stubs, `# TODO` placeholders). The Breaker must
+explicitly check for phantom output before any other quality check:
+1. Is the `code` field non-empty?
+2. Does it contain real logic (not just `pass` / `# TODO` / empty bodies)?
+3. Do all `api_contracts` from the task appear as real symbols in the output?
+
+The `kilo-swarm` node runner exits **2** when no valid JSON is extracted from the
+agent response. Orchestrators must treat exit 2 as a phantom-agent signal and retry
+the node (up to `run_agent_retry()` limit) before propagating failure.
+
+### Deterministic-Before-LLM
+**Use code when you can; use AI when you must.** Before invoking an agent for a
+mechanical task, check whether a deterministic tool can do it faster and cheaper:
+- Schema validation → `jq` / `python3 -c "json.loads(...)"`
+- Syntax check → `ruff check` / `tsc --noEmit` before asking an agent to debug
+
+Reserve LLM calls for tasks that genuinely require reasoning.
+
+> **Note:** Git operations (merge, commit, push, branch writes) are **always
+> human-gated. Agents must never run git write commands automatically.** Surface
+> merge candidates and conflict reports to the human; let the human decide when
+> and how to integrate branches.
+
+### Surgical Recovery Over Full Retry
+**The cost of failure should be proportional to the failure.** If Phase 3 output
+is 90% correct, a full re-plan + re-provision + re-run is the wrong response.
+The Maker-Fix persona is designed for surgical edits — it receives specific failures
+from the Breaker and patches in place. Do not restart from Phase 1 unless the
+specification itself is invalidated by the Breaker's findings.

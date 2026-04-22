@@ -1,23 +1,26 @@
 #!/usr/bin/env bash
-# kilo-swarm — Single-pass swarm node runner
+# kilo-swarm — Single-pass swarm node runner (atomic primitive)
 #
 # Runs one kilo agent invocation with the swarm-node agent and outputs
-# extracted JSON. The orchestrator is responsible for phases, loops,
-# parallelism, and file management.
+# extracted JSON. Kilo Code (the AI orchestrator) is responsible for
+# phases, loops, parallelism, file management, and retries.
 #
 # Usage:
 #   kilo-swarm -m MODEL -p PERSONA -i INPUT_FILE
 #   echo "input" | kilo-swarm -m MODEL -p PERSONA
 #
 # Options:
-#   -m MODEL    model to use (required)
-#   -p PERSONA  persona/instruction string passed as the user message (required)
-#   -i FILE     input file attached via -f (default: stdin written to tmpfile)
-#   --dry-run   print the kilo command without executing
-#   -h          show this help
+#   -m MODEL      model to use (required)
+#   -p PERSONA    persona/instruction string passed as the user message (required)
+#   -i FILE       input file attached via -f (default: stdin written to tmpfile)
+#   -t SECONDS    timeout for the kilo run call (default: 0 = disabled)
+#   --dry-run     print the kilo command without executing
+#   --verbose     emit extra debug info to stderr
+#   -h            show this help
 #
 # Output: extracted JSON object to stdout; logs to stderr
-# Exit:   0 always — empty/invalid response emits {} to stdout
+# Exit:   0 = valid non-empty JSON extracted
+#         2 = phantom output — no valid JSON found (orchestrator: retry this node)
 
 set -euo pipefail
 
@@ -25,67 +28,96 @@ MODEL=""
 PERSONA=""
 INPUT_FILE=""
 DRY_RUN=false
+VERBOSE=false
+TIMEOUT=0
 
 usage() {
-  sed -n '3,18p' "$0" | sed 's/^# //' | sed 's/^#//'
+  sed -n '3,21p' "$0" | sed 's/^# //' | sed 's/^#//'
   exit 0
 }
 
+log()  { printf '[kilo-swarm] %s\n' "$*" >&2; }
+vlog() { if [[ "$VERBOSE" == "true" ]]; then printf '[kilo-swarm:verbose] %s\n' "$*" >&2; fi; }
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -m) MODEL="$2";   shift 2 ;;
-    -p) PERSONA="$2"; shift 2 ;;
-    -i) INPUT_FILE="$2"; shift 2 ;;
-    --dry-run) DRY_RUN=true; shift ;;
-    -h|--help) usage ;;
-    *) echo "Unknown option: $1" >&2; exit 1 ;;
+    -m) MODEL="$2";       shift 2 ;;
+    -p) PERSONA="$2";     shift 2 ;;
+    -i) INPUT_FILE="$2";  shift 2 ;;
+    -t) TIMEOUT="$2";     shift 2 ;;
+    --dry-run)  DRY_RUN=true;  shift ;;
+    --verbose)  VERBOSE=true;  shift ;;
+    -h|--help)  usage ;;
+    *) log "Unknown option: $1"; exit 1 ;;
   esac
 done
 
-[[ -z "$MODEL" ]]   && { echo "ERROR: -m MODEL is required" >&2; exit 1; }
-[[ -z "$PERSONA" ]] && { echo "ERROR: -p PERSONA is required" >&2; exit 1; }
+[[ -z "$MODEL" ]]   && { log "ERROR: -m MODEL is required"; exit 1; }
+[[ -z "$PERSONA" ]] && { log "ERROR: -p PERSONA is required"; exit 1; }
 
 # Read stdin to a tmpfile if no -i given
 TMP_INPUT=""
 TMP_STDERR=""
 
 cleanup() {
-  [[ -n "$TMP_INPUT" ]] && rm -f "$TMP_INPUT"
+  [[ -n "$TMP_INPUT" ]]  && rm -f "$TMP_INPUT"
   [[ -n "$TMP_STDERR" ]] && rm -f "$TMP_STDERR"
 }
 
 trap cleanup EXIT
 
 if [[ -z "$INPUT_FILE" ]]; then
-  [[ -t 0 ]] && { echo "ERROR: no -i FILE and no stdin" >&2; exit 1; }
+  [[ -t 0 ]] && { log "ERROR: no -i FILE and no stdin"; exit 1; }
   TMP_INPUT=$(mktemp)
   cat > "$TMP_INPUT"
   INPUT_FILE="$TMP_INPUT"
 fi
 
-[[ -f "$INPUT_FILE" ]] || { echo "ERROR: input file not found: $INPUT_FILE" >&2; exit 1; }
+[[ -f "$INPUT_FILE" ]] || { log "ERROR: input file not found: $INPUT_FILE"; exit 1; }
+
+# Build command array
+KILO_CMD=(kilo run --auto --format json --agent swarm-node -m "$MODEL" -f "$INPUT_FILE" -- "$PERSONA")
+
+# Prepend timeout wrapper if requested
+if [[ "$TIMEOUT" -gt 0 ]]; then
+  if command -v timeout >/dev/null 2>&1; then
+    KILO_CMD=(timeout "$TIMEOUT" "${KILO_CMD[@]}")
+  elif command -v gtimeout >/dev/null 2>&1; then
+    KILO_CMD=(gtimeout "$TIMEOUT" "${KILO_CMD[@]}")
+  else
+    log "WARN: -t specified but neither 'timeout' nor 'gtimeout' found; ignoring timeout"
+    TIMEOUT=0
+  fi
+fi
 
 if [[ "$DRY_RUN" == "true" ]]; then
-  echo "DRY-RUN: kilo run --auto --format json --agent swarm-node -m $MODEL -f $INPUT_FILE -- \"<persona>\"" >&2
-  echo '{}'
+  persona_preview="${PERSONA:0:120}"
+  [[ "${#PERSONA}" -gt 120 ]] && persona_preview+="..."
+  log "DRY-RUN cmd : ${KILO_CMD[*]}"
+  log "DRY-RUN persona (${#PERSONA} chars): $persona_preview"
+  printf '%s\n' '{}'
   exit 0
 fi
 
-# Run and extract JSON
-TMP_STDERR=$(mktemp)
-set +e
-raw=$(kilo run --auto --format json --agent swarm-node \
-  -m "$MODEL" \
-  -f "$INPUT_FILE" \
-  -- \
-  "$PERSONA" 2>"$TMP_STDERR")
-kilo_status=$?
-set -e
+vlog "model=$MODEL  input=$INPUT_FILE  persona_len=${#PERSONA}  timeout=${TIMEOUT}s"
 
-if [[ $kilo_status -ne 0 && -s "$TMP_STDERR" ]]; then
-  printf 'WARN: kilo run exited with status %s\n' "$kilo_status" >&2
-  printf '%s\n' "$(<"$TMP_STDERR")" >&2
+# Run kilo — capture stdout and stderr without toggling set -e
+TMP_STDERR=$(mktemp)
+kilo_status=0
+raw=$("${KILO_CMD[@]}" 2>"$TMP_STDERR") || kilo_status=$?
+
+if [[ $kilo_status -ne 0 ]]; then
+  if [[ $kilo_status -eq 124 ]]; then
+    log "ERROR: kilo run timed out after ${TIMEOUT}s"
+  elif [[ -s "$TMP_STDERR" ]]; then
+    log "WARN: kilo run exited with status $kilo_status"
+    cat "$TMP_STDERR" >&2
+  else
+    log "WARN: kilo run exited with status $kilo_status (no stderr output)"
+  fi
 fi
+
+vlog "raw output: ${#raw} chars"
 
 # Concatenate all text events from --format json output
 text=$(printf '%s\n' "$raw" | python3 -c "
@@ -93,7 +125,8 @@ import sys, json
 out = ''
 for line in sys.stdin:
     line = line.strip()
-    if not line: continue
+    if not line:
+        continue
     try:
         e = json.loads(line)
         if e.get('type') == 'text':
@@ -103,29 +136,57 @@ for line in sys.stdin:
 print(out.strip())
 ")
 
-# Extract first valid JSON object or array from the text
-printf '%s\n' "$text" | python3 -c "
+vlog "text after event concat: ${#text} chars"
+
+# Extract first valid JSON object or array from the text.
+# Uses json.JSONDecoder.raw_decode() which correctly handles nested structures
+# and escaped strings — unlike manual brace-depth tracking.
+# Exit 0 = valid non-empty JSON found; exit 2 = phantom output (no JSON or empty {}).
+extracted=$(printf '%s\n' "$text" | python3 -c "
 import sys, re, json
+
 text = sys.stdin.read()
-for pat in [r'\`\`\`json\s*([\s\S]+?)\s*\`\`\`', r'\`\`\`\s*(\{[\s\S]+?\})\s*\`\`\`', r'\`\`\`\s*(\[[\s\S]+?\])\s*\`\`\`']:
+decoder = json.JSONDecoder()
+
+# Try fenced code blocks first — most agents wrap output in backticks
+for pat in [
+    r'\`\`\`json\s*([\s\S]+?)\s*\`\`\`',
+    r'\`\`\`\s*(\{[\s\S]+?\})\s*\`\`\`',
+    r'\`\`\`\s*(\[[\s\S]+?\])\s*\`\`\`',
+]:
     m = re.search(pat, text)
     if m:
         try:
-            print(json.dumps(json.loads(m.group(1)), indent=2)); sys.exit(0)
+            obj = json.loads(m.group(1))
+            print(json.dumps(obj, indent=2))
+            sys.exit(0 if obj else 1)
         except Exception:
             pass
-for sc, ec in [('{','}'), ('[',']')]:
-    idx = text.find(sc)
-    if idx == -1: continue
-    depth = 0
-    for i in range(idx, len(text)):
-        if text[i] == sc: depth += 1
-        elif text[i] == ec:
-            depth -= 1
-            if depth == 0:
-                try:
-                    print(json.dumps(json.loads(text[idx:i+1]), indent=2)); sys.exit(0)
-                except Exception:
-                    break
+
+# Fallback: scan for first balanced JSON object or array using the stdlib decoder.
+# raw_decode handles nested objects, arrays, and escaped strings correctly.
+for start_char in ('{', '['):
+    pos = 0
+    while pos < len(text):
+        idx = text.find(start_char, pos)
+        if idx == -1:
+            break
+        try:
+            obj, _ = decoder.raw_decode(text, idx)
+            print(json.dumps(obj, indent=2))
+            sys.exit(0 if obj else 1)
+        except json.JSONDecodeError:
+            pos = idx + 1
+
+# No JSON found — phantom output
 print('{}')
-"
+sys.exit(1)
+")
+extract_status=$?
+
+printf '%s\n' "$extracted"
+
+if [[ $extract_status -ne 0 ]]; then
+  log "WARN: phantom output — no valid JSON extracted from agent response"
+  exit 2
+fi
