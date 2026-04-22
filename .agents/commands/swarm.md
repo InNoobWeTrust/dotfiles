@@ -18,15 +18,23 @@ JSON. To run a swarm, invoke multiple nodes in parallel, then merge the results.
 
 ```
 1. Generate N diverse personas (e.g., "philosopher", "scientist", "artist")
-2. Invoke ALL nodes in parallel (same prompt, different personas)
-3. Collect all JSON responses
-4. Synthesize into unified output with a final swarm-node pass
+2. For EACH persona, invoke 2-3 cheap models in parallel (same persona, different models)
+3. Collect all JSON responses per persona, merge into consensus per persona
+4. Synthesize ALL persona-consensus outputs into unified output with a final strong model pass
 ```
 
-**Critical:** Do NOT run a single node and call it a swarm. A swarm requires:
-- 3+ agents with distinct viewpoints/perspectives
-- Parallel execution (not sequential)
-- A synthesis step to merge divergent outputs
+**Critical Redundancy Rule:** Each persona must be run by 2-3 cheap models and merged BEFORE synthesis. This avoids individual model bias, hallucinations, and blind spots. A single model per persona defeats the purpose of a swarm.
+
+**Why multi-model per persona:**
+- Any single model can be wrong, biased, or miss perspective
+- Running 2-3 cheap models (e.g., grok-code-fast-1, gpt-5-mini) and merging their answers catches individual failures
+- The synthesis step then operates on corrected, multi-model-validated persona outputs
+
+**A swarm requires:**
+- 3+ distinct persona viewpoints
+- 2-3 cheap models PER persona (run in parallel, then merge)
+- Parallel execution across all persona-model combinations
+- A final synthesis pass with a strong model to merge divergent outputs
 
 ## kilo-swarm interface
 
@@ -59,26 +67,40 @@ Examples:
 - Creative: "poet", "critic", "technician", "audience member"
 - Analysis: "advocate", "skeptic", "analyst", "pragmatist"
 
-### Step 2: Run All Nodes in Parallel
-Invoke multiple `kilo-swarm` calls simultaneously, each with a different persona:
+### Step 2: Run Each Persona with 2-3 Cheap Models in Parallel
+**Critical:** Do NOT run one model per persona. Run 2-3 cheap models PER persona,
+then merge their outputs. This redundancy eliminates individual model errors.
+
+Invoke multiple `kilo-swarm` calls simultaneously for EACH persona:
 
 ```bash
-# Parallel node 1
-echo '{"topic":"..."}' | ~/.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA1]. Return JSON: {...}'
+# Persona 1: Economist — run on 3 free kilo models, then merge
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm -m "kilo/kilo-auto/free" -p 'You are an ECONOMIST. Return JSON: {"findings":["..."]}'
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are an ECONOMIST. Return JSON: {"findings":["..."]}'
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm -m "kilo/inclusionai/ling-2.6-flash:free" -p 'You are an ECONOMIST. Return JSON: {"findings":["..."]}'
+# Merge these 3 into one consensus JSON
 
-# Parallel node 2  
-echo '{"topic":"..."}' | ~/.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA2]. Return JSON: {...}'
+# Persona 2: Ethicist — run on 3 free kilo models, then merge
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm -m "kilo/bytedance-seed/dola-seed-2.0-pro:free" -p 'You are an ETHICIST. Return JSON: {"findings":["..."]}'
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm -m "kilo/nvidia/nemotron-3-super-120b-a12b:free" -p 'You are an ETHICIST. Return JSON: {"findings":["..."]}'
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm -m "kilo/stepfun/step-3.5-flash:free" -p 'You are an ETHICIST. Return JSON: {"findings":["..."]}'
+# Merge these 3 into one consensus JSON
 
-# Parallel node 3
-echo '{"topic":"..."}' | ~/.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA3]. Return JSON: {...}'
+# Persona 3: Engineer — run on 3 free kilo models, then merge
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm -m "kilo/kilo-auto/free" -p 'You are an ENGINEER. Return JSON: {"findings":["..."]}'
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are an ENGINEER. Return JSON: {"findings":["..."]}'
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm -m "kilo/inclusionai/ling-2.6-flash:free" -p 'You are an ENGINEER. Return JSON: {"findings":["..."]}'
+# Merge these 3 into one consensus JSON
 ```
 
 ### Step 3: Synthesize
-Merge all node outputs into a final synthesis pass using a stronger model:
+Merge all persona-consensus outputs into a final synthesis pass using a **strong model**:
 
 ```bash
-# Synthesis pass
-echo '{"node1":{...},"node2":{...},"node3":{...}}' | ~/.local/bin/kilo-swarm -m "vllm/kCode" -p 'You are a SYNTHESIS ENGINE. Merge these perspectives into unified output. Return JSON: {...}'
+# Synthesis pass — use frontier model for quality
+echo '{"economist":{...},"ethicist":{...},"engineer":{...}}' | ~/.local/bin/kilo-swarm \
+  -m "openai/gpt-5.4" \
+  -p 'Merge these multi-model-validated perspectives into unified output. Return JSON: {"unified_answer":"","cross_cutting_themes":[],"practical_synthesis":""}'
 ```
 
 ### Step 4: Return Results
@@ -131,7 +153,13 @@ work; upgrade only when quality or complexity justifies it.
 
 | Tier | Model | Use for |
 |------|-------|---------|
-| Free / bulk | `kilo/x-ai/grok-code-fast-1:optimized:free` | High-volume node passes, lightweight structured extraction |
+| Free (kilo) | `kilo/kilo-auto/free` | Auto-selection from free models |
+| Free (kilo) | `kilo/x-ai/grok-code-fast-1:optimized:free` | High-volume node passes, lightweight structured extraction |
+| Free (kilo) | `kilo/bytedance-seed/dola-seed-2.0-pro:free` | ByteDance research model |
+| Free (kilo) | `kilo/inclusionai/ling-2.6-flash:free` | Lightweight flash model |
+| Free (kilo) | `kilo/nvidia/nemotron-3-super-120b-a12b:free` | NVIDIA large model |
+| Free (kilo) | `kilo/stepfun/step-3.5-flash:free` | Stepfun flash model |
+| Free (openrouter) | `openrouter/openrouter/free` | OpenRouter aggregated free tier |
 | Mid (included) | `github-copilot/gpt-5-mini` | Planning, spec, recommendation JSON; good default for most nodes |
 | Mid (self-hosted) | `vllm/kCode` | Coding-heavy tasks; more capable than the cheap models, but below frontier models like `openai/gpt-5.4` and `openai/gpt-5.4-mini` |
 | Strong | `openai/gpt-5.4-mini` | High-stakes synthesis or complex reasoning where mid-tier falls short |
@@ -180,9 +208,11 @@ echo '{"economist":{...},"ethicist":{...},"engineer":{...}}' | ~/.local/bin/kilo
 
 ## Common Mistakes to Avoid
 
+- ❌ **Running one model per persona** — Single models can be wrong, biased, or hallucinate. Always run 2-3 cheap models per persona and merge.
 - ❌ **Running one node and calling it a swarm** — That's a single agent, not a swarm
 - ❌ **Running nodes sequentially** — Swarms require parallel execution for true diversity
 - ❌ **Skipping synthesis** — Multiple perspectives without synthesis produces disjointed output
+- ❌ **Skipping multi-model merge before synthesis** — The merge step is where individual model errors are caught and corrected
 
 ## Enabling Web Search for Research Tasks
 

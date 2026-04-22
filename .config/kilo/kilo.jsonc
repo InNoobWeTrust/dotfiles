@@ -107,7 +107,10 @@
       "git show *": "allow",
       "git diff *": "allow",
       "echo *": "allow",
-      "ls *": "allow"
+      "ls *": "allow",
+      "kilo-swarm *": "allow",
+      "~/.local/bin/kilo-swarm *": "allow",
+      "kilo *": "allow"
     },
     "recall": {
       "search": "allow"
