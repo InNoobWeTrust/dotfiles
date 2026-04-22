@@ -1,0 +1,46 @@
+{
+  "name": "free",
+  "description": "Free tier models for high-volume swarm passes",
+  "models": [
+    {
+      "id": "kilo/kilo-auto/free",
+      "provider": "kilo",
+      "use_for": "Auto-selection from free models"
+    },
+    {
+      "id": "kilo/x-ai/grok-code-fast-1:optimized:free",
+      "provider": "kilo",
+      "use_for": "High-volume node passes, lightweight structured extraction"
+    },
+    {
+      "id": "kilo/bytedance-seed/dola-seed-2.0-pro:free",
+      "provider": "kilo",
+      "use_for": "ByteDance research model"
+    },
+    {
+      "id": "kilo/inclusionai/ling-2.6-flash:free",
+      "provider": "kilo",
+      "use_for": "Lightweight flash model"
+    },
+    {
+      "id": "kilo/nvidia/nemotron-3-super-120b-a12b:free",
+      "provider": "kilo",
+      "use_for": "NVIDIA large model"
+    },
+    {
+      "id": "kilo/stepfun/step-3.5-flash:free",
+      "provider": "kilo",
+      "use_for": "Stepfun flash model"
+    },
+    {
+      "id": "openrouter/openrouter/free",
+      "provider": "openrouter",
+      "use_for": "OpenRouter aggregated free tier"
+    },
+    {
+      "id": "vllm/kCode",
+      "provider": "openrouter",
+      "use_for": "Coding-heavy tasks; capable, below frontier"
+    }
+  ]
+}

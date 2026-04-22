@@ -22,18 +22,18 @@ This SKILL is materialized via the `kilo-swarm` CLI script.
 
 **Files:**
 - `~/.local/bin/kilo-swarm` — bash orchestration script (the Prime Node)
-- `~/.agents/skills/swarm-intelligence/references/` — built-in domain configs
-- `~/.kilo/agent/swarm-node.md` — read-only swarm analysis agent (all phases)
-- `~/.kilo/commands/swarm.md` — usage guide and model reference
+- `~/.agents/skills/swarm-intelligence/references/models/` — centralized model pools (`free.json`, `premium.json`)
+- `~/.agents/skills/swarm-intelligence/references/domains/` — built-in domain configs (`code/`, `writing/`, `design/`, `pm/`, `slides/`, `skill-review/`)
+- `~/.kilo/commands/swarm.md` — thin proxy that loads this skill
 
 **Quick start:**
 ```bash
 # Use a built-in domain
 echo "Build a REST API" \
-  | kilo-swarm -d ~/.agents/skills/swarm-intelligence/references/code.json
+  | kilo-swarm -d ~/.agents/skills/swarm-intelligence/references/domains/code/config.json
 
 # Research + spec only, from a file
-kilo-swarm -d references/writing.json -i brief.txt -p 2
+kilo-swarm -d domains/writing/config.json -i brief.txt -p 2
 
 # Inline custom domain
 kilo-swarm -d '{"name":"custom","phase1_a_persona":"...","phase1_b_persona":"...",...}' \
@@ -91,26 +91,19 @@ phase3_breaker_label   / phase3_breaker_persona   (use __QA_CASES__ placeholder)
 Optional metadata:
 
 ```
-model_selection = {
-  phase1_a, phase1_b,
-  phase2_forward, phase2_review, phase2_revise,
-  phase3_decompose, phase3_maker, phase3_maker_fix, phase3_breaker,
-  large_context_fallback, quality_override, quality_override_alt,
-  free_model_pool   ← array of free models for multi-model-per-persona redundancy
-}
+model_pool_refs = ["free", "premium"]   ← names of model pool files to use
 ```
 
-These are recommended model defaults for humans or higher-level orchestrators.
-The current `kilo-swarm` node runner does not apply `model_selection`
-automatically.
+Model pools are centralized in `references/models/`:
+- **`free.json`** — free tier models for high-volume passes and multi-model redundancy
+- **`premium.json`** — premium models (from benchmark-report-20260419.md) for quality-critical synthesis and high-stakes passes; includes `quality_tiers` for synthesis/high_stakes/mid_tier selection
 
-**`free_model_pool`** lists all available free-tier models. When running a swarm
-manually or with a higher-level orchestrator, use 2-3 models from this pool per
-persona in parallel, then merge their outputs into one consensus JSON before
-passing to the next phase. This eliminates individual model bias, hallucinations,
-and blind spots. Every built-in domain config includes a `free_model_pool`.
+When running a swarm, use 2-3 models from the appropriate pool per persona in
+parallel, then merge their outputs into one consensus JSON before passing to the
+next phase. This eliminates individual model bias, hallucinations, and blind spots.
+Every built-in domain config references both pools via `model_pool_refs`.
 
-Built-in domain references: `code`, `writing`, `design`, `pm`, `slides`.
+Built-in domain references: `code`, `writing`, `design`, `pm`, `slides`, `skill-review`.
 
 ## 3. Execution Pipeline (State Machine)
 
@@ -154,10 +147,48 @@ Phase 1 and strongly recommended for Phase 2 and Phase 3 high-stakes passes.
 5. *Consensus Check:* If the Breaker rejects, the Maker rewrites. Maximum 2 retries.
    The Maker is not allowed to modify the specification, only the implementation.
 
+   > **Phase 3 output is JSON only.** Makers produce code and config as structured
+   > JSON output fields — they do NOT write to the file system. File system
+   > materialization is handled by a separate, dedicated step after the swarm
+   > completes. This is critical: file system writes are synchronous and cannot
+   > be safely parallelized or isolated across agents.
+
 ## 4. Artifact Generation
 
-Once Phase 3 achieves a 100% pass rate from the Breaker agents, artifacts are saved
-to `OUTPUT_DIR/artifacts/`. A `summary.json` is written with run metadata.
+Once Phase 3 achieves a 100% pass rate from the Breaker agents, the swarm's
+output is a **structured JSON artifact** containing all code, configs, and other
+content produced by the Makers. The swarm produces this JSON as its final output —
+it does not write files directly.
+
+**File system materialization is mandatory and must be delegated to a `code`
+agent running with a premium model** (e.g., from `premium.json`). This agent
+receives the swarm's JSON artifact and performs the actual file system writes.
+
+**Why this separation is required:**
+- File system writes are synchronous and blocking — they cannot be parallelized
+  across multiple agents without race conditions and data loss.
+- Isolated agent sandboxes cannot safely coordinate writes to the same directory
+  tree; conflicts are unavoidable without a serializing layer.
+- Premium models have superior instruction-following and lower hallucination rates,
+  making them significantly better at applying complex, multi-file changes
+  correctly and completely.
+- Keeping artifact generation decoupled from materialization means the swarm
+  can be retried, modified, or replaced without touching the file system.
+
+**Handoff pattern:**
+```
+[Phase 3 Swarm] → structured JSON artifact
+       ↓
+[code agent (premium model — high_stakes tier)] → deserializes JSON → sequential, conflict-free file system writes
+       ↓
+[human review / git commit]
+```
+
+> Git operations require human approval — see the git-safety protocol in agent-instructions.md before committing.
+
+The `code` agent applies writes sequentially, one file at a time, checking for
+conflicts before each write. It is the single writer — no other agent in the
+pipeline touches the file system.
 
 ## 5. Anti-Pattern Guards
 
@@ -197,6 +228,24 @@ Reserve LLM calls for tasks that genuinely require reasoning.
 > human-gated. Agents must never run git write commands automatically.** Surface
 > merge candidates and conflict reports to the human; let the human decide when
 > and how to integrate branches.
+
+### Swarm Writes Files Directly
+**Swarm agents must never write to the file system.** This is not a preference —
+it is a structural constraint. The swarm operates as a set of parallel,
+isolated processes generating content. File system I/O is synchronous, serial,
+and subject to race conditions when multiple writers target the same tree.
+No amount of agent sophistication compensates for this fundamental mismatch.
+
+The fix is mandatory and non-negotiable: route all file system writes through a
+single `code` agent running a premium model. This agent is the serialization
+point. It receives the swarm's JSON artifact and applies writes in a controlled,
+sequential order. Any other pattern — parallel file writes from multiple agents,
+direct I/O from swarm nodes, or bypassing the `code` agent — is an anti-pattern
+that will produce corrupted or conflicting output.
+
+> If you see a swarm agent writing files directly, stop. Extract the content as
+> JSON, hand it to a premium `code` agent, and let that agent materialize the
+> files.
 
 ### Surgical Recovery Over Full Retry
 **The cost of failure should be proportional to the failure.** If Phase 3 output

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # kilo-swarm — Single-pass swarm node runner (atomic primitive)
 #
-# Runs one kilo agent invocation with the swarm-node agent and outputs
+# Runs one kilo agent invocation (no agent profile required) and outputs
 # extracted JSON. Kilo Code (the AI orchestrator) is responsible for
 # phases, loops, parallelism, file management, and retries.
 #
@@ -75,8 +75,40 @@ fi
 
 [[ -f "$INPUT_FILE" ]] || { log "ERROR: input file not found: $INPUT_FILE"; exit 1; }
 
+# Build the full message: swarm-node instructions + persona
+SWARM_NODE_MSG="You are a focused, single-purpose analysis node in a multi-agent pipeline.
+
+## Core Rules
+
+1. Follow the persona instructions below exactly. The persona defines your role (Business Analyst, Architect, QA Engineer, Researcher, etc.).
+2. Output ONLY valid JSON. No preamble, no explanation, no markdown prose outside the JSON block. Your entire response must be parseable JSON.
+3. Use web search when the persona explicitly requests it. If search is requested, gather current information before returning your JSON. Do not run bash commands.
+4. Respect the schema. The persona will specify the exact JSON schema. Conform to it strictly.
+5. Do not add undocumented fields beyond what the schema specifies.
+6. Never modify files or run shell commands. Read access and web search are permitted; write/bash operations are always denied.
+
+## Output Format
+
+Wrap your JSON in a code block for reliable extraction:
+
+\`\`\`json
+{
+  \"your\": \"output here\"
+}
+\`\`\`
+
+If you cannot complete the task, output:
+
+\`\`\`json
+{\"error\": \"reason why\", \"partial\": null}
+\`\`\`
+
+## Persona Instructions
+
+${PERSONA}"
+
 # Build command array
-KILO_CMD=(kilo run --auto --format json --agent swarm-node -m "$MODEL" -f "$INPUT_FILE" -- "$PERSONA")
+KILO_CMD=(kilo run --auto --format json -m "$MODEL" -f "$INPUT_FILE" -- "$SWARM_NODE_MSG")
 
 # Prepend timeout wrapper if requested
 if [[ "$TIMEOUT" -gt 0 ]]; then

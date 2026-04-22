@@ -1,29 +1,7 @@
 {
   "name": "slides",
   "description": "Presentation pipeline: key messages → deck structure → slide content",
-  "model_selection": {
-    "phase1_a": "kilo/x-ai/grok-code-fast-1:optimized:free",
-    "phase1_b": "kilo/inclusionai/ling-2.6-flash:free",
-    "phase2_forward": "github-copilot/gpt-5-mini",
-    "phase2_review": "github-copilot/gpt-5-mini",
-    "phase2_revise": "github-copilot/gpt-5-mini",
-    "phase3_decompose": "github-copilot/gpt-5-mini",
-    "phase3_maker": "github-copilot/gpt-5-mini",
-    "phase3_maker_fix": "github-copilot/gpt-5-mini",
-    "phase3_breaker": "openai/gpt-5.4-mini",
-    "large_context_fallback": "kilo/google/gemini-2.5-flash-lite",
-    "quality_override": "openai/gpt-5.4",
-    "quality_override_alt": "github-copilot/claude-sonnet-4.6",
-    "free_model_pool": [
-      "kilo/kilo-auto/free",
-      "kilo/x-ai/grok-code-fast-1:optimized:free",
-      "kilo/bytedance-seed/dola-seed-2.0-pro:free",
-      "kilo/inclusionai/ling-2.6-flash:free",
-      "kilo/nvidia/nemotron-3-super-120b-a12b:free",
-      "kilo/stepfun/step-3.5-flash:free",
-      "openrouter/openrouter/free"
-    ]
-  },
+  "model_pool_refs": ["free", "premium"],
 
   "phase1_a_label": "Ingest-Messages",
   "phase1_a_persona": "You are a Communications Strategist. Extract the core arguments, key data points, main takeaways, and desired call-to-action from the attached document. Ignore layout or visual details. Output ONLY valid JSON, nothing else. Schema: {\"key_messages\": [\"<message or data point>\", ...]}",

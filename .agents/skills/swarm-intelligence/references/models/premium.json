@@ -1,0 +1,75 @@
+{
+  "name": "premium",
+  "description": "Premium models for quality-critical swarm nodes (synthesis, high-stakes passes)",
+  "models": [
+    {
+      "id": "github-copilot/gpt-5-mini",
+      "provider": "copilot",
+      "copilot_unlimited": true,
+      "use_for": "Planning, spec, mid-tier synthesis; unlimited on Copilot Pro",
+      "pricing": "Included in $10/mo Copilot base"
+    },
+    {
+      "id": "openai/gpt-5.4-mini",
+      "provider": "openai",
+      "use_for": "High-stakes synthesis, complex reasoning",
+      "pricing": "$0.75/M input, $4.50/M output"
+    },
+    {
+      "id": "kilo/google/gemini-3-flash-preview",
+      "provider": "kilo",
+      "use_for": "Very high-volume, large context (1M tokens)",
+      "pricing": "$0.30/M input, $2.50/M output",
+      "openrouter_activity": "40.1B prompt tokens — very high"
+    },
+    {
+      "id": "kilo/google/gemini-3.1-pro-preview",
+      "provider": "kilo",
+      "use_for": "High-context reasoning (1M tokens), complex analysis",
+      "pricing": "$1.25/M input, $10.00/M output",
+      "openrouter_activity": "8.4B prompt tokens"
+    },
+    {
+      "id": "openai/gpt-5.4",
+      "provider": "openai",
+      "use_for": "Critical synthesis, frontier quality when output matters most",
+      "pricing": "$2.00/M input, $8.00/M output",
+      "openrouter_activity": "2.1B prompt tokens"
+    },
+    {
+      "id": "github-copilot/claude-sonnet-4.6",
+      "provider": "copilot",
+      "use_for": "Strong reasoning and coding; senior agents, architecture",
+      "pricing": "Premium request on Copilot Pro (300/mo pool)"
+    },
+    {
+      "id": "minimax-coding-plan/MiniMax-M2.7-highspeed",
+      "provider": "minimax",
+      "use_for": "Detailed architecture, planning, research",
+      "pricing": "Pay-per-token",
+      "openrouter_activity": "890M prompt tokens"
+    },
+    {
+      "id": "minimax-coding-plan/MiniMax-M2.5-highspeed",
+      "provider": "minimax",
+      "use_for": "Codebase exploration, quick edits",
+      "pricing": "Pay-per-token",
+      "openrouter_activity": "420M prompt tokens"
+    }
+  ],
+  "quality_tiers": {
+    "synthesis": [
+      "openai/gpt-5.4",
+      "github-copilot/claude-sonnet-4.6"
+    ],
+    "high_stakes": [
+      "openai/gpt-5.4-mini",
+      "kilo/google/gemini-3.1-pro-preview"
+    ],
+    "mid_tier": [
+      "github-copilot/gpt-5-mini",
+      "kilo/google/gemini-3-flash-preview",
+      "minimax-coding-plan/MiniMax-M2.7-highspeed"
+    ]
+  }
+}
