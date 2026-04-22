@@ -1,4 +1,16 @@
-# Swarm Orchestration Pipeline
+---
+name: swarm-intelligence
+description: >
+  Multi-agent swarm pipeline for domain-agnostic parallel analysis and synthesis.
+  Use this skill whenever the user says "swarm", "run swarm", "multi-agent", "parallel
+  agents", "diverse perspectives", or wants a 3-phase Research → Spec → Execution
+  pipeline via the kilo-swarm CLI. Activate when the task benefits from running
+  multiple agents with distinct personas in parallel, then synthesizing their outputs.
+  The kilo-swarm script is the Prime Node; domain configs in references/ drive all
+  agent personas for code, writing, design, product management, and slides pipelines.
+---
+
+# Swarm Intelligence Pipeline
 
 **Description:** Defines the operational protocol for a domain-agnostic 3-phase
 multi-agent pipeline. The orchestrator passes a domain config that drives all
@@ -10,7 +22,7 @@ This SKILL is materialized via the `kilo-swarm` CLI script.
 
 **Files:**
 - `~/.local/bin/kilo-swarm` — bash orchestration script (the Prime Node)
-- `~/.agents/skills/swarm-orchestrator/references/` — built-in domain configs
+- `~/.agents/skills/swarm-intelligence/references/` — built-in domain configs
 - `~/.kilo/agent/swarm-node.md` — read-only swarm analysis agent (all phases)
 - `~/.kilo/commands/swarm.md` — usage guide and model reference
 
@@ -18,7 +30,7 @@ This SKILL is materialized via the `kilo-swarm` CLI script.
 ```bash
 # Use a built-in domain
 echo "Build a REST API" \
-  | kilo-swarm -d ~/.agents/skills/swarm-orchestrator/references/code.json
+  | kilo-swarm -d ~/.agents/skills/swarm-intelligence/references/code.json
 
 # Research + spec only, from a file
 kilo-swarm -d references/writing.json -i brief.txt -p 2
@@ -74,6 +86,21 @@ phase3_maker_label     / phase3_maker_persona
 phase3_maker_fix_label / phase3_maker_fix_persona
 phase3_breaker_label   / phase3_breaker_persona   (use __QA_CASES__ placeholder)
 ```
+
+Optional metadata:
+
+```
+model_selection = {
+  phase1_a, phase1_b,
+  phase2_forward, phase2_review, phase2_revise,
+  phase3_decompose, phase3_maker, phase3_maker_fix, phase3_breaker,
+  large_context_fallback, quality_override, quality_override_alt
+}
+```
+
+These are recommended model defaults for humans or higher-level orchestrators.
+The current `kilo-swarm` node runner does not apply `model_selection`
+automatically.
 
 Built-in domain references: `code`, `writing`, `design`, `pm`, `slides`.
 

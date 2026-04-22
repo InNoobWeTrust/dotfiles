@@ -31,8 +31,8 @@ JSON. To run a swarm, invoke multiple nodes in parallel, then merge the results.
 ## kilo-swarm interface
 
 ```
-./.local/bin/kilo-swarm -m MODEL -p PERSONA -i INPUT_FILE
-echo "input" | ./.local/bin/kilo-swarm -m MODEL -p PERSONA
+~/.local/bin/kilo-swarm -m MODEL -p PERSONA -i INPUT_FILE
+echo "input" | ~/.local/bin/kilo-swarm -m MODEL -p PERSONA
 ```
 
 | Flag | Required | Description |
@@ -64,13 +64,13 @@ Invoke multiple `kilo-swarm` calls simultaneously, each with a different persona
 
 ```bash
 # Parallel node 1
-echo '{"topic":"..."}' | ./.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA1]. Return JSON: {...}'
+echo '{"topic":"..."}' | ~/.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA1]. Return JSON: {...}'
 
 # Parallel node 2  
-echo '{"topic":"..."}' | ./.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA2]. Return JSON: {...}'
+echo '{"topic":"..."}' | ~/.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA2]. Return JSON: {...}'
 
 # Parallel node 3
-echo '{"topic":"..."}' | ./.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA3]. Return JSON: {...}'
+echo '{"topic":"..."}' | ~/.local/bin/kilo-swarm -m "kilo/x-ai/grok-code-fast-1:optimized:free" -p 'You are a [PERSONA3]. Return JSON: {...}'
 ```
 
 ### Step 3: Synthesize
@@ -78,15 +78,22 @@ Merge all node outputs into a final synthesis pass using a stronger model:
 
 ```bash
 # Synthesis pass
-echo '{"node1":{...},"node2":{...},"node3":{...}}' | ./.local/bin/kilo-swarm -m "openai/gpt-5.4" -p 'You are a SYNTHESIS ENGINE. Merge these perspectives into unified output. Return JSON: {...}'
+echo '{"node1":{...},"node2":{...},"node3":{...}}' | ~/.local/bin/kilo-swarm -m "vllm/kCode" -p 'You are a SYNTHESIS ENGINE. Merge these perspectives into unified output. Return JSON: {...}'
 ```
 
 ### Step 4: Return Results
 Present the synthesized output to the user with a brief explanation of the swarm approach.
 
-## Persona Library
+## Domain Configs
 
-Domain configs live in `~/.agents/skills/swarm-orchestrator/references/`.
+For built-in domain-driven swarms, use
+`~/.agents/skills/swarm-intelligence/SKILL.md` as the source of truth.
+It defines:
+- the domain config schema
+- the built-in domain files in `~/.agents/skills/swarm-intelligence/references/`
+- the recommended `model_selection` metadata for each domain
+
+Domain configs live in `~/.agents/skills/swarm-intelligence/references/`.
 These files are useful as **persona libraries**. Copy or adapt the persona text
 you need for the current pass.
 
@@ -99,28 +106,48 @@ you need for the current pass.
 | Slides | `slides.json` | Communications/Audience → Structure → Slides |
 
 The config files may still use phase-oriented key names. Treat those as storage
-conventions only. This command does not require you to follow those phases.
+conventions only when doing ad-hoc node runs from this command.
 
-When using this command, copy or adapt **one** persona from those files instead
-of trying to recreate the full pipeline mechanically.
+Some built-in configs also include a `model_selection` block with recommended
+per-phase defaults. Treat those as suggestions unless your orchestrator reads
+them explicitly.
 
-## Hard-Coded Model Defaults
+When using a built-in domain such as `code`, `writing`, `design`, `pm`, or
+`slides`, read `~/.agents/skills/swarm-intelligence/SKILL.md` first, then use
+the selected reference file as the source for personas and recommended models.
 
-Use fixed defaults and start immediately unless the user explicitly asks to
-override models.
+When using this command for an ad-hoc swarm, copy or adapt **one** persona from
+those files instead of trying to recreate the full pipeline mechanically.
 
-These defaults are intentionally opinionated for this repo's setup:
+## Model Selection
 
-- They bias toward included or free models first.
-- They follow `.agents/benchmark-report-*.md` guidance to avoid burning
-  paid provider usage on high-frequency planning and routing work.
-- They reuse model families already present in `.agents/agents/`.
+For built-in domain configs, use
+`~/.agents/skills/swarm-intelligence/SKILL.md` plus the selected reference
+file's `model_selection` block for recommended models.
 
-| Use case | Default model | Why |
-|----------|---------------|-----|
-| Broad intake / extraction | `kilo/x-ai/grok-code-fast-1:optimized:free` | Free and fast; good enough for lightweight structured extraction |
-| Planning / spec / recommendation JSON | `github-copilot/gpt-5-mini` | Included or unlimited in current setup; good quality floor for structured planning |
-| Heavier critical synthesis | `openai/gpt-5.4-mini` | Use when the one-pass result is important enough to justify a stronger model |
+Use the defaults below only for generic ad-hoc swarms or when the domain config
+has not been consulted yet. Bias toward free/included models for high-frequency
+work; upgrade only when quality or complexity justifies it.
+
+| Tier | Model | Use for |
+|------|-------|---------|
+| Free / bulk | `kilo/x-ai/grok-code-fast-1:optimized:free` | High-volume node passes, lightweight structured extraction |
+| Mid (included) | `github-copilot/gpt-5-mini` | Planning, spec, recommendation JSON; good default for most nodes |
+| Mid (self-hosted) | `vllm/kCode` | Coding-heavy tasks; more capable than the cheap models, but below frontier models like `openai/gpt-5.4` and `openai/gpt-5.4-mini` |
+| Strong | `openai/gpt-5.4-mini` | High-stakes synthesis or complex reasoning where mid-tier falls short |
+| Frontier | `openai/gpt-5.4` | Critical single-pass output where quality matters more than cost |
+| Frontier (alt) | `github-copilot/claude-sonnet-4.6` | Strong reasoning and coding; alternative to `gpt-5.4` |
+
+**Large context:** Use `kilo/google/gemini-2.5-flash-lite` when input size is the
+bottleneck and absolute reasoning depth is secondary.
+
+**Upgrade triggers:**
+- Broad extraction → step up to `github-copilot/gpt-5-mini` when the input is dense,
+  ambiguous, or repeatedly produces malformed JSON
+- Planning/spec → step up to `vllm/kCode` or `openai/gpt-5.4-mini` when the result
+  is high-stakes or needs stronger long-form reasoning
+- Synthesis → step up to `openai/gpt-5.4` or `github-copilot/claude-sonnet-4.6`
+  when output quality is non-negotiable
 
 If the user explicitly asks for fresher model research, use `/benchmark-agents`.
 Otherwise, keep these defaults and run.
@@ -131,42 +158,25 @@ Otherwise, keep these defaults and run.
 
 ```bash
 # Node 1: Economist (with web search for current data)
-echo '{"topic":"AI impact on jobs"}' | ./.local/bin/kilo-swarm \
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm \
   -m "github-copilot/gpt-5-mini" \
   -p 'You are an ECONOMIST with web search access. Search for recent data, then Return JSON: {"role":"economist","findings":["insight1","insight2","insight3"]}'
 
 # Node 2: Ethicist (with web search for case studies)
-echo '{"topic":"AI impact on jobs"}' | ./.local/bin/kilo-swarm \
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm \
   -m "github-copilot/gpt-5-mini" \
   -p 'You are an ETHICIST with web search access. Search for relevant case studies, then Return JSON: {"role":"ethicist","findings":["insight1","insight2","insight3"]}'
 
 # Node 3: Engineer (with web search for technical perspectives)
-echo '{"topic":"AI impact on jobs"}' | ./.local/bin/kilo-swarm \
+echo '{"topic":"AI impact on jobs"}' | ~/.local/bin/kilo-swarm \
   -m "github-copilot/gpt-5-mini" \
   -p 'You are an ENGINEER with web search access. Search for technical analysis, then Return JSON: {"role":"engineer","findings":["insight1","insight2","insight3"]}'
 
 # Synthesis pass
-echo '{"economist":{...},"ethicist":{...},"engineer":{...}}' | ./.local/bin/kilo-swarm \
+echo '{"economist":{...},"ethicist":{...},"engineer":{...}}' | ~/.local/bin/kilo-swarm \
   -m "openai/gpt-5.4" \
   -p 'Merge these perspectives into unified output. Return JSON: {"unified_answer":"","cross_cutting_themes":[],"practical_synthesis":""}'
 ```
-
-## Upgrade Guidance
-
-| Use case | Default | Upgrade when |
-|----------|---------|--------------|
-| Broad extraction | `kilo/x-ai/grok-code-fast-1:optimized:free` | The input is dense, ambiguous, or repeatedly produces weak JSON |
-| Structured planning/recommendation | `github-copilot/gpt-5-mini` | The result is high-stakes or needs stronger long-form reasoning |
-| Critical single-pass synthesis | `openai/gpt-5.4` | The output quality matters more than cost or latency |
-
-Manual upgrade options:
-
-- Use `google/gemini-2.5-flash` when context size matters more than absolute
-  coding depth.
-- Use `openai/gpt-5.4` or `github-copilot/claude-sonnet-4.6` when the output is
-  critical enough to justify a stronger premium model.
-- Use `vllm/kCode` only for experimental ultra-cheap execution; it is not the
-  default quality floor.
 
 ## Common Mistakes to Avoid
 
@@ -181,7 +191,7 @@ information, include web search capability in the persona:
 
 ```bash
 # Example with web search enabled
-echo '{"topic":"..."}' | ./.local/bin/kilo-swarm \
+echo '{"topic":"..."}' | ~/.local/bin/kilo-swarm \
   -m "github-copilot/gpt-5-mini" \
   -p 'You are a RESEARCHER with web search access. Search for relevant information, then Return JSON: {...}'
 ```
