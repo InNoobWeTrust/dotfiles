@@ -6,8 +6,6 @@ description: >
 
 # Swarm — Multi-Agent Parallel Node Guidance
 
-This command is a thin proxy to the **swarm-intelligence** skill.
-
 ## Do This First
 
 1. Read `~/.agents/skills/swarm-intelligence/SKILL.md`.
