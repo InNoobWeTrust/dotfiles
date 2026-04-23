@@ -10,13 +10,25 @@
         "baseURL": "${LITELLM_BASE_URL}"
       },
       "models": {
-        "gpt-5.4": {},
-        "kCode": {
+        "gpt-5.4": {
           "options": {
-            "variant": "thinking"
+            "maxInputTokens": 272000,
+            "maxTokens": 32768
           }
         },
-        "qwen/qwen3.6-plus": {},
+        "kCode": {
+          "options": {
+            "variant": "thinking",
+            "maxInputTokens": 90000,
+            "maxTokens": 32768
+          }
+        },
+        "qwen/qwen3.6-plus": {
+          "options": {
+            "maxInputTokens": 90000,
+            "maxTokens": 32768
+          }
+        },
       }
     }
   },
