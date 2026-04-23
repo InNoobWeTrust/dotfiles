@@ -63,7 +63,5 @@ Rules:
 4. Arrays of objects: merge by the first stable key found in this order:
    `id`, `task_id`, `section_id`, `slide_id`, `name`, `title`, `file_path`.
 5. Nested objects: recursively apply the same rules.
-6. Final tie-break: if no majority exists, use the value from the model with the
-   longest response. Only use this when 3 or more models disagree; with 2 models
-   and no agreement, keep the value from whichever model produced the more detailed
-   output (prefer the one with more non-empty fields).
+ 6. Final tie-break: if no majority exists, use lexicographical comparison of model names
+    (alphabetical order) to deterministically select which model's value to keep.

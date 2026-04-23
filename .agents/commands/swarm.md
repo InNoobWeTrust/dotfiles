@@ -17,8 +17,8 @@ This command is a thin proxy to the **swarm-intelligence** skill.
 ## Quick Start
 
 ```bash
-# Use a built-in domain
-echo "Build a REST API" | kilo-swarm -d references/domains/code/config.json
+# CORRECT — always use login shell so kilo-swarm is on PATH
+zsh -l -c 'echo "Build a REST API" | kilo-swarm -d references/domains/code/config.json'
 ```
 
 ## Hard Rules
@@ -28,3 +28,4 @@ echo "Build a REST API" | kilo-swarm -d references/domains/code/config.json
 - If the skill says a phase is blocked, stop; do not improvise past the failure.
 - Swarm nodes return JSON only and do not write files.
 - `references/orchestrator/minimal-flow.md` is the canonical execution path.
+- **Always use login shell** (`zsh -l -c '...'`) to ensure `kilo-swarm` is on PATH and user environment is properly sourced.

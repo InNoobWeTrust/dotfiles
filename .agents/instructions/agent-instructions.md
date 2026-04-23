@@ -16,7 +16,7 @@ Git writes require a two-phase protocol:
 
 **Phase 1 — Swarm Analysis:**
 ```bash
-zsh -l -c "echo 'Analyze git changes: staging scope, secret risks, unrelated file risks' | kilo-swarm -d ~/.agents/skills/swarm-intelligence/references/domains/code/config.json"
+$SHELL -l -c "echo 'Analyze git changes: staging scope, secret risks, unrelated file risks' | kilo-swarm -d ~/.agents/skills/swarm-intelligence/references/domains/code/config.json"
 ```
 
 **Phase 2 — Human Synthesis:**
@@ -45,7 +45,7 @@ zsh -l -c "echo 'Analyze git changes: staging scope, secret risks, unrelated fil
 
 ```bash
 # CORRECT
-zsh -l -c "kilo-swarm -d domain/config.json -i input.txt"
+$SHELL -l -c "kilo-swarm -d domain/config.json -i input.txt"
 
 # INCORRECT — may miss ~/.local/bin
 kilo-swarm -d domain/config.json -i input.txt

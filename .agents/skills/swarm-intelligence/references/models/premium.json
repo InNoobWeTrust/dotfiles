@@ -51,6 +51,12 @@
       "openrouter_activity": "2.1B prompt tokens"
     },
     {
+      "id": "openai/gpt-5.4-pro",
+      "provider": "openai",
+      "use_for": "Frontier-quality synthesis, highest-stakes output; agentic backbone",
+      "pricing": "$3.00/M input, $15.00/M output"
+    },
+    {
       "id": "github-copilot/claude-sonnet-4.6",
       "provider": "copilot",
       "use_for": "Strong reasoning and coding; senior agents, architecture",
@@ -60,14 +66,14 @@
       "id": "minimax-coding-plan/MiniMax-M2.7-highspeed",
       "provider": "minimax",
       "use_for": "Detailed architecture, planning, research",
-      "pricing": "Pay-per-token",
+      "pricing": "Included in Minimax Token Plan",
       "openrouter_activity": "890M prompt tokens"
     },
     {
       "id": "minimax-coding-plan/MiniMax-M2.5-highspeed",
       "provider": "minimax",
       "use_for": "Codebase exploration, quick edits",
-      "pricing": "Pay-per-token",
+      "pricing": "Included in Minimax Token Plan",
       "openrouter_activity": "420M prompt tokens"
     }
   ],

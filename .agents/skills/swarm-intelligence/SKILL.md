@@ -1,11 +1,6 @@
 ---
 name: swarm-intelligence
-description: >
-  Multi-agent swarm pipeline for domain-agnostic parallel analysis and synthesis.
-  Use this skill whenever the user says "swarm", "run swarm", "multi-agent", "parallel
-  agents", "diverse perspectives", or wants a 3-phase Research -> Spec -> Execution
-  pipeline via the kilo-swarm CLI. The top-level skill is intentionally compact:
-  it routes the orchestrator to the smallest reference file needed for the task.
+description: Multi-agent swarm pipeline for domain-agnostic parallel analysis and synthesis. Use this skill whenever the user says "swarm", "run swarm", "multi-agent", "parallel agents", "diverse perspectives", or wants a 3-phase Research -> Spec -> Execution pipeline via the kilo-swarm CLI. The top-level skill is intentionally compact: it routes the orchestrator to the smallest reference file needed for the task.
 ---
 
 # Swarm Intelligence Pipeline
@@ -21,31 +16,24 @@ For normal orchestration, read only these files:
 3. `references/models/free.json`
 4. `references/models/premium.json`
 
-That is the canonical minimal bundle for weaker orchestrators.
-
 ## Read Only When Needed
 
-- Need the domain config schema or field meanings:
-  `references/orchestrator/domain-config.md`
-- Need node-level CLI, engine routing, retry, JSON extraction, or merge behavior:
-  `references/orchestrator/node-helpers.md`
-- Need final artifact shape or file materialization rules:
-  `references/orchestrator/materialization.md`
-- Need safety rules or anti-pattern guidance:
-  `references/orchestrator/anti-patterns.md`
-- Need budgeting guidance:
-  `references/orchestrator/cost-management.md`
-- Need the JSON-only node persona text:
-  `assets/templates/swarm-node.txt`
-- Need an example final artifact:
-  `assets/examples/final-artifact.json`
+| Need | File |
+|---|---|
+| Domain config schema / field meanings | `references/orchestrator/domain-config.md` |
+| CLI, engine routing, retry, JSON extraction, merge | `references/orchestrator/node-helpers.md` |
+| Final artifact shape / file materialization | `references/orchestrator/materialization.md` |
+| Safety rules / anti-pattern guidance | `references/orchestrator/anti-patterns.md` |
+| Budgeting guidance | `references/orchestrator/cost-management.md` |
+| JSON-only node persona text | `assets/templates/swarm-node.txt` |
+| Example final artifact | `assets/examples/final-artifact.json` |
 
 ## Source Of Truth Order
 
-If files disagree, resolve conflicts in this order:
+If files disagree, resolve in this order:
 
 1. `references/orchestrator/minimal-flow.md`
-2. The selected domain config and `references/models/*.json`
+2. Selected domain config + `references/models/*.json`
 3. Other files in `references/orchestrator/`
 4. `assets/` examples and templates
 
@@ -67,3 +55,16 @@ assets/
 - `minimal mode` is the default for weaker orchestrators.
 - Swarm nodes return JSON only and do not write files.
 - If a stop condition is hit, stop and surface the failure.
+
+## Shell Invocation
+
+Always use a login shell. The VS Code extension may not source user environment
+files, so `kilo-swarm` will appear missing unless invoked via a login shell.
+
+```bash
+# CORRECT
+$SHELL -l -c 'echo "input" | kilo-swarm -d path/to/config.json'
+
+# INCORRECT — kilo-swarm not found in PATH
+echo "input" | kilo-swarm -d path/to/config.json
+```
