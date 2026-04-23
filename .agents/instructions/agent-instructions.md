@@ -15,9 +15,7 @@ If neither pillar matches, use fallback agent modes (see below).
 Git writes require a two-phase protocol:
 
 **Phase 1 — Swarm Analysis:**
-```bash
-$SHELL -l -c "echo 'Analyze git changes: staging scope, secret risks, unrelated file risks' | kilo-swarm -d ~/.agents/skills/swarm-intelligence/references/domains/code/config.json"
-```
+- Use `kilo-swarm` to run the task using a mix of multiple models and personas
 
 **Phase 2 — Human Synthesis:**
 - Report: files in scope, excluded files, secret risks, commit message draft
@@ -45,25 +43,8 @@ $SHELL -l -c "echo 'Analyze git changes: staging scope, secret risks, unrelated 
 
 ```bash
 # CORRECT
-$SHELL -l -c "kilo-swarm -d domain/config.json -i input.txt"
+$SHELL -l -c "kilo-swarm --help"
 
 # INCORRECT — may miss ~/.local/bin
-kilo-swarm -d domain/config.json -i input.txt
+kilo-swarm --help
 ```
-
----
-
-## Fallback Agent Modes
-
-Use only when task is simple and well-scoped (neither pillar applies):
-
-| Task | Agent | Model |
-|------|-------|-------|
-| Serious coding | `code` | `openai/gpt-5.4`, xhigh |
-| Trivial edits (typos, tiny refactors) | `fastcode` | `minimax-coding-plan/MiniMax-M2.5-highspeed` |
-| Critical review | `review` | `openai/gpt-5.4`, xhigh |
-| Architecture / design | `senior-architect` | `github-copilot/claude-sonnet-4.6` |
-| Debugging / root cause | `debug` | `minimax-coding-plan/MiniMax-M2.7-highspeed` |
-| Research / exploration | **Use swarm** | `kilo-swarm -d domains/code/config.json` |
-
-For research and exploration: do NOT use dedicated agents — use `kilo-swarm` with `code` domain instead.

@@ -5,7 +5,17 @@ description: Multi-agent swarm pipeline for domain-agnostic parallel analysis an
 
 # Swarm Intelligence Pipeline
 
-This skill is a router. Do not read the whole tree by default.
+This skill is a router for orchestrating multi-agent swarms. Do not read the whole tree by default.
+
+## Execution Model
+
+The orchestrator achieves multi-agent behavior by running **multiple `kilo-swarm` invocations sequentially**, where each invocation is a single-agent node pass. The orchestrator handles:
+- Parallel node execution (when supported by the runtime)
+- Result merging and quorum detection
+- Retry logic and failure recovery
+- Routing between phases
+
+`kilo-swarm` itself runs one node per invocation — it is the orchestrator's responsibility to coordinate multiple nodes across phases.
 
 ## Default Read Set
 
@@ -15,6 +25,21 @@ For normal orchestration, read only these files:
 2. One chosen domain config under `references/domains/.../config.json`
 3. `references/models/free.json`
 4. `references/models/premium.json`
+
+### Domain Config Selection
+
+Use the task context to select the appropriate domain:
+
+| Task Type | Domain Config |
+|---|---|
+| Code review, debugging, implementation | `references/domains/code/config.json` |
+| UI/UX design, visual systems | `references/domains/design/config.json` |
+| Skill/agent document review | `references/domains/skill-review/config.json` |
+| Project planning, roadmapping | `references/domains/pm/config.json` |
+| Presentation slides | `references/domains/slides/config.json` |
+| Writing, documentation | `references/domains/writing/config.json` |
+
+If no domain matches, default to `skill-review` for meta-analysis tasks.
 
 ## Read Only When Needed
 
@@ -37,6 +62,69 @@ If files disagree, resolve in this order:
 3. Other files in `references/orchestrator/`
 4. `assets/` examples and templates
 
+## Orchestrator Capability Tiers
+
+| Tier | Description |
+|---|---|
+| **full** | Multiple models per phase, full quorum voting |
+| **minimal** | 2 models for Phase 1 quorum, single model for Phase 2/3 (default) |
+| **degraded** | Single model throughout, no retry |
+
+Use `minimal` by default. Use `full` when output quality is critical and budget allows. Use `degraded` only when compute is severely limited.
+
+## Core Laws
+
+- `kilo-swarm` runs one node per invocation. The orchestrator runs multiple invocations to achieve swarm behavior.
+- Swarm nodes return JSON only and do not write files.
+- If a stop condition is hit, stop immediately and surface the failure.
+
+### Stop Conditions
+
+Stop the swarm and surface the failure when any of these occur:
+
+| Code | Condition |
+|---|---|
+| `STOP_SUCCESS` | All phases completed successfully |
+| `STOP_PHASE1_NO_QUORUM` | Phase 1 could not reach 2 valid JSON outputs |
+| `STOP_PHASE2_UNAPPROVED` | Phase 2 rejected after max review cycles |
+| `STOP_PHASE3_TASK_FAILURE` | Task failed after max maker-fix retries |
+| `STOP_TIMEOUT` | Absolute timeout exceeded |
+| `STOP_CONFIG_MISSING` | Required config key is missing |
+
+### Error Envelope
+
+When surfacing a failure, return this JSON structure:
+
+```json
+{
+  "status": "error",
+  "code": "STOP_PHASE1_NO_QUORUM",
+  "message": "Phase 1-A could not reach 2 valid outputs after exhausting free model pool",
+  "details": {},
+  "retryable": false
+}
+```
+
+## Shell Invocation
+
+Always use a login shell. The VS Code extension may not source user environment files, so `kilo-swarm` will appear missing unless invoked via a login shell.
+
+**Always verify `kilo-swarm` availability first:**
+
+```bash
+$SHELL -l -c 'command -v kilo-swarm >/dev/null 2>&1 || { echo "ERROR: kilo-swarm not found in PATH" >&2; exit 1; }'
+```
+
+**Correct invocation:**
+```bash
+$SHELL -l -c 'echo "input" | kilo-swarm -m MODEL -p PERSONA'
+```
+
+**Incorrect — kilo-swarm not found in PATH:**
+```bash
+echo "input" | kilo-swarm -m MODEL -p PERSONA
+```
+
 ## Directory Layout
 
 ```text
@@ -47,24 +135,4 @@ references/
 assets/
   templates/      # reusable prompt fragments
   examples/       # example JSON artifacts
-```
-
-## Core Laws
-
-- `kilo-swarm` runs one node, not a full swarm.
-- `minimal mode` is the default for weaker orchestrators.
-- Swarm nodes return JSON only and do not write files.
-- If a stop condition is hit, stop and surface the failure.
-
-## Shell Invocation
-
-Always use a login shell. The VS Code extension may not source user environment
-files, so `kilo-swarm` will appear missing unless invoked via a login shell.
-
-```bash
-# CORRECT
-$SHELL -l -c 'echo "input" | kilo-swarm -d path/to/config.json'
-
-# INCORRECT — kilo-swarm not found in PATH
-echo "input" | kilo-swarm -d path/to/config.json
 ```

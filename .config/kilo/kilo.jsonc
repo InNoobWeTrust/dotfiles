@@ -1,6 +1,6 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
-  "default_agent": "fastcode",
+  "default_agent": "orchestrator",
   "small_model": "kilo/kilo-auto/free",
   "provider": {
     "litellm": {
@@ -68,6 +68,7 @@
       "head *": "allow",
       "cat *": "allow",
       "jq *": "allow",
+      "$SHELL *": "allow",
     },
     "recall": {
       "search": "allow"
