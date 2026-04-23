@@ -3,32 +3,20 @@
   "default_agent": "fastcode",
   "small_model": "kilo/kilo-auto/free",
   "provider": {
-    "vllm": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "vllm",
-      "options": {
-        "baseURL": "${KILO_PROVIDER_VLLM_BASE_URL}"
-      },
-      "models": {
-        "kCode": {
-          "options": {
-            "variant": "thinking"
-          }
-        }
-      }
-    },
     "litellm": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "litellm",
       "options": {
-        "baseURL": "${KILO_PROVIDER_LITELLM_BASE_URL}"
+        "baseURL": "${LITELLM_BASE_URL}"
       },
       "models": {
-        "gpt-5.3-codex": {},
         "gpt-5.4": {},
-        "kCode": {},
-        "openai/chatbot-5.4-high": {},
-        "openai/chatbot-5.4-low": {},
+        "kCode": {
+          "options": {
+            "variant": "thinking"
+          }
+        },
+        "qwen/qwen3.6-plus": {},
       }
     }
   },

@@ -50,7 +50,7 @@
       "use_for": "OpenRouter aggregated free tier"
     },
     {
-      "id": "vllm/kCode",
+      "id": "litellm/kCode",
       "provider": "openrouter",
       "use_for": "Coding-heavy tasks; capable, below frontier"
     },
