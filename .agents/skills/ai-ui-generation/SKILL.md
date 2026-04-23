@@ -1,16 +1,6 @@
 ---
 name: ai-ui-generation
-description: >
-  Workflow for AI-assisted web UI generation and integration. Use whenever the
-  user wants to design or scaffold UI with external AI design tools such as
-  Google Stitch, Stitch with Google, pencil.dev, v0, Lovable,
-  screenshot-to-code tools, or similar systems, then import the result into a
-  real codebase. Also use when the user asks to turn wireframes/screenshots
-  into app structure, refine exported HTML/CSS, integrate an AI-generated mockup
-  into React or Next.js, bind generated UI to real data, or adapt prototype
-  output to templating systems or dashboard/internal-tool architectures.
-  Activate even when the user does not name the tool explicitly but the task is
-  clearly "generate outside the repo, then integrate inside the repo."
+description: Workflow for AI-assisted web UI generation and integration. Use whenever the user wants to design or scaffold UI with external AI design tools such as Google Stitch, Stitch with Google, pencil.dev, v0, Lovable, screenshot-to-code tools, or similar systems, then import the result into a real codebase. Also use when the user asks to turn wireframes/screenshots into app structure, refine exported HTML/CSS, integrate an AI-generated mockup into React or Next.js, bind generated UI to real data, or adapt prototype output to templating systems or dashboard/internal-tool architectures. Activate even when the user does not name the tool explicitly but the task is clearly "generate outside the repo, then integrate inside the repo."
 ---
 
 # AI UI Generation

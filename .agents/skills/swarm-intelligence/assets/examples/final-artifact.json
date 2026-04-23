@@ -1,0 +1,10 @@
+{
+  "files": [
+    {
+      "path": "src/example.ts",
+      "language": "typescript",
+      "code": "export function example() { return 'ok' }\n",
+      "task_id": "task_01"
+    }
+  ]
+}

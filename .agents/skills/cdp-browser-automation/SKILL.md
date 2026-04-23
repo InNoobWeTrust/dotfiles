@@ -1,13 +1,6 @@
 ---
 name: cdp-browser-automation
-description: >
-  Methodology for direct browser automation via Chrome DevTools Protocol (CDP).
-  Zero external services, zero subscriptions — just Python + a running Chrome.
-  Use when the user wants to automate, scrape, test, or interact with web pages.
-  Activate when the user says "open browser", "automate this website", "scrape",
-  "click on", "fill this form", "download from", or any task requiring real
-  browser interaction. Also activate when building or improving site-specific
-  browser knowledge (selectors, URL patterns, API endpoints).
+description: Methodology for direct browser automation via Chrome DevTools Protocol (CDP). Zero external services, zero subscriptions — just Python + a running Chrome. Use when the user wants to automate, scrape, test, or interact with web pages. Activate when the user says "open browser", "automate this website", "scrape", "click on", "fill this form", "download from", or any task requiring real browser interaction. Also activate when building or improving site-specific browser knowledge (selectors, URL patterns, API endpoints).
 ---
 
 # CDP Browser Automation

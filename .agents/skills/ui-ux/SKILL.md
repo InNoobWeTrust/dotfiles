@@ -1,9 +1,6 @@
 ---
 name: ui-ux
-description: >
-  UI/UX design companion for building polished, accessible, production-grade
-  interfaces. Enforces modern layouts, typography, and motion to prevent "AI slop"
-  using High-Agency principles and taste-driven design.
+description: UI/UX design companion for building polished, accessible, production-grade interfaces. Enforces modern layouts, typography, and motion to prevent "AI slop" using High-Agency principles and taste-driven design.
 ---
 
 # UI-UX Design Skill

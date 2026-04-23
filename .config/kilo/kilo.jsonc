@@ -1,6 +1,6 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
-  "default_agent": "orchestrator",
+  "default_agent": "fastcode",
   "small_model": "kilo/kilo-auto/free",
   "provider": {
     "vllm": {
@@ -24,33 +24,11 @@
         "baseURL": "${KILO_PROVIDER_LITELLM_BASE_URL}"
       },
       "models": {
-        "all-proxy-models": {},
-        "qwen/qwen3.6-plus": {
-          "options": {
-            "variant": "thinking",
-          }
-        },
-        "openai/chatbot-5.3-codex": {},
-        "openai/chatbot-5.4": {
-          "options": {
-            "reasoning_effort": "high",
-          }
-        },
-        "openai/chatbot-5.3-instant": {},
-        "openai/chatbot-5.4-pro": {},
-        "openai/chatbot-5.3-chat-latest": {},
-        "MiniMax-M2.7-highspeed": {
-          "options": {
-            "reasoning_effort": "xhigh",
-          }
-        },
-        "openai/chatbot-5.3-codex-spark": {},
-        "kilo-auto/free": {},
-        "kilo-auto/balanced": {
-          "options": {
-            "reasoning_effort": "high"
-          }
-        },
+        "gpt-5.3-codex": {},
+        "gpt-5.4": {},
+        "kCode": {},
+        "openai/chatbot-5.4-high": {},
+        "openai/chatbot-5.4-low": {},
       }
     }
   },
@@ -68,36 +46,6 @@
     },
   },
   "permission": {
-    "git status*": "allow",
-    "git diff*": "allow",
-    "git log*": "allow",
-    "git show*": "allow",
-    "git branch*": "allow",
-    "git remote*": "allow",
-    "git rev-parse*": "allow",
-    "git ls-files*": "allow",
-    "git fetch*": "ask",
-    "git add*": "ask",
-    "git commit*": "ask",
-    "git push*": "ask",
-    "git reset*": "ask",
-    "git restore*": "ask",
-    "git checkout*": "ask",
-    "git switch*": "ask",
-    "git merge*": "ask",
-    "git rebase*": "ask",
-    "git cherry-pick*": "ask",
-    "git revert*": "ask",
-    "git stash*": "ask",
-    "git clean*": "ask",
-    "git tag*": "ask",
-    "git submodule*": "ask",
-    "gh pr create*": "ask",
-    "gh pr merge*": "ask",
-    "gh repo sync*": "ask",
-    "sh -c *git *": "ask",
-    "bash -c *git *": "ask",
-    "zsh -c *git *": "ask",
     "bash": {
       "git status *": "allow",
       "git log *": "allow",
@@ -115,6 +63,11 @@
       "wc *": "allow",
       "wait *": "allow",
       "zsh *": "allow",
+      "which *": "allow",
+      "gemini *": "allow",
+      "head *": "allow",
+      "cat *": "allow",
+      "jq *": "allow",
     },
     "recall": {
       "search": "allow"
@@ -122,7 +75,8 @@
     "external_directory": {
       "/tmp/*": "allow",
       "~/.agents/*": "allow",
-      "~/.local/bin/*": "allow",    },
+      "~/.local/bin/*": "allow",
+    },
   },
   "instructions": [
     "~/.agents/instructions/agent-instructions.md",

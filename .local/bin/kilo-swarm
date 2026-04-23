@@ -1,9 +1,19 @@
 #!/usr/bin/env bash
 # kilo-swarm — Single-pass swarm node runner (atomic primitive)
 #
-# Runs one kilo agent invocation (no agent profile required) and outputs
-# extracted JSON. Kilo Code (the AI orchestrator) is responsible for
-# phases, loops, parallelism, file management, and retries.
+# Runs one agent invocation (kilo or gemini-cli) and outputs extracted JSON.
+# Kilo Code (the AI orchestrator) is responsible for phases, loops,
+# parallelism, file management, and retries.
+#
+# Engine selection is automatic based on model ID:
+#   - Models matching ^(kilo/)?google/ or ^gemini/ → gemini-cli
+#   - All other models → kilo run
+#
+# For gemini engine, the model name is normalised:
+#   kilo/google/<name>  →  <name>   (strip prefix)
+#   google/<name>       →  <name>   (strip prefix)
+#   gemini/<name>       →  <name>   (strip prefix)
+#   gemini-*            →  used as-is
 #
 # Usage:
 #   kilo-swarm -m MODEL -p PERSONA -i INPUT_FILE
@@ -13,8 +23,8 @@
 #   -m MODEL      model to use (required)
 #   -p PERSONA    persona/instruction string passed as the user message (required)
 #   -i FILE       input file attached via -f (default: stdin written to tmpfile)
-#   -t SECONDS    timeout for the kilo run call (default: 0 = disabled)
-#   --dry-run     print the kilo command without executing
+#   -t SECONDS    timeout for the agent run call (default: 0 = disabled)
+#   --dry-run     print the command without executing
 #   --verbose     emit extra debug info to stderr
 #   -h            show this help
 #
@@ -38,6 +48,32 @@ usage() {
 
 log()  { printf '[kilo-swarm] %s\n' "$*" >&2; }
 vlog() { if [[ "$VERBOSE" == "true" ]]; then printf '[kilo-swarm:verbose] %s\n' "$*" >&2; fi; }
+
+# Detect engine from model ID.
+# Returns "gemini" if the model should be run via gemini-cli, else "kilo".
+detect_engine() {
+  local model="$1"
+  case "$model" in
+    kilo/google/*|google/*|gemini/*|gemini-*)
+      echo "gemini" ;;
+    *)
+      echo "kilo" ;;
+  esac
+}
+
+# Strip provider prefix from a model ID to get the bare name for gemini-cli.
+# e.g. kilo/google/gemini-2.5-flash → gemini-2.5-flash
+#      google/gemini-2.5-pro        → gemini-2.5-pro
+#      gemini/gemini-2.5-flash      → gemini-2.5-flash
+#      gemini-2.5-flash             → gemini-2.5-flash (unchanged)
+strip_gemini_prefix() {
+  local model="$1"
+  # Remove up to two slash-separated prefix components if they are not a model name
+  model="${model#kilo/google/}"
+  model="${model#google/}"
+  model="${model#gemini/}"
+  echo "$model"
+}
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -107,15 +143,27 @@ If you cannot complete the task, output:
 
 ${PERSONA}"
 
-# Build command array
-KILO_CMD=(kilo run --auto --format json -m "$MODEL" -f "$INPUT_FILE" -- "$SWARM_NODE_MSG")
+# Determine engine and build command array
+ENGINE=$(detect_engine "$MODEL")
+vlog "engine=$ENGINE  model=$MODEL"
 
-# Prepend timeout wrapper if requested
+if [[ "$ENGINE" == "gemini" ]]; then
+  BARE_MODEL=$(strip_gemini_prefix "$MODEL")
+  # gemini-cli: pass persona + input content as the prompt via stdin.
+  # -p sets the non-interactive prompt; the file content is piped via stdin.
+  # -y disables interactive approval prompts.
+  AGENT_CMD=(gemini -y -m "$BARE_MODEL" -p "$SWARM_NODE_MSG")
+else
+  # kilo: attach the input file and pass persona as the message argument
+  AGENT_CMD=(kilo run --auto --format json -m "$MODEL" -f "$INPUT_FILE" -- "$SWARM_NODE_MSG")
+fi
+
+# Build command array (with optional timeout wrapper)
 if [[ "$TIMEOUT" -gt 0 ]]; then
   if command -v timeout >/dev/null 2>&1; then
-    KILO_CMD=(timeout "$TIMEOUT" "${KILO_CMD[@]}")
+    AGENT_CMD=(timeout "$TIMEOUT" "${AGENT_CMD[@]}")
   elif command -v gtimeout >/dev/null 2>&1; then
-    KILO_CMD=(gtimeout "$TIMEOUT" "${KILO_CMD[@]}")
+    AGENT_CMD=(gtimeout "$TIMEOUT" "${AGENT_CMD[@]}")
   else
     log "WARN: -t specified but neither 'timeout' nor 'gtimeout' found; ignoring timeout"
     TIMEOUT=0
@@ -125,34 +173,46 @@ fi
 if [[ "$DRY_RUN" == "true" ]]; then
   persona_preview="${PERSONA:0:120}"
   [[ "${#PERSONA}" -gt 120 ]] && persona_preview+="..."
-  log "DRY-RUN cmd : ${KILO_CMD[*]}"
+  log "DRY-RUN engine: $ENGINE"
+  log "DRY-RUN cmd : ${AGENT_CMD[*]}"
   log "DRY-RUN persona (${#PERSONA} chars): $persona_preview"
   printf '%s\n' '{}'
   exit 0
 fi
 
-vlog "model=$MODEL  input=$INPUT_FILE  persona_len=${#PERSONA}  timeout=${TIMEOUT}s"
+vlog "model=$MODEL  engine=$ENGINE  input=$INPUT_FILE  persona_len=${#PERSONA}  timeout=${TIMEOUT}s"
 
-# Run kilo — capture stdout and stderr without toggling set -e
+# Run agent — capture stdout and stderr without toggling set -e
 TMP_STDERR=$(mktemp)
-kilo_status=0
-raw=$("${KILO_CMD[@]}" 2>"$TMP_STDERR") || kilo_status=$?
+agent_status=0
 
-if [[ $kilo_status -ne 0 ]]; then
-  if [[ $kilo_status -eq 124 ]]; then
-    log "ERROR: kilo run timed out after ${TIMEOUT}s"
+if [[ "$ENGINE" == "gemini" ]]; then
+  # gemini-cli reads the input file from stdin; persona is already in -p
+  raw=$(cat "$INPUT_FILE" | "${AGENT_CMD[@]}" 2>"$TMP_STDERR") || agent_status=$?
+else
+  raw=$("${AGENT_CMD[@]}" 2>"$TMP_STDERR") || agent_status=$?
+fi
+
+if [[ $agent_status -ne 0 ]]; then
+  if [[ $agent_status -eq 124 ]]; then
+    log "ERROR: agent run timed out after ${TIMEOUT}s"
   elif [[ -s "$TMP_STDERR" ]]; then
-    log "WARN: kilo run exited with status $kilo_status"
+    log "WARN: agent run exited with status $agent_status"
     cat "$TMP_STDERR" >&2
   else
-    log "WARN: kilo run exited with status $kilo_status (no stderr output)"
+    log "WARN: agent run exited with status $agent_status (no stderr output)"
   fi
 fi
 
 vlog "raw output: ${#raw} chars"
 
-# Concatenate all text events from --format json output
-text=$(printf '%s\n' "$raw" | python3 -c "
+# Normalise raw output to plain text.
+# - kilo engine emits newline-delimited JSON events; concatenate type=text parts.
+# - gemini engine emits plain text directly.
+if [[ "$ENGINE" == "gemini" ]]; then
+  text="$raw"
+else
+  text=$(printf '%s\n' "$raw" | python3 -c "
 import sys, json
 out = ''
 for line in sys.stdin:
@@ -167,6 +227,7 @@ for line in sys.stdin:
         pass
 print(out.strip())
 ")
+fi
 
 vlog "text after event concat: ${#text} chars"
 

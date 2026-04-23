@@ -1,16 +1,6 @@
 ---
 name: strategic-codebase-navigation
-description: >
-  Strategic navigation of large, unfamiliar codebases. Use this skill whenever
-  you need to understand an unfamiliar codebase, find where to make a change in
-  a large project, trace how a feature works end-to-end, plan a migration or
-  large refactor, or map system architecture. Also use it when you're lost in a
-  big repo and don't know where to start, or when a user asks you to work on a
-  codebase you haven't seen before. Activate when the user says "where do I find
-  X", "how does this work", "navigate this repo", "find the code for", "trace
-  this flow", "map the architecture", "explore this codebase", or "what does
-  this project do". Activate proactively at the start of any task in an
-  unfamiliar codebase — don't guess where code lives, navigate first.
+description: Strategic navigation of large, unfamiliar codebases. Use this skill whenever you need to understand an unfamiliar codebase, find where to make a change in a large project, trace how a feature works end-to-end, plan a migration or large refactor, or map system architecture. Also use it when you're lost in a big repo and don't know where to start, or when a user asks you to work on a codebase you haven't seen before. Activate when the user says "where do I find X", "how does this work", "navigate this repo", "find the code for", "trace this flow", "map the architecture", "explore this codebase", or "what does this project do". Activate proactively at the start of any task in an unfamiliar codebase — don't guess where code lives, navigate first.
 ---
 
 # Strategic Codebase Navigation

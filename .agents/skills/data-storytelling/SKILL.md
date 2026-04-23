@@ -1,9 +1,6 @@
 ---
 name: data-storytelling
-description: >
-  Transform data into goal-aligned, multi-lens, evidence-backed narratives
-  with configurable causal thresholds, explicit epistemic confidence, and
-  human-in-the-loop correction throughout.
+description: Transform data into goal-aligned, multi-lens, evidence-backed narratives with configurable causal thresholds, explicit epistemic confidence, and human-in-the-loop correction throughout.
 ---
 
 # Data Storytelling Skill Specification

@@ -1,9 +1,6 @@
 ---
 name: video-production
-description: >
-  High-Agency video production pipeline. Enforces a structured 5-step workflow
-  (Visual DNA -> Story -> Assets -> Shot List -> Render) to prevent generic output
-  and ensure cinematic consistency.
+description: High-Agency video production pipeline. Enforces a structured 5-step workflow (Visual DNA -> Story -> Assets -> Shot List -> Render) to prevent generic output and ensure cinematic consistency.
 ---
 
 # Video Production Skill

@@ -1,17 +1,6 @@
 ---
 name: requirements-driven-dev
-description: >
-  Requirements-driven development methodology — cascading from product
-  requirements (PRD) to technical requirements (TRD) to behavior specs (BDD)
-  to execution and delivery. Activate whenever the user wants to plan features,
-  write product requirements, define technical architecture, author behavior
-  specs, implement, verify, or commit work. Also activate for PRDs, TRDs,
-  technical design docs, behavior specs, acceptance criteria, Given/When/Then
-  scenarios, user stories, changelogs, structured commits, or when the user
-  says "plan a feature", "design a system", "spec this out", "write a PRD",
-  "what's the architecture", or "break this into stories" — even without
-  explicitly saying "requirements-driven". Activate proactively when you
-  detect multi-step feature work that would benefit from structured specs.
+description: Requirements-driven development methodology — cascading from product requirements (PRD) to technical requirements (TRD) to behavior specs (BDD) to execution and delivery. Activate whenever the user wants to plan features, write product requirements, define technical architecture, author behavior specs, implement, verify, or commit work. Also activate for PRDs, TRDs, technical design docs, behavior specs, acceptance criteria, Given/When/Then scenarios, user stories, changelogs, structured commits, or when the user says "plan a feature", "design a system", "spec this out", "write a PRD", "what's the architecture", or "break this into stories" — even without explicitly saying "requirements-driven". Activate proactively when you detect multi-step feature work that would benefit from structured specs.
 ---
 
 # Requirements-Driven Development Skill

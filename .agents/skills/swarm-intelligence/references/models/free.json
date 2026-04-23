@@ -3,6 +3,18 @@
   "description": "Free tier models for high-volume swarm passes",
   "models": [
     {
+      "id": "google/gemini-2.5-flash",
+      "provider": "gemini",
+      "engine": "gemini",
+      "use_for": "High-volume passes with large context — uses direct Google subscription, zero proxy cost"
+    },
+    {
+      "id": "google/gemini-2.5-flash-lite",
+      "provider": "gemini",
+      "engine": "gemini",
+      "use_for": "Lightweight high-volume passes — fastest Google model, zero proxy cost"
+    },
+    {
       "id": "kilo/kilo-auto/free",
       "provider": "kilo",
       "use_for": "Auto-selection from free models"

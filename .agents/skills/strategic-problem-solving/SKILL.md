@@ -1,16 +1,6 @@
 ---
 name: strategic-problem-solving
-description: >
-  Strategic and systematic thinking for problem-solving. Use this skill to
-  debug tricky bugs, investigate failures, perform root cause analysis, make
-  architectural decisions, or untangle complex multi-concern situations. Also
-  use when stuck going in circles, when a user reports vague or recurring
-  symptoms, or asks "why does this keep happening." Activate when the user says
-  "debug this", "troubleshoot", "figure out why", "root cause", "what's going
-  wrong", "fix this bug", or "this keeps breaking". Includes advanced elicitation
-  methods (structured reasoning second passes) — activate when output feels
-  shallow, or the user says "go deeper", "rethink this", "first principles",
-  "pre-mortem", "red team this", or "inversion".
+description: Strategic and systematic thinking for problem-solving. Use this skill to debug tricky bugs, investigate failures, perform root cause analysis, make architectural decisions, or untangle complex multi-concern situations. Also use when stuck going in circles, when a user reports vague or recurring symptoms, or asks "why does this keep happening." Activate when the user says "debug this", "troubleshoot", "figure out why", "root cause", "what's going wrong", "fix this bug", or "this keeps breaking". Includes advanced elicitation methods (structured reasoning second passes) — activate when output feels shallow, or the user says "go deeper", "rethink this", "first principles", "pre-mortem", "red team this", or "inversion".
 ---
 
 # Strategic Problem-Solving
