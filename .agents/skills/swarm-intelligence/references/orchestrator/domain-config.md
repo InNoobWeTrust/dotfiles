@@ -16,7 +16,7 @@ phase3_maker_fix_label / phase3_maker_fix_persona
 phase3_breaker_label   / phase3_breaker_persona
 ```
 
-`phase3_breaker_persona` should use the `__QA_CASES__` placeholder.
+`phase3_breaker_persona` should use the `__QA_CASES__` placeholder. The orchestrator must replace this placeholder with the actual QA cases from the domain context before invoking the breaker node.
 
 ## Field Meanings
 

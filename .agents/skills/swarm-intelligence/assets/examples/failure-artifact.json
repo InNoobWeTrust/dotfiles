@@ -1,0 +1,8 @@
+{
+  "error": "Phase 2 review failed after 3 cycles",
+  "phase2_review_findings": [
+    "Missing critical vulnerability handling",
+    "Inconsistent data model definitions"
+  ],
+  "stop_condition": "phase2_unapproved"
+}

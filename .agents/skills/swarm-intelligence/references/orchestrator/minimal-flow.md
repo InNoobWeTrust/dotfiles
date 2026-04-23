@@ -23,6 +23,7 @@ Use `minimal mode` unless a human explicitly asks for `full quorum mode`.
 
 ## Steps
 
+0. Validate input: ensure the input document is non-empty, well-formed, and relevant to the task. If not, fail immediately.
 1. Load one domain config.
 2. Confirm the config has all required `phase1_*`, `phase2_*`, and `phase3_*` keys.
 3. Resolve `model_pool_refs` into `free_model_pool` and `premium_model_pool` using
@@ -36,13 +37,13 @@ Use `minimal mode` unless a human explicitly asks for `full quorum mode`.
 8. Repeat the same process for Phase 1-B and merge with `phase1_b_field`.
 9. If either Phase 1 branch cannot reach 2 valid JSON outputs, fail the swarm.
 10. Phase 2 in `minimal mode`: run `phase2_forward_persona` on
-    `quality_tiers.mid_tier[0]`.
-11. Run `phase2_review_persona` on `quality_tiers.mid_tier[1]` if present,
-    otherwise `quality_tiers.high_stakes[0]`.
+    `quality_tiers.mid_tier[0]` (must exist).
+11. Run `phase2_review_persona` on `quality_tiers.mid_tier[1]` if present and valid,
+    otherwise `quality_tiers.high_stakes[0]` (must exist).
 12. If review returns `approved: false`, run `phase2_revise_persona` on the same
-    forward model, then review again. Maximum 3 review cycles.
-13. If Phase 2 is still unapproved after 3 review cycles, fail the swarm.
-14. Run `phase3_decompose_persona` once.
+    forward model, then review again. Maximum 3 total reviews (initial + up to 2 revise+review pairs).
+13. If Phase 2 is still unapproved after 3 total reviews, fail the swarm.
+14. Run `phase3_decompose_persona` once. If the decomposition fails or produces an empty task list, fail the swarm.
 15. For each task, run `phase3_maker_persona` on `quality_tiers.mid_tier[0]`.
 16. Run `phase3_breaker_persona` on `quality_tiers.mid_tier[1]` if present,
     otherwise `quality_tiers.high_stakes[0]`.
