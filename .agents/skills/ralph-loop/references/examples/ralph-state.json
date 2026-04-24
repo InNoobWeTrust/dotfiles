@@ -1,0 +1,15 @@
+{
+  "mode": "afk",
+  "iteration": 3,
+  "success_streak": 1,
+  "failure_fingerprint": "",
+  "repeat_failures": 0,
+  "cost_usd": 3.42,
+  "files_touched": [
+    "package.json",
+    "vitest.config.ts",
+    "tests/example.test.ts"
+  ],
+  "last_good_checkpoint": "snapshot://2026-04-24T09:18:00Z",
+  "last_verify_file": ".ralph-verify.json"
+}

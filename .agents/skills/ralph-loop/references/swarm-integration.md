@@ -1,86 +1,153 @@
 # Swarm + Ralph: Combined Pipeline
 
 This document describes how to combine `swarm-intelligence` and `ralph-loop`
-into a single end-to-end pipeline:
+into one end-to-end workflow:
 
-```
-Swarm Phase 1 (Research)
-  → Swarm Phase 2 (Spec + Completion Criteria)
-    → Ralph (Iterative Execution until criteria met)
+```text
+Swarm orchestrator (research -> design -> decomposition)
+  -> Ralph handoff package synthesis
+    -> Ralph execution loop until verification passes
 ```
 
 Use this pattern when the task is too large or ambiguous for a single-shot
-prompt but has a clear end state — typically large refactors, migrations,
-and feature builds that span many files.
+prompt, but still has a machine-verifiable end state.
 
----
-
-## When to Use the Combined Pipeline
+## When To Use The Combined Pipeline
 
 | Situation | Use |
 |-----------|-----|
-| Task is clear + small | Ralph alone |
-| Task is ambiguous or needs design | Swarm alone |
-| Task is large + ambiguous, but has a verifiable end state | **Swarm → Ralph** |
-| Task requires human judgment at every step | Neither — work manually |
+| Task is clear and small | Ralph alone |
+| Task is ambiguous and needs design | Swarm alone |
+| Task is large, ambiguous, and still has a verifiable end state | Swarm -> Ralph |
+| Task requires human judgment on every step | Neither; work manually |
 
----
+## Ground Rules
 
-## Pipeline Phases
+1. `swarm-intelligence` is an orchestrated multi-phase workflow.
+2. `kilo-swarm` runs one node per invocation, not the whole swarm.
+3. The final swarm output is one JSON artifact with a `files` array.
+4. Intermediate phase outputs may be prose, bullets, lightly structured text,
+   or JSON; they are not the final artifact contract.
+5. Swarm nodes do not write files. A separate materialization step or premium
+   `code` agent writes files.
 
-### Phase 1 — Swarm Research & Spec
-
-Run `swarm-intelligence` with the `code` domain config (or whichever domain
-matches your task). The swarm outputs:
-
-- A locked technical specification (`design` object)
-- A set of API contracts that implementation must satisfy
-- A decomposed task list (from `phase3_decompose_persona`)
-
-**Swarm invocation (minimal mode):**
+If you are building a custom orchestrator, verify `kilo-swarm` exists first:
 
 ```bash
-$SHELL -l -c 'echo "<task description>" | kilo-swarm -m MODEL -p "$(cat swarm-persona.txt)"'
+$SHELL -l -c 'command -v kilo-swarm >/dev/null 2>&1 || { echo "ERROR: kilo-swarm not found in PATH" >&2; exit 1; }'
 ```
 
-**What to extract from swarm output:**
+Do not replace the swarm with one raw `kilo-swarm` command. A single invocation
+only runs one node.
 
-1. The final `files` artifact — this becomes Ralph's `TASK.md`
-2. The QA edge cases and negative tests — these become `verify.sh` checks
-3. The API contracts — these become the machine-verifiable completion criteria
+## Phase 1: Run Swarm Normally
 
----
+Load `swarm-intelligence` and let it follow its documented orchestrator flow.
+In minimal mode that means:
 
-### Phase 2 — Translate Swarm Output to Ralph Input
+1. Select the correct domain config.
+2. Run both Phase 1 branches to quorum.
+3. Run Phase 2 forward/review and revise if needed.
+4. Run Phase 3 decomposition and maker/breaker loops.
+5. Return one final JSON artifact with `files[]`.
 
-Convert the swarm artifact into two files Ralph needs:
+For code work, the usual choice is the `code` domain config.
 
-**`TASK.md`** — the task description with scope and acceptance criteria:
+### What Ralph Needs From Swarm
+
+Ralph needs a handoff package, not just the final implementation artifact.
+Capture these during orchestration:
+
+1. The approved Phase 2 design decisions and completion criteria
+2. The Phase 2 review findings that must be checked in verification
+3. The Phase 3 decomposition and file/task scope
+4. The final artifact's `files[]` output
+
+Important: only `files[]` is guaranteed in the final swarm artifact. If you
+need design notes, QA cases, or decomposition details later, persist them
+explicitly in the orchestrator or synthesize them into the handoff package.
+
+## Phase 2: Build The Ralph Handoff Package
+
+After the swarm succeeds, create a Ralph handoff package in a separate
+synthesis/materialization step. This is done by the orchestrator or a premium
+`code` agent, not by swarm nodes directly.
+
+Recommended handoff files:
+
+1. `TASK.md`
+2. `PROMPT.md`
+3. `verify.sh`
+4. `progress.txt` seed
+5. Optional `.ralph-state.json` seed
+
+Starter templates live under `references/templates/`.
+
+### `TASK.md`
+
+`TASK.md` should be a locked execution brief, built from the approved swarm
+outputs:
 
 ```markdown
-# Task: [Title from swarm spec]
+# Task: [Title]
 
 ## What to implement
-[From swarm phase3_decompose output]
-
-## Completion criteria
-- [ ] All API contracts from spec are implemented with correct signatures
-- [ ] `npm run typecheck` passes with 0 errors
-- [ ] `npm test` passes with 0 failures
-- [ ] [QA edge cases from swarm phase2_review output are handled]
+- [Concrete work items from the approved decomposition]
 
 ## Files in scope
-[From swarm decomposition task list]
+- [Paths from decomposition and/or final artifact]
 
-## Contracts to satisfy
-[Copy api_contracts verbatim from swarm design output]
+## Allowed actions
+- Edit only the files in scope unless verification proves another file is required
+
+## Forbidden actions
+- No destructive cleanup commands
+- No dependency additions or network-mutating commands unless explicitly approved
+- No secret-file edits
+
+## Completion criteria
+- [ ] Every required contract or interface is implemented
+- [ ] Every required file in scope is updated
+- [ ] `npm run typecheck` passes
+- [ ] `npm test` passes
+- [ ] Critical review findings from swarm are covered by verification
+
+## Notes for the next iteration
+- Check `progress.txt` before changing anything
+- If verification fails, fix the reported failures before expanding scope
 ```
 
-**`verify.sh`** — machine-verifiable gate script:
+See also `references/templates/TASK.md`.
+
+### `PROMPT.md`
+
+`PROMPT.md` should be stable across iterations. It should tell the model what to
+read, what to avoid, and how to react to verifier output.
+
+```markdown
+You are executing one Ralph iteration.
+
+Read `TASK.md`, `progress.txt`, and `.ralph-verify.json` first.
+Stay inside scope. Fix the latest verifier failure first.
+If the task becomes ambiguous or unsafe, stop and report it instead of guessing.
+```
+
+See also `references/templates/PROMPT.md`.
+
+### `verify.sh`
+
+`verify.sh` should turn the swarm's acceptance criteria into machine-verifiable
+checks and emit positive proof. At minimum it should:
+
+1. Exit `0` only on real success
+2. Exit `2` on retryable product failures
+3. Exit `3` when the verifier itself is broken or the environment is wrong
+4. Exit `4` when the task is not machine-verifiable and should not run AFK
+5. Write a summary file to `.ralph-verify.json`
 
 ```bash
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 echo "=== Type check ==="
 npm run typecheck
@@ -88,103 +155,154 @@ npm run typecheck
 echo "=== Tests ==="
 npm test
 
-echo "=== Contract surface check ==="
-# Example: verify all expected exports exist
-node -e "
-  const mod = require('./dist/index.js');
-  const required = ['functionA', 'ClassB', 'typeC'];
-  const missing = required.filter(k => !(k in mod));
-  if (missing.length) { console.error('Missing:', missing); process.exit(1); }
-  console.log('All contracts present');
-"
+echo "=== Extra contract / regression checks ==="
+# Add project-specific checks derived from the swarm review here.
 
 echo "=== All checks passed ==="
 ```
 
----
+Do not treat empty output or `0 tests found` as success. Success needs positive
+proof such as `18 tests passed`.
 
-### Phase 3 — Ralph Execution Loop
+See also `references/templates/verify.sh`.
 
-With `TASK.md` and `verify.sh` ready, run the Ralph loop:
+### Artifact Shape
+
+Default behavior: build `TASK.md`, `PROMPT.md`, and `verify.sh` in the separate Ralph
+handoff materialization step above. Do not assume they are present in the
+swarm's final artifact unless your orchestrator explicitly emits them there.
+
+If your orchestrator chooses to place `TASK.md`, `PROMPT.md`, and `verify.sh` inside the final
+artifact, each entry must follow the documented swarm schema:
+
+```json
+{
+  "path": "TASK.md",
+  "language": "markdown",
+  "code": "# Task ...",
+  "task_id": "task_handoff"
+}
+```
+
+Use `.code`, not `.content`, when extracting entries from the artifact.
+
+Example extraction, only if the final artifact actually includes those files:
 
 ```bash
-MAX_ITER=20
-LOG="progress.txt"
-echo "# Swarm+Ralph Pipeline: $(date)" > $LOG
+jq -r '.files[] | select(.path == "TASK.md") | .code' swarm-output.json > TASK.md
+jq -r '.files[] | select(.path == "PROMPT.md") | .code' swarm-output.json > PROMPT.md
+jq -r '.files[] | select(.path == "verify.sh") | .code' swarm-output.json > verify.sh
+chmod +x verify.sh
+```
 
-for i in $(seq 1 $MAX_ITER); do
-  echo "## Iteration $i" >> $LOG
-  cat TASK.md | claude -p "Work on the next incomplete item. Check progress.txt for context." 2>&1 | tee -a $LOG
-  ./verify.sh && break
-  echo "Verify failed — injecting feedback for iteration $((i+1))" | tee -a $LOG
+If the final artifact does not include the handoff files, materialize them in a
+separate premium `code` step.
+
+## Phase 3: Run Ralph With Real Feedback Injection
+
+Once `TASK.md`, `PROMPT.md`, and `verify.sh` exist, Ralph can iterate until
+verification passes.
+
+```bash
+MAX_ITER=10
+ITERATION_TIMEOUT_SEC=900
+REQUIRED_SUCCESS_STREAK=1
+LOG="progress.txt"
+VERIFY_LOG=".ralph-verify.log"
+PASS_STREAK=0
+
+echo "# Swarm + Ralph Pipeline: $(date)" > "$LOG"
+: > "$VERIFY_LOG"
+
+for i in $(seq 1 "$MAX_ITER"); do
+  echo "## Iteration $i" >> "$LOG"
+
+  FEEDBACK=""
+  if [ -s "$VERIFY_LOG" ]; then
+    FEEDBACK="$(printf '\nPrevious verification failures:\n%s\n' "$(cat "$VERIFY_LOG")")"
+  fi
+
+  PROMPT="$(cat PROMPT.md)
+
+${FEEDBACK}"
+
+  timeout "$ITERATION_TIMEOUT_SEC" <ai-cli> "$PROMPT" < TASK.md 2>&1 | tee -a "$LOG" || {
+    echo "STOP_TIMEOUT" >> "$LOG"
+    break
+  }
+
+  if ./verify.sh > "$VERIFY_LOG" 2>&1; then
+    cat "$VERIFY_LOG" >> "$LOG"
+    PASS_STREAK=$((PASS_STREAK + 1))
+    if [ "$PASS_STREAK" -ge "$REQUIRED_SUCCESS_STREAK" ]; then
+      break
+    fi
+    continue
+  fi
+
+  PASS_STREAK=0
+
+  {
+    echo "### Verification failures after iteration $i"
+    cat "$VERIFY_LOG"
+  } >> "$LOG"
 done
 ```
 
-Each iteration:
-1. Reads `TASK.md` for the full task and criteria
-2. Reads `progress.txt` for context from previous iterations
-3. Implements the next incomplete item
-4. Runs `verify.sh` — if it passes, loop exits; if not, feedback is injected
+The important part is the feedback loop:
 
----
+1. Run work for one iteration
+2. Capture full verification output
+3. Feed the failed checks back into the next iteration prompt
+4. Stop only when verification exits `0` with positive proof or the iteration cap is hit
 
 ## Handoff Contract
 
-The swarm-to-ralph handoff is only valid when:
+The swarm-to-ralph handoff is valid only when all of these are true:
 
-1. `TASK.md` has **machine-verifiable** completion criteria (not "looks good")
-2. `verify.sh` is executable and exits `0` on success, non-zero on failure
-3. The swarm spec is **locked** — no open questions or unresolved contradictions
-4. A sandbox or isolated environment is in place for AFK mode
+1. `TASK.md` has machine-verifiable completion criteria
+2. `PROMPT.md` exists and encodes the per-iteration guardrails
+3. `verify.sh` is executable, emits positive proof, and exits with the documented codes
+4. The swarm spec is locked: no open questions or unresolved contradictions
+5. Required design/review context was persisted explicitly if it is needed by Ralph
+6. AFK mode runs in a sandbox or isolated environment
+7. A cleanup or restore strategy exists before the first iteration
 
-If any of these conditions are not met, do not start the Ralph loop. Resolve
-the gap first (clarify the spec, write the verify script, set up isolation).
-
----
+If any of these are false, do not start Ralph yet.
 
 ## Failure Recovery
 
 | Failure | Action |
 |---------|--------|
-| Swarm Phase 1 no quorum | Retry with different models or simplify input |
-| Swarm Phase 2 rejected after 3 cycles | Manually resolve the contradiction and re-run |
-| Ralph hits max iterations | Report partial state, identify blockers, extend cap or intervene |
-| `verify.sh` never exits 0 | Debug verify script itself — it may have a false negative |
-| Iteration breaks previously passing tests | Revert to last good commit, narrow scope |
+| Swarm Phase 1 cannot reach quorum | Retry with different models or simplify input |
+| Swarm Phase 2 is still unapproved after 3 total reviews | Resolve the contradiction manually, then rerun |
+| A Phase 3 task still fails after the maker-fix limit | Narrow the task or intervene manually |
+| Ralph hits max iterations | Report partial state, identify blockers, then either raise the cap or repair the handoff package |
+| `verify.sh` never exits `0` | Debug `verify.sh` itself; it may be too strict, too weak, or missing positive proof |
+| Iteration breaks previously passing checks | Revert to the last good checkpoint and narrow scope |
+| Ralph repeats the same failure | Stop and debug the failure fingerprint before another iteration |
+| Context grows too large to summarize safely | Stop and rebuild the handoff package with a smaller scope |
+| Workspace is polluted after failure | Restore from the disposable worktree, snapshot, or approved checkpoint |
 
----
+## Cleanup And Restore
 
-## Cost and Iteration Budget
+Prefer disposable environments for AFK runs. The safest restore path is to
+discard the disposable worktree or container and recreate it from the last good
+state.
 
-- Swarm phases are a one-time cost (Research + Spec)
-- Ralph iterations are the variable cost — each iteration is one full LLM run
-- Start with `MAX_ITER=10`, increase only after observing convergence rate
-- If iteration 5 shows no progress vs iteration 1, stop and debug the task definition
+If you must keep local state between iterations, persist:
 
----
+- `progress.txt`
+- `.ralph-state.json`
+- `.ralph-verify.json`
+- An approved patch or checkpoint reference
 
-## Example: Jest → Vitest Migration
+Do not rely on destructive cleanup commands in a shared workspace.
 
-```bash
-# Step 1: Run swarm to produce spec and task decomposition
-echo "Migrate all Jest tests in src/ to Vitest. Output: locked spec, task list, verify script." \
-  | $SHELL -l -c 'kilo-swarm -m claude-3-5-haiku -p "$(cat swarm-persona.txt)"' \
-  > swarm-output.json
+## Budget Guidance
 
-# Step 2: Extract TASK.md and verify.sh from swarm output
-# (manually or via jq)
-jq -r '.files[] | select(.path == "TASK.md") | .content' swarm-output.json > TASK.md
-jq -r '.files[] | select(.path == "verify.sh") | .content' swarm-output.json > verify.sh
-chmod +x verify.sh
-
-# Step 3: Run Ralph loop
-MAX_ITER=20
-for i in $(seq 1 $MAX_ITER); do
-  echo "Iteration $i of $MAX_ITER"
-  cat TASK.md | claude -p "Continue the migration. Check progress.txt for context from previous iterations."
-  ./verify.sh && break
-done
-```
-
-Expected outcome: all Jest imports replaced with Vitest equivalents, all tests
-pass under Vitest, in 3–8 iterations.
+- Swarm is a one-time planning/spec cost.
+- Ralph iterations are the variable execution cost.
+- Start with `MAX_ITER=10` or `20`, then adjust based on convergence.
+- If several iterations make no progress, stop and debug the task definition,
+  verification contract, or prompt handoff.

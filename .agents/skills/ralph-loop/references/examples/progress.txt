@@ -1,0 +1,17 @@
+# Ralph Loop: migrate jest to vitest
+# Started: 2026-04-24T09:00:00Z
+
+## Iteration 1
+- Changed: renamed Jest config usage in test scripts and added Vitest config
+- Verification: typecheck passed, tests failed because two suites still import `jest`
+- Next focus: migrate the remaining suites before touching unrelated helpers
+
+## Iteration 2
+- Changed: replaced `jest.mock` and `jest.fn` in the remaining suites
+- Verification: tests passed, lint failed on one unused helper import
+- Next focus: remove the unused import and rerun verification
+
+## Iteration 3
+- Changed: removed unused helper import
+- Verification: tests passed, typecheck passed, lint passed
+- Result: success candidate; waiting for required success streak to complete
