@@ -68,7 +68,11 @@
       "head *": "allow",
       "cat *": "allow",
       "jq *": "allow",
-      "$SHELL *": "allow",
+      "$SHELL *": "ask",
+      "sleep *": "allow",
+      "timeout *": "allow",
+      "grep *": "allow",
+      "basename *": "allow",
     },
     "recall": {
       "search": "allow"

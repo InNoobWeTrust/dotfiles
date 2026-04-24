@@ -18,6 +18,68 @@ phase3_breaker_label   / phase3_breaker_persona
 
 `phase3_breaker_persona` should use the `__QA_CASES__` placeholder. The orchestrator must replace this placeholder with the actual QA cases from the domain context before invoking the breaker node.
 
+## Required Output Contracts
+
+Domain configs define personas, but the orchestrator relies on a small set of normalized fields across all domains.
+
+### Phase 1
+
+- `phase1_a_persona` and `phase1_b_persona` may return prose or JSON.
+- The synthesizer must be able to extract the configured `phase1_a_field` and `phase1_b_field` from those responses.
+
+### Phase 2 Forward
+
+- Domain-specific artifact.
+- JSON is strongly preferred.
+- Use stable top-level keys so the revise and decompose steps can consume the artifact without guessing.
+
+### Phase 2 Review
+
+Must normalize to JSON with:
+
+```json
+{
+  "approved": true,
+  "critical_vulnerabilities": [],
+  "qa_flags": []
+}
+```
+
+### Phase 2 Revise
+
+- Must return the same top-level artifact shape as Phase 2 forward output.
+- Add `revisions` as an array of concrete changes made.
+
+### Phase 3 Decompose
+
+Must normalize to JSON with a non-empty `tasks` array:
+
+```json
+{
+  "tasks": [
+    {
+      "task_id": "task_01",
+      "title": "Short task title",
+      "goal": "What this task must accomplish"
+    }
+  ]
+}
+```
+
+Tasks may include extra domain-specific fields such as `file_path`, `component_name`, `slide_number`, `api_contracts`, or `key_points`.
+
+### Phase 3 Breaker
+
+Must normalize to JSON with:
+
+```json
+{
+  "passed": true,
+  "critical_failures": [],
+  "qa_notes": []
+}
+```
+
 ## Field Meanings
 
 - `_label`: human-readable name for logs
@@ -32,6 +94,15 @@ model_pool_refs = ["free", "premium"]
 
 When resolved by the orchestrator, these become runtime lists such as
 `free_model_pool` and `premium_model_pool`.
+
+## `__QA_CASES__` Source
+
+The orchestrator should populate `__QA_CASES__` from the most recent approved or latest review output using:
+
+1. `critical_vulnerabilities`
+2. `qa_flags`
+
+Preserve order and drop duplicates.
 
 ## Built-In Domains
 

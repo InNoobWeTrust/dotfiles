@@ -1,8 +1,13 @@
 {
-  "error": "Phase 2 review failed after 3 cycles",
-  "phase2_review_findings": [
-    "Missing critical vulnerability handling",
-    "Inconsistent data model definitions"
-  ],
-  "stop_condition": "phase2_unapproved"
+  "status": "error",
+  "code": "STOP_PHASE2_UNAPPROVED",
+  "message": "Phase 2 review failed after 3 cycles",
+  "details": {
+    "phase": "phase2_review",
+    "critical_vulnerabilities": [
+      "Missing critical vulnerability handling",
+      "Inconsistent data model definitions"
+    ]
+  },
+  "retryable": false
 }
