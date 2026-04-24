@@ -7,7 +7,8 @@ Use this file only when implementing node-level orchestration details.
 `kilo-swarm` is a single-node runner.
 
 ```text
-~/.local/bin/kilo-swarm -m MODEL -p PERSONA [-i FILE] [-t SECONDS] [--dry-run] [--verbose]
+echo "input" | ~/.local/bin/kilo-swarm -m MODEL -p PERSONA [-t SECONDS] [--dry-run] [--verbose]
+~/.local/bin/kilo-swarm -m MODEL -p PERSONA [-t SECONDS] < input_file
 ```
 
 Exit codes:
@@ -41,7 +42,7 @@ Prefixes stripped before `gemini -m`:
 
 ## `run_agent_retry(model, persona, input, max_retries=2)`
 
-1. Run `kilo-swarm -m MODEL -p PERSONA -i INPUT`.
+1. Run `kilo-swarm -m MODEL -p PERSONA < INPUT_FILE` (or pipe via echo).
 2. If exit code is `0`, return the output (JSON or text).
 3. If exit code is `2`, or the invocation fails with a known transient error
    such as timeout, quota, or network, increment retry counter.

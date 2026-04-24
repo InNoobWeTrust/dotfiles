@@ -15,13 +15,12 @@
 #   gemini-*            →  used as-is
 #
 # Usage:
-#   kilo-swarm -m MODEL -p PERSONA -i INPUT_FILE
 #   echo "input" | kilo-swarm -m MODEL -p PERSONA
+#   kilo-swarm -m MODEL -p PERSONA < input_file
 #
 # Options:
 #   -m MODEL      model to use (required)
 #   -p PERSONA    persona/instruction string passed as the user message (required)
-#   -i FILE       input file attached via -f (default: stdin written to tmpfile)
 #   -t SECONDS    timeout for the agent run call (default: 0 = disabled)
 #   --dry-run     print the command without executing
 #   --verbose     emit extra debug info to stderr
@@ -35,13 +34,12 @@ set -euo pipefail
 
 MODEL=""
 PERSONA=""
-INPUT_FILE=""
 DRY_RUN=false
 VERBOSE=false
 TIMEOUT=0
 
 usage() {
-  sed -n '3,21p' "$0" | sed 's/^# //' | sed 's/^#//'
+  sed -n '3,22p' "$0" | sed 's/^# //' | sed 's/^#//'
   exit 0
 }
 
@@ -73,7 +71,6 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     -m) MODEL="$2";       shift 2 ;;
     -p) PERSONA="$2";     shift 2 ;;
-    -i) INPUT_FILE="$2";  shift 2 ;;
     -t) TIMEOUT="$2";     shift 2 ;;
     --dry-run)  DRY_RUN=true;  shift ;;
     --verbose)  VERBOSE=true;  shift ;;
@@ -85,36 +82,34 @@ done
 [[ -z "$MODEL" ]]   && { log "ERROR: -m MODEL is required"; exit 1; }
 [[ -z "$PERSONA" ]] && { log "ERROR: -p PERSONA is required"; exit 1; }
 
-# Read stdin to a tmpfile if no -i given
+# Write stdin to a tmpfile so both engines can reference it by path
 TMP_INPUT=""
 TMP_STDERR=""
+TMP_STDOUT=""
 
 cleanup() {
   [[ -n "$TMP_INPUT" ]]  && rm -f "$TMP_INPUT"
   [[ -n "$TMP_STDERR" ]] && rm -f "$TMP_STDERR"
+  [[ -n "$TMP_STDOUT" ]] && rm -f "$TMP_STDOUT"
 }
 
 trap cleanup EXIT
 
-if [[ -z "$INPUT_FILE" ]]; then
-  [[ -t 0 ]] && { log "ERROR: no -i FILE and no stdin"; exit 1; }
+# In dry-run mode stdin is optional — skip reading it
+if [[ "$DRY_RUN" == "true" ]]; then
+  TMP_INPUT=$(mktemp)
+  if ! [[ -t 0 ]]; then cat > "$TMP_INPUT"; fi
+else
+  # Require piped stdin for real runs
+  [[ -t 0 ]] && { log "ERROR: no stdin — pipe input to kilo-swarm"; exit 1; }
   TMP_INPUT=$(mktemp)
   cat > "$TMP_INPUT"
-  INPUT_FILE="$TMP_INPUT"
+  [[ -s "$TMP_INPUT" ]] || { log "ERROR: stdin was empty"; exit 1; }
 fi
 
-[[ -f "$INPUT_FILE" ]] || { log "ERROR: input file not found: $INPUT_FILE"; exit 1; }
-
-# Build the full message: swarm-node instructions + persona
-SWARM_NODE_MSG="You are a focused, single-purpose analysis node in a multi-agent pipeline.
-
-## Core Rules
-
-1. Follow the persona instructions below exactly. The persona defines your role (Business Analyst, Architect, QA Engineer, Researcher, etc.).
-2. Provide thorough, well-structured output. Include all relevant information, insights, and recommendations.
-3. Use web search when the persona explicitly requests it. If search is requested, gather current information before responding.
-4. Be specific and detailed — the synthesizer will extract key points and build consensus from multiple node outputs.
-5. Never modify files or run shell commands. Read access and web search are permitted; write/bash operations are always denied.
+# Build the full message: input path reference + swarm-node instructions + persona
+SWARM_NODE_MSG="Input document is at: ${TMP_INPUT}
+Please read that file first, then follow the persona instructions below.
 
 ## Persona Instructions
 
@@ -126,9 +121,34 @@ vlog "engine=$ENGINE  model=$MODEL"
 
 if [[ "$ENGINE" == "gemini" ]]; then
   BARE_MODEL=$(strip_gemini_prefix "$MODEL")
-  AGENT_CMD=(gemini -y -m "$BARE_MODEL" -p "$SWARM_NODE_MSG")
+  # gemini-cli: inline the input content into the prompt.
+  # Guard against large inputs that could exceed ARG_MAX (~2MB on Linux).
+  INPUT_SIZE=$(wc -c < "$TMP_INPUT")
+  MAX_INLINE=1048576  # 1 MiB
+  if [[ "$INPUT_SIZE" -gt "$MAX_INLINE" ]]; then
+    log "ERROR: gemini engine input too large (${INPUT_SIZE} bytes > ${MAX_INLINE} limit); use a kilo model for large inputs"
+    exit 2
+  fi
+  GEMINI_MSG="You are a focused, single-purpose analysis node in a multi-agent pipeline.
+
+## Core Rules
+
+1. Follow the persona instructions below exactly.
+2. Provide thorough, well-structured output with all relevant information and recommendations.
+3. Use web search when the persona explicitly requests it.
+4. Be specific and detailed — the synthesizer builds consensus from multiple node outputs.
+5. Never modify files or run shell commands.
+
+## Input
+
+$(cat "$TMP_INPUT")
+
+## Persona Instructions
+
+${PERSONA}"
+  AGENT_CMD=(gemini -y -m "$BARE_MODEL" -p "$GEMINI_MSG")
 else
-  AGENT_CMD=(kilo run --auto -m "$MODEL" -f "$INPUT_FILE" -- "$SWARM_NODE_MSG")
+  AGENT_CMD=(kilo run --auto --model "$MODEL" --agent swarm-node "$SWARM_NODE_MSG")
 fi
 
 # Build command array (with optional timeout wrapper)
@@ -152,17 +172,14 @@ if [[ "$DRY_RUN" == "true" ]]; then
   exit 0
 fi
 
-vlog "model=$MODEL  engine=$ENGINE  input=$INPUT_FILE  persona_len=${#PERSONA}  timeout=${TIMEOUT}s"
+vlog "model=$MODEL  engine=$ENGINE  input=$TMP_INPUT  persona_len=${#PERSONA}  timeout=${TIMEOUT}s"
 
 # Run agent — capture stdout and stderr
 TMP_STDERR=$(mktemp)
+TMP_STDOUT=$(mktemp)
 agent_status=0
 
-if [[ "$ENGINE" == "gemini" ]]; then
-  raw=$(cat "$INPUT_FILE" | "${AGENT_CMD[@]}" 2>"$TMP_STDERR") || agent_status=$?
-else
-  raw=$("${AGENT_CMD[@]}" 2>"$TMP_STDERR") || agent_status=$?
-fi
+"${AGENT_CMD[@]}" >"$TMP_STDOUT" 2>"$TMP_STDERR" || agent_status=$?
 
 if [[ $agent_status -ne 0 ]]; then
   if [[ $agent_status -eq 124 ]]; then
@@ -177,5 +194,5 @@ if [[ $agent_status -ne 0 ]]; then
 fi
 
 # Pass raw output through — synthesizer handles all parsing
-printf '%s\n' "$raw"
+cat "$TMP_STDOUT"
 exit 0

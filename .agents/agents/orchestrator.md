@@ -24,7 +24,9 @@ When the user requests swarm/multi-agent/parallel analysis:
 4. Execute swarm nodes using `kilo-swarm` CLI only:
 
 ```bash
-$SHELL -l -c 'echo "input" | kilo-swarm -m MODEL -p PERSONA [-i FILE]'
+$SHELL -l -c 'echo "input" | kilo-swarm -m MODEL -p PERSONA'
+# or pipe a file:
+$SHELL -l -c 'kilo-swarm -m MODEL -p PERSONA < /path/to/input'
 ```
 
 ## Forbidden
