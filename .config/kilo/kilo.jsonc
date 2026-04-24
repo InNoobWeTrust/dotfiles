@@ -12,21 +12,21 @@
       "models": {
         "gpt-5.4": {
           "options": {
-            "maxInputTokens": 272000,
-            "maxTokens": 32768
+            "maxInputTokens": 32768,
+            "maxTokens": 272000
           }
         },
         "kCode": {
           "options": {
             "variant": "thinking",
-            "maxInputTokens": 90000,
-            "maxTokens": 32768
+            "maxInputTokens": 32768,
+            "maxTokens": 90000
           }
         },
         "qwen/qwen3.6-plus": {
           "options": {
-            "maxInputTokens": 90000,
-            "maxTokens": 32768
+            "maxInputTokens": 32768,
+            "maxTokens": 90000
           }
         },
       }
