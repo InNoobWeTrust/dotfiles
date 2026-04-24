@@ -1,12 +1,4 @@
----
-description: Sync shared skill DNA from canonical sources to consumer skills
----
-
-# Sync Skill DNA
-
-Check for drift between canonical skill files and their synced copies in consumer skills, and optionally apply updates.
-
-// turbo-all
+**Sync Skill DNA** — Check for drift between canonical skill files and their synced copies in consumer skills, and optionally apply updates.
 
 ## Steps
 
@@ -32,3 +24,9 @@ Check for drift between canonical skill files and their synced copies in consume
 - Source → consumer mappings are defined in `.agents/skills/skill-dna-manifest.json`
 - Synced files get a version header comment: `<!-- synced-from: ... | last-synced: ... -->`
 - Adapter files are NOT synced — they contain domain-specific content that references the synced protocol file
+
+---
+
+Follow the instructions above to work on the user's actual request right below.
+
+---

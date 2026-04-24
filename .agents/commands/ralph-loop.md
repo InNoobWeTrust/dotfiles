@@ -9,11 +9,6 @@ description: >
   NOT for ambiguous requirements, architectural decisions, or one-shot tasks.
 ---
 
-# Ralph Loop — Iterative Autonomous Coding
-
-Run an AI coding agent in a persistent loop until the work is actually complete,
-not just until the LLM stops calling tools.
-
 ## Core Philosophy
 
 **Iteration beats perfection.** The agent doesn't need to be perfect on the first
@@ -372,3 +367,9 @@ while :; do
   break
 done
 ```
+
+---
+
+Follow the instructions above to work on the user's Ralph-loop request right below.
+
+---

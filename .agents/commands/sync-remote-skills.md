@@ -1,12 +1,4 @@
----
-description: Sync skills from remote GitHub repositories to local copies
----
-
-# Sync Remote Skills
-
-Fetch and update skills sourced from external GitHub repositories. Uses the GitHub Contents API to detect drift via tree SHA comparison, then recursively downloads all files when updates are available.
-
-// turbo-all
+**Sync Remote Skills** — Fetch and update skills sourced from external GitHub repositories. Uses the GitHub Contents API to detect drift via tree SHA comparison, then recursively downloads all files when updates are available.
 
 ## Steps
 
@@ -63,3 +55,9 @@ Remote skill sources are defined in `.agents/skills/remote-skills-manifest.json`
 
 - [Sync Skill DNA](./sync-skill-dna.md) — local source→consumer protocol sync
 - [Skill Review](./review.md) — post-sync review checklist
+
+---
+
+Follow the instructions above to work on the user's actual request right below.
+
+---

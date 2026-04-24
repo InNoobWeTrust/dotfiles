@@ -1,22 +1,8 @@
----
-description: >
-  End-to-end requirements-driven development lifecycle reference. Use this
-  command when you need the full phase-by-phase flow for research,
-  PRD/TRD/BDD authoring, execution, verification, challenge gates,
-  validation, changelog tracking, and commit protocol.
----
-
-# Requirements Lifecycle Command
-
 > **Immutable Law**: No deliverable without a behavior spec. No spec without requirements. No commit without a changelog.
 
-This command defines the core development lifecycle for `requirements-driven-dev`.
-Use it as the phase-by-phase reference for moving a task from product idea to
-committed deliverable.
-
 ---
 
-## 1. ROLES
+### 1. ROLES
 
 | Role | Actor | Responsibility |
 |------|-------|----------------|
@@ -30,7 +16,7 @@ committed deliverable.
 
 ---
 
-## 2. FLOW SELECTION
+### 2. FLOW SELECTION
 
 Before starting, assess the scope to determine which flow to follow.
 
@@ -76,7 +62,7 @@ When in doubt, start Quick and escalate to Full if complexity emerges.
 
 ---
 
-## 3. THE LIFECYCLE
+### 3. THE LIFECYCLE
 
 ```
 Research (opt) → ⚔ → PRD → ⚔ → TRD → ⚔ → BDD Specs → ⚔ → Backlog
@@ -90,7 +76,7 @@ Research (opt) → ⚔ → PRD → ⚔ → TRD → ⚔ → BDD Specs → ⚔ →
 
 ---
 
-## R. RESEARCH PHASE (Optional)
+### R. RESEARCH PHASE (Optional)
 
 Before writing requirements, investigate what you don't know. This phase
 prevents building the wrong thing.
@@ -128,7 +114,7 @@ input for the PRD:
 
 ---
 
-## 0. REQUIREMENTS CASCADE
+### 0. REQUIREMENTS CASCADE
 
 The cascade flows from high-level product intent down to verifiable behaviors.
 Each level adds specificity and narrows scope.
@@ -224,7 +210,7 @@ test cases, or from a failing test up to the business goal it serves.
 
 ---
 
-## 4. BEHAVIOR SPEC — The Source of Truth for Execution
+### 4. BEHAVIOR SPEC — The Source of Truth for Execution
 
 Once the cascade produces BDD specs, each spec becomes the source of truth
 for its feature. Everything from here follows the execution lifecycle.
@@ -247,7 +233,7 @@ Every feature starts as a markdown file in the spec directory:
 
 ---
 
-## 4.5. PROJECT CONTEXT
+### 4.5. PROJECT CONTEXT
 
 Recommended for any project that will have multiple implementation sessions.
 
@@ -283,7 +269,7 @@ This is a **living document**. Update it when:
 
 ---
 
-## 5. EXECUTION PROTOCOL
+### 5. EXECUTION PROTOCOL
 
 When AI receives a task:
 
@@ -314,7 +300,7 @@ When AI receives a task:
 
 ---
 
-## 6. VERIFICATION PROTOCOL
+### 6. VERIFICATION PROTOCOL
 
 AI designs verifications based on the behavior spec, not the deliverables:
 
@@ -335,7 +321,7 @@ AI designs verifications based on the behavior spec, not the deliverables:
 
 ---
 
-## 6.5. ⚔ CHALLENGE GATE — Deliverables
+### 6.5. ⚔ CHALLENGE GATE — Deliverables
 
 > Nothing gets accepted unchallenged.
 
@@ -381,7 +367,7 @@ dissenting progress mechanism for impasses.
 
 ---
 
-## 7. VALIDATION GATE
+### 7. VALIDATION GATE
 
 Before any deliverable is considered "done":
 
@@ -416,7 +402,7 @@ If validation fails:
 
 ---
 
-## 7.5 TRACEABILITY & GAP DETECTION
+### 7.5 TRACEABILITY & GAP DETECTION
 
 > **Law**: No commit with uncovered scenarios. Every scenario must be implemented and tested.
 
@@ -472,7 +458,7 @@ Some scenarios may be intentionally deferred:
 
 ---
 
-## 8. CHANGELOG & COMMIT PROTOCOL
+### 8. CHANGELOG & COMMIT PROTOCOL
 
 ### Changelog File (Artifact Change Tracker)
 
@@ -495,7 +481,7 @@ Each feature has **one changelog file** that tracks which artifacts are in scope
 
 ---
 
-## 9. SOCRATIC GATE
+### 9. SOCRATIC GATE
 
 > **Immutable**: Never execute when the request is ambiguous.
 
@@ -506,7 +492,7 @@ Before any execution:
 
 ---
 
-## 10. HANDOFF PROTOCOL
+### 10. HANDOFF PROTOCOL
 
 When transitioning between agents or sessions:
 
@@ -521,4 +507,6 @@ This ensures continuity even when context is lost.
 
 ---
 
-_This protocol has the highest authority in the agent system._
+Follow the instructions above to work on the user's actual request right below.
+
+---

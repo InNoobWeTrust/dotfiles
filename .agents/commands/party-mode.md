@@ -6,24 +6,6 @@ description: >
   suggested during brainstorming, architecture decisions, and retrospectives.
 ---
 
-# Party Mode — Multi-Persona Deliberation
-
-Load multiple expert personas into one session. They debate, disagree, and 
-build on each other's ideas — facilitator orchestrates.
-
-## When to Use
-
-- Architecture decisions with cross-cutting trade-offs
-- Post-mortems and retrospectives
-- Product direction debates
-- Brainstorming sessions (as expansion of `brainstorming.md` Multi-Perspective Mode)
-- Any decision that benefits from diverse viewpoints
-
-> **This is always optional.** Other commands may suggest party mode at decision
-> points, but it is never required.
-
----
-
 ## Default Personas
 
 These personas cover the most common deliberation needs. Users can override,
@@ -138,3 +120,9 @@ This command can be invoked from:
 - `brainstorming.md` Phase 5 (Multi-Perspective Mode) 
 - `requirements-driven-dev` after PRD or TRD generation
 - Any decision point where you'd benefit from cross-functional deliberation
+
+---
+
+Follow the instructions above to work on the user's party-mode request right below.
+
+---

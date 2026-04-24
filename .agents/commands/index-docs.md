@@ -6,10 +6,6 @@ description: >
   available docs, or when a folder has grown and needs organization.
 ---
 
-# Index Documents
-
-Scan a directory and generate an organized index with descriptions.
-
 ## Inputs
 
 - **Target directory**: Path to the folder to index
@@ -60,3 +56,9 @@ Files: [N] | Directories: [M]
 - If an `index.md` already exists, show a diff of changes and ask before overwriting
 - Group intelligently — don't create a group for a single file
 - Relative links only — index should work regardless of where the repo lives
+
+---
+
+Follow the instructions above to work on the user's indexing request right below.
+
+---

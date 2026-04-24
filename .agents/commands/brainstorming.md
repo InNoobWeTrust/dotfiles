@@ -6,11 +6,6 @@ description: >
   not generator — your ideas, structured exploration.
 ---
 
-# Brainstorming Command
-
-AI-facilitated creative session using proven ideation techniques.
-Every idea comes from you — the AI creates conditions for insight.
-
 ## Inputs
 
 - **Topic**: What are we brainstorming about?
@@ -166,3 +161,9 @@ Save the session as a markdown document:
 
 This document can feed directly into the **Research** phase or **PRD**
 of the requirements-driven-dev lifecycle.
+
+---
+
+Follow the instructions above to work on the user's brainstorming request right below.
+
+---

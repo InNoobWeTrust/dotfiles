@@ -8,10 +8,6 @@ description: >
   For auto-save triggers, see .agents/rules/handoff.md.
 ---
 
-# Handoff Command
-
-Persist session context so any agent on any device can resume where you left off.
-
 > **CRITICAL — Save Location**: Handoff files go in the **workspace's** agent
 > config directory, NOT in the conversation artifact directory. Locate the
 > correct directory by searching for `.agents/` or `.agent/` at the workspace
@@ -140,3 +136,9 @@ Periodically (or when user asks), check for stale handoffs:
 3. Check if branch still exists: `git branch --list <branch>`
 4. If branch is gone → suggest archiving: "Found handoff for deleted branch
    `feature/old`. Archive it?"
+
+---
+
+Follow the instructions above to work on the user's handoff request right below.
+
+---

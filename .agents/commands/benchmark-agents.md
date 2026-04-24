@@ -10,12 +10,6 @@ description: >
   "optimize agents", "model comparison", "provider comparison", "pricing".
 ---
 
-# Benchmark Agents — Multi-Provider Model Analysis
-
-Analyze your agent configuration against live benchmark, availability, and
-pricing data to identify optimization opportunities without hardcoding today's
-providers, temporary preferences, or current local setup.
-
 ## Inputs
 
 - **Focus areas** (optional): Specific benchmark categories or agents to prioritize
@@ -354,3 +348,9 @@ Save the complete analysis to `.agents/benchmark-report-<YYYYMMDD>.md` with:
 - Provider-specific usage shares are useful evidence, but they reflect usage and defaults as much as quality
 - Always verify the user's actual pricing region and plan before using provider pricing data
 - For heavy orchestrator workflows, optimize for the main daily experience first; do not let low-stakes agents drive the whole recommendation
+
+---
+
+Follow the instructions above to work on the user's benchmarking request right below.
+
+---

@@ -1,21 +1,13 @@
----
-description: Automatically select and run the right reviewers for the artifact under review.
-mode: all
-model: minimax-coding-plan/MiniMax-M2.7-highspeed
----
+**Review Orchestrator** — Automatically select and run the right reviewers for the artifact under review.
 
-# Review Orchestrator
-
-Automatically select and run the right reviewers for the artifact under review.
-
-## How It Works
+### How It Works
 
 1. **Identify artifact type** — What is being reviewed?
 2. **Select reviewers** — Match artifact to reviewer combination (see routing table)
 3. **Run reviewers** — Execute in recommended order
 4. **Aggregate findings** — Present combined results
 
-## Routing Table
+#### Routing Table
 
 | Artifact Type | Reviewers | Order |
 |---|---|---|
@@ -33,7 +25,7 @@ Automatically select and run the right reviewers for the artifact under review.
 snippets), take the **union** of reviewers from all matching rows. Run in order
 of the primary type's sequence.
 
-## Artifact Type Detection
+#### Artifact Type Detection
 
 Detect automatically from:
 - **File extension**: `.ts`, `.py`, `.go` → Code; `.md` with PRD/TRD markers → Spec
@@ -43,7 +35,7 @@ Detect automatically from:
 
 **Type priority** (when ambiguous): user intent > content markers > file extension > directory location. Default to most specific type (Config > Code > Documentation).
 
-## User Overrides
+#### User Overrides
 
 Users can customize at any point:
 
@@ -54,7 +46,7 @@ Users can customize at any point:
 
 **Conflict resolution**: user override > mode (quick/standard/deep). If conflicting instructions, ask for clarification.
 
-## Output Format
+#### Output Format
 
 Adapt to the reviewers actually run. Use this as a guideline, not a rigid template:
 
@@ -86,7 +78,7 @@ Adapt to the reviewers actually run. Use this as a guideline, not a rigid templa
 - **ESCALATE**: Any blocking requiring architectural change, or user-requested escalation
 ```
 
-## Quick vs Deep Review
+#### Quick vs Deep Review
 
 | Mode | What Happens |
 |---|---|
@@ -99,7 +91,7 @@ Default is **Standard**.
 
 ---
 
-## Fix Mode
+#### Fix Mode
 
 **Key guardrail**: Maximum 3 review-fix cycles. After 3 cycles complete and issues remain, exit the loop immediately and present remaining findings for manual triage.
 
@@ -107,7 +99,7 @@ Autonomous review-fix-verify loop. Instead of reporting findings for the user to
 
 **Triggers**: "review and fix", "fix everything", "clean this up", "review until clean", or any review request combined with "fix".
 
-### Loop Protocol
+#### Loop Protocol
 
 ```
 0. Orient: re-read your planning notes — what's done, what's remaining,
@@ -134,7 +126,7 @@ Autonomous review-fix-verify loop. Instead of reporting findings for the user to
 
 Step 5 re-examines actual file state independently of step 4 verification results.
 
-### What Gets Fixed Automatically
+#### What Gets Fixed Automatically
 
 | Category | Auto-fix? | Notes |
 |---|---|---|
@@ -146,7 +138,7 @@ Step 5 re-examines actual file state independently of step 4 verification result
 | Content restructuring | ⚠️ | Only if clearly wrong (e.g. duplicate step numbers) |
 | Table alignment | ❌ | Cosmetic, skip unless user asks |
 
-### Guardrails
+#### Guardrails
 
 - **Max 3 review-fix cycles** — hard cap. After 3 cycles complete and issues remain, exit loop and present remaining for manual triage.
 - **Never modify files the user excluded** — respect "don't touch X" directives
@@ -154,7 +146,7 @@ Step 5 re-examines actual file state independently of step 4 verification result
 - **Preserve author voice** — fix mechanics, not style preferences
 - **Reviewer unavailability**: If a required reviewer is unavailable, skip it and note in output. If critical reviewer missing, abort with user warning.
 
-### Output
+#### Output
 
 After the loop completes, present a summary (not the full review):
 
@@ -188,3 +180,9 @@ Fix mode is especially useful for:
 - Post-refactor cleanup across many files
 - Skill/command directory maintenance
 - Pre-commit quality gates where you want autonomous cleanup
+
+---
+
+Follow the instructions above to work on the user's actual request right below.
+
+---

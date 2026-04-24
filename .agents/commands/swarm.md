@@ -1,18 +1,12 @@
----
-description: >
-  Proxy command that delegates to the swarm-intelligence skill.
-  Loads the skill for domain configs, persona definitions, and model selection.
----
+**Swarm — Multi-Agent Parallel Node Guidance**
 
-# Swarm — Multi-Agent Parallel Node Guidance
-
-## Do This First
+### Do This First
 
 1. Read `~/.agents/skills/swarm-intelligence/SKILL.md`.
 2. For normal orchestration, read only `references/orchestrator/minimal-flow.md`, one domain config, and `references/models/*.json`.
 3. Pull extra files only when the skill routes you to them.
 
-## Quick Start
+### Quick Start
 
 ```bash
 # CORRECT — always use login shell so kilo-swarm is on PATH
@@ -48,3 +42,9 @@ Always verify `kilo-swarm` is available before running:
 ```bash
 $SHELL -l -c 'command -v kilo-swarm >/dev/null 2>&1 || { echo "ERROR: kilo-swarm not found" >&2; exit 1; }'
 ```
+
+---
+
+Follow the instructions above to work on the user's actual request right below.
+
+---

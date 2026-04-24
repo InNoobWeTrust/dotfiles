@@ -1,10 +1,4 @@
----
-description: Sync the canonical MCP server config to the current AI agent's config file
----
-
-# Sync MCP Config
-
-The user maintains a single canonical MCP server configuration at `~/.agents/mcp.json`.
+**Sync MCP Config** — The user maintains a single canonical MCP server configuration at `~/.agents/mcp.json`.
 When this command is triggered, you (the AI agent) read the canonical config and write it
 to **your own** config file, adapting the format as needed.
 
@@ -54,3 +48,9 @@ to **your own** config file, adapting the format as needed.
 
 - You should only sync your own config — do not try to sync all agents at once.
 - If the user wants to add, remove, or edit an MCP server, edit `~/.agents/mcp.json` first, then re-run this command.
+
+---
+
+Follow the instructions above to work on the user's actual request right below.
+
+---

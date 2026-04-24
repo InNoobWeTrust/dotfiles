@@ -4,13 +4,8 @@ description: >
   traits/personas crafted from the JD and management's vision.
 ---
 
-# CV Screening Command
-
-Screen candidates against a job description using trait-based evaluation,
-OSINT-powered background verification, and dual-sided risk assessment.
-
-> **⚠️ Jurisdiction Notice**: This command references sources and practices
-> that vary by country (company registries, labor law, privacy regulations).
+> **⚠️ Jurisdiction Notice**: referenced sources and practices
+> vary by country (company registries, labor law, privacy regulations).
 > Adapt the OSINT sources and risk categories to your local legal context.
 > When in doubt, consult local employment law before investigating.
 
@@ -216,3 +211,9 @@ Specific interview questions to probe unresolved concerns.
 - Check local privacy regulations (e.g., GDPR, CCPA) for mandatory retention
   limits and deletion requirements
 - If storing reports in shared systems, apply need-to-know access controls
+
+---
+
+Follow the instructions above to work on the user's screening request right below.
+
+---
