@@ -15,6 +15,27 @@
       "use_for": "Lightweight high-volume passes — fastest Google model, zero proxy cost"
     },
     {
+      "id": "github-copilot/gpt-5-mini",
+      "provider": "copilot",
+      "copilot_unlimited": true,
+      "use_for": "Planning, spec, mid-tier synthesis; unlimited on Copilot Pro",
+      "pricing": "Included in $10/mo Copilot base"
+    },
+    {
+      "id": "minimax-coding-plan/MiniMax-M2.7-highspeed",
+      "provider": "minimax",
+      "use_for": "Detailed architecture, planning, research",
+      "pricing": "Included in Minimax Token Plan",
+      "openrouter_activity": "890M prompt tokens"
+    },
+    {
+      "id": "minimax-coding-plan/MiniMax-M2.5-highspeed",
+      "provider": "minimax",
+      "use_for": "Codebase exploration, quick edits",
+      "pricing": "Included in Minimax Token Plan",
+      "openrouter_activity": "420M prompt tokens"
+    },
+    {
       "id": "kilo/kilo-auto/free",
       "provider": "kilo",
       "use_for": "Auto-selection from free models"

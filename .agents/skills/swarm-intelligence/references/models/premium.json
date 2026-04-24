@@ -3,13 +3,6 @@
   "description": "Premium models for quality-critical swarm nodes (synthesis, high-stakes passes)",
   "models": [
     {
-      "id": "github-copilot/gpt-5-mini",
-      "provider": "copilot",
-      "copilot_unlimited": true,
-      "use_for": "Planning, spec, mid-tier synthesis; unlimited on Copilot Pro",
-      "pricing": "Included in $10/mo Copilot base"
-    },
-    {
       "id": "openai/gpt-5.4-mini",
       "provider": "openai",
       "use_for": "High-stakes synthesis, complex reasoning",
@@ -61,20 +54,6 @@
       "provider": "copilot",
       "use_for": "Strong reasoning and coding; senior agents, architecture",
       "pricing": "Premium request on Copilot Pro (300/mo pool)"
-    },
-    {
-      "id": "minimax-coding-plan/MiniMax-M2.7-highspeed",
-      "provider": "minimax",
-      "use_for": "Detailed architecture, planning, research",
-      "pricing": "Included in Minimax Token Plan",
-      "openrouter_activity": "890M prompt tokens"
-    },
-    {
-      "id": "minimax-coding-plan/MiniMax-M2.5-highspeed",
-      "provider": "minimax",
-      "use_for": "Codebase exploration, quick edits",
-      "pricing": "Included in Minimax Token Plan",
-      "openrouter_activity": "420M prompt tokens"
     }
   ],
   "quality_tiers": {
@@ -83,13 +62,12 @@
       "github-copilot/claude-sonnet-4.6"
     ],
     "high_stakes": [
-      "openai/gpt-5.4-mini",
+      "openai/gpt-5.4",
       "google/gemini-3.1-pro-preview"
     ],
     "mid_tier": [
-      "github-copilot/gpt-5-mini",
-      "google/gemini-3-flash-preview",
-      "minimax-coding-plan/MiniMax-M2.7-highspeed"
+      "openai/gpt-5.4-mini",
+      "google/gemini-3-flash-preview"
     ]
   }
 }
