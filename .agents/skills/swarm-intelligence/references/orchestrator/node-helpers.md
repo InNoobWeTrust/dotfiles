@@ -12,8 +12,8 @@ Use this file only when implementing node-level orchestration details.
 
 Exit codes:
 
-- `0`: valid JSON extracted
-- `2`: no valid JSON extracted
+- `0`: valid output (JSON if found, otherwise raw text)
+- `2`: phantom output (empty response)
 
 ## Engine Routing
 
@@ -30,21 +30,19 @@ Prefixes stripped before `gemini -m`:
 - `google/`
 - `gemini/`
 
-## `extract_json(response)`
+## `extract_output(response)`
 
 1. Look for a fenced ```json block first.
-2. If none exists, slice from the first `{` or `[` to the last `}` or `]`.
-3. Validate with `jq .` or `python3 -c "import json; json.loads(...)"`.
-4. If validation fails, treat it as exit `2`.
-5. If the response contains multiple JSON objects, try each one separately.
-   Keep the first one that validates. If none validate, treat as exit `2`.
-6. If the response appears truncated (unclosed brackets, cut-off strings),
-   treat as exit `2` and retry the node.
+2. If none exists, look for any `{` or `[` to find JSON.
+3. If JSON is found and valid, return it.
+4. If no valid JSON found, return the raw text as-is.
+5. The synthesizer handles parsing and consensus from natural language outputs.
+6. Exit `2` only if the response is truly empty/phantom.
 
 ## `run_agent_retry(model, persona, input, max_retries=2)`
 
 1. Run `kilo-swarm -m MODEL -p PERSONA -i INPUT`.
-2. If exit code is `0`, return the extracted JSON.
+2. If exit code is `0`, return the output (JSON or text).
 3. If exit code is `2`, or the invocation fails with a known transient error
    such as timeout, quota, or network, increment retry counter.
 4. Retry the same model first.
@@ -53,15 +51,16 @@ Prefixes stripped before `gemini -m`:
 
 ## `merge_outputs(model_outputs, field_name)`
 
-Merge only the top-level field named by `field_name`.
+Merge outputs from multiple nodes. The synthesizer extracts key information from natural language outputs.
 
 Rules:
 
-1. Boolean fields: majority vote.
-2. Scalar string/number fields: keep the value if at least 2 models agree.
-3. Arrays of primitives: union unique values in first-seen order.
-4. Arrays of objects: merge by the first stable key found in this order:
+1. The synthesizer reads all node outputs and identifies the key `field_name` content from each.
+2. Boolean fields: majority vote.
+3. Scalar string/number fields: keep the value if at least 2 models agree.
+4. Arrays of primitives: union unique values in first-seen order.
+5. Arrays of objects: merge by the first stable key found in this order:
    `id`, `task_id`, `section_id`, `slide_id`, `name`, `title`, `file_path`.
-5. Nested objects: recursively apply the same rules.
- 6. Final tie-break: if no majority exists, use lexicographical comparison of model names
-    (alphabetical order) to deterministically select which model's value to keep.
+6. Text outputs: synthesizer extracts and synthesizes key points.
+7. Final tie-break: if no majority exists, use lexicographical comparison of model names
+   (alphabetical order) to deterministically select which model's value to keep.

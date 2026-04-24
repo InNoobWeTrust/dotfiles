@@ -4,7 +4,7 @@ Use this file only when handling the final swarm output.
 
 ## Final Artifact Contract
 
-The swarm returns one JSON artifact with a `files` array.
+The swarm returns one JSON artifact with a `files` array. Upstream node passes may be prose, bullets, lightly structured text, or JSON; only this final artifact is JSON.
 
 Each file entry should look like this:
 
@@ -12,9 +12,14 @@ Each file entry should look like this:
 {"path":"src/example.ts","language":"typescript","code":"...","task_id":"task_01"}
 ```
 
+## Synthesizer Notes
+
+- Accept prose, bullets, lightly structured text, or JSON from intermediate node passes.
+- Normalize those responses into the final JSON artifact below.
+
 ## Hard Rules
 
-- Swarm nodes return JSON only.
+- Swarm nodes may return prose, bullets, lightly structured text, or JSON.
 - Swarm nodes do not write files.
 - A separate premium `code` agent materializes files serially.
 

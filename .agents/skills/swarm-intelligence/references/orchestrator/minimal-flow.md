@@ -21,6 +21,16 @@ Use `minimal mode` unless a human explicitly asks for `full quorum mode`.
 - `full quorum mode`: keep Phase 1 the same, and also run 2-3 models for selected
   Phase 2 or Phase 3 nodes before merging.
 
+## Intermediate Output Format
+
+Intermediate node outputs may be prose, bullets, lightly structured text, or JSON. Example:
+
+- Finding: The merge rule has no tie-break example.
+- Evidence: Two models can disagree on the same field.
+- Recommendation: Show one deterministic merge example.
+
+The synthesizer extracts the configured `phase*_field` values from these responses; they do not need to be JSON.
+
 ## Steps
 
 0. Validate input: ensure the input document is non-empty, well-formed, and relevant to the task. If not, fail immediately.
@@ -32,10 +42,10 @@ Use `minimal mode` unless a human explicitly asks for `full quorum mode`.
    `phase1_a_persona` on both.
 5. Retry the same model up to 2 times on exit `2`, timeout, quota, or network
    errors. If a node still fails, replace it with the next untried free model.
-6. Stop Phase 1-A only when you have 2 valid JSON outputs or the free pool is exhausted.
+6. Stop Phase 1-A only when you have 2 valid outputs or the free pool is exhausted.
 7. Merge Phase 1-A outputs using `phase1_a_field`.
 8. Repeat the same process for Phase 1-B and merge with `phase1_b_field`.
-9. If either Phase 1 branch cannot reach 2 valid JSON outputs, fail the swarm.
+9. If either Phase 1 branch cannot reach 2 valid outputs, fail the swarm.
 10. Phase 2 in `minimal mode`: run `phase2_forward_persona` on
     `quality_tiers.mid_tier[0]` (must exist).
 11. Run `phase2_review_persona` on `quality_tiers.mid_tier[1]` if present and valid,
@@ -50,7 +60,7 @@ Use `minimal mode` unless a human explicitly asks for `full quorum mode`.
 17. If a breaker returns `passed: false`, run `phase3_maker_fix_persona` with the
     breaker's `critical_failures`. Retry each task at most 2 times.
 18. If a task still fails after 2 maker-fix attempts, fail the swarm.
-19. Return one JSON artifact with a `files` array.
+19. Return one structured artifact with a `files` array.
 20. Hand the artifact to a separate premium `code` agent for file writes.
 
 ## Stop Conditions
@@ -61,4 +71,4 @@ Stop the swarm and surface the failure when any of these happen:
 - Phase 1 cannot reach 2 valid outputs for either persona
 - Phase 2 is still unapproved after 3 review cycles
 - a Phase 3 task still fails after 2 maker-fix attempts
-- the final artifact is missing or invalid JSON
+- the final artifact is missing or invalid or missing

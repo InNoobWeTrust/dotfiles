@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-# kilo-swarm — Single-pass swarm node runner (atomic primitive)
+# kilo-swarm — Single-pass swarm node runner (raw pass-through proxy)
 #
-# Runs one agent invocation (kilo or gemini-cli) and outputs extracted JSON.
-# Kilo Code (the AI orchestrator) is responsible for phases, loops,
-# parallelism, file management, and retries.
+# Runs one agent invocation (kilo or gemini-cli) and passes raw output through.
+# The synthesizer handles all parsing, extraction, and consensus building.
 #
 # Engine selection is automatic based on model ID:
 #   - Models matching ^(kilo/)?google/ or ^gemini/ → gemini-cli
@@ -28,9 +27,9 @@
 #   --verbose     emit extra debug info to stderr
 #   -h            show this help
 #
-# Output: extracted JSON object to stdout; logs to stderr
-# Exit:   0 = valid non-empty JSON extracted
-#         2 = phantom output — no valid JSON found (orchestrator: retry this node)
+# Output: raw text from agent to stdout; logs to stderr
+# Exit:   0 = success (even if output is empty/note to synthesizer)
+#         2 = invocation failure (orchestrator: retry this node)
 
 set -euo pipefail
 
@@ -62,13 +61,8 @@ detect_engine() {
 }
 
 # Strip provider prefix from a model ID to get the bare name for gemini-cli.
-# e.g. kilo/google/gemini-2.5-flash → gemini-2.5-flash
-#      google/gemini-2.5-pro        → gemini-2.5-pro
-#      gemini/gemini-2.5-flash      → gemini-2.5-flash
-#      gemini-2.5-flash             → gemini-2.5-flash (unchanged)
 strip_gemini_prefix() {
   local model="$1"
-  # Remove up to two slash-separated prefix components if they are not a model name
   model="${model#kilo/google/}"
   model="${model#google/}"
   model="${model#gemini/}"
@@ -117,27 +111,10 @@ SWARM_NODE_MSG="You are a focused, single-purpose analysis node in a multi-agent
 ## Core Rules
 
 1. Follow the persona instructions below exactly. The persona defines your role (Business Analyst, Architect, QA Engineer, Researcher, etc.).
-2. Output ONLY valid JSON. No preamble, no explanation, no markdown prose outside the JSON block. Your entire response must be parseable JSON.
-3. Use web search when the persona explicitly requests it. If search is requested, gather current information before returning your JSON. Do not run bash commands.
-4. Respect the schema. The persona will specify the exact JSON schema. Conform to it strictly.
-5. Do not add undocumented fields beyond what the schema specifies.
-6. Never modify files or run shell commands. Read access and web search are permitted; write/bash operations are always denied.
-
-## Output Format
-
-Wrap your JSON in a code block for reliable extraction:
-
-\`\`\`json
-{
-  \"your\": \"output here\"
-}
-\`\`\`
-
-If you cannot complete the task, output:
-
-\`\`\`json
-{\"error\": \"reason why\", \"partial\": null}
-\`\`\`
+2. Provide thorough, well-structured output. Include all relevant information, insights, and recommendations.
+3. Use web search when the persona explicitly requests it. If search is requested, gather current information before responding.
+4. Be specific and detailed — the synthesizer will extract key points and build consensus from multiple node outputs.
+5. Never modify files or run shell commands. Read access and web search are permitted; write/bash operations are always denied.
 
 ## Persona Instructions
 
@@ -149,13 +126,9 @@ vlog "engine=$ENGINE  model=$MODEL"
 
 if [[ "$ENGINE" == "gemini" ]]; then
   BARE_MODEL=$(strip_gemini_prefix "$MODEL")
-  # gemini-cli: pass persona + input content as the prompt via stdin.
-  # -p sets the non-interactive prompt; the file content is piped via stdin.
-  # -y disables interactive approval prompts.
   AGENT_CMD=(gemini -y -m "$BARE_MODEL" -p "$SWARM_NODE_MSG")
 else
-  # kilo: attach the input file and pass persona as the message argument
-  AGENT_CMD=(kilo run --auto --format json -m "$MODEL" -f "$INPUT_FILE" -- "$SWARM_NODE_MSG")
+  AGENT_CMD=(kilo run --auto -m "$MODEL" -f "$INPUT_FILE" -- "$SWARM_NODE_MSG")
 fi
 
 # Build command array (with optional timeout wrapper)
@@ -176,18 +149,16 @@ if [[ "$DRY_RUN" == "true" ]]; then
   log "DRY-RUN engine: $ENGINE"
   log "DRY-RUN cmd : ${AGENT_CMD[*]}"
   log "DRY-RUN persona (${#PERSONA} chars): $persona_preview"
-  printf '%s\n' '{}'
   exit 0
 fi
 
 vlog "model=$MODEL  engine=$ENGINE  input=$INPUT_FILE  persona_len=${#PERSONA}  timeout=${TIMEOUT}s"
 
-# Run agent — capture stdout and stderr without toggling set -e
+# Run agent — capture stdout and stderr
 TMP_STDERR=$(mktemp)
 agent_status=0
 
 if [[ "$ENGINE" == "gemini" ]]; then
-  # gemini-cli reads the input file from stdin; persona is already in -p
   raw=$(cat "$INPUT_FILE" | "${AGENT_CMD[@]}" 2>"$TMP_STDERR") || agent_status=$?
 else
   raw=$("${AGENT_CMD[@]}" 2>"$TMP_STDERR") || agent_status=$?
@@ -202,84 +173,9 @@ if [[ $agent_status -ne 0 ]]; then
   else
     log "WARN: agent run exited with status $agent_status (no stderr output)"
   fi
-fi
-
-vlog "raw output: ${#raw} chars"
-
-# Normalise raw output to plain text.
-# - kilo engine emits newline-delimited JSON events; concatenate type=text parts.
-# - gemini engine emits plain text directly.
-if [[ "$ENGINE" == "gemini" ]]; then
-  text="$raw"
-else
-  text=$(printf '%s\n' "$raw" | python3 -c "
-import sys, json
-out = ''
-for line in sys.stdin:
-    line = line.strip()
-    if not line:
-        continue
-    try:
-        e = json.loads(line)
-        if e.get('type') == 'text':
-            out += e.get('part', {}).get('text', '')
-    except Exception:
-        pass
-print(out.strip())
-")
-fi
-
-vlog "text after event concat: ${#text} chars"
-
-# Extract first valid JSON object or array from the text.
-# Uses json.JSONDecoder.raw_decode() which correctly handles nested structures
-# and escaped strings — unlike manual brace-depth tracking.
-# Exit 0 = valid non-empty JSON found; exit 2 = phantom output (no JSON or empty {}).
-extracted=$(printf '%s\n' "$text" | python3 -c "
-import sys, re, json
-
-text = sys.stdin.read()
-decoder = json.JSONDecoder()
-
-# Try fenced code blocks first — most agents wrap output in backticks
-for pat in [
-    r'\`\`\`json\s*([\s\S]+?)\s*\`\`\`',
-    r'\`\`\`\s*(\{[\s\S]+?\})\s*\`\`\`',
-    r'\`\`\`\s*(\[[\s\S]+?\])\s*\`\`\`',
-]:
-    m = re.search(pat, text)
-    if m:
-        try:
-            obj = json.loads(m.group(1))
-            print(json.dumps(obj, indent=2))
-            sys.exit(0 if obj else 1)
-        except Exception:
-            pass
-
-# Fallback: scan for first balanced JSON object or array using the stdlib decoder.
-# raw_decode handles nested objects, arrays, and escaped strings correctly.
-for start_char in ('{', '['):
-    pos = 0
-    while pos < len(text):
-        idx = text.find(start_char, pos)
-        if idx == -1:
-            break
-        try:
-            obj, _ = decoder.raw_decode(text, idx)
-            print(json.dumps(obj, indent=2))
-            sys.exit(0 if obj else 1)
-        except json.JSONDecodeError:
-            pos = idx + 1
-
-# No JSON found — phantom output
-print('{}')
-sys.exit(1)
-")
-extract_status=$?
-
-printf '%s\n' "$extracted"
-
-if [[ $extract_status -ne 0 ]]; then
-  log "WARN: phantom output — no valid JSON extracted from agent response"
   exit 2
 fi
+
+# Pass raw output through — synthesizer handles all parsing
+printf '%s\n' "$raw"
+exit 0

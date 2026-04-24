@@ -46,11 +46,11 @@ If no domain matches, default to `skill-review` for meta-analysis tasks.
 | Need | File |
 |---|---|
 | Domain config schema / field meanings | `references/orchestrator/domain-config.md` |
-| CLI, engine routing, retry, JSON extraction, merge | `references/orchestrator/node-helpers.md` |
+| CLI, engine routing, retry, output parsing, merge | `references/orchestrator/node-helpers.md` |
 | Final artifact shape / file materialization | `references/orchestrator/materialization.md` |
 | Safety rules / anti-pattern guidance | `references/orchestrator/anti-patterns.md` |
 | Budgeting guidance | `references/orchestrator/cost-management.md` |
-| JSON-only node persona text | `assets/templates/swarm-node.txt` |
+| Swarm node persona text | `assets/templates/swarm-node.txt` |
 | Example final artifact | `assets/examples/final-artifact.json` |
 
 ## Source Of Truth Order
@@ -75,8 +75,15 @@ Use `minimal` by default. Use `full` when output quality is critical and budget 
 ## Core Laws
 
 - `kilo-swarm` runs one node per invocation. The orchestrator runs multiple invocations to achieve swarm behavior.
-- Swarm nodes return JSON only and do not write files.
+- Swarm nodes do not write files.
+- Intermediate node outputs may be prose, bullets, lightly structured text, or JSON.
+- Only final artifacts and failure envelopes are JSON.
 - If a stop condition is hit, stop immediately and surface the failure.
+
+### Intermediate Output Example
+
+- Finding: The retry limit is not clear.
+- Recommendation: State the retry cap next to the quorum rule.
 
 ### Stop Conditions
 
@@ -85,7 +92,7 @@ Stop the swarm and surface the failure when any of these occur:
 | Code | Condition |
 |---|---|
 | `STOP_SUCCESS` | All phases completed successfully |
-| `STOP_PHASE1_NO_QUORUM` | Phase 1 could not reach 2 valid JSON outputs |
+| `STOP_PHASE1_NO_QUORUM` | Phase 1 could not reach 2 valid outputs |
 | `STOP_PHASE2_UNAPPROVED` | Phase 2 rejected after max review cycles |
 | `STOP_PHASE3_TASK_FAILURE` | Task failed after max maker-fix retries |
 | `STOP_TIMEOUT` | Absolute timeout exceeded |
