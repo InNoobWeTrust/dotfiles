@@ -16,9 +16,10 @@ Always use a login shell. Do not hardcode `~/.local/bin/kilo-swarm`; rely on the
 
 Exit codes:
 
-- `0`: valid output (JSON if found, otherwise raw text)
-- `2`: phantom output (empty response)
-- any other non-zero code: invocation failure
+- `0`: success — output produced (may be empty/note to synthesizer; orchestrator decides if it's valid)
+- `2`: invocation failure (timeout, quota exceeded, network error, engine unavailable, or input too large) — retryable
+- `1`: usage error (unknown option, missing required argument) — not retryable
+- other non-zero: treat as invocation failure (exit 2) for retry purposes
 
 ## Engine Routing
 

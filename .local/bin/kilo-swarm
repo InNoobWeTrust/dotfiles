@@ -123,7 +123,8 @@ if [[ "$ENGINE" == "gemini" ]]; then
   BARE_MODEL=$(strip_gemini_prefix "$MODEL")
   # gemini-cli: inline the input content into the prompt.
   # Guard against large inputs that could exceed ARG_MAX (~2MB on Linux).
-  INPUT_SIZE=$(wc -c < "$TMP_INPUT")
+  INPUT_SIZE=$(wc -c < "$TMP_INPUT" | tr -d ' ') || { log "ERROR: wc -c failed on input file"; exit 2; }
+  if ! [[ "$INPUT_SIZE" =~ ^[0-9]+$ ]]; then log "ERROR: wc -c returned non-numeric value: $INPUT_SIZE"; exit 2; fi
   MAX_INLINE=1048576  # 1 MiB
   if [[ "$INPUT_SIZE" -gt "$MAX_INLINE" ]]; then
     log "ERROR: gemini engine input too large (${INPUT_SIZE} bytes > ${MAX_INLINE} limit); use a kilo model for large inputs"
@@ -158,8 +159,8 @@ if [[ "$TIMEOUT" -gt 0 ]]; then
   elif command -v gtimeout >/dev/null 2>&1; then
     AGENT_CMD=(gtimeout "$TIMEOUT" "${AGENT_CMD[@]}")
   else
-    log "WARN: -t specified but neither 'timeout' nor 'gtimeout' found; ignoring timeout"
-    TIMEOUT=0
+    log "ERROR: -t specified but neither 'timeout' nor 'gtimeout' found; cannot enforce timeout"
+    exit 2
   fi
 fi
 
