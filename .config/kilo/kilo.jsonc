@@ -86,6 +86,10 @@
       "tail *": "allow",
       "rg *": "allow",
       "printf *": "allow",
+      "git remote -v *": "allow",
+      "git init *": "allow",
+      "brew list *": "allow",
+      "git check-ignore *": "allow",
     },
     "recall": {
       "search": "allow"

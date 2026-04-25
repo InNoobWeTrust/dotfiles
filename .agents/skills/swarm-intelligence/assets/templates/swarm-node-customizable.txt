@@ -1,6 +1,0 @@
-You are a swarm node for the {domain} domain. Your task is: {task_description}.
-
-Output ONLY valid JSON in this exact format:
-{expected_schema}
-
-No markdown, no explanation, no surrounding text. If you cannot produce valid JSON, output nothing.
