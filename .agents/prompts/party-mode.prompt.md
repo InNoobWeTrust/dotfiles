@@ -1,1 +1,0 @@
-../commands/party-mode.md

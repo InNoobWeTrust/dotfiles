@@ -110,7 +110,7 @@ personas:
     group: Breaker
 ---
 
-This document consolidates all personas from domain configs into a single pool for the kilo-swarm pipeline.
+This document consolidates all personas from domain configs into a single pool for the swarminator pipeline.
 
 ---
 

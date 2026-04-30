@@ -4,24 +4,24 @@
 
 1. Check for available updates (dry run):
 ```bash
-.agents/scripts/sync-remotes.sh
+~/.agents/scripts/sync-remotes.sh
 ```
 
 2. Pull updates from remote:
 ```bash
-.agents/scripts/sync-remotes.sh --apply
+~/.agents/scripts/sync-remotes.sh --apply
 ```
 
 3. Force re-download even if SHA matches:
 ```bash
-.agents/scripts/sync-remotes.sh --apply --force
+~/.agents/scripts/sync-remotes.sh --apply --force
 ```
 
 4. After syncing, review the updated skill files for any breaking changes or new capabilities that may affect dependent commands.
 
 ## Configuration
 
-Remote skill sources are defined in `.agents/skills/remote-skills-manifest.json`:
+Remote skill sources are defined in `~/.agents/skills/remote-skills-manifest.json`:
 
 ```json
 {
@@ -42,7 +42,7 @@ Remote skill sources are defined in `.agents/skills/remote-skills-manifest.json`
 ### Adding a new remote skill
 
 1. Add an entry to `remote-skills-manifest.json` under `remotes`
-2. Run `.agents/scripts/sync-remotes.sh --apply` to perform initial fetch
+2. Run `~/.agents/scripts/sync-remotes.sh --apply` to perform initial fetch
 
 ## Notes
 
@@ -53,8 +53,8 @@ Remote skill sources are defined in `.agents/skills/remote-skills-manifest.json`
 
 ## Related Commands
 
-- [Sync Skill DNA](./sync-skill-dna.md) — local source→consumer protocol sync
-- [Skill Review](./review.md) — post-sync review checklist
+- [Sync Skill DNA](./sync-skill-dna.prompt.md) — local source→consumer protocol sync
+- [Skill Review](./review.prompt.md) — post-sync review checklist
 
 ---
 

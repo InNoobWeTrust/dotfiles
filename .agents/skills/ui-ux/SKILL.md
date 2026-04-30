@@ -86,7 +86,7 @@ rg -N "backdrop-filter" ~/.cache/ui-ux-skill/ui-ux-pro-max/
 
 ### Sync Command
 ```bash
-.agents/scripts/sync-remotes.sh --apply
+~/.agents/scripts/sync-remotes.sh --apply
 ```
 
 ---

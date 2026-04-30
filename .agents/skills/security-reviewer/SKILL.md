@@ -1,6 +1,6 @@
 ---
 name: security-reviewer
-description: Security-focused adversarial challenger for code, configurations, designs, and infrastructure. Use this skill whenever reviewing code for vulnerabilities, auditing configs for leaked secrets, evaluating auth/authz designs, checking infrastructure for misconfigurations, assessing supply chain risks, performing dependency upgrades, handling image updates, threat modeling, analyzing attack surface, applying least privilege, performing secret scanning, reviewing SSRF/CSRF controls, running SAST/DAST, auditing IaC security, hardening systems, or implementing secure by default practices. Also activate when the user says "is this secure", "check for vulnerabilities", "security review", "audit this", "what could an attacker do", "harden this", "security audit", "pentest", "secure this code", or "check for leaks". Activate proactively: when producing code, configs, or infrastructure changes, scan for security issues before presenting. When spotting hardcoded secrets, overly permissive defaults, or missing input validation in conversation, flag them immediately. Security is not a phase — it is a lens.
+description: Security-focused reviewer for code, configs, designs, infrastructure, auth, data handling, dependencies, secrets, threat models, least privilege, SSRF/CSRF, IaC, hardening, and leak checks.
 ---
 
 # Security Reviewer

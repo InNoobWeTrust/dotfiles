@@ -62,7 +62,7 @@ Follow this sequence strictly. Each step is a mandatory "Review Gate."
 ## Data Augmentation
 This skill is enhanced by curated prompts and style seeds synced via:
 ```bash
-.agents/scripts/sync-remotes.sh --apply
+~/.agents/scripts/sync-remotes.sh --apply
 ```
 
 ### Cache Location

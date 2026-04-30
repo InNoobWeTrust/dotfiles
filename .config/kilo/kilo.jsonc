@@ -1,36 +1,96 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
-  "default_agent": "orchestrator",
   "small_model": "kilo/kilo-auto/free",
-  "provider": {
-    "litellm": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "litellm",
+  "instructions": [
+    "~/.agents/instructions/agent-instructions.md",
+  ],
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "tail_turns": 3,
+  },
+  "agent": {
+    "title": {
+      "model": "kilo/kilo-auto/free",
+    },
+    "summary": {
+      "model": "kilo/kilo-auto/free",
+    },
+    "compaction": {
+      "model": "kilo/kilo-auto/free",
+    },
+    "general": {
+      "model": "minimax-coding-plan/MiniMax-M2.7-highspeed",
       "options": {
-        "baseURL": "${LITELLM_BASE_URL}"
+        "resoningEffort": "high",
       },
-      "models": {
-        "gpt-5.4": {
-          "options": {
-            "maxInputTokens": 32768,
-            "maxTokens": 272000
-          }
-        },
-        "kCode": {
-          "options": {
-            "variant": "thinking",
-            "maxInputTokens": 32768,
-            "maxTokens": 90000
-          }
-        },
-        "qwen/qwen3.6-plus": {
-          "options": {
-            "maxInputTokens": 32768,
-            "maxTokens": 90000
-          }
-        },
-      }
-    }
+    },
+    "explore": {
+      "model": "minimax-coding-plan/MiniMax-M2.5-highspeed",
+      "options": {
+        "resoningEffort": "high",
+      },
+    },
+    "ask": {
+      "model": "minimax-coding-plan/MiniMax-M2.7-highspeed",
+      "options": {
+        "resoningEffort": "high",
+      },
+    },
+    "plan": {
+      "model": "openai/gpt-5.5",
+      "options": {
+        "resoningEffort": "xhigh",
+      },
+    },
+    "code": {
+      "model": "github-copilot/claude-sonnet-4.6",
+      "options": {
+        "resoningEffort": "high",
+      },
+    },
+    "debug": {
+      "model": "github-copilot/claude-sonnet-4.6",
+      "options": {
+        "resoningEffort": "high",
+      },
+    },
+    "build": {
+      "model": "minimax-coding-plan/MiniMax-M2.5-highspeed",
+      "options": {
+        "resoningEffort": "high",
+      },
+    },
+    "orchestrator": {
+      "model": "minimax-coding-plan/MiniMax-M2.7-highspeed",
+      "options": {
+        "resoningEffort": "high",
+      },
+    },
+    "swarm-node": {
+      "mode": "primary",
+      "hidden": true,
+      "description": "Single-purpose analysis node for swarm pipelines. CLI/direct invocation only — not for interactive use or task tool.",
+      "prompt": "## Core Rules\\n\\n1. Follow the persona instructions provided in the user message exactly.\\n2. Provide thorough, well-structured output. Include all relevant information, insights, and recommendations.\\n3. Use web search (WebFetch) when the persona explicitly requests it.\\n4. Be specific and detailed — the synthesizer extracts key points and builds consensus from multiple node outputs.\\n5. Never modify files or run shell commands. Read and web fetch are permitted; write/bash are always denied.\\n6. If given a file path in the prompt, read that file to obtain the input document.",
+      "permission": {
+        "task": "deny",
+        "lsp": "allow",
+        "read": "allow",
+        "edit": "deny",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "deny",
+        "skill": "allow",
+        "question": "deny",
+        "webfetch": "allow",
+        "todowrite": "deny",
+        "websearch": "allow",
+        "doom_loop": "deny",
+        "codesearch": "allow",
+        "external_directory": "deny",
+      },
+    },
   },
   "mcp": {
     "chrome-devtools": {
@@ -45,6 +105,67 @@
       "enabled": true
     },
   },
+  "provider": {
+    "llm-broker": {
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "${LLM_BROKER_BASE_URL}",
+      },
+      "env": [
+        "LLM_BROKER_API_KEY"
+      ],
+      "models": {
+        "qwen-plus-latest": {
+          "options": {
+            "maxInputTokens": 32768,
+            "maxTokens": 128000,
+          }
+        },
+        "qwen-max-latest": {
+          "options": {
+            "maxInputTokens": 32768,
+            "maxTokens": 128000,
+          }
+        },
+      },
+    },
+    "llm-gateway": {
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "${LLM_GATEWAY_BASE_URL}",
+      },
+      "env": [
+        "LLM_GATEWAY_API_KEY"
+      ],
+      "models": {
+        "gpt-5.5": {
+          "options": {
+            "maxInputTokens": 32768,
+            "maxTokens": 272000,
+          }
+        },
+        "gpt-5.4": {
+          "options": {
+            "maxInputTokens": 32768,
+            "maxTokens": 272000,
+          }
+        },
+        "kCode": {
+          "options": {
+            "variant": "thinking",
+            "maxInputTokens": 32768,
+            "maxTokens": 90000,
+          }
+        },
+        "qwen/qwen3.6-plus": {
+          "options": {
+            "maxInputTokens": 32768,
+            "maxTokens": 128000,
+          }
+        },
+      }
+    }
+  },
   "permission": {
     "bash": {
       "git status *": "allow",
@@ -55,14 +176,12 @@
       "git diff *": "allow",
       "echo *": "allow",
       "ls *": "allow",
-      "kilo-swarm *": "allow",
-      "~/.local/bin/kilo-swarm *": "allow",
+      "swarminator *": "allow",
       "kilo *": "allow",
       "find *": "allow",
       "sort *": "allow",
       "wc *": "allow",
       "wait *": "allow",
-      "zsh *": "allow",
       "which *": "allow",
       "gemini *": "allow",
       "head *": "allow",
@@ -90,6 +209,40 @@
       "git init *": "allow",
       "brew list *": "allow",
       "git check-ignore *": "allow",
+      "go mod *": "allow",
+      "go get *": "allow",
+      "go doc *": "allow",
+      "go list *": "allow",
+      "go build *": "allow",
+      "claude *": "allow",
+      "codex *": "allow",
+      "go run *": "allow",
+      "go test *": "allow",
+      "git branch *": "allow",
+      "curl *": "allow",
+      "test *": "allow",
+      "readlink *": "allow",
+      "gtimeout *": "allow",
+      "stat *": "allow",
+      "chmod *": "allow",
+      "npm list *": "allow",
+      "kill *": "ask",
+      "gh repo list *": "allow",
+      "git -C *": "ask",
+      "gh auth status *": "allow",
+      "gh release list *": "allow",
+      "xargs *": "ask",
+      "gofmt *": "allow",
+      "go generate *": "allow",
+      "gh run list *": "allow",
+      "gh run watch *": "allow",
+      "brew tap-info *": "allow",
+      "brew info *": "allow",
+      "brew update *": "allow",
+      "brew outdated *": "allow",
+      "git checkout *": "allow",
+      "git pull *": "allow",
+      "brew upgrade *": "allow",
     },
     "recall": {
       "search": "allow"
@@ -97,10 +250,7 @@
     "external_directory": {
       "/tmp/*": "allow",
       "~/.agents/*": "allow",
-      "~/.local/bin/*": "allow",
+      "~/.config/kilo/*": "allow",
     },
   },
-  "instructions": [
-    "~/.agents/instructions/agent-instructions.md",
-  ],
 }

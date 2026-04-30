@@ -1,6 +1,6 @@
 ---
 name: edge-case-hunter
-description: Mechanical edge-case and boundary-condition finder for code, diffs, specs, and logic. Use this skill whenever reviewing code for unhandled paths, testing boundary conditions, auditing branching logic, or complementing an adversarial review with method-driven path tracing. Also activate when the user says "find edge cases", "what did I miss", "boundary conditions", "unhandled paths", "off-by-one", "race condition", "null check", "missing validation", "what breaks", "what happens if", or "unhappy path". Activate proactively alongside adversarial-reviewer — they are orthogonal (attitude-driven vs method-driven) and produce different findings. Always activate when reviewing code before shipping, especially for parsers, state machines, validators, and auth flows.
+description: Mechanical edge-case and boundary-condition finder for code, diffs, specs, and logic. Use for explicit edge-case review, unhandled paths, off-by-one, race condition, null handling, missing validation, unhappy paths, parsers, state machines, validators, and auth flows.
 ---
 
 # Edge Case Hunter
@@ -107,4 +107,3 @@ the potential consequence if the path is hit unguarded.
 
 - **`security-reviewer`** — Security edge cases (auth bypass, injection, data exposure) overlap heavily with unhandled paths. Run both for security-critical code.
 - **`adversarial-reviewer`** — Orthogonal: attitude-driven vs method-driven. Use together for maximum coverage.
-

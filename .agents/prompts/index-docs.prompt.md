@@ -1,1 +1,0 @@
-../commands/index-docs.md

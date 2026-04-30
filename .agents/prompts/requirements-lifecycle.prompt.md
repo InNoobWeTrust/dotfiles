@@ -1,1 +1,0 @@
-../commands/requirements-lifecycle.md

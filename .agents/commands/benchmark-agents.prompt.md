@@ -173,8 +173,7 @@ Match model benchmark profiles to agent requirements:
 
 ### Step 2: Load Current Agent Configuration
 
-Read all files in `.agents/agents/` directory.
-Extract current model assignments from each agent's YAML frontmatter.
+If the active agent config root contains agent profile files, read those files and extract current model assignments from each YAML frontmatter. If no profiles exist, report that model-assignment benchmarking cannot compare against a local current state.
 
 Build a current-state matrix:
 | Agent | Current Model | Provider | Subscription |
@@ -328,7 +327,7 @@ Present the full analysis and ask:
 
 ## Output
 
-Save the complete analysis to `.agents/benchmark-report-<YYYYMMDD>.md` with:
+Save the complete analysis to `~/.agents/benchmark-report-<YYYYMMDD>.md` with:
 1. Date and data source
 2. User constraints and assumptions
 3. Current agent configuration matrix

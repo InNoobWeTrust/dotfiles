@@ -1,1 +1,0 @@
-../commands/index.md

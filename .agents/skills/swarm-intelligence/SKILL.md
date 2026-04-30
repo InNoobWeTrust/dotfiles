@@ -9,7 +9,7 @@ Read the reference data under `references/`.
 
 ## Core Law
 
-Swarm nodes output git patches in markdown code blocks; they do not write files. The user applies validated patches via `git apply`. `kilo-swarm` runs one node per invocation.
+Swarm nodes output git patches in markdown code blocks; they do not write files. The user applies validated patches via `git apply`. `swarminator` runs one node per invocation and auto-detects available agents with fallback.
 
 ## Entry Contract
 
@@ -22,17 +22,23 @@ Before starting, ensure:
 ## Invocation
 
 ```bash
-# Verify kilo-swarm is on PATH
-$SHELL -l -c 'command -v kilo-swarm >/dev/null 2>&1 || { echo "ERROR: kilo-swarm not found" >&2; exit 1; }'
+# Verify swarminator is on PATH
+$SHELL -l -c 'command -v swarminator >/dev/null 2>&1 || { echo "ERROR: swarminator not found — install via: brew tap InNoobWeTrust/tap && brew install swarminator" >&2; exit 1; }'
 
-# Safe invocation: pass stdin as a file to avoid shell interpolation.
+# Safe invocation: pipe input from a file to avoid shell interpolation.
+# swarminator auto-detects available agents (kilo, codex, claude, gemini) with fallback.
 input_file="input.txt"
-prompt="ROLE_TEXT"
+persona="PERSONA_TEXT"
 model="MODEL_ID"
-$SHELL -l -c "cat \"$input_file\" | kilo-swarm -m \"$model\" -p \"$prompt\""
+$SHELL -l -c "cat \"$input_file\" | swarminator -m \"$model\" -p \"$persona\""
+
+# Optional flags:
+#   --agent=AGENT      force a specific agent
+#   --feedback=stderr  stream feedback to stderr
+#   -t SECONDS         timeout
 ```
 
-Use a login shell and pipe input from a file or stdin.
+Use a login shell and pipe input from a file or stdin. See `swarminator --tutorial TOPIC`, `--phases`, or `--protocol` for built-in reference docs.
 
 ## Stop Conditions
 

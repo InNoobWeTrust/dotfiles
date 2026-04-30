@@ -1,18 +1,16 @@
 # Skills Discovery
 
-This repo has agent skills at `~/.agents/skills/`.
+The active agent config root keeps skills in `skills/`, normally `~/.agents/skills/`. Use index-first routing; do not recursively inspect every skill at task start.
 
 ## When to Check
 
-When starting a task, use dynamic discovery to find applicable skills:
-
-1. Scan `~/.agents/skills/` directory to discover available skills
-2. Read each skill's `SKILL.md` to understand triggers and capabilities
-3. Match the user's request against skill descriptions
-4. If a match is found, follow the skill's instructions
-5. Multiple skills can be composed — e.g., `adversarial-reviewer` after `requirements-driven-dev`
+1. Read `~/.agents/skills/INDEX.md`, or `skills/INDEX.md` relative to the active agent config root, when skill routing is needed.
+2. Match the request to the smallest applicable skill.
+3. Load the selected skill's `SKILL.md` only after the index route matches.
+4. Compose skills only when the second skill is a clear safety or review lens.
 
 ## Skill Precedence
 
-If a task matches multiple skills, prefer the more specific one. For review tasks,
-use the [review command](../commands/review.md) which handles routing automatically.
+- Prefer the most specific skill over broad methodology.
+- Prefer no skill for simple, well-scoped edits.
+- For review tasks, use `../commands/review.prompt.md` or the active config root's `commands/review.prompt.md`.

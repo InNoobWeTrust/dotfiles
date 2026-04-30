@@ -1,1 +1,0 @@
-../commands/sync-remote-skills.md

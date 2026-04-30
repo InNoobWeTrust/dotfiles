@@ -1,6 +1,6 @@
 ---
 name: editorial-reviewer
-description: Editorial review for communication clarity and document structure. Use this skill whenever polishing prose, improving document organization, reviewing specs/PRDs for readability, or preparing documents for stakeholders. Also activate when the user says "make this clearer", "tighten this up", "editorial review", "copy edit", "restructure this doc", "too long", "hard to follow", "polish this", "improve writing", "simplify this", "clean up this doc", or "make it more readable". Has two modes: prose (fix communication issues) and structure (propose cuts, merges, moves). Use prose mode for sentence-level clarity. Use structure mode for document-level organization. Activate proactively when producing stakeholder-facing docs that haven't been polished.
+description: Editorial review for prose clarity and document structure. Use for copy edits, readability, restructuring, shortening, polishing, simplifying, or stakeholder-facing document cleanup.
 ---
 
 # Editorial Reviewer
@@ -135,4 +135,3 @@ prose review (structure first, then polish).
 
 - **`adversarial-reviewer`** — Challenges reasoning and logic quality. Editorial-reviewer addresses communication clarity — different axis.
 - **`requirements-driven-dev`** — Step 9 of the Full Flow suggests editorial review before sharing with stakeholders.
-

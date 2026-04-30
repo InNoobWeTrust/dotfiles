@@ -1,10 +1,19 @@
 # Handoffs
 
 Cross-session, cross-device, cross-agent context persistence.
-Works with any AI coding agent — Claude Code, Copilot, Cursor, Kilo, Gemini CLI, etc.
+Works with any AI coding agent: Claude Code, Copilot, Cursor, Kilo, Gemini CLI, etc.
 
-When a session ends, the agent writes what the next session needs to know.
-When a session starts, the agent reads what the previous session left behind.
+This README documents the `handoffs/` directory relative to the resolved `AGENT_DIR`.
+
+## Directory Resolution
+
+1. Run `git rev-parse --show-toplevel`.
+2. If it succeeds, set `AGENT_DIR=<git-root>/.agents` and use `<git-root>/.agents/handoffs/`.
+3. If it fails, set `AGENT_DIR=~/.agents` and use `~/.agents/handoffs/`.
+
+When saving, create `{AGENT_DIR}/handoffs/` if needed. When archiving, move completed files to `{AGENT_DIR}/handoffs/archive/`.
+
+Do not scan global handoffs for repo work unless explicitly requested.
 
 ## File Convention
 
@@ -21,8 +30,7 @@ handoffs/
 <branch-slug>--<topic-slug>.md
 ```
 
-- **Branch slug**: branch name with `/` replaced by `-`
-  (e.g., `feature/auth` → `feature-auth`)
+- **Branch slug**: branch name with `/` replaced by `-` (e.g., `feature/auth` -> `feature-auth`)
 - **Topic slug**: short kebab-case descriptor of the workstream
 - **Double-dash** `--` separates branch from topic
 
@@ -65,28 +73,25 @@ Files modified, relevant git state.
 | `in-progress` | Actively being worked on |
 | `paused` | Stopped intentionally, can resume |
 | `blocked` | Waiting on external input |
-| `done` | Complete — will be moved to `archive/` |
+| `done` | Complete; move to `archive/` |
 
 ## Discovery Protocol
 
-When starting a session:
+When restoring a handoff:
 
-1. Check if `handoffs/` contains any `.md` files (excluding this README)
-2. Get current branch: `git branch --show-current`
-3. Filter files matching current branch slug prefix
-4. Read matching files, summarize status to user
-5. If no matches: check for `status: in-progress` or `status: blocked` on
-   other branches — user may have switched branches
-6. If nothing found: fresh start
+1. Resolve `AGENT_DIR`.
+2. Check whether `{AGENT_DIR}/handoffs/` contains any `.md` files excluding this README.
+3. Get current branch: `git branch --show-current`.
+4. Filter files matching current branch slug prefix.
+5. Read matching files and summarize status to the user.
+6. If no matches exist in the resolved directory, report that no matching handoff was found.
 
 ## Saving
 
 Agents should write/update handoffs:
 
-- **Auto-save**: At natural breakpoints (completing a subtask, before a long
-  operation, when context is getting large)
-- **Manual**: When user says "save handoff", "checkpoint", "I'm switching
-  devices", or "save context"
+- **Auto-save**: At natural breakpoints, before a long operation, or when context is getting large
+- **Manual**: When user says "save handoff", "checkpoint", "I'm switching devices", or "save context"
 - **On exit**: Before session ends, if meaningful work was done
 
 ## Archival
@@ -94,24 +99,21 @@ Agents should write/update handoffs:
 When a handoff reaches `status: done`:
 
 - Move the file to `archive/` with the same filename
-- If an archived file with the same name exists, append a timestamp:
-  `<branch>--<topic>--2026-03-23.md`
+- If an archived file with the same name exists, append a timestamp: `<branch>--<topic>--2026-03-23.md`
 
 ## Git
 
-Commit the infrastructure (this README, `archive/`). Gitignore actual handoff
-files by default — they are ephemeral personal context:
+Commit the infrastructure (this README, `archive/`). Gitignore actual handoff files by default because they are ephemeral personal context:
 
 ```gitignore
 # Handoff content (personal context, not project source)
-.agents/handoffs/*.md
-!.agents/handoffs/README.md
+handoffs/*.md
+!handoffs/README.md
 ```
 
-To share handoffs with a team (e.g., onboarding, leave handoff), remove the
-ignore rule and commit specific handoff files.
+To share handoffs with a team, such as onboarding or leave handoff, remove the ignore rule and commit specific handoff files.
 
 ## Related
 
-- Rule: `.agents/rules/handoff.md` — always-on session start/save behavior
-- Command: `.agents/commands/handoff.md` — step-by-step save/restore procedure
+- Rule: `~/.agents/rules/handoff.md` — session save/restore triggers
+- Command: `~/.agents/commands/handoff.prompt.md` — step-by-step save/restore procedure

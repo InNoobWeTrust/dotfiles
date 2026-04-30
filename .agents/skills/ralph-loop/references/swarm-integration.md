@@ -24,20 +24,20 @@ prompt, but still has a machine-verifiable end state.
 ## Ground Rules
 
 1. `swarm-intelligence` is an orchestrated multi-phase workflow.
-2. `kilo-swarm` runs one node per invocation, not the whole swarm.
+2. `swarminator` runs one node per invocation, not the whole swarm.
 3. The final swarm output is one JSON artifact with a `files` array.
 4. Intermediate phase outputs may be prose, bullets, lightly structured text,
    or JSON; they are not the final artifact contract.
 5. Swarm nodes do not write files. A separate materialization step or premium
    `code` agent writes files.
 
-If you are building a custom orchestrator, verify `kilo-swarm` exists first:
+If you are building a custom orchestrator, verify `swarminator` exists first:
 
 ```bash
-$SHELL -l -c 'command -v kilo-swarm >/dev/null 2>&1 || { echo "ERROR: kilo-swarm not found in PATH" >&2; exit 1; }'
+$SHELL -l -c 'command -v swarminator >/dev/null 2>&1 || { echo "ERROR: swarminator not found in PATH" >&2; exit 1; }'
 ```
 
-Do not replace the swarm with one raw `kilo-swarm` command. A single invocation
+Do not replace the swarm with one raw `swarminator` command. A single invocation
 only runs one node.
 
 ## Phase 1: Run Swarm Normally
