@@ -42,21 +42,21 @@
       "model": "kilo/kilo-auto/free",
     },
     "plan": {
-      "model": "openai/gpt-5.5",
+      "model": "oai-gateway/openai/chatbot-5.4",
       "options": {
-        "resoningEffort": "xhigh",
+        "reasoningEffort": "high",
       },
     },
     "code": {
-      "model": "github-copilot/claude-sonnet-4.6",
+      "model": "llm-gateway/kCode",
       "options": {
-        "resoningEffort": "high",
+        "reasoningEffort": "high",
       },
     },
     "debug": {
       "model": "github-copilot/claude-sonnet-4.6",
       "options": {
-        "resoningEffort": "high",
+        "reasoningEffort": "high",
       },
     },
     "swarm-node": {
@@ -104,29 +104,12 @@
         "baseURL": "${LLM_BROKER_BASE_URL}",
       },
       "env": [
-        "LLM_BROKER_API_KEY"
+        "LLM_BROKER_API_KEY",
       ],
       "models": {
         // ── Anthropic Claude ─────────────────────────────────────────
         // claude-sonnet-4-5: SKIP — superseded by 4.6 at same price
         // claude-3-x series: SKIP — all retired early 2026
-        "claude-opus-4-6": {
-          "name": "Claude Opus 4.6 [flagship]",
-          "limit": {
-            "context": 900000,
-            "output": 16000
-          },
-        },
-        "claude-opus-4-6-thinking": {
-          "name": "Claude Opus 4.6 Thinking [reasoning]",
-          "options": {
-            "variant": "thinking"
-          },
-          "limit": {
-            "context": 900000,
-            "output": 64000
-          },
-        },
         "claude-sonnet-4-6": {
           "name": "Claude Sonnet 4.6 [balanced]",
           "limit": {
@@ -154,96 +137,15 @@
             "output": 8192
           },
         },
-        "deepseek-v3.2-fast": {
-          "name": "DeepSeek V3.2 Fast [fast]",
-          "limit": {
-            "context": 65536,
-            "output": 8192
-          },
-        },
-        "deepseek-r1": {
-          "name": "DeepSeek R1 [reasoning]",
-          "options": {
-            "variant": "thinking"
-          },
-          "limit": {
-            "context": 65536,
-            "output": 16000
-          },
-        },
-        // ── Google Gemini ─────────────────────────────────────────────
-        // gemini-3-pro-preview: SKIP — discontinued Mar 26 2026
-        // gemini-3-pro-preview-thinking: SKIP — not a real separate model ID
-        // gemini-3-flash-preview: SKIP — 2.5-flash-lite (GA) is more stable
-        // gemini-2.5-pro: SKIP — superseded by 3.1-pro-preview
-        // *-thinking suffix: SKIP — not real separate models; use thinking_budget param
-        "gemini-3.1-pro-preview": {
-          "name": "Gemini 3.1 Pro Preview [flagship]",
-          "limit": {
-            "context": 1000000,
-            "output": 8192
-          },
-        },
-        "gemini-2.5-flash": {
-          "name": "Gemini 2.5 Flash [balanced]",
-          "limit": {
-            "context": 1000000,
-            "output": 8192
-          },
-        },
-        "gemini-2.5-flash-lite": {
-          "name": "Gemini 2.5 Flash Lite [fast]",
-          "limit": {
-            "context": 1000000,
-            "output": 8192
-          },
-        },
         // ── OpenAI GPT ────────────────────────────────────────────────
         // gpt-5.3-codex: SKIP — no official source; likely fake broker ID
         // gpt-5.2: SKIP — redundant between 5.1 and 5.4
         // gpt-5, gpt-5-mini: SKIP — superseded by 5.1+
         // gpt-4.1, gpt-4.1-mini, gpt-4.1-nano, gpt-4o, gpt-4o-mini: SKIP — RETIRED Feb 13 2026
-        "gpt-5.5": {
-          "name": "GPT-5.5 [flagship]",
-          "limit": {
-            "context": 1000000,
-            "output": 16384
-          },
-        },
         "gpt-5.4": {
           "name": "GPT-5.4 [balanced]",
           "limit": {
             "context": 1000000,
-            "output": 16384
-          },
-        },
-        "gpt-5.1": {
-          "name": "GPT-5.1 [fast]",
-          "limit": {
-            "context": 1000000,
-            "output": 8192
-          },
-        },
-        // ── OpenAI o-series (reasoning) ───────────────────────────────
-        // o4-mini: SKIP — RETIRED Feb 13 2026
-        // o1: SKIP — superseded by o3 in every dimension
-        "o3": {
-          "name": "o3 [reasoning]",
-          "options": {
-            "variant": "thinking"
-          },
-          "limit": {
-            "context": 200000,
-            "output": 32768
-          },
-        },
-        "o3-mini": {
-          "name": "o3 Mini [fast-reasoning]",
-          "options": {
-            "variant": "thinking"
-          },
-          "limit": {
-            "context": 200000,
             "output": 16384
           },
         },
@@ -268,13 +170,6 @@
         // qwen3.5 series not available via this broker; qwen3 is best available
         // qwen3-235b-a22b, qwen3-32b: SKIP — qwen3-max covers general use
         // qwen-plus-latest, qwen-max-latest, qwen-turbo, qwen-flash: SKIP — older commercial line, superseded by qwen3
-        "qwen3-coder": {
-          "name": "Qwen3 Coder [coding]",
-          "limit": {
-            "context": 128000,
-            "output": 8192
-          },
-        },
         "qwen3-max": {
           "name": "Qwen3 Max [balanced]",
           "limit": {
@@ -282,39 +177,30 @@
             "output": 8192
           },
         },
-        "qwq-32b": {
-          "name": "QwQ 32B [reasoning]",
-          "options": {
-            "variant": "thinking"
-          },
-          "limit": {
-            "context": 128000,
-            "output": 32768
-          },
-        },
-        // ── Moonshot Kimi ─────────────────────────────────────────────
-        // kimi-k2: SKIP — superseded by k2.5
-        "kimi-k2.5": {
-          "name": "Kimi K2.5 [balanced]",
-          "limit": {
-            "context": 131072,
-            "output": 8192
-          },
-        },
-        "kimi-k2-thinking": {
-          "name": "Kimi K2 Thinking [reasoning]",
-          "options": {
-            "variant": "thinking"
-          },
-          "limit": {
-            "context": 131072,
-            "output": 32768
-          },
-        },
-        // ── MiniMax ───────────────────────────────────────────────────
-        // MiniMax-M2.1: SKIP — stale (current is M2.7, released Mar 2026)
-        // Re-add when broker provides MiniMax-M2.7 or later
       },
+    },
+    "oai-gateway": {
+      "npm": "@ai-sdk/openai",
+      "options": {
+        "baseURL": "${LLM_GATEWAY_BASE_URL}",
+      },
+      "env": [
+        "LLM_GATEWAY_API_KEY"
+      ],
+      "models": {
+        "openai/chatbot-5.5": {
+          "limit": {
+            "context": 1000000,
+            "output": 16384
+          },
+        },
+        "openai/chatbot-5.4": {
+          "limit": {
+            "context": 1000000,
+            "output": 16384
+          },
+        },
+      }
     },
     "llm-gateway": {
       "npm": "@ai-sdk/openai-compatible",
@@ -325,22 +211,7 @@
         "LLM_GATEWAY_API_KEY"
       ],
       "models": {
-        "gpt-5.5": {
-          "limit": {
-            "context": 1000000,
-            "output": 16384
-          },
-        },
-        "gpt-5.4": {
-          "limit": {
-            "context": 1000000,
-            "output": 16384
-          },
-        },
         "kCode": {
-          "options": {
-            "variant": "thinking",
-          },
           "limit": {
             "context": 128000,
             "output": 32768
@@ -434,6 +305,7 @@
       "brew upgrade *": "allow",
       "gh run view *": "allow",
       "gh pr view *": "allow",
+      "go vet *": "allow",
     },
     "recall": {
       "search": "allow"

@@ -15,13 +15,6 @@
       "use_for": "Lightweight high-volume passes — fastest Google model, zero proxy cost"
     },
     {
-      "id": "github-copilot/gpt-5-mini",
-      "provider": "copilot",
-      "copilot_unlimited": true,
-      "use_for": "Planning, spec, mid-tier synthesis; unlimited on Copilot Pro",
-      "pricing": "Included in $10/mo Copilot base"
-    },
-    {
       "id": "kilo/kilo-auto/free",
       "provider": "kilo",
       "use_for": "Auto-selection from free models — dynamically routed to best available free model server-side"
