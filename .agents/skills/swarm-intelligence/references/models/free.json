@@ -22,53 +22,63 @@
       "pricing": "Included in $10/mo Copilot base"
     },
     {
-      "id": "minimax-coding-plan/MiniMax-M2.7-highspeed",
-      "provider": "minimax",
-      "use_for": "Detailed architecture, planning, research",
-      "pricing": "Included in Minimax Token Plan",
-      "openrouter_activity": "890M prompt tokens"
-    },
-    {
-      "id": "minimax-coding-plan/MiniMax-M2.5-highspeed",
-      "provider": "minimax",
-      "use_for": "Codebase exploration, quick edits",
-      "pricing": "Included in Minimax Token Plan",
-      "openrouter_activity": "420M prompt tokens"
-    },
-    {
       "id": "kilo/kilo-auto/free",
       "provider": "kilo",
-      "use_for": "Auto-selection from free models"
+      "use_for": "Auto-selection from free models — dynamically routed to best available free model server-side"
     },
     {
-      "id": "kilo/x-ai/grok-code-fast-1:optimized:free",
+      "id": "kilo/inclusionai/ling-2.6-1t:free",
       "provider": "kilo",
-      "use_for": "High-volume node passes, lightweight structured extraction"
-    },
-    {
-      "id": "kilo/bytedance-seed/dola-seed-2.0-pro:free",
-      "provider": "kilo",
-      "use_for": "ByteDance research model (free tier)"
-    },
-    {
-      "id": "kilo/inclusionai/ling-2.6-flash:free",
-      "provider": "kilo",
-      "use_for": "Lightweight flash model (free tier)"
-    },
-    {
-      "id": "kilo/nvidia/nemotron-3-super-120b-a12b:free",
-      "provider": "kilo",
-      "use_for": "NVIDIA large model (free tier)"
+      "use_for": "Trillion-param flagship from inclusionAI — #9 code mode, top recommended; complex agentic coding and large context tasks",
+      "context_window": 262144,
+      "recommended": true
     },
     {
       "id": "kilo/stepfun/step-3.5-flash:free",
       "provider": "kilo",
-      "use_for": "Stepfun flash model (free tier)"
+      "use_for": "Kilo-subsidized fast model from StepFun — #1 code mode by usage; 196B MoE with 11B active params, high throughput"
+    },
+    {
+      "id": "kilo/nvidia/nemotron-3-super-120b-a12b:free",
+      "provider": "kilo",
+      "use_for": "NVIDIA hybrid MoE — strong multi-agent and structured output; 120B params, 12B active",
+      "context_window": 262144
+    },
+    {
+      "id": "kilo/tencent/hy3-preview:free",
+      "provider": "kilo",
+      "use_for": "Tencent MoE with configurable reasoning — #15 code mode; supports disabled/low/high reasoning levels; 262K context",
+      "context_window": 262144
+    },
+    {
+      "id": "kilo/poolside/laguna-m.1:free",
+      "provider": "kilo",
+      "use_for": "Poolside flagship coding agent — tool calling and reasoning optimized; 128K context; recommended for agentic coding",
+      "context_window": 131072,
+      "recommended": true
+    },
+    {
+      "id": "kilo/poolside/laguna-xs.2:free",
+      "provider": "kilo",
+      "use_for": "Poolside second-gen XS coding agent — tool calling and reasoning optimized; 128K context; recommended for agentic coding",
+      "context_window": 131072,
+      "recommended": true
+    },
+    {
+      "id": "kilo/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+      "provider": "kilo",
+      "use_for": "NVIDIA Nemotron 3 Nano Omni — 30B-A3B multimodal model for perception and context sub-agent; handles text/image/video/audio",
+      "context_window": 256000
+    },
+    {
+      "id": "kilo/x-ai/grok-code-fast-1:optimized:free",
+      "provider": "kilo",
+      "use_for": "Fast reasoning model for agentic coding — visible reasoning traces; high-volume structured extraction"
     },
     {
       "id": "openrouter/openrouter/free",
       "provider": "openrouter",
-      "use_for": "OpenRouter aggregated free tier"
+      "use_for": "OpenRouter aggregated free tier — best available free model at request time"
     }
   ]
 }
