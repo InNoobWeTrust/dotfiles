@@ -39,7 +39,7 @@
       "model": "kilo/kilo-auto/free",
     },
     "ask": {
-      "model": "kilo/kilo-auto/free",
+      "model": "kilo/stepfun/step-3.5-flash:free",
     },
     "plan": {
       "model": "oai-gateway/openai/chatbot-5.4",
@@ -48,7 +48,7 @@
       },
     },
     "code": {
-      "model": "llm-gateway/kCode",
+      "model": "kilo/inclusionai/ling-2.6-1t:free",
       "options": {
         "reasoningEffort": "high",
       },
@@ -188,12 +188,6 @@
         "LLM_GATEWAY_API_KEY"
       ],
       "models": {
-        "openai/chatbot-5.5": {
-          "limit": {
-            "context": 1000000,
-            "output": 16384
-          },
-        },
         "openai/chatbot-5.4": {
           "limit": {
             "context": 1000000,
@@ -306,6 +300,7 @@
       "gh run view *": "allow",
       "gh pr view *": "allow",
       "go vet *": "allow",
+      "time *": "allow",
     },
     "recall": {
       "search": "allow"
