@@ -3,7 +3,7 @@
   "description": "Premium models for quality-critical swarm nodes (synthesis, high-stakes passes)",
   "models": [
     {
-      "id": "openai/gpt-5.4",
+      "id": "oai-gateway/openai/chatbot-5.4",
       "provider": "openai",
       "use_for": "Critical synthesis, frontier quality when output matters most",
       "pricing": "$2.5/M input, $15/M output",
@@ -11,7 +11,7 @@
       "openrouter_activity": "High"
     },
     {
-      "id": "openai/gpt-5.4-mini",
+      "id": "oai-gateway/openai/chatgpt-5.4-mini",
       "provider": "openai",
       "use_for": "High-stakes synthesis, complex reasoning; mid-tier cost",
       "pricing": "$0.75/M input, $4.5/M output",
@@ -44,15 +44,15 @@
   ],
   "quality_tiers": {
     "synthesis": [
-      "openai/gpt-5.4",
+      "oai-gateway/openai/chatbot-5.4",
       "github-copilot/claude-sonnet-4.6"
     ],
     "high_stakes": [
-      "openai/gpt-5.4",
+      "oai-gateway/openai/chatbot-5.4",
       "google/gemini-3.1-pro-preview"
     ],
     "mid_tier": [
-      "openai/gpt-5.4-mini",
+      "oai-gateway/openai/chatgpt-5.4-mini",
       "google/gemini-3-flash-preview"
     ]
   }
