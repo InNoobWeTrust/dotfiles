@@ -242,6 +242,11 @@
       "brew search *": "allow",
       "tee *": "allow",
       "sed *": "ask",
+      "read *": "allow",
+      "mkdir *": "ask",
+      "bash *": "ask",
+      "awk *": "allow",
+      "env *": "allow",
     },
     "recall": {
       "search": "allow"

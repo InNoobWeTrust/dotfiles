@@ -5,6 +5,7 @@
     {
       "id": "oai-gateway/openai/chatbot-5.4",
       "provider": "openai",
+      "engine": "kilo",
       "use_for": "Critical synthesis, frontier quality when output matters most",
       "pricing": "$2.5/M input, $15/M output",
       "context_window": 1050000,
@@ -13,6 +14,7 @@
     {
       "id": "oai-gateway/openai/chatgpt-5.4-mini",
       "provider": "openai",
+      "engine": "kilo",
       "use_for": "High-stakes synthesis, complex reasoning; mid-tier cost",
       "pricing": "$0.75/M input, $4.5/M output",
       "context_window": 400000,
@@ -37,6 +39,7 @@
     {
       "id": "github-copilot/claude-sonnet-4.6",
       "provider": "copilot",
+      "engine": "kilo",
       "use_for": "Strong reasoning and coding; senior agents, architecture",
       "pricing": "Premium request on Copilot Pro (300/mo pool)",
       "context_window": 200000
