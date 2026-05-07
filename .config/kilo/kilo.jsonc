@@ -75,12 +75,30 @@
       ],
       "models": {
         "openai/chatbot-5.4": {
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
           "limit": {
             "context": 1000000,
             "output": 16384
           },
         },
         "openai/chatgpt-5.4-mini": {
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
           "limit": {
             "context": 400000,
             "output": 8192
@@ -98,18 +116,45 @@
       ],
       "models": {
         "kCode": {
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
           "limit": {
             "context": 92160,
             "output": 32768
           },
         },
         "qwen/qwen3.6-plus": {
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
           "limit": {
             "context": 128000,
             "output": 8192
           },
         },
         "deepseek/deepseek-v4-flash": {
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
           "limit": {
             "context": 1048576,
             "output": 384000
@@ -131,6 +176,15 @@
         // claude-3-x series: SKIP — all retired early 2026
         "claude-sonnet-4-6": {
           "name": "Claude Sonnet 4.6 [balanced]",
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
           "limit": {
             "context": 900000,
             "output": 16000
@@ -138,6 +192,15 @@
         },
         "claude-haiku-4-5": {
           "name": "Claude Haiku 4.5 [fast]",
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
           "limit": {
             "context": 180000,
             "output": 8192
@@ -150,6 +213,15 @@
         // gpt-4.1, gpt-4.1-mini, gpt-4.1-nano, gpt-4o, gpt-4o-mini: SKIP — RETIRED Feb 13 2026
         "gpt-5.4": {
           "name": "GPT-5.4 [balanced]",
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
           "limit": {
             "context": 1000000,
             "output": 16384
