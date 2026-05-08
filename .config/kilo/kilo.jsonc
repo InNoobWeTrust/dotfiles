@@ -29,20 +29,22 @@
       "model": "kilo/kilo-auto/free",
     },
     "orchestrator": {
-      "hidden": true,
-      "model": "kilo/kilo-auto/free",
+      "model": "llm-gateway/deepseek/deepseek-v4-flash",
     },
     "ask": {
       "model": "kilo/stepfun/step-3.5-flash:free",
     },
     "plan": {
-      "model": "oai-gateway/openai/chatbot-5.4",
+      "model": "oai-gateway/openai/chatbot-5.4-high",
       "options": {
         "reasoningEffort": "xhigh",
       },
     },
     "code": {
-      "model": "kilo/stepfun/step-3.5-flash:free",
+      "model": "oai-gateway/openai/chatgpt-5.4-mini",
+      "options": {
+        "reasoningEffort": "xhigh",
+      },
     },
     "debug": {
       "model": "github-copilot/claude-sonnet-4.6",
@@ -74,7 +76,7 @@
         "LLM_GATEWAY_API_KEY"
       ],
       "models": {
-        "openai/chatbot-5.4": {
+        "openai/chatbot-5.4-high": {
           "modalities": {
             "input": [
               "text",
