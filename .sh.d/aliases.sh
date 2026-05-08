@@ -237,7 +237,7 @@ usable npx && \
         # OpenAI Codex
         ! usable codex && alias codex='npx --yes @openai/codex'
         # Kilo code
-        ! usable kilo && alias kilo="npx --yes @kilocode/cli"
+        ! usable kilo && alias kilo="npx --yes @kilocode/cli@7.2.34"
         # Agent skills manager
         ! usable skills && alias skills="npx --yes skills"
         ! usable openskills && alias openskills="npx --yes openskills"
