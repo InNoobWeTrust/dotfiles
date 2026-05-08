@@ -29,7 +29,7 @@
       "model": "kilo/kilo-auto/free",
     },
     "orchestrator": {
-      "model": "llm-gateway/deepseek/deepseek-v4-flash",
+      "model": "kilo/stepfun/step-3.5-flash:free",
     },
     "ask": {
       "model": "kilo/stepfun/step-3.5-flash:free",
@@ -41,7 +41,7 @@
       },
     },
     "code": {
-      "model": "oai-gateway/openai/chatgpt-5.4-mini",
+      "model": "llm-gateway/deepseek/deepseek-v4-flash",
       "options": {
         "reasoningEffort": "xhigh",
       },
