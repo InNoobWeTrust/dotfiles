@@ -50,12 +50,12 @@ Execution note:
 
 Preferred path:
 
-- Run `structured-inquiry` first.
+- Run `systematic-investigation` first.
 - Import `goal`, `key_results`, `audience`, and any available `constraints` or `assumptions`.
 
 Fallback path:
 
-- Use `questionnaire/goal-framing.md` when `structured-inquiry` was not run or required fields are missing.
+- Use `questionnaire/goal-framing.md` when `systematic-investigation` was not run or required fields are missing.
 - Ask 3 to 5 lightweight questions.
 - Propose goal framing, success metrics, threshold, mode, and template.
 - Mark inferred threshold, mode, or template with `[RECOMMENDED]` and require confirmation before lens planning.

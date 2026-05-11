@@ -5,7 +5,7 @@
 **Load skills selectively** — prefer no skill for straightforward edits. Use `~/.agents/skills/INDEX.md` to select one primary skill; optionally add one review/safety lens when clearly beneficial.
 
 ### High-Impact Daily Skills
-- **Bug/failure/debug "why" tasks** → Load `structured-inquiry`
+- **Bug/failure/debug "why" tasks** → Load `systematic-investigation`
 - **Unfamiliar codebase navigation** → Load `codebase-exploration`
 - **Auth/secrets/data handling** → Add `security-reviewer` as safety lens
 - **Parsers, validators, branching logic** → Add `edge-case-hunter` for boundary review

@@ -1,5 +1,5 @@
 ---
-name: structured-inquiry
+name: systematic-investigation
 description: Systematic ideation and investigation for complex problems. Use this skill to debug tricky bugs, investigate failures, perform root cause analysis, make architectural decisions, brainstorm solutions, or untangle complex multi-concern situations. Also use when stuck going in circles, when a user reports vague or recurring symptoms, or asks "why does this keep happening." Activate when the user says "debug this", "troubleshoot", "figure out why", "root cause", "what's going wrong", "fix this bug", "this keeps breaking", "brainstorm solutions", "ideate on", "generate ideas", "creative problem solving", "first principles", "pre-mortem", "red team this", "challenge assumptions", "go deeper", "rethink this", or "inversion".
 ---
 

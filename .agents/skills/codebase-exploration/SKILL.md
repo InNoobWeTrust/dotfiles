@@ -169,11 +169,11 @@ is rarely needed — just enough to make your change safely.
 After mapping the codebase:
 
 - **Implementing changes?** → Use `requirements-driven-dev` for structured execution
-- **Found a bug during navigation?** → Use `structured-inquiry` for root cause analysis
+- **Found a bug during navigation?** → Use `systematic-investigation` for root cause analysis
 - **Planning a refactor?** → Use Strategy 4 output to prioritize modules, then `requirements-driven-dev` for implementation
 
 ## Related Skills
 
-- **`structured-inquiry`** — For debugging and root cause analysis after navigation reveals issues.
+- **`systematic-investigation`** — For debugging and root cause analysis after navigation reveals issues.
 - **`requirements-driven-dev`** — For structured implementation after understanding the codebase.
 - **`edge-case-hunter`** — For auditing code paths discovered during navigation.

@@ -50,13 +50,13 @@ The skill succeeds when it produces an output that:
 ### Goal And Context Layer
 
 - Accept mission, OKRs, KPIs, audience, threshold, orchestration mode, and output format.
-- Prefer `structured-inquiry` as the upstream goal-framing step.
+- Prefer `systematic-investigation` as the upstream goal-framing step.
 - If unavailable or incomplete, use `references/questionnaire/goal-framing.md` to gather equivalent context.
 - If user already supplies a goal statement, treat it as authoritative unless they request refinement.
 
 ### Upstream Import Contract
 
-Expected fields from `structured-inquiry` output:
+Expected fields from `systematic-investigation` output:
 
 - `goal`: string — the primary objective.
 - `key_results`: string[] — measurable key results.
@@ -64,7 +64,7 @@ Expected fields from `structured-inquiry` output:
 - `constraints`: string[] — budget, timeline, or other limits (optional).
 - `assumptions`: string[] — stated assumptions (optional).
 
-Fallback: if `structured-inquiry` was not run, or if any required field is missing, use `references/questionnaire/goal-framing.md` to gather the missing equivalent information before lens planning.
+Fallback: if `systematic-investigation` was not run, or if any required field is missing, use `references/questionnaire/goal-framing.md` to gather the missing equivalent information before lens planning.
 
 ### Core Engine
 

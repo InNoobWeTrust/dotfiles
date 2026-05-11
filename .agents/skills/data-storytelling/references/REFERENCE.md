@@ -5,7 +5,7 @@ This directory contains documentation, prompt contracts, lens definitions, quest
 ## Contents
 
 - **README.md**: Comprehensive usage documentation, workflow examples, invocation commands, and implementation notes.
-- **questionnaire/goal-framing.md**: Fallback questionnaire for gathering goal, audience, threshold, and other context when `structured-inquiry` is unavailable.
+- **questionnaire/goal-framing.md**: Fallback questionnaire for gathering goal, audience, threshold, and other context when `systematic-investigation` is unavailable.
 - **prompts/**: Component-level prompt contracts for the core engine:
   - `goal-interpreter.md`: Goal normalization and context import.
   - `data-profiler.md`: Data structure, quality, and constraint identification.

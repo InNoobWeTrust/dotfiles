@@ -23,7 +23,7 @@ Before generating ideas, ensure the problem is well-defined.
 3. **Define success** — what does a good answer look like?
 4. **Identify assumptions** — what are we taking for granted that could be wrong?
 
-> **If the problem involves a tricky bug, complex debugging, or root cause analysis**, consider using the `structured-inquiry` skill for structured frameworks (5 Whys, Ishikawa, First Principles) before brainstorming solutions.
+> **If the problem involves a tricky bug, complex debugging, or root cause analysis**, consider using the `systematic-investigation` skill for structured frameworks (5 Whys, Ishikawa, First Principles) before brainstorming solutions.
 
 > **If the problem requires understanding unfamiliar code or architecture**, consider using the `codebase-exploration` skill to map the relevant codebase before brainstorming solutions.
 
