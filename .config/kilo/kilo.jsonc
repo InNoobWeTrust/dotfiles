@@ -29,28 +29,20 @@
       "model": "kilo/kilo-auto/free",
     },
     "orchestrator": {
-      "model": "kilo/stepfun/step-3.5-flash:free",
+      "hidden": true,
+      "model": "kilo/kilo-auto/free",
     },
     "ask": {
       "model": "kilo/stepfun/step-3.5-flash:free",
     },
     "plan": {
       "model": "oai-gateway/openai/chatbot-5.4-high",
-      "options": {
-        "reasoningEffort": "xhigh",
-      },
     },
     "code": {
       "model": "llm-gateway/deepseek/deepseek-v4-flash",
-      "options": {
-        "reasoningEffort": "xhigh",
-      },
     },
     "debug": {
       "model": "github-copilot/claude-sonnet-4.6",
-      "options": {
-        "reasoningEffort": "high",
-      },
     },
   },
   "mcp": {

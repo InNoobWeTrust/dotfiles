@@ -1,6 +1,6 @@
 # Goal Framing Questionnaire
 
-Use this when `strategic-problem-solving` was not run, when its required fields are missing, or when the user has not provided enough context to align the analysis.
+Use this when `structured-inquiry` was not run, when its required fields are missing, or when the user has not provided enough context to align the analysis.
 
 ## Ask These Questions
 

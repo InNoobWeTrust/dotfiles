@@ -1,6 +1,6 @@
 ---
-name: strategic-codebase-navigation
-description: Strategic navigation of large unfamiliar codebases. Use to find where behavior lives, trace feature flow, map architecture, plan migrations/refactors, or answer "where is X" and "how does this work" questions.
+name: codebase-exploration
+description: Systematic exploration of large unfamiliar codebases. Use to find where behavior lives, trace feature flow, map architecture, plan migrations/refactors, or answer "where is X" and "how does this work" questions. Also use for codebase scouting, hunting for specific patterns, or discovering module relationships.
 ---
 
 # Strategic Codebase Navigation
@@ -169,11 +169,11 @@ is rarely needed — just enough to make your change safely.
 After mapping the codebase:
 
 - **Implementing changes?** → Use `requirements-driven-dev` for structured execution
-- **Found a bug during navigation?** → Use `strategic-problem-solving` for root cause analysis
+- **Found a bug during navigation?** → Use `structured-inquiry` for root cause analysis
 - **Planning a refactor?** → Use Strategy 4 output to prioritize modules, then `requirements-driven-dev` for implementation
 
 ## Related Skills
 
-- **`strategic-problem-solving`** — For debugging and root cause analysis after navigation reveals issues.
+- **`structured-inquiry`** — For debugging and root cause analysis after navigation reveals issues.
 - **`requirements-driven-dev`** — For structured implementation after understanding the codebase.
 - **`edge-case-hunter`** — For auditing code paths discovered during navigation.

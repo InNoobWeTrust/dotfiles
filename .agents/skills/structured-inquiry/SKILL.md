@@ -1,6 +1,6 @@
 ---
-name: strategic-problem-solving
-description: Strategic and systematic thinking for problem-solving. Use this skill to debug tricky bugs, investigate failures, perform root cause analysis, make architectural decisions, or untangle complex multi-concern situations. Also use when stuck going in circles, when a user reports vague or recurring symptoms, or asks "why does this keep happening." Activate when the user says "debug this", "troubleshoot", "figure out why", "root cause", "what's going wrong", "fix this bug", or "this keeps breaking". Includes advanced elicitation methods (structured reasoning second passes) — activate when output feels shallow, or the user says "go deeper", "rethink this", "first principles", "pre-mortem", "red team this", or "inversion".
+name: structured-inquiry
+description: Systematic ideation and investigation for complex problems. Use this skill to debug tricky bugs, investigate failures, perform root cause analysis, make architectural decisions, brainstorm solutions, or untangle complex multi-concern situations. Also use when stuck going in circles, when a user reports vague or recurring symptoms, or asks "why does this keep happening." Activate when the user says "debug this", "troubleshoot", "figure out why", "root cause", "what's going wrong", "fix this bug", "this keeps breaking", "brainstorm solutions", "ideate on", "generate ideas", "creative problem solving", "first principles", "pre-mortem", "red team this", "challenge assumptions", "go deeper", "rethink this", or "inversion".
 ---
 
 # Strategic Problem-Solving
@@ -383,6 +383,6 @@ named reasoning methods), see [elicitation-methods](references/elicitation-metho
 
 ## Related Skills
 
-- **`strategic-codebase-navigation`** — Use before this skill when the problem involves unfamiliar code. Navigate first, then debug.
+- **`codebase-exploration`** — Use before this skill when the problem involves unfamiliar code. Navigate first, then debug.
 - **`edge-case-hunter`** — Use after solving to verify no unhandled paths remain in the fix.
 - **`adversarial-reviewer`** — Phase 4 of this skill applies adversarial challenge; the standalone skill provides a deeper protocol.

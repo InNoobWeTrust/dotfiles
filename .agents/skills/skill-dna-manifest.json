@@ -3,7 +3,7 @@
         "adversarial-reviewer/SKILL.md": {
             "consumers": [
                 "requirements-driven-dev/references/core/adversarial-protocol.md",
-                "strategic-problem-solving/references/adversarial-protocol.md",
+                "structured-inquiry/references/adversarial-protocol.md",
                 "security-reviewer/references/adversarial-protocol.md"
             ]
         }

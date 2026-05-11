@@ -329,7 +329,7 @@ Stop when any of these happens:
 - The loop keeps changing unrelated files without improving verification
 
 Oscillation means the loop is no longer learning from feedback. Switch to HITL
-or route to `strategic-problem-solving`.
+or route to `structured-inquiry`.
 
 ### 6. Cleanup And Handoff
 
@@ -475,6 +475,6 @@ Ralph works with any AI CLI that can be wrapped in a bounded outer loop.
 ## Related Skills
 
 - `swarm-intelligence` - Use before Ralph when the task needs design or decomposition. See `references/swarm-integration.md`.
-- `strategic-problem-solving` - Use when the loop hits oscillation or a verifier failure you do not understand.
-- `strategic-codebase-navigation` - Use before Ralph on an unfamiliar codebase.
+- `structured-inquiry` - Use when the loop hits oscillation or a verifier failure you do not understand.
+- `codebase-exploration` - Use before Ralph on an unfamiliar codebase.
 - `security-reviewer` - Use for auth, dependency, secrets, or network-facing work before enabling AFK.

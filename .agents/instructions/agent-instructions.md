@@ -2,14 +2,25 @@
 
 ## Scope-Based Routing
 
-- Simple code, config, or docs tasks: do the focused work without loading a skill.
-- Bug, failure, root cause, or "why" tasks: load `strategic-problem-solving`.
-- Large unfamiliar repo exploration: load `strategic-codebase-navigation`.
-- Explicit review: quick/narrow reviews use one primary matching reviewer skill; broad, mixed, or deep reviews use `review.prompt.md` orchestration.
-- Security-sensitive work: add `security-reviewer` as the safety lens.
-- PRD, TRD, BDD, specs, or ambiguous feature planning: load `requirements-driven-dev`.
-- Swarm or multi-agent work: load `swarm-intelligence` only on explicit request or high-risk ambiguity.
-- Ralph loops: use only for bounded, machine-verifiable repetition; prefer HITL.
+**Load skills selectively** — prefer no skill for straightforward edits. Use `~/.agents/skills/INDEX.md` to select one primary skill; optionally add one review/safety lens when clearly beneficial.
+
+### High-Impact Daily Skills
+- **Bug/failure/debug "why" tasks** → Load `structured-inquiry`
+- **Unfamiliar codebase navigation** → Load `codebase-exploration`
+- **Auth/secrets/data handling** → Add `security-reviewer` as safety lens
+- **Parsers, validators, branching logic** → Add `edge-case-hunter` for boundary review
+- **Explicit review requests** → Match narrow reviewer (adversarial-reviewer, editorial-reviewer, etc.)
+
+### Specialized Skills (on explicit trigger)
+- **Requirements/planning work** → Load `requirements-driven-dev`
+- **Multi-agent exploration** → Load `swarm-intelligence`
+- **Bounded repetitive tasks** → Load `ralph-loop`
+- **UI/frontend polish** → Load `ui-ux` or `ai-ui-generation`
+- **Browser automation** → Load `cdp-browser-automation`
+- **Data narratives/charts** → Load `data-storytelling`
+- **Video workflow** → Load `video-production`
+
+**Do not load skills** for: simple edits, known config changes, straightforward implementation from existing plans.
 
 Use `~/.agents/skills/INDEX.md` before loading skill bodies. Load one primary skill by default, plus at most one focused review or safety lens when justified.
 

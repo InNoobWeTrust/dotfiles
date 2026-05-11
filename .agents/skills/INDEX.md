@@ -4,8 +4,8 @@ Use this index before loading any skill body. Select one primary skill by defaul
 
 | Skill | Cost | Use When | Do Not Use When |
 | --- | --- | --- | --- |
-| `strategic-problem-solving` | medium | Debugging, root cause, recurring failures, first-principles diagnosis | The task is a straightforward edit or known change |
-| `strategic-codebase-navigation` | medium | Finding where behavior lives in a large unfamiliar repo, tracing architecture | Relevant files are already known |
+| `structured-inquiry` | medium | Debugging, root cause, recurring failures, first-principles diagnosis, architectural decisions, brainstorming solutions, ideation, pre-mortem, red-teaming | The task is a straightforward edit or known change |
+| `codebase-exploration` | medium | Finding where behavior lives in a large unfamiliar repo, tracing architecture, pattern discovery, module auditing | Relevant files are already known |
 | `requirements-driven-dev` | high | User requests PRD, TRD, BDD, specs, acceptance criteria, or ambiguous feature planning | Small well-scoped fixes or implementation from an existing plan |
 | `swarm-intelligence` | high | User says swarm, multi-agent, parallel agents, diverse perspectives, or the risk is too high for one pass | Routine implementation or git writes |
 | `ralph-loop` | high | Bounded repetitive work with machine-verifiable completion criteria | Ambiguous, subjective, unsafe, or design-heavy work |

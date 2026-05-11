@@ -8,7 +8,7 @@ Turn the user's request into an explicit analysis brief that the rest of the ski
 
 - Raw user request.
 - `goal`, `data`, `audience`, `threshold`, `mode`, and `template` arguments if provided.
-- Output from `strategic-problem-solving`, if available, using this import contract:
+- Output from `structured-inquiry`, if available, using this import contract:
   - `goal`: string
   - `key_results`: string[]
   - `audience`: string
@@ -19,7 +19,7 @@ Turn the user's request into an explicit analysis brief that the rest of the ski
 ## Procedure
 
 1. Rewrite the request as a decision or insight question.
-2. Normalize upstream `strategic-problem-solving` fields when present and merge them with explicit user inputs.
+2. Normalize upstream `structured-inquiry` fields when present and merge them with explicit user inputs.
 3. If required upstream fields are missing, fall back to the raw request and questionnaire answers instead of failing.
 4. Identify the audience and the action they should be able to take after reading the output.
 5. Extract or infer the primary KPI, supporting KPIs, and success window.
@@ -62,7 +62,7 @@ Return a brief using this structure:
 
 - Do not silently invent a KPI if the user already supplied one.
 - Do not block on `threshold`, `mode`, or `template` when the user already supplied them explicitly.
-- If `strategic-problem-solving` is missing `goal`, `key_results`, or `audience`, recover from the raw request or questionnaire instead of treating the prerequisite as mandatory.
+- If `structured-inquiry` is missing `goal`, `key_results`, or `audience`, recover from the raw request or questionnaire instead of treating the prerequisite as mandatory.
 - When goal context is weak, mark assumptions clearly instead of pretending certainty.
 - Keep the brief short enough that the user can approve it quickly.
 

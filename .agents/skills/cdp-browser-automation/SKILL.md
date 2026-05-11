@@ -282,7 +282,7 @@ contribution protocol, three gates, domain file template, and lifecycle rules.
 
 ## Related Skills
 
-- **`strategic-codebase-navigation`** — Use when mapping an unfamiliar site's
+- **`codebase-exploration`** — Use when mapping an unfamiliar site's
   structure before writing a domain skill
 - **`security-reviewer`** — Activate before any task touching auth flows,
   cookies, or sensitive data in the browser
