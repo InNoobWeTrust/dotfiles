@@ -8,5 +8,8 @@ bootstrap\.sh
 # Non-dotfile project dirs
 \.innoobwetrust
 
+# Hermes secrets — never stow the live .env (use .env.example)
+\.hermes/\.env$
+
 # Misc
 .DS_Store
