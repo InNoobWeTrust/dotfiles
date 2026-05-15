@@ -237,7 +237,7 @@ usable npx && \
         # OpenAI Codex
         ! usable codex && alias codex='npx --yes @openai/codex'
         # Kilo code
-        ! usable kilo && alias kilo="npx --yes @kilocode/cli@7.2.34"
+        ! usable kilo && alias kilo="npx --yes @kilocode/cli@latest"
         # Agent skills manager
         ! usable skills && alias skills="npx --yes skills"
         ! usable openskills && alias openskills="npx --yes openskills"
@@ -457,11 +457,9 @@ usable curl && alias install-zoxide='curl -sSfL https://raw.githubusercontent.co
 alias install-zellij-cargo='cargo install --locked zellij'
 
 ## AI Agent CLI
-usable curl && alias install-opencode='curl -fsSL https://opencode.ai/install | bash'
+usable curl && usable bash && alias install-opencode='curl -fsSL https://opencode.ai/install | bash'
 
-usable curl && alias install-amazon-q='isekai && curl --proto "=https" --tlsv1.2 -Sf --progress-bar "https://desktop-release.q.us-east-1.amazonaws.com/latest/q-x86_64-linux-musl.zip" -o "q.zip" && unzip q.zip && ./q/install.sh'
-
-usable curl && alias install-omnara='curl -fsSL https://omnara.com/install.sh | bash'
+usable curl && usable bash && alias install-hermes='curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash'
 
 ################ DevSecMLOps ###################
 
