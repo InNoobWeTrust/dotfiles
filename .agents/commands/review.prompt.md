@@ -23,4 +23,14 @@
 
 If a required reviewer skill is unavailable, skip it and note the gap. If a critical security review is unavailable for security-sensitive work, stop and report the blocker.
 
+## Invocation Arguments
+
+Additional command input, if any, appears below exactly as provided:
+
+```text
+$ARGUMENTS
+```
+
+Use the block above as raw additional user input. Preserve whitespace, blank lines, and quoting exactly. If the block is empty, rely on the conversation context instead.
+
 Follow this command for the user's review request below.

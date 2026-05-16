@@ -129,4 +129,14 @@ Periodically, or when user asks, check for stale handoffs in the resolved direct
 
 ---
 
+## Invocation Arguments
+
+Additional command input, if any, appears below exactly as provided:
+
+```text
+$ARGUMENTS
+```
+
+Use the block above as raw additional user input. Preserve whitespace, blank lines, and quoting exactly. If the block is empty, rely on the conversation context instead.
+
 Follow the instructions above to work on the user's handoff request right below.

@@ -18,4 +18,14 @@ Use the `swarm-intelligence` skill for swarm orchestration.
 $SHELL -l -c 'command -v swarminator >/dev/null 2>&1 || { echo "ERROR: swarminator not found — install via: brew tap InNoobWeTrust/tap && brew install swarminator" >&2; exit 1; }'
 ```
 
+## Invocation Arguments
+
+Additional command input, if any, appears below exactly as provided:
+
+```text
+$ARGUMENTS
+```
+
+Use the block above as raw additional user input. Preserve whitespace, blank lines, and quoting exactly. If the block is empty, rely on the conversation context instead.
+
 Follow this command for the user's swarm request below.

@@ -2,6 +2,8 @@
 
 Canonical command prompts live in `~/.agents/commands/*.prompt.md`, or `commands/*.prompt.md` relative to the active agent config root. CLI-specific command discovery paths may symlink to that directory, but must not duplicate command content.
 
+When invoked through Kilo/OpenCode custom commands, prompt bodies may use `$ARGUMENTS` and positional placeholders like `$1`, `$2`, and `$3`. `$ARGUMENTS` may be multi-line and should be treated as raw text.
+
 Commands are entrypoints. Commands that wrap skills must stay thin and defer to the named skill for methodology, references, and detailed workflow. Standalone commands may keep their own procedure when no skill owns that domain.
 
 ## Routing Rule
