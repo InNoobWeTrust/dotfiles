@@ -36,7 +36,10 @@
       "model": "kilo/stepfun/step-3.5-flash:free",
     },
     "plan": {
-      "model": "oai-gateway/openai/chatbot-5.4-high",
+      "model": "openai/gpt-5.4",
+      "options": {
+        "reasoningEffort": "xhigh",
+      },
     },
     "code": {
       "model": "llm-gateway/deepseek/deepseek-v4-flash",
