@@ -346,6 +346,14 @@
       "bash *": "ask",
       "awk *": "allow",
       "env *": "allow",
+      "cmd *": "allow",
+      "git tag *": "ask",
+      "git push *": "ask",
+      "python3 *": "ask",
+      "pwd *": "allow",
+      "gh pr list *": "allow",
+      "git config --global *": "ask",
+      "git rebase *": "ask",
     },
     "recall": {
       "search": "allow"
