@@ -17,7 +17,7 @@
       "model": "kilo/kilo-auto/free",
     },
     "compaction": {
-      "model": "kilo/kilo-auto/free",
+      "model": "kilo/stepfun/step-3.5-flash:free",
     },
     "general": {
       "model": "kilo/kilo-auto/free",
