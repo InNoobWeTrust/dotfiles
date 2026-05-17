@@ -1,8 +1,3 @@
----
-name: edge-case-hunter
-description: Mechanical edge-case and boundary-condition finder for code, diffs, specs, and logic. Use for explicit edge-case review, unhandled paths, off-by-one, race condition, null handling, missing validation, unhappy paths, parsers, state machines, validators, and auth flows.
----
-
 # Edge Case Hunter
 
 Mechanical, method-driven path tracing for unhandled edge cases. Orthogonal to
@@ -16,7 +11,7 @@ challenging from a cynical stance.
 - Auditing logic-heavy code (parsers, state machines, validators, auth flows)
 - Checking boundary conditions before shipping
 
-> **Relationship to `adversarial-reviewer`**: The adversarial reviewer asks
+> **Relationship to adversarial review**: The adversarial reviewer asks
 > "what's wrong with this?" from a skeptical stance. The edge-case hunter asks
 > "what paths exist and which are unguarded?" via mechanical enumeration. Run
 > both for orthogonal coverage.
@@ -103,7 +98,7 @@ the potential consequence if the path is hit unguarded.
 
 ---
 
-## Related Skills
+## Related References
 
-- **`security-reviewer`** — Security edge cases (auth bypass, injection, data exposure) overlap heavily with unhandled paths. Run both for security-critical code.
-- **`adversarial-reviewer`** — Orthogonal: attitude-driven vs method-driven. Use together for maximum coverage.
+- **`security.md`** — Security edge cases (auth bypass, injection, data exposure) overlap heavily with unhandled paths. Run both for security-critical code.
+- **`adversarial.md`** — Orthogonal: attitude-driven vs method-driven. Use together for maximum coverage.

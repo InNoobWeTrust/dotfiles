@@ -125,8 +125,8 @@ For complex problems, apply multiple perspectives to the top ideas:
 
 - **Product Owner**: Does this solve a real user problem?
 - **Architect**: Is this technically feasible? What are the constraints?
-- **Security**: What could go wrong from a security standpoint? (Apply `security-reviewer` lens if available)
-- **Devil's Advocate**: Why will this fail? (Apply `adversarial-reviewer` lens)
+- **Security**: What could go wrong from a security standpoint? (Load `reviewer` for security lens if available)
+- **Devil's Advocate**: Why will this fail? (Load `reviewer` for adversarial lens)
 - **User**: Would I actually use this? Is it intuitive?
 
 > **Tip**: For deeper multi-persona deliberation with sustained back-and-forth,

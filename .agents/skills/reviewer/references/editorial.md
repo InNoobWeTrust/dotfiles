@@ -1,8 +1,3 @@
----
-name: editorial-reviewer
-description: Editorial review for prose clarity and document structure. Use for copy edits, readability, restructuring, shortening, polishing, simplifying, or stakeholder-facing document cleanup.
----
-
 # Editorial Reviewer
 
 Two-mode review skill for communication quality — a different axis from
@@ -131,7 +126,7 @@ prose review (structure first, then polish).
 - §8 "Verification" — distinct from §4 despite surface similarity
 ```
 
-## Related Skills
+## Related References
 
-- **`adversarial-reviewer`** — Challenges reasoning and logic quality. Editorial-reviewer addresses communication clarity — different axis.
-- **`requirements-driven-dev`** — Step 9 of the Full Flow suggests editorial review before sharing with stakeholders.
+- **`adversarial.md`** — Challenges reasoning and logic quality. Editorial reviewer addresses communication clarity — different axis.
+- **`requirements-driven-dev`** (separate skill) — Step 9 of the Full Flow suggests editorial review before sharing with stakeholders.

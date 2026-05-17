@@ -44,7 +44,7 @@ Users can request specific personas:
 - "I want a Marketing perspective too"
 
 Personas can also be derived from the user's available skills and agents.
-If the project has a `security-reviewer` skill, a Security Auditor persona
+If the project has a `reviewer` skill, a Security Auditor persona
 is a natural fit. Adapt the defaults to what's available.
 
 ---

@@ -257,7 +257,7 @@ Fill in these sections, keeping each brief:
 ## Phase 4 — Challenge & Validate
 
 Before committing to a solution, apply the adversarial self-challenge protocol
-from `references/adversarial-protocol.md` (Mode 2: Self-Challenge). This means:
+from the `reviewer` skill's `references/adversarial.md` (Mode 2: Self-Challenge). This means:
 running a pre-mortem, challenging across all attack vectors, and surfacing
 tensions inline.
 
@@ -384,5 +384,5 @@ named reasoning methods), see [elicitation-methods](references/elicitation-metho
 ## Related Skills
 
 - **`codebase-exploration`** — Use before this skill when the problem involves unfamiliar code. Navigate first, then debug.
-- **`edge-case-hunter`** — Use after solving to verify no unhandled paths remain in the fix.
-- **`adversarial-reviewer`** — Phase 4 of this skill applies adversarial challenge; the standalone skill provides a deeper protocol.
+- **`reviewer`** (edge-case hunter lens) — Use after solving to verify no unhandled paths remain in the fix.
+- **`reviewer`** (adversarial lens) — Phase 4 of this skill applies adversarial challenge; the reviewer skill provides a deeper protocol.

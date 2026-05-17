@@ -54,7 +54,7 @@ whatever is relevant to the domain.>
 - **Observability**: <logging, monitoring, alerting needs>
 
 ## Security Assessment
-> Apply security-reviewer skill to this section.
+> Apply `reviewer` skill (security lens) to this section.
 
 ### Authentication & Authorization
 ### Data Protection
@@ -73,7 +73,7 @@ whatever is relevant to the domain.>
 2. **Every section traces to a PRD goal** — if a component doesn't serve a product goal, question whether it belongs
 3. **Architecture decisions use ADR format** — context, decision, rationale, alternatives. This avoids "we just chose X" without reasoning
 4. **Non-functional requirements must be specific** — "fast" is meaningless; "p95 < 200ms at 1000 rps" is testable
-5. **Security is mandatory, not optional** — the Security Assessment section must be filled for every TRD. Invoke the `security-reviewer` skill to audit it. An empty or hand-waved security section blocks the challenge gate
+5. **Security is mandatory, not optional** — the Security Assessment section must be filled for every TRD. Load the `reviewer` skill (security lens) to audit it. An empty or hand-waved security section blocks the challenge gate
 6. **Interfaces are contracts** — define them clearly enough that two teams could build against them independently
 7. **Versioned** — if architecture changes, update the TRD first, then cascade to BDD specs
 8. **Immutable during execution** — once BDD specs are approved, freeze the TRD for that iteration
@@ -86,7 +86,7 @@ whatever is relevant to the domain.>
 - [ ] Interfaces are defined clearly (inputs, outputs, error cases)
 - [ ] Non-functional requirements have concrete targets
 - [ ] Security Assessment is complete — all 6 subsections addressed
-- [ ] Security Assessment has been reviewed by `security-reviewer`
+- [ ] Security Assessment has been reviewed by `reviewer` (security lens)
 - [ ] Child BDD specs are listed (or planned)
 - [ ] No product-level concerns (those belong in the PRD)
 

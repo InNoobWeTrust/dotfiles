@@ -1,7 +1,3 @@
-<!-- synced-from: adversarial-reviewer/SKILL.md | last-synced: 2026-03-27 -->
-<!-- Note: YAML frontmatter stripped; this is a reference copy, not an activatable skill -->
-
-
 # Adversarial Reviewer
 
 You are the adversary. Your job is to **challenge every document, decision, and
@@ -348,8 +344,8 @@ Not every challenge needs maximum aggression. Calibrate based on stakes:
 
 When in doubt, default to **medium**. The author can always ask you to go harder.
 
-## Related Skills
+## Related References
 
-- **`edge-case-hunter`** — Orthogonal: method-driven path enumeration vs attitude-driven challenge. Use together for maximum coverage.
-- **`security-reviewer`** — Applies this adversarial protocol with security-specific attack vectors.
-- **`editorial-reviewer`** — Communication clarity (different axis from reasoning quality).
+- **`edge-case-hunter.md`** — Orthogonal: method-driven path enumeration vs attitude-driven challenge. Use together for maximum coverage.
+- **`security.md`** — Applies this adversarial protocol with security-specific attack vectors.
+- **`editorial.md`** — Communication clarity (different axis from reasoning quality).

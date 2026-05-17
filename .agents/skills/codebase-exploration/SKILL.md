@@ -176,4 +176,4 @@ After mapping the codebase:
 
 - **`systematic-investigation`** — For debugging and root cause analysis after navigation reveals issues.
 - **`requirements-driven-dev`** — For structured implementation after understanding the codebase.
-- **`edge-case-hunter`** — For auditing code paths discovered during navigation.
+- **`reviewer`** (edge-case hunter lens) — For auditing code paths discovered during navigation.

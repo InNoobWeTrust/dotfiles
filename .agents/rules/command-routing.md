@@ -20,7 +20,6 @@ Use the table first. Do not scan command bodies unless no route matches and the 
 | "benchmark", "optimize agents", "model comparison" | `~/.agents/commands/benchmark-agents.prompt.md` |
 | "sync mcp", "update mcp config" | `~/.agents/commands/sync-mcp.prompt.md` |
 | "brainstorm", "ideate" | `~/.agents/commands/brainstorming.prompt.md` |
-| "sync skill dna", "sync local skills" | `~/.agents/commands/sync-skill-dna.prompt.md` |
 | "sync remote skills", "pull remote skills" | `~/.agents/commands/sync-remote-skills.prompt.md` |
 | "screen CVs", "review candidates" | `~/.agents/commands/cv-screening.prompt.md` |
 | "shard doc", "split document", "chunk document" | `~/.agents/commands/shard-doc.prompt.md` |

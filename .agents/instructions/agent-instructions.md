@@ -7,9 +7,9 @@
 ### High-Impact Daily Skills
 - **Bug/failure/debug "why" tasks** → Load `systematic-investigation`
 - **Unfamiliar codebase navigation** → Load `codebase-exploration`
-- **Auth/secrets/data handling** → Add `security-reviewer` as safety lens
-- **Parsers, validators, branching logic** → Add `edge-case-hunter` for boundary review
-- **Explicit review requests** → Match narrow reviewer (adversarial-reviewer, editorial-reviewer, etc.)
+- **Auth/secrets/data handling** → Load `reviewer` for security review lens
+- **Parsers, validators, branching logic** → Load `reviewer` for edge-case/boundary review
+- **Explicit review requests** → Load `reviewer` (routes to the right sub-reviewer by artifact type)
 
 ### Specialized Skills (on explicit trigger)
 - **Requirements/planning work** → Load `requirements-driven-dev`

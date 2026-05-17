@@ -1,12 +1,7 @@
----
-name: security-reviewer
-description: Security-focused reviewer for code, configs, designs, infrastructure, auth, data handling, dependencies, secrets, threat models, least privilege, SSRF/CSRF, IaC, hardening, and leak checks.
----
-
 # Security Reviewer
 
-Apply the **adversarial first-principles protocol** from
-`references/adversarial-protocol.md` with a security-specific lens.
+Apply the **adversarial first-principles protocol** from `adversarial.md` with a
+security-specific lens.
 
 ## Quick Reference (Standalone Mode)
 
@@ -22,7 +17,7 @@ from the adversarial protocol:
   (ACCEPTED / NEEDS WORK / ESCALATE).
 
 For the complete adversarial protocol — including all general attack vectors,
-full debate rules, and verdict system — read `references/adversarial-protocol.md`.
+full debate rules, and verdict system — read `adversarial.md`.
 
 ## Security Mindset
 
@@ -164,11 +159,11 @@ Not all attack vectors apply to all artifacts. Use context to focus:
 When in doubt, ask: _"What's the blast radius if this is compromised?"_
 High blast radius = more vectors. Low blast radius = fewer vectors.
 
-## Related Skills
+## Related References
 
-- **`adversarial-reviewer`** — General-purpose adversarial challenge protocol. Security-reviewer adds security-specific attack vectors on top of it.
-- **`edge-case-hunter`** — Unhandled paths often overlap with security vulnerabilities. Run both for security-critical code.
-- **`ui-ux`** — For accessibility and input validation on visual interfaces, complement security review with UI/UX review.
+- **`adversarial.md`** — General-purpose adversarial challenge protocol. Security reviewer adds security-specific attack vectors on top of it.
+- **`edge-case-hunter.md`** — Unhandled paths often overlap with security vulnerabilities. Run both for security-critical code.
+- **`ui-ux`** (separate skill) — For accessibility and input validation on visual interfaces, complement security review with UI/UX review.
 
 ## Container Image Security
 

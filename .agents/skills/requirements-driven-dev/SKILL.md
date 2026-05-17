@@ -49,10 +49,10 @@ Escalate only when ambiguity, risk, or scope demands it.
 
 ## Review And Safety
 
-- Use `adversarial-reviewer` for challenge gates on PRDs, TRDs, BDD specs, or risky decisions.
-- Add `security-reviewer` when requirements touch auth, secrets, data handling, infrastructure, or supply chain.
-- Add `edge-case-hunter` for validators, parsers, state machines, concurrency, or complex branching.
-- Add `editorial-reviewer` when stakeholder-facing requirements need structure or prose polish.
+- Use `reviewer` (adversarial lens) for challenge gates on PRDs, TRDs, BDD specs, or risky decisions.
+- Add `reviewer` (security lens) when requirements touch auth, secrets, data handling, infrastructure, or supply chain.
+- Add `reviewer` (edge-case hunter lens) for validators, parsers, state machines, concurrency, or complex branching.
+- Add `reviewer` (editorial lens) when stakeholder-facing requirements need structure or prose polish.
 - Use changelogs for scoped requirements workflows, not for every routine edit.
 - Commit only when the user explicitly approves git writes and project git-safety rules are satisfied.
 
@@ -67,7 +67,7 @@ Escalate only when ambiguity, risk, or scope demands it.
 - Commit rule: `references/rules/commit.md`
 - Configuration: `references/rules/config.md`
 - Project context: `references/rules/project-context.md`
-- Adversarial protocol: `references/core/adversarial-protocol.md`
+- Adversarial protocol: Load `reviewer` skill and read `references/adversarial.md`
 
 ## Tool Integration
 

@@ -284,5 +284,5 @@ contribution protocol, three gates, domain file template, and lifecycle rules.
 
 - **`codebase-exploration`** — Use when mapping an unfamiliar site's
   structure before writing a domain skill
-- **`security-reviewer`** — Activate before any task touching auth flows,
+- **`reviewer`** (security lens) — Activate before any task touching auth flows,
   cookies, or sensitive data in the browser

@@ -477,4 +477,4 @@ Ralph works with any AI CLI that can be wrapped in a bounded outer loop.
 - `swarm-intelligence` - Use before Ralph when the task needs design or decomposition. See `references/swarm-integration.md`.
 - `systematic-investigation` - Use when the loop hits oscillation or a verifier failure you do not understand.
 - `codebase-exploration` - Use before Ralph on an unfamiliar codebase.
-- `security-reviewer` - Use for auth, dependency, secrets, or network-facing work before enabling AFK.
+- `reviewer` (security lens) - Use for auth, dependency, secrets, or network-facing work before enabling AFK.

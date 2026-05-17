@@ -69,7 +69,7 @@ Errors:
 
 ## Security Assessment
 
-> Apply `security-reviewer` skill to this section. Do not skip.
+> Apply `reviewer` skill (security lens) to this section. Do not skip.
 
 ### Authentication & Authorization
 
@@ -128,7 +128,7 @@ Errors:
 > **Date**: <YYYY-MM-DD>
 
 This TRD must survive adversarial challenge before advancing to BDD specs.
-The challenge MUST include a security-reviewer pass on the Security Assessment section.
+The challenge MUST include a `reviewer` (security lens) pass on the Security Assessment section.
 Record all challenges and their outcomes below for traceability.
 
 ### Debate Record
