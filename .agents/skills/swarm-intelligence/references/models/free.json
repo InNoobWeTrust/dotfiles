@@ -21,14 +21,6 @@
       "use_for": "Auto-selection from free models — dynamically routed to best available free model server-side"
     },
     {
-      "id": "kilo/inclusionai/ling-2.6-1t:free",
-      "provider": "kilo",
-      "engine": "kilo",
-      "use_for": "Trillion-param flagship from inclusionAI — #9 code mode, top recommended; complex agentic coding and large context tasks",
-      "context_window": 262144,
-      "recommended": true
-    },
-    {
       "id": "kilo/stepfun/step-3.5-flash:free",
       "provider": "kilo",
       "engine": "kilo",

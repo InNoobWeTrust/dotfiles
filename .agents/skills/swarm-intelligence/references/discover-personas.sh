@@ -11,7 +11,8 @@
 #   discover-personas.sh by-tag <tag>           # list personas with a tag (substring match)
 #   discover-personas.sh count                  # total persona count
 
-PERSONAS_DIR=".agents/skills/swarm-intelligence/references/personas"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PERSONAS_DIR="${SCRIPT_DIR}/personas"
 
 if [[ ! -d "$PERSONAS_DIR" ]]; then
   echo "ERROR: Personas directory not found at $PERSONAS_DIR" >&2

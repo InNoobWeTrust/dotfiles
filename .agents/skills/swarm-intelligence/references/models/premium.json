@@ -43,20 +43,47 @@
       "use_for": "Strong reasoning and coding; senior agents, architecture",
       "pricing": "Premium request on Copilot Pro (300/mo pool)",
       "context_window": 200000
+    },
+    {
+      "id": "deepseek/deepseek-v4-pro",
+      "provider": "deepseek",
+      "engine": "command-code",
+      "use_for": "Open-weight frontier coding and long-context synthesis via Command Code — #1 open-source coding model; handles full codebase analysis, autonomous terminal execution, and large-scale synthesis; 1.6T MoE (49B active), 1M context",
+      "context_window": 1048576,
+      "recommended": true,
+      "openrouter_activity": "High",
+      "benchmarks": {
+        "swe_bench_verified": "80.6%",
+        "swe_bench_terminal_bench_2.0": "67.9%",
+        "swe_bench_livecodebench": "93.5%",
+        "swe_bench_pro": "55.4%",
+        "mcpatlas_public": "73.6%",
+        "mmlu_pro": 87.5,
+        "gpqa_diamond": 90.1
+      },
+      "pricing": {
+        "note": "75% discount via Command Code through 2026-05-31 — functionally free during promo window",
+        "command_code_list": "$1.74 / $3.48",
+        "command_code_discounted": "$0.435 / $0.87 per 1M tokens",
+        "openrouter": "$0.435 / $0.87 per 1M tokens"
+      }
     }
   ],
   "quality_tiers": {
     "synthesis": [
       "oai-gateway/openai/chatbot-5.4",
-      "github-copilot/claude-sonnet-4.6"
+      "github-copilot/claude-sonnet-4.6",
+      "deepseek/deepseek-v4-pro"
     ],
     "high_stakes": [
       "oai-gateway/openai/chatbot-5.4",
-      "google/gemini-3.1-pro-preview"
+      "google/gemini-3.1-pro-preview",
+      "deepseek/deepseek-v4-pro"
     ],
     "mid_tier": [
       "oai-gateway/openai/chatgpt-5.4-mini",
-      "google/gemini-3-flash-preview"
+      "google/gemini-3-flash-preview",
+      "deepseek/deepseek-v4-pro"
     ]
   }
 }
