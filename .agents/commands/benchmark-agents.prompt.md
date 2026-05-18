@@ -55,6 +55,9 @@ the user can actually choose from.
 3. Public pricing and plan pages
 4. Public documentation listing model availability and limits
 
+**Canonical model ID schema** — validate model identifiers and provider prefixes against the models.dev schema:
+- `https://models.dev/model-schema.json#/$defs/Model` — authoritative source for model `id` format (provider/model-name or provider/model-name:label), required fields, and valid provider prefixes across all providers.
+
 **Additional sources required when evaluating cheap/small models** — standard
 benchmarks under-represent this space. Always include at least 3 of these:
 
@@ -65,7 +68,7 @@ benchmarks under-represent this space. Always include at least 3 of these:
 | BigCode Leaderboard — `huggingface.co/spaces/bigcode/bigcode-models-leaderboard` | Coding-specific; covers small open-weight code models |
 | EvalPlus Leaderboard — `evalplus.github.io/leaderboard.html` | HumanEval+ and MBPP+ scores; includes open and small models |
 | OpenRouter model catalog — `openrouter.ai/models` | Lists all available models with pricing, context, and provider; filter by price to find cheap options |
-| OpenRouter free tier — `openrouter.ai/models?max_price=0` | Models available at $0/token; quality varies widely |
+| OpenRouter free tier — `openrouter.ai/models?max_price=0` | Models available at $0/token; quality varies widely. **Critical: check per-model uptime** — most free models on OpenRouter have very poor uptime and stability, making them unreliable for production or long-running agent workflows. Prefer Kilo-curated free models when available, as they are stability-vetted even if they lag slightly behind the newest OpenRouter listings. |
 | Together AI model catalog — `together.ai/models` | Many open-weight small models with pay-per-token pricing |
 | Groq model catalog — `console.groq.com/docs/models` or `groq.com/pricing` | Speed-optimized inference; often cheapest for latency-sensitive nodes |
 | Fireworks AI model catalog — `fireworks.ai/models` | Competitive pricing on open-weight models; good for batch/parallel workloads |
@@ -92,6 +95,7 @@ When using a provider-specific leaderboard or catalog, capture:
 1. Top models overall
 2. Top models by relevant mode or task category
 3. Per-model metadata such as context, benchmark snippets, and published pricing
+4. Validate model `id` format against `https://models.dev/model-schema.json#/$defs/Model` — the canonical schema for valid provider prefixes and naming conventions
 
 **When the task explicitly involves cheap/small model selection** (e.g. swarm
 node selection, background agents, high-volume parallel tasks):
@@ -104,6 +108,14 @@ node selection, background agents, high-volume parallel tasks):
 
 Treat mode shares or usage shares as **real-world popularity data**, not as a
 direct substitute for quality benchmarks or user preference.
+
+**For OpenRouter free models, always check uptime and stability.** Most free models
+on OpenRouter have very poor uptime (often <80%), making them unsuitable for
+agents where a failed API call breaks a workflow. The Kilo API gateway
+(`api.kilo.ai/api/gateway/models`) curates free models with stability filtering —
+prefer these for any agent that runs unattended or in long sessions. OpenRouter
+free models may appear first for new releases, but lagging 1-2 weeks behind for a
+curated stable model is almost always the better trade-off.
 
 Then fetch plan/model availability from any bundled provider plans the user is
 considering. Capture:
@@ -175,6 +187,8 @@ Match model benchmark profiles to agent requirements:
 
 If the active agent config root contains agent profile files, read those files and extract current model assignments from each YAML frontmatter. If no profiles exist, report that model-assignment benchmarking cannot compare against a local current state.
 
+Validate every extracted model `id` against `https://models.dev/model-schema.json#/$defs/Model`. Flag any model IDs that don't match the canonical format (provider/model-name or provider/model-name:label).
+
 Build a current-state matrix:
 | Agent | Current Model | Provider | Subscription |
 |-------|--------------|----------|--------------|
@@ -195,10 +209,10 @@ Also classify each agent by its practical role:
 For each agent, cross-reference its current model against ALL benchmark
 dimensions. Produce a scoring matrix:
 
-| Agent | Task Type | Current Model | Quality Evidence | Tool Use | Context | Speed | Cost | Fit |
+| Agent | Task Type | Current Model | Quality Evidence | Tool Use | Context | Speed | Cost | Uptime | Fit |
 |-------|-----------|--------------|------------------|----------|---------|-------|------|-----|
-| code | serious coding | provider/model-a | benchmark leader | strong | large | good | premium | HIGH |
-| cheap | cost-sensitive | provider/model-b | acceptable baseline | unknown | - | strong | free | MED |
+| code | serious coding | provider/model-a | benchmark leader | strong | large | good | premium | 99%+ | HIGH |
+| cheap | cost-sensitive | provider/model-b | acceptable baseline | unknown | - | strong | free | <80% | LOW |
 
 Quality Evidence may include:
 1. Aggregator reasoning benchmark rank
@@ -215,8 +229,9 @@ Before recommending changes, filter out options that violate user constraints:
 
 1. **Quality floor violation** — never recommend a model below the user's stated floor for critical agents.
 2. **Availability violation** — model not accessible through the subscriptions/plans under consideration.
-3. **Workflow mismatch** — model may benchmark well but is a poor fit for the user's heavy orchestrator or long-session workflow.
-4. **Region/pricing mismatch** — wrong pricing source used for the user's actual region/plan.
+3. **Uptime/stability violation** — OpenRouter free model with known poor uptime; flag and prefer a Kilo-curated equivalent if one exists. A free model that fails mid-session is worse than a slightly slower or slightly older stable model.
+4. **Workflow mismatch** — model may benchmark well but is a poor fit for the user's heavy orchestrator or long-session workflow.
+5. **Region/pricing mismatch** — wrong pricing source used for the user's actual region/plan.
 
 ### Step 5: Identify Issues
 
@@ -228,6 +243,7 @@ Flag problems:
 5. **Subscription gap** — model not accessible with user's subscriptions
 6. **Wrong optimization target** — recommendation optimizes for cost while ignoring stated quality requirements
 7. **Popularity trap** — a model is common or heavily used, but that does not make it the best fit for this user
+8. **Unstable free model** — OpenRouter free model with poor uptime history; recommend Kilo-curated equivalent or a paid tier model instead. A model that fails API calls mid-workflow is effectively unavailable regardless of benchmark scores.
 
 ### Step 6: Produce Comparison Matrix
 
@@ -243,6 +259,7 @@ the current decision. Do not assume a fixed set of vendors.
 | Tool Calls | value | value | value | value | value |
 | Speed | value | value | value | value | value |
 | Context | value | value | value | value | value |
+| Uptime | value | value | value | value | value |
 | Cost | value | value | value | value | value |
 
 If the user is comparing access paths rather than just models, also produce a
@@ -347,6 +364,7 @@ Save the complete analysis to `~/.agents/benchmark-report-<YYYYMMDD>.md` with:
 - Provider-specific usage shares are useful evidence, but they reflect usage and defaults as much as quality
 - Always verify the user's actual pricing region and plan before using provider pricing data
 - For heavy orchestrator workflows, optimize for the main daily experience first; do not let low-stakes agents drive the whole recommendation
+- **Model ID validation:** Cross-reference all model `id` values against `https://models.dev/model-schema.json#/$defs/Model` to ensure valid provider prefixes, correct naming, and supported labels (e.g., `:free`, `:preview`). The schema is the single source of truth for model identifier format.
 
 ---
 
