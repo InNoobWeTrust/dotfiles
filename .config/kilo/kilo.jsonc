@@ -34,7 +34,7 @@
     },
     "ask": {
       //"model": "kilo/stepfun/step-3.5-flash:free",
-      "model": "llm-gateway/deepseek/deepseek-v4-flash",
+      "model": "kilo/deepseek/deepseek-v4-flash:free",
       "options": {
         "reasoningEffort": "high",
       },
@@ -46,7 +46,8 @@
       },
     },
     "code": {
-      "model": "llm-gateway/deepseek/deepseek-v4-pro",
+      "model": "openai/gpt-5.4-mini",
+      //"model": "llm-gateway/deepseek/deepseek-v4-pro",
       "options": {
         "reasoningEffort": "high",
       },
