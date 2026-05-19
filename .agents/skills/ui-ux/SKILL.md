@@ -110,4 +110,4 @@ These patterns demonstrate high variance/motion combinations:
 
 ## Related Skills
 
-- **`ai-ui-generation`**: Use alongside this skill when the user wants to work through Google Stitch, pencil.dev, v0, Lovable, screenshot-to-code tools, or any workflow where an external AI tool generates the first UI draft and the repo needs structured integration afterward.
+- **`code-design`**: Compose with this skill when implementing UI components — use `ui-ux` as the design quality lens and `code-design` to enforce SOLID/modularity on the component logic.

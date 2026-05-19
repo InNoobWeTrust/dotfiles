@@ -1,11 +1,24 @@
 # Agent Instructions
 
+## Skill Compliance (Non-Negotiable)
+
+**Loading or reading a skill's SKILL.md is a binding commitment to execute its complete workflow.** Complexity, length, and effort are NOT valid reasons to skip steps. See `~/.agents/rules/skill-compliance.md` for full enforcement rules and swarm-intelligence hard-stop gates.
+
+> You do NOT have discretion to simplify or abbreviate a skill's workflow once you have selected it.
+
+## Code Quality (Always Active)
+
+`~/.agents/rules/code-quality.md` applies to **every file you write or modify**, with no user request required. Before writing any function, class, or module, run the Pre-Implementation Design Checkpoint defined in that rule. Before finishing, verify the Prohibited Patterns list.
+
 ## Scope-Based Routing
 
-**Load skills selectively** — prefer no skill for straightforward edits. Use `~/.agents/skills/INDEX.md` to select one primary skill; optionally add one review/safety lens when clearly beneficial.
+**Default for implementation tasks: load `code-design`.** Load it any time you write or modify code logic. Use `~/.agents/skills/INDEX.md` to select one primary skill; optionally add one review/safety lens when clearly beneficial.
+
+### Always-On for Implementation
+- **Any non-trivial code write, feature, or refactor** → Load `code-design` (enforces SOLID, KISS, modularity, readability checkpoints)
 
 ### High-Impact Daily Skills
-- **Bug/failure/debug "why" tasks** → Load `systematic-investigation`
+- **Bug/failure/debug "why" tasks** → Load `systematic-investigation`; compose with `code-design` if the fix involves writing new code
 - **Unfamiliar codebase navigation** → Load `codebase-exploration`
 - **Auth/secrets/data handling** → Load `reviewer` for security review lens
 - **Parsers, validators, branching logic** → Load `reviewer` for edge-case/boundary review
@@ -13,14 +26,14 @@
 
 ### Specialized Skills (on explicit trigger)
 - **Requirements/planning work** → Load `requirements-driven-dev`
-- **Multi-agent exploration** → Load `swarm-intelligence`
+- **Multi-agent exploration** → Load `swarm-intelligence` (see skill-compliance.md for mandatory preflight gates)
 - **Bounded repetitive tasks** → Load `ralph-loop`
-- **UI/frontend polish** → Load `ui-ux` or `ai-ui-generation`
+- **UI/frontend polish** → Load `ui-ux`; compose with `code-design` for component logic
 - **Browser automation** → Load `cdp-browser-automation`
 - **Data narratives/charts** → Load `data-storytelling`
 - **Video workflow** → Load `video-production`
 
-**Do not load skills** for: simple edits, known config changes, straightforward implementation from existing plans.
+**Do not load skills** for: typos, formatting, config value changes, or renaming with no logic changes.
 
 Use `~/.agents/skills/INDEX.md` before loading skill bodies. Load one primary skill by default, plus at most one focused review or safety lens when justified.
 

@@ -3,6 +3,16 @@ name: swarm-intelligence
 description: Orchestrates multi-agent swarms for parallel, read-only execution and multi-phase output synthesis.
 ---
 
+> **⚠ COMPLIANCE ENFORCEMENT — READ BEFORE PROCEEDING**
+>
+> Loading this skill is a binding commitment to execute its **complete three-phase workflow**. You **must**:
+> - Complete all 10 preflight steps before starting Phase 1 (see `~/.agents/rules/skill-compliance.md`)
+> - Run actual `swarminator` tool invocations — producing a Markdown description of what the swarm would do is **NOT acceptable**
+> - Use 2–3 models per persona invocation — single-model shortcuts are **NOT acceptable**
+> - Produce the required artifact sections for all three phases
+>
+> If you find yourself writing "here is what the swarm would produce" instead of running `swarminator`, **STOP** — that is a violation, not a shortcut.
+
 Swarm-intelligence orchestrates a three-phase workflow by calling `swarminator` once per node (one model + one persona prompt per invocation) and synthesizing Markdown artifacts between phases. All CLI interface details are obtained at runtime from `swarminator` itself.
 
 ## Quick References (Runtime)
