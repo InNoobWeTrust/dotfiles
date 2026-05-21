@@ -225,7 +225,7 @@
       "name": "LLM Broker",
       "npm": "@ai-sdk/openai-compatible",
       "options": {
-        "baseURL": "${LLM_BROKER_BASE_URL}",
+        "baseURL": "${LLM_BROKER_BASE_URL}/v1",
       },
       "env": [
         "LLM_BROKER_API_KEY",
