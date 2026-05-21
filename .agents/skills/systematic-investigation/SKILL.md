@@ -1,6 +1,6 @@
 ---
 name: systematic-investigation
-description: "Debug, investigate, and solve complex problems using structured frameworks (5 Whys, Fishbone, OODA, First Principles, PDCA). Use for tricky bugs, failure investigation, root cause analysis, architectural decisions, brainstorming, or untangling multi-concern situations. Also activate when stuck in circles, on vague/recurring symptoms, or \"why does this keep happening.\" Trigger phrases: \"debug this\", \"troubleshoot\", \"figure out why\", \"root cause\", \"what's going wrong\", \"fix this bug\", \"this keeps breaking\", \"brainstorm solutions\", \"ideate on\", \"generate ideas\", \"creative problem solving\", \"first principles\", \"pre-mortem\", \"red team this\", \"challenge assumptions\", \"go deeper\", \"rethink this\", \"inversion\"."
+description: "Debug, investigate, and solve complex problems using structured frameworks (5 Whys, Fishbone, OODA, First Principles, PDCA). Use for tricky bugs, failure investigation, root cause analysis, architectural decisions, pre-mortem, or untangling multi-concern situations. Also activate when stuck in circles, on vague/recurring symptoms, or \"why does this keep happening.\" Trigger phrases: \"debug this\", \"troubleshoot\", \"figure out why\", \"root cause\", \"what's going wrong\", \"fix this bug\", \"this keeps breaking\", \"first principles\", \"pre-mortem\", \"red team this\", \"challenge assumptions\", \"go deeper\", \"rethink this\", \"inversion\"."
 ---
 
 # Strategic Problem-Solving

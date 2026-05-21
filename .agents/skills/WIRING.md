@@ -57,10 +57,21 @@ Natural transitions between skills:
 |---|---|---|
 | `codebase-exploration` | `systematic-investigation` | "I understand the codebase, now I need to debug" |
 | `codebase-exploration` | `code-craft` | "I understand the codebase, now I need to implement" |
+| `systematic-investigation` | `brainstorming` | "Root cause analyzed, now brainstorming potential solutions" |
 | `systematic-investigation` | `code-craft` | "Root cause found, now implementing the fix" |
+| `brainstorming` | `requirements-driven-dev` | "Ideation complete, translating concepts to PRD/specs" |
+| `brainstorming` | `code-craft` | "Concepts finalized, ready to prototype/implement" |
 | `code-craft` | `reviewer` | "Implementation complete, ready for review" |
 | `requirements-driven-dev` | `code-craft` | "Specs approved, now implementing" |
 | `requirements-driven-dev` | `reviewer` (editorial lens) | "Polish specs before sharing with stakeholders" |
+| `requirements-driven-dev` | `multi-perspective-deliberation` | "Draft specs completed, launching persona review to challenge assumptions" |
+| `multi-perspective-deliberation` | `code-craft` | "Deliberation complete, starting implementation of the peer-reviewed design" |
+| `multi-perspective-deliberation` | `model-benchmarking` | "Deliberation complete, optimizing model assignments for the selected architecture" |
+| `model-benchmarking` | `swarm-intelligence` | "Models selected, ready to launch multi-agent swarm" |
+| `model-benchmarking` | `requirements-driven-dev` | "Token costs and model limits analyzed, feeding into TRD/PRD architectural specs" |
+| `talent-screening` | `reviewer` (editorial lens) | "Evaluation reports completed, ready for peer review" |
+| Any skill | `session-handoff` | "Handoff requested, serializing context and saving progress" |
+| `session-handoff` | Any skill | "Session restored, resuming active work" |
 | Any implementation skill | `reviewer` | "Review my work" |
 
 ---
