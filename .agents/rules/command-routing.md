@@ -15,7 +15,7 @@ Use the table first. Do not scan command bodies unless no route matches and the 
 | "review this", "check this" | `~/.agents/commands/review.prompt.md` |
 | "requirements", "PRD", "TRD", "BDD", "spec this" | `~/.agents/commands/requirements-lifecycle.prompt.md` |
 | "swarm", "multi-agent", "parallel agents" | `~/.agents/commands/swarm.prompt.md` |
-| "ralph", "loop", "run until done" | `~/.agents/commands/ralph-loop.prompt.md` |
+| "ralph", "loop", "run until done", "bounded iteration" | `~/.agents/commands/bounded-iteration.prompt.md` |
 | "save handoff", "checkpoint", "resume" | `~/.agents/commands/handoff.prompt.md` |
 | "benchmark", "optimize agents", "model comparison" | `~/.agents/commands/benchmark-agents.prompt.md` |
 | "sync mcp", "update mcp config" | `~/.agents/commands/sync-mcp.prompt.md` |

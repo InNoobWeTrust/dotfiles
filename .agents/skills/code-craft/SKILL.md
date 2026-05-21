@@ -1,9 +1,9 @@
 ---
-name: code-design
-description: Enforces SOLID, KISS, modularity, and human-readability principles during implementation. Load for any non-trivial code write, feature addition, or refactor. Prevents lazy easy-path decisions that reduce maintainability.
+name: code-craft
+description: "Code design discipline enforcing SOLID, KISS, DRY, modularity, separation of concerns, and human-readability during implementation. Load for any non-trivial code write, feature addition, refactor, or restructuring. Covers: clean code, design patterns, decomposition, dependency management, naming, and architecture at the function/class/module level. Activate on \"refactor\", \"restructure\", \"design this module\", \"clean up this code\", \"make this maintainable\", \"decompose\", \"extract\", or any implementation touching more than one file."
 ---
 
-# Code Design Skill
+# Code Crafting Skill
 
 ## When to Load This Skill
 
@@ -24,7 +24,7 @@ This skill has five phases. All five must be completed for non-trivial code. Pha
 
 ---
 
-### Phase 1 — Design Intent
+### Phase 1 — Design Intent & Resilience Plan
 
 Before writing any code, produce this block (in a code comment or scratch space):
 
@@ -36,6 +36,7 @@ Responsibility  : [one sentence — what it does, using no "and"]
 Caller interface: [what callers pass in → what they get back]
 Dependencies    : [list each import/dependency this unit will have]
 Isolation test  : [yes / no — can this unit be tested without mocking the whole world?]
+Error budget    : [what can fail here (IO, API, DB) and how is it handled / isolated?]
 Traceability    : [how will a human reader find this unit and understand it by name alone?]
 ```
 
@@ -43,34 +44,49 @@ Traceability    : [how will a human reader find this unit and understand it by n
 
 ---
 
-### Phase 2 — SOLID Quick Check
+### Phase 2 — SOLID & Clean Architecture Check
 
 Run this check after Phase 1, before writing code:
 
-| Principle | Question | Pass? |
+| Principle / Aspect | Question | Pass? |
 |---|---|---|
 | **S** — Single Responsibility | Does this unit do exactly one thing? Could you describe it in one sentence without "and"? | ☐ |
 | **O** — Open/Closed | Can this unit be extended (new behavior added) without modifying its existing logic? | ☐ |
-| **L** — Liskov Substitution | If no inheritance: N/A, mark ✓. If this extends/implements something: does any override add preconditions or weaken postconditions compared to the base? (If yes → redesign.) | ☐ |
-| **I** — Interface Segregation | Is the public interface the minimum callers actually need? No fat interface. | ☐ |
+| **L** — Liskov Substitution | If inheritance: does any override add preconditions or weaken postconditions? If no inheritance: N/A (✓). | ☐ |
+| **I** — Interface Segregation | Is the public interface the minimum callers actually need? No bloated interfaces. | ☐ |
 | **D** — Dependency Inversion | Does this unit depend on abstractions (interfaces, protocols), not concrete implementations? | ☐ |
+| **YAGNI** (You Aren't Gonna Need It) | Did you strip out all speculative structures, "future-proofing" boilerplate, or unused parameters? | ☐ |
+| **Separation of Concerns** | Is the core logic 100% free of web frameworks, HTTP protocols, databases, or filesystem details? | ☐ |
 
 **Any unchecked item must either be fixed or documented as explicit accepted debt** with a `// TODO(debt):` comment.
 
 ---
 
-### Phase 3 — Write
+### Phase 3 — Write with High-Quality Standards
 
-Write the implementation following `rules/code-quality.md`:
-- Naming conventions (verb phrases for functions, noun phrases for variables)
-- Max 3 nesting levels; guard clauses at the top
-- Functions ≤ 50 lines of logic (excluding declarations, type annotations, comments, blank lines)
-- `// WHY:` comments for non-obvious decisions
-- Module boundary docstring at file top
+Write the implementation following `rules/code-quality.md` and these advanced crafting guidelines:
+
+#### A. Defensive Boundaries (Robust Exception Handling)
+- **Zero Silent Failures:** Never catch exceptions without recording diagnostic information or recovering.
+- **Fail Gracefully:** Every network call, file IO, or database query must configure explicit timeouts and clear fallbacks (default values, empty lists, or mapped errors).
+- **Sanitize Boundaries:** Validate external API payloads immediately upon receiving them before passing them to internal functions.
+
+#### B. Immutability & State Hygiene
+- **Immutability by Default:** Prefer pure functions that receive parameters and return new copies of data instead of mutating inputs or deep state objects.
+- **Centralized Mutation:** If state mutation is required, isolate it to a single dedicated manager class or event loop to avoid race conditions.
+
+#### C. Runtime Invariant Assertions
+- **Design by Contract:** Place lightweight assertions at the beginning and end of complex algorithmic boundaries to check preconditions (e.g. valid arguments) and invariants.
+- **Example (Python):** `assert item_count >= 0, "Item count cannot be negative"`
+- **Example (TypeScript):** `if (itemCount < 0) throw new Error("Invariant violated")`
+
+#### D. Strict Type Soundness
+- **No Loose Types:** Do not use `any`, `unknown`, `object`, or unstructured dictionaries for core logic.
+- **Discriminated Unions / ADTs:** Represent states and outcomes using strong types, union types, and enums rather than raw string matching or magic numbers.
 
 ---
 
-### Phase 4 — Readability Audit
+### Phase 4 — Readability & Robustness Audit
 
 After writing, read the code as a new engineer with zero context. Answer these:
 
@@ -78,8 +94,9 @@ After writing, read the code as a new engineer with zero context. Answer these:
 2. **Flow traceability** — Can you follow the control flow from function names alone, without reading bodies?
 3. **Side effects** — Are all state mutations obvious at the call site?
 4. **Error path** — Is the failure path as readable and explicit as the happy path?
+5. **Resilience** — What happens if the filesystem is full, a database connection drops, or a network request times out?
 
-For any "no" answer, add a `// CLARITY:` annotation explaining what the code does and why the structure is what it is.
+For any "no" or weak answer, refactor or add a `// CLARITY:` annotation explaining what the code does and why.
 
 ---
 
@@ -97,7 +114,7 @@ TECH DEBT INVENTORY
 - TODO(debt): [marker location] — [what] — [why deferred] — [trigger for cleanup]
 ```
 
-If debt was accepted in Phase 2 (SOLID check), it must appear here. Empty inventory is fine — but it must be explicitly stated.
+If debt was accepted in Phase 2, it must appear here. Empty inventory is fine — but it must be explicitly stated.
 
 ---
 
@@ -121,8 +138,9 @@ These are the most common agent lazy-path shortcuts. Recognize and refuse them:
 
 The skill's output is working code that satisfies:
 
-- [ ] Design Intent block was produced (Phase 1)
-- [ ] SOLID check passed or debt documented (Phase 2)
+- [ ] Design Intent & Resilience Plan block was produced (Phase 1)
+- [ ] SOLID & Clean Architecture check passed or debt documented (Phase 2)
 - [ ] Code follows naming, structure, and traceability rules from `rules/code-quality.md` (Phase 3)
-- [ ] Readability audit passed or CLARITY annotations added (Phase 4)
+- [ ] Code is robust, pure where possible, and strictly typed (Phase 3 A-D)
+- [ ] Readability & Robustness audit passed or CLARITY annotations added (Phase 4)
 - [ ] Tech Debt Inventory produced (Phase 5, even if empty)

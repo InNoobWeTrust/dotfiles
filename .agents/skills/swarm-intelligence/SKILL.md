@@ -1,6 +1,6 @@
 ---
 name: swarm-intelligence
-description: Orchestrates multi-agent swarms for parallel, read-only execution and multi-phase output synthesis.
+description: "Multi-agent swarm orchestration for parallel, diverse-perspective analysis and synthesis. Spawns multiple agents with different personas and models to cross-validate, challenge, and synthesize outputs. Use when the task needs diverse expert perspectives, multi-model validation, ensemble reasoning, or the risk is too high for a single pass. Activate on \"swarm\", \"multi-agent\", \"parallel agents\", \"diverse perspectives\", \"get a second opinion\", \"cross-validate\", or any high-stakes decision needing multiple viewpoints."
 ---
 
 > **⚠ COMPLIANCE ENFORCEMENT — READ BEFORE PROCEEDING**

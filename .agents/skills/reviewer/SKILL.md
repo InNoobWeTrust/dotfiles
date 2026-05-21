@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: Master reviewer skill. Lazy-loads sub-reviewers from references/ based on artifact type. Covers: adversarial (reasoning/decisions), code-quality (architecture/smells), security (threats/vulnerabilities), edge-case (control-flow paths), editorial (prose/clarity). Use for any review request — routing table selects the right sub-reviewers automatically.
+description: "Multi-lens review orchestrator for code, specs, architecture, config, docs, and infrastructure. Sub-lenses loaded by artifact type: code-quality (architecture/smells), design-rigor (design discipline), adversarial (reasoning/logic holes), security (threats/vulnerabilities), edge-case (control-flow/boundary paths), editorial (prose/clarity). Activate on \"review my code\", \"check for issues\", \"code review\", \"pull request review\", \"audit this\", \"check my work\", \"security review\", \"QA\", or any explicit review request."
 ---
 
 # Reviewer
@@ -22,13 +22,14 @@ with attack vectors, protocol, and output format.
 
 | Artifact Type | Sub-Reviewers (load these files) | Order |
 |---|---|---|
-| Code / diffs / pull requests | `references/code-quality.md`, `references/adversarial.md`, `references/security.md`, `references/edge-case-hunter.md` | Structure first, then logic, then security, then paths |
+| Code / diffs / pull requests | `references/code-quality.md`, `references/design-rigor.md`, `references/adversarial.md`, `references/security.md`, `references/edge-case-hunter.md` | Structure first, then design process, then logic, then security, then paths |
 | Specs / PRDs / TRDs | `references/adversarial.md`, `references/editorial.md` | Challenge reasoning, then structure |
-| Architecture / design docs | `references/code-quality.md`, `references/adversarial.md`, `references/security.md` | Structure decisions, then challenge, then threat model |
+| Architecture / design docs | `references/code-quality.md`, `references/design-rigor.md`, `references/adversarial.md`, `references/security.md` | Structure decisions, then design process, then challenge, then threat model |
 | Documentation / prose | `references/editorial.md` | Structure, then prose if needed |
 | Config / infra | `references/security.md`, `references/edge-case-hunter.md` | Security first, then boundaries |
+| Bug fixes / incident response | `references/design-rigor.md`, `references/code-quality.md`, `references/adversarial.md`, `references/edge-case-hunter.md` | Investigation rigor first, then structure, then logic, then paths |
 | BDD specs / test plans | `references/adversarial.md`, `references/edge-case-hunter.md` | Coverage gaps, then path tracing |
-| API contracts | `references/code-quality.md`, `references/adversarial.md`, `references/security.md`, `references/edge-case-hunter.md` | Structure/abstraction, then design, then security, then boundaries |
+| API contracts | `references/code-quality.md`, `references/design-rigor.md`, `references/adversarial.md`, `references/security.md`, `references/edge-case-hunter.md` | Structure/abstraction, then design process, then design, then security, then boundaries |
 | Skill / command definitions | `references/adversarial.md`, `references/editorial.md` | Challenge logic, then clarity |
 
 ## Orchestration
@@ -51,6 +52,7 @@ For quick orientation before loading the full reference:
 |---|---|---|
 | `references/adversarial.md` | Reasoning, decisions, assumptions | "Why did we do this?" challenges |
 | `references/code-quality.md` | Architecture, code smells, AI laziness | Structure rot, SOLID violations, demo-code-in-production |
+| `references/design-rigor.md` | Design discipline, investigation process | "Was this designed or grown? Was the root cause found?" |
 | `references/security.md` | Threats, vulnerabilities, secrets | Auth, injection, data exposure, supply chain |
 | `references/edge-case-hunter.md` | Control-flow paths, boundary conditions | Unhandled branches, off-by-one, null handling |
 | `references/editorial.md` | Prose clarity, document structure | Ambiguous writing, poor organization |

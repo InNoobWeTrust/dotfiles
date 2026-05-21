@@ -1,6 +1,6 @@
 ---
 name: video-production
-description: High-Agency video production pipeline. Enforces a structured 5-step workflow (Visual DNA -> Story -> Assets -> Shot List -> Render) to prevent generic output and ensure cinematic consistency.
+description: "AI video production pipeline for creating animated videos, motion graphics, and cinematic content. Structured workflow: style guide → story/script → asset extraction → shot list → render. Ensures visual consistency and cinematic quality across frames. Activate on \"create a video\", \"animate this\", \"make a video\", \"storyboard\", \"motion graphics\", \"AI video\", \"film this concept\", or any video/animation production task."
 ---
 
 # Video Production Skill

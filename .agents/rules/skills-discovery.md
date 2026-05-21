@@ -11,7 +11,7 @@ The active agent config root keeps skills in `skills/`, normally `~/.agents/skil
 
 ## Skill Precedence
 
-- **`code-design` is the default primary skill for implementation tasks.** It is not the "narrowest" skill to skip — it is the baseline to load for any non-trivial code write, feature, or refactor.
+- **`code-craft` is the default primary skill for implementation tasks.** It is not the "narrowest" skill to skip — it is the baseline to load for any non-trivial code write, feature, or refactor.
 - Prefer the most specific skill over broad methodology for non-implementation tasks.
 - Prefer no skill for purely mechanical changes: formatting, config values, renaming with no logic changes.
 - For review tasks, use `../commands/review.prompt.md` or the active config root's `commands/review.prompt.md`.

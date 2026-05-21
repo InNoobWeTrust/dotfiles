@@ -1,6 +1,6 @@
 ---
 name: cdp-browser-automation
-description: Methodology for direct browser automation via Chrome DevTools Protocol (CDP). Zero external services, zero subscriptions — just Python + a running Chrome. Use when the user wants to automate, scrape, test, or interact with web pages. Activate when the user says "open browser", "automate this website", "scrape", "click on", "fill this form", "download from", or any task requiring real browser interaction. Also activate when building or improving site-specific browser knowledge (selectors, URL patterns, API endpoints), or when diagnosing web performance, Core Web Vitals, memory leaks, Lighthouse audits, or CDP traces/emulation.
+description: "Direct browser automation via Chrome DevTools Protocol — scraping, clicking, form-filling, login flows, file download/upload, DOM interaction, and end-to-end page testing without external services. Also covers web performance diagnostics: Core Web Vitals, Lighthouse audits, memory leaks, slow loads, long tasks, CDP traces, throttling, and network emulation. Activate on \"open browser\", \"automate this website\", \"scrape\", \"click on\", \"fill this form\", \"download from\", \"test this page\", \"check performance\", or any task requiring real browser interaction. Also activate when building site-specific browser knowledge (selectors, URL patterns, API endpoints)."
 ---
 
 # CDP Browser Automation
@@ -288,12 +288,3 @@ contribution protocol, three gates, domain file template, and lifecycle rules.
 
 > *"The less you build, the more it works."*
 > Model capability scales with better models. Framework complexity doesn't shrink.
-
----
-
-## Related Skills
-
-- **`codebase-exploration`** — Use when mapping an unfamiliar site's
-  structure before writing a domain skill
-- **`reviewer`** (security lens) — Activate before any task touching auth flows,
-  cookies, or sensitive data in the browser

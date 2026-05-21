@@ -1,12 +1,12 @@
 ---
-name: ralph-loop
-description: Bounded iterative execution loop for well-defined tasks with machine-verifiable completion criteria. Ralph is a control pattern, not a standalone binary. It runs one implementation iteration, records state, verifies with positive proof, and repeats until success or a stop condition is hit. Prefer HITL by default. Use AFK only in an isolated environment with explicit guardrails, cleanup, and recovery.
+name: bounded-iteration
+description: "Bounded iterative execution for well-defined tasks with machine-verifiable completion criteria. Runs implementation → verify → retry cycles until success or a stop condition. Use for \"run until done\", \"keep trying until tests pass\", \"iterate until it works\", automated fix-verify loops, or any repetitive task with a clear pass/fail gate. Prefers human-in-the-loop by default; AFK mode requires isolation and explicit guardrails."
 ---
 
-# Ralph Loop
+# Bounded Iteration
 
-Ralph is a bounded execution pattern for repetitive implementation work. It is
-not its own CLI, model, or agent runtime. You implement Ralph by wrapping your
+Bounded Iteration is a bounded execution pattern for repetitive implementation work. It is
+not its own CLI, model, or agent runtime. You implement Bounded Iteration by wrapping your
 existing AI CLI in an outer control loop that:
 
 1. Starts from a locked task brief
@@ -17,14 +17,14 @@ existing AI CLI in an outer control loop that:
 
 Core principle: persistence only counts when it is bounded by proof.
 
-## What Ralph Is
+## What Bounded Iteration Is
 
 - A loop controller around an AI CLI
 - A pattern for retrying implementation after real verification failures
 - A way to separate execution from verification and recovery
 - A fit for tasks with a clear, machine-verifiable end state
 
-## What Ralph Is Not
+## What Bounded Iteration Is Not
 
 - Not a design method for ambiguous requirements
 - Not a license to run unsupervised edits in a shared workspace
@@ -32,11 +32,11 @@ Core principle: persistence only counts when it is bounded by proof.
 - Not a guarantee that repeated attempts will converge
 
 If the task is ambiguous, subjective, or safety-critical, stop and route to a
-human or to `swarm-intelligence` first.
+human or to a swarm/design-first workflow first.
 
 ## When To Use
 
-| Scenario | Use Ralph? | Why |
+| Scenario | Use Bounded Iteration? | Why |
 |----------|------------|-----|
 | "Add tests to all uncovered functions" | Yes | Coverage and test counts are verifiable |
 | "Migrate Jest to Vitest" | Yes | Test runner and typecheck provide hard proof |
@@ -45,13 +45,13 @@ human or to `swarm-intelligence` first.
 | "Figure out why this is slow" | No | Diagnosis has no bounded end state yet |
 | "Design our new architecture" | No | Requires human judgment and tradeoff analysis |
 
-When the task needs design first, use `swarm-intelligence` to produce the spec
-and handoff package, then execute with Ralph. See
+When the task needs design first, use a swarm or design-first workflow to
+produce the spec and handoff package, then execute with Bounded Iteration. See
 `references/swarm-integration.md`.
 
-## Ralph Contract
+## Bounded Iteration Contract
 
-Ralph expects a small handoff package. These files are the operating contract,
+Bounded Iteration expects a small handoff package. These files are the operating contract,
 not optional prose.
 
 | File | Required | Purpose |
@@ -73,7 +73,7 @@ Starter templates live here:
 
 ## Entry Point
 
-Ralph is tool-agnostic. Replace `<ai-cli>` with your CLI of choice. The hard
+Bounded Iteration is tool-agnostic. Replace `<ai-cli>` with your CLI of choice. The hard
 requirement is the outer loop, not the inner model.
 
 Minimal form:
@@ -86,7 +86,7 @@ while :; do
 done
 ```
 
-In practice, do not run the minimal form in AFK mode. Real Ralph needs
+In practice, do not run the minimal form in AFK mode. Real Bounded Iteration needs
 timeouts, state files, cleanup, and stop conditions.
 
 ## Operating Modes
@@ -161,7 +161,7 @@ state, last known good checkpoint, and the exact blocker.
 
 ## Verification Contract
 
-`verify.sh` is the heart of Ralph. If verification is weak, Ralph is unsafe.
+`verify.sh` is the heart of Bounded Iteration. If verification is weak, Bounded Iteration is unsafe.
 
 ### Required behavior
 
@@ -220,7 +220,7 @@ has intermittent tests.
 
 ## State And Context Management
 
-Ralph must manage state explicitly. Otherwise the loop either forgets too much
+Bounded Iteration must manage state explicitly. Otherwise the loop either forgets too much
 or drags too much history forward.
 
 ### Human-readable state
@@ -228,7 +228,7 @@ or drags too much history forward.
 `progress.txt` is the concise operator log. Append one section per iteration:
 
 ```text
-# Ralph Loop: add jsdoc to exports
+# Bounded Iteration: add jsdoc to exports
 # Started: 2026-04-24T09:00:00Z
 
 ## Iteration 1
@@ -329,7 +329,7 @@ Stop when any of these happens:
 - The loop keeps changing unrelated files without improving verification
 
 Oscillation means the loop is no longer learning from feedback. Switch to HITL
-or route to `systematic-investigation`.
+or route to systematic investigation.
 
 ### 6. Cleanup And Handoff
 
@@ -362,7 +362,7 @@ explicitly permits them and the workspace is disposable:
 - `git clean -fdx`
 - `rm -rf`
 
-If the loop runs in a shared workspace, Ralph should stop and request human
+If the loop runs in a shared workspace, Bounded Iteration should stop and request human
 cleanup instead of attempting destructive restoration.
 
 ## Loop Patterns
@@ -426,7 +426,7 @@ The loop above is still a template. In production AFK mode, add:
 ### On Success
 
 ```markdown
-## Ralph Loop Complete: [task]
+## Bounded Iteration Complete: [task]
 
 Mode: HITL / AFK
 Stop code: STOP_SUCCESS
@@ -446,7 +446,7 @@ Checkpoint:
 ### On Stop Condition
 
 ```markdown
-## Ralph Loop Stopped: [task]
+## Bounded Iteration Stopped: [task]
 
 Mode: HITL / AFK
 Stop code: STOP_MAX_ITER
@@ -464,17 +464,10 @@ Next operator action:
 
 ## Integration
 
-Ralph works with any AI CLI that can be wrapped in a bounded outer loop.
+Bounded Iteration works with any AI CLI that can be wrapped in a bounded outer loop.
 
 | Tool | Pattern |
 |------|---------|
 | Generic AI CLI | `<ai-cli> "$(cat PROMPT.md)" < TASK.md` |
 | Claude Code | `claude -p "$(cat PROMPT.md)" < TASK.md` |
 | Custom scripts | Replace `<ai-cli>` with your wrapper |
-
-## Related Skills
-
-- `swarm-intelligence` - Use before Ralph when the task needs design or decomposition. See `references/swarm-integration.md`.
-- `systematic-investigation` - Use when the loop hits oscillation or a verifier failure you do not understand.
-- `codebase-exploration` - Use before Ralph on an unfamiliar codebase.
-- `reviewer` (security lens) - Use for auth, dependency, secrets, or network-facing work before enabling AFK.

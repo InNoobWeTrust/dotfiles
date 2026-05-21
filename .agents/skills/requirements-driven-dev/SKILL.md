@@ -1,6 +1,6 @@
 ---
 name: requirements-driven-dev
-description: Requirements workflow for PRDs, TRDs, BDD specs, acceptance criteria, traceability, and changelogs. Use when the user explicitly requests requirements, specs, architecture planning, behavior scenarios, or a large ambiguous feature plan.
+description: "PRD, TRD, BDD specs, acceptance criteria, user stories, traceability, and changelog workflows. Use when the user requests requirements, product specs, technical design documents, architecture planning, behavior scenarios, scope definition, or a large ambiguous feature plan. Activate on \"write a PRD\", \"define requirements\", \"acceptance criteria\", \"user stories\", \"feature spec\", or any task needing formal specification before implementation."
 ---
 
 # Requirements-Driven Dev

@@ -163,7 +163,6 @@ High blast radius = more vectors. Low blast radius = fewer vectors.
 
 - **`adversarial.md`** — General-purpose adversarial challenge protocol. Security reviewer adds security-specific attack vectors on top of it.
 - **`edge-case-hunter.md`** — Unhandled paths often overlap with security vulnerabilities. Run both for security-critical code.
-- **`ui-ux`** (separate skill) — For accessibility and input validation on visual interfaces, complement security review with UI/UX review.
 
 ## Container Image Security
 

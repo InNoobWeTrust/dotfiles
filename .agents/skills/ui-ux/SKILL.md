@@ -1,6 +1,6 @@
 ---
 name: ui-ux
-description: UI/UX design companion for building polished, accessible, production-grade interfaces. Enforces modern layouts, typography, and motion to prevent "AI slop" using High-Agency principles and taste-driven design.
+description: "UI/UX design skill for building polished, accessible, production-grade interfaces. Covers layout, typography, color systems, motion design, responsive design, dark mode, glassmorphism, component styling, and visual polish. Uses taste sliders and audit-first methodology to prevent generic output. Activate on \"design this UI\", \"make it look good\", \"improve the design\", \"frontend polish\", \"responsive layout\", \"add animations\", \"design system\", \"visual overhaul\", or any UI/frontend design task."
 ---
 
 # UI-UX Design Skill
@@ -107,7 +107,3 @@ These patterns demonstrate high variance/motion combinations:
 2. **Accessibility First**: WCAG AA is the absolute baseline.
 3. **Context-Aware**: Respect existing tech stack (Tailwind vs Vanilla CSS).
 4. **Audit Before Action**: Briefly state design rationale before making changes.
-
-## Related Skills
-
-- **`code-design`**: Compose with this skill when implementing UI components — use `ui-ux` as the design quality lens and `code-design` to enforce SOLID/modularity on the component logic.

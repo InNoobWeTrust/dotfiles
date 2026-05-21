@@ -12,13 +12,13 @@
 
 ## Scope-Based Routing
 
-**Default for implementation tasks: load `code-design`.** Load it any time you write or modify code logic. Use `~/.agents/skills/INDEX.md` to select one primary skill; optionally add one review/safety lens when clearly beneficial.
+**Default for implementation tasks: load `code-craft`.** Load it any time you write or modify code logic. Use `~/.agents/skills/INDEX.md` to select one primary skill; optionally add one review/safety lens when clearly beneficial.
 
 ### Always-On for Implementation
-- **Any non-trivial code write, feature, or refactor** → Load `code-design` (enforces SOLID, KISS, modularity, readability checkpoints)
+- **Any non-trivial code write, feature, or refactor** → Load `code-craft` (enforces SOLID, KISS, modularity, readability checkpoints)
 
 ### High-Impact Daily Skills
-- **Bug/failure/debug "why" tasks** → Load `systematic-investigation`; compose with `code-design` if the fix involves writing new code
+- **Bug/failure/debug "why" tasks** → Load `systematic-investigation`; compose with `code-craft` if the fix involves writing new code
 - **Unfamiliar codebase navigation** → Load `codebase-exploration`
 - **Auth/secrets/data handling** → Load `reviewer` for security review lens
 - **Parsers, validators, branching logic** → Load `reviewer` for edge-case/boundary review
@@ -27,8 +27,8 @@
 ### Specialized Skills (on explicit trigger)
 - **Requirements/planning work** → Load `requirements-driven-dev`
 - **Multi-agent exploration** → Load `swarm-intelligence` (see skill-compliance.md for mandatory preflight gates)
-- **Bounded repetitive tasks** → Load `ralph-loop`
-- **UI/frontend polish** → Load `ui-ux`; compose with `code-design` for component logic
+- **Bounded repetitive tasks** → Load `bounded-iteration`
+- **UI/frontend polish** → Load `ui-ux`; compose with `code-craft` for component logic
 - **Browser automation** → Load `cdp-browser-automation`
 - **Data narratives/charts** → Load `data-storytelling`
 - **Video workflow** → Load `video-production`

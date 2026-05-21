@@ -1,4 +1,4 @@
-You are executing one Ralph iteration.
+You are executing one Bounded Iteration iteration.
 
 Rules:
 - Read `TASK.md`, `progress.txt`, and `.ralph-verify.json` before editing.

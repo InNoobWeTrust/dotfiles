@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Template verifier for Ralph.
+# Template verifier for Bounded Iteration.
 # Customize the commands and proof checks for your project before using AFK mode.
 
 TYPECHECK_CMD=${TYPECHECK_CMD:-"npm run typecheck"}

@@ -1,12 +1,12 @@
-# Swarm + Ralph: Combined Pipeline
+# Swarm + Bounded Iteration: Combined Pipeline
 
-This document describes how to combine `swarm-intelligence` and `ralph-loop`
+This document describes how to combine `swarm-intelligence` and `bounded-iteration`
 into one end-to-end workflow:
 
 ```text
 Swarm orchestrator (research -> design -> decomposition)
-  -> Ralph handoff package synthesis
-    -> Ralph execution loop until verification passes
+  -> Bounded Iteration handoff package synthesis
+    -> Bounded Iteration execution loop until verification passes
 ```
 
 Use this pattern when the task is too large or ambiguous for a single-shot
@@ -16,9 +16,9 @@ prompt, but still has a machine-verifiable end state.
 
 | Situation | Use |
 |-----------|-----|
-| Task is clear and small | Ralph alone |
+| Task is clear and small | Bounded Iteration alone |
 | Task is ambiguous and needs design | Swarm alone |
-| Task is large, ambiguous, and still has a verifiable end state | Swarm -> Ralph |
+| Task is large, ambiguous, and still has a verifiable end state | Swarm -> Bounded Iteration |
 | Task requires human judgment on every step | Neither; work manually |
 
 ## Ground Rules
@@ -53,9 +53,9 @@ In minimal mode that means:
 
 For code work, the usual choice is the `code` domain config.
 
-### What Ralph Needs From Swarm
+### What Bounded Iteration Needs From Swarm
 
-Ralph needs a handoff package, not just the final implementation artifact.
+Bounded Iteration needs a handoff package, not just the final implementation artifact.
 Capture these during orchestration:
 
 1. The approved Phase 2 design decisions and completion criteria
@@ -67,9 +67,9 @@ Important: only `files[]` is guaranteed in the final swarm artifact. If you
 need design notes, QA cases, or decomposition details later, persist them
 explicitly in the orchestrator or synthesize them into the handoff package.
 
-## Phase 2: Build The Ralph Handoff Package
+## Phase 2: Build The Bounded Iteration Handoff Package
 
-After the swarm succeeds, create a Ralph handoff package in a separate
+After the swarm succeeds, create a Bounded Iteration handoff package in a separate
 synthesis/materialization step. This is done by the orchestrator or a premium
 `code` agent, not by swarm nodes directly.
 
@@ -125,7 +125,7 @@ See also `references/templates/TASK.md`.
 read, what to avoid, and how to react to verifier output.
 
 ```markdown
-You are executing one Ralph iteration.
+You are executing one Bounded Iteration iteration.
 
 Read `TASK.md`, `progress.txt`, and `.ralph-verify.json` first.
 Stay inside scope. Fix the latest verifier failure first.
@@ -168,7 +168,7 @@ See also `references/templates/verify.sh`.
 
 ### Artifact Shape
 
-Default behavior: build `TASK.md`, `PROMPT.md`, and `verify.sh` in the separate Ralph
+Default behavior: build `TASK.md`, `PROMPT.md`, and `verify.sh` in the separate Bounded Iteration
 handoff materialization step above. Do not assume they are present in the
 swarm's final artifact unless your orchestrator explicitly emits them there.
 
@@ -198,9 +198,9 @@ chmod +x verify.sh
 If the final artifact does not include the handoff files, materialize them in a
 separate premium `code` step.
 
-## Phase 3: Run Ralph With Real Feedback Injection
+## Phase 3: Run Bounded Iteration With Real Feedback Injection
 
-Once `TASK.md`, `PROMPT.md`, and `verify.sh` exist, Ralph can iterate until
+Once `TASK.md`, `PROMPT.md`, and `verify.sh` exist, Bounded Iteration can iterate until
 verification passes.
 
 ```bash
@@ -211,7 +211,7 @@ LOG="progress.txt"
 VERIFY_LOG=".ralph-verify.log"
 PASS_STREAK=0
 
-echo "# Swarm + Ralph Pipeline: $(date)" > "$LOG"
+echo "# Swarm + Bounded Iteration Pipeline: $(date)" > "$LOG"
 : > "$VERIFY_LOG"
 
 for i in $(seq 1 "$MAX_ITER"); do
@@ -258,17 +258,17 @@ The important part is the feedback loop:
 
 ## Handoff Contract
 
-The swarm-to-ralph handoff is valid only when all of these are true:
+The swarm-to-bounded-iteration handoff is valid only when all of these are true:
 
 1. `TASK.md` has machine-verifiable completion criteria
 2. `PROMPT.md` exists and encodes the per-iteration guardrails
 3. `verify.sh` is executable, emits positive proof, and exits with the documented codes
 4. The swarm spec is locked: no open questions or unresolved contradictions
-5. Required design/review context was persisted explicitly if it is needed by Ralph
+5. Required design/review context was persisted explicitly if it is needed by Bounded Iteration
 6. AFK mode runs in a sandbox or isolated environment
 7. A cleanup or restore strategy exists before the first iteration
 
-If any of these are false, do not start Ralph yet.
+If any of these are false, do not start Bounded Iteration yet.
 
 ## Failure Recovery
 
@@ -277,10 +277,10 @@ If any of these are false, do not start Ralph yet.
 | Swarm Phase 1 cannot reach quorum | Retry with different models or simplify input |
 | Swarm Phase 2 is still unapproved after 3 total reviews | Resolve the contradiction manually, then rerun |
 | A Phase 3 task still fails after the maker-fix limit | Narrow the task or intervene manually |
-| Ralph hits max iterations | Report partial state, identify blockers, then either raise the cap or repair the handoff package |
+| Bounded Iteration hits max iterations | Report partial state, identify blockers, then either raise the cap or repair the handoff package |
 | `verify.sh` never exits `0` | Debug `verify.sh` itself; it may be too strict, too weak, or missing positive proof |
 | Iteration breaks previously passing checks | Revert to the last good checkpoint and narrow scope |
-| Ralph repeats the same failure | Stop and debug the failure fingerprint before another iteration |
+| Bounded Iteration repeats the same failure | Stop and debug the failure fingerprint before another iteration |
 | Context grows too large to summarize safely | Stop and rebuild the handoff package with a smaller scope |
 | Workspace is polluted after failure | Restore from the disposable worktree, snapshot, or approved checkpoint |
 
@@ -302,7 +302,7 @@ Do not rely on destructive cleanup commands in a shared workspace.
 ## Budget Guidance
 
 - Swarm is a one-time planning/spec cost.
-- Ralph iterations are the variable execution cost.
+- Bounded Iteration iterations are the variable execution cost.
 - Start with `MAX_ITER=10` or `20`, then adjust based on convergence.
 - If several iterations make no progress, stop and debug the task definition,
   verification contract, or prompt handoff.

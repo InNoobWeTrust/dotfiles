@@ -1,6 +1,6 @@
 ---
 name: codebase-exploration
-description: Systematic exploration of large unfamiliar codebases. Use to find where behavior lives, trace feature flow, map architecture, plan migrations/refactors, or answer "where is X" and "how does this work" questions. Also use for codebase scouting, hunting for specific patterns, or discovering module relationships.
+description: "Navigate and map large unfamiliar codebases. Find where behavior lives, trace feature flow and call chains, map architecture and dependency graphs, plan migrations/refactors, or answer \"where is X\" and \"how does this work\" questions. Also use for codebase scouting, hunting for specific patterns, discovering module relationships, or code archaeology. Activate on \"find the code for\", \"how is X implemented\", \"navigate the codebase\", \"trace this\", \"map the architecture\", or any task in an unfamiliar repo."
 ---
 
 # Strategic Codebase Navigation
@@ -168,12 +168,7 @@ is rarely needed — just enough to make your change safely.
 
 After mapping the codebase:
 
-- **Implementing changes?** → Use `requirements-driven-dev` for structured execution
-- **Found a bug during navigation?** → Use `systematic-investigation` for root cause analysis
-- **Planning a refactor?** → Use Strategy 4 output to prioritize modules, then `requirements-driven-dev` for implementation
+- **Implementing changes?** → Proceed with structured implementation
+- **Found a bug during navigation?** → Proceed with root cause analysis
+- **Planning a refactor?** → Use Strategy 4 output to prioritize modules
 
-## Related Skills
-
-- **`systematic-investigation`** — For debugging and root cause analysis after navigation reveals issues.
-- **`requirements-driven-dev`** — For structured implementation after understanding the codebase.
-- **`reviewer`** (edge-case hunter lens) — For auditing code paths discovered during navigation.

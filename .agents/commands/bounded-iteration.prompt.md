@@ -1,10 +1,10 @@
 ---
-description: Thin entrypoint for bounded iterative execution with machine-verifiable completion criteria. Use for explicit Ralph/loop/run-until-done requests; default to HITL and avoid shared-workspace AFK unless isolated.
+description: Thin entrypoint for bounded iterative execution with machine-verifiable completion criteria. Use for explicit loop/run-until-done requests; default to HITL and avoid shared-workspace AFK unless isolated.
 ---
 
-# Ralph Loop
+# Bounded Iteration
 
-Use the `ralph-loop` skill for the bounded iterative execution workflow.
+Use the `bounded-iteration` skill for the bounded iterative execution workflow.
 
 ## Entrypoint Guardrails
 
@@ -23,4 +23,4 @@ $ARGUMENTS
 
 Use the block above as raw additional user input. Preserve whitespace, blank lines, and quoting exactly. If the block is empty, rely on the conversation context instead.
 
-Follow this command for the user's Ralph-loop request below.
+Follow this command for the user's loop request below.

@@ -95,7 +95,7 @@ agent: [agent name]
 5. If the request is generic, list active non-README handoffs in the resolved directory and ask which one to restore.
 6. If multiple candidates match, summarize each active candidate and ask the user to choose.
 7. If exactly one candidate matches and the request is explicit, summarize it and confirm the restore target before proceeding.
-8. Proceed autonomously only when the user explicitly requested autonomous operation, such as a Ralph loop, and exactly one safe active match exists.
+8. Proceed autonomously only when the user explicitly requested autonomous operation, such as a Bounded Iteration loop, and exactly one safe active match exists.
 9. If no matches exist in the resolved directory, report that no matching handoff was found.
 
 ---

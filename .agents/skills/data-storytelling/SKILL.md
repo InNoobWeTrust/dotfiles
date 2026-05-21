@@ -1,6 +1,6 @@
 ---
 name: data-storytelling
-description: Transform data into goal-aligned, multi-lens, evidence-backed narratives with configurable causal thresholds, explicit epistemic confidence, and human-in-the-loop correction throughout.
+description: "Transform raw data into decision-ready narratives aligned to goals, KPIs, or OKRs. Multi-lens analysis with explicit evidence grading and confidence levels. Use for data analysis, metric summaries, trend interpretation, insight extraction, report writing, or presenting findings to stakeholders. Activate on \"analyze this data\", \"summarize the metrics\", \"what do these numbers mean\", \"write a report\", \"present findings\", \"interpret trends\", or any task turning data into actionable narrative."
 ---
 
 # Data Storytelling Skill Specification
@@ -50,13 +50,13 @@ The skill succeeds when it produces an output that:
 ### Goal And Context Layer
 
 - Accept mission, OKRs, KPIs, audience, threshold, orchestration mode, and output format.
-- Prefer `systematic-investigation` as the upstream goal-framing step.
+- Prefer a prior investigation step as the upstream goal-framing source.
 - If unavailable or incomplete, use `references/questionnaire/goal-framing.md` to gather equivalent context.
 - If user already supplies a goal statement, treat it as authoritative unless they request refinement.
 
 ### Upstream Import Contract
 
-Expected fields from `systematic-investigation` output:
+Expected fields from the upstream investigation output:
 
 - `goal`: string — the primary objective.
 - `key_results`: string[] — measurable key results.
@@ -64,7 +64,7 @@ Expected fields from `systematic-investigation` output:
 - `constraints`: string[] — budget, timeline, or other limits (optional).
 - `assumptions`: string[] — stated assumptions (optional).
 
-Fallback: if `systematic-investigation` was not run, or if any required field is missing, use `references/questionnaire/goal-framing.md` to gather the missing equivalent information before lens planning.
+Fallback: if no upstream investigation was run, or if any required field is missing, use `references/questionnaire/goal-framing.md` to gather the missing equivalent information before lens planning.
 
 ### Core Engine
 

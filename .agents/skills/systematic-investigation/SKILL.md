@@ -1,6 +1,6 @@
 ---
 name: systematic-investigation
-description: Systematic ideation and investigation for complex problems. Use this skill to debug tricky bugs, investigate failures, perform root cause analysis, make architectural decisions, brainstorm solutions, or untangle complex multi-concern situations. Also use when stuck going in circles, when a user reports vague or recurring symptoms, or asks "why does this keep happening." Activate when the user says "debug this", "troubleshoot", "figure out why", "root cause", "what's going wrong", "fix this bug", "this keeps breaking", "brainstorm solutions", "ideate on", "generate ideas", "creative problem solving", "first principles", "pre-mortem", "red team this", "challenge assumptions", "go deeper", "rethink this", or "inversion".
+description: "Debug, investigate, and solve complex problems using structured frameworks (5 Whys, Fishbone, OODA, First Principles, PDCA). Use for tricky bugs, failure investigation, root cause analysis, architectural decisions, brainstorming, or untangling multi-concern situations. Also activate when stuck in circles, on vague/recurring symptoms, or \"why does this keep happening.\" Trigger phrases: \"debug this\", \"troubleshoot\", \"figure out why\", \"root cause\", \"what's going wrong\", \"fix this bug\", \"this keeps breaking\", \"brainstorm solutions\", \"ideate on\", \"generate ideas\", \"creative problem solving\", \"first principles\", \"pre-mortem\", \"red team this\", \"challenge assumptions\", \"go deeper\", \"rethink this\", \"inversion\"."
 ---
 
 # Strategic Problem-Solving
@@ -380,9 +380,3 @@ For framework origins and academic references, see `references/origins.md`.
 
 For the advanced elicitation methods library (structured second passes using
 named reasoning methods), see [elicitation-methods](references/elicitation-methods.md).
-
-## Related Skills
-
-- **`codebase-exploration`** — Use before this skill when the problem involves unfamiliar code. Navigate first, then debug.
-- **`reviewer`** (edge-case hunter lens) — Use after solving to verify no unhandled paths remain in the fix.
-- **`reviewer`** (adversarial lens) — Phase 4 of this skill applies adversarial challenge; the reviewer skill provides a deeper protocol.
