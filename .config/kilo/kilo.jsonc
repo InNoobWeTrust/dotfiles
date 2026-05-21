@@ -47,7 +47,7 @@
     },
     "code": {
       "model": "openai/gpt-5.4-mini",
-      //"model": "llm-gateway/deepseek/deepseek-v4-pro",
+      //"model": "llm-gw/deepseek/deepseek-v4-pro",
       "options": {
         "reasoningEffort": "high",
       },
@@ -73,7 +73,8 @@
     },
   },
   "provider": {
-    "oai-gateway": {
+    "oai-gw": {
+      "name": "OpenAI Gateway",
       "npm": "@ai-sdk/openai",
       "options": {
         "baseURL": "${LLM_GATEWAY_BASE_URL}/v1",
@@ -129,7 +130,8 @@
         },
       }
     },
-    "llm-gateway": {
+    "llm-gw": {
+      "name": "Open-weight Models Gateway",
       "npm": "@ai-sdk/openai-compatible",
       "options": {
         "baseURL": "${LLM_GATEWAY_BASE_URL}/v1",
@@ -189,21 +191,6 @@
             "output": 32768,
           },
         },
-        "qwen/qwen3.6-plus": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 128000,
-            "output": 8192,
-          },
-        },
         "deepseek/deepseek-v4-pro": {
           "modalities": {
             "input": [
@@ -234,7 +221,8 @@
         },
       }
     },
-    "llm-broker": {
+    "llm-agg": {
+      "name": "LLM Broker",
       "npm": "@ai-sdk/openai-compatible",
       "options": {
         "baseURL": "${LLM_BROKER_BASE_URL}",
