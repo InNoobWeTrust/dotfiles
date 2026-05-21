@@ -76,7 +76,7 @@
     "oai-gateway": {
       "npm": "@ai-sdk/openai",
       "options": {
-        "baseURL": "${LLM_GATEWAY_BASE_URL}",
+        "baseURL": "${LLM_GATEWAY_BASE_URL}/v1",
       },
       "env": [
         "LLM_GATEWAY_API_KEY"
@@ -132,70 +132,104 @@
     "llm-gateway": {
       "npm": "@ai-sdk/openai-compatible",
       "options": {
-        "baseURL": "${LLM_GATEWAY_BASE_URL}",
+        "baseURL": "${LLM_GATEWAY_BASE_URL}/v1",
       },
       "env": [
         "LLM_GATEWAY_API_KEY"
       ],
       "models": {
-        "kCode": {
+        "google/gemini-3.5-flash": {
           "modalities": {
             "input": [
               "text",
-              "image"
+              "image",
+              "video",
+              "audio",
+              "pdf",
             ],
             "output": [
               "text"
             ]
           },
           "limit": {
+            "context": 1048576,
+            "output": 65536,
+          },
+        },
+        "google/gemini-3.1-flash-lite": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+              "audio",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1048576,
+            "output": 65536,
+          },
+        },
+        "kCode": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
             "context": 92160,
-            "output": 32768
+            "output": 32768,
           },
         },
         "qwen/qwen3.6-plus": {
           "modalities": {
             "input": [
               "text",
-              "image"
+              "image",
             ],
             "output": [
-              "text"
+              "text",
             ]
           },
           "limit": {
             "context": 128000,
-            "output": 8192
+            "output": 8192,
           },
         },
         "deepseek/deepseek-v4-pro": {
           "modalities": {
             "input": [
               "text",
-              "image"
             ],
             "output": [
-              "text"
+              "text",
             ]
           },
           "limit": {
             "context": 1048576,
-            "output": 384000
+            "output": 384000,
           },
         },
         "deepseek/deepseek-v4-flash": {
           "modalities": {
             "input": [
               "text",
-              "image"
             ],
             "output": [
-              "text"
+              "text",
             ]
           },
           "limit": {
             "context": 1048576,
-            "output": 384000
+            "output": 384000,
           },
         },
       }

@@ -463,6 +463,8 @@ usable curl && usable bash && alias install-opencode='curl -fsSL https://opencod
 
 usable curl && usable bash && alias install-hermes='curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash'
 
+usable curl && usable bash && alias install-agy='curl -fsSL https://antigravity.google/cli/install.sh | bash'
+
 ################ DevSecMLOps ###################
 
 ! usable pkgx && usable curl && alias install-k3s='curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.24.10+k3s1" sh -s - server --cluster-init'
@@ -472,9 +474,6 @@ usable curl && alias install-garden='curl -sL https://get.garden.io/install.sh |
 ############################# Custom ##########################################
 # Remote user provisioning utility
 alias setup-user='setup_remote_user'
-
-# Sync Antigravity chat history from remote machine
-alias ag-sync='antigravity_sync'
 
 # Import custom alias
 # shellcheck source=/dev/null
