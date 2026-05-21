@@ -1,12 +1,22 @@
 ---
 name: cdp-browser-automation
-description: Methodology for direct browser automation via Chrome DevTools Protocol (CDP). Zero external services, zero subscriptions — just Python + a running Chrome. Use when the user wants to automate, scrape, test, or interact with web pages. Activate when the user says "open browser", "automate this website", "scrape", "click on", "fill this form", "download from", or any task requiring real browser interaction. Also activate when building or improving site-specific browser knowledge (selectors, URL patterns, API endpoints).
+description: Methodology for direct browser automation via Chrome DevTools Protocol (CDP). Zero external services, zero subscriptions — just Python + a running Chrome. Use when the user wants to automate, scrape, test, or interact with web pages. Activate when the user says "open browser", "automate this website", "scrape", "click on", "fill this form", "download from", or any task requiring real browser interaction. Also activate when building or improving site-specific browser knowledge (selectors, URL patterns, API endpoints), or when diagnosing web performance, Core Web Vitals, memory leaks, Lighthouse audits, or CDP traces/emulation.
 ---
 
 # CDP Browser Automation
 
 Direct browser control via Chrome DevTools Protocol. No framework, no SDK, no
 subscription. The only dependencies are a running Chrome and a websocket client.
+
+## Intention Routing
+
+- **UI automation, scraping, login flows, file download/upload, DOM interaction**:
+  use this skill's core workflow and [`references/cdp-snippets.md`](references/cdp-snippets.md).
+- **Performance debugging, Lighthouse, Core Web Vitals, long tasks, slow loads,
+  slow interactions, memory leaks, throttling, trace capture**: use
+  [`references/performance-diagnostics.md`](references/performance-diagnostics.md).
+- **Capturing reusable cross-site or site-specific discoveries**: use
+  [`references/knowledge-system.md`](references/knowledge-system.md).
 
 ---
 
@@ -114,6 +124,7 @@ Every action follows this four-step pattern — never skip step 3:
 | Action helper is missing | Write it, add to your CDP class | Self-heal rather than fail |
 | Nothing else works | Raw `cdp.send("Domain.method", ...)` | CDP is the full protocol surface |
 | Auth wall hit | Inject saved session cookies via `Network.setCookies`; surface structured error if none available | Never type credentials from screenshots |
+| Diagnose performance / CWV / leaks | Emulate first, then use trace capture and insights for diagnosis; use Lighthouse audit only for supported non-performance categories (accessibility, best-practices, SEO) | Performance debugging needs trace detail; see `references/performance-diagnostics.md` |
 
 ---
 
