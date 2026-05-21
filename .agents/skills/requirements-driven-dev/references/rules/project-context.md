@@ -72,16 +72,14 @@ few code files.
 
 ## Loading
 
-Execution-phase workflows (`executor`, `verifier`, `reviewer`) automatically
-load this file when it exists:
+Execution and review workflows should load this file when it exists:
 
 1. **Read at session start** — before any code generation or review
 2. **Treat as constraints** — rules in project-context override generic defaults
-3. **Violations are bugs** — if an agent produces output that contradicts
+3. **Violations are bugs** — if a workflow produces output that contradicts
    project-context, that's a defect to fix, not a preference to weigh
 
-Planning-phase agents (`prd-writer`, `trd-writer`) respect it for consistency
-but don't require it.
+Planning workflows should respect it for consistency but do not require it.
 
 ## Updating
 

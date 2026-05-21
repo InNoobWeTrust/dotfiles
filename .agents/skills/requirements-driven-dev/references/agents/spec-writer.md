@@ -1,1 +1,0 @@
-../../../../agents/requirements-spec-writer.md

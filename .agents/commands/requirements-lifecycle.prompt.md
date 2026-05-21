@@ -6,7 +6,7 @@ description: Thin entrypoint for PRD, TRD, BDD, verification, traceability, and 
 
 Use the `requirements-driven-dev` skill for this workflow.
 
-The skill owns the requirements methodology, packaged references, templates, review-gate guidance, and full lifecycle flow under its `references/` tree.
+The skill owns the requirements methodology, packaged references, templates, review-gate guidance, and full lifecycle flow under `references/core/lifecycle.md`.
 
 ## Entrypoint Guardrails
 

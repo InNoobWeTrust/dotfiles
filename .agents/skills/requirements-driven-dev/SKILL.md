@@ -14,7 +14,7 @@ Requirements-driven development is an opt-in workflow for turning product intent
 | User asks for PRD, product requirements, or feature definition | Load `references/rules/prd.md` and `references/templates/prd.md` |
 | User asks for TRD, technical design, or architecture | Load `references/rules/trd.md` and `references/templates/trd.md` |
 | User asks for BDD, behavior specs, scenarios, or acceptance criteria | Load `references/rules/bdd.md` and `references/templates/behavior-spec.md` |
-| User asks for full lifecycle | Use the full-lifecycle flow in this skill |
+| User asks for full lifecycle | Load `references/core/lifecycle.md` and follow it |
 | User asks for changelog or traceability | Load `references/rules/changelog.md` and `references/templates/changelog-entry.md` |
 | User asks for requirements-driven execution or commit guidance | Load `references/rules/execution.md` or `references/rules/commit.md` as needed |
 
@@ -49,15 +49,16 @@ Escalate only when ambiguity, risk, or scope demands it.
 
 ## Review And Safety
 
-- Use `reviewer` (adversarial lens) for challenge gates on PRDs, TRDs, BDD specs, or risky decisions.
-- Add `reviewer` (security lens) when requirements touch auth, secrets, data handling, infrastructure, or supply chain.
-- Add `reviewer` (edge-case hunter lens) for validators, parsers, state machines, concurrency, or complex branching.
-- Add `reviewer` (editorial lens) when stakeholder-facing requirements need structure or prose polish.
+- Request an adversarial-lens review for challenge gates on PRDs, TRDs, BDD specs, or risky decisions.
+- Request a security-lens review when requirements touch auth, secrets, data handling, infrastructure, or supply chain.
+- Request an edge-case-lens review for validators, parsers, state machines, concurrency, or complex branching.
+- Request an editorial-lens review when stakeholder-facing requirements need structure or prose polish.
 - Use changelogs for scoped requirements workflows, not for every routine edit.
 - Commit only when the user explicitly approves git writes and project git-safety rules are satisfied.
 
 ## References
 
+- Lifecycle entrypoint: `references/core/lifecycle.md`
 - PRD rule/template: `references/rules/prd.md`, `references/templates/prd.md`
 - TRD rule/template: `references/rules/trd.md`, `references/templates/trd.md`
 - BDD rule/template: `references/rules/bdd.md`, `references/templates/behavior-spec.md`
@@ -67,8 +68,8 @@ Escalate only when ambiguity, risk, or scope demands it.
 - Commit rule: `references/rules/commit.md`
 - Configuration: `references/rules/config.md`
 - Project context: `references/rules/project-context.md`
-- Adversarial protocol: Load `reviewer` skill and read `references/adversarial.md`
+- Review gates: request adversarial-, security-, edge-case-, or editorial-lens review as needed
 
 ## Tool Integration
 
-This skill is self-contained. Use packaged files under `references/` for methodology, templates, and project-context guidance; use other reviewer skills by name for review gates.
+This skill is self-contained. Use packaged files under `references/` for methodology, templates, lifecycle orchestration, and project-context guidance; request review lenses when additional challenge is needed.
