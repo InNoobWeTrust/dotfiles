@@ -35,7 +35,7 @@ All files are relative to this skill directory (`~/.agents/skills/swarm-intellig
 - **Personas:** `references/personas/<group>/<name>.md` — YAML frontmatter + system prompt body.
 - **Persona discovery:** `./references/discover-personas.sh` — lists, searches, and retrieves full prompt text from persona files.
 - **Model catalogs:** `references/models/free.json` and `references/models/premium.json` — pre-vetted model IDs grouped by tier.
-- **`deepseek-v4-pro` (command-code):** Open-weight 1.6T MoE (49B active), 1M context, MIT license. Listed in both catalogs under `engine: "command-code"`. Via Command Code: 75% off through 2026-05-31 ($0.435/$0.87/M tokens, promo list price $1.74/$3.48). #1 open-source coding model — SWE-Bench Verified 80.6%, LiveCodeBench 93.5%, Terminal-Bench 2.0 67.9%, Codeforces 3206. WARNING: promo expires 2026-05-31 — cost will rise 4×; reclassify placement in catalogs before then if it should move from free-tier to premium-tier.
+- **`deepseek-v4-pro` (command-code):** Open-weight 1.6T MoE (49B active), 1M context, MIT license. Listed in both catalogs as the default external-node choice under `command-code`. Local Command Code budget is explicitly set to `$40` total for `deepseek-v4-pro`; prefer it until that quota is exhausted, then fall back to the other catalog entries. Current Command Code pricing remains $0.435/$0.87 per 1M tokens during the promo window, with list price $1.74/$3.48. #1 open-source coding model — SWE-Bench Verified 80.6%, LiveCodeBench 93.5%, Terminal-Bench 2.0 67.9%, Codeforces 3206.
 - **senior-reviewer persona:** Defined inline below (no file — always use the inline definition).
 
 ## Preflight Checklist
@@ -47,7 +47,7 @@ All files are relative to this skill directory (`~/.agents/skills/swarm-intellig
 5. Verify swarminator: `$SHELL -l -c 'command -v swarminator'`.
 6. Inspect CLI: `$SHELL -l -c 'swarminator --help'`.
 7. List agents: `$SHELL -l -c 'swarminator --list-agents'`.
-8. Review model catalogs (`references/models/{free,premium}.json`) and select agent+model pairs.
+8. Review model catalogs (`references/models/{free,premium}.json`) and select agent+model pairs, defaulting to `command-code` + `deepseek-v4-pro` while the explicit `$40` quota remains.
 9. Ensure persona discovery script exists and is executable: `references/discover-personas.sh`.
 10. Confirm required personas have retrievable prompts via discover-personas.sh (senior-reviewer is always inline — define it manually).
 

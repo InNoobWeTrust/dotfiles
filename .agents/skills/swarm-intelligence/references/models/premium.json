@@ -1,6 +1,21 @@
 {
   "name": "premium",
-  "description": "Premium models for quality-critical swarm nodes (synthesis, high-stakes passes)",
+  "description": "Premium models for quality-critical swarm nodes (synthesis, high-stakes passes). Prefer `command-code` with built-in `deepseek-v4-pro` first while the explicit $40 local quota remains, then fall back to the other premium entries.",
+  "selection_policy": {
+    "default_external_node": {
+      "agent": "command-code",
+      "engine": "command-code",
+      "model": "deepseek/deepseek-v4-pro",
+      "pinning": "For command-code, this model is pinned implicitly by the user before invoking swarminator and may not be fully discoverable via list-models.",
+      "quota_usd": 40,
+      "use_until_exhausted": true,
+      "fallback_order": [
+        "oai-gateway/openai/chatbot-5.4",
+        "google/gemini-3.1-pro-preview",
+        "github-copilot/claude-sonnet-4.6"
+      ]
+    }
+  },
   "models": [
     {
       "id": "oai-gateway/openai/chatbot-5.4",
@@ -47,8 +62,10 @@
     {
       "id": "deepseek/deepseek-v4-pro",
       "provider": "deepseek",
+      "agent": "command-code",
       "engine": "command-code",
-      "use_for": "Open-weight frontier coding and long-context synthesis via Command Code — #1 open-source coding model; handles full codebase analysis, autonomous terminal execution, and large-scale synthesis; 1.6T MoE (49B active), 1M context",
+      "use_for": "Default external-node choice while the explicit $40 Command Code quota remains. Uses the built-in deepseek-v4-pro path for frontier coding, autonomous terminal execution, and long-context synthesis before any premium fallback runtime is considered.",
+      "availability_note": "For command-code, deepseek-v4-pro is expected to be pinned implicitly by the user before swarminator invocation, so list-models output may be incomplete.",
       "context_window": 1048576,
       "recommended": true,
       "openrouter_activity": "High",
@@ -62,7 +79,7 @@
         "gpqa_diamond": 90.1
       },
       "pricing": {
-        "note": "75% discount via Command Code through 2026-05-31 — functionally free during promo window",
+        "note": "Local Command Code budget explicitly set to $40 total for deepseek-v4-pro; prefer this model until that quota is exhausted",
         "command_code_list": "$1.74 / $3.48",
         "command_code_discounted": "$0.435 / $0.87 per 1M tokens",
         "openrouter": "$0.435 / $0.87 per 1M tokens"
@@ -71,19 +88,19 @@
   ],
   "quality_tiers": {
     "synthesis": [
+      "deepseek/deepseek-v4-pro",
       "oai-gateway/openai/chatbot-5.4",
-      "github-copilot/claude-sonnet-4.6",
-      "deepseek/deepseek-v4-pro"
+      "github-copilot/claude-sonnet-4.6"
     ],
     "high_stakes": [
+      "deepseek/deepseek-v4-pro",
       "oai-gateway/openai/chatbot-5.4",
-      "google/gemini-3.1-pro-preview",
-      "deepseek/deepseek-v4-pro"
+      "google/gemini-3.1-pro-preview"
     ],
     "mid_tier": [
+      "deepseek/deepseek-v4-pro",
       "oai-gateway/openai/chatgpt-5.4-mini",
-      "google/gemini-3-flash-preview",
-      "deepseek/deepseek-v4-pro"
+      "google/gemini-3-flash-preview"
     ]
   }
 }

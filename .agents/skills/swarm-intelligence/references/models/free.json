@@ -1,14 +1,46 @@
 {
   "name": "free",
-  "description": "Free tier models for high-volume swarm passes. Prefer Kilo-curated models — they are stability-vetted. OpenRouter free models often have poor uptime; delegate only unimportant redundancy nodes to them.",
-  "last_updated": "2026-05-18",
+  "description": "Free tier models for high-volume swarm passes. Prefer `command-code` with built-in `deepseek-v4-pro` first while the explicit $40 local quota remains; after that, prefer Kilo-curated or direct-provider models for stability. OpenRouter free models often have poor uptime; delegate only unimportant redundancy nodes to them.",
+  "last_updated": "2026-05-24",
   "$schema": "https://models.dev/model-schema.json#/$defs/Model",
   "stability_tiers": {
     "stable": "Kilo-curated or direct-provider models with reliable uptime — safe for any swarm node",
     "conditional": "OpenRouter model with single provider and 99%+ uptime — safe for non-critical redundancy nodes only",
     "unstable": "OpenRouter meta-router or models with known poor uptime — delegate only to disposable redundancy passes where failure has zero impact"
   },
+  "selection_policy": {
+    "default_external_node": {
+      "agent": "command-code",
+      "engine": "command-code",
+      "model": "deepseek/deepseek-v4-pro",
+      "pinning": "For command-code, this model is pinned implicitly by the user before invoking swarminator and may not be fully discoverable via list-models.",
+      "quota_usd": 40,
+      "use_until_exhausted": true,
+      "fallback_order": [
+        "google/gemini-2.5-flash",
+        "google/gemini-2.5-flash-lite",
+        "kilo/kilo-auto/free"
+      ]
+    }
+  },
   "models": [
+    {
+      "id": "deepseek/deepseek-v4-pro",
+      "provider": "deepseek",
+      "agent": "command-code",
+      "engine": "command-code",
+      "use_for": "Default external-node choice while the explicit $40 Command Code quota remains. Uses the built-in deepseek-v4-pro path for bounded research, review, coding, and long-context synthesis before any fallback runtime is considered.",
+      "availability_note": "For command-code, deepseek-v4-pro is expected to be pinned implicitly by the user before swarminator invocation, so list-models output may be incomplete.",
+      "context_window": 1048576,
+      "recommended": true,
+      "stability": "stable",
+      "pricing": {
+        "quota_note": "Local Command Code budget explicitly set to $40 total for deepseek-v4-pro",
+        "command_code_list": "$1.74 / $3.48 per 1M tokens",
+        "command_code_discounted": "$0.435 / $0.87 per 1M tokens",
+        "fallback_policy": "Prefer this entry until the $40 quota is exhausted"
+      }
+    },
     {
       "id": "google/gemini-2.5-flash",
       "provider": "gemini",

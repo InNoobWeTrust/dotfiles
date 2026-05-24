@@ -9,6 +9,7 @@ Use this index before loading any skill body. Select one primary skill by defaul
 | `brainstorming` | low | **Creative ideation, product design, open-ended problem solving, conceptual exploration.** When you need to generate volume, switch perspectives, or prioritize options. | Purely analytical debugging, root-cause analysis of bugs, or structured fixes. |
 | `codebase-exploration` | medium | Finding where behavior lives in a large unfamiliar repo, tracing architecture, pattern discovery, module auditing | Relevant files are already known |
 | `requirements-driven-dev` | high | User requests PRD, TRD, BDD, specs, acceptance criteria, or ambiguous feature planning | Small well-scoped fixes or implementation from an existing plan |
+| `external-subagent` | low | **One bounded `swarminator` delegation that returns an immutable artifact.** Use for isolated research, targeted second opinions, or patch-only edit suggestions when full swarm orchestration is unnecessary or native subagents are unavailable. | Tasks that need multi-phase multi-node orchestration, quorum, or delegated workspace writes |
 | `swarm-intelligence` | high | User says swarm, multi-agent, parallel agents, diverse perspectives, or the risk is too high for one pass | Routine implementation or git writes |
 | `bounded-iteration` | high | Bounded repetitive work with machine-verifiable completion criteria | Ambiguous, subjective, unsafe, or design-heavy work |
 | `reviewer` | varies | Explicit review of any artifact — code, docs, config, infra, designs. Lazy-loads sub-reviewers by type. | User asked only for implementation and no review is needed |
@@ -25,6 +26,7 @@ Use this index before loading any skill body. Select one primary skill by defaul
 
 - Prefer no skill for simple edits (formatting, config values, renaming only).
 - Prefer the narrowest skill that matches the user intent.
+- Use `external-subagent` for one bounded external node through `swarminator`; use `swarm-intelligence` for multi-phase multi-node orchestration.
 - Quick/narrow explicit reviews use one primary matching reviewer skill.
 - Broad, mixed, or deep explicit reviews use `/review` command (loads the `reviewer` skill).
 - Load deep references only after the selected skill requests them.
