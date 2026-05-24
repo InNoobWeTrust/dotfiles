@@ -34,13 +34,19 @@ DESIGN INTENT
 Unit name       : [name of function/class/module being created or modified]
 Responsibility  : [one sentence — what it does, using no "and"]
 Caller interface: [what callers pass in → what they get back]
+Glossary Sync   : [yes / no — did you verify all naming against the project's GLOSSARY.md?]
+Interface contract: [exact type signature, abstract contract, or API schema definition]
+Interface sign-off: [yes / no — has the user approved the interface signature?]
 Dependencies    : [list each import/dependency this unit will have]
 Isolation test  : [yes / no — can this unit be tested without mocking the whole world?]
 Error budget    : [what can fail here (IO, API, DB) and how is it handled / isolated?]
 Traceability    : [how will a human reader find this unit and understand it by name alone?]
 ```
 
-**Isolation test = "no" is a STOP condition.** Redesign the dependency structure before proceeding. A unit that cannot be isolated has too many implicit couplings — extract them.
+**STOP CONDITIONS (Gates 1 & 2):**
+1. **Isolation test = "no" is a STOP condition.** Redesign the dependency structure before proceeding. A unit that cannot be isolated has too many implicit couplings — extract them.
+2. **Interface sign-off = "no" is a STOP condition.** When creating new services or public exports, you MUST present the Interface contract to the user and obtain their explicit sign-off before writing the concrete logic body.
+   *   *AFK / Non-Interactive Exception*: If operating in automated, background, or non-interactive (AFK) modes, set `Interface sign-off = "assumed-approved"`. Log a design contract block detailing your assumptions in the task scratch space or logs, and proceed with execution without blocking.
 
 ---
 
@@ -57,6 +63,7 @@ Run this check after Phase 1, before writing code:
 | **D** — Dependency Inversion | Does this unit depend on abstractions (interfaces, protocols), not concrete implementations? | ☐ |
 | **YAGNI** (You Aren't Gonna Need It) | Did you strip out all speculative structures, "future-proofing" boilerplate, or unused parameters? | ☐ |
 | **Separation of Concerns** | Is the core logic 100% free of web frameworks, HTTP protocols, databases, or filesystem details? | ☐ |
+| **Deep Module** | Is the module's public interface highly simplified while hiding substantial internal complexity? (Interface Complexity << Implementation Complexity) | ☐ |
 
 **Any unchecked item must either be fixed or documented as explicit accepted debt** with a `// TODO(debt):` comment.
 
@@ -83,6 +90,13 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 #### D. Strict Type Soundness
 - **No Loose Types:** Do not use `any`, `unknown`, `object`, or unstructured dictionaries for core logic.
 - **Discriminated Unions / ADTs:** Represent states and outcomes using strong types, union types, and enums rather than raw string matching or magic numbers.
+
+#### E. Test-Driven Development (TDD Cycle)
+- **Write Test Cases First:** In accordance with `rules/tdd.md`, implement your test cases and interface stubs *before* writing the logic bodies.
+- **RED**: Execute the test command and confirm that the test fails as expected.
+- **GREEN**: Write the minimal code to satisfy the test cases. Confirm all tests pass.
+- **Refactor**: Refactor to meet all code quality criteria, maintaining passing test states.
+- **Deliverable requirement**: You must post the execution of your test command and its passing results in your turn summary.
 
 ---
 

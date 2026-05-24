@@ -20,22 +20,26 @@ Requirements-driven development is an opt-in workflow for turning product intent
 
 ## Full-Lifecycle Flow
 
-1. Identify the smallest required artifact: PRD, TRD, BDD spec, changelog, or verification plan.
-2. Select the lightest safe track: Quick, Standard, or Deep.
-3. Load only the packaged rule and template needed for the current artifact.
-4. If deriving a child artifact, read the approved parent first.
-5. Preserve parent-child traceability across PRD -> TRD -> BDD -> changelog.
-6. Execute only after acceptance criteria are concrete enough to verify.
-7. Verify against the selected artifact and report gaps.
-8. Stop when requirements conflict, verification cannot be made concrete, approval is needed, or a git write lacks explicit approval.
+1. **Grooming Interview (Gate 0)**: Before writing any specs, load `rules/grooming.md`. If standard/deep, ask the user 3-5 clarifying questions to align on the Design Concept. Do not proceed until aligned.
+2. Identify the smallest required artifact: PRD, TRD, BDD spec, changelog, or verification plan.
+3. Select the lightest safe track: Quick, Standard, or Deep.
+4. Load only the packaged rule and template needed for the current artifact.
+5. **Vertical Slicing**: When defining architecture (TRD) or planning execution checklists (`task.md`), load `rules/slicing.md` and decompose requirements into end-to-end vertical slices.
+6. If deriving a child artifact, read the approved parent first.
+7. Preserve parent-child traceability across PRD -> TRD -> BDD -> changelog.
+8. Execute only after acceptance criteria are concrete enough to verify.
+9. Verify against the selected artifact and report gaps.
+10. Stop when requirements conflict, verification cannot be made concrete, approval is needed, or a git write lacks explicit approval.
 
 ## Default Flow
 
-1. Identify the smallest required artifact: PRD, TRD, BDD spec, changelog, or verification plan.
-2. Load only the rule/template for that artifact.
-3. Preserve parent-child traceability when a parent artifact exists.
-4. Execute only after requirements are clear enough for verification.
-5. Verify against the selected artifact and report gaps.
+1. **Groom Interview**: Load `rules/grooming.md` and clarify Design Concept boundaries if ambiguous.
+2. Identify the smallest required artifact: PRD, TRD, BDD spec, changelog, or verification plan.
+3. Load only the rule/template for that artifact.
+4. **Vertical Slicing**: Decompose the task checklist into vertical slices using `rules/slicing.md`.
+5. Preserve parent-child traceability when a parent artifact exists.
+6. Execute only after requirements are clear enough for verification.
+7. Verify against the selected artifact and report gaps.
 
 ## Scale
 

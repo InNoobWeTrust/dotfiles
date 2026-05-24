@@ -6,9 +6,13 @@
 
 > You do NOT have discretion to simplify or abbreviate a skill's workflow once you have selected it.
 
-## Code Quality (Always Active)
+## Code Quality & Engineering Principles (Always Active)
 
-`~/.agents/rules/code-quality.md` applies to **every file you write or modify**, with no user request required. Before writing any function, class, or module, run the Pre-Implementation Design Checkpoint defined in that rule. Before finishing, verify the Prohibited Patterns list.
+- **Code Quality Baseline**: `~/.agents/rules/code-quality.md` applies to **every file you write or modify**, with no user request required. Before writing any function, class, or module, run the Pre-Implementation Design Checkpoint defined in that rule. Before finishing, verify the Prohibited Patterns list.
+- **Grooming (Reverse Interviewing)**: `~/.agents/rules/grooming.md` applies to **all plan creations and complex tasks**. Proactively grill the user with 3-5 high-value questions rather than accepting plans blindly.
+- **Ubiquitous Language**: `~/.agents/rules/ubiquitous-language.md` applies to **all logic modification tasks**. Always sync with the project's `GLOSSARY.md` before coding.
+- **Test-Driven Development (TDD)**: `~/.agents/rules/tdd.md` applies to **all logical modules, services, and algorithms**. Implement tests before concrete logic.
+- **Vertical Slicing**: `~/.agents/rules/slicing.md` applies to **all feature planning and execution checklists (`task.md`)**. Structure work in end-to-end vertical tracer bullets.
 
 ## Scope-Based Routing
 

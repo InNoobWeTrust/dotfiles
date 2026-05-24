@@ -6,12 +6,14 @@ This rule applies to **every coding task** without exception. No user request is
 
 ## Pre-Implementation Design Checkpoint
 
-Before writing any new function, class, or module, answer all four questions. If you cannot answer any one of them, redesign first.
+Before writing any new function, class, or module, answer all six questions. If you cannot answer any one of them, redesign first.
 
 1. **Single responsibility** — What is the one thing this unit does? If you need "and", it does too much — split it.
 2. **Minimal interface** — What is the smallest surface callers need? Define only that.
 3. **Dependency direction** — What does this unit import or depend on? Each dependency should point toward an abstraction, not a concrete detail.
 4. **Human traceability** — Can a reader follow the logic from names and structure alone, without reading implementation bodies?
+5. **Deep Module encapsulation** — Does this module hide significant internal complexity behind a highly simplified interface? (Interface Complexity << Implementation Complexity). If it's a shallow wrapper, merge it or redesign it.
+6. **Interface-First specification** — Have you fully defined and agreed on the type signatures, enums, or abstract contracts *before* writing any implementation logic?
 
 ---
 
@@ -35,6 +37,26 @@ Before writing any new function, class, or module, answer all four questions. If
 - **Guard clauses at the top.** Return early or throw early. Do not put the happy path inside an `else`.
 - **Functions ≤ 50 lines of logic** (excluding pure declarations, type annotations, comments, and blank lines). If longer due to logic, add a `// WHY: not extracted — [reason]` comment and extract at the next opportunity.
 - **One public export per file** when the language and framework allow it. Co-locate private helpers in the same file; move shared helpers to a named shared module.
+- **Deep Modules over Shallow Modules.** Avoid scattering logic across tiny, fragmented helper files that expose all their implementation details. Combine related logic into unified, deep modules with clean APIs to reduce cognitive overhead for both humans and AI.
+  *   *Example (Shallow Module Anti-Pattern)*: Exposes all internals, requiring callers to do heavy coordination:
+      ```javascript
+      class TextParser {
+        constructor() { this.buffer = ''; }
+        append(c) { this.buffer += c; }
+        tokenize() { return this.buffer.split(' '); }
+      }
+      // Caller must manage buffer state and parse details manually
+      ```
+  *   *Example (Deep Module Pattern)*: Hides immense complexity behind a single simple call:
+      ```javascript
+      class DeepParser {
+        static parse(filepath) {
+          // Encapsulates buffer management, file IO, encoding, and error fallbacks internals
+          return result;
+        }
+      }
+      // Caller simply gets result in one clean, bulletproof invocation
+      ```
 
 ---
 
