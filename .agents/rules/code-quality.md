@@ -110,6 +110,22 @@ When you encounter a code smell but cannot fix it in the current task scope, mar
 
 ---
 
+## Module Documentation Requirements
+
+Every distinct module or component directory must contain a `README.md` documenting its architecture design, responsibility, and caller interfaces.
+
+1. **Existence**: A `README.md` is mandatory for every module. If you create a new module, you must create its `README.md` immediately.
+2. **Maintenance**: If you modify a module in a way that changes its public interface (API), core responsibility, or internal design, you must update its `README.md` to reflect these changes before delivering code.
+3. **Auditability**: The `README.md` must be complete and clear enough for a human auditor to understand what the module does, how to use it, and how it works internally without having to read the source code.
+4. **Flexible Guidelines**: The documentation should cover:
+   - **Purpose**: Clear, high-level summary of the module's role and responsibility.
+   - **Architecture & Design**: Key design patterns, data flow, components, and design decisions.
+   - **Public Interface**: API contracts, public parameters, return types, and exceptions.
+   - **Dependencies**: Coupling to external systems, libraries, or other internal modules.
+   - **Resilience & Errors**: Error handling strategy, boundaries, and fallbacks.
+
+---
+
 ## Prohibited Patterns (Hard Stop)
 
 Do NOT write code that violates these:

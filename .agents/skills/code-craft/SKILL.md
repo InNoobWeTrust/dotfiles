@@ -37,6 +37,7 @@ Caller interface: [what callers pass in → what they get back]
 Glossary Sync   : [yes / no — did you verify all naming against the project's GLOSSARY.md?]
 Interface contract: [exact type signature, abstract contract, or API schema definition]
 Interface sign-off: [yes / no — has the user approved the interface signature?]
+Module README   : [yes / no / updated — does the module have a README.md or will it be created/updated in this task?]
 Dependencies    : [list each import/dependency this unit will have]
 Isolation test  : [yes / no — can this unit be tested without mocking the whole world?]
 Error budget    : [what can fail here (IO, API, DB) and how is it handled / isolated?]
@@ -112,6 +113,12 @@ After writing, read the code as a new engineer with zero context. Answer these:
 
 For any "no" or weak answer, refactor or add a `// CLARITY:` annotation explaining what the code does and why.
 
+#### F. Module README & Architecture Design Audit
+For any module directory created or modified, you must ensure it has an up-to-date, high-quality `README.md` documenting its architecture, responsibility, public interface, and behavior:
+- **Create**: If the module directory has no `README.md`, create it immediately.
+- **Update**: If the changes modify the module's public interface, internal logic flow, dependencies, or core responsibility, update the directory's `README.md`.
+- **Content guidelines (flexible but thorough)**: The `README.md` must contain sufficient detail to allow a human auditor to understand what the module does, its responsibility, public APIs, key design decisions, and external coupling without having to read the source code.
+
 ---
 
 ### Phase 5 — Tech Debt Inventory (Final Gate)
@@ -157,4 +164,5 @@ The skill's output is working code that satisfies:
 - [ ] Code follows naming, structure, and traceability rules from `rules/code-quality.md` (Phase 3)
 - [ ] Code is robust, pure where possible, and strictly typed (Phase 3 A-D)
 - [ ] Readability & Robustness audit passed or CLARITY annotations added (Phase 4)
+- [ ] Module README.md is created or updated to reflect the architecture design and public interfaces (Phase 4.F)
 - [ ] Tech Debt Inventory produced (Phase 5, even if empty)
