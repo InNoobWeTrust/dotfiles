@@ -5,7 +5,7 @@ description: >
   handing off to another agent, or resuming a previous session. Also activate
   when the user says "save handoff", "checkpoint", "save context",
   "I'm switching devices", "what was I working on", or "resume".
-  For auto-save triggers, see ~/.agents/rules/handoff.md.
+  For auto-save triggers, see ../rules/handoff.md.
 ---
 
 ## Setup

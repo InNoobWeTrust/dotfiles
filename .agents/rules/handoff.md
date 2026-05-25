@@ -14,7 +14,7 @@ Restore a handoff only when:
 
 ## Save Triggers
 
-Save or update a handoff with `~/.agents/commands/handoff.prompt.md`, or the equivalent command prompt under the active agent config root, when:
+Save or update a handoff with `../commands/handoff.prompt.md`, or the equivalent command prompt under the active agent config root, when:
 
 - The user asks for a handoff, checkpoint, or session summary.
 - A major milestone completes and future continuation is likely.

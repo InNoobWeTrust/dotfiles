@@ -115,5 +115,5 @@ To share handoffs with a team, such as onboarding or leave handoff, remove the i
 
 ## Related
 
-- Rule: `~/.agents/rules/handoff.md` — session save/restore triggers
-- Command: `~/.agents/commands/handoff.prompt.md` — step-by-step save/restore procedure
+- Rule: `../rules/handoff.md` — session save/restore triggers
+- Command: `../commands/handoff.prompt.md` — step-by-step save/restore procedure

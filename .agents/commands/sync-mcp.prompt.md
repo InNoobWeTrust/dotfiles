@@ -1,10 +1,10 @@
-**Sync MCP Config** — The user maintains a single canonical MCP server configuration at `~/.agents/mcp.json`.
+**Sync MCP Config** — The user maintains a single canonical MCP server configuration at `../mcp.json`.
 When this command is triggered, you (the AI agent) read the canonical config and write it
 to **your own** config file, adapting the format as needed.
 
 ## Canonical config format
 
-`~/.agents/mcp.json` uses the standard MCP `mcpServers` schema.
+`../mcp.json` uses the standard MCP `mcpServers` schema.
 **Important**: Use **absolute paths** or globally installed commands (available on `$PATH`). Relative paths will break because different agents execute MCP servers from different working directories!
 
 ```json
@@ -36,7 +36,7 @@ to **your own** config file, adapting the format as needed.
 
 ## Steps
 
-1. Read `~/.agents/mcp.json`. If the file is missing, contains malformed JSON, or doesn't have an `mcpServers` object, **stop** and prompt the user to fix it before proceeding.
+1. Read `../mcp.json`. If the file is missing, contains malformed JSON, or doesn't have an `mcpServers` object, **stop** and prompt the user to fix it before proceeding.
 2. Determine which agent you are and locate **your own** config file using the reference table above.
 3. If your config file already exists, read it and **merge** the `mcpServers` key from the canonical config into it, preserving all other existing settings. If the file does not exist, create it with `{ "mcpServers": ... }`.
 4. Write the updated config back to disk. Be careful: if you are attempting to modify an active configuration file that your own host process writes to on exit, ensure you do not create a race condition.
@@ -47,7 +47,7 @@ to **your own** config file, adapting the format as needed.
 ## Notes
 
 - You should only sync your own config — do not try to sync all agents at once.
-- If the user wants to add, remove, or edit an MCP server, edit `~/.agents/mcp.json` first, then re-run this command.
+- If the user wants to add, remove, or edit an MCP server, edit `../mcp.json` first, then re-run this command.
 
 ---
 

@@ -4,24 +4,24 @@
 
 1. Check for available updates (dry run):
 ```bash
-~/.agents/scripts/sync-remotes.sh
+../scripts/sync-remotes.sh
 ```
 
 2. Pull updates from remote:
 ```bash
-~/.agents/scripts/sync-remotes.sh --apply
+../scripts/sync-remotes.sh --apply
 ```
 
 3. Force re-download even if SHA matches:
 ```bash
-~/.agents/scripts/sync-remotes.sh --apply --force
+../scripts/sync-remotes.sh --apply --force
 ```
 
 4. After syncing, review the updated skill files for any breaking changes or new capabilities that may affect dependent commands.
 
 ## Configuration
 
-Remote skill sources are defined in `~/.agents/skills/remote-skills-manifest.json`:
+Remote skill sources are defined in `../skills/remote-skills-manifest.json`:
 
 ```json
 {
@@ -42,7 +42,7 @@ Remote skill sources are defined in `~/.agents/skills/remote-skills-manifest.jso
 ### Adding a new remote skill
 
 1. Add an entry to `remote-skills-manifest.json` under `remotes`
-2. Run `~/.agents/scripts/sync-remotes.sh --apply` to perform initial fetch
+2. Run `../scripts/sync-remotes.sh --apply` to perform initial fetch
 
 ## Notes
 

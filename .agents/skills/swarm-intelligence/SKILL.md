@@ -6,7 +6,7 @@ description: "Multi-agent swarm orchestration for parallel, diverse-perspective 
 > **⚠ COMPLIANCE ENFORCEMENT — READ BEFORE PROCEEDING**
 >
 > Loading this skill is a binding commitment to execute its **complete three-phase workflow**. You **must**:
-> - Complete all 10 preflight steps before starting Phase 1 (see `~/.agents/rules/skill-compliance.md`)
+> - Complete all 10 preflight steps before starting Phase 1 (see `../../rules/skill-compliance.md`)
 > - Run actual `swarminator` tool invocations — producing a Markdown description of what the swarm would do is **NOT acceptable**
 > - Use 2–3 models per persona invocation — single-model shortcuts are **NOT acceptable**
 > - Produce the required artifact sections for all three phases
@@ -30,7 +30,7 @@ $SHELL -l -c 'swarminator --tutorial rules'     # exit codes & safety rules
 
 ## Preconfigured References
 
-All files are relative to this skill directory (`~/.agents/skills/swarm-intelligence/`):
+All files are relative to this skill directory (`./`):
 
 - **Personas:** `references/personas/<group>/<name>.md` — YAML frontmatter + system prompt body.
 - **Persona discovery:** `./references/discover-personas.sh` — lists, searches, and retrieves full prompt text from persona files.

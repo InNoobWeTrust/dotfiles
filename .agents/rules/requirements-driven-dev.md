@@ -18,4 +18,4 @@ Use the `requirements-driven-dev` skill for requirements workflows.
 | Requirements-driven execution, `on_execute` | Use `requirements-driven-dev` for execution rules and verification discipline |
 | Requirements-driven commit, `on_commit` | Use `requirements-driven-dev` for commit conventions and changelog linkage |
 
-For full lifecycle orchestration, use `~/.agents/commands/requirements-lifecycle.prompt.md`.
+For full lifecycle orchestration, use `../commands/requirements-lifecycle.prompt.md`.
