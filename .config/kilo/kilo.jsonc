@@ -59,38 +59,6 @@
       },
     },
   },
-  "mcp": {
-    "chrome-devtools": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--no-usage-statistics",
-        "--browser-url=http://localhost:19222"
-      ],
-      "enabled": true,
-    },
-    "ado": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@azure-devops/mcp",
-        "{env:ADO_ORG}",
-        "-d",
-        "core",
-        "work",
-        "work-items",
-        "--authentication",
-        "envvar",
-      ],
-      "environment": {
-        "ADO_MCP_AUTH_TOKEN": "{env:ADO_MCP_AUTH_TOKEN}",
-      },
-      "enabled": true,
-    },
-  },
   "provider": {
     "oai-gw": {
       "name": "OpenAI Gateway",

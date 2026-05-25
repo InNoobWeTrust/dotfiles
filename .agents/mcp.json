@@ -1,18 +1,20 @@
 {
     "mcpServers": {
         "chrome-devtools": {
+            "enabled": false,
             "command": "npx",
             "args": [
                 "-y",
-                "chrome-devtools-mcp@0.1.1",
+                "chrome-devtools-mcp@latest",
                 "--no-usage-statistics",
-                "--browser-url=http://localhost:9222"
+                "--browser-url=http://localhost:19222"
             ]
         },
         "ado": {
+            "enabled": false,
             "command": "bash",
             "args": [
-                "-ic",
+                "-lc",
                 "npx -y @azure-devops/mcp $ADO_ORG -d core work work-items --authentication envvar"
             ]
         }
