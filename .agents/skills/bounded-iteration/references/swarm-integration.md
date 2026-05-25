@@ -108,8 +108,8 @@ outputs:
 ## Completion criteria
 - [ ] Every required contract or interface is implemented
 - [ ] Every required file in scope is updated
-- [ ] `npm run typecheck` passes
-- [ ] `npm test` passes
+- [ ] `bun run typecheck` passes
+- [ ] `bun test` passes
 - [ ] Critical review findings from swarm are covered by verification
 
 ## Notes for the next iteration
@@ -150,10 +150,10 @@ checks and emit positive proof. At minimum it should:
 set -euo pipefail
 
 echo "=== Type check ==="
-npm run typecheck
+bun run typecheck
 
 echo "=== Tests ==="
-npm test
+bun test
 
 echo "=== Extra contract / regression checks ==="
 # Add project-specific checks derived from the swarm review here.

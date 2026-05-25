@@ -19,7 +19,7 @@ For any new logical component or modification:
 1.  **Phase 1: Define Interface & Write Test (RED)**
     *   Create the interface definitions (signatures, enums, TypeScript interfaces, Python type stubs).
     *   Write the unit test file. Specify multiple test cases covering the happy path, boundary conditions, and error states.
-    *   Run the test command (e.g. `npm run test`, `pytest`, `jest`). **Confirm the tests fail** (or fail to run due to missing implementation).
+    *   Run the test command (e.g. `bun test`, `uv run pytest`, project-native test runner). **Confirm the tests fail** (or fail to run due to missing implementation).
 2.  **Phase 2: Write Minimum Implementation (GREEN)**
     *   Write the *minimum* amount of code required to make the test cases pass.
     *   Do not add speculative "future-proof" features. Keep it simple (KISS).

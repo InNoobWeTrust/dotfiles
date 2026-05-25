@@ -6,7 +6,8 @@ Minimal, copy-paste-ready implementations. Add to your own CDP class as needed.
 
 ## Minimal CDP Client
 
-Requires only `websockets` (`pip install websockets`). Everything else is stdlib.
+Requires only `websockets`. Run it with `uv run --with websockets python` so
+the dependency is resolved on demand; everything else is stdlib.
 
 ```python
 import asyncio, base64, json, platform
@@ -372,8 +373,9 @@ Never hardcode credentials. Accept session file paths from the caller.
 
 ---
 
-Requires `httpx` (`pip install httpx`). Use `urllib.request` only if httpx is
-unavailable — it does not follow POST redirects by default.
+Requires `httpx`. Run it with `uv run --with httpx python` so the dependency is
+resolved on demand. Use `urllib.request` only if `httpx` is unavailable — it
+does not follow POST redirects by default.
 
 ```python
 from concurrent.futures import ThreadPoolExecutor

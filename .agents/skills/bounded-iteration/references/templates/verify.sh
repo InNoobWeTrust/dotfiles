@@ -4,8 +4,8 @@ set -euo pipefail
 # Template verifier for Bounded Iteration.
 # Customize the commands and proof checks for your project before using AFK mode.
 
-TYPECHECK_CMD=${TYPECHECK_CMD:-"npm run typecheck"}
-TEST_CMD=${TEST_CMD:-"npm test"}
+TYPECHECK_CMD=${TYPECHECK_CMD:-"bun run typecheck"}
+TEST_CMD=${TEST_CMD:-"bun test"}
 EXTRA_CHECK_CMD=${EXTRA_CHECK_CMD:-":"}
 POSITIVE_PROOF_REGEX=${POSITIVE_PROOF_REGEX:-"([1-9][0-9]*) (tests?|specs?) passed"}
 SUMMARY_FILE=${SUMMARY_FILE:-".ralph-verify.json"}

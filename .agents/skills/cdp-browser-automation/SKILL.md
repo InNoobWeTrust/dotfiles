@@ -71,8 +71,10 @@ open -a "Google Chrome" --args \
   --disable-extensions --password-store=basic --use-mock-keychain
 ```
 
-The only runtime requirements are `Python` + `websockets` + `httpx`
-(`pip install websockets httpx`). See
+The only runtime requirements are `uv` plus Python with `websockets` and
+`httpx`. Prefer ephemeral execution such as
+`uv run --with websockets --with httpx python` so dependencies resolve on
+demand without touching the system environment. See
 [`references/cdp-snippets.md`](references/cdp-snippets.md) for the full `CDP`
 class.
 
