@@ -30,29 +30,35 @@ model:
 custom_providers:
   # ── oai-gateway (OpenAI-compatible, LLM Gateway) ──
   - name: oai-gateway
-    base_url: "${LLM_GATEWAY_BASE_URL}"
+    base_url: "${LLM_GATEWAY_BASE_URL}/v1"
     key_env: LLM_GATEWAY_API_KEY
     models:
       openai/chatbot-5.4-high:
+        context_length: 1000000
+      openai/chatbot-5.4:
         context_length: 1000000
       openai/chatgpt-5.4-mini:
         context_length: 400000
 
   # ── llm-gateway (OpenAI-compatible, LLM Gateway — same endpoint, more models) ──
   - name: llm-gateway
-    base_url: "${LLM_GATEWAY_BASE_URL}"
+    base_url: "${LLM_GATEWAY_BASE_URL}/v1"
     key_env: LLM_GATEWAY_API_KEY
     models:
+      google/gemini-3.5-flash:
+        context_length: 1048576
+      google/gemini-3.1-flash-lite:
+        context_length: 1048576
       kCode:
         context_length: 92160
-      qwen/qwen3.6-plus:
-        context_length: 128000
+      deepseek/deepseek-v4-pro:
+        context_length: 1048576
       deepseek/deepseek-v4-flash:
         context_length: 1048576
 
   # ── llm-broker (OpenAI-compatible, LLM Broker) ──
   - name: llm-broker
-    base_url: "${LLM_BROKER_BASE_URL}"
+    base_url: "${LLM_BROKER_BASE_URL}/v1"
     key_env: LLM_BROKER_API_KEY
     models:
       claude-sonnet-4-6:
@@ -468,25 +474,31 @@ lsp:
 _config_version: 23
 custom_providers:
 - name: oai-gateway
-  base_url: ${LLM_GATEWAY_BASE_URL}
+  base_url: ${LLM_GATEWAY_BASE_URL}/v1
   key_env: LLM_GATEWAY_API_KEY
   models:
     openai/chatbot-5.4-high:
       context_length: 1000000
+    openai/chatbot-5.4:
+      context_length: 1000000
     openai/chatgpt-5.4-mini:
       context_length: 400000
 - name: llm-gateway
-  base_url: ${LLM_GATEWAY_BASE_URL}
+  base_url: ${LLM_GATEWAY_BASE_URL}/v1
   key_env: LLM_GATEWAY_API_KEY
   models:
+    google/gemini-3.5-flash:
+      context_length: 1048576
+    google/gemini-3.1-flash-lite:
+      context_length: 1048576
     kCode:
       context_length: 92160
-    qwen/qwen3.6-plus:
-      context_length: 128000
+    deepseek/deepseek-v4-pro:
+      context_length: 1048576
     deepseek/deepseek-v4-flash:
       context_length: 1048576
 - name: llm-broker
-  base_url: ${LLM_BROKER_BASE_URL}
+  base_url: ${LLM_BROKER_BASE_URL}/v1
   key_env: LLM_BROKER_API_KEY
   models:
     claude-sonnet-4-6:
