@@ -6,7 +6,7 @@ This rule applies to **every coding task** without exception. No user request is
 
 ## Pre-Implementation Design Checkpoint
 
-Before writing any new function, class, or module, answer all six questions. If you cannot answer any one of them, redesign first.
+Before writing any new function, class, or module, answer all seven questions. If you cannot answer any one of them, redesign first.
 
 1. **Single responsibility** — What is the one thing this unit does? If you need "and", it does too much — split it.
 2. **Minimal interface** — What is the smallest surface callers need? Define only that.
@@ -14,6 +14,7 @@ Before writing any new function, class, or module, answer all six questions. If 
 4. **Human traceability** — Can a reader follow the logic from names and structure alone, without reading implementation bodies?
 5. **Deep Module encapsulation** — Does this module hide significant internal complexity behind a highly simplified interface? (Interface Complexity << Implementation Complexity). If it's a shallow wrapper, merge it or redesign it.
 6. **Interface-First specification** — Have you fully defined and agreed on the type signatures, enums, or abstract contracts *before* writing any implementation logic?
+7. **Ambiguity policy** — If an edge case or failure path has multiple reasonable caller-visible behaviors, what contract chooses the behavior? If none does, stop and clarify instead of inventing a fallback.
 
 ---
 
@@ -51,7 +52,7 @@ Before writing any new function, class, or module, answer all six questions. If 
       ```javascript
       class DeepParser {
         static parse(filepath) {
-          // Encapsulates buffer management, file IO, encoding, and error fallbacks internals
+          // Encapsulates buffer management, file IO, encoding, and error handling internals
           return result;
         }
       }
@@ -67,6 +68,8 @@ Every non-obvious decision must have a `// WHY:` comment explaining the reasonin
 ```
 // WHY: Retry up to 3 times before failing — downstream rate limit is per-minute
 ```
+
+Every fallback, default, degraded-mode, or error-mapping path must be traceable to an explicit contract, prior behavior, or user instruction. If code returns `[]`, `null`, `false`, cached data, partial success, or a no-op on failure, the rationale must be obvious from the type/contract and, when non-obvious, documented with a `// WHY:` comment. Do not turn uncertainty into fake success.
 
 Module boundaries must be documented at the top of each file (1-3 lines on what this module is responsible for):
 
@@ -87,7 +90,7 @@ Technical debt is acceptable when explicitly marked. Use this format:
 
 **Acceptable debt:** incomplete abstraction, deferred optimization, provisional business rule, known rough edge.
 
-**NOT acceptable as debt:** silent error swallowing, god objects, untracked side effects, security shortcuts, logic copied more than twice without extraction.
+**NOT acceptable as debt:** silent error swallowing, silent semantic fallbacks, god objects, untracked side effects, security shortcuts, logic copied more than twice without extraction.
 
 ---
 
@@ -122,7 +125,7 @@ Every distinct module or component directory must contain a `README.md` document
    - **Architecture & Design**: Key design patterns, data flow, components, and design decisions.
    - **Public Interface**: API contracts, public parameters, return types, and exceptions.
    - **Dependencies**: Coupling to external systems, libraries, or other internal modules.
-   - **Resilience & Errors**: Error handling strategy, boundaries, and fallbacks.
+   - **Resilience & Errors**: Error handling strategy, escalation rules, boundaries, and any contract-approved fallbacks.
 
 ---
 
@@ -137,6 +140,8 @@ Do NOT write code that violates these:
 | Logic copied more than twice | Extract to a named shared function |
 | Global mutable state | Must have an explicit `// WHY: global — [justification]` |
 | Silent error swallowing | `catch(e) {}` or `except: pass` with no handling — always propagate or log |
+| Silent semantic fallback | Returning `[]`, `null`, `false`, partial success, or a no-op for an ambiguous/failed case without contract approval |
 | Magic literals | No inline numbers/strings — use named constants |
 | Mixing layers | Business logic inside framework callbacks (controllers, handlers, views) |
 | Extend-by-parameter | Adding yet another parameter to grow a function's behavior — use composition |
+| Guessing through ambiguity | Choosing a business rule for an unclear edge case instead of asking the user or surfacing a typed/domain error |

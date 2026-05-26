@@ -41,6 +41,8 @@ Module README   : [yes / no / updated — does the module have a README.md or wi
 Dependencies    : [list each import/dependency this unit will have]
 Isolation test  : [yes / no — can this unit be tested without mocking the whole world?]
 Error budget    : [what can fail here (IO, API, DB) and how is it handled / isolated?]
+Failure contract: [for each failure mode, exact caller-visible behavior: retry, mapped error, partial result, or stop]
+Ambiguity policy: [which edge cases are contract-defined vs which require escalation or user clarification]
 Traceability    : [how will a human reader find this unit and understand it by name alone?]
 ```
 
@@ -48,6 +50,8 @@ Traceability    : [how will a human reader find this unit and understand it by n
 1. **Isolation test = "no" is a STOP condition.** Redesign the dependency structure before proceeding. A unit that cannot be isolated has too many implicit couplings — extract them.
 2. **Interface sign-off = "no" is a STOP condition.** When creating new services or public exports, you MUST present the Interface contract to the user and obtain their explicit sign-off before writing the concrete logic body.
    *   *AFK / Non-Interactive Exception*: If operating in automated, background, or non-interactive (AFK) modes, set `Interface sign-off = "assumed-approved"`. Log a design contract block detailing your assumptions in the task scratch space or logs, and proceed with execution without blocking.
+3. **Unspecified edge-case semantics is a STOP condition.** If an input, failure mode, or boundary case has more than one reasonable caller-visible behavior and the contract or existing product behavior does not choose one, you MUST stop and ask the user instead of inventing a fallback.
+   *   *AFK / Non-Interactive Exception*: The AFK exception does not authorize guessing. If no contract-defined behavior exists, fail closed with an explicit blocker or mapped error rather than silently defaulting.
 
 ---
 
@@ -76,7 +80,9 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 
 #### A. Defensive Boundaries (Robust Exception Handling)
 - **Zero Silent Failures:** Never catch exceptions without recording diagnostic information or recovering.
-- **Fail Gracefully:** Every network call, file IO, or database query must configure explicit timeouts and clear fallbacks (default values, empty lists, or mapped errors).
+- **Fail Explicitly:** Every network call, file IO, or database query must configure explicit timeouts and an explicit failure contract. Use mapped errors, retries, or contract-approved defaults only when the caller-visible semantics are already defined. Do not invent `[]`, `null`, `false`, or no-op fallbacks just to keep execution moving.
+- **Escalate Semantic Ambiguity:** If an edge case can plausibly mean more than one thing, stop and ask the user or surface a domain error. Defensive programming makes uncertainty visible; it does not hide it behind defaults.
+- **Preserve Diagnostics:** Propagate source context (error code, field name, upstream status, correlation data) so a reviewer can see why the failure path happened.
 - **Sanitize Boundaries:** Validate external API payloads immediately upon receiving them before passing them to internal functions.
 
 #### B. Immutability & State Hygiene
@@ -110,6 +116,7 @@ After writing, read the code as a new engineer with zero context. Answer these:
 3. **Side effects** — Are all state mutations obvious at the call site?
 4. **Error path** — Is the failure path as readable and explicit as the happy path?
 5. **Resilience** — What happens if the filesystem is full, a database connection drops, or a network request times out?
+6. **Ambiguity handling** — For every fallback or error mapping, can a reviewer tell why this behavior is correct and when execution escalates instead?
 
 For any "no" or weak answer, refactor or add a `// CLARITY:` annotation explaining what the code does and why.
 
@@ -152,6 +159,7 @@ These are the most common agent lazy-path shortcuts. Recognize and refuse them:
 | "The function is getting long but it all belongs together" | No function "belongs together" at 80 lines | Extract named sub-functions at logical boundaries |
 | "I'll put the business rule in the controller/handler" | Mixes layers; makes business logic untestable in isolation | Extract to a domain service |
 | "I'll use a global flag to coordinate these modules" | Introduces invisible coupling and ordering dependency | Use explicit dependency injection or event passing |
+| "I'll return `[]` / `null` / `false` here so callers don't break" | Hides contract ambiguity and turns real failure into fake success | Surface a typed/domain error or ask the user to define the expected behavior |
 
 ---
 
@@ -163,6 +171,7 @@ The skill's output is working code that satisfies:
 - [ ] SOLID & Clean Architecture check passed or debt documented (Phase 2)
 - [ ] Code follows naming, structure, and traceability rules from `rules/code-quality.md` (Phase 3)
 - [ ] Code is robust, pure where possible, and strictly typed (Phase 3 A-D)
+- [ ] Ambiguous edge cases were escalated or clarified; no invented semantic fallbacks were shipped
 - [ ] Readability & Robustness audit passed or CLARITY annotations added (Phase 4)
 - [ ] Module README.md is created or updated to reflect the architecture design and public interfaces (Phase 4.F)
 - [ ] Tech Debt Inventory produced (Phase 5, even if empty)
