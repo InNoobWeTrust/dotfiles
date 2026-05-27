@@ -1,7 +1,17 @@
 #!/usr/bin/env sh
 
 # github's cli
-usable gh && eval "$(gh completion)"
+if usable gh; then
+    gh_completion_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}"
+    gh_completion_cache_file="$gh_completion_cache_dir/gh-completion.bash"
+    [ -d "$gh_completion_cache_dir" ] || mkdir -p "$gh_completion_cache_dir"
+
+    if [ ! -s "$gh_completion_cache_file" ] || [ "$(command -v gh)" -nt "$gh_completion_cache_file" ]; then
+        gh completion > "$gh_completion_cache_file" 2>/dev/null || true
+    fi
+
+    [ -s "$gh_completion_cache_file" ] && . "$gh_completion_cache_file"
+fi
 
 # kitty terminal
 # shellcheck source=/dev/null
@@ -22,26 +32,20 @@ if [ -n "$BASH_VERSION" ]; then
         . "$HOME/bash_completion.d/python-argcomplete"
     fi
     if [ -n "$BREW_HOME" ] && [ -d "$BREW_HOME/etc/bash_completion.d" ]; then
-        tmp="$(mktemp)"
-        find "$BREW_HOME/etc/bash_completion.d" -maxdepth 1 -follow -type f -readable > "$tmp"
-        while IFS= read -r s
-        do
+        for s in "$BREW_HOME"/etc/bash_completion.d/*; do
+            [ -f "$s" ] && [ -r "$s" ] || continue
             # shellcheck source=/dev/null
             . "$s"
-        done < "$tmp"
-        rm "$tmp"
+        done
     fi
 
     # Custom completion
     if [ -d "$HOME/.bash_completion.d/" ]; then
-        tmp="$(mktemp)"
-        find "$HOME/.bash_completion.d/" -maxdepth 1 -follow -type f -readable > "$tmp"
-        while IFS= read -r s
-        do
+        for s in "$HOME"/.bash_completion.d/*; do
+            [ -f "$s" ] && [ -r "$s" ] || continue
             # shellcheck source=/dev/null
             . "$s"
-        done < "$tmp"
-        rm "$tmp"
+        done
     fi
 fi
 

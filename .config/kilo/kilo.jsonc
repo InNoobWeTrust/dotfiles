@@ -70,21 +70,6 @@
         "LLM_GATEWAY_API_KEY"
       ],
       "models": {
-        "openai/chatbot-5.4-high": {
-          "modalities": {
-            "input": [
-              "text",
-              "image"
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 16384
-          },
-        },
         "openai/chatbot-5.4": {
           "modalities": {
             "input": [
@@ -331,10 +316,6 @@
       "go generate *": "allow",
       "go vet *": "allow",
       "npm list *": "allow",
-      "bun run --cwd *": "allow",
-      "bun run build *": "allow",
-      "bun run check:business-logic *": "allow",
-      "bun run check:api *": "allow",
       "helm version *": "allow",
       "helm lint *": "allow",
       "pwd *": "allow",
@@ -374,15 +355,36 @@
       "rmdir *": "allow",
       "ps *": "allow",
       "cmp *": "allow",
-      "mktemp *": "allow"
+      "mktemp *": "allow",
+      "lsof *": "allow",
     },
     "recall": {
       "search": "allow"
     },
+    "read": {
+      "*": "allow"
+    },
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "todowrite": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "lsp": "allow",
+    "skill": "allow",
+    "todoread": "allow",
+    "codesearch": "allow",
     "external_directory": {
       "/tmp/*": "allow",
       "~/.agents/*": "allow",
       "~/.config/kilo/*": "allow",
     },
+  },
+  "experimental": {
+    "batch_tool": true,
+    "codebase_search": true,
+    "semantic_indexing": true,
+    "agent_manager_tool": true,
+    "openTelemetry": true
   },
 }

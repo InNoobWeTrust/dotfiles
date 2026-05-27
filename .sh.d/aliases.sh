@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+# Batch check commonly used commands for efficiency
+usable_batch git docker curl npx uv pkgx rg exa nvim ssh neovide python3 corepack uvx brew rustup conda pyenv nvm yarn pnpm
+
 ########################### Fancy prompt ######################################
 if [ -n "$use_color" ]; then
     alias ls='ls --color=auto'

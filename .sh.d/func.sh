@@ -4,7 +4,38 @@
 # # usable - Check if command exist before invoking
 # # usage: usable [some_command] && [some_command]
 usable() {
-    type "$1" >/dev/null 2>&1
+    [ -n "$1" ] || return 1
+
+    case " ${__USABLE_HIT_CMDS-} " in
+        *" $1 "*) return 0 ;;
+    esac
+
+    case " ${__USABLE_MISS_CMDS-} " in
+        *" $1 "*) return 1 ;;
+    esac
+
+    if command -v "$1" >/dev/null 2>&1; then
+        __USABLE_HIT_CMDS="${__USABLE_HIT_CMDS-} $1"
+        return 0
+    fi
+
+    __USABLE_MISS_CMDS="${__USABLE_MISS_CMDS-} $1"
+    return 1
+}
+
+#
+# # usable_batch - Batch check multiple commands for existence
+# # usage: usable_batch cmd1 cmd2 cmd3 ...
+# # Sets __USABLE_BATCH_RESULTS with space-separated "cmd:0" (found) or "cmd:1" (not found)
+usable_batch() {
+    __USABLE_BATCH_RESULTS=""
+    for cmd in "$@"; do
+        if usable "$cmd"; then
+            __USABLE_BATCH_RESULTS="${__USABLE_BATCH_RESULTS}${cmd}:0 "
+        else
+            __USABLE_BATCH_RESULTS="${__USABLE_BATCH_RESULTS}${cmd}:1 "
+        fi
+    done
 }
 
 #

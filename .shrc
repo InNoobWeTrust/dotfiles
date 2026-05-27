@@ -23,7 +23,13 @@ export CONF_SH_DIR="$HOME/.sh.d"
 # shellcheck source=.sh.d/completion.sh
 [ -r "$CONF_SH_DIR/completion.sh" ] && . "$CONF_SH_DIR/completion.sh"
 
-xhost +local:root > /dev/null 2>&1
+[ -n "$DISPLAY" ] && usable xhost && xhost +local:root > /dev/null 2>&1
+
+# Lazy-load x-cmd to improve startup time (defer until 'x' command is first used)
+[ -r "$CONF_SH_DIR/x-cmd-lazy.sh" ] && . "$CONF_SH_DIR/x-cmd-lazy.sh"
+
+# Lazy-load starship prompt (use 'ss' to initialize)
+[ -r "$CONF_SH_DIR/starship-lazy.sh" ] && . "$CONF_SH_DIR/starship-lazy.sh"
 
 usable complete && complete -cf sudo
 
