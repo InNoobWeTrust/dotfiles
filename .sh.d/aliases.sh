@@ -154,7 +154,7 @@ usable pkgx && \
         ## File manager
         ! usable yazi && alias yazi='pkgx yazi'
         ## Code editors
-        ! usable nvim && alias nvim='pkgx +neovim.io nvim'
+        ! usable nvim && alias nvim='pkgx +gnu.org/libiconv +neovim.io nvim'
         ! usable hx && alias hx='pkgx +helix-editor.com hx'
         ## Text document viewer
         ! usable bat && alias bat='pkgx bat'

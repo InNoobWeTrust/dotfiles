@@ -1,0 +1,12 @@
+antigravity/
+antigravity-cli/
+config/
+history/
+tmp/
+google_accounts.json
+installation_id
+oauth_creds.json
+projects.json
+settings.json
+state.json
+trustedFolders.json
