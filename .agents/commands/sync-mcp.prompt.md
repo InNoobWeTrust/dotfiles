@@ -31,15 +31,50 @@ to **your own** config file, adapting the format as needed.
 | Gemini CLI             | `~/.gemini/settings.json`                                         | Merge `mcpServers` key, preserve other settings |
 | Antigravity CLI             | `~/.gemini/antigravity-cli/mcp_config.json`                                         | Merge `mcpServers` key, preserve other settings |
 | GitHub Copilot         | `~/.copilot/mcp-config.json`                                      | Standalone `{ "mcpServers": ... }` file         |
-| Kilo Code              | Project `.kilo/mcp.json` or global `~/.config/kilo/mcp.json`     | Standalone `{ "mcpServers": ... }` file         |
+| Kilo Code (≥v7.3)      | `~/.config/kilo/kilo.jsonc` `"mcp"` key (or project `.kilo/kilo.jsonc`) | Merge `"mcp"` key, convert format (see below)   |
 | Antigravity            | Check agent docs                                                  | Merge `mcpServers` key if supported             |
 | Cursor                 | `~/.cursor/mcp.json`                                              | Standalone `{ "mcpServers": ... }` file         |
+
+## Kilo Code format conversion
+
+Kilo Code (≥v7.3) uses a different MCP schema inside its main config file (`kilo.jsonc`):
+
+- `"type": "local"` is required for each server
+- `"command"` is a **single array** (command + args combined) instead of separate fields
+- `"environment"` replaces `"env"` for env vars
+
+**Canonical → Kilo conversion example:**
+
+```json
+// Canonical (../mcp.json)
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "npx",
+      "args": ["-y", "some-mcp-server"],
+      "env": { "API_KEY": "..." }
+    }
+  }
+}
+
+// Kilo (inside kilo.jsonc "mcp" key)
+{
+  "mcp": {
+    "my-server": {
+      "type": "local",
+      "command": ["npx", "-y", "some-mcp-server"],
+      "environment": { "API_KEY": "..." },
+      "enabled": true
+    }
+  }
+}
+```
 
 ## Steps
 
 1. Read `../mcp.json`. If the file is missing, contains malformed JSON, or doesn't have an `mcpServers` object, **stop** and prompt the user to fix it before proceeding.
 2. Determine which agent you are and locate **your own** config file using the reference table above.
-3. If your config file already exists, read it and **merge** the `mcpServers` key from the canonical config into it, preserving all other existing settings. If the file does not exist, create it with `{ "mcpServers": ... }`.
+3. If your config file already exists, read it and **merge** the `mcpServers` key from the canonical config into it, preserving all other existing settings. If the file does not exist, create it with `{ "mcpServers": ... }`. **For Kilo Code**: convert each server entry to the Kilo format (see above) and merge into the `"mcp"` key of `kilo.jsonc`.
 4. Write the updated config back to disk. Be careful: if you are attempting to modify an active configuration file that your own host process writes to on exit, ensure you do not create a race condition.
 5. Confirm to the user what changed (servers added, removed, or updated).
 
