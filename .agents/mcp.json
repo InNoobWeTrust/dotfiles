@@ -1,22 +1,22 @@
 {
-    "mcpServers": {
-        "chrome-devtools": {
-            "enabled": false,
-            "command": "npx",
-            "args": [
-                "-y",
-                "chrome-devtools-mcp@latest",
-                "--no-usage-statistics",
-                "--browser-url=http://localhost:19222"
-            ]
-        },
-        "ado": {
-            "enabled": false,
-            "command": "bash",
-            "args": [
-                "-lc",
-                "npx -y @azure-devops/mcp $ADO_ORG -d core work work-items --authentication envvar"
-            ]
-        }
+  "mcpServers": {
+    "chrome-devtools": {
+      "enabled": false,
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--no-usage-statistics",
+        "--browser-url=http://localhost:19222"
+      ]
+    },
+    "ado": {
+      "enabled": false,
+      "command": "bash",
+      "args": [
+        "-lc",
+        "npx -y @azure-devops/mcp $ADO_ORG -d core work work-items --authentication envvar"
+      ]
     }
+  }
 }
