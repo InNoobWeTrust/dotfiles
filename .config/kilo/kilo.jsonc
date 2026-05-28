@@ -379,6 +379,7 @@
       "cmp *": "allow",
       "mktemp *": "allow",
       "lsof *": "allow",
+      "git rev-parse *": "allow",
     },
     "recall": {
       "search": "allow"
@@ -405,7 +406,7 @@
   "experimental": {
     "batch_tool": true,
     "codebase_search": true,
-    "semantic_indexing": true,
+    "semantic_indexing": false,
     "agent_manager_tool": true,
     "openTelemetry": true
   },
