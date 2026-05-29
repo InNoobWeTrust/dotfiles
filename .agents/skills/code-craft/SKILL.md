@@ -39,6 +39,7 @@ Interface contract: [exact type signature, abstract contract, or API schema defi
 Interface sign-off: [yes / no — has the user approved the interface signature?]
 Module README   : [yes / no / updated — does the module have a README.md or will it be created/updated in this task?]
 Dependencies    : [list each import/dependency this unit will have]
+Quality tools   : [repo-native verify commands first; otherwise list exact runner+tool commands, including any package/binary mismatch handling]
 Isolation test  : [yes / no — can this unit be tested without mocking the whole world?]
 Error budget    : [what can fail here (IO, API, DB) and how is it handled / isolated?]
 Failure contract: [for each failure mode, exact caller-visible behavior: retry, mapped error, partial result, or stop]
@@ -105,6 +106,25 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 - **Refactor**: Refactor to meet all code quality criteria, maintaining passing test states.
 - **Deliverable requirement**: You must post the execution of your test command and its passing results in your turn summary.
 
+#### F. Quality Tooling Pass
+- **Prefer Repo-Native Commands:** Discover and use the repo's existing verification entrypoints first: project scripts, `Makefile`/`justfile`, `tox`/`nox`, `pre-commit`, CI jobs, or documented contributor workflows. These encode the team's actual policy and should win over ad hoc commands.
+- **Run the Relevant Set:** For the files and language you touched, run the formatter, linter, type checker, dependency audit, and/or security scan that materially validates the change. Do not run tools just to create noise.
+- **Use Mainstream Ecosystem Runners When Setup Is Missing:** If the repo lacks a local install or wrapper, prefer widely used, officially documented ephemeral runners for that ecosystem:
+  - JavaScript / TypeScript: `npm exec` / `npx`, `pnpm dlx` / `pnx`, `yarn dlx`, `bunx`
+  - Python tools: `uvx` (`uv tool run`) for isolated tool execution; `uv run` or `uv run --with <package>` when the tool must run against the project environment
+- **Treat `pkgx` and `x-cmd` as Optional Fallbacks:** They can be useful local runners, but they are not the default industry recommendation unless the repo, environment, or user already prefers them.
+- **Use Exact Doc-Backed Invocation Patterns:** If the package name and binary name differ, use the runner's explicit package-selection flag instead of assuming name inference. Examples: `npm exec --package=typescript -- tsc --noEmit`, `bunx -p typescript tsc --noEmit`, `pnpm dlx --package typescript tsc --noEmit`, `yarn dlx -p typescript tsc --noEmit`.
+- **Choose Tools by Ecosystem and Signal:** Common defaults when relevant:
+  - JavaScript / TypeScript: ESLint, Prettier, `tsc --noEmit`, `npm audit`
+  - Python: Ruff (`ruff check`, `ruff format --check`), the repo's configured type checker, `pip-audit`
+  - Shell: ShellCheck, `shfmt`
+  - Cross-language security / pattern scanning: Semgrep when configured or clearly useful for the touched surface
+- **Keep Tool Semantics Straight:** Dependency audits, static analysis, formatting, and type checking answer different questions. Do not claim one category substitutes for another. Example: `npm audit` checks dependency vulnerabilities, while Semgrep scans source patterns; `ruff format` formats code, while `ruff check` handles lint rules and import sorting.
+- **Example Official CLI Patterns:** `npx eslint .`, `npx prettier . --check`, `uvx ruff check .`, `uvx ruff format --check .`, `uvx pip-audit -r requirements.txt`, `semgrep scan --config p/default .`.
+- **Fix or Account for Findings:** Do not ignore tool output. Resolve issues introduced by your change. If a tool surfaces unrelated pre-existing problems outside the agreed scope, leave them untouched but document them as accepted debt when they materially affect your edited path.
+- **Do Not Install Permanent Tooling for a One-Off Check:** Avoid adding devDependencies or project config solely to validate a single task unless the user explicitly asked to establish that tooling permanently.
+- **Deliverable requirement:** Post the repo-native commands you ran, or the exact fallback commands you recommend, and summarize the results. If you only suggested commands because the repo lacked setup, say so explicitly.
+
 ---
 
 ### Phase 4 — Readability & Robustness Audit
@@ -120,7 +140,7 @@ After writing, read the code as a new engineer with zero context. Answer these:
 
 For any "no" or weak answer, refactor or add a `// CLARITY:` annotation explaining what the code does and why.
 
-#### F. Module README & Architecture Design Audit
+#### G. Module README & Architecture Design Audit
 For any module directory created or modified, you must ensure it has an up-to-date, high-quality `README.md` documenting its architecture, responsibility, public interface, and behavior:
 - **Create**: If the module directory has no `README.md`, create it immediately.
 - **Update**: If the changes modify the module's public interface, internal logic flow, dependencies, or core responsibility, update the directory's `README.md`.
@@ -171,7 +191,8 @@ The skill's output is working code that satisfies:
 - [ ] SOLID & Clean Architecture check passed or debt documented (Phase 2)
 - [ ] Code follows naming, structure, and traceability rules from `rules/code-quality.md` (Phase 3)
 - [ ] Code is robust, pure where possible, and strictly typed (Phase 3 A-D)
+- [ ] Relevant formatter, linter, type-check, dependency/security scans were run via repo-native commands or documented ecosystem-native runners, or exact fallback commands were provided when setup was missing (Phase 3.F)
 - [ ] Ambiguous edge cases were escalated or clarified; no invented semantic fallbacks were shipped
 - [ ] Readability & Robustness audit passed or CLARITY annotations added (Phase 4)
-- [ ] Module README.md is created or updated to reflect the architecture design and public interfaces (Phase 4.F)
+- [ ] Module README.md is created or updated to reflect the architecture design and public interfaces (Phase 4.G)
 - [ ] Tech Debt Inventory produced (Phase 5, even if empty)
