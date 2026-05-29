@@ -407,7 +407,7 @@
   },
   "experimental": {
     "batch_tool": true,
-    "codebase_search": true,
+    "codebase_search": false,
     "semantic_indexing": false,
     "agent_manager_tool": true,
     "openTelemetry": true
