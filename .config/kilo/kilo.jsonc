@@ -40,15 +40,15 @@
       },
     },
     "plan": {
-      "model": "github-copilot/gpt-5.4",
-      //"model": "openai/gpt-5.4",
+      //"model": "github-copilot/gpt-5.4",
+      "model": "openai/gpt-5.4",
       "options": {
         "reasoningEffort": "xhigh",
       },
     },
     "code": {
-      "model": "github-copilot/gpt-5.4-mini",
-      //"model": "openai/gpt-5.4",
+      //"model": "github-copilot/gpt-5.4-mini",
+      "model": "openai/gpt-5.4",
       //"model": "llm-gw/deepseek/deepseek-v4-pro",
       "options": {
         "reasoningEffort": "xhigh",
@@ -187,6 +187,38 @@
             "output": 32768,
           },
         },
+        "mimo-v2.5-pro": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1048576,
+            "output": 131072,
+          },
+        },
+        "mimo-v2.5": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+              "audio",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1048576,
+            "output": 131072,
+          },
+        },
         "deepseek/deepseek-v4-pro": {
           "modalities": {
             "input": [
@@ -309,6 +341,7 @@
       "git stash list *": "allow",
       "git grep *": "allow",
       "git ls-tree *": "allow",
+      "git rev-parse *": "allow",
       "gh auth status *": "allow",
       "gh release list *": "allow",
       "gh run list *": "allow",
@@ -381,7 +414,9 @@
       "cmp *": "allow",
       "mktemp *": "allow",
       "lsof *": "allow",
-      "git rev-parse *": "allow",
+      "pgrep *": "allow",
+      "ss *": "allow",
+      "fuser *": "allow",
     },
     "recall": {
       "search": "allow"
@@ -410,6 +445,6 @@
     "codebase_search": false,
     "semantic_indexing": false,
     "agent_manager_tool": true,
-    "openTelemetry": true
+    "openTelemetry": false
   },
 }
