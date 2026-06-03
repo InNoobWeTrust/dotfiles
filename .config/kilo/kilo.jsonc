@@ -33,8 +33,8 @@
       "model": "github-copilot/claude-sonnet-4.5",
     },
     "ask": {
-      //"model": "kilo/stepfun/step-3.5-flash:free",
-      "model": "kilo/deepseek/deepseek-v4-flash:free",
+      "hidden": true,
+      "model": "kilo/kilo-auto/free",
     },
     "plan": {
       //"model": "github-copilot/gpt-5.4",
@@ -97,21 +97,6 @@
             "output": 16384
           },
         },
-        "openai/chatgpt-5.4-mini": {
-          "modalities": {
-            "input": [
-              "text",
-              "image"
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 400000,
-            "output": 8192
-          },
-        },
       }
     },
     "llm-gw": {
@@ -124,42 +109,6 @@
         "LLM_GATEWAY_API_KEY"
       ],
       "models": {
-        "google/gemini-3.5-flash": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
-              "audio",
-              "pdf",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1048576,
-            "output": 65536,
-          },
-        },
-        "google/gemini-3.1-flash-lite": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
-              "audio",
-              "pdf",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1048576,
-            "output": 65536,
-          },
-        },
         "kCode": {
           "modalities": {
             "input": [
@@ -247,60 +196,88 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
-        // ── Anthropic Claude ─────────────────────────────────────────
-        // claude-sonnet-4-5: SKIP — superseded by 4.6 at same price
-        // claude-3-x series: SKIP — all retired early 2026
-        "claude-sonnet-4-6": {
-          "name": "Claude Sonnet 4.6 [balanced]",
+        "qwen3-coder-480b-a35b-instruct": {
           "modalities": {
             "input": [
               "text",
-              "image"
             ],
             "output": [
               "text"
             ]
           },
           "limit": {
-            "context": 900000,
-            "output": 16000
+            "context": 200000,
+            "output": 16000,
           },
         },
-        "claude-haiku-4-5": {
-          "name": "Claude Haiku 4.5 [fast]",
+        "qwen3-coder-next": {
           "modalities": {
             "input": [
               "text",
-              "image"
             ],
             "output": [
               "text"
             ]
           },
           "limit": {
-            "context": 180000,
-            "output": 8192
+            "context": 200000,
+            "output": 16000,
           },
         },
-        // ── OpenAI GPT ────────────────────────────────────────────────
-        // gpt-5.3-codex: SKIP — no official source; likely fake broker ID
-        // gpt-5.2: SKIP — redundant between 5.1 and 5.4
-        // gpt-5, gpt-5-mini: SKIP — superseded by 5.1+
-        // gpt-4.1, gpt-4.1-mini, gpt-4.1-nano, gpt-4o, gpt-4o-mini: SKIP — RETIRED Feb 13 2026
+        "kimi-k2.6": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 200000,
+            "output": 16000,
+          },
+        },
+        "grok-4.3": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 200000,
+            "output": 16000,
+          },
+        },
+        "deepseek-v4-pro": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 200000,
+            "output": 16000,
+          },
+        },
         "gpt-5.4": {
-          "name": "GPT-5.4 [balanced]",
           "modalities": {
             "input": [
               "text",
-              "image"
             ],
             "output": [
               "text"
             ]
           },
           "limit": {
-            "context": 1000000,
-            "output": 16384
+            "context": 200000,
+            "output": 16000,
           },
         },
       },
