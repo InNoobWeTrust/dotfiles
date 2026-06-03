@@ -35,30 +35,18 @@
     "ask": {
       //"model": "kilo/stepfun/step-3.5-flash:free",
       "model": "kilo/deepseek/deepseek-v4-flash:free",
-      "options": {
-        "reasoningEffort": "high",
-      },
     },
     "plan": {
       //"model": "github-copilot/gpt-5.4",
       "model": "openai/gpt-5.4",
-      "options": {
-        "reasoningEffort": "xhigh",
-      },
     },
     "code": {
       //"model": "github-copilot/gpt-5.4-mini",
       "model": "openai/gpt-5.4-mini",
       //"model": "llm-gw/deepseek/deepseek-v4-pro",
-      "options": {
-        "reasoningEffort": "xhigh",
-      },
     },
     "debug": {
       "model": "github-copilot/claude-sonnet-4.6",
-      "options": {
-        "reasoningEffort": "high",
-      },
     },
   },
   "mcp": {
