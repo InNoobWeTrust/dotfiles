@@ -28,9 +28,6 @@ export CONF_SH_DIR="$HOME/.sh.d"
 # Lazy-load x-cmd to improve startup time (defer until 'x' command is first used)
 [ -r "$CONF_SH_DIR/x-cmd-lazy.sh" ] && . "$CONF_SH_DIR/x-cmd-lazy.sh"
 
-# Lazy-load starship prompt (use 'ss' to initialize)
-[ -r "$CONF_SH_DIR/starship-lazy.sh" ] && . "$CONF_SH_DIR/starship-lazy.sh"
-
 usable complete && complete -cf sudo
 
 # Expand aliases on non-interactive shell too
