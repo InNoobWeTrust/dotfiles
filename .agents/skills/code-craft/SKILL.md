@@ -40,6 +40,7 @@ Interface sign-off: [yes / no — has the user approved the interface signature?
 Module README   : [yes / no / updated — does the module have a README.md or will it be created/updated in this task?]
 Dependencies    : [list each import/dependency this unit will have]
 Quality tools   : [repo-native verify commands first; otherwise list exact runner+tool commands, including any package/binary mismatch handling]
+Complexity guard: [which metric/rule will catch spaghetti risk here: cyclomatic/cognitive complexity, nesting depth, function length, duplication, maintainability index, or N/A]
 Isolation test  : [yes / no — can this unit be tested without mocking the whole world?]
 Error budget    : [what can fail here (IO, API, DB) and how is it handled / isolated?]
 Failure contract: [for each failure mode, exact caller-visible behavior: retry, mapped error, partial result, or stop]
@@ -70,6 +71,7 @@ Run this check after Phase 1, before writing code:
 | **YAGNI** (You Aren't Gonna Need It) | Did you strip out all speculative structures, "future-proofing" boilerplate, or unused parameters? | ☐ |
 | **Separation of Concerns** | Is the core logic 100% free of web frameworks, HTTP protocols, databases, or filesystem details? | ☐ |
 | **Deep Module** | Is the module's public interface highly simplified while hiding substantial internal complexity? (Interface Complexity << Implementation Complexity) | ☐ |
+| **Complexity Budget** | Would a complexity/smell tool likely flag this unit for high branching, nesting, duplication, parameter count, or function length? If yes, split or redesign it before shipping. | ☐ |
 
 **Any unchecked item must either be fixed or documented as explicit accepted debt** with a `// TODO(debt):` comment.
 
@@ -108,19 +110,27 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 
 #### F. Quality Tooling Pass
 - **Prefer Repo-Native Commands:** Discover and use the repo's existing verification entrypoints first: project scripts, `Makefile`/`justfile`, `tox`/`nox`, `pre-commit`, CI jobs, or documented contributor workflows. These encode the team's actual policy and should win over ad hoc commands.
-- **Run the Relevant Set:** For the files and language you touched, run the formatter, linter, type checker, dependency audit, and/or security scan that materially validates the change. Do not run tools just to create noise.
+- **Run the Relevant Set:** For the files and language you touched, run the formatter, linter, type checker, complexity/maintainability checks, duplication checks when warranted, and dependency audit and/or security scan that materially validate the change. Do not run tools just to create noise.
 - **Use Mainstream Ecosystem Runners When Setup Is Missing:** If the repo lacks a local install or wrapper, prefer widely used, officially documented ephemeral runners for that ecosystem:
   - JavaScript / TypeScript: `npm exec` / `npx`, `pnpm dlx` / `pnx`, `yarn dlx`, `bunx`
   - Python tools: `uvx` (`uv tool run`) for isolated tool execution; `uv run` or `uv run --with <package>` when the tool must run against the project environment
 - **Treat `pkgx` and `x-cmd` as Optional Fallbacks:** They can be useful local runners, but they are not the default industry recommendation unless the repo, environment, or user already prefers them.
 - **Use Exact Doc-Backed Invocation Patterns:** If the package name and binary name differ, use the runner's explicit package-selection flag instead of assuming name inference. Examples: `npm exec --package=typescript -- tsc --noEmit`, `bunx -p typescript tsc --noEmit`, `pnpm dlx --package typescript tsc --noEmit`, `yarn dlx -p typescript tsc --noEmit`.
+- **Trigger Complexity Checks on Branch-Heavy Logic:** If you touched parsers, validators, reducers, state machines, policy engines, switch/match-heavy code, nested loops/conditionals, or long data-mapping functions, run an explicit complexity/smell check or document why no suitable check applies.
 - **Choose Tools by Ecosystem and Signal:** Common defaults when relevant:
   - JavaScript / TypeScript: ESLint, Prettier, `tsc --noEmit`, `npm audit`
+  - JavaScript / TypeScript complexity/smells: ESLint core rules such as `complexity`, `max-depth`, `max-lines-per-function`, `max-params`, `max-statements`; if the repo already uses SonarJS / SonarLint, include cognitive-complexity and duplicate-branch/function rules there as well
   - Python: Ruff (`ruff check`, `ruff format --check`), the repo's configured type checker, `pip-audit`
+  - Python complexity/smells: Ruff or Flake8 McCabe `C901` when configured; otherwise `radon cc` for cyclomatic complexity, `radon mi` for maintainability index, and `xenon` when the repo wants fail-on-threshold enforcement
+  - Go complexity/smells: the repo's `golangci-lint` complexity/design rules when configured; otherwise `gocyclo -over 15 ./...`
+  - JVM complexity/smells: the repo's Checkstyle or PMD cyclomatic/design rules when configured
   - Shell: ShellCheck, `shfmt`
+  - Cross-language duplication: `jscpd` or PMD CPD when copy/paste drift is a realistic risk for the touched area
   - Cross-language security / pattern scanning: Semgrep when configured or clearly useful for the touched surface
-- **Keep Tool Semantics Straight:** Dependency audits, static analysis, formatting, and type checking answer different questions. Do not claim one category substitutes for another. Example: `npm audit` checks dependency vulnerabilities, while Semgrep scans source patterns; `ruff format` formats code, while `ruff check` handles lint rules and import sorting.
-- **Example Official CLI Patterns:** `npx eslint .`, `npx prettier . --check`, `uvx ruff check .`, `uvx ruff format --check .`, `uvx pip-audit -r requirements.txt`, `semgrep scan --config p/default .`.
+- **Prefer Existing Rule Sets Over One-Off Installs:** If the repo already carries ESLint, Ruff, golangci-lint, Checkstyle, PMD, Sonar, or pre-commit wiring, extend and run that. Only reach for standalone fallbacks when the existing toolchain has no maintainability signal for the touched language.
+- **Use Temporary Default Thresholds Only When the Repo Has None:** Prefer the repository's configured limits. If you must choose a one-off baseline, start around cyclomatic complexity <= 10-15 per function, nesting <= 3-4, maintainability >= B, and duplication < 5%, then tighten only with evidence.
+- **Keep Tool Semantics Straight:** Dependency audits, static analysis, formatting, type checking, complexity metrics, and duplication scans answer different questions. Do not claim one category substitutes for another. Example: `npm audit` checks dependency vulnerabilities, Semgrep scans source patterns, `ruff format` formats code, `ruff check` handles lint rules and import sorting, and `radon cc` or ESLint complexity rules expose branchy code that may still be type-safe.
+- **Example Official CLI Patterns:** `npx eslint .`, `npx prettier . --check`, `uvx ruff check .`, `uvx ruff format --check .`, `uvx radon cc src -s -a`, `uvx radon mi src -s`, `uvx xenon --max-absolute B --max-modules A --max-average A src`, `npx jscpd src --min-lines 5 --min-tokens 50 --threshold 5`, `uvx pip-audit -r requirements.txt`, `semgrep scan --config p/default .`.
 - **Fix or Account for Findings:** Do not ignore tool output. Resolve issues introduced by your change. If a tool surfaces unrelated pre-existing problems outside the agreed scope, leave them untouched but document them as accepted debt when they materially affect your edited path.
 - **Do Not Install Permanent Tooling for a One-Off Check:** Avoid adding devDependencies or project config solely to validate a single task unless the user explicitly asked to establish that tooling permanently.
 - **Deliverable requirement:** Post the repo-native commands you ran, or the exact fallback commands you recommend, and summarize the results. If you only suggested commands because the repo lacked setup, say so explicitly.
@@ -137,6 +147,7 @@ After writing, read the code as a new engineer with zero context. Answer these:
 4. **Error path** — Is the failure path as readable and explicit as the happy path?
 5. **Resilience** — What happens if the filesystem is full, a database connection drops, or a network request times out?
 6. **Ambiguity handling** — For every fallback or error mapping, can a reviewer tell why this behavior is correct and when execution escalates instead?
+7. **Metric smell** — Did any complexity, maintainability, or duplication check flag this unit, and if so, did you refactor or explicitly record the debt?
 
 For any "no" or weak answer, refactor or add a `// CLARITY:` annotation explaining what the code does and why.
 
@@ -191,7 +202,7 @@ The skill's output is working code that satisfies:
 - [ ] SOLID & Clean Architecture check passed or debt documented (Phase 2)
 - [ ] Code follows naming, structure, and traceability rules from `rules/code-quality.md` (Phase 3)
 - [ ] Code is robust, pure where possible, and strictly typed (Phase 3 A-D)
-- [ ] Relevant formatter, linter, type-check, dependency/security scans were run via repo-native commands or documented ecosystem-native runners, or exact fallback commands were provided when setup was missing (Phase 3.F)
+- [ ] Relevant formatter, linter, type-check, complexity/maintainability, duplication (when warranted), and dependency/security scans were run via repo-native commands or documented ecosystem-native runners, or exact fallback commands were provided when setup was missing (Phase 3.F)
 - [ ] Ambiguous edge cases were escalated or clarified; no invented semantic fallbacks were shipped
 - [ ] Readability & Robustness audit passed or CLARITY annotations added (Phase 4)
 - [ ] Module README.md is created or updated to reflect the architecture design and public interfaces (Phase 4.G)
