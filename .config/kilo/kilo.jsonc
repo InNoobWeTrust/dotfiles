@@ -170,6 +170,22 @@
             "output": 384000,
           },
         },
+        "MiniMax-M3": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 52288,
+            "output": 512000,
+          },
+        },
         "deepseek/deepseek-v4-flash": {
           "modalities": {
             "input": [
