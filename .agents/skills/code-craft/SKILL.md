@@ -36,6 +36,7 @@ Responsibility  : [one sentence — what it does, using no "and"]
 Caller interface: [what callers pass in → what they get back]
 Glossary Sync   : [yes / no — did you verify all naming against the project's GLOSSARY.md?]
 Interface contract: [exact type signature, abstract contract, or API schema definition]
+Docstring Spec  : [yes / no — does the interface signature have compliant docstrings?]
 Interface sign-off: [yes / no — has the user approved the interface signature?]
 Module README   : [yes / no / updated — does the module have a README.md or will it be created/updated in this task?]
 Dependencies    : [list each import/dependency this unit will have]
@@ -68,6 +69,8 @@ Run this check after Phase 1, before writing code:
 | **L** — Liskov Substitution | If inheritance: does any override add preconditions or weaken postconditions? If no inheritance: N/A (✓). | ☐ |
 | **I** — Interface Segregation | Is the public interface the minimum callers actually need? No bloated interfaces. | ☐ |
 | **D** — Dependency Inversion | Does this unit depend on abstractions (interfaces, protocols), not concrete implementations? | ☐ |
+| **Docstrings** | Are all public interfaces, classes, and exported methods documented with compliant docstrings? | ☐ |
+| **Deep Abstraction** | Are we avoiding shallow, one-line helper functions that add indirection without hiding complexity? | ☐ |
 | **YAGNI** (You Aren't Gonna Need It) | Did you strip out all speculative structures, "future-proofing" boilerplate, or unused parameters? | ☐ |
 | **Separation of Concerns** | Is the core logic 100% free of web frameworks, HTTP protocols, databases, or filesystem details? | ☐ |
 | **Deep Module** | Is the module's public interface highly simplified while hiding substantial internal complexity? (Interface Complexity << Implementation Complexity) | ☐ |
@@ -135,6 +138,18 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 - **Do Not Install Permanent Tooling for a One-Off Check:** Avoid adding devDependencies or project config solely to validate a single task unless the user explicitly asked to establish that tooling permanently.
 - **Deliverable requirement:** Post the repo-native commands you ran, or the exact fallback commands you recommend, and summarize the results. If you only suggested commands because the repo lacked setup, say so explicitly.
 
+#### G. Docstring & API Documentation Standards
+All new or modified public modules, classes, functions, and interfaces MUST include detailed docstrings conforming to ecosystem standards:
+- **TypeScript / JavaScript**: Use JSDoc (`/** ... */`) specifying parameters (`@param`), return values (`@returns`), and thrown errors (`@throws`).
+- **Python**: Use PEP 257 docstrings (triple quotes) detailing arguments (`Args:`), return types (`Returns:`), and exceptions raised (`Raises:`).
+- **Go**: Standard Go doc comments directly preceding the declaration.
+- **Content**: The docstring must state *what* the unit does, its invariants, its input preconditions, output postconditions, and all potential side effects or errors.
+
+#### H. Abstraction & Boundary Rules (Avoiding Shallow Helpers)
+- **The Abstraction Ratio**: Only extract a function if `Interface Complexity < Implementation Complexity`. Do not extract 1-to-3-line helpers that simply wrap standard operations or lookups.
+- **Inline Registry/Mapping Calculations**: Keep lookups, mapping matrices, and registry computations inline using clean, declarative structures (like mapping tables or inline dictionaries) rather than scattering them across single-line helper functions.
+- **Single-Use Helpers**: Avoid creating private helpers that are only called once unless they reduce deep nesting or isolate a heavy, self-contained algorithm. Keep linear code linear.
+
 ---
 
 ### Phase 4 — Readability & Robustness Audit
@@ -148,10 +163,12 @@ After writing, read the code as a new engineer with zero context. Answer these:
 5. **Resilience** — What happens if the filesystem is full, a database connection drops, or a network request times out?
 6. **Ambiguity handling** — For every fallback or error mapping, can a reviewer tell why this behavior is correct and when execution escalates instead?
 7. **Metric smell** — Did any complexity, maintainability, or duplication check flag this unit, and if so, did you refactor or explicitly record the debt?
+8. **Docstring Check** — Do all public declarations have complete and accurate docstrings detailing inputs, outputs, errors, and side effects?
+9. **Abstraction Boundary** — Are all helper functions deep modules? Did we inline any shallow, single-use, or trivial logic to maintain flow readability?
 
 For any "no" or weak answer, refactor or add a `// CLARITY:` annotation explaining what the code does and why.
 
-#### G. Module README & Architecture Design Audit
+#### I. Module README & Architecture Design Audit
 For any module directory created or modified, you must ensure it has an up-to-date, high-quality `README.md` documenting its architecture, responsibility, public interface, and behavior:
 - **Create**: If the module directory has no `README.md`, create it immediately.
 - **Update**: If the changes modify the module's public interface, internal logic flow, dependencies, or core responsibility, update the directory's `README.md`.
@@ -188,6 +205,7 @@ These are the most common agent lazy-path shortcuts. Recognize and refuse them:
 | "I'll copy this logic here — it's only used twice" | Creates divergence; the copies will drift | Extract to a named shared function now |
 | "I'll use a dict/map here — it's flexible" | Hides structure; readers cannot see what fields exist | Use a typed struct, dataclass, or interface |
 | "The function is getting long but it all belongs together" | No function "belongs together" at 80 lines | Extract named sub-functions at logical boundaries |
+| "I'll extract this 2-line calculation/lookup into a helper function to keep the caller extremely short" | Creates shallow, single-use methods that increase indirection and cognitive load, scattering cohesive logic | Keep simple calculations and registry mappings inline and self-documenting |
 | "I'll put the business rule in the controller/handler" | Mixes layers; makes business logic untestable in isolation | Extract to a domain service |
 | "I'll use a global flag to coordinate these modules" | Introduces invisible coupling and ordering dependency | Use explicit dependency injection or event passing |
 | "I'll return `[]` / `null` / `false` here so callers don't break" | Hides contract ambiguity and turns real failure into fake success | Surface a typed/domain error or ask the user to define the expected behavior |
@@ -202,8 +220,10 @@ The skill's output is working code that satisfies:
 - [ ] SOLID & Clean Architecture check passed or debt documented (Phase 2)
 - [ ] Code follows naming, structure, and traceability rules from `rules/code-quality.md` (Phase 3)
 - [ ] Code is robust, pure where possible, and strictly typed (Phase 3 A-D)
+- [ ] Docstrings were written for all new/modified public interfaces, classes, and exported functions (Phase 3.G)
+- [ ] Abstraction boundaries were validated; shallow/trivial helper functions were avoided or inlined (Phase 3.H)
 - [ ] Relevant formatter, linter, type-check, complexity/maintainability, duplication (when warranted), and dependency/security scans were run via repo-native commands or documented ecosystem-native runners, or exact fallback commands were provided when setup was missing (Phase 3.F)
 - [ ] Ambiguous edge cases were escalated or clarified; no invented semantic fallbacks were shipped
 - [ ] Readability & Robustness audit passed or CLARITY annotations added (Phase 4)
-- [ ] Module README.md is created or updated to reflect the architecture design and public interfaces (Phase 4.G)
+- [ ] Module README.md is created or updated to reflect the architecture design and public interfaces (Phase 4.I)
 - [ ] Tech Debt Inventory produced (Phase 5, even if empty)

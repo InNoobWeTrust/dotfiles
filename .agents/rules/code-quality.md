@@ -37,6 +37,7 @@ Before writing any new function, class, or module, answer all seven questions. I
 - **Max 3 levels of nesting.** If logic would require a 4th level, extract an inner block to a named function.
 - **Guard clauses at the top.** Return early or throw early. Do not put the happy path inside an `else`.
 - **Functions ≤ 50 lines of logic** (excluding pure declarations, type annotations, comments, and blank lines). If longer due to logic, add a `// WHY: not extracted — [reason]` comment and extract at the next opportunity.
+- **Deep Modules & Inlining Over-Abstraction.** Do not extract 1-3 line functions that only add indirection. Keep registry logic, mapping dictionaries, and simple computations inline to maintain cohesive readability.
 - **One public export per file** when the language and framework allow it. Co-locate private helpers in the same file; move shared helpers to a named shared module.
 - **Deep Modules over Shallow Modules.** Avoid scattering logic across tiny, fragmented helper files that expose all their implementation details. Combine related logic into unified, deep modules with clean APIs to reduce cognitive overhead for both humans and AI.
   *   *Example (Shallow Module Anti-Pattern)*: Exposes all internals, requiring callers to do heavy coordination:
@@ -127,6 +128,17 @@ Every distinct module or component directory must contain a `README.md` document
    - **Dependencies**: Coupling to external systems, libraries, or other internal modules.
    - **Resilience & Errors**: Error handling strategy, escalation rules, boundaries, and any contract-approved fallbacks.
 
+## Required Docstring and API Documentation
+
+All public APIs, classes, exported interfaces, and functions MUST have a comprehensive docstring preceding their definition.
+
+* **Format**: Use the ecosystem standard (e.g. JSDoc for TS/JS, PEP 257 for Python, Go doc comments for Go).
+* **Requirements**:
+  - A clear one-line summary of what it does.
+  - Argument names, types (if not compiler-enforced), and descriptive roles.
+  - Return value descriptions.
+  - Detail on errors, exceptions, or failure modes (e.g. `@throws` in JSDoc, `Raises` in Python).
+
 ---
 
 ## Prohibited Patterns (Hard Stop)
@@ -145,3 +157,5 @@ Do NOT write code that violates these:
 | Mixing layers | Business logic inside framework callbacks (controllers, handlers, views) |
 | Extend-by-parameter | Adding yet another parameter to grow a function's behavior — use composition |
 | Guessing through ambiguity | Choosing a business rule for an unclear edge case instead of asking the user or surfacing a typed/domain error |
+| Undocumented public units | Exported/public classes, interfaces, methods, or functions without docstrings conforming to ecosystem standards |
+| Shallow helper over-extraction | Extracting 1-3 line helper functions that add indirection without hiding complexity (e.g., trivial calculations, registry mappings) |
