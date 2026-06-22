@@ -20,7 +20,7 @@ ___x_cmd_lazy_load() {
 # Create a lazy alias for the x command
 alias x='___x_cmd_lazy_load'
 # Create a lazy alias for x starship
-alias ss='x starship use gruvbox-rainbow'
+alias x-starship='x starship use gruvbox-rainbow'
 
 # Also lazy-load x-cmd if it was already sourced at startup
 # This handles the case where .bashrc sources x-cmd directly
