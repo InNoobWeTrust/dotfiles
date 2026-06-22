@@ -99,6 +99,9 @@ done
 
 PUBKEY=$(cat "$PUBKEY_FILE")
 [ -z "$PUBKEY" ] && die "Public key file is empty: $PUBKEY_FILE"
+# Base64-encode so the key survives SSH's argument flattening (SSH joins all
+# args into one shell string; spaces in the key would split it into extra $4/$5).
+PUBKEY_B64=$(printf '%s' "$PUBKEY" | base64 | tr -d '\n')
 
 # Prompt for password if not provided
 if [ -z "$PASSWORD" ]; then
@@ -137,12 +140,13 @@ success "SSH connection verified."
 # ── Run remote provisioning ────────────────────────────────────────────────────
 info "Provisioning user '${USERNAME}' on ${REMOTE_HOST} ..."
 
-ssh_base "root@${REMOTE_HOST}" sh -s -- "$USERNAME" "$PASSWORD" "$PUBKEY" <<'REMOTE_SCRIPT'
+ssh_base "root@${REMOTE_HOST}" sh -s -- "$USERNAME" "$PASSWORD" "$PUBKEY_B64" <<'REMOTE_SCRIPT'
 set -eu
 
 USERNAME="$1"
 PASSWORD="$2"
-PUBKEY="$3"
+# Decode the base64-encoded public key (was encoded to survive SSH arg flattening)
+PUBKEY=$(printf '%s' "$3" | base64 -d)
 
 # ── Create user ─────────────────────────────────────────────────────────────
 if id "$USERNAME" >/dev/null 2>&1; then
