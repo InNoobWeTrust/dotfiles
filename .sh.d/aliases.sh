@@ -111,8 +111,8 @@ usable docker && \
         alias theia-docker='docker run --name theia -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
         # Full VsCode over browser
         alias code-server-docker='docker run --name code-server -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
-        # Postman alike interminal
-    alias atac-docker='docker run --name atac --rm -it -v ${PWD}:/app juliencaposiena/atac'
+        # Postman alike in terminal
+        alias atac-docker='docker run --name atac --rm -it -v ${PWD}:/app juliencaposiena/atac'
         # Swagger api documentation generator
         alias swagger-docker='docker run --name swagger --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
         # MongoDB
@@ -135,6 +135,8 @@ usable docker && \
         alias gitleaks-docker='docker run -v "$(realpath .):/$(basename $(realpath .))" zricethezav/gitleaks:latest "dir" "/$(basename $(realpath .))" "-v"'
         # Docling-serve
         alias docling-docker='docker run --rm -it --name docling-serve -p 5001:5001 -e DOCLING_SERVE_ENABLE_UI=1 quay.io/docling-project/docling-serve'
+        # LLM compression proxy
+        alias headroom-docker='HEADROOM_CODE_AWARE_ENABLED=1 docker run -p 8787:8787 ghcr.io/chopratejas/headroom:code-slim-nonroot'
         # Cleanup docker data and cache
         alias docker-cleanup='yes | docker system prune -a --volumes && yes | docker builder prune -a'
     }

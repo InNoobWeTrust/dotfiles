@@ -21,6 +21,7 @@ Use this index before loading any skill body. Select one primary skill by defaul
 | `model-benchmarking` | low | **LLM selection, cost optimization, ELO auditing, and provider catalog analysis.** When configuring model suites or selecting cost-effective task nodes. | General non-LLM pricing or cost questions |
 | `session-handoff` | low | **Session context saving, restorations, branch transitions, and context checkpoints.** When preparing to exit a session or restoring progress. | Simple short tasks with no need for state checkpointing |
 | `multi-perspective-deliberation` | low | **Persona debates, pre-mortem challenges, design stress-testing, and strategy deliberation.** Runs concurrent subagents if supported or simulated context dialogues. | Straightforward mechanical tasks or simple direct fixes |
+| `subagent-dispatch` | low | **Any background worker or external node delegation.** Constructs a delegation prompt that injects scope, structured output, obstacle reporting, and allowed-action constraints directly into the input — compensating for generic subagent descriptions. | You have full control over the subagent's system prompt and description |
 
 ## Routing Rules
 

@@ -257,7 +257,7 @@ Fill in these sections, keeping each brief:
 ## Phase 4 — Challenge & Validate
 
 Before committing to a solution, apply the adversarial self-challenge protocol
-from the `reviewer` skill's `references/adversarial.md` (Mode 2: Self-Challenge). This means:
+from the `reviewer` skill's `references/sub-reviewers/adversarial.md` (Mode 2: Self-Challenge). This means:
 running a pre-mortem, challenging across all attack vectors, and surfacing
 tensions inline.
 

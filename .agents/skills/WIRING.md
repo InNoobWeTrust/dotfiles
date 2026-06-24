@@ -47,6 +47,13 @@ When debugging or fixing a problem:
 4. `systematic-investigation` — if the loop hits oscillation or verifier failures
 5. `reviewer` (security lens) — for auth, dependency, secrets, or network-facing work before AFK mode
 
+### Subagent Delegation
+
+Any time a background worker or external node is launched (regardless of harness API):
+
+1. `subagent-dispatch` — construct the structured delegation prompt (scope, output contract, allowed actions, stop conditions)
+2. harness worker or `external-subagent` — launch the node
+
 ---
 
 ## Handoff Points
@@ -73,6 +80,9 @@ Natural transitions between skills:
 | Any skill | `session-handoff` | "Handoff requested, serializing context and saving progress" |
 | `session-handoff` | Any skill | "Session restored, resuming active work" |
 | Any implementation skill | `reviewer` | "Review my work" |
+| `subagent-dispatch` | `external-subagent` | "Prompt constructed, delegating one bounded node to swarminator" |
+| `subagent-dispatch` | `swarm-intelligence` | "Prompt constructed, task requires multi-node orchestration" |
+| `multi-perspective-deliberation` | `subagent-dispatch` | "Launching background workers for persona simulation" |
 
 ---
 
@@ -84,7 +94,7 @@ skill.
 
 | Reviewer Sub-Lens | Derived From | Relationship |
 |---|---|---|
-| `reviewer/references/design-rigor.md` | `code-craft`, `systematic-investigation` | Reviews whether design discipline and investigation rigor were applied |
+| `reviewer/references/sub-reviewers/design-rigor.md` | `code-craft`, `systematic-investigation` | Reviews whether design discipline and investigation rigor were applied |
 
 ---
 

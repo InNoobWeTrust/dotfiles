@@ -238,7 +238,7 @@ drift.
 
 For document-type artifacts (design docs, specs, runbooks, guidelines,
 instructional content), apply the additional vectors in
-`references/doc-attack-vectors.md`. These cover: Single Source of Truth,
+`references/sub-reviewers/doc-attack-vectors.md`. These cover: Single Source of Truth,
 Context Fitness, Codebase Consistency, Magic Numbers, Delegation vs.
 Restatement, and Staleness Risk.
 
