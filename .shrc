@@ -23,6 +23,10 @@ export CONF_SH_DIR="$HOME/.sh.d"
 # shellcheck source=.sh.d/completion.sh
 [ -r "$CONF_SH_DIR/completion.sh" ] && . "$CONF_SH_DIR/completion.sh"
 
+# Alias definitions.
+# shellcheck source=.sh.d/aliases.sh
+[ -r "$CONF_SH_DIR/aliases.sh" ] && . "$CONF_SH_DIR/aliases.sh"
+
 [ -n "$DISPLAY" ] && usable xhost && xhost +local:root > /dev/null 2>&1
 
 # Lazy-load x-cmd to improve startup time (defer until 'x' command is first used)
@@ -32,10 +36,6 @@ usable complete && complete -cf sudo
 
 # Expand aliases on non-interactive shell too
 usable shopt && shopt -s expand_aliases
-
-# Alias definitions.
-# shellcheck source=.sh.d/aliases.sh
-[ -r "$CONF_SH_DIR/aliases.sh" ] && . "$CONF_SH_DIR/aliases.sh"
 
 # Platform-aware definitions (WSL, CYGWIN,...).
 for f in "$CONF_SH_DIR"/platform_*.sh; do

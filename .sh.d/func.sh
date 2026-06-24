@@ -17,6 +17,9 @@ usable() {
     if command -v "$1" >/dev/null 2>&1; then
         __USABLE_HIT_CMDS="${__USABLE_HIT_CMDS-} $1"
         return 0
+    elif which "$1" >/dev/null 2>&1; then
+        __USABLE_HIT_CMDS="${__USABLE_HIT_CMDS-} $1"
+        return 0
     fi
 
     __USABLE_MISS_CMDS="${__USABLE_MISS_CMDS-} $1"
@@ -28,6 +31,10 @@ usable() {
 # # usage: usable_batch cmd1 cmd2 cmd3 ...
 # # Sets __USABLE_BATCH_RESULTS with space-separated "cmd:0" (found) or "cmd:1" (not found)
 usable_batch() {
+    # Reset cached results
+    __USABLE_HIT_CMDS=""
+    __USABLE_MISS_CMDS=""
+    # Combined results
     __USABLE_BATCH_RESULTS=""
     for cmd in "$@"; do
         if usable "$cmd"; then

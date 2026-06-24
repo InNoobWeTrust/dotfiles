@@ -14,6 +14,8 @@ ___x_cmd_lazy_load() {
         [ ! -f "$HOME/.x-cmd.root/X" ] || . "$HOME/.x-cmd.root/X"
         # Re-execute with original arguments
         x "$@"
+        # Reload aliases as tools are available
+        [ -r "$CONF_SH_DIR/aliases.sh" ] && . "$CONF_SH_DIR/aliases.sh"
     fi
 }
 

@@ -220,6 +220,8 @@ usable npx && \
         ! usable remixd && alias remixd='npx --yes @remix-project/remixd'
         # Execute http files (http requests)
         ! usable httpyac && alias httpyac='npx --yes httpyac'
+        # http api client for opencollection format
+        ! usable bru && alias bru='npx --yes @usebruno/cli'
         # Serve live rendered markdown files
         ! usable markserv && alias markserv='npx --yes markserv'
         # Render markdown to html
@@ -233,8 +235,6 @@ usable npx && \
         ! usable mmx-cli && alias mmx-cli='npx --yes mmx-cli'
         # Copilot CLI
         ! usable copilot && alias copilot='npx --yes @github/copilot'
-        # Gemini-cli
-        ! usable gemini && alias gemini='npx --yes @google/gemini-cli'
         # Claude code
         ! usable claude && alias claude='npx --yes @anthropic-ai/claude-code'
         # OpenAI Codex
