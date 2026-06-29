@@ -76,10 +76,10 @@
       "name": "OpenAI Gateway",
       "npm": "@ai-sdk/openai",
       "options": {
-        "baseURL": "${LLM_GATEWAY_BASE_URL}/v1",
+        "baseURL": "${AI_GATEWAY_BASE_URL}/v1",
       },
       "env": [
-        "LLM_GATEWAY_API_KEY"
+        "AI_GATEWAY_API_KEY"
       ],
       "models": {
         "openai/chatbot-5.4": {
@@ -103,10 +103,10 @@
       "name": "Open-weight Models Gateway",
       "npm": "@ai-sdk/openai-compatible",
       "options": {
-        "baseURL": "${LLM_GATEWAY_BASE_URL}/v1",
+        "baseURL": "${AI_GATEWAY_BASE_URL}/v1",
       },
       "env": [
-        "LLM_GATEWAY_API_KEY"
+        "AI_GATEWAY_API_KEY"
       ],
       "models": {
         "kCode": {
