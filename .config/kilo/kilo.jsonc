@@ -218,7 +218,23 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
-        "mimo-v2.5-pro": {
+        "thanhnhan9023/kimi-2.7": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 256000,
+            "output": 65536,
+          },
+        },
+        "thanhnhan9023/deepseek-v4-pro": {
           "modalities": {
             "input": [
               "text",
@@ -228,22 +244,54 @@
             ]
           },
           "limit": {
-            "context": 1048576,
-            "output": 131072,
+            "context": 1000000,
+            "output": 384000,
           },
         },
-        "deepseek-v4-pro": {
+        "thanhnhan9023/glm-5.1": {
           "modalities": {
             "input": [
               "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 200000,
+            "output": 131072,
+          },
+        },
+        "gpt-5.4": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
             ],
             "output": [
               "text"
             ]
           },
           "limit": {
-            "context": 200000,
-            "output": 16000,
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
+        "claude-opus-4.8-coding": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 128000,
           },
         },
       },
