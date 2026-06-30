@@ -218,6 +218,20 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
+        "thanhnhan9023/glm-5.2": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 131072,
+          },
+        },
         "thanhnhan9023/kimi-2.7": {
           "modalities": {
             "input": [
