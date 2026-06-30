@@ -20,17 +20,20 @@
     //  "model": "kilo/stepfun/step-3.5-flash:free",
     //},
     "general": {
-      "model": "github-copilot/claude-sonnet-4.5",
+      //"model": "github-copilot/claude-sonnet-4.5",
+      "model": "oai-gw/openai/chatgpt-5.4-mini",
     },
     "explore": {
-      "model": "github-copilot/claude-haiku-4.5",
+      //"model": "github-copilot/claude-haiku-4.5",
+      "model": "oai-gw/openai/chatgpt-5.4-mini",
     },
     "build": {
       "model": "kilo/kilo-auto/free",
     },
     "orchestrator": {
       "hidden": true,
-      "model": "github-copilot/claude-sonnet-4.5",
+      //"model": "github-copilot/claude-sonnet-4.5",
+      "model": "kilo/kilo-auto/free",
     },
     "ask": {
       "hidden": true,
@@ -38,15 +41,18 @@
     },
     "plan": {
       //"model": "github-copilot/gpt-5.4",
-      "model": "github-copilot/gpt-5.4",
+      //"model": "github-copilot/gpt-5.4",
+      "model": "oai-gw/openai/chatbot-5.4",
     },
     "code": {
       //"model": "github-copilot/gpt-5.4-mini",
-      "model": "github-copilot/claude-sonnet-4.5",
+      //"model": "github-copilot/claude-sonnet-4.5",
       //"model": "llm-gw/deepseek/deepseek-v4-pro",
+      "model": "oai-gw/openai/chatbot-5.4",
     },
     "debug": {
-      "model": "github-copilot/claude-sonnet-4.6",
+      //"model": "github-copilot/claude-sonnet-4.6",
+      "model": "kilo/kilo-auto/free",
     },
   },
   "mcp": {
@@ -212,77 +218,21 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
-        "qwen3-coder-480b-a35b-instruct": {
+        "mimo-v2.5-pro": {
           "modalities": {
             "input": [
               "text",
             ],
             "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 200000,
-            "output": 16000,
-          },
-        },
-        "qwen3-coder-next": {
-          "modalities": {
-            "input": [
               "text",
-            ],
-            "output": [
-              "text"
             ]
           },
           "limit": {
-            "context": 200000,
-            "output": 16000,
-          },
-        },
-        "kimi-k2.6": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 200000,
-            "output": 16000,
-          },
-        },
-        "grok-4.3": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 200000,
-            "output": 16000,
+            "context": 1048576,
+            "output": 131072,
           },
         },
         "deepseek-v4-pro": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 200000,
-            "output": 16000,
-          },
-        },
-        "gpt-5.4": {
           "modalities": {
             "input": [
               "text",
@@ -423,9 +373,6 @@
   },
   "experimental": {
     "batch_tool": true,
-    "codebase_search": false,
-    "semantic_indexing": false,
-    "agent_manager_tool": true,
     "openTelemetry": false
   },
 }
