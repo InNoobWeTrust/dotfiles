@@ -100,7 +100,22 @@
           },
           "limit": {
             "context": 1000000,
-            "output": 16384
+            "output": 16384,
+          },
+        },
+        "openai/chatgpt-5.4-mini": {
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 400000,
+            "output": 128000,
           },
         },
       }
@@ -218,7 +233,7 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
-        "thanhnhan9023/glm-5.2": {
+        "vuduythanh2023/glm-5.2": {
           "modalities": {
             "input": [
               "text",
@@ -232,23 +247,7 @@
             "output": 131072,
           },
         },
-        "thanhnhan9023/kimi-2.7": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 256000,
-            "output": 65536,
-          },
-        },
-        "thanhnhan9023/deepseek-v4-pro": {
+        "vpsnodelab/deepseek-v4-pro": {
           "modalities": {
             "input": [
               "text",
@@ -260,20 +259,6 @@
           "limit": {
             "context": 1000000,
             "output": 384000,
-          },
-        },
-        "thanhnhan9023/glm-5.1": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 200000,
-            "output": 131072,
           },
         },
         "gpt-5.4": {
