@@ -20,8 +20,9 @@
     //  "model": "kilo/kilo-auto/free",
     //},
     "general": {
-      "model": "github-copilot/claude-sonnet-4.5",
+      //"model": "github-copilot/claude-sonnet-4.5",
       //"model": "oai-gw/openai/chatgpt-5.4-mini",
+      "model": "llm-agg/forbiddengun/deepseek-v4-pro",
     },
     "explore": {
       "model": "github-copilot/claude-haiku-4.5",
