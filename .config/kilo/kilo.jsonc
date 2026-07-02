@@ -184,10 +184,10 @@
       "name": "INK AI Gateway",
       "npm": "@ai-sdk/anthropic",
       "options": {
-        "baseURL": "${AI_GATEWAY_BASE_URL}/anthropic/v1",
+        "baseURL": "${INK_GATEWAY_BASE_URL}/anthropic/v1",
       },
       "env": [
-        "AI_GATEWAY_API_KEY"
+        "INK_GATEWAY_API_KEY"
       ],
       "models": {
         "openai/chatbot-5.4": {
