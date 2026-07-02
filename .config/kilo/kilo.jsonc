@@ -78,6 +78,120 @@
     }
   },
   "provider": {
+    "featherless": {
+      "name": "Featherless",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "${FEATHERLESS_BASE_URL}/v1",
+      },
+      "env": [
+        "FEATHERLESS_API_KEY"
+      ],
+      "models": {
+        "zai-org/GLM-5.2": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            //"context": 1000000,
+            //"output": 131072,
+            "context": 32000, // lowest plan limits context to 32k
+            "output": 32000, // lowest plan limits context to 32k
+          },
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            //"context": 1000000,
+            //"output": 384000,
+            "context": 32000, // lowest plan limits context to 32k
+            "output": 32000, // lowest plan limits context to 32k
+          },
+        },
+        "MiniMaxAI/MiniMax-M3": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            //"context": 512000,
+            //"output": 128000,
+            "context": 32000, // lowest plan limits context to 32k
+            "output": 32000, // lowest plan limits context to 32k
+          },
+        },
+        "moonshotai/Kimi-K2.7-Code": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            //"context": 262144,
+            //"output": 262144,
+            "context": 32000, // lowest plan limits context to 32k
+            "output": 32000, // lowest plan limits context to 32k
+          },
+        },
+        "XiaomiMiMo/MiMo-V2.5": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "audio",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            //"context": 1048576,
+            //"output": 131072,
+            "context": 32000, // lowest plan limits context to 32k
+            "output": 32000, // lowest plan limits context to 32k
+          },
+        },
+        "stepfun-ai/Step-3.7-Flash": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            //"context": 256000,
+            //"output": 256000,
+            "context": 32000, // lowest plan limits context to 32k
+            "output": 32000, // lowest plan limits context to 32k
+          },
+        },
+      },
+    },
     "oai-gw": {
       "name": "OpenAI Gateway",
       "npm": "@ai-sdk/openai",
@@ -118,7 +232,7 @@
             "output": 128000,
           },
         },
-      }
+      },
     },
     "llm-gw": {
       "name": "Open-weight Models Gateway",
@@ -164,7 +278,6 @@
             "input": [
               "text",
               "image",
-              "pdf",
               "audio",
               "video",
             ],
@@ -221,7 +334,7 @@
             "output": 384000,
           },
         },
-      }
+      },
     },
     "llm-agg": {
       "name": "LLM Broker",
