@@ -20,12 +20,12 @@
     //  "model": "kilo/stepfun/step-3.5-flash:free",
     //},
     "general": {
-      //"model": "github-copilot/claude-sonnet-4.5",
-      "model": "oai-gw/openai/chatgpt-5.4-mini",
+      "model": "github-copilot/claude-sonnet-4.5",
+      //"model": "oai-gw/openai/chatgpt-5.4-mini",
     },
     "explore": {
-      //"model": "github-copilot/claude-haiku-4.5",
-      "model": "oai-gw/openai/chatgpt-5.4-mini",
+      "model": "github-copilot/claude-haiku-4.5",
+      //"model": "oai-gw/openai/chatgpt-5.4-mini",
     },
     "build": {
       "model": "kilo/kilo-auto/free",
@@ -42,17 +42,17 @@
     "plan": {
       //"model": "github-copilot/gpt-5.4",
       //"model": "github-copilot/gpt-5.4",
-      "model": "oai-gw/openai/chatbot-5.4",
+      "model": "llm-agg/forbiddengun/glm-5.2",
     },
     "code": {
       //"model": "github-copilot/gpt-5.4-mini",
       //"model": "github-copilot/claude-sonnet-4.5",
       //"model": "llm-gw/deepseek/deepseek-v4-pro",
-      "model": "oai-gw/openai/chatbot-5.4",
+      "model": "llm-agg/forbiddengun/deepseek-v4-pro",
     },
     "debug": {
-      //"model": "github-copilot/claude-sonnet-4.6",
-      "model": "kilo/kilo-auto/free",
+      "model": "github-copilot/claude-sonnet-4.6",
+      //"model": "kilo/kilo-auto/free",
     },
   },
   "mcp": {
@@ -233,7 +233,7 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
-        "vuduythanh2023/glm-5.2": {
+        "forbiddengun/glm-5.2": {
           "modalities": {
             "input": [
               "text",
@@ -247,7 +247,7 @@
             "output": 131072,
           },
         },
-        "vpsnodelab/deepseek-v4-pro": {
+        "forbiddengun/deepseek-v4-pro": {
           "modalities": {
             "input": [
               "text",
@@ -261,7 +261,7 @@
             "output": 384000,
           },
         },
-        "gpt-5.4": {
+        "forbiddengun/gpt-5.4": {
           "modalities": {
             "input": [
               "text",
@@ -277,7 +277,7 @@
             "output": 128000,
           },
         },
-        "claude-opus-4.8-coding": {
+        "forbiddengun/claude-opus": {
           "modalities": {
             "input": [
               "text",
