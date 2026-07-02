@@ -17,7 +17,7 @@
       "model": "kilo/kilo-auto/free",
     },
     //"compaction": {
-    //  "model": "kilo/stepfun/step-3.5-flash:free",
+    //  "model": "kilo/kilo-auto/free",
     //},
     "general": {
       "model": "github-copilot/claude-sonnet-4.5",
@@ -31,13 +31,13 @@
       "model": "kilo/kilo-auto/free",
     },
     "orchestrator": {
-      "hidden": true,
-      //"model": "github-copilot/claude-sonnet-4.5",
-      "model": "kilo/kilo-auto/free",
+      //"hidden": true,
+      //"model": "kilo/kilo-auto/free",
+      "model": "featherless/zai-org/GLM-5.2",
     },
     "ask": {
-      "hidden": true,
-      "model": "kilo/kilo-auto/free",
+      //"hidden": true,
+      "model": "featherless/deepseek-ai/DeepSeek-V4-Pro",
     },
     "plan": {
       //"model": "github-copilot/gpt-5.4",
@@ -87,7 +87,7 @@
       "env": [
         "FEATHERLESS_API_KEY"
       ],
-      "models": {
+      "models": { // plans limits context to 32k and 256k and concurrent connections to 4 and 8
         "zai-org/GLM-5.2": {
           "modalities": {
             "input": [
@@ -98,10 +98,8 @@
             ]
           },
           "limit": {
-            //"context": 1000000,
-            //"output": 131072,
-            "context": 32000, // lowest plan limits context to 32k
-            "output": 32000, // lowest plan limits context to 32k
+            "context": 1000000,
+            "output": 131072,
           },
         },
         "deepseek-ai/DeepSeek-V4-Pro": {
@@ -114,10 +112,8 @@
             ]
           },
           "limit": {
-            //"context": 1000000,
-            //"output": 384000,
-            "context": 32000, // lowest plan limits context to 32k
-            "output": 32000, // lowest plan limits context to 32k
+            "context": 1000000,
+            "output": 384000,
           },
         },
         "MiniMaxAI/MiniMax-M3": {
@@ -130,10 +126,8 @@
             ]
           },
           "limit": {
-            //"context": 512000,
-            //"output": 128000,
-            "context": 32000, // lowest plan limits context to 32k
-            "output": 32000, // lowest plan limits context to 32k
+            "context": 512000,
+            "output": 128000,
           },
         },
         "moonshotai/Kimi-K2.7-Code": {
@@ -148,10 +142,8 @@
             ]
           },
           "limit": {
-            //"context": 262144,
-            //"output": 262144,
-            "context": 32000, // lowest plan limits context to 32k
-            "output": 32000, // lowest plan limits context to 32k
+            "context": 262144,
+            "output": 262144,
           },
         },
         "XiaomiMiMo/MiMo-V2.5": {
@@ -167,10 +159,8 @@
             ]
           },
           "limit": {
-            //"context": 1048576,
-            //"output": 131072,
-            "context": 32000, // lowest plan limits context to 32k
-            "output": 32000, // lowest plan limits context to 32k
+            "context": 1048576,
+            "output": 131072,
           },
         },
         "stepfun-ai/Step-3.7-Flash": {
@@ -184,10 +174,8 @@
             ]
           },
           "limit": {
-            //"context": 256000,
-            //"output": 256000,
-            "context": 32000, // lowest plan limits context to 32k
-            "output": 32000, // lowest plan limits context to 32k
+            "context": 256000,
+            "output": 256000,
           },
         },
       },
