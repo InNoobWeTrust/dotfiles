@@ -32,7 +32,6 @@
     },
     "orchestrator": {
       //"hidden": true,
-      //"model": "kilo/kilo-auto/free",
       "model": "featherless/zai-org/GLM-5.2",
     },
     "ask": {
@@ -41,18 +40,18 @@
     },
     "plan": {
       //"model": "github-copilot/gpt-5.4",
-      //"model": "github-copilot/gpt-5.4",
-      "model": "llm-agg/forbiddengun/glm-5.2",
+      //"model": "llm-agg/forbiddengun/glm-5.2",
+      "model": "oai-gw/openai/chatbot-5.4",
     },
     "code": {
       //"model": "github-copilot/gpt-5.4-mini",
       //"model": "github-copilot/claude-sonnet-4.5",
-      //"model": "llm-gw/deepseek/deepseek-v4-pro",
-      "model": "llm-agg/forbiddengun/deepseek-v4-pro",
+      "model": "llm-gw/deepseek/deepseek-v4-pro",
+      //"model": "llm-agg/forbiddengun/deepseek-v4-pro",
     },
     "debug": {
-      "model": "github-copilot/claude-sonnet-4.6",
-      //"model": "kilo/kilo-auto/free",
+      //"model": "github-copilot/claude-sonnet-4.6",
+      "model": "llm-agg/forbiddengun/glm-5.2",
     },
   },
   "mcp": {
@@ -75,7 +74,7 @@
         "npx -y @azure-devops/mcp $ADO_ORG -d core work work-items --authentication envvar"
       ],
       "enabled": false
-    }
+    },
   },
   "provider": {
     "featherless": {
@@ -290,22 +289,6 @@
           "limit": {
             "context": 1048576,
             "output": 384000,
-          },
-        },
-        "MiniMax-M3": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 52288,
-            "output": 512000,
           },
         },
         "deepseek/deepseek-v4-flash": {
