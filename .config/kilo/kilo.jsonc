@@ -316,6 +316,22 @@
             "output": 128000,
           },
         },
+        "forbiddengun/gpt-5.5": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
         "forbiddengun/claude-opus": {
           "modalities": {
             "input": [
