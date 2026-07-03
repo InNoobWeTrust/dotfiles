@@ -321,6 +321,22 @@
             "output": 384000,
           },
         },
+        "forbiddengun/kimi": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 262144,
+            "output": 262144,
+          },
+        },
         "forbiddengun/mistral": {
           "modalities": {
             "input": [
