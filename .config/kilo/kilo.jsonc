@@ -32,11 +32,10 @@
       "model": "featherless/zai-org/GLM-5.2",
     },
     "orchestrator": {
-      //"hidden": true,
-      "model": "featherless/zai-org/GLM-5.2",
+      "model": "llm-agg/forbiddengun/glm-5.2",
     },
     "ask": {
-      //"hidden": true,
+      "description": "32k context — quick questions, explanations, single-pass answers",
       "model": "featherless/deepseek-ai/DeepSeek-V4-Pro",
     },
     "plan": {
@@ -53,6 +52,39 @@
     "debug": {
       //"model": "github-copilot/claude-sonnet-4.6",
       "model": "llm-agg/forbiddengun/glm-5.2",
+    },
+    // [Featherless cheapest plan] 32k context, 4 concurrent connections shared across ALL
+    // featherless-backed agents below (build, orchestrator, ask, featherless-*). When
+    // running a swarm, limit to ≤3 featherless subagents so the orchestrator has a slot.
+    "featherless-glm": {
+      "mode": "subagent",
+      "description": "32k context — swarm perspective agent, GLM-5.2 viewpoint. [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "model": "featherless/zai-org/GLM-5.2",
+    },
+    "featherless-deepseek": {
+      "mode": "subagent",
+      "description": "32k context — swarm perspective agent, DeepSeek V4 Pro viewpoint. [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "model": "featherless/deepseek-ai/DeepSeek-V4-Pro",
+    },
+    "featherless-kimi": {
+      "mode": "subagent",
+      "description": "32k context — swarm perspective agent, Kimi K2.7 Code viewpoint (vision). [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "model": "featherless/moonshotai/Kimi-K2.7-Code",
+    },
+    "featherless-minimax": {
+      "mode": "subagent",
+      "description": "32k context — swarm perspective agent, MiniMax M3 viewpoint. [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "model": "featherless/MiniMaxAI/MiniMax-M3",
+    },
+    "featherless-mimo": {
+      "mode": "subagent",
+      "description": "32k context — swarm perspective agent, MiMo V2.5 viewpoint (multimodal: text, image, audio, video). [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "model": "featherless/XiaomiMiMo/MiMo-V2.5",
+    },
+    "featherless-stepfun": {
+      "mode": "subagent",
+      "description": "32k context — swarm perspective agent, Step-3.7 Flash viewpoint (text, image). [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "model": "featherless/stepfun-ai/Step-3.7-Flash",
     },
   },
   "mcp": {
@@ -253,7 +285,7 @@
     },
     "llm-agg": {
       "name": "LLM Broker",
-      "npm": "@ai-sdk/openai-compatible",
+      "npm": "@ai-sdk/anthropic",
       "options": {
         "baseURL": "${LLM_BROKER_BASE_URL}/v1",
       },
@@ -287,6 +319,21 @@
           "limit": {
             "context": 1000000,
             "output": 384000,
+          },
+        },
+        "forbiddengun/mistral": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 256000,
+            "output": 256000,
           },
         },
         "forbiddengun/gpt-5.4": {
