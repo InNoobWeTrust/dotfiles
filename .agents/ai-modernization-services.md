@@ -42,9 +42,9 @@ paginate: true
 
 | Service | Best for | Duration | Pricing |
 |---|---|---|---|
-| **AI Strategy Workshop** | Validating an AI initiative | 2 hours | ₫1.2M ($50) |
-| **Agentic AI Bootcamp** | Teams upskilling fast | 2 days | ₫3.5M ($150) |
-| **Implementation Mentorship** | Building an AI product | 4 weeks | ₫500K ($20/h) |
+| **AI Strategy Workshop** | Validating an AI initiative | 2 hours | ₫2.5M ($100) |
+| **Agentic AI Bootcamp** | Teams upskilling fast | 2 days | ₫7.5M ($300) |
+| **Implementation Mentorship** | Building an AI product | 4 weeks | ₫1M ($40/h) |
 | **Enterprise Team Training** | Custom curriculum needs | Custom | Custom quote |
 
 ---
@@ -131,8 +131,8 @@ You are learning from someone who has deployed production AI systems since GPT-4
 - No sales pitch
 
 **Option 2: Book directly**
-- ✅ AI Strategy Workshop — ₫1.2M ($50)
-- ✅ Agentic AI Bootcamp — ₫3.5M ($150)
+- ✅ AI Strategy Workshop — ₫2.5M ($100)
+- ✅ Agentic AI Bootcamp — ₫7.5M ($300)
 
 ---
 
