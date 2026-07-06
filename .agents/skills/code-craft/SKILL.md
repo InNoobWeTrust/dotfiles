@@ -216,14 +216,16 @@ These are the most common agent lazy-path shortcuts. Recognize and refuse them:
 
 The skill's output is working code that satisfies:
 
-- [ ] Design Intent & Resilience Plan block was produced (Phase 1)
-- [ ] SOLID & Clean Architecture check passed or debt documented (Phase 2)
+- [ ] Design Intent & Resilience Plan block was produced answering all fields (Phase 1)
+- [ ] SOLID & Clean Architecture check passed or debt documented — all 11 boxes checked (Phase 2)
 - [ ] Code follows naming, structure, and traceability rules from `rules/code-quality.md` (Phase 3)
 - [ ] Code is robust, pure where possible, and strictly typed (Phase 3 A-D)
 - [ ] Docstrings were written for all new/modified public interfaces, classes, and exported functions (Phase 3.G)
 - [ ] Abstraction boundaries were validated; shallow/trivial helper functions were avoided or inlined (Phase 3.H)
-- [ ] Relevant formatter, linter, type-check, complexity/maintainability, duplication (when warranted), and dependency/security scans were run via repo-native commands or documented ecosystem-native runners, or exact fallback commands were provided when setup was missing (Phase 3.F)
+- [ ] Relevant formatter, linter, type-check, complexity/maintainability, duplication (when warranted), and dependency/security scans were run via repo-native commands or documented ecosystem-native runners — or explicit fallback commands provided when setup was missing. Results posted (Phase 3.F)
+- [ ] TDD: tests written first, failed, then passed after implementation. Test output posted as evidence (Phase 3.E)
 - [ ] Ambiguous edge cases were escalated or clarified; no invented semantic fallbacks were shipped
-- [ ] Readability & Robustness audit passed or CLARITY annotations added (Phase 4)
-- [ ] Module README.md is created or updated to reflect the architecture design and public interfaces (Phase 4.I)
-- [ ] Tech Debt Inventory produced (Phase 5, even if empty)
+- [ ] Readability & Robustness audit passed all 9 questions or CLARITY annotations added (Phase 4)
+- [ ] Module README.md is created or updated to reflect architecture design and public interfaces (Phase 4.I)
+- [ ] Tech Debt Inventory produced (Phase 5 — even if empty)
+- [ ] Prohibited patterns checked: no silent error swallowing, no magic literals, no business logic in views/controllers, no extend-by-parameter, no shallow helper over-extraction, no guessing through ambiguity

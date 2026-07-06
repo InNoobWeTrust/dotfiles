@@ -41,7 +41,12 @@ Always resolve the physical handoff storage path before reading or writing.
    - **Next Steps**: Detail concrete, actionable next steps.
    - **Git State**: Capture current branch, modified files, and unstaged changes.
 2. Inline crucial state from internal artifacts (e.g. plans, review findings, or scratchpads) so the handoff is **fully self-contained** and readable without accessing internal DBs.
-3. Write to `{HANDOFFS_DIR}/<branch-slug>--<topic-slug>.md`.
+3. Capture **audit trail context** when the project handles financial data, customer PII, or business-critical operations. Determine applicability by checking: (a) does the project's AGENTS.md or `docs/engineering/quality-gates.md` list regulated/sensitive data? (b) did any data mutation operations occur in this session (inserts, updates, deletes on business entities, not schema changes)? If neither signal fires, skip this section entirely. When applicable, capture:
+   - Which quality gates passed/failed in this session? (if applicable)
+   - Which security checks were run, and with what results? (if applicable)
+   - Were any compliance rules waived or exceptions granted? Document rationale. (if applicable)
+   - Did any data mutation occur that requires audit log entries? (if applicable)
+4. Write to `{HANDOFFS_DIR}/<branch-slug>--<topic-slug>.md`.
 
 ### Handoff Markdown Template
 ```markdown
@@ -77,6 +82,13 @@ agent: [agent name]
 ## Recent Changes & Git Context
 - **Modified files**: [list paths]
 - **Git diff status**: [uncommitted changes summary]
+
+## Quality & Compliance (Audit Trail)
+- **Quality gates passed**: [if applicable — e.g., make fix ✓, make lint ✓, make quality ✓, make test ✓]
+- **Security checks run**: [if applicable — e.g., secret scan ✓, dependency audit ✓, SAST ✓]
+- **Exceptions granted**: [list any waived rules with rationale, or "none"]
+- **Data mutations requiring audit logs**: [if applicable — list write paths touched, or "N/A"]
+- **Compliance gaps noted**: [list any unaddressed compliance issues, or "none"]
 ```
 
 ---

@@ -140,6 +140,22 @@ Use for ANY technical issue: test failures, bugs, unexpected behavior, performan
 
 ---
 
+## Phase 1.5 — Governance Capture (Failure Review Integration)
+
+When this investigation uncovers a pattern that warrants governance attention (recurring failure, rule/skill gap), capture findings for future audits. This is advisory — it does not prescribe a specific tool or protocol. The organization's audit system determines how findings are preserved.
+
+1. **Record the failure pattern**: After root cause is found, document in the session handoff (see `session-handoff` skill):
+   - What was the AI's mistake (if an AI-authored change is the source)?
+   - Was there a rule that should have prevented this? If yes, why didn't it work?
+   - Was there no rule covering this pattern? Should there be?
+   - Could a skill have prevented this? Does such a skill exist?
+
+2. **Propose rule/skill evolution**: If a gap was found, propose a concrete rule or skill change. The proposal goes in the Problem-Solving Report under a new "Governance Gap" section.
+
+3. **Handoff for audit**: Make findings discoverable through handoff files (tag with "governance-gap" or equivalent org convention) so quarterly audits (see `skill-author` skill, Workflow B) can surface them.
+
+---
+
 ## Phase 2 — Find the Root Cause
 
 > **Iron Law**: NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST.

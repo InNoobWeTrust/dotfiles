@@ -75,10 +75,13 @@ Sub-reviewers live in `references/sub-reviewers/`. To load one, use Read tool on
 | Architecture / design docs | `references/sub-reviewers/code-quality.md`, `references/sub-reviewers/design-rigor.md`, `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/security.md` | Structure decisions, then design process, then challenge, then threat model |
 | Documentation / prose | `references/sub-reviewers/editorial.md` | Structure, then prose if needed |
 | Config / infra | `references/sub-reviewers/security.md`, `references/sub-reviewers/edge-case-hunter.md` | Security first, then boundaries |
+| Compliance / audit reports | `references/sub-reviewers/security.md`, `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/editorial.md` | Security posture, then reasoning gaps, then clarity |
 | Bug fixes / incident response | `references/sub-reviewers/design-rigor.md`, `references/sub-reviewers/code-quality.md`, `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/edge-case-hunter.md` | Investigation rigor first, then structure, then logic, then paths |
 | BDD specs / test plans | `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/edge-case-hunter.md` | Coverage gaps, then path tracing |
 | API contracts | `references/sub-reviewers/code-quality.md`, `references/sub-reviewers/design-rigor.md`, `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/security.md`, `references/sub-reviewers/edge-case-hunter.md` | Structure/abstraction, then design process, then logic, then security, then boundaries |
 | Skill / command definitions | `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/editorial.md` | Challenge logic, then clarity |
+| Quality gates / governance docs | `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/design-rigor.md` | Challenge coverage gaps, then design process |
+| Management reports / metrics | `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/editorial.md` | Challenge data confidence, then clarity |
 
 ### Orchestration
 
@@ -104,6 +107,7 @@ Quick orientation before loading full references:
 | `references/sub-reviewers/security.md` | Threats, vulnerabilities, secrets | Auth, injection, data exposure, supply chain |
 | `references/sub-reviewers/edge-case-hunter.md` | Control-flow paths, boundary conditions | Unhandled branches, off-by-one, null handling |
 | `references/sub-reviewers/editorial.md` | Prose clarity, document structure | Ambiguous writing, poor organization |
+| `references/sub-reviewers/doc-attack-vectors.md` | Documentation threats, compliance gaps | Docs that mislead, omit, or contradict governance rules |
 
 ---
 

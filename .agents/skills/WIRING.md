@@ -54,6 +54,32 @@ Any time a background worker or external node is launched (regardless of harness
 1. `subagent-dispatch` — construct the structured delegation prompt (scope, output contract, allowed actions, stop conditions)
 2. harness worker or `external-subagent` — launch the node
 
+### Project Foundation (New Project Setup or Evolution)
+
+When setting up or evolving a project's AI-augmented foundation:
+
+1. `project-foundation` — bootstrap/audit AGENTS.md, GLOSSARY.md, rules/, skills/, Makefile, docs/architecture.md, quality gates, CI/CD skeleton
+2. `architecture-writer` — deep architecture doc if system design is complex and needs detailed diagrams
+3. `devsecops` — CI/CD pipeline + integrated security scanning for the specific platform
+4. `reviewer` — review all generated governance files
+
+### DevSecOps Hardening
+
+When hardening an existing project's pipeline and security posture:
+
+1. `devsecops` — CI/CD design + full security audit (secrets, deps, SAST, IaC, audit trails) + scanner integration
+2. `code-craft` — implement remediations for security findings
+3. `reviewer` (security lens) — verify fixes address root vulnerabilities
+
+### Skill Authoring & Maintenance
+
+When creating or maintaining the .agents/ governance layer:
+
+1. `skill-author` — Workflow A (create new skill) or Workflow B (quarterly audit + failure review)
+2. `project-foundation` — if the audit reveals missing foundational files
+3. `reviewer` (adversarial lens) — challenge the new skill or audit conclusions
+4. `codebase-exploration` — if the new skill needs domain knowledge of the codebase
+
 ---
 
 ## Handoff Points
@@ -66,6 +92,7 @@ Natural transitions between skills:
 | `codebase-exploration` | `code-craft` | "I understand the codebase, now I need to implement" |
 | `systematic-investigation` | `brainstorming` | "Root cause analyzed, now brainstorming potential solutions" |
 | `systematic-investigation` | `code-craft` | "Root cause found, now implementing the fix" |
+| `systematic-investigation` | `skill-author` | "Failure pattern discovered, cataloging for governance review" |
 | `brainstorming` | `requirements-driven-dev` | "Ideation complete, translating concepts to PRD/specs" |
 | `brainstorming` | `code-craft` | "Concepts finalized, ready to prototype/implement" |
 | `code-craft` | `reviewer` | "Implementation complete, ready for review" |
@@ -83,6 +110,18 @@ Natural transitions between skills:
 | `subagent-dispatch` | `external-subagent` | "Prompt constructed, delegating one bounded node to swarminator" |
 | `subagent-dispatch` | `swarm-intelligence` | "Prompt constructed, task requires multi-node orchestration" |
 | `multi-perspective-deliberation` | `subagent-dispatch` | "Launching background workers for persona simulation" |
+| `project-foundation` | `architecture-writer` | "Project scaffolded, now writing detailed architecture doc" |
+| `project-foundation` | `devsecops` | "Project scaffolded, now designing CI/CD with integrated security" |
+| `project-foundation` | `reviewer` | "Governance files created, ready for review" |
+| `devsecops` | `code-craft` | "Vulnerabilities found, now implementing remediations" |
+| `devsecops` | `reviewer` (security lens) | "Pipeline and security config complete, verifying" |
+| `architecture-writer` | `project-foundation` | "Architecture mapped, updating GLOSSARY.md with discovered terms" |
+| `architecture-writer` | `reviewer` (design-rigor lens) | "Architecture doc written, now reviewing for design discipline" |
+| `skill-author` (Workflow B) | `skill-author` (Workflow A) | "Audit reveals skill gap — creating new skill to fill it" |
+| `skill-author` (Workflow B) | `project-foundation` | "Audit reveals missing foundational files — bootstrapping them" |
+| `skill-author` (Workflow B) | `reviewer` | "Audit complete, challenging conclusions" |
+| `skill-author` (Workflow A) | `reviewer` | "New skill written, ready for adversarial review" |
+| `skill-author` (Workflow A) | `skill-author` (Workflow B) | "New skill registered, queued for next quarterly audit" |
 
 ---
 
@@ -107,3 +146,7 @@ skill.
   e.g. `systematic-investigation` (primary) + `code-craft` (design lens).
 - Prefer no skill for simple edits (formatting, config values, renaming only).
 - Prefer the narrowest skill that matches the user intent.
+- **Project setup**: `project-foundation` → `devsecops` (foundation first, then secure the pipeline).
+- **Security hardening**: `devsecops` → `code-craft` → `reviewer` (security lens).
+- **Governance maintenance**: `skill-author` is the entry point; it routes to `project-foundation` or back to itself (Workflow A) as gaps are found.
+- **Management reporting**: Not a skill — refer to `docs/ai-augmented-project-setup-and-evolution.md` §9 for what to report. Define your org's reporting template and generate ad-hoc using `data-storytelling` for data interpretation.
