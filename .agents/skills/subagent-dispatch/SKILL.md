@@ -23,10 +23,11 @@ Before constructing a delegation prompt, apply this single test:
 - The exploratory work would clutter the main context (e.g., reading dozens of files to answer one question)
 - The task benefits from a fresh context with no history of how the code was written (code reviews)
 - The task needs a custom tone, persona, or domain context baked into the prompt (copywriting, styling against a design system)
+- **Clean-Room TDD Implementation**: Implementing a feature/bugfix after writing unit tests in the main context to avoid bias and enforce blind test verification (see `rules/tdd.md`).
 
 **Do not delegate when:**
 - Each step of the pipeline depends on what the previous step discovered — information degrades at every handoff
-- You need full raw output to diagnose issues (test runners: a subagent returning "tests failed" hides the details you need)
+- You need full raw output to diagnose issues (test runners: a subagent returning "tests failed" hides the details you need — except in Clean-Room TDD where the subagent itself runs the tests blindly and implements/fixes code iteratively)
 - The only value would come from an "expert" persona label — the LLM model already has that knowledge; the label adds nothing
 
 ---
@@ -185,13 +186,25 @@ Include a `## Allowed Actions` block in every delegation prompt:
 - NO network requests beyond: <list domains or NONE>
 ```
 
-For **implementation agents** that must write:
+For **standard implementation agents** that must write:
 
 ```
 ## Allowed Actions
 - READ: all files under src/
 - WRITE: <specific files only, e.g. src/auth/jwt.ts, src/auth/jwt.test.ts>
 - RUN: npm test, npm run lint
+- NO changes outside the listed write targets
+- NO git commits or pushes
+```
+
+For **Clean-Room TDD implementation agents**:
+
+```
+## Allowed Actions
+- READ: all files under src/ (EXCLUDING the unit test files and test helper files, e.g. *.test.ts, test_*.py)
+- WRITE: <specific implementation files only, e.g. src/auth/jwt.ts>
+- RUN: <specific test runner command, e.g. npm test -- src/auth/jwt.test.ts>
+- NO reading or viewing of the unit test files
 - NO changes outside the listed write targets
 - NO git commits or pushes
 ```
@@ -289,7 +302,8 @@ When the subagent returns:
 | Treating a missing TASK_COMPLETE as success | Silent partial results slip through | Always scan for the Done Signal |
 | "You are a Python expert" persona | underlying LLM model already has that knowledge; label adds nothing | Drop the persona; use a role that changes *context*, not just claimed expertise |
 | Sequential pipeline where step B needs step A's discoveries | Information degrades at every handoff; bugs compound | Keep sequential dependent work in the main thread |
-| Test-runner subagent | Returns "tests failed" — hides the output needed to diagnose | Run tests directly in main thread; delegate only post-analysis summaries |
+| Test-runner subagent | Returns "tests failed" — hides the output needed to diagnose | Run tests directly in main thread; delegate only post-analysis summaries (except blind test loops in Clean-Room TDD) |
+| Biased TDD Implementation | Writing tests and implementing them in the same context, leading to tests being "cheated" with hardcoded values. | Delegate implementation to a separate subagent or new session, explicitly forbidding it from reading test file contents (Clean-Room TDD). |
 
 ---
 
@@ -301,12 +315,12 @@ DECISION GATE: does the intermediate work matter?
   NO  → delegate
 
 GOOD DELEGATE TARGETS:
-  research/exploration · code review (fresh context) · custom system prompt tasks
+  research/exploration · code review (fresh context) · custom system prompt tasks · Clean-Room TDD implementation (blind to tests)
 
 BAD DELEGATE TARGETS:
-  expert persona labels · sequential dependent pipelines · test runners
+  expert persona labels · sequential dependent pipelines · test runners (except blind test loops in Clean-Room TDD)
 
-DELEGATION PROMPT = Role + Task + Context (surgical) + Allowed Actions + Output Template + Stop Conditions
+DELEGATION PROMPT = Role + Task + Context (surgical) + Allowed Actions (excluding tests for Clean-Room TDD) + Output Template + Stop Conditions
 
 OUTPUT TEMPLATE =
   1. Objective Recap
@@ -316,5 +330,5 @@ OUTPUT TEMPLATE =
   5. Done Signal: TASK_COMPLETE
 
 RECEIVE =
-  scan TASK_COMPLETE → surface Obstacles → check Confidence → reject if out-of-scope
+  scan TASK_COMPLETE → surface Obstacles → check Confidence → reject if out-of-scope/read-forbidden-tests
 ```
