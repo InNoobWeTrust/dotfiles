@@ -32,7 +32,7 @@
       "model": "featherless/zai-org/GLM-5.2",
     },
     "orchestrator": {
-      "model": "llm-agg/forbiddengun/glm-5.2",
+      "model": "llm-agg/forbiddengun/qwen",
     },
     "ask": {
       "description": "32k context — quick questions, explanations, single-pass answers",
@@ -293,6 +293,20 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
+        "forbiddengun/deepseek-v4-pro": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 384000,
+          },
+        },
         "forbiddengun/glm-5.2": {
           "modalities": {
             "input": [
@@ -307,7 +321,7 @@
             "output": 131072,
           },
         },
-        "forbiddengun/deepseek-v4-pro": {
+        "forbiddengun/qwen": {
           "modalities": {
             "input": [
               "text",
@@ -318,7 +332,7 @@
           },
           "limit": {
             "context": 1000000,
-            "output": 384000,
+            "output": 64000,
           },
         },
         "forbiddengun/kimi": {
@@ -335,6 +349,38 @@
           "limit": {
             "context": 262144,
             "output": 262144,
+          },
+        },
+        "forbiddengun/minimax": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 512000,
+            "output": 128000,
+          },
+        },
+        "forbiddengun/grok": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 30000,
           },
         },
         "forbiddengun/mistral": {
