@@ -22,21 +22,21 @@
     "general": {
       //"model": "github-copilot/claude-sonnet-4.5",
       //"model": "ink-gw/openai/chatgpt-5.4-mini",
-      "model": "llm-agg/forbiddengun/mimo",
+      "model": "ink-gw/deepseek/deepseek-v4-pro",
     },
     "explore": {
       "model": "github-copilot/claude-haiku-4.5",
       //"model": "ink-gw/openai/chatgpt-5.4-mini",
     },
     "build": {
-      "model": "featherless/zai-org/GLM-5.2",
+      "model": "ink-gw/deepseek/deepseek-v4-pro",
     },
     "orchestrator": {
-      "model": "llm-agg/forbiddengun/qwen",
+      "description": "You can only use tools with no side-effect, check available/allowed tools before calling. For other actions, delegate to subagents",
+      "model": "llm-agg/forbiddengun/mimo",
     },
     "ask": {
-      "description": "32k context — quick questions, explanations, single-pass answers",
-      "model": "featherless/deepseek-ai/DeepSeek-V4-Pro",
+      "model": "kilo/kilo-auto/free",
     },
     "plan": {
       //"model": "github-copilot/gpt-5.4",
@@ -44,14 +44,14 @@
       "model": "ink-gw/openai/chatbot-5.4",
     },
     "code": {
-      //"model": "github-copilot/gpt-5.4-mini",
       //"model": "github-copilot/claude-sonnet-4.5",
-      "model": "ink-gw/deepseek/deepseek-v4-pro",
-      //"model": "llm-agg/forbiddengun/deepseek-v4-pro",
+      //"model": "ink-gw/deepseek/deepseek-v4-pro",
+      //"model": "llm-agg/forbiddengun/deepseek",
+      "model": "llm-agg/forbiddengun/claude",
     },
     "debug": {
       //"model": "github-copilot/claude-sonnet-4.6",
-      "model": "llm-agg/forbiddengun/glm-5.2",
+      "model": "llm-agg/forbiddengun/gpt",
     },
     // [Featherless cheapest plan] 32k context, 4 concurrent connections shared across ALL
     // featherless-backed agents below (build, orchestrator, ask, featherless-*). When
@@ -293,7 +293,7 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
-        "forbiddengun/deepseek-v4-pro": {
+        "forbiddengun/deepseek": {
           "modalities": {
             "input": [
               "text",
@@ -321,7 +321,7 @@
             "output": 131072,
           },
         },
-        "forbiddengun/glm-5.2": {
+        "forbiddengun/glm": {
           "modalities": {
             "input": [
               "text",
@@ -412,7 +412,7 @@
             "output": 256000,
           },
         },
-        "forbiddengun/gpt-5.4": {
+        "forbiddengun/gpt": {
           "modalities": {
             "input": [
               "text",
@@ -428,23 +428,7 @@
             "output": 128000,
           },
         },
-        "forbiddengun/gpt-5.5": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-        },
-        "forbiddengun/claude-opus": {
+        "forbiddengun/claude": {
           "modalities": {
             "input": [
               "text",
@@ -480,13 +464,13 @@
       "git remote -v *": "allow",
       "git init *": "allow",
       "git check-ignore *": "allow",
-      "gh repo list *": "allow",
       "git checkout *": "allow",
       "git pull *": "allow",
       "git stash list *": "allow",
       "git grep *": "allow",
       "git ls-tree *": "allow",
       "git rev-parse *": "allow",
+      "gh repo list *": "allow",
       "gh auth status *": "allow",
       "gh release list *": "allow",
       "gh run list *": "allow",
@@ -514,9 +498,9 @@
       "go build *": "allow",
       "go run *": "allow",
       "go test *": "allow",
-      "gofmt *": "allow",
       "go generate *": "allow",
       "go vet *": "allow",
+      "gofmt *": "allow",
       "npm list *": "allow",
       "helm version *": "allow",
       "helm lint *": "allow",
