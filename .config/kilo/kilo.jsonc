@@ -20,36 +20,42 @@
     //  "model": "kilo/kilo-auto/free",
     //},
     "general": {
+      "description": "Can only use tools with no side-effect",
       //"model": "github-copilot/claude-sonnet-4.5",
       //"model": "ink-gw/openai/chatgpt-5.4-mini",
       "model": "ink-gw/deepseek/deepseek-v4-pro",
     },
     "explore": {
+      "description": "Can only use tools with no side-effect",
       "model": "github-copilot/claude-haiku-4.5",
       //"model": "ink-gw/openai/chatgpt-5.4-mini",
     },
-    "build": {
-      "model": "ink-gw/deepseek/deepseek-v4-pro",
-    },
     "orchestrator": {
-      "description": "You can only use tools with no side-effect, check available/allowed tools before calling. For other actions, delegate to subagents",
+      "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
       "model": "llm-agg/forbiddengun/mimo",
     },
     "ask": {
+      "description": "A knowledgeable technical assistant focused on answering questions without changing your codebase",
       "model": "kilo/kilo-auto/free",
     },
     "plan": {
+      "mode": "all",
+      "description": "An experienced technical leader and planner for system design, architecture, and implementation plans",
       //"model": "github-copilot/gpt-5.4",
       //"model": "llm-agg/forbiddengun/glm-5.2",
       "model": "ink-gw/openai/chatbot-5.4",
     },
     "code": {
+      "mode": "all",
+      "description": "A skilled software engineer for implementation, refactoring, debugging, and general development",
       //"model": "github-copilot/claude-sonnet-4.5",
       //"model": "ink-gw/deepseek/deepseek-v4-pro",
       //"model": "llm-agg/forbiddengun/deepseek",
       "model": "llm-agg/forbiddengun/claude",
     },
     "debug": {
+      "mode": "all",
+      "description": "An expert problem solver specializing in systematic troubleshooting and diagnostics",
       //"model": "github-copilot/claude-sonnet-4.6",
       "model": "llm-agg/forbiddengun/gpt",
     },
@@ -567,6 +573,9 @@
       "/tmp/*": "allow",
       "~/.agents/*": "allow",
       "~/.config/kilo/*": "allow",
+    },
+    "kilo_memory_recall": {
+      "*": "allow",
     },
   },
   "experimental": {
