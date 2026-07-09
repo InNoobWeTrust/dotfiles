@@ -31,6 +31,7 @@ This directory contains the canonical guides for engineering AI agent skills, ru
 | Ubiquitous language / glossary rule | [1 → §2 Rule 4](./ai-agent-skills-and-rules-engineering.md#rule-4-ubiquitous-language-domain-glossary) |
 | Vertical slicing rule | [1 → §2 Rule 5](./ai-agent-skills-and-rules-engineering.md#rule-5-vertical-slicing) |
 | Skill compliance rule | [1 → §2 Rule 6](./ai-agent-skills-and-rules-engineering.md#rule-6-skill-compliance) |
+| Self-grounded verification rule (anti agreement-bias) | [1 → §2 Rule 7](./ai-agent-skills-and-rules-engineering.md#rule-7-self-grounded-verification) |
 | Nice-to-have rules (handoff, discovery, routing) | [1 → §3](./ai-agent-skills-and-rules-engineering.md#3-nice-to-have-rules) |
 | How to evolve rules from failure patterns | [1 → §4](./ai-agent-skills-and-rules-engineering.md#4-the-failure-pattern--rule-evolution-loop) |
 | Full catalog of AI failure patterns (A–E) | [1 → §5](./ai-agent-skills-and-rules-engineering.md#5-catalog-of-ai-failure-patterns) |
@@ -142,6 +143,8 @@ This directory contains the canonical guides for engineering AI agent skills, ru
 | **Vertical Slicing** | Build feature by feature (schema → API → UI), not layer by layer | [1 → §2 Rule 5](./ai-agent-skills-and-rules-engineering.md#rule-5-vertical-slicing) |
 | **TDD Enforcement** | Tests must be written first and must fail before implementation | [1 → §2 Rule 2](./ai-agent-skills-and-rules-engineering.md#rule-2-test-driven-development-enforcement) |
 | **Skill Compliance** | Loading a SKILL.md = binding commitment to full workflow | [1 → §2 Rule 6](./ai-agent-skills-and-rules-engineering.md#rule-6-skill-compliance) |
+| **Agreement Bias** | LLM tendency to validate whatever is already in its context, even against its own better priors | [1 → §2 Rule 7](./ai-agent-skills-and-rules-engineering.md#rule-7-self-grounded-verification) |
+| **Self-Grounded Verification (SGV)** | Elicit success criteria before looking at the artifact, then evaluate against them with evidence | [1 → §2 Rule 7](./ai-agent-skills-and-rules-engineering.md#rule-7-self-grounded-verification) |
 | **Handoff** | Session checkpoint to maintain context across AI sessions | [2 → §5](./ai-augmented-project-setup-and-evolution.md#handoff-context-continuity-across-sessions) |
 | **Tech Debt Inventory** | AI must declare what debt it's accepting with every change | [2 → §6 Gate 6](./ai-augmented-project-setup-and-evolution.md#gate-6-tech-debt-inventory) |
 | **REFACTOR-SIGNAL** | Searchable markers for code smells found during AI work | [2 → §6](./ai-augmented-project-setup-and-evolution.md#marking-problems-for-future-work) |
@@ -153,6 +156,7 @@ This directory contains the canonical guides for engineering AI agent skills, ru
 | Term | Definition |
 |---|---|
 | **AGENTS.md** | Project-root file injected as AI system prompt — the entry point for every AI session |
+| **Agreement bias** | The tendency of an LLM to validate whatever is in its context window — its own output, a candidate solution, a user's claim — and rationalize flaws, even when it holds correct priors. Documented by Andrade et al. (ICLR 2026) |
 | **GLOSSARY.md** | Canonical domain terminology — prevents naming drift across AI sessions |
 | **Handoff** | Self-contained checkpoint file preserving session state (goal, decisions, blockers) |
 | **Harness** | The AI coding tool itself (Kilo, Claude Code, Codex, etc.) — provides the environment where agents run |

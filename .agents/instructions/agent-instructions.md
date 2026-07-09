@@ -13,6 +13,7 @@
 - **Ubiquitous Language**: `../rules/ubiquitous-language.md` applies to **all logic modification tasks**. Always sync with the project's `GLOSSARY.md` before coding.
 - **Test-Driven Development (TDD)**: `../rules/tdd.md` applies to **all logical modules, services, and algorithms**. Implement tests before concrete logic.
 - **Vertical Slicing**: `../rules/slicing.md` applies to **all feature planning and execution checklists (`task.md`)**. Structure work in end-to-end vertical tracer bullets.
+- **Self-Grounded Verification**: `../rules/self-grounded-verification.md` applies to **every verification, self-review, and "done" claim**. Defends against *agreement bias* (Andrade et al., ICLR 2026) — the tendency to validate whatever is already in context. Before declaring work correct, first state artifact-independent success criteria (including a disconfirming test), THEN evaluate the artifact against them with cited evidence. Never let a green-looking result or your own authorship substitute for grounded checking.
 
 ## Scope-Based Routing
 

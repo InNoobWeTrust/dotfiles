@@ -109,7 +109,8 @@ AI agent = một lập trình viên junior:
 │   ├── grooming.md
 │   ├── ubiquitous-language.md
 │   ├── slicing.md
-│   └── skill-compliance.md
+│   ├── skill-compliance.md
+│   └── self-grounded-verification.md
 ├── skills/             ← Tải theo task, khi cần
 │   ├── INDEX.md        ← Bảng định tuyến
 │   ├── WIRING.md       ← Lộ trình kết hợp
@@ -132,7 +133,7 @@ AI agent = một lập trình viên junior:
 
 ---
 
-# 6 Rules Thiết Yếu
+# 7 Rules Thiết Yếu
 
 Mọi dự án AI-augmented đều cần:
 
@@ -142,6 +143,7 @@ Mọi dự án AI-augmented đều cần:
 4. **Ubiquitous Language** — Đồng bộ với GLOSSARY.md để tránh lệch thuật ngữ
 5. **Vertical Slicing** — Xây dựng theo feature, không theo tầng kỹ thuật
 6. **Skill Compliance** — Tải một skill = cam kết ràng buộc toàn bộ workflow
+7. **Self-Grounded Verification** — Xác định tiêu chí thành công TRƯỚC khi xem xét kết quả
 
 ---
 

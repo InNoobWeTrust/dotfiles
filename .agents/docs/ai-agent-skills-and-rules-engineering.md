@@ -215,6 +215,27 @@ Some rules need to be absolute. Skill compliance uses "hard-stop gates" — cond
 - TDD: if tests weren't written first, stop and write them
 - Ambiguity policy: if an edge case has multiple reasonable behaviors and none is specified by contract, stop and ask the user
 
+### Rule 7: Self-Grounded Verification
+
+**File:** `rules/self-grounded-verification.md`
+
+**What it prevents:** AI validating its own (or a user's) work because it is already in context — *agreement bias*.
+
+**Core components:**
+
+```
+1. Two-step verification: elicit success criteria BEFORE examining the artifact
+2. Step 1 criteria derived from requirement/contract only — NOT from the artifact
+3. Every criteria set includes a disconfirming check ("what would prove this wrong?")
+4. Step 2 evaluates artifact against each criterion: PASS / FAIL / UNVERIFIED + cited evidence
+5. Verdict is PASS only if every criterion is PASS
+6. Compose with delegation (reviewer skill): delegation removes shared context; SGV hardens in-context checks
+```
+
+**Without this rule:** The AI reads its own implementation, decides it looks correct, sees a green-looking test run, and declares the task done — generating confident reasoning that rationalizes rather than interrogates. Bugs that the AI actually *knows how to catch* slip through because it never separated "what should be true" from "what the code does."
+
+**The research grounding:** Andrade et al., "Let's Think in Two Steps: Mitigating Agreement Bias in MLLMs with Self-Grounded Verification" (ICLR 2026), found that MLLM verifiers over-validate flawed agent behavior *even when they hold correct, human-aligned priors* about success. The bias is pervasive across model families and **resilient to test-time scaling** — thinking harder in one pass produces more elaborate rationalization, not better detection. Their fix (SGV) decouples verification: retrieve priors unconditionally (without the artifact), then evaluate conditioned on those self-generated priors. This yielded up to 20-point gains in failure detection. The rule ports this two-step discipline into the agent's verification and self-review moments.
+
 ---
 
 ## 3. Nice-to-Have Rules
@@ -389,6 +410,18 @@ These are the failure patterns observed across real AI-augmented development. Ea
 **What happens:** Integration bugs are discovered late. A schema mistake discovered after the UI is built requires changing everything.
 
 **Defending rule:** Vertical Slicing
+
+#### B5. Agreement Bias in Self-Review
+
+**Symptom:** The AI reads its own implementation (or a candidate solution already in context) and declares it correct. A test run "looks green" and the AI stops checking. It produces confident, articulate reasoning that *justifies* the artifact rather than *interrogating* it.
+
+**What happens:** Bugs the AI actually knows how to catch slip through, because success criteria were never stated independent of the artifact — the AI checked the code against itself, a circular loop that always passes. This is distinct from B1 (no tests were run at all): here tests may run and even pass, but they don't test the actual requirement, or the "verification" was really just re-reading the code with a favorable eye.
+
+**Defending rule:** Self-Grounded Verification (`rules/self-grounded-verification.md`) — state artifact-independent success criteria and a disconfirming check FIRST, then evaluate the artifact against them with cited evidence.
+
+**Escalation:** If the AI keeps declaring things "done" without a Step-1/Step-2 split, require it to output the Success Criteria checklist before the Verification Result table in any completion message. If in-context bias persists even with the checklist, escalate to delegation — hand the review to an independent subagent (see `reviewer` skill's Author Bias Gate) since no amount of single-context restructuring fully eliminates shared-context bias.
+
+**Note:** This differs from `reviewer`'s Author Bias Gate. That gate is about *whether to delegate at all* when you're the author. This pattern is about *what to do inside a single context* when delegation isn't available or the check is lightweight — the two are complementary layers, not competing fixes.
 
 ### Category C: Naming & Context Failures
 

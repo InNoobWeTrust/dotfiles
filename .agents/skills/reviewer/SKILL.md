@@ -15,6 +15,15 @@ Author self-review is ineffective regardless of methodology due to confirmation 
 
 **Authorship check is the FIRST gate in the decision tree** — before considering review type, complexity, or available lenses.
 
+## ⚠️ CRITICAL RULE: Self-Grounded Verification (Anti Agreement-Bias)
+
+Whenever review happens **in a single context** — Direct Review Mode, self-review fallback, or a subagent reviewing material handed to it — apply the two-step Self-Grounded Verification protocol from `../../rules/self-grounded-verification.md`. This counters *agreement bias* (Andrade et al., ICLR 2026): the tendency to validate whatever sits in the context window and to generate reasoning that rationalizes flaws.
+
+1. **Step 1 — Elicit priors first.** Before reading the artifact for judgment, write the artifact-independent success criteria the artifact MUST satisfy (from the requirement/contract, not the artifact), including at least one **disconfirming criterion** ("what would prove this is wrong?").
+2. **Step 2 — Evaluate against those priors.** Then examine the artifact, marking each criterion PASS / FAIL / UNVERIFIED with cited evidence (file:line, test output). PASS only if every criterion is PASS.
+
+Delegation removes shared context and is the strongest debiasing tool; Self-Grounded Verification hardens the cases where in-context review is unavoidable. They compose — use both when reviewing your own work is unavoidable and no subagent exists.
+
 ## When to Use This Skill
 
 **Explicit triggers**: "review this", "check for issues", "code review", "audit", "challenge this", "QA", "security review", "pull request review"

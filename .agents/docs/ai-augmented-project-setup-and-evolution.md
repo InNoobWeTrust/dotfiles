@@ -99,6 +99,7 @@ The project's `.agents/` directory follows this structure:
 │   ├── ubiquitous-language.md # Sync with GLOSSARY.md before coding
 │   ├── slicing.md            # Vertical slicing for feature work
 │   ├── skill-compliance.md   # Loading a skill = binding commitment to full workflow
+│   └── self-grounded-verification.md # Anti-agreement-bias: separate criteria from artifact
 │   ├── handoff.md            # When to save/restore session checkpoints
 │   └── skills-discovery.md   # How to select the right skill for a task
 │
@@ -167,7 +168,8 @@ When `rules/` files are not auto-loaded, embed the essential rule content direct
 2. **TDD protocol** — Red-Green-Refactor cycle and when it's required vs skippable.
 3. **Grooming protocol** — Requirement to ask clarifying questions before complex tasks.
 4. **Skill compliance** — Loading a skill = binding commitment to execute its full workflow.
-5. **Project-specific hard rules** — Where business logic lives, data integrity constraints, rules against manipulating servers.
+5. **Self-grounded verification** — Before declaring work done, state success criteria independent of the artifact (including a disconfirming check), then evaluate the artifact against them with cited evidence. Counters agreement bias — the tendency to validate whatever is already in context.
+6. **Project-specific hard rules** — Where business logic lives, data integrity constraints, rules against manipulating servers.
 
 **What NOT to embed** in the instructions file (keep in separate docs for human reference):
 
@@ -1078,6 +1080,7 @@ Use this checklist when bootstrapping a new project or auditing an existing one 
 | `.agents/rules/ubiquitous-language.md` | Glossary sync protocol, bootstrap procedure | Engineering lead |
 | `.agents/rules/slicing.md` | Vertical slicing protocol for feature decomposition | Engineering lead |
 | `.agents/rules/skill-compliance.md` | Binding workflow enforcement, hard-stop gates | Engineering lead |
+| `.agents/rules/self-grounded-verification.md` | Two-step anti-agreement-bias verification protocol | Engineering lead |
 | `.agents/rules/handoff.md` | Context persistence rules, save/restore triggers | Engineering lead |
 | `.agents/skills/INDEX.md` | Skill routing table with cost and applicability columns | Engineering lead |
 | `.agents/skills/WIRING.md` | Skill composition pathways and handoff matrix | Engineering lead |

@@ -109,7 +109,8 @@ AI agent = a junior engineer who is:
 │   ├── grooming.md
 │   ├── ubiquitous-language.md
 │   ├── slicing.md
-│   └── skill-compliance.md
+│   ├── skill-compliance.md
+│   └── self-grounded-verification.md
 ├── skills/             ← Loaded per-task, on demand
 │   ├── INDEX.md        ← Routing table
 │   ├── WIRING.md       ← Composition pathways
@@ -132,7 +133,7 @@ AI agent = a junior engineer who is:
 
 ---
 
-# The 6 Essential Rules
+# The 7 Essential Rules
 
 Every AI-augmented project needs these:
 
@@ -142,6 +143,7 @@ Every AI-augmented project needs these:
 4. **Ubiquitous Language** — Sync with GLOSSARY.md to prevent naming drift
 5. **Vertical Slicing** — Build feature-by-feature, not layer-by-layer
 6. **Skill Compliance** — Loading a skill = binding commitment to full workflow
+7. **Self-Grounded Verification** — Elicit success criteria BEFORE examining artifact
 
 ---
 
@@ -237,6 +239,22 @@ Prevents the AI from loading a skill and selectively skipping steps.
 
 ---
 
+# Rule 7: Self-Grounded Verification
+
+Prevents AI from validating its own (or a user's) work just because it's already in context — **agreement bias**.
+
+**The problem:** LLMs over-validate flawed behavior and rationalize flaws, even when they hold correct priors about what success looks like. This happens *despite* thinking harder — test-time scaling makes rationalization more elaborate, not better.
+
+**The fix (two-step):**
+1. **Before examining the artifact** — State success criteria artifact-independently (from requirement/contract only, including a disconfirming check: "what would prove this wrong?")
+2. **Then evaluate against those criteria** — Mark each criterion PASS / FAIL / UNVERIFIED with cited evidence (file:line, test output)
+
+Verdict is PASS only if every criterion is PASS.
+
+*Source: Andrade et al., ICLR 2026*
+
+---
+
 # How Rules Evolve
 
 Rules aren't designed in advance. They emerge from real failures:
@@ -260,6 +278,7 @@ OBSERVE → Diagnose → Encode → Test → Refine → Generalize
 | Architecture | God objects growing over time | Code quality baseline |
 | Security | Hardcoding API keys in source | Git safety rules |
 | Business | Inventing business rules for ambiguous cases | Ambiguity policy |
+| Verification | Declaring own work correct without grounded check | Self-grounded verification |
 
 ---
 
@@ -512,7 +531,7 @@ Predictive quality suggestions, cross-project knowledge sharing, skill effective
 
 1. Create `AGENTS.md` with source-of-truth hierarchy
 2. Create `GLOSSARY.md` with domain terminology
-3. Set up `.agents/rules/` with the 6 essential rules
+3. Set up `.agents/rules/` with the 7 essential rules
 4. Set up `.agents/skills/INDEX.md` and `WIRING.md`
 5. Define quality gates with thresholds
 6. Set up automated build & deploy pipeline with environment separation
