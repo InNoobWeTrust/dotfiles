@@ -20,7 +20,7 @@
     //  "model": "kilo/kilo-auto/free",
     //},
     "general": {
-      "description": "Can only use tools with no side-effect",
+      "description": "Read-only general research. USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
       //"model": "github-copilot/claude-sonnet-4.5",
       //"model": "ink-gw/openai/chatgpt-5.4-mini",
       "model": "ink-gw/deepseek/deepseek-v4-pro",
@@ -40,24 +40,96 @@
     },
     "plan": {
       "mode": "all",
-      "description": "An experienced technical leader and planner for system design, architecture, and implementation plans",
+      "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
       //"model": "github-copilot/gpt-5.4",
       //"model": "llm-agg/forbiddengun/glm-5.2",
       "model": "ink-gw/openai/chatbot-5.4",
     },
     "code": {
       "mode": "all",
-      "description": "A skilled software engineer for implementation, refactoring, debugging, and general development",
+      "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
       //"model": "github-copilot/claude-sonnet-4.5",
-      //"model": "ink-gw/deepseek/deepseek-v4-pro",
+      "model": "ink-gw/deepseek/deepseek-v4-pro",
       //"model": "llm-agg/forbiddengun/deepseek",
-      "model": "llm-agg/forbiddengun/claude",
+      //"model": "llm-agg/forbiddengun/claude",
     },
     "debug": {
       "mode": "all",
-      "description": "An expert problem solver specializing in systematic troubleshooting and diagnostics",
+      "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
       //"model": "github-copilot/claude-sonnet-4.6",
-      "model": "llm-agg/forbiddengun/gpt",
+      "model": "llm-agg/forbiddengun/claude",
+    },
+    "code-reviewer": {
+      "mode": "subagent",
+      "description": "Code quality review: best practices, security, maintainability, and SOLID/KISS compliance. Read-only. Use after any non-trivial implementation.",
+      "model": "ink-gw/openai/chatbot-5.4",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny",
+          "git diff": "allow",
+          "git log": "allow",
+          "rg *": "allow",
+          "grep *": "allow"
+        }
+      },
+      "prompt": "You are a code reviewer. Analyze code for code quality, best practices, SOLID/KISS compliance, potential bugs, edge cases, performance issues, and security concerns. Provide constructive feedback without making direct changes. Always check: naming conventions, error handling, edge cases, null safety, concurrency issues, and dependency direction."
+    },
+    "tester": {
+      "mode": "subagent",
+      "description": "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only.",
+      "model": "ink-gw/deepseek/deepseek-v4-pro",
+      "permission": {
+        "edit": {
+          "*.test.*": "allow",
+          "*.spec.*": "allow",
+          "*test*/**": "allow",
+          "*spec*/**": "allow",
+          "*__tests__/**": "allow",
+          "vitest.config.*": "allow",
+          "jest.config.*": "allow",
+          "playwright.config.*": "allow",
+          "*": "deny"
+        }
+      },
+      "prompt": "You are a test engineer. Write comprehensive tests following the project's existing test patterns and framework. Cover happy path, edge cases, error conditions, and boundary values. Match existing test style (naming, structure, assertions). Only edit test files and test config."
+    },
+    "docs-writer": {
+      "mode": "subagent",
+      "description": "Writes and edits documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
+      "model": "llm-agg/forbiddengun/claude",
+      "permission": {
+        "edit": {
+          "*.md": "allow",
+          "*.mdx": "allow",
+          "*.rst": "allow",
+          "docs/**": "allow",
+          "README": "allow",
+          "CHANGELOG*": "allow",
+          "CONTRIBUTING*": "allow",
+          "*": "deny"
+        },
+        "bash": "deny"
+      },
+      "prompt": "You are a technical writer. Write clear, concise, well-structured documentation. Follow existing documentation style and conventions. Focus on clarity, accuracy, and completeness. Include code examples where helpful. Use proper markdown formatting."
+    },
+    "security-auditor": {
+      "mode": "subagent",
+      "description": "Security audit: vulnerability assessment, secret exposure, dependency risks, input validation, auth/authz flaws. Read-only. Use for security reviews and pre-deployment audits.",
+      "model": "llm-agg/forbiddengun/claude",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny",
+          "git log": "allow",
+          "rg *": "allow",
+          "grep *": "allow",
+          "npm audit": "allow",
+          "pip-audit *": "allow",
+          "cargo audit": "allow"
+        }
+      },
+      "prompt": "You are a security auditor. Review code for security vulnerabilities: input validation, authentication/authorization flaws, data exposure, injection risks, dependency vulnerabilities, misconfigurations, and secret leakage. Report findings with severity (critical/high/medium/low) and specific remediation steps. Do not modify files."
     },
     // [Featherless cheapest plan] 32k context, 4 concurrent connections shared across ALL
     // featherless-backed agents below (build, orchestrator, ask, featherless-*). When
