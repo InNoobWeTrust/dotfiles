@@ -32,7 +32,7 @@
     },
     "orchestrator": {
       "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
-      "model": "llm-agg/forbiddengun/mimo",
+      "model": "llm-agg/forbiddengun/glm",
     },
     "ask": {
       "description": "A knowledgeable technical assistant focused on answering questions without changing your codebase",
