@@ -1,169 +1,122 @@
 ---
 name: swarm-intelligence
-description: "Multi-agent swarm orchestration for parallel, diverse-perspective analysis and synthesis. Spawns multiple agents with different personas and models to cross-validate, challenge, and synthesize outputs. Use when the task needs diverse expert perspectives, multi-model validation, ensemble reasoning, or the risk is too high for a single pass. Activate on \"swarm\", \"multi-agent\", \"parallel agents\", \"diverse perspectives\", \"get a second opinion\", \"cross-validate\", or any high-stakes decision needing multiple viewpoints."
+description: "Swarminator orchestration: Mode Single-Node (one bounded external node, immutable artifact) or Mode Full Swarm (multi-phase multi-persona multi-model). Use for isolated research/second opinions/patch suggestions, or for diverse-perspective cross-validation when risk is too high for one pass. Activate on \"swarm\", \"multi-agent\", \"external subagent\", \"single-node\", \"swarminator\", \"second opinion\", \"cross-validate\", \"parallel agents\". Commands: /swarm → Full Swarm, /external-subagent → Single-Node. Skip for routine single-agent implementation."
 ---
 
-> **⚠ COMPLIANCE ENFORCEMENT — READ BEFORE PROCEEDING**
->
-> Loading this skill is a binding commitment to execute its **complete three-phase workflow**. You **must**:
-> - Complete all 10 preflight steps before starting Phase 1 (see `../../rules/skill-compliance.md`)
-> - Run actual `swarminator` tool invocations — producing a Markdown description of what the swarm would do is **NOT acceptable**
-> - Use 2–3 models per persona invocation — single-model shortcuts are **NOT acceptable**
-> - Produce the required artifact sections for all three phases
->
-> If you find yourself writing "here is what the swarm would produce" instead of running `swarminator`, **STOP** — that is a violation, not a shortcut.
+# Swarm Intelligence (Swarminator)
 
-Swarm-intelligence orchestrates a three-phase workflow by calling `swarminator` once per node (one model + one persona prompt per invocation) and synthesizing Markdown artifacts between phases. All CLI interface details are obtained at runtime from `swarminator` itself.
+One skill, two modes. **Choose the mode first** — compliance and preflight differ. Commands pin the mode: `/external-subagent` → Single-Node, `/swarm` → Full Swarm.
 
-## Quick References (Runtime)
+> Loading this skill binds you to the **chosen mode’s full procedure**. Do not run a “lite swarm” that is neither a locked single node nor a full three-phase swarm. Real `swarminator` invocations only — no prose simulations. See `rules/skill-compliance.md` for Full Swarm hard gates.
+
+Compose with `subagent-dispatch` for prompt contracts before any node launch.
+
+---
+
+## Mode router (mandatory)
+
+| Signal | Mode | Cost |
+|---|---|---|
+| `/external-subagent` command, or one concrete deliverable / one node / research / second opinion / review / patch suggestion | **Single-Node** | low |
+| User says external subagent, isolated context, offload this small task | **Single-Node** | low |
+| `/swarm` command, or multi-phase / ambiguous / high-stakes / quorum / challenge cycles | **Full Swarm** | high |
+| User says swarm, multi-agent, diverse perspectives, cross-validate | **Full Swarm** | high |
+| Unsure | Prefer **Single-Node**; escalate to Full Swarm only if the artifact is still insufficient after one tight retry | — |
+
+```
+Is the deliverable one bounded artifact from one model context?
+  YES → Mode Single-Node  (references/single-node.md)
+  NO  → Mode Full Swarm   (references/preflight-and-phases.md)
+```
+
+**Do not** slowly grow Single-Node into an ad-hoc multi-node mini-swarm. Escalate modes explicitly.
+
+---
+
+## Shared runtime
+
+Discover CLI at runtime — do not hard-code stale flags:
 
 ```bash
-$SHELL -l -c 'swarminator --help'              # CLI flags, examples, tutorial mode
-$SHELL -l -c 'swarminator --list-agents'        # available agent binaries & status
-$SHELL -l -c 'swarminator --list-models --agent NAME'  # models per agent
-$SHELL -l -c 'swarminator --tutorial swarm'     # built-in swarm orchestration guide
-$SHELL -l -c 'swarminator --phases'             # intent-to-phase map
-$SHELL -l -c 'swarminator --protocol'           # envelope format
-$SHELL -l -c 'swarminator --tutorial "agent modes"'  # ACP agent mode docs
-$SHELL -l -c 'swarminator --tutorial rules'     # exit codes & safety rules
+$SHELL -l -c 'command -v swarminator'
+$SHELL -l -c 'swarminator --help'
+$SHELL -l -c 'swarminator --list-agents'
+$SHELL -l -c 'swarminator --list-models --agent NAME'
 ```
 
-## Preconfigured References
+**Shared assets** (both modes):
 
-All files are relative to this skill directory (`./`):
+- Personas: `references/personas/` via `references/discover-personas.sh`
+- Models: `references/models/{free,premium}.json`
+- Default node preference: `command-code` + `deepseek-v4-pro` while budget allows
 
-- **Personas:** `references/personas/<group>/<name>.md` — YAML frontmatter + system prompt body.
-- **Persona discovery:** `./references/discover-personas.sh` — lists, searches, and retrieves full prompt text from persona files.
-- **Model catalogs:** `references/models/free.json` and `references/models/premium.json` — pre-vetted model IDs grouped by tier.
-- **`deepseek-v4-pro` (command-code):** Open-weight 1.6T MoE (49B active), 1M context, MIT license. Listed in both catalogs as the default external-node choice under `command-code`. Local Command Code budget is explicitly set to `$40` total for `deepseek-v4-pro`; prefer it until that quota is exhausted, then fall back to the other catalog entries. Current Command Code pricing remains $0.435/$0.87 per 1M tokens during the promo window, with list price $1.74/$3.48. #1 open-source coding model — SWE-Bench Verified 80.6%, LiveCodeBench 93.5%, Terminal-Bench 2.0 67.9%, Codeforces 3206.
-- **senior-reviewer persona:** Defined inline below (no file — always use the inline definition).
+**Shared hard rules** (both modes):
 
-## Preflight Checklist
+1. Delegated nodes are **read-only** on the workspace: no file writes, patch apply, stage, or destructive commands.
+2. Host defines contract (scope, output, allowed files, stop conditions) **before** invoke.
+3. Host validates and applies any changes.
+4. Prefer `subagent-dispatch` pillars in every node prompt.
 
-1. Confirm user wants multi-agent swarm orchestration.
-2. Identify primary domain (code, skill-review, writing, slides, design, pm, finance).
-3. Clarify final deliverable shape.
-4. Confirm read-only node constraint is acceptable.
-5. Verify swarminator: `$SHELL -l -c 'command -v swarminator'`.
-6. Inspect CLI: `$SHELL -l -c 'swarminator --help'`.
-7. List agents: `$SHELL -l -c 'swarminator --list-agents'`.
-8. Review model catalogs (`references/models/{free,premium}.json`) and select agent+model pairs, defaulting to `command-code` + `deepseek-v4-pro` while the explicit `$40` quota remains.
-9. Ensure persona discovery script exists and is executable: `references/discover-personas.sh`.
-10. Confirm required personas have retrievable prompts via discover-personas.sh (senior-reviewer is always inline — define it manually).
+---
 
-## Repeated Node Pattern
+## Mode Single-Node
 
-```bash
-PROMPT=$(references/discover-personas.sh prompt "PersonaName")
-$SHELL -l -c 'printf "%s" "$TASK" | swarminator --agent=AGENT -m MODEL -p "$(printf "%s" "$PROMPT")" -t TIMEOUT'
-```
+**Goal:** one task → one `swarminator` node → one immutable artifact.
 
-One call per persona+model pair. Orchestrator collects stdout and merges outputs externally.
+**Procedure:** `references/single-node.md`  
+Artifact modes: `analysis` | `review` | `patch` | `transform`.
 
-## Phase Workflow
+**Minimum flow:** lock scope + artifact mode + allowed files → one node → validate artifact → host applies if needed.
 
-### Phase 1 — Gather Inputs (2–3 models per persona)
-1. Run `Ingest` persona → collect outputs.
-2. Run `Analysis` persona → collect outputs.
-3. Synthesize phase summary with: `## Goals And Constraints`, `## Key Inputs`, `## Extracted Findings`, `## Open Questions`, `## Synthesis Log`.
+**Retry:** fresh bounded invocation with a tighter contract — not automatic multi-node expansion. If scope is unbounded, switch to Full Swarm.
 
-### Phase 2 — Synthesize and Challenge (2–3 models per persona)
-1. Run `Synthesis` persona → collect outputs → unify into **Specification**.
-2. Run `Review` persona → collect critiques.
-3. If critical gaps found, run `Synthesis-Revise` → re-review. Max 3 review cycles total.
-4. After 2 Review rejections: escalate to `senior-reviewer`.
-5. Deliverable: `## Specification Summary`, `## Design Decisions`, `## Acceptance Criteria`, `## Task Decomposition Hints`, `## Open Questions`, `## Synthesis Log`.
+---
 
-### Phase 3 — Decompose and Produce (2–3 models per persona)
-1. Run `Decompose` persona → numbered **Task List**.
-2. For each task: run `Maker` → run `Breaker` → read verdict.
-3. If verdict is `NEEDS REVISION` or `FAIL` (or malformed), run `Maker-Fix` (max 2 iterations).
-4. Assemble: `## Executive Summary`, `## Task Results`, `## Blocked Tasks`, `## Open Items`, `## Synthesis Log`.
+## Mode Full Swarm
 
-## Persona Group Map
+**Goal:** multi-persona, multi-model, three-phase orchestration with synthesis between phases.
 
-| Group | Persona IDs |
-| :--- | :--- |
-| **Ingest** | `business-analyst`, `technical-documentation-auditor`, `audience-analyst`, `technical-analyst`, `communications-strategist`, `ux-researcher`, `product-researcher` |
-| **Analysis** | `adversarial-reviewer`, `technical-analyst`, `business-analyst-pm`, `content-analyst`, `design-systems-analyst` |
-| **Synthesis** | `solution-architect`, `content-strategist`, `senior-ux-designer`, `review-plan-synthesizer`, `senior-product-manager` |
-| **Review** | `senior-engineer`, `qa-engineer`, `plan-challenger`, `critical-stakeholder-reviewer`, `senior-editor`, `usability-and-accessibility-specialist`, `senior-reviewer` |
-| **Decompose** | `technical-lead`, `review-lead`, `content-lead`, `design-lead`, `product-lead` |
-| **Maker** | `code-maker`, `technical-writer-finding`, `feature-writer`, `slide-content-writer`, `component-designer` |
-| **Breaker** | `code-breaker`, `qa-reviewer-finding`, `design-quality-reviewer`, `product-spec-reviewer`, `slide-quality-reviewer`, `copy-editor` |
-| **Maker-Fix** | `code-maker-fix`, `technical-writer-finding-fix`, `writer-fix`, `component-designer-fix` |
-| **Synthesis-Revise** | `solution-architect-reviser`, `review-plan-reviser`, `outline-reviser`, `strategist-reviser` |
+**Preflight:** all 10 steps required (user confirm, domain, deliverable, read-only OK, swarminator checks, catalogs, personas).  
+**Detail:** `references/preflight-and-phases.md`  
+**Models:** **2–3 models per persona** each phase — single-model shortcuts forbidden.
 
-Fetch Persona prompt text for all personas except **senior-reviewer** via `discover-personas.sh prompt "Name"`. Locate **senior-reviewer** definition inline below (no file — always use the inline definition).
+| Phase | Purpose | Required sections (summary) |
+|---|---|---|
+| 1 Gather | Inputs + findings | Goals, Key Inputs, Extracted Findings, Open Questions, Synthesis Log |
+| 2 Synthesize | Spec + challenge | Spec Summary, Design Decisions, Acceptance Criteria, Task Hints, Synthesis Log |
+| 3 Produce | Decompose + deliver | Executive Summary, Task Results, Blocked Tasks, Open Items, Synthesis Log |
 
-**senior-reviewer** has no file — inline definition below. Cannot be retrieved via discover-personas.sh; define it manually.
+**Forbidden:** describing what the swarm would produce; skipping preflight; “simplified” single-model swarm.
 
-## Domain Mapping
+---
 
-| Domain | Output Format | Primary Persona Groups |
-| :--- | :--- | :--- |
-| code | Code package, patch plan, diff-based implementation | Ingest, Analysis, Synthesis, Review, Decompose, Maker, Breaker |
-| skill-review | Skill or document review, findings report, patch diff | Ingest, Analysis, Synthesis, Review, senior-reviewer |
-| writing | Structured prose, synthesis notes, editorial output | Ingest, Analysis, Synthesis, Review, Decompose, Maker, Breaker |
-| slides | Slide outline, talking points, narrative structure | Ingest, Analysis, Synthesis, Review, Decompose, Maker, Breaker |
-| design | Design brief, interface spec, critique notes | Ingest, Analysis, Synthesis, Review, Decompose, Maker, Breaker |
-| pm | Plan, milestones, risks, acceptance criteria | Ingest, Analysis, Synthesis, Review, Decompose, Maker, Breaker |
-| finance | Analysis memo, assumptions, risks, recommendation | Ingest, Analysis, Synthesis, Review, Decompose, Maker, Breaker |
+## Composition
 
-## Breaker Output Template
+| With | How |
+|---|---|
+| `subagent-dispatch` | Build every node prompt (scope, output contract, obstacles, allowed actions) before `swarminator` |
+| `bounded-iteration` | Full Swarm (or design) first → locked `TASK.md` → iteration loop (`bounded-iteration/references/swarm-integration.md`) |
+| `reviewer` | Single-Node `review` artifact mode, or Full Swarm review personas |
+| `model-benchmarking` | Choose catalogs/tiers → then this skill for execution |
+| Harness-native Task/subagents | Prefer native workers when available; use this skill when you need swarminator isolation or multi-model quorum |
 
-```markdown
-### Verdict: [PASS | NEEDS REVISION | FAIL]
+---
 
-### Critical Flaws
-- ...
-```
+## Deliverable checklist
 
-Orchestrator reads `### Verdict:` line (case-insensitive). Missing/invalid → retry once; second failure → treat as FAIL.
+**Either mode**
 
-## Synthesis Log Format
+- [ ] Mode chosen and stated
+- [ ] swarminator verified at runtime
+- [ ] Node prompts include dispatch contract
+- [ ] Workspace mutations only on host after validation
 
-```markdown
-### Phase [N] — [Phase Name]
-- **Models consulted:** [model IDs per persona]
-- **Agreement level:** [AGREED | DISAGREED | UNCERTAIN]
-- **Key contradictions:** [list; "none" if full agreement]
-- **Resolution rationale:** [how resolved, or "N/A"]
-```
+**Single-Node**
 
-## Error Handling
+- [ ] Artifact mode locked; one node; one artifact validated
 
-| Tier | Trigger | Action |
-| :--- | :--- | :--- |
-| Tier 1 Retry | Non-zero exit; output < 10 chars; malformed Breaker verdict | Retry same persona with different-family model, max 2 retries |
-| Tier 2 Degrade | Only one provider family available; synthesis DISAGREED/UNCERTAIN; single Review rejection | Continue with `confidence: reduced`; run Synthesis-Revise for disagreement/uncertainty; add another review cycle |
-| Tier 3 Stop | senior-reviewer rejects; >2 Review rejections; critical task blocked after 2 Maker-Fix iterations; safety violation; swarminator unavailable; required persona missing | STOP; write `blocker_summary.md` |
+**Full Swarm**
 
-**Hard stop conditions:** user intent unclear; domain undetermined; deliverable shape ambiguous; swarminator unavailable; cannot assemble 2–3 model quorum; Phase 1 unusable after retries; Phase 2 rejected after review limits; all critical tasks blocked; safety boundary crossed.
-
-## Inline Persona Definitions
-
-### senior-reviewer
-
-```yaml
-id: senior-reviewer
-name: Senior Reviewer
-group: Review
-domain: general
-```
-You are a Senior Reviewer with final escalation authority. Review the provided synthesis and review histories. Produce a single verdict: APPROVED or REJECTED with brief rationale. Your decision is final.
-
-### Persona Group Purposes (for writing inline prompts)
-
-| Group | Purpose |
-| :--- | :--- |
-| Ingest | Collect raw requirements, constraints, and context |
-| Analysis | Normalize inputs, extract facts, surface gaps |
-| Synthesis | Merge inputs into one coherent specification |
-| Review | Critique for gaps, contradictions, weak assumptions |
-| Synthesis-Revise | Repair rejected synthesis |
-| Decompose | Break specification into atomic tasks |
-| Maker | Produce task implementations |
-| Breaker | Validate outputs; judge pass/fail |
-| Maker-Fix | Repair rejected task outputs |
-| senior-reviewer | Final escalation gate when reviews reject |
+- [ ] Full preflight complete
+- [ ] All three phases with required sections
+- [ ] 2–3 models per persona; real swarminator runs

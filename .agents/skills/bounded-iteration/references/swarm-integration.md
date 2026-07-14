@@ -1,6 +1,6 @@
 # Swarm + Bounded Iteration: Combined Pipeline
 
-This document describes how to combine `swarm-intelligence` and `bounded-iteration`
+This document describes how to combine `swarm-intelligence` (**Mode Full Swarm**) and `bounded-iteration`
 into one end-to-end workflow:
 
 ```text
@@ -23,7 +23,7 @@ prompt, but still has a machine-verifiable end state.
 
 ## Ground Rules
 
-1. `swarm-intelligence` is an orchestrated multi-phase workflow.
+1. `swarm-intelligence` Mode Full Swarm is an orchestrated multi-phase workflow.
 2. `swarminator` runs one node per invocation, not the whole swarm.
 3. The final swarm output is one JSON artifact with a `files` array.
 4. Intermediate phase outputs may be prose, bullets, lightly structured text,
@@ -42,7 +42,7 @@ only runs one node.
 
 ## Phase 1: Run Swarm Normally
 
-Load `swarm-intelligence` and let it follow its documented orchestrator flow.
+Load `swarm-intelligence`, select **Mode Full Swarm**, and follow its orchestrator flow.
 In minimal mode that means:
 
 1. Select the correct domain config.

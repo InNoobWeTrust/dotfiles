@@ -77,7 +77,7 @@ These phrases in your reasoning signal a violation — stop and correct:
 
 ## All Other Skills
 
-For every loaded skill that is not swarm-intelligence:
+For every loaded skill that is not `swarm-intelligence` Mode Full Swarm:
 
 1. Read the full SKILL.md.
 2. Identify every section marked mandatory / required / must / hard stop.

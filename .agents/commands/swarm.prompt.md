@@ -1,16 +1,17 @@
 ---
-description: Thin multi-agent swarm entrypoint. Use only when the user asks for swarm, multi-agent, parallel agents, diverse perspectives, or the task is too high-risk for a single pass.
+description: Thin multi-agent swarm entrypoint. Use when the user asks for swarm, multi-agent, parallel agents, diverse perspectives, or high-risk multi-pass work. Routes to swarm-intelligence Mode Full Swarm.
 ---
 
 # Swarm
 
-Use the `swarm-intelligence` skill for swarm orchestration.
+Load **`swarm-intelligence`** and select **Mode Full Swarm** (complete preflight + three phases). For one bounded node only, use `/external-subagent` or Mode Single-Node instead.
 
 ## Entrypoint Guardrails
 
 - Preserve the user's objective, inputs, constraints, and stop conditions exactly.
 - Stop immediately on missing swarm configuration, failed quorum, timeout, unsafe action, or user approval boundary.
 - Use a login shell when PATH matters: `$SHELL -l -c 'swarminator --help'`.
+- Full Swarm requires 2–3 models per persona and real `swarminator` runs — no prose simulations.
 
 ## Preflight
 
@@ -27,5 +28,3 @@ $ARGUMENTS
 ```
 
 Use the block above as raw additional user input. Preserve whitespace, blank lines, and quoting exactly. If the block is empty, rely on the conversation context instead.
-
-Follow this command for the user's swarm request below.

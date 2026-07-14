@@ -41,27 +41,30 @@ When debugging or fixing a problem:
 
 ### Bounded Iteration
 
-1. `swarm-intelligence` — if the task needs design or decomposition first
+1. `swarm-intelligence` (Full Swarm or design-first) — if the task needs design or decomposition first
 2. `codebase-exploration` — if the codebase is unfamiliar
 3. `bounded-iteration` — bounded iterative execution
 4. `systematic-investigation` — if the loop hits oscillation or verifier failures
 5. `reviewer` (security lens) — for auth, dependency, secrets, or network-facing work before AFK mode
 
-### Subagent Delegation
+### Subagent / Swarminator Delegation
 
-Any time a background worker or external node is launched (regardless of harness API):
+Any time a background worker or external node is launched:
 
 1. `subagent-dispatch` — construct the structured delegation prompt (scope, output contract, allowed actions, stop conditions)
-2. harness worker or `external-subagent` — launch the node
+2. **Harness-native worker** when available, else **`swarm-intelligence`**:
+   - Mode Single-Node — one bounded swarminator node (`swarm-intelligence/references/single-node.md`); pin via `/external-subagent`
+   - Mode Full Swarm — multi-phase multi-model orchestration; pin via `/swarm`
 
-### Project Foundation (New Project Setup or Evolution)
+### Project Foundation (Bootstrap, Materialize, Audit/Evolve)
 
-When setting up or evolving a project's AI-augmented foundation:
+When setting up or keeping a project's AI-augmented foundation honest:
 
-1. `project-foundation` — bootstrap/audit AGENTS.md, GLOSSARY.md, rules/, skills/, Makefile, docs/architecture.md, quality gates, CI/CD skeleton
-2. `architecture-writer` — deep architecture doc if system design is complex and needs detailed diagrams
-3. `devsecops` — CI/CD pipeline + integrated security scanning for the specific platform
-4. `reviewer` — review all generated governance files
+1. `project-foundation` — Mode A Bootstrap | Mode B Audit/Evolve | Mode C Materialize core pack (full skill trees, not INDEX stubs)
+2. `codebase-exploration` — if glossary/architecture need a domain map of an unfamiliar repo
+3. `architecture-writer` — deep architecture doc when system design is complex
+4. `devsecops` — CI/CD pipeline + integrated security scanning for the specific platform
+5. `reviewer` — review generated governance files after bootstrap or major evolve
 
 ### DevSecOps Hardening
 
@@ -104,15 +107,21 @@ Natural transitions between skills:
 | `model-benchmarking` | `swarm-intelligence` | "Models selected, ready to launch multi-agent swarm" |
 | `model-benchmarking` | `requirements-driven-dev` | "Token costs and model limits analyzed, feeding into TRD/PRD architectural specs" |
 | `talent-screening` | `reviewer` (editorial lens) | "Evaluation reports completed, ready for peer review" |
-| Any skill | `session-handoff` | "Handoff requested, serializing context and saving progress" |
-| `session-handoff` | Any skill | "Session restored, resuming active work" |
+| Any skill | `memory` (Capture) | "Handoff requested, serializing context and saving progress" |
+| `memory` (Recall) | Any skill | "Session restored, resuming active work" |
+| Any skill | `memory` (Consolidate) | "Commit pending or explicit dream-cycle request, promoting short-term to long-term" |
+| `memory` (Consolidate) | `memory` (Evict) | "Long-term size limits passed, running eviction pass" |
+| Any skill | `memory` (Structure) | "Applying progressive-disclosure pattern to a docs directory or code module" |
 | Any implementation skill | `reviewer` | "Review my work" |
-| `subagent-dispatch` | `external-subagent` | "Prompt constructed, delegating one bounded node to swarminator" |
-| `subagent-dispatch` | `swarm-intelligence` | "Prompt constructed, task requires multi-node orchestration" |
+| `subagent-dispatch` | `swarm-intelligence` (Single-Node) | "Prompt constructed, one bounded swarminator node (`/external-subagent`)" |
+| `subagent-dispatch` | `swarm-intelligence` (Full Swarm) | "Prompt constructed, multi-node orchestration (`/swarm`)" |
+| `swarm-intelligence` (Single-Node) | `swarm-intelligence` (Full Swarm) | "Bounded node insufficient; escalate to full swarm" |
 | `multi-perspective-deliberation` | `subagent-dispatch` | "Launching background workers for persona simulation" |
 | `project-foundation` | `architecture-writer` | "Project scaffolded, now writing detailed architecture doc" |
 | `project-foundation` | `devsecops` | "Project scaffolded, now designing CI/CD with integrated security" |
 | `project-foundation` | `reviewer` | "Governance files created, ready for review" |
+| Any skill | `project-foundation` (Mode B) | "INDEX routes to missing skill, FOUNDATION.md missing, or architecture/glossary clearly stale vs repo" |
+| `project-foundation` (Mode C) | `project-foundation` (Mode B) | "Core pack materialized; run full drift audit" |
 | `devsecops` | `code-craft` | "Vulnerabilities found, now implementing remediations" |
 | `devsecops` | `reviewer` (security lens) | "Pipeline and security config complete, verifying" |
 | `architecture-writer` | `project-foundation` | "Architecture mapped, updating GLOSSARY.md with discovered terms" |

@@ -81,7 +81,7 @@ AI agent projects use two layers of configuration, kept strictly separate:
 
 - Rules that apply to every task in this project
 - Skills with workflows tailored to this project's stack and domain
-- Handoffs: session checkpoints for context continuity
+- Memory: short-term session checkpoints + long-term consolidated memory (see `memory` skill)
 - Project-specific infrastructure templates
 
 **Why separate them:** A new team member who clones the repo must get the full project configuration without any dependency on the lead's personal tooling. Conversely, the lead's personal configuration should never leak into the team's shared contract.
@@ -100,7 +100,7 @@ The project's `.agents/` directory follows this structure:
 │   ├── slicing.md            # Vertical slicing for feature work
 │   ├── skill-compliance.md   # Loading a skill = binding commitment to full workflow
 │   └── self-grounded-verification.md # Anti-agreement-bias: separate criteria from artifact
-│   ├── handoff.md            # When to save/restore session checkpoints
+│   ├── memory.md             # When to capture/recall/consolidate/evict memory
 │   └── skills-discovery.md   # How to select the right skill for a task
 │
 ├── skills/                   # Complete workflows loaded per-task
@@ -111,12 +111,11 @@ The project's `.agents/` directory follows this structure:
 │   ├── reviewer/             # Multi-lens code/spec review
 │   ├── requirements-driven-dev/  # PRD → TRD → BDD specification workflow
 │   ├── codebase-exploration/ # Navigating unfamiliar codebases
-│   ├── session-handoff/      # Saving/restoring context across sessions
+│   ├── memory/               # Short-term + long-term memory with dream-cycle
 │   ├── brainstorming/        # Creative ideation and problem framing
 │   └── <project-specific>/   # Skills unique to this project's stack
 │
-├── handoffs/                 # Self-contained checkpoint files
-└── sessions/                 # Project-specific conversation history
+└── memory/                   # short-term/, long-term/, archive/ — see skills/memory
 ```
 
 ### Key Files Explained
@@ -345,7 +344,7 @@ Your project's `AGENTS.md` should have these sections, adapted to your stack and
 | **Database Rules** | Schema management protocol | Migration workflow, raw SQL vs ORM boundaries, seed data setup |
 | **Agent Operating Rules** | How the AI agent should behave | Default skill, when to load/not load skills, verification protocol |
 | **Code Quality Rules** | Minimum engineering bar | Naming conventions, nesting limits, function length, prohibited patterns |
-| **Routing & Handoff Rules** | Context management | When to save/restore checkpoints, file locations |
+| **Routing & Memory Rules** | Context management | When to save/restore short-term entries, when to consolidate, file locations |
 | **Server Management Rules** | What the AI can/cannot do to infrastructure | Explicit prohibitions against starting/stopping servers |
 | **Source Code Organization** | File/folder map | Where each type of code lives (routers, services, components, DTOs) |
 | **Debugging Protocol** | Structured investigation approach | Steps to follow when diagnosing a bug |
@@ -554,25 +553,35 @@ The AI should ask 3-5 high-value questions, prioritized by architectural impact.
 
 **When to skip the interview:** Simple edits (typos, config values, renames), tasks where the specification is already exact and unambiguous, tasks that are purely mechanical.
 
-### Handoff: Context Continuity Across Sessions
+### Memory: Context Continuity Across Sessions
 
-When a coding session ends and the task will continue later, a handoff saves the current state so the next session can resume without re-explaining everything.
+When a coding session ends and the task will continue later, a **short-term memory entry** saves the current state so the next session can resume without re-explaining everything. When enough short-term entries accumulate — or when a git commit is about to close the day — a **dream cycle** consolidates the useful ones into **long-term memory** and proposes stale entries for eviction. Session checkpoints are just one kind of short-term entry.
 
-**What a handoff contains:**
+**What a short-term entry contains (self-contained so the next session can act):**
 - Current goal and status
-- Key decisions made (and why)
+- Key decisions made (and why) — mark `(finalised)` or `(fluid)`
 - Files touched (with paths)
 - Verification state (what tests passed, what's pending)
 - Known blockers
 - Next actions (prioritized)
+- Open questions for the user
 
-**When to save a handoff:**
+**When to write a short-term entry:**
 - The user asks for a checkpoint
 - A major milestone completes and continuation is likely
 - Context length is getting large (the session will soon lose early context)
 - The user signals end of session or device switch
 
-**Handoff location:** Inside a git repo, handoffs go to `<project-root>/.agents/handoffs/`. Outside a repo, they go to a personal directory. This keeps team and personal state separate.
+**When to run a dream cycle (Consolidate mode):**
+- The user explicitly asks ("consolidate memory", "dream cycle")
+- A git commit is about to be made and short-term entries are unconsolidated
+- Long-term size limits are approaching and eviction candidates need scoring
+
+**Long-term is size-limited.** Growth happens only through consolidation, and eviction is always a scored proposal the human approves — never a silent delete. Corrections are append-only and user-owned.
+
+**Memory location:** Inside a git repo, memory lives under `<project-root>/.agents/memory/` with `short-term/` and `long-term/` subdirectories plus an `archive/` for evicted long-term entries. Outside a repo, it falls back to `~/.agents/memory/`. Full layout, frontmatter templates, dream-cycle phases, scoring function, and eviction protocol live in the `memory` skill (`.agents/skills/memory/`).
+
+**Progressive-disclosure meta-pattern.** The same short-term-leaf ↔ long-term-index shape applies to docs (`docs/README.md` + section indexes → `docs/**/detail-*.md`) and code (module `index.ts` / `__init__.py` / `mod.rs` → individual files). The `memory` skill's Structure mode applies it to any docs directory or source module on request.
 
 ---
 
@@ -905,7 +914,7 @@ If management asks "what is the AI actually doing?" — have data:
 
 | Metric | How to Track |
 |---|---|
-| Tasks completed with AI assistance | Count of session checkpoints, handoff files |
+| Tasks completed with AI assistance | Count of short-term memory entries in `.agents/memory/short-term/` |
 | AI-generated vs human-written code | Git author analysis |
 | Quality of AI output | Review findings per AI-assisted change |
 | AI cost | Token usage across providers, cost per task or sprint |
@@ -1010,7 +1019,7 @@ If the AI starts producing lower-quality output, check these in order:
 2. **Was the right skill loaded?** Check INDEX.md. Using the wrong skill for a task is inefficient; using no skill for a complex task is dangerous.
 3. **Was the task scoped properly?** "Add feature X" is too broad. "Add feature X following pattern Y with acceptance criteria Z, storing data in module M" is actionable.
 4. **Were quality gates run?** If the AI didn't run the quality commands, it didn't verify its work. Require verification output.
-5. **Is there a handoff gap?** If the AI lost context mid-task, save handoffs more frequently so context doesn't need to be rebuilt.
+5. **Is there a memory gap?** If the AI lost context mid-task, write short-term memory entries more frequently and run the dream cycle before commits so long-term memory stays current.
 
 ---
 
@@ -1046,7 +1055,7 @@ Use this checklist when bootstrapping a new project or auditing an existing one 
 
 - [ ] Skill loading rules defined (default to `code-craft` for code, skip for formatting)
 - [ ] Grooming interview protocol active (3-5 clarifying questions before complex tasks)
-- [ ] Handoff protocol defined (repo-local checkpoints for context continuity)
+- [ ] Memory protocol defined (repo-local short-term + long-term with dream-cycle consolidation)
 - [ ] Server management rules (AI agent must not start/stop servers or manipulate processes)
 - [ ] Debugging protocol documented (reproduce → inspect → compare → trace → test → fix → verify)
 
@@ -1081,9 +1090,10 @@ Use this checklist when bootstrapping a new project or auditing an existing one 
 | `.agents/rules/slicing.md` | Vertical slicing protocol for feature decomposition | Engineering lead |
 | `.agents/rules/skill-compliance.md` | Binding workflow enforcement, hard-stop gates | Engineering lead |
 | `.agents/rules/self-grounded-verification.md` | Two-step anti-agreement-bias verification protocol | Engineering lead |
-| `.agents/rules/handoff.md` | Context persistence rules, save/restore triggers | Engineering lead |
+| `.agents/rules/memory.md` | Memory triggers: capture, recall, dream-cycle, eviction | Engineering lead |
 | `.agents/skills/INDEX.md` | Skill routing table with cost and applicability columns | Engineering lead |
-| `.agents/skills/WIRING.md` | Skill composition pathways and handoff matrix | Engineering lead |
+| `.agents/skills/WIRING.md` | Skill composition pathways and skill-to-skill transitions | Engineering lead |
+| `.agents/skills/memory/` | Two-tier memory skill: short-term entries, long-term consolidation, dream cycle, eviction protocol, progressive-disclosure structuring | Engineering lead |
 | `docs/architecture.md` | System design, responsibility split, data ownership model | Engineering lead |
 | `docs/engineering/quality-gates.md` | Quality thresholds, command matrix, escalation rules | Engineering lead |
 | `docs/engineering/ai-agent-skills-and-rules-engineering.md` | How to design skills and rules, failure pattern catalog | Engineering lead |

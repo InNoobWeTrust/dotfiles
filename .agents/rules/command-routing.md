@@ -16,7 +16,7 @@ Use the table first. Do not scan command bodies unless no route matches and the 
 | "requirements", "PRD", "TRD", "BDD", "spec this" | `../commands/requirements-lifecycle.prompt.md` |
 | "swarm", "multi-agent", "parallel agents" | `../commands/swarm.prompt.md` |
 | "ralph", "loop", "run until done", "bounded iteration" | `../commands/bounded-iteration.prompt.md` |
-| "save handoff", "checkpoint", "resume" | `../commands/handoff.prompt.md` |
+| "save handoff", "checkpoint", "save context", "note this", "remember this", "save memory", "resume", "restore", "load context", "what was I working on", "consolidate memory", "dream cycle", "prune memory", "forget", "structure docs", "split module" | `../commands/memory.prompt.md` |
 | "benchmark", "optimize agents", "model comparison" | `../commands/benchmark-agents.prompt.md` |
 | "sync mcp", "update mcp config" | `../commands/sync-mcp.prompt.md` |
 | "brainstorm", "ideate" | `../commands/brainstorming.prompt.md` |

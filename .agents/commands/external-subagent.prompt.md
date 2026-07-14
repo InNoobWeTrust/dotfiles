@@ -1,12 +1,14 @@
 ---
-description: Thin external-node delegation entrypoint. Use for one bounded swarminator offload that returns an immutable artifact such as research notes, a review, or a patch-only edit suggestion.
+description: Thin entrypoint for one bounded swarminator node (immutable artifact). Loads swarm-intelligence Mode Single-Node.
 ---
 
 # External Subagent
 
-Use the `external-subagent` skill for one bounded `swarminator` delegation.
+Load **`swarm-intelligence`** and select **Mode Single-Node** only.
 
-Default runtime priority: use `command-code` with the built-in `deepseek-v4-pro` path first, and keep using it until the documented `$40` quota is exhausted.
+Do **not** run Full Swarm from this command unless the user escalates after a failed Single-Node attempt.
+
+Default runtime priority: `command-code` + `deepseek-v4-pro` while documented quota remains.
 
 ## Entrypoint Guardrails
 

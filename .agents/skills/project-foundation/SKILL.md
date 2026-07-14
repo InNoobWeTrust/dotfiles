@@ -1,193 +1,180 @@
 ---
 name: project-foundation
-description: "Bootstrap, evolve, and maintain the full AI-augmented project foundation: AGENTS.md, GLOSSARY.md, .agents/rules/, .agents/skills/, Makefile, docs/architecture.md, quality gates, and CI/CD pipeline skeleton. Load for \"set up a new project\", \"bootstrap AI agent infrastructure\", \"onboard a new project\", \"initialize .agents/\", \"create AGENTS.md\", \"create Makefile\", \"create glossary\", \"update project scaffold\", \"evolve project structure\", or \"audit project foundation\". Skip for adding individual rules/skills to an already-bootstrapped project."
+description: "Bootstrap, audit, evolve, and materialize the AI-augmented project foundation (AGENTS.md, GLOSSARY.md, .agents/rules+skills core pack, Makefile, architecture, quality gates). Load for new project setup, missing skills after bootstrap, foundation drift, sync .agents from global, evolve AGENTS/GLOSSARY/architecture to match the repo, or audit project foundation. Skip only when editing a single existing rule/skill body with no pack-level change."
 ---
 
 # Project Foundation
 
-Bootstrap, evolve, and maintain the full AI-augmented project foundation — the files every project described in the docs as "Phase 1: Foundation" needs, regardless of whether the project is brand new or evolving.
+Keeps a repo’s agent-facing foundation **complete, loadable, and honest relative to the codebase**. Bootstrap is only one mode — **Audit/Evolve** is the ongoing mode.
+
+Progressive disclosure: this file is the workflow. Pack membership and checklists live in:
+
+- `references/core-pack.md` — what must be on disk
+- `references/drift-checks.md` — audit checklist + auto-trigger signals
+- `references/FOUNDATION.template.md` — stamp written to `.agents/FOUNDATION.md`
 
 ---
 
-## Skill Workflow
+## Mode Selection (mandatory first step)
 
-This skill has 9 phases. All must be completed in order. For existing projects, phases adapt to what already exists — audit and fill gaps, don't overwrite.
+| Signal | Mode |
+|---|---|
+| No `AGENTS.md` / no `.agents/` / "set up new project" | **A — Bootstrap** |
+| "audit foundation", "evolve", "sync .agents", missing skill at runtime, stale architecture/glossary | **B — Audit/Evolve** |
+| Core skills only as INDEX stubs; teammate can't load skills | **C — Materialize core pack** (often inside A or B) |
 
-### Phase 1 — Discover Project Context
+State the chosen mode in one line before acting.
 
-Before creating anything, gather the facts:
+---
 
-1. **Read existing project files**: Scan `README.md`, `package.json`/`pyproject.toml`/`go.mod`, any existing `docs/`, and source code directories.
-2. **Identify**: language stack, framework, database, external services, build system.
-3. **Extract domain concepts**: Scan entity models, database schemas, and API route files for 10-15 recurrent nouns.
-4. **Note what is missing**: Which of the foundation deliverables already exist?
+## Mode A — Bootstrap
 
-**Deliverable**: A context summary block:
+Run phases in order. Adapt to what exists; never overwrite substantive local content without asking.
+
+### A1 — Discover context
+
+Read README, manifests (`package.json` / `pyproject.toml` / `go.mod`), `docs/`, and primary source trees.
+
+Deliverable:
+
 ```
 PROJECT CONTEXT
 ===============
-Language/stack  : [e.g., Python/FastAPI + Vue 3/Nuxt]
-Database        : [e.g., PostgreSQL via SQLAlchemy]
-External services: [e.g., Stripe, SendGrid, AWS S3]
-Build system    : [e.g., npm scripts, tox, Makefile]
-Domain concepts : [list 10-15 recurring nouns found in entities/models]
-Existing files  : [list which foundation files already exist]
+Language/stack   :
+Database         :
+External services:
+Build system     :
+Domain concepts  : [10–15 nouns]
+Existing foundation files:
+Materialization preference: symlink | copy | ask
 ```
 
-### Phase 2 — Create AGENTS.md
+If materialization preference is unknown and the repo is shared: **default to copy** for core pack. Solo + global pack present: **symlink** is fine.
 
-Create or update `<project-root>/AGENTS.md` with these mandatory sections (adapt content to the discovered context):
+### A2 — AGENTS.md
 
-1. **First paragraph**: What does this project do? Who uses it? One paragraph.
-2. **Source-of-Truth Hierarchy**: Ranked list (1. product requirements → 2. design docs → 3. architecture → 4. existing code → 5. legacy docs).
-3. **Project Rules**: Hard constraints — business logic location, data integrity rules, server management prohibitions.
-4. **Tooling Rules**: Package manager, build commands, environment isolation.
-5. **Agent Operating Rules**: Default skill (`code-craft`), when to load/not load skills, verification protocol.
-6. **Code Quality Rules**: Nesting depth ≤ 3, function length ≤ 50, guard clauses, no magic literals, no silent error swallowing.
-7. **Source Code Organization**: Map of where each type of code lives (routers, services, models, components, DTOs).
-8. **Verification Commands**: Every command the AI should run before declaring work done (`make fix`, `make lint`, `make quality`, `make test`).
-9. **Security Rules**: Never commit secrets, `.gitignore` patterns, secret scanning expectation. Run `trufflehog git file://. --only-verified` or `gitleaks detect --source .` before every commit; add them to `make quality` target.
+Create/update project `AGENTS.md` with: product one-liner, source-of-truth hierarchy, project rules, tooling, agent operating rules (default `code-craft`, full-skill commitment), code quality pointers, source layout, verify commands, security (no secrets; secret scan expectation).
 
-**STOP CONDITION**: If AGENTS.md already exists and is comprehensive, skip creation. If it exists but is incomplete, update it rather than overwriting.
+Stop: if comprehensive, leave it; if incomplete, patch sections only.
 
-### Phase 3 — Create GLOSSARY.md
+### A3 — GLOSSARY.md
 
-Create `<project-root>/GLOSSARY.md` using the bootstrap protocol:
+Bootstrap ≥10 domain terms from code/schema (or fewer with justification). Canonical names + prohibited aliases. Extend existing file; do not rename canon without drift resolution.
 
-1. Scan entity models, class declarations, and database schemas.
-2. Extract 10-15 recurrent domain nouns and concepts.
-3. Verify synonyms — check if identical concepts have different names in different files.
-4. Detect term drift: cluster terms by concept, flag variants. The most-used name in domain code wins as canonical.
-5. Draft the table:
+### A4 — Rules
 
-```
-| Term | Domain Definition | Backend Reference | Frontend Reference | Prohibited Aliases |
-|---|---|---|---|---|
-| [CanonicalName] | [What this concept means in the business domain] | [file path + symbol] | [file path + component] | [banned names] |
-```
+Materialize **required rules** from `references/core-pack.md` into `.agents/rules/` (symlink or copy). Do not hand-write full rule bodies when a global source exists.
 
-**Rules**: Each row is one canonical domain concept. "Domain Definition" explains business meaning, not code. Prohibited aliases list all alternative names found in the codebase. At least 10 terms for non-trivial projects.
+### A5 — Skills core pack (critical)
 
-**If GLOSSARY.md already exists**: Add new discovered terms. Update references. Do NOT change existing canonical names unless drift must be resolved.
+Materialize **required skill trees** from `references/core-pack.md` — full directories including `references/` for `reviewer` and `requirements-driven-dev`.
 
-### Phase 4 — Bootstrap Rules Directory
+**Forbidden:** creating only `INDEX.md` / `WIRING.md` that *mention* global skills without a project-resolvable path.
 
-Create or verify `.agents/rules/` contains these 6 essential files:
+Also write:
 
-1. `code-quality.md` — Design checkpoint, naming conventions, structure limits, prohibited patterns, tech debt markers, refactoring signals.
-2. `tdd.md` — Red-Green-Refactor protocol, logic gates, exceptions, evidence requirement.
-3. `grooming.md` — Reverse interview (3-5 questions), AFK self-grooming audit.
-4. `ubiquitous-language.md` — Glossary protocol: locate → inspect → align → extend. Bootstrap rule pointing to GLOSSARY.md.
-5. `slicing.md` — Vertical slicing protocol: decompose → implement → validate → feedback.
-6. `skill-compliance.md` — Binding commitment, hard-stop gates, self-check checklist.
+- `skills/INDEX.md` — core rows + any project-specific skills only
+- `skills/WIRING.md` — symlink to global or minimal local composition
+- `.agents/FOUNDATION.md` — from `references/FOUNDATION.template.md` (source, mode, revision, date)
 
-If this is a project-level `.agents/` (not the global `~/.agents/`), also create: `handoff.md`, `skills-discovery.md`.
+### A6 — Makefile
 
-### Phase 5 — Bootstrap Skills Directory
+Thin targets: `help`, `fix`, `lint`, `quality`, `test`, `dev`, `dev-up`, `build`. Adapt to stack; never delete existing targets.
 
-Create or verify `.agents/skills/` contains:
+### A7 — Architecture + quality gates
 
-1. `INDEX.md` — Routing table with at minimum: `code-craft`, `systematic-investigation`, `codebase-exploration`, `reviewer`, `requirements-driven-dev`.
-2. `WIRING.md` — Composition pathways: Investigation→Fix→Review, Feature Implementation.
+- `docs/architecture.md` — responsibility split, data ownership, data flow, API contracts, integration modes, non-goals
+- `docs/engineering/quality-gates.md` — command matrix, thresholds, escalation, rollout
 
-For a project-level `.agents/`, these files are references to the global skill set. For a global `~/.agents/`, ensure all skills are in place.
+### A8 — Verify
 
-### Phase 6 — Create Makefile
-
-Create `<project-root>/Makefile` with these standard targets, adapted to the discovered stack. Each target is a thin wrapper — maximum 3 lines. Real logic stays in the build system:
-
-```
-make help         # Show available commands
-make fix          # Auto-fix formatting and safe corrections
-make lint         # Fast format + lint + type check
-make quality      # Full structural checks + dependency audit
-make test         # All tests
-make dev          # Start dev servers
-make dev-up       # Start infrastructure (databases, queues)
-make build        # Production build
-```
-
-**Adaptation rules**:
-- **Monorepo**: Delegate to subdirectory Makefiles or workspace-level commands.
-- **No existing format/lint/test**: Create a target that echoes "not configured yet" — the target exists as a contract.
-- **Multiple languages**: Chain commands with `&&`.
-- **Python with uv**: Use `uv run` prefixes.
-- **JavaScript**: Use the detected package manager (npm/pnpm/yarn/bun).
-
-**If Makefile already exists**: Add missing targets. Never remove existing targets. If a target name conflicts, propose a unified target that subsumes both purposes rather than adding a `:new` variant — conflicting targets signal a process question that needs resolution, not a naming workaround.
-
-### Phase 7 — Create docs/architecture.md
-
-Create `<project-root>/docs/architecture.md` answering:
-
-1. **Responsibility split**: Which component owns what? (Frontend, Backend, Data, Infrastructure).
-2. **Data ownership**: Which tables/collections belong to which service?
-3. **Data flow**: ASCII diagram showing how data moves between components.
-4. **API contract strategy**: OpenAPI, gRPC, GraphQL — how are contracts defined and synchronized?
-5. **Integration modes**: When ORM vs raw SQL? When REST vs events?
-6. **Non-goals**: What is explicitly OUT of scope?
-
-### Phase 7.5 — Create docs/engineering/quality-gates.md
-
-Create `<project-root>/docs/engineering/quality-gates.md` with:
-
-1. **Command matrix**: Map `make fix` / `make lint` / `make quality` / `make test` to the actual tool commands.
-2. **Thresholds**: Per-command pass/fail criteria and timeout values.
-3. **Escalation path**: When to widen thresholds, waive checks, or route to human review.
-4. **Rollout policy**: How new checks are introduced and enforced (opt-in → warning → blocking).
-
-### Phase 8 — Bootstrap Verification
-
-Run the foundation checklist:
-
-- [ ] `AGENTS.md` exists and has all mandatory sections
-- [ ] `GLOSSARY.md` exists with 10+ domain terms, linked from AGENTS.md
-- [ ] `rules/` contains all 6 essential rules
-- [ ] `skills/INDEX.md` and `WIRING.md` exist
-- [ ] `Makefile` exists with all standard targets; `make help` works
-- [ ] `docs/architecture.md` exists with all 6 sections
-- [ ] `docs/engineering/quality-gates.md` exists (creates if not — command matrix, thresholds, escalation, rollout policy)
-- [ ] A new developer could onboard in 30 minutes using these files
+Use the presence checklist in `references/drift-checks.md` section A. All critical items must pass.
 
 ---
 
-## Stop Conditions
+## Mode B — Audit/Evolve
 
-- **Update mode**: If the user says "update" not "create", apply only the phases for missing/incomplete files.
-- **File conflict**: If a file exists and is substantively different from what this skill would create, present the conflict and ask before overwriting.
-- **Insufficient domain knowledge**: If the project is too large to map in one pass, focus on the core data path and mark the rest as "to be mapped."
+Use when the foundation already exists. **Do not re-bootstrap from scratch.**
+
+1. Read `.agents/FOUNDATION.md` (if missing → treat as critical gap).
+2. Run `references/drift-checks.md` sections A–E.
+3. Emit the gap report format from that file.
+4. Apply fixes in this priority order:
+   1. Critical routing breaks (missing core skills/rules, dangling INDEX)
+   2. Reality drift (AGENTS verify commands, glossary, architecture)
+   3. Freshness sync from global (copy mode only; preserve project overlays)
+   4. INDEX slim-down (drop unused mega-skills from the default table)
+5. Update `FOUNDATION.md` date/revision after changes.
+6. Stop after the report if the user only asked for an audit.
+
+### Proactive trigger (when this skill is not yet loaded)
+
+If, during normal work, you detect a **critical** drift signal from `references/drift-checks.md` §E / auto-trigger list (e.g. INDEX points at a missing skill), **load this skill in Mode B** or tell the user the foundation is broken and offer Mode B. Do not silently continue with a half pack.
 
 ---
 
-## Deliverable
+## Mode C — Materialize core pack
 
-- [ ] Project context summary produced (Phase 1)
-- [ ] AGENTS.md created or verified (Phase 2)
-- [ ] GLOSSARY.md created or verified (Phase 3)
-- [ ] Rules directory bootstrapped (Phase 4)
-- [ ] Skills directory bootstrapped (Phase 5)
-- [ ] Makefile created or updated (Phase 6)
-- [ ] docs/architecture.md created (Phase 7)
-- [ ] docs/engineering/quality-gates.md created (Phase 7.5)
-- [ ] Foundation verification checklist passed (Phase 8)
+Standalone fix for "bootstrap left stubs / missing companion skills":
+
+1. Resolve global source (`references/core-pack.md` → Detect global source).
+2. Choose symlink vs copy (ask if shared-repo impact is unclear).
+3. Materialize every **required** rule and skill tree.
+4. Rewrite `INDEX.md` so every row resolves on disk.
+5. Write/update `FOUNDATION.md`.
+6. Run drift-checks section A–B only.
 
 ---
 
-## Design Decision Anti-Patterns
+## Stop conditions
 
-| Temptation | Why It's Wrong | Correct Path |
+- **Conflict:** local file differs substantially from global source → show diff summary and ask before overwrite.
+- **No global source** and copy requested → ask for path; do not invent rule/skill bodies from memory.
+- **Update-only request** → Mode B; skip greenfield sections.
+- **Single skill edit** → stop; this skill is pack-level, not skill-authoring (use `skill-author`).
+
+---
+
+## Deliverable checklist
+
+**Mode A**
+
+- [ ] Context summary
+- [ ] AGENTS.md + GLOSSARY.md
+- [ ] Required rules materialized
+- [ ] Required skills materialized (full trees)
+- [ ] INDEX + WIRING + FOUNDATION.md
+- [ ] Makefile + architecture + quality-gates
+- [ ] Drift-checks A passed
+
+**Mode B**
+
+- [ ] Gap report
+- [ ] Critical gaps fixed (or explicitly deferred with owner)
+- [ ] FOUNDATION.md updated
+
+**Mode C**
+
+- [ ] Core pack on disk and INDEX-consistent
+- [ ] FOUNDATION.md written
+
+---
+
+## Anti-patterns
+
+| Temptation | Why wrong | Correct path |
 |---|---|---|
-| "I'll copy the template verbatim without adapting" | Generic content is worse than no content | Adapt every section to the actual stack and domain |
-| "GLOSSARY.md can wait — we'll do it later" | Term drift starts immediately; retroactive cleanup is 10x harder | Bootstrap the glossary with at least 10 terms now |
-| "I'll put the actual lint configuration in the Makefile" | Makefiles should be thin wrappers, not build logic | Reference the project's native tool |
-| "The architecture doc is too high-level to write" | A partial doc is better than none — a newcomer has zero mental model | Write what you can deduce from code, mark unknowns |
-| "I'll put todo placeholders in all files" | Placeholder-ridden docs are unusable | Write complete content for every section; mark only genuinely unknown areas |
-| "I'll skip dev-up target, the team knows how to start databases" | Assumed knowledge is broken knowledge for newcomers and AI agents | Add the target, even if it's simple |
+| INDEX + WIRING only; "skills live globally" | Many harnesses resolve project `.agents/skills` first; CI/teammates lack `~/.agents` | Materialize core pack (symlink or copy) |
+| Copy entire global skills tree including swarm/video assets | Attention + disk bloat; INDEX becomes unusable | Core pack only; optional skills on demand |
+| Rewrite all rules by hand each bootstrap | Drift from global; stale security/TDD | Materialize from source; overlay in AGENTS.md |
+| Bootstrap once; never re-open the skill | Architecture/glossary/INDEX rot | Mode B on drift signals and explicit audit |
+| Overwrite project-specific skills during sync | Destroys local value | Sync core only; leave `kpur`-style custom skills |
+| Load this skill for a one-line rule typo | Wrong tool | Edit the file; use skill-author only for structural skill work |
 
 ---
 
 ## References
 
-- `code-craft` skill — For code quality implementation beyond foundation bootstrap
-- `architecture-writer` skill — For deep architecture doc generation with detailed diagrams
-- `devsecops` skill — For CI/CD pipeline design with integrated security scanning
+- `references/core-pack.md`
+- `references/drift-checks.md`
+- Compose with: `architecture-writer` (deep arch), `devsecops` (pipeline), `skill-author` (new skills), `codebase-exploration` (domain scan for glossary)

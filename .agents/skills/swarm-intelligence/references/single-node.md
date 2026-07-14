@@ -1,42 +1,8 @@
----
-name: external-subagent
-description: "Bounded external-node delegation through swarminator for one isolated subtask that returns an immutable artifact. Use for quick research, targeted second opinions, or patch-only edit suggestions when full swarm orchestration is unnecessary or native subagents are unavailable. Trigger phrases: 'external subagent', 'single-node delegation', 'isolated context', 'offload this small task', 'patch-only suggestion', 'use swarminator'."
----
+# Mode: Single-Node (external subagent)
 
-# External Subagent
+Bounded one-node `swarminator` delegation. Host keeps workspace control. Nodes never mutate the workspace.
 
-`external-subagent` is the lightweight companion to `swarm-intelligence`. It exists for one bounded delegation through `swarminator` when the host agent wants a separate model context but still keeps control of the workspace. This skill does not depend on harness-native subagent APIs.
-
-## Routing Boundary
-
-| Use this skill | Use `swarm-intelligence` instead |
-| --- | --- |
-| One small, concrete deliverable | Multi-phase or ambiguous work |
-| One external node | Multiple nodes, quorum, or challenge cycles |
-| Immutable artifact return | Cross-node synthesis and orchestration |
-| Quick research, second opinion, or patch suggestion | High-risk work that needs broad validation |
-
-## Hard Rules
-
-1. One bounded task in.
-2. One `swarminator` node run by default.
-3. One immutable artifact out.
-4. Delegated nodes never write files, apply patches, stage changes, or run destructive commands.
-5. The host agent must define the output contract, allowed files, and stop conditions before invocation.
-6. The host agent remains responsible for validation, synthesis, and any eventual apply step.
-
-## Default Runtime Priority
-
-Use `command-code` first for this skill.
-
-1. Default external delegations to the built-in `deepseek-v4-pro` path on the `command-code` agent.
-2. Treat the current Command Code budget for `deepseek-v4-pro` as a hard `$40` total available quota.
-3. Keep using `command-code` with `deepseek-v4-pro` until that quota is exhausted or the runtime reports the agent/model is unavailable.
-4. Only fall back to Gemini or other catalog entries after quota exhaustion, runtime unavailability, or a task-specific constraint that `deepseek-v4-pro` cannot satisfy.
-
-For `command-code`, the effective model may be pinned implicitly by the user before invoking `swarminator`. Treat `deepseek-v4-pro` as that pinned default even when model enumeration is incomplete or absent.
-
-## Runtime References
+## Runtime references
 
 ```bash
 $SHELL -l -c 'command -v swarminator'
@@ -53,17 +19,17 @@ Use runtime self-documentation for current CLI mechanics. Do not hard-code flags
 
 All paths below are relative to this skill directory.
 
-- `../swarm-intelligence/references/discover-personas.sh`
-- `../swarm-intelligence/references/models/free.json`
-- `../swarm-intelligence/references/models/premium.json`
-- `../swarm-intelligence/references/personas/`
+- `references/discover-personas.sh`
+- `references/models/free.json`
+- `references/models/premium.json`
+- `references/personas/`
 
 `discover-personas.sh` resolves personas by YAML `name:` values, not filenames. Valid examples include:
 
 ```bash
-../swarm-intelligence/references/discover-personas.sh list
-../swarm-intelligence/references/discover-personas.sh prompt "Technical Analyst"
-../swarm-intelligence/references/discover-personas.sh prompt "QA Engineer"
+references/discover-personas.sh list
+references/discover-personas.sh prompt "Technical Analyst"
+references/discover-personas.sh prompt "QA Engineer"
 ```
 
 ## Preflight
@@ -169,4 +135,4 @@ Stop instead of improvising when:
 - the selected persona or runtime model is unavailable
 - the returned artifact exceeds the agreed boundary
 
-If the task grows beyond one bounded node, switch to `swarm-intelligence` instead of slowly re-creating swarm behavior inside this skill. A retry should be a fresh bounded invocation with a tighter contract, not an automatic mini-swarm.
+If the task grows beyond one bounded node, escalate to Mode Full Swarm in this skill instead of slowly re-creating swarm behavior inside this skill. A retry should be a fresh bounded invocation with a tighter contract, not an automatic mini-swarm.

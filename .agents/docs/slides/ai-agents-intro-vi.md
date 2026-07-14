@@ -93,7 +93,7 @@ AI agent = một lập trình viên junior:
 ## Hợp đồng dự án (`.agents/`)
 - Rules chia sẻ trong team
 - Skills đặc thù cho dự án
-- Handoffs & session checkpoints
+- Memory: checkpoint phiên làm việc + long-term memory đã được consolidate
 
 **Tách biệt để khi clone repo, bạn có ngay toàn bộ hợp đồng team — không có gì từ cấu hình cá nhân của lead bị rò rỉ vào.**
 
@@ -117,7 +117,7 @@ AI agent = một lập trình viên junior:
 │   ├── code-craft/
 │   ├── reviewer/
 │   └── ...
-└── handoffs/           ← File checkpoint phiên làm việc
+└── memory/             ← Ghi chú ngắn hạn + bộ nhớ dài hạn đã cô đọng
 ```
 
 ---

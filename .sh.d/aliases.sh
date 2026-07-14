@@ -244,7 +244,7 @@ usable npx && \
         # Kilo code
         ! usable kilo && alias kilo="npx --yes @kilocode/cli@latest"
         # Command code
-        ! usable cmd && alias cmd='npx --yes command-code@latest'
+        ! usable cmdc && alias cmdc='npx --yes command-code@latest'
         # Agent skills manager
         ! usable skills && alias skills="npx --yes skills"
         ! usable openskills && alias openskills="npx --yes openskills"

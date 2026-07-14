@@ -32,7 +32,8 @@ This directory contains the canonical guides for engineering AI agent skills, ru
 | Vertical slicing rule | [1 → §2 Rule 5](./ai-agent-skills-and-rules-engineering.md#rule-5-vertical-slicing) |
 | Skill compliance rule | [1 → §2 Rule 6](./ai-agent-skills-and-rules-engineering.md#rule-6-skill-compliance) |
 | Self-grounded verification rule (anti agreement-bias) | [1 → §2 Rule 7](./ai-agent-skills-and-rules-engineering.md#rule-7-self-grounded-verification) |
-| Nice-to-have rules (handoff, discovery, routing) | [1 → §3](./ai-agent-skills-and-rules-engineering.md#3-nice-to-have-rules) |
+| Autonomy safety rule (consequence-first agency) | [1 → §2 Rule 8](./ai-agent-skills-and-rules-engineering.md#rule-8-autonomy-safety-consequence-first-agency) |
+| Nice-to-have rules (memory, discovery, routing) | [1 → §3](./ai-agent-skills-and-rules-engineering.md#3-nice-to-have-rules) |
 | How to evolve rules from failure patterns | [1 → §4](./ai-agent-skills-and-rules-engineering.md#4-the-failure-pattern--rule-evolution-loop) |
 | Full catalog of AI failure patterns (A–E) | [1 → §5](./ai-agent-skills-and-rules-engineering.md#5-catalog-of-ai-failure-patterns) |
 | Code quality failures (error swallowing, magic literals, etc.) | [1 → §5 Category A](./ai-agent-skills-and-rules-engineering.md#category-a-code-quality-failures) |
@@ -68,7 +69,7 @@ This directory contains the canonical guides for engineering AI agent skills, ru
 | How to give good prompts | [2 → §5: How to Give Good Prompts](./ai-augmented-project-setup-and-evolution.md#how-to-give-good-prompts) |
 | The skill system explained | [2 → §5: The Skill System](./ai-augmented-project-setup-and-evolution.md#the-skill-system-what-it-is-and-how-to-use-it) |
 | The grooming interview | [2 → §5: The Grooming Interview](./ai-augmented-project-setup-and-evolution.md#the-grooming-interview-reverse-interview) |
-| Handoff: context continuity across sessions | [2 → §5: Handoff](./ai-augmented-project-setup-and-evolution.md#handoff-context-continuity-across-sessions) |
+| Memory: short-term notes + long-term consolidation across sessions | [2 → §5: Memory](./ai-augmented-project-setup-and-evolution.md#memory-context-continuity-across-sessions) |
 | The 6 code quality gates | [2 → §6](./ai-augmented-project-setup-and-evolution.md#6-code-quality--engineering-discipline) |
 | Pre-implementation design checkpoint (7 questions) | [2 → §6: Gate 1](./ai-augmented-project-setup-and-evolution.md#gate-1-pre-implementation-design-checkpoint) |
 | TDD for logic components | [2 → §6: Gate 2](./ai-augmented-project-setup-and-evolution.md#gate-2-tdd-for-logic-components) |
@@ -145,7 +146,7 @@ This directory contains the canonical guides for engineering AI agent skills, ru
 | **Skill Compliance** | Loading a SKILL.md = binding commitment to full workflow | [1 → §2 Rule 6](./ai-agent-skills-and-rules-engineering.md#rule-6-skill-compliance) |
 | **Agreement Bias** | LLM tendency to validate whatever is already in its context, even against its own better priors | [1 → §2 Rule 7](./ai-agent-skills-and-rules-engineering.md#rule-7-self-grounded-verification) |
 | **Self-Grounded Verification (SGV)** | Elicit success criteria before looking at the artifact, then evaluate against them with evidence | [1 → §2 Rule 7](./ai-agent-skills-and-rules-engineering.md#rule-7-self-grounded-verification) |
-| **Handoff** | Session checkpoint to maintain context across AI sessions | [2 → §5](./ai-augmented-project-setup-and-evolution.md#handoff-context-continuity-across-sessions) |
+| **Memory** | Two-tier store: short-term notes + long-term consolidated memory with a dream cycle | [2 → §5](./ai-augmented-project-setup-and-evolution.md#memory-context-continuity-across-sessions) |
 | **Tech Debt Inventory** | AI must declare what debt it's accepting with every change | [2 → §6 Gate 6](./ai-augmented-project-setup-and-evolution.md#gate-6-tech-debt-inventory) |
 | **REFACTOR-SIGNAL** | Searchable markers for code smells found during AI work | [2 → §6](./ai-augmented-project-setup-and-evolution.md#marking-problems-for-future-work) |
 
@@ -158,7 +159,9 @@ This directory contains the canonical guides for engineering AI agent skills, ru
 | **AGENTS.md** | Project-root file injected as AI system prompt — the entry point for every AI session |
 | **Agreement bias** | The tendency of an LLM to validate whatever is in its context window — its own output, a candidate solution, a user's claim — and rationalize flaws, even when it holds correct priors. Documented by Andrade et al. (ICLR 2026) |
 | **GLOSSARY.md** | Canonical domain terminology — prevents naming drift across AI sessions |
-| **Handoff** | Self-contained checkpoint file preserving session state (goal, decisions, blockers) |
+| **Memory (short-term)** | Self-contained working entry preserving session state (goal, decisions, blockers) — replaces the old "handoff" concept |
+| **Memory (long-term)** | Size-limited, INDEX-gated consolidated facts, decisions, constraints, corrections; grows via the dream cycle |
+| **Dream Cycle** | Consolidation pass that promotes hot short-term entries to long-term, scores long-term entries, and proposes human-approved evictions |
 | **Harness** | The AI coding tool itself (Kilo, Claude Code, Codex, etc.) — provides the environment where agents run |
 | **INDEX.md** | Routing table in `.agents/skills/` — maps task types to the correct skill |
 | **WIRING.md** | Composition pathways — defines correct order when chaining multiple skills |

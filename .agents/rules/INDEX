@@ -1,0 +1,32 @@
+# Rules map (progressive disclosure)
+
+**Do not load every file in this directory into context.**  
+Always-on entry is `../instructions/agent-instructions.md`, which **points** at rules. Load a rule body only when its trigger fires or you must enforce a gate.
+
+| Rule | Load when | Approx. size |
+|---|---|---|
+| `code-quality.md` | Writing or modifying code | medium |
+| `tdd.md` | Logic modules / algorithms / services | medium |
+| `grooming.md` | Plans, ambiguous requirements, complex tasks | small |
+| `ubiquitous-language.md` | Logic that introduces or renames domain terms | small |
+| `slicing.md` | Feature plans / `task.md` checklists | small |
+| `skill-compliance.md` | After loading any skill (binding commitment) | medium |
+| `self-grounded-verification.md` | Verification, self-review, "done" claims | medium |
+| `autonomy-safety.md` | Auto-approved tools, AFK, waived per-step prompts | medium |
+| `skills-discovery.md` | Need to choose a skill (index-first) | tiny |
+| `command-routing.md` | User request maps to a slash/command workflow | tiny |
+| `memory.md` | Capture / recall / consolidate / evict memory | small |
+| `requirements-driven-dev.md` | Adapter → load `requirements-driven-dev` skill | tiny |
+
+## Layering
+
+```
+instructions (always) → rule pointer → rule body (on fire)
+                      → skills/INDEX → SKILL.md → references/*
+```
+
+## Anti-patterns
+
+- Bulk-reading `rules/*.md` at session start
+- Duplicating rule text into every skill (link instead)
+- Project forks of global rules without a documented overlay reason

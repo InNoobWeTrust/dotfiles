@@ -62,7 +62,7 @@ Every effective rule was created in response to a real failure. Rules written to
 
 ## 2. Essential Rules for Every Project
 
-These six rules form the minimum viable rule set. A project lacking any of them will accumulate technical debt rapidly once AI agents are involved.
+These essential rules form the minimum viable rule set. A project lacking them will accumulate technical debt (or operational risk) rapidly once AI agents are involved.
 
 ### Rule 1: Code Quality Baseline
 
@@ -236,19 +236,39 @@ Some rules need to be absolute. Skill compliance uses "hard-stop gates" — cond
 
 **The research grounding:** Andrade et al., "Let's Think in Two Steps: Mitigating Agreement Bias in MLLMs with Self-Grounded Verification" (ICLR 2026), found that MLLM verifiers over-validate flawed agent behavior *even when they hold correct, human-aligned priors* about success. The bias is pervasive across model families and **resilient to test-time scaling** — thinking harder in one pass produces more elaborate rationalization, not better detection. Their fix (SGV) decouples verification: retrieve priors unconditionally (without the artifact), then evaluate conditioned on those self-generated priors. This yielded up to 20-point gains in failure detection. The rule ports this two-step discipline into the agent's verification and self-review moments.
 
+### Rule 8: Autonomy Safety (Consequence-First Agency)
+
+**File:** `rules/autonomy-safety.md`
+
+**What it prevents:** Agents with auto-approved tools or AFK modes treating capability as authorization and performing irreversible, high-blast-radius actions without consensus.
+
+**Core components:**
+
+```
+1. Consequence-first table: reversible → proceed in bounds; irreversible → stop; unsure → treat as dangerous
+2. Consensus before power: scope, stop conditions, allowed/forbidden, success criteria
+3. Mandatory human-in-the-loop triggers (destructive, out of scope, ambiguous, secrets/prod)
+4. Harness-agnostic adaptation: works with or without permission config; allowlists ≠ authorization
+5. Audit trail: plan, assumptions, verify, rollback
+```
+
+**Without this rule:** An "autonomous" or AFK agent will roam under full tool allow, force-push, delete data, or expand scope because nothing prompted it to stop. Permission config alone does not encode judgment.
+
+**Portability:** This is a **rule**, not a skill — always-on when autonomy is elevated. No harness-specific skill load required. Soft control (instruction-following) unless the harness isolates the workspace; prefer disposable worktrees for true AFK power.
+
 ---
 
 ## 3. Nice-to-Have Rules
 
 These rules add value but aren't essential on day one. Add them when the failure pattern they prevent has actually occurred.
 
-### Handoff Protocol
+### Memory (Short-Term + Long-Term)
 
-**File:** `rules/handoff.md`
+**File:** `rules/memory.md` (pointer) + `skills/memory/` (workflow)
 
-**When to add:** When you've lost context between sessions and had to re-explain the task. Or when working with multiple AI sessions in parallel and need to share state.
+**When to add:** When you've lost context between sessions and had to re-explain the task, need to persist facts/decisions/corrections across sessions, or want a curated long-term memory that stays bounded. Also the vehicle for applying the same progressive-disclosure pattern to docs and code.
 
-**What it does:** Defines when to save/restore session checkpoints (handoffs) containing goal, status, decisions, blockers, and next actions.
+**What it does:** Defines a two-tier store — unbounded short-term working notes (session checkpoints included) and a size-limited long-term index. A dream cycle consolidates hot short-term entries into long-term, scores existing entries, and proposes evictions for human approval on explicit request or git commit.
 
 ### Skills Discovery
 

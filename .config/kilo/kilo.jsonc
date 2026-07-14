@@ -47,6 +47,35 @@
       "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
       "model": "llm-agg/forbiddengun/minimax",
     },
+    "autonomous": {
+      "mode": "primary",
+      "description": "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts.",
+      "model": "llm-agg/forbiddengun/grok",
+      "permission": {
+        "bash": "allow",
+        "edit": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "allow",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "semantic_search": "allow",
+        "codesearch": "allow",
+        "skill": "allow",
+        "lsp": "allow",
+        "external_directory": "allow",
+        "todowrite": "allow",
+        "todoread": "allow",
+        "question": "allow",
+        "doom_loop": "allow",
+        "kilo_memory_save": "allow",
+        "kilo_memory_recall": "allow",
+        "recall": "allow",
+      },
+      "prompt": "You are a cost-aware autonomous lead operator. Optimize for successful delivery per unit of expensive primary-agent effort, not for personally performing every step.\n\n## Mode-specific responsibility\nOwn task framing, decomposition, executor selection, risk judgment, integration, final verification, and the user-facing result. Delegate routine, low-stakes, bounded, or independently verifiable work to the cheapest competent executor. Work directly when the task requires accumulated main-thread context or top-level judgment, or when delegation and integration would cost more than the work itself. Do not delegate merely to appear agentic, fragment tiny atomic actions, or duplicate work without a concrete validation need.\n\n## Routing preference\n- Prefer a specialized native subagent for bounded scouting, implementation, debugging, tests, docs, reviews, or audits.\n- Before every native or external launch, load and follow `subagent-dispatch`.\n- For external execution, load and follow `swarm-intelligence`; let its mode router choose Single-Node or Full Swarm. Do not invent a lightweight swarm.\n- Parallelize only independent work whose outputs can be verified and integrated separately.\n- Treat delegated results as evidence, not authority; final integration and correctness remain yours.\n\n## Existing controls\nFollow the project instruction routing and every triggered rule or skill rather than restating their procedures here. In particular, elevated permissions activate `autonomy-safety`, and every completion claim must follow `self-grounded-verification`. User-selected executors or modes override these cost preferences."
+    },
     "code-reviewer": {
       "mode": "subagent",
       "description": "Code quality review: best practices, security, maintainability, and SOLID/KISS compliance. Read-only. Use after any non-trivial implementation.",
@@ -55,8 +84,9 @@
         "edit": "deny",
         "bash": {
           "*": "deny",
-          "git diff": "allow",
-          "git log": "allow",
+          "git status *": "allow",
+          "git diff *": "allow",
+          "git log *": "allow",
           "rg *": "allow",
           "grep *": "allow"
         }
@@ -109,12 +139,14 @@
         "edit": "deny",
         "bash": {
           "*": "deny",
-          "git log": "allow",
+          "git status *": "allow",
+          "git diff *": "allow",
+          "git log *": "allow",
           "rg *": "allow",
           "grep *": "allow",
-          "npm audit": "allow",
+          "npm audit *": "allow",
           "pip-audit *": "allow",
-          "cargo audit": "allow"
+          "cargo audit *": "allow",
         }
       },
       "prompt": "You are a security auditor. Review code for security vulnerabilities: input validation, authentication/authorization flaws, data exposure, injection risks, dependency vulnerabilities, misconfigurations, and secret leakage. Report findings with severity (critical/high/medium/low) and specific remediation steps. Do not modify files."
@@ -515,12 +547,6 @@
   },
   "permission": {
     "bash": {
-      "swarminator *": "allow",
-      "kilo *": "allow",
-      "claude *": "allow",
-      "codex *": "allow",
-      "gemini *": "allow",
-      "cmd *": "allow",
       "git status *": "allow",
       "git log *": "allow",
       "git fetch *": "allow",

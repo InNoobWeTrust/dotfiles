@@ -93,7 +93,7 @@ AI agent = a junior engineer who is:
 ## Project Contract (`.agents/`)
 - Team-shared rules
 - Project-specific skills
-- Handoffs & session checkpoints
+- Memory: session checkpoints + consolidated long-term memory
 
 **Separated so cloning the repo gets you the full team contract — nothing from the lead's personal config leaks in.**
 
@@ -117,7 +117,7 @@ AI agent = a junior engineer who is:
 │   ├── code-craft/
 │   ├── reviewer/
 │   └── ...
-└── handoffs/           ← Session checkpoint files
+└── memory/             ← Short-term notes + long-term consolidated memory
 ```
 
 ---

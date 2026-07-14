@@ -15,3 +15,6 @@ node_modules
 bun.lock
 package.json
 package-lock.json
+
+# Memory / Handoffs (repo-local runtime state; keep local unless a repo opts in)
+/memory/
