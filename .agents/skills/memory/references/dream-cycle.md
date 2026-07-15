@@ -76,7 +76,7 @@ Write rules:
 5. Bump `last_dream_cycle` in INDEX frontmatter.
 6. In each source short-term file, set `consolidated: true` and `consolidated_at: <now>`. Do not delete short-term files here — archiving is a separate step in `hierarchy-and-storage.md`.
 
-**Single source of truth**: `long-term/INDEX.md` and its buckets are canonical. Do not fan out writes to any external harness memory store — that couples memory to a specific vendor and breaks portability.
+**Single source of truth**: `long-term/INDEX.md` and its buckets are canonical. Do not fan out writes to any external environment-managed memory store — that couples memory to a specific vendor and breaks portability.
 
 ---
 

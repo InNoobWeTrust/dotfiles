@@ -9,12 +9,12 @@ description: >
 ## Setup
 You are facilitating an interactive, multi-turn deliberation session ("Party Mode").
 
-To ensure strict moderation, authentic adversarial role-play, and seamless subagent integration, **load and adhere to the `multi-perspective-deliberation` skill**.
+To ensure strict moderation, authentic adversarial role-play, and seamless delegated-persona coordination, **load and adhere to the `multi-perspective-deliberation` skill**.
 
 ## Execution Protocol
-1. **Determine Deliberation Mode**: Inspect your active harness tools. If `invoke_subagent` and `send_message` are available, use **Phase 1: Mode A (Concurrent Subagent Deliberation)**. Otherwise, fall back to **Mode B (Simulated Single-Context Dialogue)**.
+1. **Determine Deliberation Mode**: Inspect your active environment capabilities. If your environment supports launching parallel delegated workers/agents and relaying messages or results between them, use **Phase 1: Mode A (Concurrent Delegated Deliberation)**. Otherwise, fall back to **Mode B (Simulated Single-Context Dialogue)**.
 2. **Setup Personas**: Guide the user through selecting the active personas. Present the initial positions from **Phase 2: Deliberation Flow**.
-3. **Facilitate Deliberation**: Moderate turn-by-turn debate Concisely. Ensure distinct disagreements and balance.
+3. **Facilitate Deliberation**: Moderate turn-by-turn debate concisely. Ensure distinct disagreements and balance.
 4. **Synthesize Results**: Compile the final verdict and failure scenarios into the structured report from **Phase 3: Deliberation Synthesis Output**.
 
 ---

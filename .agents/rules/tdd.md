@@ -23,16 +23,16 @@ To eliminate bias, TDD must be executed by two distinct contexts:
     2. Write the unit test file (e.g., `src/auth/jwt.test.ts` or `tests/test_auth.py`). Cover happy paths, boundary conditions, and failure states.
     3. Run the test command and verify it fails (confirming the **RED** state).
     4. **DO NOT write any production implementation code.**
-    5. Delegate the implementation to a fresh **Implementation Subagent** (using the `self` or a custom subagent) or instruct the user to start a new session for implementation.
+    5. Delegate the implementation to a fresh **implementation worker/agent** (using an isolated delegated context when available) or instruct the user to start a new session for implementation.
 
-### 2. The Blind Implementer (Subagent or New Session)
+### 2. The Blind Implementer (Delegated Worker or New Session)
 *   **Role**: Implement the production code blindly to satisfy requirements until the tests pass.
 *   **Constraints**:
     *   **NO reading of the test files**: The implementer must never open, view, or read the unit test files. They must write the code based *only* on the interface specs, requirements, and plan provided in the delegation package.
     *   **Blind Execution**: The implementer runs the test command blindly (e.g., `npm test -- src/auth/jwt.test.ts`).
     *   **Diagnostic Loop**: If tests fail, the implementer must diagnose issues using only the test runner's failure output (error messages, assertion diffs, stack traces), *never* by looking at the test file.
     *   **Green & Refactor**: Write minimal code to pass the tests (**GREEN**), then refactor for quality (**REFACTOR**), re-running tests blindly to ensure no regressions.
-    *   **Deadlock Escalation**: If the implementation fully aligns with requirements and specs, but the tests repeatedly fail, the subagent must halt and report a suspected buggy test/spec mismatch in their final report (Section 3) instead of looping indefinitely.
+    *   **Deadlock Escalation**: If the implementation fully aligns with requirements and specs, but the tests repeatedly fail, the delegated implementer must halt and report a suspected buggy test/spec mismatch in their final report (Section 3) instead of looping indefinitely.
 
 ---
 
@@ -41,12 +41,12 @@ To eliminate bias, TDD must be executed by two distinct contexts:
 ```mermaid
 graph TD
     A[Main Agent: Write Specs & Unit Tests] --> B[Main Agent: Run Tests & Confirm Fail - RED]
-    B --> C[Main Agent: Spawn Implementer Subagent with Specs/Plan]
-    C --> D[Subagent: Implement Production Code Blindly - No Test Reading]
-    D --> E[Subagent: Run Test Suite & Inspect CLI Outputs]
+    B --> C[Main Agent: Spawn Blind Implementer with Specs/Plan]
+    C --> D[Delegated Worker: Implement Production Code Blindly - No Test Reading]
+    D --> E[Delegated Worker: Run Test Suite & Inspect CLI Outputs]
     E -->|Fail| D
-    E -->|Pass - GREEN| F[Subagent: Refactor Production Code]
-    F --> G[Subagent: Run Tests Blindly & Confirm Pass]
+    E -->|Pass - GREEN| F[Delegated Worker: Refactor Production Code]
+    F --> G[Delegated Worker: Run Tests Blindly & Confirm Pass]
     G -->|Pass| H[Main Agent: Verify Code & Merge]
     G -->|Fail| F
 ```
@@ -56,12 +56,12 @@ graph TD
 *   Write the unit test file. Specify multiple test cases covering happy path, boundary conditions, and error states.
 *   Run the test command. **Confirm the tests fail** (or fail to run due to missing implementation).
 
-### Phase 2: Write Minimum Implementation (GREEN) - *Subagent*
+### Phase 2: Write Minimum Implementation (GREEN) - *Delegated Worker*
 *   Write the *minimum* amount of code required to make the test cases pass, without knowing the test code's implementation details.
 *   Do not add speculative features. Keep it simple (KISS).
 *   Run the test command blindly and **confirm all tests pass**.
 
-### Phase 3: Clean up & Refactor (REFACTOR) - *Subagent*
+### Phase 3: Clean up & Refactor (REFACTOR) - *Delegated Worker*
 *   Clean up variable names, nesting, and structure to comply with `rules/code-quality.md`.
 *   Rerun the tests blindly to verify that no refactoring introduced regressions.
 
@@ -69,7 +69,7 @@ graph TD
 
 ## 📋 Clean-Room TDD Delegation Template
 
-When delegating implementation to a subagent, the Main Agent **must** use this prompt template to enforce context isolation and align with the standard 5-section subagent output template:
+When delegating implementation to an isolated worker/agent, the Main Agent **must** use this prompt template to enforce context isolation and align with the standard 5-section delegated-output template:
 
 ```markdown
 You are acting as a Clean-Room TDD Implementation Agent.
@@ -126,8 +126,8 @@ Write exactly: TASK_COMPLETE
 
 *   **Strict Gate**: Any new logical component (parsers, validators, mathematical algorithms, data processing units, state managers) **MUST** use this protocol.
 *   **Verification Gate**:
-    *   **Logic Review**: The Main Agent must review the subagent's implementation to ensure no hardcoded test values (e.g. constant returns matching specific test assertions) are present, validating that the code implements general logic.
-    *   **Transcript Audit**: To verify compliance with the context-isolation protocol, the Main Agent **MUST** inspect the subagent's conversation transcript logs (`<appDataDir>/brain/<subagent-conversation-id>/.system_generated/logs/transcript.jsonl` or `transcript_full.jsonl`). Scan the log to verify that the subagent did not run file viewing, reading, or search commands targeting unit test files.
+    *   **Logic Review**: The Main Agent must review the delegated implementation to ensure no hardcoded test values (e.g. constant returns matching specific test assertions) are present, validating that the code implements general logic.
+    *   **Transcript Audit**: To verify compliance with the context-isolation protocol, the Main Agent **MUST** inspect whatever conversation or execution logs the environment provides for the delegated worker. Scan the log to verify that the worker did not run file viewing, reading, or search commands targeting unit test files.
 *   **Exceptions**: You may bypass TDD and Context Isolation only for:
     *   Pure CSS / design changes.
     *   Static configuration or JSON file edits.

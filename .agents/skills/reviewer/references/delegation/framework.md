@@ -1,13 +1,13 @@
 # Review Delegation Framework
 
-This guide helps you decide when to perform reviews directly vs when to delegate to subagents for multi-perspective or specialized analysis.
+This guide helps you decide when to perform reviews directly vs when to delegate to independent agents/workers for multi-perspective or specialized analysis.
 
 ## Core Principles
 
 1. **Single-perspective technical reviews** can be performed by the main agent using sub-reviewer references
-2. **Multi-perspective reviews** should delegate to subagents with distinct personas to avoid bias contamination
-3. **Audit reviews** must use the most intelligent available subagent (check subagent descriptions for capability indicators)
-4. **Specialized aspect reviews** should delegate to domain-specific subagents when available (debug, architect, security-specialist, etc.)
+2. **Multi-perspective reviews** should delegate to isolated reviewers with distinct personas to avoid bias contamination
+3. **Audit reviews** must use the strongest available independent reviewer (check reviewer descriptions for capability indicators)
+4. **Specialized aspect reviews** should delegate to domain-specific reviewers when available (debug, architect, security-specialist, etc.)
 
 ---
 
@@ -17,12 +17,12 @@ This guide helps you decide when to perform reviews directly vs when to delegate
 Review request received
 │
 ├─ Did I (main agent) just create/edit the artifacts being reviewed?
-│  └─ YES → MUST delegate to subagents for ALL reviews
+│  └─ YES → MUST delegate to independent reviewers for ALL reviews
 │           (Author cannot objectively review own work — confirmation bias)
 │           (Proceed to delegation selection below)
 │
 ├─ Is this an AUDIT review?
-│  └─ YES → MUST delegate to highest-intelligence subagent
+│  └─ YES → MUST delegate to the strongest available independent reviewer
 │           (Audit requires independent, unbiased judgment)
 │
 ├─ Does it need MULTIPLE PERSPECTIVES/HATS?
@@ -32,8 +32,8 @@ Review request received
 │
 ├─ Does it need SPECIALIZED DOMAIN KNOWLEDGE?
 │  (Performance analysis, accessibility, security-specific threat modeling)
-│  └─ YES → Prefer delegation to specialized subagent if available
-│           (Check harness for: debug, architect, security, perf agents)
+│  └─ YES → Prefer delegation to a specialized reviewer if available
+│           (Check the environment for: debug, architect, security, performance reviewers)
 │
 ├─ Is it PURE TECHNICAL REVIEW?
 │  (Code quality, design patterns, edge cases, security vectors)
@@ -55,9 +55,9 @@ Review request received
 
 | Scenario | Reason | Subagent Requirements |
 |----------|--------|----------------------|
-| **Main agent is author** | Cannot objectively review own work; confirmation bias makes self-review ineffective | Any suitable subagent; choose based on review type (technical/audit/multi-perspective) |
-| **Audit review** | Requires independent, unbiased judgment; main agent context creates confirmation bias | Highest intelligence available; check descriptions for reasoning/analysis capability |
-| **Multi-hat review** | Each perspective needs distinct context/persona; single-context review contaminates all viewpoints | One subagent per perspective OR general agent with explicit persona isolation |
+| **Main agent is author** | Cannot objectively review own work; confirmation bias makes self-review ineffective | Any suitable independent reviewer; choose based on review type (technical/audit/multi-perspective) |
+| **Audit review** | Requires independent, unbiased judgment; main agent context creates confirmation bias | Strongest available reviewer; check descriptions for reasoning/analysis capability |
+| **Multi-hat review** | Each perspective needs distinct context/persona; single-context review contaminates all viewpoints | One delegated reviewer per perspective OR one general reviewer with explicit persona isolation |
 | **Pre-mortem / Red team** | Adversarial thinking requires genuine attempt to break, not defend | General or specialized adversarial agent; must not have implementation context |
 | **Stakeholder acceptance** | Product Owner, PM, business analyst perspectives need domain context separate from technical | General agent with stakeholder persona prompt |
 
@@ -84,13 +84,13 @@ Review request received
 | **Quick review** | Single sub-reviewer, artifact <200 lines |
 | **Routine PR review** | Code + tests, standard patterns, no novel architecture |
 
-**Critical rule**: If you (main agent) created or edited the artifacts, you MUST delegate. Author self-review is ineffective due to confirmation bias.
+**Critical rule**: If you (main agent) created or edited the artifacts, you MUST delegate to an independent reviewer. Author self-review is ineffective due to confirmation bias.
 
 ---
 
-## Detecting Available Subagents
+## Detecting Available Independent Reviewers
 
-**Harness-agnostic approach**: Most harnesses provide subagent capability information. Look for:
+**Environment-agnostic approach**: Most execution environments provide capability information for delegated reviewers/workers. Look for:
 
 ### Intelligence Indicators (for audit reviews)
 - Model name/tier in description: "claude-sonnet-4", "gpt-4", "powered by X"
@@ -107,7 +107,7 @@ Review request received
 - **General-purpose**: descriptions mentioning "general", "multi-purpose", "flexible", "broad capability"
 - Check if they support: persona prompts, role-playing, stakeholder simulation
 
-**If no suitable subagents exist**: Fallback to main agent review with explicit bias warnings in output.
+**If no suitable independent reviewers exist**: Fallback to main agent review with explicit bias warnings in output.
 
 ---
 
@@ -133,7 +133,7 @@ Return findings with severity: CRITICAL / HIGH / MEDIUM / LOW.
 
 ### Pattern 2: Multi-Perspective (Stakeholder Panel)
 
-Delegate separate subagents for each perspective, then synthesize:
+Delegate separate reviewers for each perspective, then synthesize:
 
 **Product Owner perspective:**
 ```
@@ -221,7 +221,7 @@ Return findings with:
 
 ## Synthesis Protocol (After Delegation)
 
-When you receive findings from multiple subagents:
+When you receive findings from multiple delegated reviewers:
 
 1. **Aggregate by severity**: CRITICAL → HIGH → MEDIUM → LOW
 2. **Identify conflicts**: Where perspectives disagree (this is valuable signal)

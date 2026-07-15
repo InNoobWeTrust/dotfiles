@@ -47,14 +47,14 @@ When debugging or fixing a problem:
 4. `systematic-investigation` — if the loop hits oscillation or verifier failures
 5. `reviewer` (security lens) — for auth, dependency, secrets, or network-facing work before AFK mode
 
-### Subagent / Swarminator Delegation
+### Delegated Execution / Swarminator
 
-Any time a background worker or external node is launched:
+Any time a background worker, delegated agent, or external node is launched:
 
 1. `subagent-dispatch` — construct the structured delegation prompt (scope, output contract, allowed actions, stop conditions)
-2. **Harness-native worker** when available, else **`swarm-intelligence`**:
-   - Mode Single-Node — one bounded swarminator node (`swarm-intelligence/references/single-node.md`); pin via `/external-subagent`
-   - Mode Full Swarm — multi-phase multi-model orchestration; pin via `/swarm`
+2. **Environment-native delegated worker** when available, else **`swarm-intelligence`**:
+   - Mode Single-Node — one bounded swarminator node (`swarm-intelligence/references/single-node.md`); pin via `/external-subagent` when that command exists
+   - Mode Full Swarm — multi-phase multi-model orchestration; pin via `/swarm` when that command exists
 
 ### Project Foundation (Bootstrap, Materialize, Audit/Evolve)
 
@@ -113,10 +113,10 @@ Natural transitions between skills:
 | `memory` (Consolidate) | `memory` (Evict) | "Long-term size limits passed, running eviction pass" |
 | Any skill | `memory` (Structure) | "Applying progressive-disclosure pattern to a docs directory or code module" |
 | Any implementation skill | `reviewer` | "Review my work" |
-| `subagent-dispatch` | `swarm-intelligence` (Single-Node) | "Prompt constructed, one bounded swarminator node (`/external-subagent`)" |
-| `subagent-dispatch` | `swarm-intelligence` (Full Swarm) | "Prompt constructed, multi-node orchestration (`/swarm`)" |
+| `subagent-dispatch` | `swarm-intelligence` (Single-Node) | "Prompt constructed, one bounded swarminator node (or equivalent explicit single-node mode)" |
+| `subagent-dispatch` | `swarm-intelligence` (Full Swarm) | "Prompt constructed, multi-node orchestration (or equivalent explicit full-swarm mode)" |
 | `swarm-intelligence` (Single-Node) | `swarm-intelligence` (Full Swarm) | "Bounded node insufficient; escalate to full swarm" |
-| `multi-perspective-deliberation` | `subagent-dispatch` | "Launching background workers for persona simulation" |
+| `multi-perspective-deliberation` | `subagent-dispatch` | "Launching delegated persona workers for the deliberation" |
 | `project-foundation` | `architecture-writer` | "Project scaffolded, now writing detailed architecture doc" |
 | `project-foundation` | `devsecops` | "Project scaffolded, now designing CI/CD with integrated security" |
 | `project-foundation` | `reviewer` | "Governance files created, ready for review" |

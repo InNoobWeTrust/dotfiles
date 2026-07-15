@@ -1,6 +1,6 @@
 # Autonomy Safety (Consequence-First Agency)
 
-This rule applies whenever you operate with **elevated autonomy**: auto-approved tools, unattended/AFK runs, "just do it" sessions, or any harness that will not ask before each side effect. No special config is required for the rule to apply — if the environment will not gate you, **you gate yourself**.
+This rule applies whenever you operate with **elevated autonomy**: auto-approved tools, unattended/AFK runs, "just do it" sessions, or any execution environment that will not ask before each side effect. No special config is required for the rule to apply — if the environment will not gate you, **you gate yourself**.
 
 > Autonomy is a convenience for delivery velocity when the user trusts you to reason about cause and effect without approving every step. It is **not** a license to roam or act recklessly. More power means more responsibility. Trust is earned through **consensus**, then exercised only inside **pre-approved bounds**.
 
@@ -39,7 +39,7 @@ Default posture: **decisive on low-risk reversible work inside agreed bounds; co
 3. Do **not** invent authority beyond agreement.
 4. If consensus is missing and the next step is non-trivial, ask — do not expand scope to "be helpful."
 
-When the harness supports a question / confirm tool, use it. When it does not, stop with a short blocker report and wait for the next human turn.
+When the environment supports a question / confirm tool, use it. When it does not, stop with a short blocker report and wait for the next human turn.
 
 ---
 
@@ -70,11 +70,11 @@ Ask focused, decision-ready questions. Prefer one clear recommendation plus opti
 
 ---
 
-## Harness Adaptation (Portable, Config-Light)
+## Environment Adaptation (Portable, Config-Light)
 
-This rule is harness-agnostic. Adapt with the least machinery available:
+This rule is environment-agnostic. Adapt with the least machinery available:
 
-| Harness capability | How to apply this rule |
+| Environment capability | How to apply this rule |
 |---|---|
 | Permission / allow / deny config | Treat allowlists as **capability**, not **authorization**. Allowed ≠ must do. This rule still gates irreversible actions. |
 | No permission system (prompt-only) | This rule **is** the safety layer. Instruction-following is the only control — be stricter, not looser. |
@@ -84,9 +84,9 @@ This rule is harness-agnostic. Adapt with the least machinery available:
 
 ### Caveats (read once)
 
-1. **Instruction-following is soft.** A rule cannot hard-block a tool the harness already auto-approved. Prefer isolated worktrees/containers for real AFK power.
+1. **Instruction-following is soft.** A rule cannot hard-block a tool the environment already auto-approved. Prefer isolated worktrees/containers for real AFK power.
 2. **Project standards define "dangerous".** Production paths, deploy scripts, shared DBs, and secret files in *this* repo raise the bar even if the same command is fine in a toy repo.
-3. **Do not re-implement full permission matrices in prose** for every harness. Keep the decision table above; only add project-specific forbidden actions when the repo documents them.
+3. **Do not re-implement full permission matrices in prose** for every environment. Keep the decision table above; only add project-specific forbidden actions when the repo documents them.
 4. **This rule does not replace** code-quality, TDD, grooming, skill-compliance, or self-grounded verification — it governs *whether and how far* you act without a human.
 
 ---

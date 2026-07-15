@@ -1,16 +1,16 @@
-## Fallback Strategy (No Suitable Subagents Available)
+## Fallback Strategy (No Suitable Independent Reviewers Available)
 
-If harness doesn't provide suitable subagents for required multi-perspective or audit review:
+If the current environment doesn't provide suitable delegated agents/workers for required multi-perspective or audit review:
 
 ### When main agent is NOT the author:
-1. **Warn the user**: "This review ideally requires independent subagents, but none are available. Proceeding with single-context review; findings may have confirmation bias."
+1. **Warn the user**: "This review ideally requires independent delegated reviewers, but none are available. Proceeding with single-context review; findings may have confirmation bias."
 2. **Use sub-reviewer references directly**: Load applicable technical reviewers
 3. **Explicitly note bias risks**: In output, mark sections where independent judgment would be beneficial
 4. **Recommend external review**: For audit-critical work, suggest human review or external tool
 
 ### When main agent IS the author:
 1. **Do NOT attempt self-review**: Author self-review is ineffective regardless of methodology
-2. **Inform the user**: "I created these artifacts and cannot objectively review them. No suitable subagents are available for independent review."
+2. **Inform the user**: "I created these artifacts and cannot objectively review them. No suitable independent delegated reviewers are available."
 3. **Recommend alternatives**:
    - Wait for human review
    - Use external code analysis tools (linters, static analyzers, security scanners)
@@ -27,17 +27,17 @@ User explicitly requests review. Follow full protocol: decision framework → di
 **Triggers**: "review this", "check for issues", "audit this", "challenge this design"
 
 ### Mode 2: Self-Review (Before Presenting)
-When you produce work, **you MUST delegate review to subagents** due to confirmation bias.
+When you produce work, **you MUST delegate review to independent agents/workers** due to confirmation bias.
 
 **DO NOT attempt self-review using sub-reviewer references** — this creates the illusion of objectivity while still suffering from author bias.
 
 **Proper approach**:
-1. Check available subagents (general, debug, or highest-intelligence available)
+1. Check available independent reviewers (general, debug, or strongest available)
 2. Delegate with appropriate review focus:
    - For code: Check TODO/FIXME, debug statements, error handling, placeholder implementations
    - For specs: Run adversarial challenge (assumptions, alternatives, failure scenarios)
    - For architecture: Run design rigor (was this designed or grown?)
-3. Present subagent findings with your work
+3. Present delegated-review findings with your work
 
 **Exception**: For trivial changes (<10 lines, no structural impact), you may skip review entirely rather than self-review
 
@@ -65,14 +65,14 @@ See `references/examples/delegation-scenarios.md` for worked examples:
 3. Specialized domain (performance + accessibility)
 4. Pure technical (code quality, no delegation)
 5. Mixed approach (technical direct + stakeholder delegated)
-6. Fallback (no subagents available)
+6. Fallback (no independent delegated reviewers available)
 
 ---
 
 ## References
 
 **Delegation framework** (progressive discovery):
-- `references/delegation/framework.md` — When to delegate, subagent detection, prompt patterns, synthesis protocol
+- `references/delegation/framework.md` — When to delegate, reviewer/worker detection, prompt patterns, synthesis protocol
 - `references/delegation/personas.md` — Pre-built stakeholder and domain expert persona prompts
 
 **Technical sub-reviewers** (lazy-loaded by artifact type):
@@ -98,9 +98,9 @@ See `references/examples/delegation-scenarios.md` for worked examples:
 3. Aggregate findings by severity
 
 ### For Code Review (when you ARE the author)
-1. **MUST delegate** → Check available subagents (general, debug, highest-intelligence)
+1. **MUST delegate** → Check available independent reviewers (general, debug, strongest available)
 2. Delegate with technical review focus using sub-reviewer lens guidance
-3. Present subagent findings
+3. Present delegated-review findings
 
 ### For Architecture Review (when NOT the author)
 1. Check delegation framework → Is this audit-level? → Delegate if yes
@@ -108,7 +108,7 @@ See `references/examples/delegation-scenarios.md` for worked examples:
 3. Consider SRE perspective for operational concerns → Delegate if needed
 
 ### For Architecture Review (when you ARE the author)
-1. **MUST delegate** → Prefer highest-intelligence subagent or specialized architect agent
+1. **MUST delegate** → Prefer the strongest available independent reviewer or a specialized architecture reviewer
 2. Include full context but no defense of decisions
 3. Request adversarial challenge and design rigor lenses
 
@@ -118,12 +118,12 @@ See `references/examples/delegation-scenarios.md` for worked examples:
 3. Aggregate findings
 
 ### For Spec Review (when you ARE the author)
-1. **MUST delegate** → Use general subagent with adversarial lens
+1. **MUST delegate** → Use a general independent reviewer with an adversarial lens
 2. Request challenge of assumptions, alternatives, and failure scenarios
 3. Consider stakeholder delegation if acceptance needed
 
 ### For Security Review
 1. **Authorship check first** → If you're the author → MUST delegate
-2. Check delegation framework → Specialized security subagent available? → Delegate if yes
+2. Check delegation framework → Specialized security reviewer available? → Delegate if yes
 3. If not author and no specialized agent → Load: sub-reviewers/security, sub-reviewers/edge-case-hunter
-4. For high-stakes → MUST delegate to highest-intelligence subagent (audit mode)
+4. For high-stakes → MUST delegate to the strongest available independent reviewer (audit mode)

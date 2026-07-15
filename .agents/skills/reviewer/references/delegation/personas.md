@@ -1,6 +1,6 @@
 # Persona Review Templates
 
-Pre-built persona prompts for delegating stakeholder and domain-expert reviews. Use these when delegating to general-purpose subagents that support persona/role-playing.
+Pre-built persona prompts for delegating stakeholder and domain-expert reviews. Use these when delegating to general-purpose agents/workers that support persona or role-playing behavior.
 
 ---
 
@@ -284,7 +284,7 @@ Do not evaluate: Technical implementation, code quality (those are dev concerns)
 ## Usage Instructions
 
 1. **Select persona(s)** matching the review need
-2. **Delegate to subagent** (general or specialized, depending on harness)
+2. **Delegate to an independent reviewer** (general or specialized, depending on the environment)
 3. **Include artifact** (code, spec, design doc, etc.)
 4. **Specify output format** (if deviating from persona template)
 5. **Synthesize findings** from multiple personas if using panel review
@@ -305,7 +305,7 @@ Focus on: Authentication, authorization, input validation, and rate limiting.
 ### Multi-Persona Panel Example
 
 ```
-Delegate 3 subagents:
+Delegate 3 independent reviewers:
 1. Product Owner perspective → Review feature completeness
 2. SRE perspective → Review operational risks
 3. Security Analyst perspective → Review vulnerabilities
@@ -320,7 +320,7 @@ Then synthesize findings, highlighting conflicts and trade-offs.
 These templates are starting points. Customize based on:
 - **Project context**: Add domain-specific concerns (e.g., "medical device regulations" for healthcare)
 - **Review depth**: Adjust evaluation criteria for quick vs deep reviews
-- **Output format**: Adapt to harness capabilities (some may support structured JSON, others markdown)
+- **Output format**: Adapt to environment capabilities (some may support structured JSON, others markdown)
 
 **Anti-pattern**: Don't use all personas for every review. Select only those relevant to the artifact and review goal.
 

@@ -1,6 +1,6 @@
 ---
 name: multi-perspective-deliberation
-description: "Coordinate a multi-persona deliberation session to challenge assumptions, debate architectural decisions, and perform pre-mortems. Leverages concurrent subagents if supported by the harness, or falls back to single-context simulated dialogue. Trigger phrases: 'party mode', 'deliberation', 'multi-perspective', 'get a second opinion', 'debate this', 'challenge design'."
+description: "Coordinate a multi-persona deliberation session to challenge assumptions, debate architectural decisions, and perform pre-mortems. Leverages concurrent delegated agents/workers when the environment supports them, or falls back to single-context simulated dialogue. Trigger phrases: 'party mode', 'deliberation', 'multi-perspective', 'get a second opinion', 'debate this', 'challenge design'."
 ---
 
 # Multi-Perspective Deliberation & Deliberative Dialogue
@@ -23,13 +23,13 @@ A framework to challenge designs, stress-test plans, and synthesize multi-discip
 
 ## Phase 1: Execution Mode Selection
 
-Determine the capability of the host agent harness:
+Determine the capabilities of the current execution environment:
 
-### Mode A: Concurrent Subagent Deliberation (Preferred)
-*Use when the harness supports subagents (`invoke_subagent` and `send_message` tools).*
-1. **Spawn Subagents**: Define and launch separate, concurrent subagents for the selected personas (e.g., Architect, Developer, Security). Give each subagent its specific persona system prompt.
-2. **Orchestrate Dialogue**: Use the messaging system to send the topic to all spawned subagents. Rotate turns, allowing subagents to respond to the topic and directly challenge each other's messages.
-3. **Facilitate**: Prompt the subagents to address each other's concerns.
+### Mode A: Concurrent Delegated Deliberation (Preferred)
+*Use when the environment supports parallel delegated agents/workers plus a way to exchange prompts, intermediate positions, or results between them.*
+1. **Launch Persona Workers**: Create separate, concurrent delegated workers/agents for the selected personas (e.g., Architect, Developer, Security). Give each worker a clear persona brief and scope.
+2. **Orchestrate Dialogue**: Share the topic with all active workers. Rotate turns by relaying the other personas' positions, allowing them to respond to the topic and directly challenge each other's reasoning.
+3. **Facilitate**: Prompt the workers to address each other's concerns, surface trade-offs, and refine their positions.
 
 ### Mode B: Simulated Single-Context Dialogue (Fallback)
 *Use in single-agent environments.*
@@ -58,7 +58,7 @@ Compile the deliberation results into the following structure:
 ```markdown
 # Deliberation Report: [Topic]
 
-- **Deliberation Mode**: [Subagent Swarm / Simulated Dialogue]
+- **Deliberation Mode**: [Delegated Multi-Agent / Simulated Dialogue]
 - **Participants**: [List of active personas]
 
 ## 1. Consensus (Points of Agreement)

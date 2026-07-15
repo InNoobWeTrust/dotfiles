@@ -1,20 +1,20 @@
 ## The Four Pillars (Input-Side Only)
 
-Because you own the **input prompt**, not the subagent config, every pillar is implemented inside the prompt you write.
+Because you own the **input prompt**, not the delegated worker's config, every pillar is implemented inside the prompt you write.
 
 ### Pillar 1 — Precise Scope Instruction
 
-The main agent's system prompt lists subagent names and descriptions. Since those may be generic, the delegation prompt **must** contain the specificity the description omitted.
+The main agent's environment usually exposes worker/agent names and descriptions. Since those may be generic, the delegation prompt **must** contain the specificity the description omitted.
 
 Rules:
 - State the exact deliverable (file paths, function names, URLs, data set, etc.).
 - State what is out of scope explicitly.
 - Never say "investigate the code" — say "read `src/auth/jwt.ts` lines 40–90 and identify any token expiry edge cases."
-- **Context budget**: limit pasted context to the minimum that would let a competent engineer start immediately — typically under 500 lines or one logical unit. A subagent receiving a 50k-token blob will still wander regardless of how precise the task statement is.
+- **Context budget**: limit pasted context to the minimum that would let a competent engineer start immediately — typically under 500 lines or one logical unit. A delegated worker receiving a 50k-token blob will still wander regardless of how precise the task statement is.
 
 ### Pillar 2 — Structured Output Contract
 
-Include a numbered output template in the prompt. The subagent fills in each section and stops when all sections are complete. This is the primary mechanism to prevent runaway execution.
+Include a numbered output template in the prompt. The delegated worker fills in each section and stops when all sections are complete. This is the primary mechanism to prevent runaway execution.
 
 **Required sections for any delegation:**
 
@@ -129,13 +129,13 @@ Section 3 of the output template ("Obstacles Encountered") is non-optional. It c
 
 **Why it matters**: without this, the orchestrating agent rediscovers the same issues on its own, wasting tokens and time.
 
-If the subagent has no obstacles to report, it writes `NONE`. This still confirms the section was evaluated.
+If the delegated worker has no obstacles to report, it writes `NONE`. This still confirms the section was evaluated.
 
 ---
 
 ### Pillar 4 — Allowed Actions Declaration
 
-You cannot change which tools the subagent has access to. You compensate by **declaring allowed actions in the prompt** and relying on the subagent's instruction-following to respect them.
+You cannot change which tools the delegated worker has access to. You compensate by **declaring allowed actions in the prompt** and relying on the worker's instruction-following to respect them.
 
 > **Soft contract**: this is enforced by instruction-following, not a hard sandbox. If hard tool isolation is required, configure actual permission grants separately — this declaration alone does not provide it.
 

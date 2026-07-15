@@ -1,6 +1,6 @@
 ## Direct Review Mode (Single Technical Perspective)
 
-**CRITICAL PREREQUISITE**: Use this mode ONLY if you (main agent) did NOT create or edit the artifacts being reviewed. If you are the author, you MUST delegate to subagents instead.
+**CRITICAL PREREQUISITE**: Use this mode ONLY if you (main agent) did NOT create or edit the artifacts being reviewed. If you are the author, you MUST delegate to independent agents/workers instead.
 
 Use this mode for pure technical reviews where you apply one or more sub-reviewer lenses from a single agent context.
 
@@ -61,11 +61,11 @@ Use this mode when:
 - Review requires **audit-level independence**
 - Need **multiple stakeholder perspectives** (PO, PM, SRE, end-user, security, ops)
 - Need **specialized domain expertise** (performance, accessibility, threat modeling)
-- Harness provides suitable subagents (check descriptions for capability/intelligence)
+- The environment provides suitable delegated reviewers/workers (check descriptions for capability/intelligence)
 
-### Step 1: Check Available Subagents
+### Step 1: Check Available Independent Reviewers
 
-Query your harness for available subagents. Look for:
+Query your environment for available delegated reviewers/workers. Look for:
 
 **For audit reviews** (need highest intelligence):
 - Model indicators: "claude-sonnet-4", "gpt-4", "o1", "advanced reasoning"
@@ -86,9 +86,9 @@ Choose delegation pattern based on review need:
 
 | Need | Pattern | Template |
 |------|---------|----------|
-| Independent audit | Single high-intelligence subagent | `references/delegation/framework.md` → Audit Review |
-| Multiple stakeholders | Separate subagent per persona | `references/delegation/personas.md` → Select personas |
-| Specialized domain | Domain-specific subagent | `references/delegation/framework.md` → Specialized Domain |
+| Independent audit | Single high-capability independent reviewer | `references/delegation/framework.md` → Audit Review |
+| Multiple stakeholders | Separate reviewer per persona | `references/delegation/personas.md` → Select personas |
+| Specialized domain | Domain-specific reviewer | `references/delegation/framework.md` → Specialized Domain |
 | Mixed (technical + stakeholders) | Technical direct + persona delegation | Hybrid approach |
 
 ### Step 3: Delegate with Persona/Context Isolation
@@ -112,7 +112,7 @@ Focus on: [Specific concerns for this review]
 
 ### Step 4: Synthesize Multi-Agent Findings
 
-When you receive findings from multiple subagents:
+When you receive findings from multiple delegated reviewers:
 
 1. **Aggregate by severity**: CRITICAL → HIGH → MEDIUM → LOW
 2. **Identify conflicts**: Where perspectives disagree (valuable signal)

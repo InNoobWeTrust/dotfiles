@@ -1,6 +1,6 @@
 ## Delegation Prompt Template
 
-Copy this template and fill in the `[BRACKETS]` before launching a subagent.
+Copy this template and fill in the `[BRACKETS]` before launching a delegated worker/agent.
 
 ```
 You are acting as a [ROLE, e.g. "code reviewer", "research analyst", "debugging agent"].
@@ -51,7 +51,7 @@ Stop immediately and report partial findings if:
 
 ## Preflight Checklist
 
-Run through this before every subagent launch:
+Run through this before every delegated worker launch:
 
 - [ ] **Scope**: Does the prompt name the exact files, URLs, or data — not a vague domain?
 - [ ] **Output template**: Is the five-section format included verbatim?
@@ -59,20 +59,20 @@ Run through this before every subagent launch:
 - [ ] **Obstacles section**: Is section 3 present and non-optional?
 - [ ] **Allowed Actions**: Is the block present and does it match what the task actually requires?
 - [ ] **Stop Conditions**: Is there at least one condition that triggers early termination?
-- [ ] **Context is surgical**: Did you include only what the subagent needs — not the entire conversation?
+- [ ] **Context is surgical**: Did you include only what the delegated worker needs — not the entire conversation?
 
 ---
 
 ## Receiving Results
 
-When the subagent returns:
+When the delegated worker returns:
 
 1. **Scan for `TASK_COMPLETE`** in section 5. If absent, treat the result as incomplete and re-delegate with a clarification prompt.
 2. **Read section 3 (Obstacles Encountered)**. Surface any workarounds or quirks to the main context so they are not rediscovered.
 3. **Read section 4 (Confidence & Caveats)**. Low-confidence findings must be verified before acting on them.
 4. **Reject and re-delegate** if:
-   - The subagent broadened scope beyond what was described. _Detect this by checking whether findings reference files, URLs, or data sources not listed in the delegation prompt's context or Allowed Actions block._
-   - The subagent performed a forbidden action (e.g., wrote a file it was not allowed to touch).
+   - The delegated worker broadened scope beyond what was described. _Detect this by checking whether findings reference files, URLs, or data sources not listed in the delegation prompt's context or Allowed Actions block._
+   - The delegated worker performed a forbidden action (e.g., wrote a file it was not allowed to touch).
    - The output format is missing or incomplete.
 
 ---
@@ -81,16 +81,16 @@ When the subagent returns:
 
 | Anti-pattern | Why it fails | Fix |
 |---|---|---|
-| "Investigate the auth module" | No scope → subagent wanders | Name the exact files and question |
-| No output format in prompt | Subagent invents its own → unreadable | Always include the five-section template |
+| "Investigate the auth module" | No scope → delegated worker wanders | Name the exact files and question |
+| No output format in prompt | Delegated worker invents its own → unreadable | Always include the five-section template |
 | Omitting Obstacles section | Workarounds get lost → main agent rediscovers | Section 3 is mandatory |
 | "Use any tools you need" | Accidental writes or destructive commands | Always include Allowed Actions block |
 | Delegating the entire conversation context | Expensive, distracting, often wrong | Paste only the surgical slice |
 | Treating a missing TASK_COMPLETE as success | Silent partial results slip through | Always scan for the Done Signal |
 | "You are a Python expert" persona | underlying LLM model already has that knowledge; label adds nothing | Drop the persona; use a role that changes *context*, not just claimed expertise |
 | Sequential pipeline where step B needs step A's discoveries | Information degrades at every handoff; bugs compound | Keep sequential dependent work in the main thread |
-| Test-runner subagent | Returns "tests failed" — hides the output needed to diagnose | Run tests directly in main thread; delegate only post-analysis summaries (except blind test loops in Clean-Room TDD) |
-| Biased TDD Implementation | Writing tests and implementing them in the same context, leading to tests being "cheated" with hardcoded values. | Delegate implementation to a separate subagent or new session, explicitly forbidding it from reading test file contents (Clean-Room TDD). |
+| Test-runner delegated worker | Returns "tests failed" — hides the output needed to diagnose | Run tests directly in main thread; delegate only post-analysis summaries (except blind test loops in Clean-Room TDD) |
+| Biased TDD Implementation | Writing tests and implementing them in the same context, leading to tests being "cheated" with hardcoded values. | Delegate implementation to a separate worker or new session, explicitly forbidding it from reading test file contents (Clean-Room TDD). |
 
 ---
 

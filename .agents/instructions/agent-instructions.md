@@ -35,7 +35,7 @@ Rules live under `../rules/`. **Do not bulk-load every rule file.** Use `../rule
 
 ### Specialized Skills (on explicit trigger)
 - **Requirements/planning work** → Load `requirements-driven-dev`
-- **Swarminator / multi-agent / single external node** → Load `swarm-intelligence` and pick Mode Single-Node or Full Swarm (Full Swarm preflight gates in skill-compliance.md). `/external-subagent` pins Single-Node; `/swarm` pins Full Swarm.
+- **Swarminator / multi-agent / single external node** → Load `swarm-intelligence` and pick Mode Single-Node or Full Swarm (Full Swarm preflight gates in skill-compliance.md). Prefer explicit mode selection; `/external-subagent` pins Single-Node and `/swarm` pins Full Swarm where those commands exist.
 - **Bounded repetitive tasks** → Load `bounded-iteration`
 - **UI/frontend polish** → Load `ui-ux`; compose with `code-craft` for component logic
 - **Browser automation** → Load `cdp-browser-automation`

@@ -59,7 +59,7 @@ The verdict is **PASS only if every criterion is PASS**. Any FAIL or UNVERIFIED 
 | Situation | Applies? |
 |---|---|
 | Declaring a task/feature "done" or "working" | Yes — run the two-step before claiming completion |
-| Verifying your own code (self-review fallback, no subagent) | Yes — this is the highest-bias scenario |
+| Verifying your own code (self-review fallback, no independent reviewer) | Yes — this is the highest-bias scenario |
 | Judging a candidate solution / tool output / test result | Yes |
 | Evaluating a user's premise before building on it | Yes, when the premise is load-bearing and checkable |
 | Confirming a bug is actually fixed | Yes — define "fixed" independent of the patch, then check |
@@ -70,11 +70,11 @@ The verdict is **PASS only if every criterion is PASS**. Any FAIL or UNVERIFIED 
 
 ## Relationship to Delegation (reviewer skill)
 
-Delegation to an independent subagent is the **strongest** debiasing tool and remains the required path when you are the author of the artifact under audit (see `../skills/reviewer/SKILL.md` — Author Bias Gate).
+Delegation to an independent reviewer/worker is the **strongest** debiasing tool and remains the required path when you are the author of the artifact under audit (see `../skills/reviewer/SKILL.md` — Author Bias Gate).
 
 Self-Grounded Verification is the **within-context** technique for the many moments where delegation is unavailable, unwarranted, or too heavy: it does not replace delegation, it hardens single-context verification. Order of preference:
 
-1. Independent subagent review (best — no shared context).
+1. Independent delegated review (best — no shared context).
 2. Self-Grounded Verification two-step (when reviewing in-context is unavoidable).
 3. Never: unstructured self-review that reads the artifact and pronounces it good.
 

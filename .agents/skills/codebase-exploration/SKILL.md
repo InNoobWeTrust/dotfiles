@@ -30,7 +30,7 @@ Can you answer now?
 
 ## Phase 2 — Deep path
 
-**Delegate** when harness has an explore agent and scope is large: give goal, strategy number, report template path.
+**Delegate** when the environment provides an exploration-focused worker/agent and the scope is large: give goal, strategy number, report template path.
 
 **Or run directly** using one strategy (load only that section):
 

@@ -60,7 +60,7 @@ branch: feature/auth
 topic: login flow
 status: in-progress            # in-progress | paused | blocked | done
 updated: 2026-07-14T09:12:00+07:00
-agent: <optional identifier, e.g. author or harness>
+agent: <optional identifier, e.g. author or execution environment>
 consolidated: false
 consolidated_at: null
 tags: [session, decision, blocker]
@@ -86,7 +86,7 @@ Reuse this template for both "checkpoint" and "working note" modes; a working no
 
 ## Long-term entries
 
-Long-term memory is size-limited and only grows through the Consolidate mode. Each entry has a stable **key** and a **type** so entries stay portable across agents and machines — the file layout is the source of truth, not any harness-specific store.
+Long-term memory is size-limited and only grows through the Consolidate mode. Each entry has a stable **key** and a **type** so entries stay portable across agents and machines — the file layout is the source of truth, not any environment-specific store.
 
 ### Bucket files
 
@@ -214,7 +214,7 @@ Use when the user asks to restore, resume, load context, or lists prior notes.
 3. If multiple active short-term entries match, present summaries and ask which to load. Do not silently pick one.
 4. Parse the selected file. Print Goal, Current Status, Key Decisions, Next Steps, Blockers. Long-term reads print the matching rows plus their bucket entries.
 
-This skill is the source of truth. Do not delegate recall to external harness stores or expect them to hold repo memory. If a harness happens to expose its own memory, treat it as unrelated context — its entries are not authoritative here.
+This skill is the source of truth. Do not delegate recall to external environment-managed memory stores or expect them to hold repo memory. If the current environment happens to expose its own memory, treat it as unrelated context — its entries are not authoritative here.
 
 ---
 

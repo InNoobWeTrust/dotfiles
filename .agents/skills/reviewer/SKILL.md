@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: "Multi-lens review orchestrator for code, specs, architecture, config, docs, and infrastructure. Hybrid execution: direct technical review using sub-reviewer references, or delegate to subagents for multi-perspective/audit/specialized reviews. Sub-lenses: code-quality, design-rigor, adversarial, security, edge-case, editorial. Activate on \"review\", \"check\", \"audit\", \"challenge\", \"QA\", or any explicit review request."
+description: "Multi-lens review orchestrator for code, specs, architecture, config, docs, and infrastructure. Hybrid execution: direct technical review using sub-reviewer references, or delegate to independent agents/workers for multi-perspective, audit, or specialized reviews. Sub-lenses: code-quality, design-rigor, adversarial, security, edge-case, editorial. Activate on \"review\", \"check\", \"audit\", \"challenge\", \"QA\", or any explicit review request."
 ---
 
 # Reviewer
@@ -26,12 +26,12 @@ Any in-context review must follow `rules/self-grounded-verification.md`: criteri
 | Situation | Approach |
 |---|---|
 | You are author | Delegate always |
-| Audit / independent judgment | Delegate (highest-intelligence agent) |
+| Audit / independent judgment | Delegate (strongest independent reviewer available) |
 | Multi-stakeholder personas | Delegate separately per persona |
 | Pure technical, you are **not** author | Direct + sub-reviewer refs |
-| No subagents + you are author | Do not self-review; ask human / external tools |
+| No independent delegated reviewers + you are author | Do not self-review; ask human / external tools |
 
-Full decision tree, subagent detection, synthesis: `references/delegation/framework.md`.  
+Full decision tree, delegated-reviewer detection, synthesis: `references/delegation/framework.md`.  
 Persona prompts: `references/delegation/personas.md`.  
 Expanded direct/delegation steps: `references/direct-and-delegation-detail.md`.  
 Fallback + review modes + quick start: `references/fallback-modes-quickstart.md`.  

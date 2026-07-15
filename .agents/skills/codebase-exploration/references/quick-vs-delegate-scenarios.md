@@ -71,7 +71,7 @@ $ rg "implements IPlugin" --count-matches
 ```
 
 ### Decision
-**⚠️ Delegate to subagent**
+**⚠️ Delegate to an exploration worker/agent**
 - 17 plugins implementing complex interface
 - Registration system spans multiple core files
 - Dependency chain between plugins (`.dependencies` field)
@@ -158,7 +158,7 @@ $ rg "from 'winston'|require\('winston'\)" --count-matches | wc -l
 ```
 
 ### Decision
-**⚠️ Delegate to subagent**
+**⚠️ Delegate to an exploration worker/agent**
 - 142 files use logger (massive impact)
 - Core module imported 87 times
 - 23 files have direct Winston dependency (need to be updated)
@@ -290,7 +290,7 @@ src/utils/tax.ts:15: function calculateTax(amount: number) { ... }
 
 # DON'T try to read all 42 files
 # DON'T try to understand it in the main agent context
-# → Delegate to subagent with Strategy 2
+# → Delegate to an exploration worker/agent with Strategy 2
 ```
 
 ### ❌ Delegating trivial tasks
@@ -299,7 +299,7 @@ src/utils/tax.ts:15: function calculateTax(amount: number) { ... }
 $ rg "^export (default )?function main\(|if __name__ == \"__main__\"" --max-count=1
 src/index.ts:1: export default function main() { ... }
 
-# DON'T delegate this to subagent
+# DON'T delegate this to an exploration worker/agent
 # → Answer is immediate, no exploration needed
 ```
 

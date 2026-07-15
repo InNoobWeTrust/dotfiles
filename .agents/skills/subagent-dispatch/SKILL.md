@@ -1,11 +1,11 @@
 ---
 name: subagent-dispatch
-description: "Construct a precise, structured delegation prompt before every subagent launch. Use whenever you are about to delegate work to a background agent, run a task in parallel, or spawn a worker. Injects scope constraints, a structured output contract, obstacle reporting, and allowed-action boundaries directly into the input prompt to compensate for generic or unconfigured subagent descriptions. Activate on: 'delegate this', 'run this in parallel', 'use the research agent', 'background task', 'spawn a worker', 'launch a subagent', 'hand this off'."
+description: "Construct a precise, structured delegation prompt before every delegated-agent or worker launch. Use whenever you are about to delegate work to a background agent, run a task in parallel, or spawn a worker. Injects scope constraints, a structured output contract, obstacle reporting, and allowed-action boundaries directly into the input prompt to compensate for generic or unconfigured delegated-worker descriptions. Activate on: 'delegate this', 'run this in parallel', 'use the research agent', 'background task', 'spawn a worker', 'launch a subagent', 'hand this off'."
 ---
 
 # Subagent Dispatch
 
-**When:** immediately before launching any subagent / background worker.  
+**When:** immediately before launching any delegated agent / background worker.  
 **Constraint:** you usually cannot edit the worker’s system prompt — put intelligence in the **delegation input**.
 
 ---
@@ -29,7 +29,7 @@ description: "Construct a precise, structured delegation prompt before every sub
 1. **Precise scope** — exact deliverable + explicit out-of-scope; ≤ ~500 lines pasted context.
 2. **Structured output** — numbered sections + `TASK_COMPLETE` done signal.
 3. **Obstacle reporting** — force listing of workarounds / env quirks (or NONE).
-4. **Allowed actions** — READ / EDIT / RUN / FORBIDDEN lists (soft contract; pair with harness permissions when available).
+4. **Allowed actions** — READ / EDIT / RUN / FORBIDDEN lists (soft contract; pair with environment-level permissions when available).
 
 Full pillar text, domain findings templates, and allowed-action examples:  
 `references/pillars-and-templates.md`

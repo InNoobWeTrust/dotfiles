@@ -13,12 +13,12 @@ Worked examples showing when to delegate vs when to handle directly, with comple
 - **Audit review** = requires independent judgment
 - **High-stakes** = PII + payment data
 - **Confirmation bias risk** = main agent may defend existing implementation
-- **Decision**: MUST delegate to highest-intelligence subagent
+- **Decision**: MUST delegate to the strongest available independent reviewer
 
-### Harness Check
-Query available subagents:
+### Environment Check
+Query available delegated reviewers/workers:
 ```
-List available subagents with intelligence/capability indicators
+List available delegated reviewers/workers with intelligence/capability indicators
 ```
 
 **Found**: `general` agent with "powered by claude-sonnet-4.5, advanced reasoning" → Suitable for audit
@@ -60,9 +60,9 @@ Return findings with:
 Verdict: APPROVED FOR PRODUCTION / NEEDS WORK / DO NOT SHIP
 ```
 
-### Synthesis (After Subagent Returns)
+### Synthesis (After the Delegated Reviewer Returns)
 
-**Subagent findings**:
+**Delegated-review findings**:
 - CRITICAL: Hardcoded JWT secret in auth.service.ts:15
 - HIGH: No rate limiting on /login endpoint → brute force possible
 - HIGH: SQL injection in payment.controller.ts:67 (user input in raw query)
@@ -111,13 +111,13 @@ Recommend re-audit after fixes.
 ### Analysis
 - **Multi-perspective needed**: Product Owner (feature completeness), SRE (operational readiness), Security (payment flow safety)
 - **Persona isolation required**: Each perspective needs independent context
-- **Decision**: Delegate 3 subagents with different personas
+- **Decision**: Delegate 3 independent reviewers with different personas
 
 ### Delegation Strategy
 
-**Delegate 3 subagents in parallel**:
+**Delegate 3 independent reviewers in parallel**:
 
-**Subagent 1: Product Owner Perspective**
+**Reviewer 1: Product Owner Perspective**
 ```markdown
 Review this checkout flow from a Product Owner perspective.
 
@@ -157,7 +157,7 @@ Output format:
 - Recommendations
 ```
 
-**Subagent 2: SRE Perspective**
+**Reviewer 2: SRE Perspective**
 ```markdown
 Review this checkout flow from an SRE/Operations perspective.
 
@@ -188,7 +188,7 @@ Output format:
 - Recommendations
 ```
 
-**Subagent 3: Security Perspective**
+**Reviewer 3: Security Perspective**
 ```markdown
 Review this checkout flow from a Security Analyst perspective.
 
@@ -301,16 +301,16 @@ After fixes, meets acceptance criteria and operational/security standards.
 
 ### Analysis
 - **Specialized domain needs**: Performance (renders 1000+ rows), Accessibility (WCAG compliance)
-- **Check harness**: Does it have specialized subagents?
+- **Check environment**: Does it provide specialized delegated reviewers/workers?
   - Performance agent: Not available
   - Accessibility agent: Not available
   - General agent: Available (use with domain expert personas) → Use with domain expert personas
 
-- **Decision**: Delegate 2 general subagents with specialized personas
+- **Decision**: Delegate 2 general-purpose reviewers with specialized personas
 
 ### Delegation Prompts
 
-**Subagent 1: Performance Engineer Persona**
+**Reviewer 1: Performance Engineer Persona**
 ```markdown
 Review this dashboard component for performance.
 
@@ -342,7 +342,7 @@ Output format:
 - Optimization recommendations: Ranked by impact
 ```
 
-**Subagent 2: Accessibility Specialist Persona**
+**Reviewer 2: Accessibility Specialist Persona**
 ```markdown
 Review this dashboard component for accessibility.
 
@@ -533,7 +533,7 @@ Load sub-reviewers: `code-quality.md`, `adversarial.md`, `editorial.md`
 
 ### Step 2: Stakeholder Review (Delegate)
 
-**Delegate subagent 1: Product Manager perspective**
+**Delegate reviewer 1: Product Manager perspective**
 ```markdown
 Review this API specification from a Product Manager perspective.
 
@@ -563,7 +563,7 @@ Output format:
 - Recommendations
 ```
 
-**Delegate subagent 2: Integration Partner persona (simulate external developer)**
+**Delegate reviewer 2: Integration Partner persona (simulate external developer)**
 ```markdown
 Review this API specification as an external integration partner.
 
@@ -600,11 +600,11 @@ Output format:
 - Versioning inconsistency
 - Missing rate limit docs
 
-**PM** (from subagent):
+**PM** (from delegated reviewer):
 - Gap: Webhook delivery status not documented
 - Support risk: No partner onboarding checklist
 
-**Partner** (from subagent):
+**Partner** (from delegated reviewer):
 - Confusion: No examples for pagination
 - Confusion: Auth token refresh not explained
 - Missing: Sandbox environment not mentioned
@@ -656,25 +656,25 @@ Recommend: Pilot with 1-2 partners before full launch.
 
 ---
 
-## Scenario 6: Fallback (No Subagents Available)
+## Scenario 6: Fallback (No Independent Reviewers Available)
 
 ### User Request
-> "I need a multi-perspective review (technical + PO + SRE) but I'm using a minimal harness with no subagent support."
+> "I need a multi-perspective review (technical + PO + SRE) but I'm using a minimal environment with no delegated-review support."
 
 ### Analysis
-- **Ideal**: Delegate to 3 subagents with isolated personas
-- **Reality**: No subagents available
+- **Ideal**: Delegate to 3 independent reviewers with isolated personas
+- **Reality**: No independent reviewers available
 - **Decision**: Fallback to single-context review with bias warnings
 
 ### Approach
 
 **Warn the user**:
 ```markdown
-Note: This review ideally requires independent subagents for PO and SRE perspectives, but none are available in this harness. Proceeding with single-context review; findings may have confirmation bias.
+Note: This review ideally requires independent delegated reviewers for PO and SRE perspectives, but none are available in this environment. Proceeding with single-context review; findings may have confirmation bias.
 
 For production-critical work, consider:
 - Human review from actual PO and SRE
-- External review harness with subagent support
+- An external review environment with delegated-review support
 - Staged rollout with monitoring
 ```
 
@@ -714,6 +714,6 @@ This review provides technical rigor but lacks independent stakeholder judgment.
 | **Specialized domain** | Should delegate (if available) | Domain expertise + focus |
 | **Pure technical** | Can handle directly | Single technical perspective |
 | **Mixed** | Hybrid (direct + delegate) | Separate technical from stakeholder |
-| **No subagents** | Fallback with warnings | Warn user of bias risk |
+| **No independent reviewers** | Fallback with warnings | Warn user of bias risk |
 
 Use `references/delegation/framework.md` decision tree to classify your scenario.

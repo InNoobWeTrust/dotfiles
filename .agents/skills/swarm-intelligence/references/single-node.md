@@ -1,4 +1,4 @@
-# Mode: Single-Node (external subagent)
+# Mode: Single-Node (external delegated node)
 
 Bounded one-node `swarminator` delegation. Host keeps workspace control. Nodes never mutate the workspace.
 

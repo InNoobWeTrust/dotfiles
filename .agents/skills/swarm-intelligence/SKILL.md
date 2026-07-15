@@ -1,6 +1,6 @@
 ---
 name: swarm-intelligence
-description: "Swarminator orchestration: Mode Single-Node (one bounded external node, immutable artifact) or Mode Full Swarm (multi-phase multi-persona multi-model). Use for isolated research/second opinions/patch suggestions, or for diverse-perspective cross-validation when risk is too high for one pass. Activate on \"swarm\", \"multi-agent\", \"external subagent\", \"single-node\", \"swarminator\", \"second opinion\", \"cross-validate\", \"parallel agents\". Commands: /swarm → Full Swarm, /external-subagent → Single-Node. Skip for routine single-agent implementation."
+description: "Swarminator orchestration: Mode Single-Node (one bounded external node, immutable artifact) or Mode Full Swarm (multi-phase multi-persona multi-model). Use for isolated research/second opinions/patch suggestions, or for diverse-perspective cross-validation when risk is too high for one pass. Activate on \"swarm\", \"multi-agent\", \"external delegated node\", \"single-node\", \"swarminator\", \"second opinion\", \"cross-validate\", \"parallel agents\". Commands: /swarm → Full Swarm, /external-subagent → Single-Node. Skip for routine single-agent implementation."
 ---
 
 # Swarm Intelligence (Swarminator)
@@ -18,7 +18,7 @@ Compose with `subagent-dispatch` for prompt contracts before any node launch.
 | Signal | Mode | Cost |
 |---|---|---|
 | `/external-subagent` command, or one concrete deliverable / one node / research / second opinion / review / patch suggestion | **Single-Node** | low |
-| User says external subagent, isolated context, offload this small task | **Single-Node** | low |
+| User asks for one isolated delegated node / worker to offload a small task | **Single-Node** | low |
 | `/swarm` command, or multi-phase / ambiguous / high-stakes / quorum / challenge cycles | **Full Swarm** | high |
 | User says swarm, multi-agent, diverse perspectives, cross-validate | **Full Swarm** | high |
 | Unsure | Prefer **Single-Node**; escalate to Full Swarm only if the artifact is still insufficient after one tight retry | — |
@@ -98,7 +98,7 @@ Artifact modes: `analysis` | `review` | `patch` | `transform`.
 | `bounded-iteration` | Full Swarm (or design) first → locked `TASK.md` → iteration loop (`bounded-iteration/references/swarm-integration.md`) |
 | `reviewer` | Single-Node `review` artifact mode, or Full Swarm review personas |
 | `model-benchmarking` | Choose catalogs/tiers → then this skill for execution |
-| Harness-native Task/subagents | Prefer native workers when available; use this skill when you need swarminator isolation or multi-model quorum |
+| Environment-native task workers | Prefer native workers when available; use this skill when you need swarminator isolation or multi-model quorum |
 
 ---
 
