@@ -255,42 +255,73 @@ struct CookieJson {
     http_only: Option<bool>,
     #[serde(rename = "sameSite")]
     same_site: Option<String>, // e.g. "lax", "strict", "no_restriction" or null
+    /// Unix epoch seconds (float from browser exports). Optional session cookies omit it.
+    #[serde(rename = "expirationDate", default)]
+    expiration_date: Option<f64>,
+}
+
+/// True when WebDriver will treat this cookie as SameSite=None.
+///
+/// WHY: fantoccini maps *missing* same_site to the string `"None"` when talking
+/// to WebDriver (see fantoccini `WebDriverCookie::from`). Browsers then require
+/// the Secure flag. Firefox/Chrome exports often leave sameSite null with
+/// secure:false (e.g. Instagram `th_eu_pref`), which would otherwise abort login.
+fn webdriver_same_site_is_none(same_site: Option<&str>) -> bool {
+    match same_site {
+        None => true,
+        Some(ss) => {
+            ss.eq_ignore_ascii_case("none") || ss.eq_ignore_ascii_case("no_restriction")
+        }
+    }
 }
 
 fn map_cookie(c: &CookieJson) -> Cookie<'_> {
-    // Construct a fantoccini Cookie and map supported fields exactly from the Firefox export.
+    // Construct a fantoccini Cookie and map supported fields from the browser export.
     let mut cookie = Cookie::new(c.name.clone(), c.value.clone());
 
-    // Domain
     cookie.set_domain(c.domain.clone());
 
-    // Path
     if let Some(ref p) = c.path {
-        // fantoccini's Cookie exposes set_path in many versions; call it directly.
-        // If your fantoccini version doesn't have this setter, the compiler will flag it;
-        // at that point we can gate-call or adapt to the specific version in use.
         cookie.set_path(p.clone());
     }
 
-    // Secure: honor explicit JSON value if present; otherwise ensure Secure when
-    // sameSite indicates None (Firefox exports this sometimes as "no_restriction").
-    if let Some(s) = c.secure {
-        cookie.set_secure(s);
-    } else if let Some(ref ss) = c.same_site {
-        if ss.eq_ignore_ascii_case("no_restriction") || ss.eq_ignore_ascii_case("none") {
-            cookie.set_secure(true);
-        }
-    }
+    // Secure: honor export when possible, but never emit SameSite=None without Secure.
+    let secure = c.secure.unwrap_or(false)
+        || webdriver_same_site_is_none(c.same_site.as_deref());
+    cookie.set_secure(secure);
 
-    // HttpOnly
     if let Some(h) = c.http_only {
         cookie.set_http_only(h);
     }
 
-    // Expiration / session:
-    // session is honored by not setting expiration when true
+    // WHY: Expiry is optional; session cookies work without it. We primarily use
+    // expirationDate for dedupe (freshest auth cookies), not for WebDriver set.
 
     cookie
+}
+
+/// Browser exports often list the same cookie name twice (multi-profile / re-export).
+/// Keep the entry with the latest expirationDate per (name, domain); session cookies last-win.
+fn dedupe_cookies_prefer_freshest(cookies: Vec<CookieJson>) -> Vec<CookieJson> {
+    use std::collections::HashMap;
+    let mut best: HashMap<(String, String), CookieJson> = HashMap::new();
+    for c in cookies {
+        let key = (c.name.clone(), c.domain.clone());
+        match best.get(&key) {
+            None => {
+                best.insert(key, c);
+            }
+            Some(prev) => {
+                let prev_exp = prev.expiration_date.unwrap_or(0.0);
+                let next_exp = c.expiration_date.unwrap_or(0.0);
+                // WHY: fresher auth cookies (xs/c_user) must win over stale duplicates.
+                if next_exp >= prev_exp {
+                    best.insert(key, c);
+                }
+            }
+        }
+    }
+    best.into_values().collect()
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -421,6 +452,10 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     let cookies_raw_json = fs::read_to_string(cookie_file.to_owned())
         .expect(&format!("failed to read {}", cookie_file.to_str().unwrap()));
     let cookies: Vec<CookieJson> = serde_json::from_str(&cookies_raw_json)?;
+    // WHY: Cookie exports often contain duplicate names (re-export / multi-profile);
+    // keep the freshest by expirationDate so stale xs/c_user do not overwrite.
+    let cookies = dedupe_cookies_prefer_freshest(cookies);
+    tracing::info!(count = cookies.len(), "Loaded unique cookies after dedupe");
     // Map JSON cookie objects into fantoccini Cookie objects as faithfully as possible.
     let cookies = cookies
         .iter()
@@ -488,4 +523,70 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     };
 
     run(&report_args)
+}
+
+#[cfg(test)]
+mod cookie_mapping_tests {
+    use super::*;
+
+    fn sample(
+        name: &str,
+        domain: &str,
+        secure: Option<bool>,
+        same_site: Option<&str>,
+    ) -> CookieJson {
+        CookieJson {
+            name: name.to_string(),
+            value: "v".to_string(),
+            domain: domain.to_string(),
+            path: Some("/".to_string()),
+            secure,
+            http_only: Some(false),
+            same_site: same_site.map(str::to_string),
+            expiration_date: Some(1_800_000_000.0),
+        }
+    }
+
+    #[test]
+    fn forces_secure_when_same_site_null_and_export_says_insecure() {
+        // WHY: fantoccini will send SameSite=None for unset same_site.
+        let json = sample("th_eu_pref", ".instagram.com", Some(false), None);
+        let c = map_cookie(&json);
+        assert_eq!(c.secure(), Some(true));
+    }
+
+    #[test]
+    fn forces_secure_for_no_restriction_even_if_export_says_insecure() {
+        let json = sample(
+            "sessionid",
+            ".instagram.com",
+            Some(false),
+            Some("no_restriction"),
+        );
+        let c = map_cookie(&json);
+        assert_eq!(c.secure(), Some(true));
+    }
+
+    #[test]
+    fn keeps_insecure_for_lax_when_export_says_insecure() {
+        let json = sample("csrftoken", ".instagram.com", Some(false), Some("lax"));
+        let c = map_cookie(&json);
+        assert_eq!(c.secure(), Some(false));
+    }
+
+    #[test]
+    fn honors_secure_true_for_lax() {
+        let json = sample("sessionid", ".instagram.com", Some(true), Some("lax"));
+        let c = map_cookie(&json);
+        assert_eq!(c.secure(), Some(true));
+    }
+
+    #[test]
+    fn webdriver_none_helper_matches_fantoccini_default() {
+        assert!(webdriver_same_site_is_none(None));
+        assert!(webdriver_same_site_is_none(Some("None")));
+        assert!(webdriver_same_site_is_none(Some("no_restriction")));
+        assert!(!webdriver_same_site_is_none(Some("lax")));
+        assert!(!webdriver_same_site_is_none(Some("strict")));
+    }
 }

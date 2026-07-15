@@ -432,7 +432,12 @@ impl ClientActionExt for Client {
                 })
                 .collect();
             for cookie in filtered_cookies {
-                self.add_cookie(cookie.into_owned()).await?;
+                // WHY: one rejected non-auth cookie (prefs/telemetry) must not abort
+                // the whole login; auth cookies are still applied.
+                let name = cookie.name().to_string();
+                if let Err(e) = self.add_cookie(cookie.into_owned()).await {
+                    warn!(%name, error = %e, "skipping cookie that browser rejected");
+                }
             }
 
             self.goto(target).await?;
