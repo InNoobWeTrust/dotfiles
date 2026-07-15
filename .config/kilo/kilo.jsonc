@@ -1,6 +1,7 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
   "small_model": "kilo/kilo-auto/free",
+  "default_agent": "autonomous",
   "instructions": [
     "~/.agents/instructions/agent-instructions.md",
   ],
@@ -19,38 +20,171 @@
     "general": {
       "description": "Read-only general research. USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
       "model": "ink-gw/deepseek/deepseek-v4-pro",
+      "permission": {
+        "edit": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "deny",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "semantic_search": "allow",
+        "codesearch": "allow",
+        "skill": "allow",
+        "lsp": "allow",
+        "external_directory": "allow",
+        "todowrite": "allow",
+        "todoread": "allow",
+        "question": "allow",
+        "doom_loop": "allow",
+        "kilo_memory_save": "allow",
+        "kilo_memory_recall": "allow",
+        "recall": "allow",
+      },
     },
     "explore": {
       "description": "Can only use tools with no side-effect",
       "model": "github-copilot/claude-haiku-4.5",
+      "permission": {
+        "edit": "deny",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "deny",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "semantic_search": "allow",
+        "codesearch": "allow",
+        "skill": "allow",
+        "lsp": "allow",
+        "external_directory": "allow",
+        "todowrite": "allow",
+        "todoread": "allow",
+        "question": "allow",
+        "doom_loop": "allow",
+        "kilo_memory_save": "allow",
+        "kilo_memory_recall": "allow",
+        "recall": "allow",
+      },
     },
     "orchestrator": {
+      "hidden": true,
       "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
       "model": "llm-agg/forbiddengun/mimo",
     },
     "ask": {
       "description": "A knowledgeable technical assistant focused on answering questions without changing your codebase",
-      "model": "kilo/kilo-auto/free",
+      "model": "github-copilot/claude-haiku-4.5",
+      "permission": {
+        "edit": "deny",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "deny",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "semantic_search": "allow",
+        "codesearch": "allow",
+        "skill": "allow",
+        "lsp": "allow",
+        "external_directory": "allow",
+        "todowrite": "deny",
+        "todoread": "deny",
+        "question": "allow",
+        "doom_loop": "allow",
+        "kilo_memory_save": "deny",
+        "kilo_memory_recall": "deny",
+        "recall": "allow",
+      },
     },
     "plan": {
       "mode": "all",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
       "model": "llm-agg/forbiddengun/grok",
+      "permission": {
+        "edit": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "deny",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "semantic_search": "allow",
+        "codesearch": "allow",
+        "skill": "allow",
+        "lsp": "allow",
+        "external_directory": "allow",
+        "todowrite": "deny",
+        "todoread": "deny",
+        "question": "allow",
+        "doom_loop": "allow",
+        "kilo_memory_save": "allow",
+        "kilo_memory_recall": "allow",
+        "recall": "allow",
+      },
     },
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      "model": "ink-gw/openai/chatbot-5.4",
+      "model": "llm-agg/forbiddengun/gpt",
+      "permission": {
+        "edit": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "allow",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "semantic_search": "allow",
+        "codesearch": "allow",
+        "skill": "allow",
+        "lsp": "allow",
+        "external_directory": "allow",
+        "todowrite": "allow",
+        "todoread": "allow",
+        "question": "allow",
+        "doom_loop": "allow",
+        "kilo_memory_save": "allow",
+        "kilo_memory_recall": "allow",
+        "recall": "allow",
+      },
     },
     "debug": {
       "mode": "all",
       "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
       "model": "llm-agg/forbiddengun/minimax",
+      "permission": {
+        "edit": "deny",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "allow",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "semantic_search": "allow",
+        "codesearch": "allow",
+        "skill": "allow",
+        "lsp": "allow",
+        "external_directory": "allow",
+        "todowrite": "allow",
+        "todoread": "allow",
+        "question": "allow",
+        "doom_loop": "allow",
+        "kilo_memory_save": "allow",
+        "kilo_memory_recall": "allow",
+        "recall": "allow",
+      },
     },
     "autonomous": {
       "mode": "primary",
       "description": "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts.",
-      "model": "llm-agg/forbiddengun/grok",
+      "model": "ink-gw/openai/chatbot-5.4",
       "permission": {
         "bash": "allow",
         "edit": "allow",
@@ -79,9 +213,8 @@
     "code-reviewer": {
       "mode": "subagent",
       "description": "Code quality review: best practices, security, maintainability, and SOLID/KISS compliance. Read-only. Use after any non-trivial implementation.",
-      "model": "ink-gw/openai/chatbot-5.4",
+      "model": "llm-agg/forbiddengun/gpt",
       "permission": {
-        "edit": "deny",
         "bash": {
           "*": "deny",
           "git status *": "allow",
@@ -89,7 +222,8 @@
           "git log *": "allow",
           "rg *": "allow",
           "grep *": "allow"
-        }
+        },
+        "edit": "deny",
       },
       "prompt": "You are a code reviewer. Analyze code for code quality, best practices, SOLID/KISS compliance, potential bugs, edge cases, performance issues, and security concerns. Provide constructive feedback without making direct changes. Always check: naming conventions, error handling, edge cases, null safety, concurrency issues, and dependency direction."
     },
@@ -115,7 +249,7 @@
     "docs-writer": {
       "mode": "subagent",
       "description": "Writes and edits documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
-      "model": "llm-agg/forbiddengun/claude",
+      "model": "github-copilot/claude-haiku-4.5",
       "permission": {
         "edit": {
           "*.md": "allow",
@@ -391,94 +525,6 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
-        "forbiddengun/deepseek": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 384000,
-          },
-        },
-        "forbiddengun/mimo": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1048576,
-            "output": 131072,
-          },
-        },
-        "forbiddengun/glm": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 131072,
-          },
-        },
-        "forbiddengun/qwen": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 64000,
-          },
-        },
-        "forbiddengun/kimi": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 262144,
-            "output": 262144,
-          },
-        },
-        "forbiddengun/minimax": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 512000,
-            "output": 128000,
-          },
-        },
         "forbiddengun/grok": {
           "modalities": {
             "input": [
@@ -493,21 +539,6 @@
           "limit": {
             "context": 1000000,
             "output": 30000,
-          },
-        },
-        "forbiddengun/mistral": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 256000,
-            "output": 256000,
           },
         },
         "forbiddengun/gpt": {
@@ -540,6 +571,127 @@
           "limit": {
             "context": 1000000,
             "output": 128000,
+          },
+        },
+        "forbiddengun/gemini": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+              "audio",
+              "pdf",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1048576,
+            "output": 65536,
+          },
+        },
+        "forbiddengun/deepseek": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 384000,
+          },
+        },
+        "forbiddengun/glm": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 131072,
+          },
+        },
+        "forbiddengun/kimi": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 262144,
+            "output": 262144,
+          },
+        },
+        "forbiddengun/mimo": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1048576,
+            "output": 131072,
+          },
+        },
+        "forbiddengun/qwen": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 64000,
+          },
+        },
+        "forbiddengun/minimax": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 512000,
+            "output": 128000,
+          },
+        },
+        "forbiddengun/mistral": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 256000,
+            "output": 256000,
           },
         },
       },

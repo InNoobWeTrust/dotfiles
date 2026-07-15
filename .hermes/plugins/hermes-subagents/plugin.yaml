@@ -1,0 +1,16 @@
+name: hermes-subagents
+kind: standalone
+version: 1.0.0
+description: Typed delegation tools mirroring Kilo role routing.
+author: InNoobWeTrust + OpenAI
+provides_tools:
+  - delegate_ask
+  - delegate_general
+  - delegate_explore
+  - delegate_plan
+  - delegate_code
+  - delegate_debug
+  - delegate_code_reviewer
+  - delegate_tester
+  - delegate_docs_writer
+  - delegate_security_auditor

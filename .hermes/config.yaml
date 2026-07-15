@@ -9,62 +9,63 @@ model:
   base_url: https://api.kilo.ai/api/gateway
 
 # ── Custom Providers ────────────────────────────────────────────────────
-# Adapted from ~/.config/kilo/kilo.jsonc provider definitions.
+# Mirrored from ~/.config/kilo/kilo.jsonc provider definitions.
 #
 # Env vars required (set in ~/.hermes/.env or shell profile):
-#   LLM_GATEWAY_BASE_URL  — shared base URL for oai-gateway and llm-gateway
-#   LLM_GATEWAY_API_KEY   — shared API key for oai-gateway and llm-gateway
-#   LLM_BROKER_BASE_URL   — base URL for llm-broker
-#   LLM_BROKER_API_KEY    — API key for llm-broker
+#   INK_GATEWAY_BASE_URL   — base URL for ink-gw
+#   INK_GATEWAY_API_KEY    — API key for ink-gw
+#   LLM_BROKER_BASE_URL    — base URL for llm-agg
+#   LLM_BROKER_API_KEY     — API key for llm-agg
 #
 # Usage examples:
-#   hermes chat -q "..." --provider custom:oai-gateway
-#   hermes chat -q "..." --provider custom:llm-gateway
-#   hermes chat -q "..." --provider custom:llm-broker
+#   hermes chat -q "..." --provider custom:ink-gw --model "openai/chatbot-5.4"
+#   hermes chat -q "..." --provider custom:llm-agg --model "forbiddengun/claude"
 #
 # Or set as main model:
-#   hermes config set model.provider custom:llm-broker
-#   hermes config set model.default claude-sonnet-4-6
+#   hermes config set model.provider custom:llm-agg
+#   hermes config set model.default forbiddengun/claude
 #
 custom_providers:
-  # ── oai-gateway (OpenAI-compatible, LLM Gateway) ──
-  - name: oai-gateway
-    base_url: "${LLM_GATEWAY_BASE_URL}/v1"
-    key_env: LLM_GATEWAY_API_KEY
+  # ── ink-gw ──
+  - name: ink-gw
+    base_url: "${INK_GATEWAY_BASE_URL}/anthropic/v1"
+    key_env: INK_GATEWAY_API_KEY
+    api_mode: anthropic_messages
     models:
-      openai/chatbot-5.4-high:
-        context_length: 1000000
       openai/chatbot-5.4:
         context_length: 1000000
       openai/chatgpt-5.4-mini:
         context_length: 400000
-
-  # ── llm-gateway (OpenAI-compatible, LLM Gateway — same endpoint, more models) ──
-  - name: llm-gateway
-    base_url: "${LLM_GATEWAY_BASE_URL}/v1"
-    key_env: LLM_GATEWAY_API_KEY
-    models:
-      google/gemini-3.5-flash:
-        context_length: 1048576
-      google/gemini-3.1-flash-lite:
-        context_length: 1048576
       kCode:
         context_length: 92160
       deepseek/deepseek-v4-pro:
         context_length: 1048576
-      deepseek/deepseek-v4-flash:
-        context_length: 1048576
 
-  # ── llm-broker (OpenAI-compatible, LLM Broker) ──
-  - name: llm-broker
+  # ── llm-agg ──
+  - name: llm-agg
     base_url: "${LLM_BROKER_BASE_URL}/v1"
     key_env: LLM_BROKER_API_KEY
+    api_mode: anthropic_messages
     models:
-      claude-sonnet-4-6:
-        context_length: 900000
-      claude-haiku-4-5:
-        context_length: 180000
-      gpt-5.4:
+      forbiddengun/deepseek:
+        context_length: 1000000
+      forbiddengun/mimo:
+        context_length: 1048576
+      forbiddengun/glm:
+        context_length: 1000000
+      forbiddengun/qwen:
+        context_length: 1000000
+      forbiddengun/kimi:
+        context_length: 262144
+      forbiddengun/minimax:
+        context_length: 512000
+      forbiddengun/grok:
+        context_length: 1000000
+      forbiddengun/mistral:
+        context_length: 256000
+      forbiddengun/gpt:
+        context_length: 1050000
+      forbiddengun/claude:
         context_length: 1000000
 
 providers: {}
@@ -429,6 +430,9 @@ delegation:
 prefill_messages_file: ''
 goals:
   max_turns: 20
+plugins:
+  enabled:
+    - hermes-subagents
 skills:
   external_dirs:
     - ~/.agents/skills
