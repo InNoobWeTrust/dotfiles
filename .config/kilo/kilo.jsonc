@@ -130,7 +130,7 @@
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      "model": "llm-agg/forbiddengun/gpt",
+      "model": "ink-gw/deepseek/deepseek-v4-pro",
       "permission": {
         "edit": "allow",
         "read": "allow",
