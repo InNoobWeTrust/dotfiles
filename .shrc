@@ -7,6 +7,9 @@ export CONF_SH_DIR="$HOME/.sh.d"
 # shellcheck source=.sh.d/vars.sh
 [ -r "$CONF_SH_DIR/vars.sh" ] && . "$CONF_SH_DIR/vars.sh"
 
+# Custom environment
+[ -r "$HOME/.vars.user" ] && . "$HOME/.vars.user"
+
 # Function definitions.
 # shellcheck source=.sh.d/func.sh
 [ -r "$CONF_SH_DIR/func.sh" ] && . "$CONF_SH_DIR/func.sh"
@@ -15,10 +18,6 @@ export CONF_SH_DIR="$HOME/.sh.d"
 # shellcheck source=.sh.d/path.sh
 [ -r "$CONF_SH_DIR/path.sh" ] && . "$CONF_SH_DIR/path.sh"
 
-# Hook definitions
-# shellcheck source=.sh.d/hooks.sh
-[ -r "$CONF_SH_DIR/hooks.sh" ] && . "$CONF_SH_DIR/hooks.sh"
-
 # Completion definitions
 # shellcheck source=.sh.d/completion.sh
 [ -r "$CONF_SH_DIR/completion.sh" ] && . "$CONF_SH_DIR/completion.sh"
@@ -26,6 +25,10 @@ export CONF_SH_DIR="$HOME/.sh.d"
 # Alias definitions.
 # shellcheck source=.sh.d/aliases.sh
 [ -r "$CONF_SH_DIR/aliases.sh" ] && . "$CONF_SH_DIR/aliases.sh"
+
+# Hook definitions
+# shellcheck source=.sh.d/hooks.sh
+[ -r "$CONF_SH_DIR/hooks.sh" ] && . "$CONF_SH_DIR/hooks.sh"
 
 [ -n "$DISPLAY" ] && usable xhost && xhost +local:root > /dev/null 2>&1
 

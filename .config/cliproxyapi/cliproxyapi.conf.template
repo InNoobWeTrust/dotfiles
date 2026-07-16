@@ -1,0 +1,85 @@
+host: "127.0.0.1"
+port: 8317
+
+api-keys: []
+
+auth-dir: "~/.local/share/cli-proxy-api"
+
+# Remote management configuration, used with EasyCLI or WebUI
+remote-management:
+  # Switch to enable remote management. If you deploy it on a server,
+  # you need to set it to true to use EasyCLI or WebUI to connect to CLIProxyAPI
+  # for management.
+  # If you only use the API for local management, you can keep it as false.
+  allow-remote: true
+
+  # If you want to use EasyCLI or WebUI to manage CLIProxyAPI through the API,
+  # you must set a Key.
+  # If it is not set, it is considered that the API management function is
+  # disabled, and you cannot use EasyCLI or WebUI to connect.
+  # If you do not need to use EasyCLI or WebUI for management, you can leave it
+  # blank.
+  secret-key: "lorem"
+
+# OpenAI Compatibility Providers (Featherless)
+openai-compatibility:
+  - name: "featherless"
+    prefix: "featherless"
+    base-url: "${FEATHERLESS_BASE_URL}/v1"
+    api-key-entries:
+      - api-key: "${FEATHERLESS_API_KEY}"
+    models:
+      - name: "zai-org/GLM-5.2"
+        alias: "zai-org/GLM-5.2"
+      - name: "deepseek-ai/DeepSeek-V4-Pro"
+        alias: "deepseek-ai/DeepSeek-V4-Pro"
+      - name: "MiniMaxAI/MiniMax-M3"
+        alias: "MiniMaxAI/MiniMax-M3"
+      - name: "moonshotai/Kimi-K2.7-Code"
+        alias: "moonshotai/Kimi-K2.7-Code"
+      - name: "XiaomiMiMo/MiMo-V2.5"
+        alias: "XiaomiMiMo/MiMo-V2.5"
+      - name: "stepfun-ai/Step-3.7-Flash"
+        alias: "stepfun-ai/Step-3.7-Flash"
+
+# Claude API Keys (INK Gateway & LLM Broker)
+claude-api-key:
+  - api-key: "${INK_GATEWAY_API_KEY}"
+    prefix: "ink-gw"
+    base-url: "${INK_GATEWAY_BASE_URL}/anthropic"
+    models:
+      - name: "openai/chatbot-5.4"
+        alias: "openai/chatbot-5.4"
+      - name: "openai/chatgpt-5.4-mini"
+        alias: "openai/chatgpt-5.4-mini"
+      - name: "kCode"
+        alias: "kCode"
+      - name: "deepseek/deepseek-v4-pro"
+        alias: "deepseek/deepseek-v4-pro"
+
+  - api-key: "${LLM_BROKER_API_KEY}"
+    prefix: "llm-agg"
+    base-url: "${LLM_BROKER_BASE_URL}"
+    models:
+      - name: "forbiddengun/grok"
+        alias: "forbiddengun/grok"
+      - name: "forbiddengun/gpt"
+        alias: "forbiddengun/gpt"
+      - name: "forbiddengun/claude"
+        alias: "forbiddengun/claude"
+      - name: "forbiddengun/gemini"
+        alias: "forbiddengun/gemini"
+      - name: "forbiddengun/deepseek"
+        alias: "forbiddengun/deepseek"
+      - name: "forbiddengun/glm"
+        alias: "forbiddengun/glm"
+      - name: "forbiddengun/kimi"
+        alias: "forbiddengun/kimi"
+      - name: "forbiddengun/mimo"
+        alias: "forbiddengun/mimo"
+      - name: "forbiddengun/qwen"
+        alias: "forbiddengun/qwen"
+      - name: "forbiddengun/minimax"
+        alias: "forbiddengun/minimax"
+      - name: "forbiddengun/mistral"
+        alias: "forbiddengun/mistral"
