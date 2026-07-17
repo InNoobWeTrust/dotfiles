@@ -49,11 +49,7 @@ Use `../skills/INDEX.md` before loading skill bodies. Load one primary skill by 
 
 ## Git Safety
 
-- Inspect status and diffs before staging or committing.
-- Stage explicit files only; do not use `git add .` or `git add -A`.
-- Do not stage secret-bearing files: `.env`, `*.pem`, `*.key`, `auth.json`, `credentials.json`.
-- Do not run destructive operations such as `git reset`, `git restore`, `git clean`, `git stash`, or force push unless explicitly approved.
-- Commit and push require separate user approvals.
+- **Git Safety**: `../rules/git-safety.md` applies to **all git operations (staging, committing, pushing)**. Includes pre-commit memory checkpoint — before any commit, check for unconsolidated short-term memory and run the dream cycle. Full procedure in the rule file.
 
 ## Process Management
 

@@ -1,7 +1,7 @@
 # Rules map (progressive disclosure)
 
 **Do not load every file in this directory into context.**  
-Always-on entry is `../instructions/agent-instructions.md`, which **points** at rules. Load a rule body only when its trigger fires or you must enforce a gate.
+Always-on entries are `../AGENTS.md` (universal, all harnesses) and `../instructions/agent-instructions.md` (kilo). Both **point** at rules. Load a rule body only when its trigger fires or you must enforce a gate.
 
 | Rule | Load when | Approx. size |
 |---|---|---|
@@ -16,13 +16,14 @@ Always-on entry is `../instructions/agent-instructions.md`, which **points** at 
 | `skills-discovery.md` | Need to choose a skill (index-first) | tiny |
 | `command-routing.md` | User request maps to a slash/command workflow | tiny |
 | `memory.md` | Capture / recall / consolidate / evict memory | small |
+| `git-safety.md` | Git staging, committing, pushing; pre-commit memory checkpoint | small |
 | `requirements-driven-dev.md` | Adapter → load `requirements-driven-dev` skill | tiny |
 
 ## Layering
 
 ```
-instructions (always) → rule pointer → rule body (on fire)
-                      → skills/INDEX → SKILL.md → references/*
+AGENTS.md / instructions (always) → rule pointer → rule body (on fire)
+                                  → skills/INDEX → SKILL.md → references/*
 ```
 
 ## Anti-patterns
