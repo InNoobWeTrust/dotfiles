@@ -1,6 +1,6 @@
 ---
 name: video-production
-description: "AI video production pipeline for creating animated videos, motion graphics, and cinematic content. Structured workflow: style guide → story/script → asset extraction → shot list → render. Ensures visual consistency and cinematic quality across frames. Activate on \"create a video\", \"animate this\", \"make a video\", \"storyboard\", \"motion graphics\", \"AI video\", \"film this concept\", or any video/animation production task."
+description: "Use this skill for AI video production — animated videos, motion graphics, and cinematic content. Follows a structured pipeline: style guide → story/script → asset extraction → shot list → render. Activate when the user wants to create a video, animate content, build a storyboard, or produce motion graphics."
 ---
 
 # Video Production Skill

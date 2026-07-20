@@ -1,6 +1,6 @@
 ---
 name: systematic-investigation
-description: "Debug, investigate, and solve complex problems using structured frameworks (5 Whys, Fishbone, OODA, First Principles, PDCA). Use for tricky bugs, failure investigation, root cause analysis, architectural decisions, pre-mortem, or untangling multi-concern situations. Also activate when stuck in circles, on vague/recurring symptoms, or \"why does this keep happening.\" Trigger phrases: \"debug this\", \"troubleshoot\", \"figure out why\", \"root cause\", \"what's going wrong\", \"fix this bug\", \"this keeps breaking\", \"first principles\", \"pre-mortem\", \"red team this\", \"challenge assumptions\", \"go deeper\", \"rethink this\", \"inversion\"."
+description: Use this skill when debugging, troubleshooting, or investigating why something is broken or behaving unexpectedly. Applies structured frameworks (5 Whys, Fishbone, First Principles, OODA) to find root causes before attempting fixes. Also use for pre-mortems, assumption challenges, and architectural decisions that need rigorous analysis. Activate when the user is stuck in circles, facing recurring failures, or asks "why does this keep happening" — even if they frame it as "just fix this bug."
 ---
 
 # Systematic Investigation

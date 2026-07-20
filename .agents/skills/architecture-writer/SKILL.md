@@ -1,6 +1,6 @@
 ---
 name: architecture-writer
-description: "Generate or update docs/architecture.md with responsibility split, data ownership, data flow diagrams, API contract strategy, integration modes, and explicit non-goals. Load for \"write architecture doc\", \"document system design\", \"create architecture diagram\", \"map data flow\", or \"define API contracts\". Skip for minor code changes that don't affect architecture."
+description: "Use this skill to generate or update architecture documentation — responsibility splits, data ownership, data flow diagrams, API contracts, integration modes, and non-goals. Activate when the user asks to document system design, create architecture diagrams, map data flows, or define API contracts. Skip for code changes that don't affect system architecture."
 ---
 
 # Architecture Writer

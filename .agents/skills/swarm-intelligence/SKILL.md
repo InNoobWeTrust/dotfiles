@@ -1,6 +1,6 @@
 ---
 name: swarm-intelligence
-description: "Swarminator orchestration: Mode Single-Node (one bounded external node, immutable artifact) or Mode Full Swarm (multi-phase multi-persona multi-model). Use for isolated research/second opinions/patch suggestions, or for diverse-perspective cross-validation when risk is too high for one pass. Activate on \"swarm\", \"multi-agent\", \"external delegated node\", \"single-node\", \"swarminator\", \"second opinion\", \"cross-validate\", \"parallel agents\". Commands: /swarm → Full Swarm, /external-subagent → Single-Node. Skip for routine single-agent implementation."
+description: "Use this skill for multi-agent orchestration — Mode Single-Node (one bounded external node for research, second opinions, or patch suggestions) or Mode Full Swarm (multi-phase multi-persona cross-validation). Activate when the user asks for a swarm, parallel agents, second opinion, cross-validation, or diverse perspectives on high-risk work. Commands: \"swarm\" → Full Swarm, \"external subagent\" → Single-Node. Skip for routine single-agent tasks."
 ---
 
 # Swarm Intelligence (Swarminator)

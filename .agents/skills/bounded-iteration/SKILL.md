@@ -1,6 +1,6 @@
 ---
 name: bounded-iteration
-description: "Bounded iterative execution for well-defined tasks with machine-verifiable completion criteria. Runs implementation → verify → retry cycles until success or a stop condition. Use for \"run until done\", \"keep trying until tests pass\", \"iterate until it works\", automated fix-verify loops, or any repetitive task with a clear pass/fail gate. Prefers human-in-the-loop by default; AFK mode requires isolation and explicit guardrails."
+description: "Use this skill for repetitive implement-verify-retry loops with machine-verifiable completion criteria. Activate when the user says \"run until done,\" \"keep trying until tests pass,\" \"iterate until it works,\" or any task with a clear pass/fail gate that benefits from automated retries. Prefers human-in-the-loop; AFK mode requires isolation."
 ---
 
 # Bounded Iteration

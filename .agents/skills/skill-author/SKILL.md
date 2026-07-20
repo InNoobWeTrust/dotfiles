@@ -1,25 +1,31 @@
 ---
 name: skill-author
-description: "Full lifecycle skill authoring and maintenance: design and write new skills following the documented template, register them, run quarterly audits, review failure patterns, and guide skill evolution (prototype → harden → adopt → maintain → deprecate). Load for \"create a skill\", \"write a new skill\", \"design a skill\", \"add a skill\", \"prototype a skill\", \"audit rules\", \"review skills\", \"maintain .agents/\", \"quarterly audit\", \"failure review\", \"deprecate skill\", or \"evolve rules\". Skip for editing existing skills when no structural changes are needed."
+description: "Use this skill whenever creating, modifying, editing, auditing, or maintaining skills, rules, or governance files in .agents/. Mandatory whenever editing files in .agents/skills, .agents/rules, or .agents/instructions. Follows official specs from https://agentskills.io and https://agents.md."
 ---
 
 # Skill Author
 
-Create and maintain skills/rules governance. Two workflows — choose one first.
+Create, modify, and maintain skills/rules governance in `.agents/`.
+
+Official Specs:
+- Format & Progressive Disclosure: `references/agentskills-spec.md` (https://agentskills.io)
+- AGENTS.md Standard: https://agents.md
+
+Two workflows — choose one first.
 
 | Mode | When | Detail |
 |---|---|---|
-| **A — Create** | New skill needed | `references/workflow-a-create.md` (A1–A6) |
-| **B — Audit** | Quarterly / failure review | `references/workflow-b-audit.md` (B1–B4) |
+| **A — Create / Modify** | New skill needed or editing existing skills/rules | `references/workflow-a-create.md` (A1–A6) |
+| **B — Audit** | Quarterly / failure review / governance drift | `references/workflow-b-audit.md` (B1–B4) |
 
 Stop / deliverable / anti-patterns: `references/stop-deliverable-antipatterns.md`.
 
 ## Workflow A (summary)
 
 1. Validate need (extend existing skill first; not one-offs).
-2. Define scope contract (name, triggers, exclusions, I/O, phases).
+2. Define scope contract (name, description, exclusions, I/O, phases).
 3. Design phases, stop conditions, deliverables, anti-patterns.
-4. Write `SKILL.md` (YAML + progressive disclosure; body under ~150 lines; deep content in `references/`).
+4. Write `SKILL.md` (YAML frontmatter per https://agentskills.io spec; body under ~150 lines; deep content in `references/`).
 5. Register in `INDEX.md` (+ `WIRING.md` if composition).
 6. Queue for prototype audit.
 
@@ -32,6 +38,8 @@ Stop / deliverable / anti-patterns: `references/stop-deliverable-antipatterns.md
 
 ## Hard rules
 
+- Load `skill-author` BEFORE making any changes to files in `.agents/`.
+- Consult https://agentskills.io and https://agents.md to verify compliance with latest specs.
 - Do not invent skills for single-use tasks.
 - Do not bulk-load every rule/skill during audits — sample by evidence.
-- Progressive disclosure is mandatory for new skills (router SKILL + refs).
+- Progressive disclosure is mandatory for skills (router SKILL + refs; see `references/agentskills-spec.md`).

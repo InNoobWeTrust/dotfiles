@@ -1,6 +1,6 @@
 ---
 name: project-foundation
-description: "Bootstrap, audit, evolve, and materialize the AI-augmented project foundation (AGENTS.md, GLOSSARY.md, .agents/rules+skills core pack, Makefile, architecture, quality gates). Load for new project setup, missing skills after bootstrap, foundation drift, sync .agents from global, evolve AGENTS/GLOSSARY/architecture to match the repo, or audit project foundation. Skip only when editing a single existing rule/skill body with no pack-level change."
+description: "Use this skill to bootstrap, audit, or evolve a project's AI-augmented foundation — AGENTS.md, GLOSSARY.md, rules, skills core pack, Makefile, architecture docs, and quality gates. Activate for new project setup, foundation drift detection, syncing .agents from global, or when INDEX.md points at missing skills. Skip when editing a single existing rule or skill body with no pack-level change."
 ---
 
 # Project Foundation

@@ -1,6 +1,6 @@
 ---
 name: cdp-browser-automation
-description: "Direct browser automation via Chrome DevTools Protocol — scraping, clicking, form-filling, login flows, file download/upload, DOM interaction, and end-to-end page testing without external services. Also covers web performance diagnostics: Core Web Vitals, Lighthouse audits, memory leaks, slow loads, long tasks, CDP traces, throttling, and network emulation. Activate on \"open browser\", \"automate this website\", \"scrape\", \"click on\", \"fill this form\", \"download from\", \"test this page\", \"check performance\", or any task requiring real browser interaction. Also activate when building site-specific browser knowledge (selectors, URL patterns, API endpoints)."
+description: "Use this skill for any task requiring real browser interaction — scraping, clicking, form-filling, login flows, file downloads, DOM manipulation, and end-to-end page testing via Chrome DevTools Protocol. Also covers web performance diagnostics (Core Web Vitals, Lighthouse, memory leaks). Activate when the user asks to open a browser, automate a website, scrape data, fill forms, test a page, or check web performance."
 ---
 
 # CDP Browser Automation

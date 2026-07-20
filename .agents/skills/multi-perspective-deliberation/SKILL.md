@@ -1,6 +1,6 @@
 ---
 name: multi-perspective-deliberation
-description: "Coordinate a multi-persona deliberation session to challenge assumptions, debate architectural decisions, and perform pre-mortems. Leverages concurrent delegated agents/workers when the environment supports them, or falls back to single-context simulated dialogue. Trigger phrases: 'party mode', 'deliberation', 'multi-perspective', 'get a second opinion', 'debate this', 'challenge design'."
+description: "Use this skill to run multi-persona deliberation sessions — challenging assumptions, debating architectural decisions, and performing pre-mortems with diverse expert perspectives. Activate when the user wants a second opinion, asks to debate or challenge a design, or says \"party mode\" Uses concurrent delegated agents when available, or simulated dialogue in single-context environments."
 ---
 
 # Multi-Perspective Deliberation & Deliberative Dialogue

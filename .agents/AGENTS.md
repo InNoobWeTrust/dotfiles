@@ -36,7 +36,17 @@ These rules apply automatically. Read `rules/INDEX` for the full map; load a rul
 
 ## Skill Routing
 
-**Default for implementation tasks: load `code-craft`.** Use `skills/INDEX.md` to select one primary skill; optionally add one review/safety lens.
+Match user **intent** against skill descriptions in `skills/INDEX.md` to select one primary skill; optionally add one review/safety lens.
+
+**Default for implementation tasks: load `code-craft`.** It is the baseline for ANY non-trivial code write, feature, refactor, or restructuring. Do not skip it because the task seems simple — if it touches logic, load it.
+
+**Modifying `.agents/`, skills, or rules: load `skill-author`.** Whenever creating, modifying, editing, or auditing skills, rules, or governance files under `.agents/`, you MUST load `skill-author` as your primary skill and follow official specs at https://agentskills.io and https://agents.md.
+
+**High-frequency skills** (load on matching intent):
+- `systematic-investigation` — debugging, root cause, "why is this broken"
+- `codebase-exploration` — unfamiliar repo, "where is X," trace call chains
+- `reviewer` — explicit review/audit/check requests, security lens, edge-case analysis
+- `skill-author` — creating/modifying/auditing skills, rules, or `.agents/` governance
 
 Loading or reading a skill's `SKILL.md` is a binding commitment to execute its complete workflow. See `rules/skill-compliance.md`.
 

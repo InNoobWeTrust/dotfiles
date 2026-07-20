@@ -1,6 +1,6 @@
 ---
 name: requirements-driven-dev
-description: "PRD, TRD, BDD specs, acceptance criteria, user stories, traceability, and changelog workflows. Use when the user requests requirements, product specs, technical design documents, architecture planning, behavior scenarios, scope definition, or a large ambiguous feature plan. Activate on \"write a PRD\", \"define requirements\", \"acceptance criteria\", \"user stories\", \"feature spec\", or any task needing formal specification before implementation."
+description: "Use this skill when the user needs formal specifications before implementation — PRDs, TRDs, BDD scenarios, acceptance criteria, user stories, or scope definitions. Activate when the task is large and ambiguous enough that jumping straight to code would be risky, or when the user explicitly asks for requirements, specs, or feature planning."
 ---
 
 # Requirements-Driven Dev

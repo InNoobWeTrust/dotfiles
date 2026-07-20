@@ -1,6 +1,6 @@
 ---
 name: talent-screening
-description: "Screen CVs, evaluate candidates, and run professional OSINT verification/risk audits based on a job description and hiring context. Use when analyzing resumes, verifying candidate histories, researching hiring companies, or mapping market roles. Trigger phrases: 'screen CVs', 'screen candidates', 'evaluate candidates', 'resume screening', 'OSINT verification', 'candidate background check', 'talent screening'."
+description: "Use this skill to screen CVs, evaluate candidates, and run professional OSINT verification against a job description. Activate when analyzing resumes, verifying candidate histories, assessing hiring risks, or mapping market roles — even when the user frames it as \"review these applications\" rather than explicit screening terminology."
 ---
 
 # Talent Screening

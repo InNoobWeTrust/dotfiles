@@ -1,6 +1,6 @@
 ---
 name: memory
-description: "Human-inspired working + consolidated memory for agents, and the same progressive-disclosure pattern applied to docs and code. Two-tier store: unbounded short-term notes (working memory, per-branch session state, scratchpads) and size-limited long-term memory (curated facts, decisions, constraints, corrections) reached through an INDEX. A dream cycle runs on explicit request or git commit to consolidate hot short-term entries into long-term, score existing long-term entries, and propose evictions for human approval. Session checkpoints are one kind of short-term memory entry. Trigger phrases: 'remember this', 'save memory', 'checkpoint', 'save handoff', 'save context', 'what was I working on', 'resume', 'restore', 'load context', 'consolidate memory', 'dream cycle', 'prune memory', 'forget', 'evict', 'index my notes', 'structure docs', 'shard doc', 'split module', 'progressive disclosure'."
+description: Use this skill to save, restore, or manage agent memory across sessions. Handles session checkpoints, context handoffs, progress saves, and session resumption. Also runs dream-cycle consolidation (promoting short-term notes to curated long-term memory) and memory eviction. Use when the user says "save this," "checkpoint," "remember," "resume," "what was I working on," "consolidate memory," or "forget." Also applies progressive-disclosure structuring to docs and code modules.
 ---
 
 # Memory
@@ -65,7 +65,7 @@ Layout:
 <MEMORY_DIR>/
 ├── README.md                    # directory protocol
 ├── short-term/                  # unbounded, append-only per session
-│   └── <branch>--<topic>.md     # session checkpoints + working notes
+│   └── <created-stamp>--<branch>--<topic>.md  # session checkpoints + working notes
 ├── long-term/                   # size-limited, INDEX-gated
 │   ├── INDEX.md                 # topic map + entry catalog (the "consolidated" view)
 │   ├── project.md               # facts / decisions / constraints
@@ -100,7 +100,7 @@ Working memory (leaf) ↔ long-term memory (index) is one instance of the same s
 
 | Layer | Leaf (short-term) | Index / entry point (long-term) |
 |---|---|---|
-| Agent memory | `short-term/<branch>--<topic>.md` | `long-term/INDEX.md` |
+| Agent memory | `short-term/<created-stamp>--<branch>--<topic>.md` | `long-term/INDEX.md` |
 | Docs | `docs/**/detail-*.md` | `docs/README.md` + section indexes |
 | Code | Individual functions, files | Module `index.ts` / `__init__.py` / `mod.rs` |
 | Rules | `rules/<name>.md` | `rules/INDEX` |

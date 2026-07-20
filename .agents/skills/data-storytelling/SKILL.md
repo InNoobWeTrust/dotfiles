@@ -1,6 +1,6 @@
 ---
 name: data-storytelling
-description: "Transform raw data into decision-ready narratives aligned to goals, KPIs, or OKRs. Multi-lens analysis with explicit evidence grading and confidence levels. Use for data analysis, metric summaries, trend interpretation, insight extraction, report writing, or presenting findings to stakeholders. Activate on \"analyze this data\", \"summarize the metrics\", \"what do these numbers mean\", \"write a report\", \"present findings\", \"interpret trends\", or any task turning data into actionable narrative."
+description: "Use this skill to transform raw data into decision-ready narratives — metric summaries, trend interpretation, insight extraction, and stakeholder reports. Activate when the user has data and wants to understand what it means, write a report, present findings, or turn numbers into actionable recommendations, even if they don't frame it as \"data analysis.\""
 ---
 
 # Data Storytelling

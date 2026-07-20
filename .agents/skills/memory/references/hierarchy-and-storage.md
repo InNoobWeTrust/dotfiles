@@ -44,12 +44,15 @@ Short-term memory is unbounded during a session and append-only. Session checkpo
 ### Filename
 
 ```
-<branch-slug>--<topic-slug>.md
+<created-stamp>--<branch-slug>--<topic-slug>.md
 ```
 
+- `created-stamp`: UTC timestamp at minute precision, compact form `YYYYMMDDTHHmmZ` (e.g. `20260714T0912Z`). No colons, no `+`/`-` offset — those break on some filesystems and in URLs. **Set once at file creation; never changes**, even when the entry is updated across many sessions. This is what makes the filename itself audit-usable without opening the file.
 - `branch-slug`: current git branch, `/` replaced with `-`. If not in git, use `nogit`.
 - `topic-slug`: short kebab-case descriptor of the workstream.
-- Double dash `--` separates them.
+- Double dash `--` separates all three segments.
+
+Lookup and updates key off `branch-slug` + `topic-slug` only — the timestamp prefix is identity metadata, not part of the lookup key. See §Capture mode and §Recall mode for the glob patterns.
 
 ### Frontmatter
 
@@ -59,6 +62,7 @@ kind: short-term
 branch: feature/auth
 topic: login flow
 status: in-progress            # in-progress | paused | blocked | done
+created: 2026-07-14T09:12:00+07:00
 updated: 2026-07-14T09:12:00+07:00
 agent: <optional identifier, e.g. author or execution environment>
 consolidated: false
@@ -66,6 +70,29 @@ consolidated_at: null
 tags: [session, decision, blocker]
 ---
 ```
+
+`created` is set once at file creation and never rewritten — it must always match the filename's `created-stamp` (same instant, filename in UTC compact form, frontmatter in ISO 8601 with offset). `updated` continues to bump on every touch. If the two ever disagree (e.g. a hand-edited file), the filename stamp wins for audit/sort purposes and the frontmatter `created` should be corrected to match on next write — see §Frontmatter resilience.
+
+### Frontmatter resilience
+
+Frontmatter drifts over time — entries get created by different tools, hand-edited, or predate a field being added. Any process that scans `short-term/` (Consolidate gather, Recall listing, the git-safety pre-commit checkpoint) must fail open toward inclusion, never fail closed toward silent skipping:
+
+| Missing / malformed field | Treat as | Why |
+|---|---|---|
+| `consolidated` absent | `consolidated: false` | Unreviewed entries must surface, not disappear from scans. |
+| `consolidated_at` absent while `consolidated: true` | Leave `null`; not an error | Backfill on next touch; doesn't block anything. |
+| `updated` absent or unparseable | Oldest possible timestamp | Forces the entry to sort as stale so it gets attention, not ignored. |
+| `status` absent | `in-progress` | Never assume `done` by default — that would wrongly exclude it from Recall/archival logic. |
+| `created` absent | Filename's `created-stamp` if present; else same fallback as `updated` (oldest) | Filename is the more durable source once it exists; degrade gracefully for pre-stamp files. |
+| Filename has no `created-stamp` prefix (pre-existing files, e.g. legacy `<branch>--<topic>.md`) | Not an error; treat as an old-format name | Do not force a rename during a read. Rename only on next explicit write to that file (§Self-heal). |
+| Unknown extra fields | Ignore | Forward-compatible; don't error on fields a newer template adds. |
+
+Rules:
+
+1. **Self-heal on next write.** Whenever Capture, Recall, or Consolidate touches a file that used a fallback, write the missing/corrected field(s) back explicitly. Do not require a separate migration pass.
+2. **Report, don't block.** When a fallback is used, add one line to the mode's output (e.g., "note: `<file>` had no `consolidated` field, treated as false") so the human sees the drift, but continue the workflow.
+3. **This is not the schema-version gate.** A missing/malformed *individual field* is minor drift — heal and continue. A `schema_version` older than current (see §Schema versioning) is a structural mismatch — stop and report instead of guessing field meanings.
+4. **Rename legacy filenames on next write, not on read.** A file without a `created-stamp` prefix gets renamed to `<created-stamp>--<branch-slug>--<topic-slug>.md` the next time Capture or Consolidate writes to it (`git mv` if the file is tracked, plain rename otherwise). Use the earliest known timestamp for the stamp: existing frontmatter `created`, else frontmatter `updated`, else the file's mtime. Print the rename (old path → new path) in that mode's output. Do not batch-rename the whole `short-term/` directory as a side effect of an unrelated Capture/Recall/Consolidate call — only the file actually being written.
 
 ### Body sections
 
@@ -184,11 +211,14 @@ Use when the user asks to save a checkpoint, note, or working state, or when a n
 
 1. Resolve `MEMORY_DIR`.
 2. Decide bucket:
-   - Session state / active work → `short-term/<branch>--<topic>.md`.
-   - One-shot durable fact / correction / command → still write to `short-term/` first (a dedicated `capture-notes.md` short-term file is fine). It will be scored and promoted on the next Consolidate. Never write to `long-term/` directly.
-3. If `short-term/<branch>--<topic>.md` exists, update it (bump `updated`, set `consolidated: false`). Otherwise create it from the template.
+   - Session state / active work → `short-term/<created-stamp>--<branch>--<topic>.md`.
+   - One-shot durable fact / correction / command → still write to `short-term/` first (a dedicated `capture-notes` short-term file is fine, same naming rule). It will be scored and promoted on the next Consolidate. Never write to `long-term/` directly.
+3. Look up existing entry by glob `short-term/*--<branch-slug>--<topic-slug>.md` (the timestamp prefix is not part of the lookup key):
+   - Match found, has a `created-stamp` prefix → update that file in place (bump `updated`, set `consolidated: false`). Do not touch its `created` field or its stamp.
+   - Match found, no `created-stamp` prefix (legacy name) → rename it to add the stamp per §Frontmatter resilience rule 4, then update it in place.
+   - No match → create new, with `created-stamp` = now (UTC, compact form) and frontmatter `created` = now (ISO 8601 with offset).
 4. Inline crucial state from plans, review findings, or scratchpads so the entry is self-contained.
-5. Print: mode, file path, sections touched, whether Consolidate is now pending.
+5. Print: mode, file path (noting any rename), sections touched, whether Consolidate is now pending.
 
 **Auto-save triggers** (only if the user has enabled autonomy for this session):
 
@@ -208,8 +238,8 @@ Use when the user asks to restore, resume, load context, or lists prior notes.
 1. Resolve `MEMORY_DIR`.
 2. Choose search scope:
    - Explicit path → load that file.
-   - Current branch → glob `short-term/<branch-slug>--*.md`, exclude `status: done`.
-   - "What was I working on" / generic resume → list non-archived short-term entries sorted by `updated` desc, plus `long-term/INDEX.md` topic summary.
+   - Current branch → glob `short-term/*--<branch-slug>--*.md` (matches both stamped and legacy unstamped names), exclude `status: done` (missing `status` is never treated as `done`; see §Frontmatter resilience).
+   - "What was I working on" / generic resume → list non-archived short-term entries sorted by `updated` desc (unparseable/missing `updated` sorts as oldest, per §Frontmatter resilience), plus `long-term/INDEX.md` topic summary. The filename's `created-stamp` is available for an audit-trail view (creation order) but `updated` remains the sort key for "recent work."
    - Topic query → grep `long-term/INDEX.md` first, then follow to the bucket or topic file.
 3. If multiple active short-term entries match, present summaries and ask which to load. Do not silently pick one.
 4. Parse the selected file. Print Goal, Current Status, Key Decisions, Next Steps, Blockers. Long-term reads print the matching rows plus their bucket entries.
@@ -220,8 +250,8 @@ This skill is the source of truth. Do not delegate recall to external environmen
 
 ## Archiving short-term
 
-- When a branch merges or work is done, set `status: done` and move the file to `short-term/archive/`.
-- If a duplicate name exists in archive, suffix `--<YYYY-MM-DD>`.
+- When a branch merges or work is done, set `status: done` and move the file to `short-term/archive/`, keeping the full `<created-stamp>--<branch-slug>--<topic-slug>.md` name unchanged (the stamp is what keeps archive entries sortable and collision-resistant).
+- If a duplicate name still exists in archive (same branch+topic captured and archived twice at the same minute-precision stamp), suffix `--<n>` (e.g. `--2`) rather than a date — the stamp already encodes the date.
 - Never delete short-term files; archive only. The archive is the audit trail for later dream cycles.
 
 ---

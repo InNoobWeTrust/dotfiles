@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: "Multi-lens review orchestrator for code, specs, architecture, config, docs, and infrastructure. Hybrid execution: direct technical review using sub-reviewer references, or delegate to independent agents/workers for multi-perspective, audit, or specialized reviews. Sub-lenses: code-quality, design-rigor, adversarial, security, edge-case, editorial. Activate on \"review\", \"check\", \"audit\", \"challenge\", \"QA\", or any explicit review request."
+description: Use this skill when the user asks you to review, check, audit, challenge, or QA any artifact — code, specs, architecture, config, docs, or infrastructure. Routes to specialized sub-lenses (code-quality, design-rigor, adversarial, security, edge-case, editorial) based on what's being reviewed. Also activate for security reviews of auth flows, input validation, or secrets handling, and for edge-case analysis of parsers, validators, or branching logic.
 ---
 
 # Reviewer

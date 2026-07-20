@@ -1,6 +1,6 @@
 ---
 name: subagent-dispatch
-description: "Construct a precise, structured delegation prompt before every delegated-agent or worker launch. Use whenever you are about to delegate work to a background agent, run a task in parallel, or spawn a worker. Injects scope constraints, a structured output contract, obstacle reporting, and allowed-action boundaries directly into the input prompt to compensate for generic or unconfigured delegated-worker descriptions. Activate on: 'delegate this', 'run this in parallel', 'use the research agent', 'background task', 'spawn a worker', 'launch a subagent', 'hand this off'."
+description: "Use this skill before launching any delegated agent, background worker, or parallel task. Constructs a structured delegation prompt with scope constraints, output contracts, obstacle reporting, and action boundaries — compensating for generic worker descriptions. Activate whenever you're about to delegate, run something in parallel, or hand off work to a subagent."
 ---
 
 # Subagent Dispatch

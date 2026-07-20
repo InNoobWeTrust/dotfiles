@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "Facilitate creative ideation, product design, problem framing, and conceptual exploration. Use when generating new ideas, exploring solutions to open-ended problems, breaking creative blocks, or evaluating options from multiple perspectives. Trigger phrases: 'brainstorm', 'ideate', 'generate ideas', 'creative thinking', 'SCAMPER', 'six thinking hats', 'worst possible idea'."
+description: "Use this skill to facilitate creative ideation, product design, and conceptual exploration. Activate when the user wants to generate ideas, explore open-ended solutions, break through creative blocks, or evaluate options from multiple perspectives — even if they just say \"I'm stuck\" or \"what are my options\" without explicitly asking to brainstorm."
 ---
 
 # Brainstorming

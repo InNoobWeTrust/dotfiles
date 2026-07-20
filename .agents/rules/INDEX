@@ -1,22 +1,31 @@
-# Rules map (progressive disclosure)
+# Rules map (index-first routing)
 
 **Do not load every file in this directory into context.**  
 Always-on entries are `../AGENTS.md` (universal, all harnesses) and `../instructions/agent-instructions.md` (kilo). Both **point** at rules. Load a rule body only when its trigger fires or you must enforce a gate.
 
-| Rule | Load when | Approx. size |
+## Always-Active (pointers in AGENTS.md / instructions)
+
+These rules are referenced from the always-loaded instruction files. Load the rule body when you encounter the trigger condition.
+
+| Rule | Trigger | Size |
 |---|---|---|
-| `code-quality.md` | Writing or modifying code | medium |
+| `code-quality.md` | Writing or modifying ANY code | medium |
+| `skill-compliance.md` | After loading any skill (binding commitment) | medium |
+| `self-grounded-verification.md` | Verification, self-review, "done" claims | medium |
+| `autonomy-safety.md` | Auto-approved tools, AFK, waived per-step prompts | medium |
+| `git-safety.md` | Git staging, committing, pushing; pre-commit memory checkpoint | small |
+
+## On-Demand (load when trigger fires)
+
+| Rule | Trigger | Size |
+|---|---|---|
 | `tdd.md` | Logic modules / algorithms / services | medium |
 | `grooming.md` | Plans, ambiguous requirements, complex tasks | small |
 | `ubiquitous-language.md` | Logic that introduces or renames domain terms | small |
 | `slicing.md` | Feature plans / `task.md` checklists | small |
-| `skill-compliance.md` | After loading any skill (binding commitment) | medium |
-| `self-grounded-verification.md` | Verification, self-review, "done" claims | medium |
-| `autonomy-safety.md` | Auto-approved tools, AFK, waived per-step prompts | medium |
-| `skills-discovery.md` | Need to choose a skill (index-first) | tiny |
+| `skills-discovery.md` | Need to choose a skill (index-first) | small |
 | `command-routing.md` | User request maps to a slash/command workflow | tiny |
 | `memory.md` | Capture / recall / consolidate / evict memory | small |
-| `git-safety.md` | Git staging, committing, pushing; pre-commit memory checkpoint | small |
 | `requirements-driven-dev.md` | Adapter → load `requirements-driven-dev` skill | tiny |
 
 ## Layering
@@ -28,6 +37,9 @@ AGENTS.md / instructions (always) → rule pointer → rule body (on fire)
 
 ## Anti-patterns
 
-- Bulk-reading `rules/*.md` at session start
+- Bulk-reading `rules/*.md` at session start — load only when triggered
+- Modifying `.agents/`, skills, or rules without loading `skill-author` and checking https://agentskills.io + https://agents.md
 - Duplicating rule text into every skill (link instead)
 - Project forks of global rules without a documented overlay reason
+- Loading skills without checking `skills/INDEX.md` first
+

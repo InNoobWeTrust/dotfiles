@@ -1,6 +1,6 @@
 ---
 name: devsecops
-description: "Design CI/CD pipelines with integrated security scanning — change detection, environment separation, artifact retention, diagnostic collection, secret detection, dependency auditing, SAST, IaC scanning, and audit trail verification.\n\nLoad for \"set up CI/CD\", \"create pipeline\", \"configure GitHub Actions / GitLab CI\", \"automate deployments\", \"set up security scanning\", \"audit dependencies\", \"check for secrets\", \"security audit\", \"vulnerability scan\", \"compliance check\", or \"design deployment workflow\".\n\nSkip for one-off script runs, local-only changes, or security reviews handled by the reviewer skill."
+description: "Use this skill to design CI/CD pipelines with integrated security scanning — change detection, environment separation, secret detection, dependency auditing, SAST, IaC scanning, and audit trails. Activate when setting up CI/CD, configuring GitHub Actions or GitLab CI, automating deployments, or running security audits and compliance checks. Skip for one-off scripts, local-only changes, or code reviews (use reviewer)."
 ---
 
 # DevSecOps

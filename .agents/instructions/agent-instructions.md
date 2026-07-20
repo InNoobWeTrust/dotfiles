@@ -21,21 +21,27 @@ Rules live under `../rules/`. **Do not bulk-load every rule file.** Use `../rule
 
 ## Scope-Based Routing
 
-**Default for implementation tasks: load `code-craft`.** Load it any time you write or modify code logic. Use `../skills/INDEX.md` to select one primary skill; optionally add one review/safety lens when clearly beneficial.
+Match user **intent** against skill descriptions in `../skills/INDEX.md` to select one primary skill; optionally add one review/safety lens when clearly beneficial.
 
-### Always-On for Implementation
-- **Any non-trivial code write, feature, or refactor** → Load `code-craft` (enforces SOLID, KISS, modularity, readability checkpoints)
+### ⚡ Default: `code-craft` (Always-On for Implementation)
 
-### High-Impact Daily Skills
+**Load `code-craft` any time you write or modify code logic.** This is non-negotiable for any non-trivial code write, feature addition, refactor, or restructuring. It enforces SOLID, KISS, modularity, and readability checkpoints. Do not skip it because the task "seems simple" — if it touches logic, load it.
+
+### 🛠️ Mandatory for Infrastructure: `skill-author` (.agents/ & Rules/Skills Modification)
+
+**Load `skill-author` whenever creating, modifying, editing, auditing, or maintaining skills, rules, or governance files under `.agents/`.** You MUST follow official specs at https://agentskills.io and https://agents.md.
+
+### 🔍 High-Impact Daily Skills
 - **Bug/failure/debug "why" tasks** → Load `systematic-investigation`; compose with `code-craft` if the fix involves writing new code
-- **Unfamiliar codebase navigation** → Load `codebase-exploration`
+- **Unfamiliar codebase, "where is X"** → Load `codebase-exploration` — start here before implementing in unknown code
 - **Auth/secrets/data handling** → Load `reviewer` for security review lens
 - **Parsers, validators, branching logic** → Load `reviewer` for edge-case/boundary review
 - **Explicit review requests** → Load `reviewer` (routes to the right sub-reviewer by artifact type)
 
-### Specialized Skills (on explicit trigger)
+### 🎯 Specialized Skills (on explicit trigger)
 - **Requirements/planning work** → Load `requirements-driven-dev`
-- **Swarminator / multi-agent / single external node** → Load `swarm-intelligence` and pick Mode Single-Node or Full Swarm (Full Swarm preflight gates in skill-compliance.md). Prefer explicit mode selection; `/external-subagent` pins Single-Node and `/swarm` pins Full Swarm where those commands exist.
+- **Creative ideation / "what are my options"** → Load `brainstorming`
+- **Swarminator / multi-agent / single external node** → Load `swarm-intelligence` and pick Mode Single-Node or Full Swarm. Prefer explicit mode selection; `/external-subagent` pins Single-Node and `/swarm` pins Full Swarm where those commands exist.
 - **Bounded repetitive tasks** → Load `bounded-iteration`
 - **UI/frontend polish** → Load `ui-ux`; compose with `code-craft` for component logic
 - **Browser automation** → Load `cdp-browser-automation`
@@ -44,8 +50,6 @@ Rules live under `../rules/`. **Do not bulk-load every rule file.** Use `../rule
 - **Foundation bootstrap / drift / missing core skills** → Load `project-foundation` (Mode A Bootstrap, B Audit/Evolve, or C Materialize). If `INDEX.md` points at a missing skill or `.agents/FOUNDATION.md` is absent in a repo that has `AGENTS.md`, prefer Mode B/C over continuing with a broken pack.
 
 **Do not load skills** for: typos, formatting, config value changes, or renaming with no logic changes.
-
-Use `../skills/INDEX.md` before loading skill bodies. Load one primary skill by default, plus at most one focused review or safety lens when justified.
 
 ## Git Safety
 

@@ -1,6 +1,6 @@
 ---
 name: ui-ux
-description: "UI/UX design skill for building polished, accessible, production-grade interfaces. Covers layout, typography, color systems, motion design, responsive design, dark mode, glassmorphism, component styling, and visual polish. Uses taste sliders and audit-first methodology to prevent generic output. Activate on \"design this UI\", \"make it look good\", \"improve the design\", \"frontend polish\", \"responsive layout\", \"add animations\", \"design system\", \"visual overhaul\", or any UI/frontend design task."
+description: "Use this skill when building or polishing user interfaces — layout, typography, color, motion, responsive design, dark mode, or visual polish. Activate when the user asks to design a UI, make something look better, add animations, create a design system, or do any frontend work where visual quality matters. Uses taste sliders and audit-first methodology to prevent generic output."
 ---
 
 # UI-UX Design Skill

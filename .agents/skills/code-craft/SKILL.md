@@ -1,6 +1,6 @@
 ---
 name: code-craft
-description: "Code design discipline enforcing SOLID, KISS, DRY, modularity, separation of concerns, and human-readability during implementation. Load for any non-trivial code write, feature addition, refactor, or restructuring. Covers: clean code, design patterns, decomposition, dependency management, naming, and architecture at the function/class/module level. Activate on \"refactor\", \"restructure\", \"design this module\", \"clean up this code\", \"make this maintainable\", \"decompose\", \"extract\", or any implementation touching more than one file."
+description: Use this skill for any non-trivial code write, feature implementation, refactor, or restructuring — it is the default skill for all implementation tasks. Enforces SOLID, KISS, DRY, modularity, and human-readability at the function, class, and module level. Applies when writing new code, adding features, decomposing large functions, extracting modules, cleaning up code, or touching more than one file, even if the user doesn't explicitly ask for "clean code" or "refactoring."
 ---
 
 # Code Craft
