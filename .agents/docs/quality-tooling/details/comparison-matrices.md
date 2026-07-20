@@ -193,5 +193,5 @@ This order tends to maximize adoption and minimize backlash.
 
 - Main guide: [`../overview.md`](../overview.md)
 - Stack baselines: [`../stack-baselines.md`](../stack-baselines.md)
-- Workshop slides (Vietnamese): [`../../slides/ai-quality-tooling-vi.md`](../../slides/ai-quality-tooling-vi.md)
-- Workshop slides (English): [`../../slides/ai-quality-tooling-en.md`](../../slides/ai-quality-tooling-en.md)
+- Presentation slides (Vietnamese): [`../../slides/ai-quality-tooling-vi.md`](../../slides/ai-quality-tooling-vi.md)
+- Presentation slides (English): [`../../slides/ai-quality-tooling-en.md`](../../slides/ai-quality-tooling-en.md)

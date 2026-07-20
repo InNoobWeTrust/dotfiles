@@ -1,6 +1,6 @@
 # Quality Tooling Comparison Matrix
 
-**Purpose**: quick-reference appendix for the workshop.
+**Purpose**: quick-reference appendix for tool comparison.
 **Use this when**: you need a fast comparison of role, scope, audience fit, and tradeoffs for a tool family.
 
 > This matrix doesn't try to be exhaustive. It prioritizes tools with high relevance in enterprise / legacy / polyglot environments.

@@ -42,27 +42,27 @@ Part 1 landed 3 points:
 
 ---
 
-# Goals for This Session
+# Goals
 
-- Teach a **mental model** for placing the right tool in the right spot
-- Give **practical baselines** for common stacks
+- Establish a **mental model** for placing the right tool in the right spot
+- Provide **practical baselines** for common stacks
 - Put **Sonar in the bigger picture**
-- Help your team reason about tool fit on their own after this workshop
+- Enable teams to reason about tool fit on their own
 
 ---
 
 # The Common Mistake
 
-Tooling workshops easily become:
+Tooling discussions easily become:
 
 - a disconnected list of tools
 - a vendor tour
 - "the tool I use is the best one"
 
-**A better goal:**
+**A better approach:**
 
-> Don't teach people to copy a tool list.
-> Teach them how to evaluate tool fit for their own codebase.
+> Don't copy a tool list.
+> Learn how to evaluate tool fit for your own codebase.
 
 ---
 
@@ -252,20 +252,11 @@ Don't drop:
 
 # Open-Source-First Maturity Path
 
-## Phase 1 — Baseline
-- formatter + lint
-- type/build checks
-- tests
-- secrets + dependency scan
-
-## Phase 2 — Standardized CI
-- required checks
-- severity thresholds
-- update automation
-
-## Phase 3 — Governance
-- Sonar / Dependency-Track
-- NDepend / CodeQL when needed
+| Phase | Focus | Key actions |
+|---|---|---|
+| **1 — Baseline** | Every repo has hygiene | formatter + lint, type/build, tests, secrets + dep scan |
+| **2 — Standardized CI** | Tools get policy | required checks, severity thresholds, update automation |
+| **3 — Governance** | Portfolio visibility | Sonar / Dependency-Track, NDepend / CodeQL when needed |
 
 ---
 
@@ -305,7 +296,7 @@ Don't drop:
 3. **Every stack has a different baseline**
 4. **Sonar is a governance layer, not everything**
 5. **Open-source-first is usually the sensible starting point**
-6. **The workshop succeeds when people can self-evaluate tool fit afterward**
+6. **Success = teams can self-evaluate tool fit on their own**
 
 ---
 
@@ -313,11 +304,13 @@ Don't drop:
 
 # Questions?
 
-**Reference material:**
+**Full reference:**
 - `.agents/docs/quality-tooling/INDEX.md`
 - `.agents/docs/quality-tooling/stack-baselines.md`
 - `.agents/docs/quality-tooling/comparison-matrix.md`
 - `.agents/docs/slides/ai-agents-intro-en.md`
+
+> These slides are a compact summary. The docs above are the source of truth.
 
 **Suggested next step:**
 - standardize quality-layers thinking across the team first

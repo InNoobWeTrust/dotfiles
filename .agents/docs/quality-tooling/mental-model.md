@@ -1,6 +1,6 @@
 # Mental Model: Quality Layers
 
-This is the mental model to teach before naming a single tool.
+This is the mental model to internalize before naming a single tool.
 
 ### 3.1 Layer 1 — Formatting / Style Consistency
 

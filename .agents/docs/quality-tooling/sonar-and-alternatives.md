@@ -40,7 +40,7 @@ CodeQL fits well when:
 - your stack overlaps with CodeQL's supported languages
 - you accept that CodeQL is not a universal answer for every legacy language
 
-Practical note: CodeQL **does not support PHP**. This is a good example to use in a workshop to emphasize that every governance platform has a coverage boundary.
+Practical note: CodeQL **does not support PHP** — a reminder that every governance platform has a coverage boundary.
 
 ### 6.5 Where does Dependency-Track fit?
 

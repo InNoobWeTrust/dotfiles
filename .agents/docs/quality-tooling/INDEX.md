@@ -10,11 +10,7 @@
 | [Sonar and alternatives](./sonar-and-alternatives.md) | Governance platform vs local loop | Positioning Sonar / Semgrep / CodeQL / etc. |
 | [Maturity and rollout](./maturity-and-rollout.md) | OSS-first path and legacy adoption | Rolling out without backlash |
 | [Management metrics](./management-metrics.md) | What leadership should track | Dashboard design |
-| [Workshop recommendations](./workshop-recommendations.md) | How to teach this material | Preparing a talk |
 | [Stack baselines](./stack-baselines.md) | Java, .NET, JS, Python, PHP, Rails, C/C++ | Picking tools per stack |
 | [Comparison matrix](./comparison-matrix.md) | Category-level tradeoffs | Fast tool comparison |
-
-**Details (load on demand):**
-- [Research notes](./details/research-notes.md) — sources and landscape notes behind the revision
 
 **Related sections:** [project-lifecycle](../project-lifecycle/INDEX.md) · [slides](../slides/INDEX.md)

@@ -1,6 +1,6 @@
 # Quality Tooling Stack Baselines
 
-**Purpose**: appendix to the quality tooling workshop.
+**Purpose**: appendix to the quality tooling guide.
 **Use this when**: you already understand the `quality layers` mental model and now need a practical baseline for a specific stack.
 
 > Principle of this appendix: **baseline first, enterprise escalation later**. This is not "one true stack." It's a sensible starting point so a team can choose the tools that actually fit their codebase.
@@ -58,5 +58,5 @@ Each stack is broken into 4 implementation layers:
 
 - Main guide: [`./overview.md`](./overview.md)
 - Comparison matrix: [`./comparison-matrix.md`](./comparison-matrix.md)
-- Workshop slides (Vietnamese): [`../slides/ai-quality-tooling-vi.md`](../slides/ai-quality-tooling-vi.md)
-- Workshop slides (English): [`../slides/ai-quality-tooling-en.md`](../slides/ai-quality-tooling-en.md)
+- Presentation slides (Vietnamese): [`../slides/ai-quality-tooling-vi.md`](../slides/ai-quality-tooling-vi.md)
+- Presentation slides (English): [`../slides/ai-quality-tooling-en.md`](../slides/ai-quality-tooling-en.md)

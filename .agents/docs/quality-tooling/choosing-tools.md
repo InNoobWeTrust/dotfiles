@@ -59,7 +59,7 @@ This is why some tools are especially good for rolling into an old codebase:
 
 ## 5. Tool Groups by Layer
 
-This section doesn't try to be exhaustive — it tries to be **industry-grade enough to be credible in a workshop**.
+This section doesn't try to be exhaustive — it tries to be **industry-grade enough to be credible as a practical reference**.
 
 ### 5.1 Formatting & Style
 

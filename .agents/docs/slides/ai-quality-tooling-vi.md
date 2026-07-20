@@ -252,20 +252,11 @@ Không nên bỏ:
 
 # Open-Source-First Maturity Path
 
-## Phase 1 — Baseline
-- formatter + lint
-- type/build checks
-- tests
-- secrets + dependency scan
-
-## Phase 2 — Standardized CI
-- required checks
-- severity thresholds
-- update automation
-
-## Phase 3 — Governance
-- Sonar / Dependency-Track
-- NDepend / CodeQL khi cần
+| Phase | Mục tiêu | Hành động chính |
+|---|---|---|
+| **1 — Baseline** | Mỗi repo có hygiene | formatter + lint, type/build, tests, secrets + dep scan |
+| **2 — Standardized CI** | Tool có policy | required checks, severity thresholds, update automation |
+| **3 — Governance** | Tầm nhìn portfolio | Sonar / Dependency-Track, NDepend / CodeQL khi cần |
 
 ---
 
