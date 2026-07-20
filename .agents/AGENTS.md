@@ -34,6 +34,18 @@ These rules apply automatically. Read `rules/INDEX` for the full map; load a rul
 | Memory | Session save/restore, dream cycle, eviction | `rules/memory.md` |
 | **Git Safety** | **All git operations (staging, committing, pushing)** | **`rules/git-safety.md`** |
 
+## Memory Recall (Before Routing)
+
+**Before selecting a skill, exploring the codebase, or planning any multi-step task, run the `memory` skill's Recall mode.** Prior sessions may have already mapped the repo, identified constraints, or recorded decisions that eliminate entire investigation phases.
+
+This means reading the repo-local memory files directly (`.agents/memory/short-term/` and `.agents/memory/long-term/` per `skills/memory/references/hierarchy-and-storage.md`), not any harness-specific memory tool. Memory is portable file state owned by the `memory` skill — any harness-provided memory feature is unrelated context, not authoritative here.
+
+1. Resolve `MEMORY_DIR` (`<git-root>/.agents/memory/` if in a repo, else `~/.agents/memory/`).
+2. Grep `long-term/INDEX.md` and glob `short-term/*--<branch-slug>--*.md` for the current branch and 2-4 keywords from the request.
+3. If a matching short-term entry or long-term topic is found, read it and use it to skip redundant file reads, inform skill selection, and surface prior constraints before planning.
+
+This step is nearly free and can replace an entire codebase exploration phase. Do not skip it because a task "seems simple."
+
 ## Skill Routing
 
 Match user **intent** against skill descriptions in `skills/INDEX.md` to select one primary skill; optionally add one review/safety lens.
@@ -44,7 +56,7 @@ Match user **intent** against skill descriptions in `skills/INDEX.md` to select 
 
 **High-frequency skills** (load on matching intent):
 - `systematic-investigation` — debugging, root cause, "why is this broken"
-- `codebase-exploration` — unfamiliar repo, "where is X," trace call chains
+- `codebase-exploration` — unfamiliar repo, "where is X," trace call chains (run Memory Recall first — prior sessions may have already mapped this)
 - `reviewer` — explicit review/audit/check requests, security lens, edge-case analysis
 - `skill-author` — creating/modifying/auditing skills, rules, or `.agents/` governance
 
