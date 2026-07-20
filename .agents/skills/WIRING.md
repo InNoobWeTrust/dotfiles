@@ -74,6 +74,16 @@ When hardening an existing project's pipeline and security posture:
 2. `code-craft` — implement remediations for security findings
 3. `reviewer` (security lens) — verify fixes address root vulnerabilities
 
+### Strategic Positioning via OSINT
+
+When public signals should shape outreach, direction, or decision-making:
+
+1. `strategic-osint` — gather and translate public evidence into priorities, positioning, and next actions
+2. Use `strategic-osint` for researching the target organization, decision-maker, or market to shape outreach; use `talent-screening` for evaluating people as candidates or hiring prospects
+3. `brainstorming` — expand options after the signal map is clear
+4. `requirements-driven-dev` — formalize the chosen direction into a PRD/TRD/spec if needed
+5. `reviewer` (editorial or adversarial lens) — stress-test the resulting narrative or recommendation
+
 ### Skill Authoring & Maintenance
 
 When creating or maintaining the .agents/ governance layer:
@@ -107,6 +117,9 @@ Natural transitions between skills:
 | `model-benchmarking` | `swarm-intelligence` | "Models selected, ready to launch multi-agent swarm" |
 | `model-benchmarking` | `requirements-driven-dev` | "Token costs and model limits analyzed, feeding into TRD/PRD architectural specs" |
 | `talent-screening` | `reviewer` (editorial lens) | "Evaluation reports completed, ready for peer review" |
+| `strategic-osint` | `brainstorming` | "The public-signal map is clear; now generate options or paths" |
+| `strategic-osint` | `requirements-driven-dev` | "OSINT clarified priorities; now formalize the chosen direction" |
+| `strategic-osint` | `reviewer` (editorial lens) | "Positioning draft is ready; now polish or challenge the narrative" |
 | Any skill | `memory` (Capture) | "Handoff requested, serializing context and saving progress" |
 | `memory` (Recall) | Any skill | "Session restored, resuming active work" |
 | Any skill | `memory` (Consolidate) | "Commit pending or explicit dream-cycle request, promoting short-term to long-term" |
