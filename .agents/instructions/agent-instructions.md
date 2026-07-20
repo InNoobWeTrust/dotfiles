@@ -53,7 +53,7 @@ Match user **intent** against skill descriptions in `../skills/INDEX.md` to sele
 
 ## Git Safety
 
-- **Git Safety**: `../rules/git-safety.md` applies to **all git operations (staging, committing, pushing)**. Includes pre-commit memory checkpoint — before any commit, check for unconsolidated short-term memory and run the dream cycle. Full procedure in the rule file.
+- **Git Safety**: `../rules/git-safety.md` applies to **all git operations (staging, committing, pushing)**. Includes a pre-commit memory checkpoint via `../rules/memory-checkpoint.md` — before any commit, suggest capturing uncaptured session work into short-term memory, then check for unconsolidated entries and run the dream cycle. Full procedure in `../rules/memory-checkpoint.md`.
 
 ## Process Management
 

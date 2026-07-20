@@ -12,6 +12,7 @@ Write to `memory/short-term/` when:
 - A major milestone completes and future continuation is likely.
 - Context length is near budget or the user signals session end / device switch.
 - Before any destructive command.
+- A commit is about to be made and the pre-commit checkpoint (`memory-checkpoint.md`) finds no active short-term entry covering the commit's workstream — suggest Capture so the conversation behind the commit is recorded. Suggestion, not a block.
 
 ## Recall triggers
 

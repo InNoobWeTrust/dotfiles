@@ -109,9 +109,10 @@ Never evict from `corrections.md` without an explicit user request naming the co
 
 When the trigger is a pending commit:
 
-1. Run Phases 1–3 first. This may take a minute; tell the user.
-2. Show the eviction proposal from Phase 4 but do **not** block the commit on eviction. Eviction can defer to the next dream cycle.
-3. If any long-term files were changed, add them to the commit **only if the user asked to include memory changes**. Do not silently stage `.agents/memory/**`.
+1. Coverage first: if no active short-term entry covers the commit's workstream, suggest a Capture (`hierarchy-and-storage.md` §Capture mode) before running the cycle — there is nothing to consolidate from a conversation that was never recorded. Suggestion, not a block. See `rules/memory-checkpoint.md` §Procedure, step 2.
+2. Run Phases 1–3 first. This may take a minute; tell the user.
+3. Show the eviction proposal from Phase 4 but do **not** block the commit on eviction. Eviction can defer to the next dream cycle.
+4. If any long-term files were changed, add them to the commit **only if the user asked to include memory changes**. Do not silently stage `.agents/memory/**`.
 
 This keeps the "human dreams after a day of work" behaviour: commit closes the day, consolidation curates memory for the next one.
 

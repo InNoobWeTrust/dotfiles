@@ -13,7 +13,7 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 | `skill-compliance.md` | After loading any skill (binding commitment) | medium |
 | `self-grounded-verification.md` | Verification, self-review, "done" claims | medium |
 | `autonomy-safety.md` | Auto-approved tools, AFK, waived per-step prompts | medium |
-| `git-safety.md` | Git staging, committing, pushing; pre-commit memory checkpoint | small |
+| `git-safety.md` | Git staging, committing, pushing | small |
 
 ## On-Demand (load when trigger fires)
 
@@ -26,6 +26,7 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 | `skills-discovery.md` | Need to choose a skill (index-first) | small |
 | `command-routing.md` | User request maps to a slash/command workflow | tiny |
 | `memory.md` | Capture / recall / consolidate / evict memory | small |
+| `memory-checkpoint.md` | Pre-commit memory checkpoint; invoked from `git-safety.md` before every commit | small |
 | `requirements-driven-dev.md` | Adapter → load `requirements-driven-dev` skill | tiny |
 
 ## Layering

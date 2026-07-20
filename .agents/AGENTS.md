@@ -56,7 +56,7 @@ Loading or reading a skill's `SKILL.md` is a binding commitment to execute its c
 - Stage explicit files only; never `git add .` or `git add -A`.
 - Do not stage secret-bearing files (`.env`, `*.pem`, `*.key`, `auth.json`, `credentials.json`).
 - No destructive git operations without explicit user approval.
-- **Pre-commit memory checkpoint**: before committing, check for unconsolidated short-term memory and run the dream cycle. See `rules/git-safety.md` for the full procedure.
+- **Pre-commit memory checkpoint**: before committing, run `rules/memory-checkpoint.md` — suggest capturing session work not yet in short-term memory, then check for unconsolidated entries and run the dream cycle.
 - Commit and push require separate user approvals.
 
 ## Process Management
