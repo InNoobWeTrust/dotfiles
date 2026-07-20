@@ -543,8 +543,8 @@ Gợi ý cải thiện cấu trúc tự động, chia sẻ kiến thức xuyên 
 # Hỏi Đáp?
 
 **Tài liệu tham khảo:**
-- `.agents/docs/ai-agent-skills-and-rules-engineering.md`
-- `.agents/docs/ai-augmented-project-setup-and-evolution.md`
+- `.agents/docs/skills-and-rules/INDEX.md`
+- `.agents/docs/project-lifecycle/INDEX.md`
 - `.agents/docs/README.md`
 
 **Bước tiếp theo:** Chọn một rule để triển khai hôm nay. Sau đó prototype một skill.

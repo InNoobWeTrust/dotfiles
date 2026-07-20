@@ -314,9 +314,9 @@ Không nên bỏ:
 # Hỏi Đáp?
 
 **Tài liệu tham khảo:**
-- `.agents/docs/quality-tooling-for-ai-projects.md`
-- `.agents/docs/quality-tooling-stack-baselines.md`
-- `.agents/docs/quality-tooling-comparison-matrix.md`
+- `.agents/docs/quality-tooling/INDEX.md`
+- `.agents/docs/quality-tooling/stack-baselines.md`
+- `.agents/docs/quality-tooling/comparison-matrix.md`
 - `.agents/docs/slides/ai-agents-intro-vi.md`
 
 **Gợi ý bước tiếp theo:**

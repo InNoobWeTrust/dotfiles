@@ -314,9 +314,9 @@ Don't drop:
 # Questions?
 
 **Reference material:**
-- `.agents/docs/quality-tooling-for-ai-projects.md`
-- `.agents/docs/quality-tooling-stack-baselines.md`
-- `.agents/docs/quality-tooling-comparison-matrix.md`
+- `.agents/docs/quality-tooling/INDEX.md`
+- `.agents/docs/quality-tooling/stack-baselines.md`
+- `.agents/docs/quality-tooling/comparison-matrix.md`
 - `.agents/docs/slides/ai-agents-intro-en.md`
 
 **Suggested next step:**

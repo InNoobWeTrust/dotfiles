@@ -560,8 +560,8 @@ Predictive quality suggestions, cross-project knowledge sharing, skill effective
 # Questions?
 
 **Resources:**
-- `.agents/docs/ai-agent-skills-and-rules-engineering.md`
-- `.agents/docs/ai-augmented-project-setup-and-evolution.md`
+- `.agents/docs/skills-and-rules/INDEX.md`
+- `.agents/docs/project-lifecycle/INDEX.md`
 - `.agents/docs/README.md`
 
 **Next step:** Pick one rule to implement today. Then one skill to prototype.

@@ -818,6 +818,6 @@
   },
   "experimental": {
     "batch_tool": true,
-    "openTelemetry": false
+    "openTelemetry": false,
   },
 }
