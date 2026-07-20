@@ -12,8 +12,10 @@ This directory contains the canonical guides for engineering AI agent skills, ru
 |---|---|---|---|
 | 1 | [`ai-agent-skills-and-rules-engineering.md`](./ai-agent-skills-and-rules-engineering.md) | Designing `.agents/rules/` and `.agents/skills/` — rule catalog, failure patterns, skill anatomy, lifecycle, composition | **Read this when:** you need to create or evolve a rule or skill |
 | 2 | [`ai-augmented-project-setup-and-evolution.md`](./ai-augmented-project-setup-and-evolution.md) | Complete project lifecycle — onboarding, daily AI workflows, quality gates, CI/CD, security, management visibility, phased evolution | **Read this when:** you're setting up a new project for AI-augmented development, or onboarding to an existing one |
-| 3 | [`slides/ai-agents-intro-en.md`](./slides/ai-agents-intro-en.md) | Marp slide deck (English) — 30 slides introducing key concepts for newcomers to AI-assisted coding | **Read this when:** presenting or self-studying the fundamentals |
-| 4 | [`slides/ai-agents-intro-vi.md`](./slides/ai-agents-intro-vi.md) | Marp slide deck (Vietnamese) — same content as EN, translated for Vietnamese-speaking audiences | **Read this when:** presenting to a Vietnamese-speaking team |
+| 3 | [`quality-tooling-for-ai-projects.md`](./quality-tooling-for-ai-projects.md) | Practical guide to quality tooling for AI-augmented projects — inner loop, CI gates, Sonar, scc, security, metrics, maturity model | **Read this when:** selecting or explaining quality tools for developers, AI agents, and management |
+| 4 | [`slides/ai-agents-intro-en.md`](./slides/ai-agents-intro-en.md) | Marp slide deck (English) — 30 slides introducing key concepts for newcomers to AI-assisted coding | **Read this when:** presenting or self-studying the fundamentals |
+| 5 | [`slides/ai-agents-intro-vi.md`](./slides/ai-agents-intro-vi.md) | Marp slide deck (Vietnamese) — same content as EN, translated for Vietnamese-speaking audiences | **Read this when:** presenting to a Vietnamese-speaking team |
+| 6 | [`slides/ai-quality-tooling-vi.md`](./slides/ai-quality-tooling-vi.md) | Marp slide deck (Vietnamese) — workshop follow-up focused on quality tooling, Sonar, security scans, and management visibility | **Read this when:** presenting the second session after the AI-agents intro deck |
 
 ---
 
@@ -47,6 +49,20 @@ This directory contains the canonical guides for engineering AI agent skills, ru
 | Maintaining rules and skills (quarterly audit, failure review) | [1 → §9](./ai-agent-skills-and-rules-engineering.md#9-maintaining-rules-and-skills-over-time) |
 | Rule template (copy-paste) | [1 → Appendix: Rule Template](./ai-agent-skills-and-rules-engineering.md#appendix-rule-template) |
 | Skill template (copy-paste) | [1 → Appendix: Skill Template](./ai-agent-skills-and-rules-engineering.md#appendix-skill-template) |
+
+### Quality Tooling & Governance
+
+| Topic | Document & Section |
+|---|---|
+| Why quality tooling changes in the AI era | [3 → §1](./quality-tooling-for-ai-projects.md#1-tại-sao-quality-tooling-quan-trọng-hơn-khi-có-ai) |
+| Two-speed model: inner loop vs governance loop | [3 → §2](./quality-tooling-for-ai-projects.md#2-mô-hình-hai-tốc-độ-inner-loop-và-governance-loop) |
+| Tool selection principles | [3 → §3](./quality-tooling-for-ai-projects.md#3-nguyên-tắc-chọn-tool) |
+| Tool taxonomy (format, lint, type, secrets, SAST, metrics) | [3 → §4](./quality-tooling-for-ai-projects.md#4-taxonomy-các-nhóm-công-cụ-cần-có) |
+| Where Sonar fits | [3 → §5](./quality-tooling-for-ai-projects.md#5-sonar-đứng-ở-đâu-trong-bức-tranh) |
+| Recommended maturity-phase stack | [3 → §6](./quality-tooling-for-ai-projects.md#6-stack-khuyến-nghị-theo-mức-trưởng-thành) |
+| Makefile / CI packaging | [3 → §7](./quality-tooling-for-ai-projects.md#7-cách-đóng-gói-thành-makefile-và-ci) |
+| Management metrics | [3 → §8](./quality-tooling-for-ai-projects.md#8-metrics-nào-nên-báo-cáo-cho-management) |
+| Workshop slide deck (Vietnamese) | [6](./slides/ai-quality-tooling-vi.md) |
 
 ### Project Setup, Onboarding & Operations
 
