@@ -21,7 +21,7 @@ style: |
 ---
 
 # Quality Tooling cho Dự Án AI
-## Phần 2 — Từ Rules sang Governance
+## Phần 2 — Mental Model trước, Tool sau
 
 **Tiếp nối từ `ai-agents-intro-vi.md`**
 
@@ -29,261 +29,283 @@ style: |
 
 <!-- _class: default -->
 
-# Mục Tiêu Phần Này
-
-- Chọn đúng công cụ cho **dev/agent feedback loop**
-- Chọn đúng công cụ cho **CI/management governance**
-- Hiểu **Sonar đứng ở đâu** trong toàn hệ thống
-- Có một **baseline stack thực dụng** để mang về dùng ngay
-
----
-
 # Nhắc Lại Deck Trước
 
 Deck trước đã chốt 3 ý:
 
-1. **AI là junior engineer** → rất nhanh nhưng cần rào chắn
-2. **Rules và skills** định nghĩa cách làm đúng
-3. **Quality gates** là không thể thương lượng
+1. **AI là junior engineer**
+2. **Rules & skills** hướng dẫn hành vi
+3. **Quality gates** là không thương lượng
 
-**Phần này trả lời câu hỏi tiếp theo:**
-> dùng tool nào để biến các gate đó thành feedback loop thật?
+**Phần này trả lời tiếp:**
+> dùng tooling nào để biến các gate đó thành feedback loop thật?
 
 ---
 
-# Tại Sao Tooling Quan Trọng Hơn Khi Có AI?
+# Mục Tiêu Phần Này
+
+- Dạy một **mental model** để chọn tool đúng chỗ
+- Đưa ra **baseline thực dụng** cho các stack phổ biến
+- Đặt **Sonar trong bức tranh lớn hơn**
+- Giúp team tự reason về tooling fit sau workshop
+
+---
+
+# Sai Lầm Phổ Biến
+
+Workshop về tooling rất dễ thành:
+
+- danh sách tool rời rạc
+- vendor tour
+- "tool tôi đang dùng là tốt nhất"
+
+**Mục tiêu tốt hơn:**
+
+> Không dạy mọi người chép đúng danh sách tool.  
+> Dạy họ cách đánh giá tool cho codebase của họ.
+
+---
+
+# Tại Sao AI Làm Tooling Quan Trọng Hơn?
 
 AI agent có 2 đặc tính:
 
-- **Rất nhanh** → tạo ra nhiều code rất sớm
-- **Không đáng tin tuyệt đối** → cần bị chặn bởi tín hiệu máy móc
+- **rất nhanh** → sinh ra nhiều code hơn
+- **không đáng tin tuyệt đối** → hợp lý hóa output sai rất giỏi
 
-**Hệ quả:**
+Hệ quả:
 
-> Rules nói cho AI biết nên làm gì.  
-> Tools kiểm tra xem AI có thực sự làm đúng không.
+- local loop phải nhanh hơn
+- CI gates phải rõ hơn
+- management cần nhìn quality/risk rõ hơn
+
+---
+
+# Mental Model: Quality Layers
+
+1. Formatting / style
+2. Maintainability / static rules
+3. Type / compile correctness
+4. Tests / coverage evidence
+5. Dependency / supply chain
+6. Secrets hygiene
+7. SAST / security analysis
+8. Governance / quality gates
+9. Metrics / hotspots / debt trends
+
+**Bắt đầu từ layer, không bắt đầu từ brand.**
+
+---
+
+# Layer 1–3: Inner Loop
+
+## 1. Formatting / style
+Loại bỏ nhiễu review
+
+## 2. Maintainability rules
+Chặn code smells, conventions sai
+
+## 3. Type / compile correctness
+Chặn code "trông đúng nhưng sẽ gãy"
+
+**Đây là lớp dev/agent loop phải chạy nhanh.**
+
+---
+
+# Layer 4–7: Evidence & Risk
+
+## 4. Tests / coverage
+Có bằng chứng thay đổi đúng
+
+## 5. Dependency / supply chain
+Có CVE / package risk không?
+
+## 6. Secrets
+Có token/key lộ ra không?
+
+## 7. SAST
+Có security anti-pattern không?
+
+---
+
+# Layer 8–9: Governance
+
+## 8. Governance / quality gates
+Repo này có đủ chuẩn để merge/release chưa?
+
+## 9. Metrics / hotspots
+Chỗ nào phức tạp nhất, thay đổi nhiều nhất, đáng refactor nhất?
+
+**Đây là nơi management và lead bắt đầu nhìn thấy giá trị hệ thống.**
 
 ---
 
 # Hai Vòng Lặp Chất Lượng
 
-## 1. Inner Loop — dev / agent
+## Inner loop — dev / agent
 - format
 - lint
-- type-check
-- feedback trong vài giây
+- type/build checks
 
-## 2. Governance Loop — CI / management
+## Governance loop — CI / leadership
 - tests
-- dependency audit
-- SAST / secret scan
-- quality gates / dashboard
+- SAST
+- dependency scan
+- quality gates
+- dashboards
 
-**Đừng dùng một tool cho cả hai vòng.**
-
----
-
-# Bản Đồ Tooling
-
-| Lớp | Mục tiêu | Ví dụ |
-|---|---|---|
-| Format | Loại bỏ nhiễu | Prettier, Biome, Ruff format |
-| Lint | Chặn anti-pattern | ESLint, Ruff, golangci-lint |
-| Type | Chặn lỗi tương thích | `tsc`, pyright, mypy, `ty` |
-| Secrets | Chặn lộ token/key | gitleaks |
-| Dependency | Chặn package lỗi | npm audit, pip-audit, Trivy |
-| SAST | Chặn lỗi bảo mật logic | Semgrep, Sonar |
-| Metrics | Complexity/hotspots | scc |
-| Governance | Gate + dashboard | SonarQube / SonarCloud |
+**Một tool hiếm khi phục vụ tốt cả hai vòng.**
 
 ---
 
-# Tool Cho Inner Loop
+# Sonar Đứng Ở Đâu?
 
-| Nhu cầu | Tool gợi ý | Lý do |
-|---|---|---|
-| Format JS/TS | Prettier / Biome | nhanh, auto-fix |
-| Lint JS/TS | ESLint / Biome | ecosystem lớn |
-| Python fast loop | Ruff | rất nhanh |
-| Python type | pyright / `ty` | feedback sớm cho AI |
-| Go | golangci-lint | gom nhiều rule |
-| Shell | ShellCheck, shfmt | shell rất dễ lỗi |
+Sonar **không phải chỉ là một linter**.
 
-**Nguyên tắc:** chậm là bị bỏ qua.
+Sonar là lớp **governance platform**:
 
----
-
-# Tool Cho Security & CI Gates
-
-| Risk | Tool baseline |
-|---|---|
-| Secret leak | gitleaks |
-| Vulnerable dependencies | npm audit / pip-audit / govulncheck |
-| Multi-surface scan | Trivy |
-| SAST đa ngôn ngữ | Semgrep |
-| Coverage reporting | native coverage + Codecov/Sonar |
-
-**Merge blocker hợp lý:**
-- secret mới
-- critical/high vuln
-- test/type-check fail
-- blocker issue trên code mới
-
----
-
-# Sonar Là Gì Trong Hệ Này?
-
-Sonar **không chỉ là một linter**.
-
-Sonar là **quality governance platform**:
-
-- quality gate cho PR / branch / main
-- dashboard cho lead & management
+- PR / branch / main quality gates
 - coverage + duplication + maintainability + security
-- pull request decoration
-- policy tập trung trên **new code**
+- dashboard cho lead & management
+- new-code policy
 
-**Câu hỏi Sonar trả lời:**
-> “Change này có đủ chuẩn để merge/release chưa?”
-
----
-
-# Tại Sao Sonar Hợp Với AI Era?
-
-Theo mô hình hiện đại của Sonar:
-
-- gate cho **new code** thay vì đòi fix toàn bộ legacy
-- có **AI Code** quality gate riêng
-- có thể fail PR hoặc fail CI khi gate fail
-
-Điều này rất hợp với nguyên tắc:
-
-> Không cần sửa hết nợ cũ hôm nay.  
-> Nhưng không cho AI tạo thêm nợ mới.
+**Nó nằm ở upper layer, không nằm ở fast local loop.**
 
 ---
 
-# Sonar Không Thay Thế Những Gì?
+# Sonar Không Thay Thế Gì?
 
-Không nên bỏ các tool local nhanh như:
+Không nên bỏ:
 
-- Prettier / Biome
-- ESLint / Ruff / golangci-lint
-- `tsc` / pyright / mypy / `ty`
+- Prettier / Biome / Ruff formatter
+- ESLint / Ruff / Checkstyle / RuboCop
+- `tsc` / pyright / mypy / ty / PHPStan
 - gitleaks pre-commit
 
 **Mô hình đúng:**
-
-- local tools = **inner loop**
-- Sonar = **control tower / governance layer**
-
----
-
-# Vì Sao `scc` Đáng Đưa Vào Workshop?
-
-`scc` không chỉ đếm LOC.
-
-Nó còn hữu ích cho:
-
-- complexity estimation
-- hotspots
-- change coupling
-- HTML report
-- COCOMO / **LOCOMO**
-
-**Điểm hay:**
-- rất nhanh
-- dễ đưa vào CI
-- tạo metric mà management hiểu được
-- mở ra thảo luận về **AI cost vs delivery value**
+- native tools = fast loop
+- Sonar = control tower
 
 ---
 
-# Baseline Stack Khuyến Nghị
+# Alternatives Quan Trọng Cần Biết
 
-## Phase 1 — Foundation
-- formatter
-- linter
-- type-check
-- gitleaks
-- dependency audit
-- Semgrep hoặc SAST cơ bản
-
-## Phase 2 — Intelligence
-- SonarQube / SonarCloud
-- coverage dashboard
-- Dependabot / Renovate
-- scc hotspot reports
-
-## Phase 3 — Optimization
-- custom rules theo failure patterns
-- AI cost tracking
-- threshold theo loại project
+| Need | Tool family |
+|---|---|
+| Polyglot SAST | Semgrep |
+| GitHub-native deep security | CodeQL |
+| SBOM / supply-chain governance | Dependency-Track |
+| Repo metrics / hotspots | `scc` |
+| All-in-one infra/security scan | Trivy |
+| Enterprise SCA/AppSec suite | Snyk, Mend |
 
 ---
 
-# Mapping vào Makefile
+# Baseline Gợi Ý: Java
 
-```bash
-make fix       # format + safe autofix
-make lint      # fast lint + type-check
-make quality   # lint đầy đủ + audit + SAST + IaC scan
-make test      # tests + coverage
-make metrics   # scc report + hotspot snapshot
-```
+- Format: Spotless / IDE formatter
+- Style: Checkstyle
+- Maintainability: PMD
+- Bug-finding: SpotBugs / Error Prone
+- SCA: OWASP Dependency-Check
+- Governance: Sonar / Dependency-Track
 
-**Một interface cho:**
-- dev
-- AI agent
-- CI pipeline
+**Thông điệp:** Java enterprise đã có hệ sinh thái rất trưởng thành; đừng bỏ qua tool cũ chỉ vì nó không mới.
 
 ---
 
-# Management Cần Thấy Gì?
+# Baseline Gợi Ý: C# / .NET
+
+- Format: `dotnet format`
+- Baseline analyzers: built-in .NET analyzers
+- Optional analyzers: StyleCop / Meziantou / Roslynator
+- Governance: Sonar hoặc NDepend
+- Security: CodeQL nếu GitHub-centric
+
+**Thông điệp:** .NET có native analyzer story rất mạnh; đừng nhảy thẳng vào platform trước khi tận dụng baseline này.
+
+---
+
+# Baseline Gợi Ý: Legacy JS / Vanilla Web
+
+- Format: Prettier hoặc Biome
+- Lint: ESLint hoặc Biome
+- CSS: Stylelint
+- Dependency/security: npm audit, OSV, Trivy
+- Vendored JS libs: Retire.js
+
+**Thông điệp:** app jQuery/Bootstrap cũ vẫn có thể có quality baseline mạnh mà không cần rewrite framework.
+
+---
+
+# Baseline Gợi Ý: Python
+
+- Format + lint: Ruff
+- Type: pyright / mypy / ty
+- Tests: pytest
+- Dependency scan: pip-audit
+- SAST: Semgrep hoặc Bandit
+
+**Thông điệp:** Python hưởng lợi cực lớn từ fast loop vì AI rất dễ sinh code dynamic-looking nhưng type-unsafe.
+
+---
+
+# Open-Source-First Maturity Path
+
+## Phase 1 — Baseline
+- formatter + lint
+- type/build checks
+- tests
+- secrets + dependency scan
+
+## Phase 2 — Standardized CI
+- required checks
+- severity thresholds
+- update automation
+
+## Phase 3 — Governance
+- Sonar / Dependency-Track
+- NDepend / CodeQL khi cần
+
+---
+
+# Legacy Rollout: Làm Sao Để Không Bị Reject?
+
+- **Đừng bật strict-all ngay ngày đầu**
+- gate **new code** trước
+- baseline old issues khi cần
+- ưu tiên pain point rõ nhất trước:
+  - style noise
+  - CVEs
+  - secret leaks
+  - broken PR quality
+
+**Mục tiêu: adoption trước, purity sau.**
+
+---
+
+# Management Nên Nhìn Gì?
 
 | Metric | Câu hỏi nó trả lời |
 |---|---|
-| Quality gate pass rate | Code mới có đang đủ chuẩn không? |
-| Dependency vulns | Có đang ship risk đã biết không? |
-| Coverage on new code | Thay đổi mới có được bảo vệ không? |
+| New code gate pass rate | Code mới có đủ chuẩn không? |
+| Critical/high vulns | Có đang ship known risk không? |
+| Coverage on new code | Thay đổi mới có evidence không? |
 | Complexity / duplication trend | Nợ kỹ thuật có tăng không? |
 | Secret incidents | Hygiene có ổn không? |
-| AI cost / sprint | AI có tạo ROI không? |
 
-**Đừng báo cáo raw lint noise. Báo cáo xu hướng và risk.**
-
----
-
-# Thứ Tự Triển Khai Thực Dụng
-
-1. Ổn định `make fix`, `make lint`, `make test`
-2. Thêm `gitleaks` và dependency audit
-3. Thêm Semgrep / Trivy
-4. Khi team lớn hơn → thêm Sonar làm governance hub
-5. Thêm `scc` để nhìn hotspots / complexity / AI cost signals
-
-**Đừng mua dashboard trước khi có discipline.**
-
----
-
-# Demo Gợi Ý Trong Workshop
-
-- Chạy formatter/linter/type-check trên một thay đổi nhỏ
-- Cho `gitleaks` chặn một secret giả
-- Cho Semgrep hoặc Sonar bắt một issue trên PR
-- Chạy `scc` để xem complexity/hotspots/report
-
-**Mục tiêu demo:** mọi người thấy mỗi tool nằm ở đâu trong loop.
+**Đừng báo cáo raw lint noise cho leadership.**
 
 ---
 
 # Điểm Chốt
 
-1. **AI làm tăng nhu cầu feedback nhanh**
-2. **Tooling phải chia thành inner loop và governance loop**
-3. **Sonar là platform hợp nhất, không thay tool local**
-4. **scc là tool nhỏ nhưng cực giá trị cho metrics**
-5. **Chọn tool theo vị trí trong workflow, không theo độ nổi tiếng**
+1. **Mental model trước, tool sau**
+2. **Dùng quality layers để reason về fit**
+3. **Mỗi stack có baseline khác nhau**
+4. **Sonar là governance layer, không phải mọi thứ**
+5. **Open-source-first thường là điểm bắt đầu hợp lý**
+6. **Workshop thành công khi người nghe tự đánh giá được tool fit sau buổi này**
 
 ---
 
@@ -293,9 +315,10 @@ make metrics   # scc report + hotspot snapshot
 
 **Tài liệu tham khảo:**
 - `.agents/docs/quality-tooling-for-ai-projects.md`
-- `.agents/docs/ai-augmented-project-setup-and-evolution.md`
+- `.agents/docs/quality-tooling-stack-baselines.md`
+- `.agents/docs/quality-tooling-comparison-matrix.md`
 - `.agents/docs/slides/ai-agents-intro-vi.md`
 
 **Gợi ý bước tiếp theo:**
-- thêm `gitleaks` + dependency audit trước
-- sau đó mới quyết định có cần Sonar ngay không
+- chuẩn hóa quality layers trong team trước
+- rồi mới chốt tool cụ thể cho từng repo
