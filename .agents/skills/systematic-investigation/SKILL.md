@@ -1,6 +1,6 @@
 ---
 name: systematic-investigation
-description: Use this skill when debugging, troubleshooting, or investigating why something is broken or behaving unexpectedly. Applies structured frameworks (5 Whys, Fishbone, First Principles, OODA) to find root causes before attempting fixes. Also use for pre-mortems, assumption challenges, and architectural decisions that need rigorous analysis. Activate when the user is stuck in circles, facing recurring failures, or asks "why does this keep happening" — even if they frame it as "just fix this bug."
+description: "Use this skill when debugging, troubleshooting, or investigating why something is broken or behaving unexpectedly. Applies structured frameworks (5 Whys, Fishbone, First Principles, OODA) to find root causes before attempting fixes. Also use for pre-mortems, assumption challenges, and architectural decisions that need rigorous analysis. Activate when the user is stuck in circles, facing recurring failures, or asks \"why does this keep happening\" — even if they frame it as \"just fix this bug.\""
 ---
 
 # Systematic Investigation

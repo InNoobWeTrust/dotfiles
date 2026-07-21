@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: Use this skill when the user asks you to review, check, audit, challenge, or QA any artifact — code, specs, architecture, config, docs, or infrastructure. Routes to specialized sub-lenses (code-quality, design-rigor, adversarial, security, edge-case, editorial) based on what's being reviewed. Also activate for security reviews of auth flows, input validation, or secrets handling, and for edge-case analysis of parsers, validators, or branching logic.
+description: "Use this skill when the user asks you to review, check, audit, challenge, or QA any artifact — code, specs, architecture, config, docs, or infrastructure. Routes to specialized sub-lenses (code-quality, design-rigor, adversarial, security, edge-case, editorial) based on what's being reviewed. Also activate for security reviews of auth flows, input validation, or secrets handling, and for edge-case analysis of parsers, validators, or branching logic."
 ---
 
 # Reviewer

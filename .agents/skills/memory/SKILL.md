@@ -1,6 +1,6 @@
 ---
 name: memory
-description: Use this skill to save, restore, or manage agent memory across sessions. Handles session checkpoints, context handoffs, progress saves, and session resumption. Also runs dream-cycle consolidation (promoting short-term notes to curated long-term memory) and memory eviction. Use when the user says "save this," "checkpoint," "remember," "resume," "what was I working on," "consolidate memory," or "forget." Also applies progressive-disclosure structuring to docs and code modules.
+description: "Use this skill to save, restore, or manage agent memory across sessions. Handles session checkpoints, context handoffs, progress saves, and session resumption. Also runs dream-cycle consolidation (promoting short-term notes to curated long-term memory) and memory eviction. Use when the user says \"save this,\" \"checkpoint,\" \"remember,\" \"resume,\" \"what was I working on,\" \"consolidate memory,\" or \"forget.\" Also applies progressive-disclosure structuring to docs and code modules."
 ---
 
 # Memory

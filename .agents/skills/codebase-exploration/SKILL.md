@@ -1,6 +1,6 @@
 ---
 name: codebase-exploration
-description: Use this skill to navigate and map unfamiliar codebases — find where behavior lives, trace call chains and feature flow, map architecture and dependency graphs, or answer "where is X" and "how does this work." Activate when working in a repo you haven't explored yet, planning migrations or refactors across unknown code, hunting for specific patterns, or doing code archaeology. If you don't know where the relevant code lives, start here before implementing.
+description: "Use this skill to navigate and map unfamiliar codebases — find where behavior lives, trace call chains and feature flow, map architecture and dependency graphs, or answer \"where is X\" and \"how does this work.\" Activate when working in a repo you haven't explored yet, planning migrations or refactors across unknown code, hunting for specific patterns, or doing code archaeology. If you don't know where the relevant code lives, start here before implementing."
 ---
 
 # Codebase Exploration
