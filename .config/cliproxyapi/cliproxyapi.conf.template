@@ -81,5 +81,7 @@ claude-api-key:
         alias: "forbiddengun/qwen"
       - name: "forbiddengun/minimax"
         alias: "forbiddengun/minimax"
+      - name: "forbiddengun/gemma"
+        alias: "forbiddengun/gemma"
       - name: "forbiddengun/mistral"
         alias: "forbiddengun/mistral"

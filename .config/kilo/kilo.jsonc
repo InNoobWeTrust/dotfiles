@@ -679,6 +679,21 @@
             "output": 128000,
           },
         },
+        "forbiddengun/gemma": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 262144,
+            "output": 32768,
+          },
+        },
         "forbiddengun/mistral": {
           "modalities": {
             "input": [
