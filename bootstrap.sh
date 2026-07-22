@@ -17,11 +17,13 @@ if [ -z "$TERMUX_VERSION" ]; then
     fi
 fi
 
-# On Termux, install stow via pkg if not available
-if [ -n "$TERMUX_VERSION" ]; then
-    if ! command -v stow >/dev/null 2>&1; then
-        echo "Installing stow on Termux..."
-        pkg install -y stow
+# Install pkgx if not already there (only when system bin dirs are writable)
+if ! command -v pkgx >/dev/null 2>&1; then
+    if [ "$(id -u)" -eq 0 ] || [ -w "/usr/local/bin" ] || [ -w "/usr/bin" ]; then
+        echo "Installing pkgx..."
+        curl -fsS "https://pkgx.sh" | sh
+    else
+        echo "Skipping pkgx install (no permission to write system bin directories)."
     fi
 fi
 
