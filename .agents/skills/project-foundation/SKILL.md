@@ -81,10 +81,11 @@ Also write:
 
 Thin targets: `help`, `fix`, `lint`, `quality`, `test`, `dev`, `dev-up`, `build`. Adapt to stack; never delete existing targets.
 
-### A7 — Architecture + quality gates
+### A7 — Architecture, quality gates + visual design system (DESIGN.md)
 
 - `docs/architecture.md` — responsibility split, data ownership, data flow, API contracts, integration modes, non-goals
 - `docs/engineering/quality-gates.md` — command matrix, thresholds, escalation, rollout
+- `DESIGN.md` — **For projects with UI/frontend or brand identity**: reference `ui-ux` to initialize `DESIGN.md` at repo root per Google Labs spec (YAML frontmatter tokens + canonical prose sections) and add `npx @google/design.md lint DESIGN.md` to visual quality checks.
 
 ### A8 — Verify
 
@@ -101,7 +102,7 @@ Use when the foundation already exists. **Do not re-bootstrap from scratch.**
 3. Emit the gap report format from that file.
 4. Apply fixes in this priority order:
    1. Critical routing breaks (missing core skills/rules, dangling INDEX)
-   2. Reality drift (AGENTS verify commands, glossary, architecture)
+   2. Reality drift (AGENTS verify commands, glossary, architecture, DESIGN.md)
    3. Freshness sync from global (copy mode only; preserve project overlays)
    4. INDEX slim-down (drop unused mega-skills from the default table)
 5. Update `FOUNDATION.md` date/revision after changes.
@@ -144,7 +145,7 @@ Standalone fix for "bootstrap left stubs / missing companion skills":
 - [ ] Required rules materialized
 - [ ] Required skills materialized (full trees)
 - [ ] INDEX + WIRING + FOUNDATION.md
-- [ ] Makefile + architecture + quality-gates
+- [ ] Makefile + architecture + quality-gates + DESIGN.md (if UI project via `ui-ux`)
 - [ ] Drift-checks A passed
 
 **Mode B**

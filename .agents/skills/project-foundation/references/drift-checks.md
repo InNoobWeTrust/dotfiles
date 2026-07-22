@@ -15,6 +15,7 @@ Run these checks without rewriting healthy files. Produce a **gap report**, then
 - [ ] `skills/WIRING.md` exists
 - [ ] `Makefile` has help/fix/lint/quality/test/dev/build (or documented equivalents)
 - [ ] `docs/architecture.md` and `docs/engineering/quality-gates.md` exist
+- [ ] `DESIGN.md` exists for UI/frontend projects (verified via `ui-ux` skill)
 
 ## B. Wiring integrity
 
@@ -30,6 +31,7 @@ Run these checks without rewriting healthy files. Produce a **gap report**, then
 - [ ] `GLOSSARY.md` terms still appear in code; flag dead terms and new unnamed concepts
 - [ ] Quality-gates doc thresholds match CI / Makefile
 - [ ] Architecture non-goals still true; no major subsystem missing from the map
+- [ ] `DESIGN.md` passes lint (`npx @google/design.md lint DESIGN.md`) and tokens match UI implementation
 
 ## D. Freshness vs global pack (copy mode)
 

@@ -16,7 +16,7 @@ Use this index before loading any skill body. Select one primary skill by defaul
 | `swarm-intelligence` | low–high | **Swarminator orchestration with mode router.** Mode Single-Node: one bounded external node (research, second opinion, patch suggestion). Mode Full Swarm: multi-phase multi-persona multi-model. Triggers: swarm, multi-agent, external subagent, single-node, swarminator, cross-validate. Commands: `/swarm` → Full Swarm, `/external-subagent` → Single-Node. | Routine single-agent implementation or git writes |
 | `bounded-iteration` | high | Bounded repetitive work with machine-verifiable completion criteria | Ambiguous, subjective, unsafe, or design-heavy work |
 | `reviewer` | varies | Explicit review of any artifact — code, docs, config, infra, designs, compliance. Lazy-loads sub-reviewers by type. | User asked only for implementation and no review is needed |
-| `ui-ux` | medium | UI design or frontend polish | Non-UI tasks |
+| `ui-ux` | medium | **UI design, frontend polish, and DESIGN.md visual systems.** Designing user interfaces, visual design system tokens/rationale (Google Labs DESIGN.md spec), CSS/Tailwind themes, or micro-animations. | Non-UI tasks |
 | `cdp-browser-automation` | medium | Browser automation, scraping, clicking, filling forms, real page testing | Static code inspection is enough |
 | `data-storytelling` | medium | Turning data into evidence-backed narrative | No dataset or narrative goal exists |
 | `video-production` | medium | Video production workflow | Non-video tasks |

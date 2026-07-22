@@ -45,7 +45,7 @@ Also materialize:
 
 ## Skills (do **not** force-copy unless the project uses them)
 
-`swarm-intelligence` (Single-Node + Full Swarm via mode router; pin with `/external-subagent` or `/swarm`), `data-storytelling`, `cdp-browser-automation`, `ui-ux`, `video-production`, `talent-screening`, `model-benchmarking`, featherless personas, large asset CSVs — **link or copy only on demand**. Putting them in every repo wastes disk and INDEX attention.
+`swarm-intelligence` (Single-Node + Full Swarm via mode router; pin with `/external-subagent` or `/swarm`), `data-storytelling`, `cdp-browser-automation`, `ui-ux` (materialize when project contains UI/frontend components or maintains a `DESIGN.md` visual system), `video-production`, `talent-screening`, `model-benchmarking`, featherless personas, large asset CSVs — **link or copy only on demand**. Putting them in every repo wastes disk and INDEX attention.
 
 **INDEX slim rule:** project `skills/INDEX.md` lists core pack + used domain skills only. Unused global rows are noise for attention routing.
 

@@ -29,7 +29,7 @@ When debugging or fixing a problem:
 
 ### UI/UX Implementation
 
-1. `ui-ux` — design quality lens
+1. `ui-ux` — design quality lens & DESIGN.md visual system authority
 2. `code-craft` — SOLID/modularity on component logic
 3. `reviewer` (security lens) — input validation, auth on visual interfaces
 
@@ -131,6 +131,7 @@ Natural transitions between skills:
 | `swarm-intelligence` (Single-Node) | `swarm-intelligence` (Full Swarm) | "Bounded node insufficient; escalate to full swarm" |
 | `multi-perspective-deliberation` | `subagent-dispatch` | "Launching delegated persona workers for the deliberation" |
 | `project-foundation` | `architecture-writer` | "Project scaffolded, now writing detailed architecture doc" |
+| `project-foundation` | `ui-ux` | "Project scaffolded with UI/frontend components; initializing DESIGN.md visual system" |
 | `project-foundation` | `devsecops` | "Project scaffolded, now designing CI/CD with integrated security" |
 | `project-foundation` | `reviewer` | "Governance files created, ready for review" |
 | Any skill | `project-foundation` (Mode B) | "INDEX routes to missing skill, FOUNDATION.md missing, or architecture/glossary clearly stale vs repo" |
