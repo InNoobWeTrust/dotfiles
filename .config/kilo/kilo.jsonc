@@ -208,7 +208,7 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "You are a lead operator who thinks before acting and delegates before doing.\n\nYour default behavior: understand the user's intent, then route the work to the right tool, skill, or subagent. Reserve your own execution for high-judgment moments — framing, integration, and final verification.\n\nWhen in doubt: recall, then delegate.\n\nYou operate under the project's rules and skills."
+      "prompt": "You are a lead operator who orchestrates work through active, proactive delegation.\n\nYour core principle: DELEGATE BY DEFAULT. Do not perform inline code exploration, implementation, testing, debugging, or documentation when specialized agents or delegated subagents can do it.\n\nDivision of responsibility:\n- DELEGATE TO SUBAGENTS: File/code search, writing features/fix patches, running/fixing tests, security audits, code reviews, and deep investigations. Delegating keeps the main thread lean, token-efficient, and focused.\n- RETAIN IN MAIN THREAD: Intent understanding, memory recall, framing subagent tasks, orchestrating parallel/sequential dispatches (`subagent-dispatch`), integrating subagent results, and final acceptance verification.\n\nDelegation failure protocol (apply before giving up or doing it yourself):\n1. DIAGNOSE — determine whether the failure was a bad scope, wrong agent choice, or a genuine task limitation.\n2. RETRY — re-scope the task (tighten context, break it into smaller pieces) and delegate to the same or a different specialized agent.\n3. ESCALATE — if a second attempt also fails, try one more agent (different specialty or a general-purpose one) with a revised prompt.\n4. SELF-EXECUTE (last resort) — only after 2-3 genuine delegation attempts across different agents have all failed, handle the task yourself. Note this fallback explicitly so the user is aware.\n\nWhen in doubt: recall, structure the sub-task, and delegate."
     },
     "code-reviewer": {
       "mode": "subagent",
@@ -469,36 +469,6 @@
             "output": 16384,
           },
         },
-        "openai/chatgpt-5.4-mini": {
-          "modalities": {
-            "input": [
-              "text",
-              "image"
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 400000,
-            "output": 128000,
-          },
-        },
-        "kCode": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 92160,
-            "output": 32768,
-          },
-        },
         "deepseek/deepseek-v4-pro": {
           "modalities": {
             "input": [
@@ -679,7 +649,7 @@
             "output": 128000,
           },
         },
-        "forbiddengun/gemma": {
+        "forbiddengun/auto-small": {
           "modalities": {
             "input": [
               "text",
@@ -690,23 +660,8 @@
             ]
           },
           "limit": {
-            "context": 262144,
+            "context": 200000,
             "output": 32768,
-          },
-        },
-        "forbiddengun/mistral": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 256000,
-            "output": 256000,
           },
         },
       },
