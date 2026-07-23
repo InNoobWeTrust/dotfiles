@@ -32,9 +32,10 @@ One call per persona+model pair. Orchestrator collects stdout and merges outputs
 ### Phase 2 — Synthesize and Challenge (2–3 models per persona)
 1. Run `Synthesis` persona → collect outputs → unify into **Specification**.
 2. Run `Review` persona → collect critiques.
-3. If critical gaps found, run `Synthesis-Revise` → re-review. Max 3 review cycles total.
-4. After 2 Review rejections: escalate to `senior-reviewer`.
-5. Deliverable: `## Specification Summary`, `## Design Decisions`, `## Acceptance Criteria`, `## Task Decomposition Hints`, `## Open Questions`, `## Synthesis Log`.
+3. If multiple viable but conflicting branches emerge, apply `references/branch-graft-synthesis.md` before flattening them into one answer.
+4. If critical gaps found, run `Synthesis-Revise` → re-review. Max 3 review cycles total.
+5. After 2 Review rejections: escalate to `senior-reviewer`.
+6. Deliverable: `## Specification Summary`, `## Design Decisions`, `## Acceptance Criteria`, `## Task Decomposition Hints`, `## Open Questions`, `## Synthesis Log`.
 
 ### Phase 3 — Decompose and Produce (2–3 models per persona)
 1. Run `Decompose` persona → numbered **Task List**.

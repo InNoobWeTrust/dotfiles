@@ -43,6 +43,31 @@ Stop immediately when any of these codes applies:
 If a stop condition fires, do not run another iteration first. Report current
 state, last known good checkpoint, and the exact blocker.
 
+## Evaluator–Optimizer Contract
+
+Bounded Iteration is an evaluator–optimizer loop.
+
+- **Optimizer**: the AI iteration that proposes the next edit, patch, or command sequence.
+- **Evaluator**: the acceptance criteria in `TASK.md` plus `verify.sh` and `.ralph-verify.json`.
+
+Write evaluator criteria before the first optimizer run. Do not let the optimizer invent or relax its own scoring rubric mid-loop.
+
+Minimum evaluator inputs before iteration 1:
+
+1. Objective completion target (`done when ...`)
+2. Machine-verifiable checks with positive proof
+3. Retryable vs non-retryable failure boundary
+4. Any subjective checks that require HITL instead of AFK
+5. If Reviewer is acting as evaluator: review artifact, review rubric, and the mapping from `PASS / FAIL / UNVERIFIED` to next-loop behavior
+
+Reviewer mapping rules when used as evaluator:
+
+- `PASS` -> treat as success only if the machine gate also passes, or if `TASK.md` explicitly says Reviewer is the final evaluator for that criterion
+- `FAIL` -> retryable only when the findings describe a concrete fix inside scope
+- `UNVERIFIED` -> stop with `STOP_MANUAL_INTERVENTION` or gather missing evidence; do not guess
+- Record Reviewer verdict and 1-3 supporting findings in both `progress.txt` and `.ralph-verify.json`
+- Default precedence when `TASK.md` is silent: **both must pass** (machine gate + Reviewer for named subjective criteria)
+
 ## Verification Contract
 
 `verify.sh` is the heart of Bounded Iteration. If verification is weak, Bounded Iteration is unsafe.
@@ -90,6 +115,12 @@ Not good enough:
       "proof": "18 tests passed"
     }
   ],
+  "reviewer": {
+    "used": false,
+    "artifact": "",
+    "verdict": "",
+    "summary": []
+  },
   "proof": {
     "tests_ran": 18,
     "typecheck_passed": true
@@ -198,11 +229,13 @@ After each iteration:
 
 1. Run `verify.sh`
 2. Read `.ralph-verify.json`
-3. Classify the result
+3. If `TASK.md` declares a Reviewer Override, run Reviewer on the declared artifact using the declared rubric and record `PASS / FAIL / UNVERIFIED` in both `progress.txt` and `.ralph-verify.json`
+4. Classify the result using the precedence rule from `TASK.md` (default: both must pass)
    - Success -> increment success streak
    - Retryable failure -> feed the failure back into the next iteration
    - Verifier failure -> stop and repair the verifier
    - Unsafe or subjective path -> stop and escalate
+   - Reviewer `UNVERIFIED` -> stop and gather evidence rather than looping blindly
 
 ### 5. Detect Oscillation
 

@@ -241,6 +241,7 @@ Use when the user asks to restore, resume, load context, or lists prior notes.
    - Current branch → glob `short-term/*--<branch-slug>--*.md` (matches both stamped and legacy unstamped names), exclude `status: done` (missing `status` is never treated as `done`; see §Frontmatter resilience).
    - "What was I working on" / generic resume → list non-archived short-term entries sorted by `updated` desc (unparseable/missing `updated` sorts as oldest, per §Frontmatter resilience), plus `long-term/INDEX.md` topic summary. The filename's `created-stamp` is available for an audit-trail view (creation order) but `updated` remains the sort key for "recent work."
    - Topic query → grep `long-term/INDEX.md` first, then follow to the bucket or topic file.
+   - Similar-trace query ("have we seen a step like this before?") → load `references/compaction-and-step-recall.md` and search for prior incidents by step shape, blocker type, and recovery pattern — not just by topic name.
 3. If multiple active short-term entries match, present summaries and ask which to load. Do not silently pick one.
 4. Parse the selected file. Print Goal, Current Status, Key Decisions, Next Steps, Blockers. Long-term reads print the matching rows plus their bucket entries.
 

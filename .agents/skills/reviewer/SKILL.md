@@ -19,6 +19,8 @@ Trivial exception: &lt;10 lines, no structural impact → skip review rather tha
 
 Any in-context review must follow `rules/self-grounded-verification.md`: criteria + disconfirming test **before** judging the artifact; then PASS/FAIL/UNVERIFIED with evidence.
 
+In research terms, Reviewer is the repo's **evaluator** half of an evaluator–optimizer loop. It must score against declared criteria, not vibe-check or rewrite the rubric after seeing the artifact.
+
 ---
 
 ## Direct vs delegate (summary)
@@ -80,3 +82,4 @@ Paths: `references/sub-reviewers/<name>.md`.
 1. **Explicit** — user asked for review.
 2. **Self-review before present** — delegate (author bias).
 3. **Proactive** — flag structural/security/assumption issues mid-conversation when not in hot-fix/throwaway mode.
+4. **Evaluator for a loop** — when paired with `bounded-iteration`, score the artifact named in `TASK.md` against the predeclared rubric and return `PASS`, `FAIL`, or `UNVERIFIED` so the next optimizer pass has grounded feedback.

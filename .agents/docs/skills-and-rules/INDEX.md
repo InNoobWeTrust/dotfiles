@@ -16,4 +16,4 @@
 | [Rule template](./templates-rule.md) | Copy-paste rule skeleton | Authoring a rule |
 | [Skill template](./templates-skill.md) | Copy-paste skill skeleton | Authoring a skill |
 
-**Related sections:** [project-lifecycle](../project-lifecycle/INDEX.md) · [quality-tooling](../quality-tooling/INDEX.md)
+**Related sections:** [project-lifecycle](../project-lifecycle/INDEX.md) · [quality-tooling](../quality-tooling/INDEX.md) · [research (not battle-tested)](../research/INDEX.md)

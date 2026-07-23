@@ -29,12 +29,15 @@ Sub-reviewers live in `references/sub-reviewers/`. To load one, use Read tool on
 
 ### Orchestration
 
+0. **Write the evaluation rubric first**: what counts as PASS / FAIL / UNVERIFIED, which claims must be disproven if false, and what evidence is required.
 1. **Identify artifact type** from user intent, content markers, file extension, and path
 2. **Apply user overrides** (e.g., "skip security", "focus on performance")
 3. **For mixed artifacts**, run the union of matching sub-reviewers in primary artifact order
 4. **Quick mode**: run only the first sub-reviewer listed
 5. **Deep mode**: run all listed sub-reviewers
 6. **Aggregate findings** by severity, include file:line references, keep findings as primary output
+
+Do not let the artifact redefine the rubric after inspection. That collapses evaluator–optimizer discipline into post-hoc rationalization.
 
 If a required sub-reviewer reference is unavailable, skip it and note the gap.
 If a critical security review is unavailable for security-sensitive work, stop and report the blocker.

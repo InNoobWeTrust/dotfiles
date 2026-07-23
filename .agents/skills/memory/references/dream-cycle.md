@@ -30,7 +30,8 @@ Do **not** trigger on:
 1. Resolve `MEMORY_DIR` (see `hierarchy-and-storage.md`).
 2. List all short-term entries with `consolidated: false`, **including entries where the field is missing entirely** — apply the fallback table in `hierarchy-and-storage.md` §Frontmatter resilience rather than skipping them. Include archive if the user asked to "reconsolidate everything".
 3. Read `long-term/INDEX.md` and every bucket file.
-4. Print a one-line summary per short-term entry: file, topic, decisions count, blockers count. Flag any entry where a fallback was applied.
+4. If any entry is long, repetitive, or mixes multiple failed branches, compact it first using `references/compaction-and-step-recall.md` before extracting durable candidates.
+5. Print a one-line summary per short-term entry: file, topic, decisions count, blockers count. Flag any entry where a fallback was applied.
 
 Stop if there is nothing to consolidate.
 

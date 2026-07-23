@@ -47,7 +47,7 @@ Determine the capabilities of the current execution environment:
    - Ensure turns are concise (no monologues) and the conversation remains balanced.
    - Introduce user interjections if running in human-in-the-loop mode.
 4. **Convergence**: Each persona delivers their final adjusted position, noting what they agree on, what they still contest, and what they need to investigate.
-5. **Synthesis**: Produce a consensus and divergence summary.
+5. **Synthesis**: Produce a consensus and divergence summary. If multiple branches remain viable, use the branch-graft protocol in `../swarm-intelligence/references/branch-graft-synthesis.md` instead of forcing premature consensus.
 
 ---
 

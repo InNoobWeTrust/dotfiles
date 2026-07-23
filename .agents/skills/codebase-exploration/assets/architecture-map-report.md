@@ -39,6 +39,24 @@
 Files: [list]            Files: [list]          Files: [list]
 ```
 
+## Wiring Diagram (Default for system understanding)
+
+**Minimum completion rule:** do not leave this section as a placeholder for system-understanding work. Fill the diagram and all three path bullets below, or mark a field `NOT FOUND` with the files searched.
+
+```text
+[entrypoint]
+   │ calls / registers
+   ▼
+[module or registry]
+   ├──> [dependency A]
+   ├──> [dependency B]
+   └──> [side-effect boundary]
+```
+
+- **Read path**: `[request/event] -> [handler] -> [core logic] -> [output]`
+- **Write path**: `[mutation trigger] -> [validator] -> [state change] -> [side effect]`
+- **Registration edges**: `[plugin/module] -> [registry/container/router]`
+
 ## Dependency Hierarchy
 
 ### Core Modules (change last, highest risk)
@@ -86,6 +104,15 @@ Files: [list]            Files: [list]          Files: [list]
 - **Confidence**: [High / Medium / Low]
 - **Incomplete Mapping**: [Areas not fully explored]
 - **Assumptions**: [What was inferred vs confirmed]
+
+## Completion Checklist
+- [ ] Wiring diagram filled or `NOT FOUND` with searched files noted
+- [ ] Read path filled or `NOT FOUND`
+- [ ] Write path filled or `NOT FOUND`
+- [ ] Registration edges filled or `NOT FOUND`
+- [ ] File:line evidence included where available
+
+**Failure rule:** if this report is being used for system-understanding work and any required checklist item above is neither filled nor marked `NOT FOUND`, the report is incomplete and must not be presented as finished.
 
 ---
 

@@ -2,6 +2,7 @@ You are executing one Bounded Iteration iteration.
 
 Rules:
 - Read `TASK.md`, `progress.txt`, and `.ralph-verify.json` before editing.
+- Treat this prompt as the **optimizer** half of the loop; `TASK.md` + `verify.sh` define the evaluator and may not be rewritten by you.
 - Stay inside the task scope unless verification proves another file is required.
 - Prefer the smallest correct change.
 - Do not add dependencies, start background services, or touch secret-bearing files.

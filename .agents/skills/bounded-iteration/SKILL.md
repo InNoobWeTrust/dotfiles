@@ -7,6 +7,8 @@ description: "Use this skill for repetitive implement-verify-retry loops with ma
 
 Outer control loop around an AI CLI: locked brief → limited actions → state → **positive proof** verify → stop. Persistence only counts when bounded by proof.
 
+This is a named **evaluator–optimizer** loop: the optimizer proposes the next change, the evaluator scores it against predeclared criteria, and the loop only continues when the evaluator returns retryable failure.
+
 **Not:** design method, unsupervised shared-workspace edits, or a substitute for human judgment.
 
 Elevated autonomy still obeys `rules/autonomy-safety.md`: reversible work inside locked scope may proceed; irreversible / high-blast-radius → stop and escalate.
@@ -22,6 +24,8 @@ Elevated autonomy still obeys `rules/autonomy-safety.md`: reversible work inside
 | Diagnosis / architecture design | No — design or investigate first |
 
 Design-first handoff: `references/swarm-integration.md`.
+
+For subjective or policy-heavy scoring that cannot live in `verify.sh`, pair this skill with `reviewer` and let Reviewer act as the explicit evaluator before another optimizer pass. In that mode, the artifact under review, the review rubric, and the mapping from `PASS / FAIL / UNVERIFIED` to `retry / stop / escalate` must be written into `TASK.md` before iteration 1.
 
 ---
 
@@ -52,9 +56,9 @@ Defaults: `MAX_ITER=10`, `ITERATION_TIMEOUT_SEC=900`, `REQUIRED_SUCCESS_STREAK=1
 ## Session flow (summary)
 
 1. Reject ambiguous tasks (AFK → `STOP_INPUT_AMBIGUOUS`).
-2. Build handoff package from templates.
-3. One bounded AI iteration (narrow scope).
-4. Run `verify.sh`; classify; feed failures back.
+2. Build handoff package from templates, including criteria the evaluator can score before the optimizer writes.
+3. One bounded optimizer iteration (narrow scope).
+4. Run the evaluator (`verify.sh` + acceptance criteria); classify; feed failures back.
 5. Detect oscillation (same fingerprint ×3 or alternating) → stop.
 6. Cleanup/handoff; no destructive restore in shared workspaces.
 
@@ -71,5 +75,6 @@ Load `references/procedure.md` before first AFK run or when implementing `verify
 - [ ] Contract files present and filled
 - [ ] Mode chosen with guardrails
 - [ ] Stop on success or explicit stop code (never silent continue)
+- [ ] Evaluator criteria written before optimizer iteration begins
 - [ ] Verification proof recorded
 - [ ] Last good checkpoint known on failure

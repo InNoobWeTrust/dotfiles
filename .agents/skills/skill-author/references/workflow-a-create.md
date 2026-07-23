@@ -49,6 +49,7 @@ Design each phase before writing prose:
 2. **Stop conditions**: 2-5 gates where execution must halt.
 3. **Deliverable checklist**: 5-10 completion criteria.
 4. **Anti-patterns**: 5-10 shortcuts the AI will try, with why wrong + correct path.
+5. **ACI pass**: if the skill/command/tool exposes an interface another agent must use, run `references/aci-checklist.md`, note any guardrails or examples that belong in the interface contract, and leave the `ACI Pass` evidence block in the workflow/design outline or in the short-term handoff/checkpoint entry if work pauses.
 
 **Format**:
 ```
@@ -81,7 +82,9 @@ Write the file following the documented template:
 
 6. **Anti-pattern table**: 5-10 rows (Temptation, Why Wrong, Correct Path).
 
-7. **References section**: Related docs, skills, or reference files (even if they don't exist yet — they're contracts).
+7. **ACI details when applicable**: examples, absolute-path/file-shape expectations, failure modes, and misuse-resistant wording for any agent-facing interface.
+
+8. **References section**: Related docs, skills, or reference files (even if they don't exist yet — they're contracts).
 
 **Length guideline**: Keep SKILL.md under 500 lines. Move deep content to `references/`. Move content to references when it's only needed for variants, is implementation detail rather than methodology, changes frequently, or is a sub-workflow.
 

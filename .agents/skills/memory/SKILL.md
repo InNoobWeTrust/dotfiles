@@ -14,6 +14,8 @@ Two hard rules:
 
 Storage, protocol, and templates live in `references/hierarchy-and-storage.md`. Load it before any read/write.
 
+For recall shaping and context compaction tactics, load `references/compaction-and-step-recall.md` only when Recall or Consolidate needs it.
+
 ---
 
 ## When to load this skill
@@ -38,8 +40,8 @@ Pick one mode per invocation. Modes are separate procedures; do not interleave.
 | Mode | Purpose | Reference |
 |---|---|---|
 | **Capture** | Write a new short-term entry (session checkpoint, working note, scratchpad, decision-in-progress) | `references/hierarchy-and-storage.md` §Capture |
-| **Recall** | Find and load prior short-term or long-term entries | `references/hierarchy-and-storage.md` §Recall |
-| **Consolidate (Dream Cycle)** | Promote hot short-term entries to long-term, re-score long-term, propose evictions | `references/dream-cycle.md` |
+| **Recall** | Find and load prior short-term or long-term entries | `references/hierarchy-and-storage.md` §Recall + `references/compaction-and-step-recall.md` when the query needs a similar prior trace |
+| **Consolidate (Dream Cycle)** | Promote hot short-term entries to long-term, re-score long-term, propose evictions | `references/dream-cycle.md` + `references/compaction-and-step-recall.md` when context needs compaction |
 | **Evict** | Standalone pruning of long-term when size limits are exceeded | `references/eviction-scoring.md` |
 | **Structure** | Apply the same hierarchy pattern to docs (`references/pattern-docs.md`) or code (`references/pattern-code.md`) | `references/progressive-disclosure-pattern.md` |
 
@@ -129,6 +131,8 @@ For every invocation:
 - [ ] Mode named up front (Capture / Recall / Consolidate / Evict / Structure)
 - [ ] `MEMORY_DIR` resolved and printed
 - [ ] Files written listed with paths
+- [ ] If compaction was used: compact state persisted to short-term memory or included in a handoff artifact that was itself saved to short-term memory
+- [ ] If similar-trace recall was used: searched buckets + top matches (or `NONE FOUND`) reported
 - [ ] For Consolidate/Evict: scored ranking + explicit human-approval prompt before any archive/delete
 - [ ] `long-term/INDEX.md` updated last (single source of truth for what exists)
 

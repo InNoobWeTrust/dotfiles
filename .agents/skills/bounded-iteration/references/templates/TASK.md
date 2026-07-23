@@ -23,6 +23,20 @@
 - [ ] <criterion with positive proof>
 - [ ] `verify.sh` exits `0`
 
+## Evaluator Notes
+- Success means: <what the evaluator must see to call this done>
+- Retryable failure means: <what can be fixed by another optimizer iteration>
+- Non-retryable / escalate means: <what requires human or design intervention>
+
+## Reviewer Override (only for subjective/policy-heavy checks)
+- Review artifact: <what Reviewer evaluates: patch / summary / report / diff>
+- Review rubric: <criteria Reviewer must score>
+- Record result in: `progress.txt` and `.ralph-verify.json`
+- PASS => <continue as success / require human confirm>
+- FAIL => <feed findings into next optimizer iteration>
+- UNVERIFIED => <stop and escalate / gather more evidence>
+- Precedence rule: <machine gate wins | Reviewer wins for named criteria | both must pass>
+
 ## Verification Commands
 - <command>
 - <command>

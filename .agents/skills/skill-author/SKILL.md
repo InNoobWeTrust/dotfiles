@@ -18,6 +18,8 @@ Two workflows — choose one first.
 | **A — Create / Modify** | New skill needed or editing existing skills/rules | `references/workflow-a-create.md` (A1–A6) |
 | **B — Audit** | Quarterly / failure review / governance drift | `references/workflow-b-audit.md` (B1–B4) |
 
+Load `references/aci-checklist.md` when designing a new skill, command, prompt interface, or tool-shaped workflow.
+
 Stop / deliverable / anti-patterns: `references/stop-deliverable-antipatterns.md`.
 
 ## Workflow A (summary)
@@ -25,9 +27,10 @@ Stop / deliverable / anti-patterns: `references/stop-deliverable-antipatterns.md
 1. Validate need (extend existing skill first; not one-offs).
 2. Define scope contract (name, description, exclusions, I/O, phases).
 3. Design phases, stop conditions, deliverables, anti-patterns.
-4. Write `SKILL.md` (YAML frontmatter per https://agentskills.io spec; body under ~150 lines; deep content in `references/`).
-5. Register in `INDEX.md` (+ `WIRING.md` if composition).
-6. Queue for prototype audit.
+4. Apply the ACI checklist when the artifact behaves like an interface (`references/aci-checklist.md`).
+5. Write `SKILL.md` (YAML frontmatter per https://agentskills.io spec; body under ~150 lines; deep content in `references/`).
+6. Register in `INDEX.md` (+ `WIRING.md` if composition).
+7. Queue for prototype audit.
 
 ## Workflow B (summary)
 

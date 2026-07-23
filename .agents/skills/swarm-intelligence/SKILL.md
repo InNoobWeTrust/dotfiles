@@ -98,6 +98,7 @@ Artifact modes: `analysis` | `review` | `patch` | `transform`.
 | `bounded-iteration` | Full Swarm (or design) first → locked `TASK.md` → iteration loop (`bounded-iteration/references/swarm-integration.md`) |
 | `reviewer` | Single-Node `review` artifact mode, or Full Swarm review personas |
 | `model-benchmarking` | Choose catalogs/tiers → then this skill for execution |
+| `references/branch-graft-synthesis.md` | Use when multiple viable branches disagree and the host must preserve them before converging |
 | Environment-native task workers | Prefer native workers when available; use this skill when you need swarminator isolation or multi-model quorum |
 
 ---

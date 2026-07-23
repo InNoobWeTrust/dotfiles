@@ -14,6 +14,7 @@ Progressive disclosure: load refs only when the phase needs them.
 | When | Load |
 |---|---|
 | Writing implementation (Phase 3) | `references/write-standards.md` |
+| Long tool chain, confidence drop, or thrash smell during Phase 3/4 | `references/trajectory-checkpoint.md` |
 | Tempted by a shortcut | `references/anti-patterns.md` |
 
 ---
@@ -68,7 +69,8 @@ Unchecked → fix or `// TODO(debt):`.
 
 1. Obey `rules/code-quality.md` + `rules/tdd.md` (RED → GREEN → REFACTOR; post test output).
 2. Load `references/write-standards.md` for: defensive boundaries, immutability, invariants, types, quality tooling pass, docstrings, abstraction rules.
-3. Prefer repo-native `make` / scripts over ad-hoc tool installs.
+3. If the task crosses a long tool chain, confidence drops, or you detect thrash/re-reading, run the micro-protocol in `references/trajectory-checkpoint.md` before continuing.
+4. Prefer repo-native `make` / scripts over ad-hoc tool installs.
 
 ### Phase 4 — Readability audit
 
@@ -92,6 +94,7 @@ TECH DEBT INVENTORY
 - [ ] Phase 2 checklist passed or debt marked
 - [ ] Code follows `rules/code-quality.md` / `rules/tdd.md`
 - [ ] Write-standards applied (Phase 3 ref when needed)
+- [ ] Trajectory checkpoint used when drift/thrash signals appeared
 - [ ] Tests: written first, evidence posted
 - [ ] No invented semantic fallbacks
 - [ ] Readability audit + module README

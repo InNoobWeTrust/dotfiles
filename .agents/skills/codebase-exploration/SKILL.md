@@ -37,7 +37,7 @@ Can you answer now?
 | Need | Strategy | Detail |
 |---|---|---|
 | Fix bug / add feature | 1 Logic Bubble | `references/navigation-strategies.md` |
-| How system works | 2 Boundary & Registration | same |
+| How system works | 2 Boundary & Registration | same — required default deliverable: `assets/architecture-map-report.md` with wiring diagram, read/write paths, and registration edges completed |
 | Add similar thing | 3 Clone & Mutate | same |
 | Migration / module map | 4 Metadata & Module Audit | same |
 
@@ -48,7 +48,7 @@ Can you answer now?
 | Purpose | Template |
 |---|---|
 | Bug / feature context | `assets/logic-bubble-report.md` |
-| System understanding | `assets/architecture-map-report.md` |
+| System understanding (**default wiring diagram**) | `assets/architecture-map-report.md` |
 | Similar feature | `assets/clone-pattern-report.md` |
 | Migration impact | `assets/dependency-audit-report.md` |
 | Integration | `assets/api-surface-report.md` |
@@ -63,5 +63,7 @@ Can you answer now?
 - Change locus is clear (≤ bubble of files)
 - Further reading is curiosity, not task need
 - Diminishing returns after the chosen strategy’s steps
+- For system-understanding work, the architecture report includes a wiring diagram plus read path, write path, and registration edges
+- If those fields cannot be filled and are not explicitly marked `NOT FOUND` with searched files, stop and report the map as incomplete rather than claiming system understanding
 
 Do not dump the whole repo into context. Prefer structured report over raw file paste.
