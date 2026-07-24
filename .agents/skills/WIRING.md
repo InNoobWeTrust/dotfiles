@@ -122,7 +122,8 @@ Natural transitions between skills:
 | `strategic-osint` | `reviewer` (editorial lens) | "Positioning draft is ready; now polish or challenge the narrative" |
 | Any skill | `memory` (Capture) | "Handoff requested, serializing context and saving progress" |
 | `memory` (Recall) | Any skill | "Session restored, resuming active work" |
-| Any skill | `memory` (Consolidate) | "Commit pending or explicit dream-cycle request, promoting short-term to long-term" |
+| Any skill | `memory` (Consolidate via Subagent) | "Commit pending or explicit dream-cycle request, running report-only consolidation first" |
+| `memory` (Consolidate via Subagent) | `memory` (Consolidate) | "Approval received or delegation unavailable; applying approved memory writes" |
 | `memory` (Consolidate) | `memory` (Evict) | "Long-term size limits passed, running eviction pass" |
 | Any skill | `memory` (Structure) | "Applying progressive-disclosure pattern to a docs directory or code module" |
 | Any implementation skill | `reviewer` | "Review my work" |

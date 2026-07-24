@@ -25,6 +25,53 @@ Do **not** trigger on:
 
 ---
 
+## Subagent consolidation (default at commit time)
+
+To avoid main-agent context bloat, the main agent should **Capture** the current work and then **delegate consolidation to a subagent**. The subagent does not need the prior conversation transcript — it only needs the capture note and access to the memory directories.
+
+### When to use
+
+- A commit is imminent and the main agent is in the middle of a task.
+- The short-term entry is long or mixes multiple workstreams.
+- The main agent wants to avoid loading the full `dream-cycle.md`, `eviction-scoring.md`, and `compaction-and-step-recall.md` workflow.
+
+### What the main agent does
+
+1. Resolve `MEMORY_DIR`.
+2. Run **Capture** mode: write a self-contained short-term entry for the current work (goal, key decisions, files, next steps, blockers, open questions). Set `consolidated: false`.
+3. Launch a subagent with this exact scope:
+   - Read the capture note at `<path>`.
+   - Read all `short-term/*.md` entries with `consolidated: false` (or missing the field — treat as false).
+   - Read `long-term/INDEX.md` and all bucket files.
+   - Run the analytical portions of the Consolidate procedure below: Gather, Extract, Score, and prepare an Eviction Proposal if needed.
+   - Return a report: candidates, scores, proposed long-term writes, any short-term files that would be flipped to `consolidated: true`, and any eviction proposal.
+   - **Do not write to `long-term/*`, do not archive anything, and do not mutate short-term frontmatter during this report-only pass.**
+4. Surface the subagent report to the user and ask for approval before writing long-term or archiving.
+5. After approval, apply the proposed long-term writes and flip the approved short-term entries to `consolidated: true`. This apply step may be performed by the main agent or by a resumed consolidator, but only after approval.
+
+### Subagent prompt template
+
+```markdown
+You are a memory-consolidation subagent. You have no prior conversation context.
+Read this capture note: <path>
+Resolve MEMORY_DIR = <path>
+Run the report-only form of `skills/memory/SKILL.md` Consolidate mode on all unconsolidated short-term entries.
+Do not write anything to long-term, do not archive anything, and do not flip any short-term file to `consolidated: true` before returning a full report first.
+Return:
+- Summary of each short-term entry
+- Candidate table (key, bucket, type, summary)
+- Score for each candidate (with input vector)
+- Proposed long-term writes (exact writes that should happen after approval)
+- Proposed short-term files to flip to `consolidated: true` after approval
+- Eviction proposal if any soft limit is exceeded
+```
+
+### Fallback if subagent is unavailable
+
+The main agent runs the same Consolidate procedure directly. Do not skip consolidation just because delegation is unavailable.
+
+---
+
 ## Phase 1 — Gather
 
 1. Resolve `MEMORY_DIR` (see `hierarchy-and-storage.md`).
@@ -64,18 +111,23 @@ Print the candidate table before writing anything.
 
 ---
 
-## Phase 3 — Score and write long-term
+## Phase 3 — Score and prepare/apply long-term writes
 
 Score each candidate using `eviction-scoring.md` §Scoring function. Same function is used to score existing long-term entries in Phase 4.
+
+This phase has two execution forms:
+
+- **Report-only form (subagent default)**: compute scores, prepare exact write proposals, and return them. Do **not** write to `long-term/*` and do **not** flip any short-term file to `consolidated: true`.
+- **Apply form (after human approval)**: perform the approved long-term writes, regenerate indexes, and flip the approved short-term files to `consolidated: true`.
 
 Write rules:
 
 1. **Merge over duplicate**: if a candidate's key already exists in long-term, present a diff. Prefer replace when the new entry is a refinement; prefer append when both variants remain relevant.
 2. **Never touch `corrections.md` without a Correction candidate**. Corrections are user-owned. Adds only; no rewrites.
 3. **Topic files split** at 8 KB soft / 16 KB hard. When splitting, keep the shared key prefix and append `-part-2` etc.
-4. After writes, regenerate `long-term/INDEX.md` from the buckets. Every long-term row must appear in INDEX.
-5. Bump `last_dream_cycle` in INDEX frontmatter.
-6. In each source short-term file, set `consolidated: true` and `consolidated_at: <now>`. Do not delete short-term files here — archiving is a separate step in `hierarchy-and-storage.md`.
+4. After approved writes, regenerate `long-term/INDEX.md` from the buckets. Every long-term row must appear in INDEX.
+5. After approved writes, bump `last_dream_cycle` in INDEX frontmatter.
+6. After approved writes, set `consolidated: true` and `consolidated_at: <now>` in each approved source short-term file. Do not delete short-term files here — archiving is a separate step in `hierarchy-and-storage.md`.
 
 **Single source of truth**: `long-term/INDEX.md` and its buckets are canonical. Do not fan out writes to any external environment-managed memory store — that couples memory to a specific vendor and breaks portability.
 
@@ -99,7 +151,7 @@ Ranked candidates (low score first):
 Action requested: approve to move to archive/<bucket>/<key>.md
 ```
 
-5. Wait for human approval. In AFK / autonomy-safety mode, move the lowest-scored candidates to `archive/` but **do not delete**; the human confirms deletion on return. See `SKILL.md` §Stop conditions.
+5. Wait for human approval. In AFK / autonomy-safety mode, move the lowest-scored candidates to `archive/` but **do not delete**; the human confirms deletion on return. See `SKILL.md` §Stop conditions. **This AFK carveout applies only to the existing hard-limit archive exception in Phase 4. It does not authorize ordinary report-only consolidators to archive without approval.**
 6. On approval, follow `eviction-scoring.md` §Archive-then-delete protocol.
 
 Never evict from `corrections.md` without an explicit user request naming the correction key.
@@ -110,12 +162,14 @@ Never evict from `corrections.md` without an explicit user request naming the co
 
 When the trigger is a pending commit:
 
-1. Coverage first: if no active short-term entry covers the commit's workstream, suggest a Capture (`hierarchy-and-storage.md` §Capture mode) before running the cycle — there is nothing to consolidate from a conversation that was never recorded. Suggestion, not a block. See `rules/memory-checkpoint.md` §Procedure, step 2.
-2. Run Phases 1–3 first. This may take a minute; tell the user.
-3. Show the eviction proposal from Phase 4 but do **not** block the commit on eviction. Eviction can defer to the next dream cycle.
-4. If any long-term files were changed, add them to the commit **only if the user asked to include memory changes**. Do not silently stage `.agents/memory/**`.
+1. Coverage first: if no active short-term entry covers the commit's workstream, run a Capture (`hierarchy-and-storage.md` §Capture mode) before running the cycle — there is nothing to consolidate from a conversation that was never recorded. See `rules/memory-checkpoint.md` §Procedure, step 3.
+2. **Default to subagent consolidation**: delegate to a subagent using `../skills/memory/references/dream-cycle.md` §Subagent consolidation. The subagent runs the report-only form of Phases 1–4 and returns a report.
+3. If subagent delegation is unavailable, run the same analytical pass in the main agent. This may take a minute; tell the user.
+4. For commit-time checkpoints, the mandatory part is the **report-only consolidation pass**. Approval-gated apply work may happen immediately after approval or in a follow-up apply pass.
+5. Show the eviction proposal from Phase 4 but do **not** block the commit on eviction. Eviction can defer to the next dream cycle.
+6. If any long-term files were changed during an approved apply pass, add them to the commit **only if the user asked to include memory changes**. Do not silently stage `.agents/memory/**`.
 
-This keeps the "human dreams after a day of work" behaviour: commit closes the day, consolidation curates memory for the next one.
+This keeps the "human dreams after a day of work" behaviour: commit closes the day, consolidation curates memory for the next one without forcing all writes into the main agent's hot path.
 
 ---
 
@@ -131,8 +185,9 @@ This keeps the "human dreams after a day of work" behaviour: commit closes the d
 ## Deliverable
 
 - [ ] Trigger named (explicit request / commit signal / soft-limit advisory).
+- [ ] Subagent path noted if used; subagent report surfaced to user before long-term writes.
 - [ ] Candidate table printed before writing (Phase 2).
-- [ ] Long-term writes listed with keys, buckets, and score.
-- [ ] `long-term/INDEX.md` regenerated; `last_dream_cycle` bumped.
-- [ ] Short-term entries flipped to `consolidated: true`.
-- [ ] Eviction proposal presented (Phase 4); no deletions without approval.
+- [ ] Report-only pass lists proposed long-term writes with keys, buckets, and score.
+- [ ] Apply pass regenerates `long-term/INDEX.md` and bumps `last_dream_cycle`.
+- [ ] Apply pass flips approved short-term entries to `consolidated: true`.
+- [ ] Eviction proposal presented (Phase 4); no deletions without approval except the pre-existing AFK hard-limit archive carveout.

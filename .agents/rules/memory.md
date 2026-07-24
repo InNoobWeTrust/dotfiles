@@ -12,7 +12,7 @@ Write to `memory/short-term/` when:
 - A major milestone completes and future continuation is likely.
 - Context length is near budget or the user signals session end / device switch.
 - Before any destructive command.
-- A commit is about to be made and the pre-commit checkpoint (`memory-checkpoint.md`) finds no active short-term entry covering the commit's workstream — suggest Capture so the conversation behind the commit is recorded. Suggestion, not a block.
+- A commit is about to be made and the pre-commit checkpoint (`memory-checkpoint.md`) finds no active short-term entry covering the commit's workstream — run Capture so the conversation behind the commit is recorded before consolidation starts.
 
 ## Recall triggers
 
@@ -29,6 +29,8 @@ Run the consolidation flow in `../skills/memory/references/dream-cycle.md` when:
 - The user says "consolidate memory", "dream cycle", "run consolidation", "review my notes".
 - A commit is about to be made and any short-term entry has `consolidated: false`.
 - The user asks to save a handoff and more than one short-term entry is unconsolidated.
+
+**Default execution path:** run the report-only consolidation pass via subagent first, then apply approved writes. Fall back to in-agent consolidation only when delegation is unavailable.
 
 Do **not** consolidate on every message, on session start, or on a single `kilo_memory_save` call.
 

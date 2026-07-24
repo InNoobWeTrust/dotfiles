@@ -42,15 +42,25 @@ Pick one mode per invocation. Modes are separate procedures; do not interleave.
 | **Capture** | Write a new short-term entry (session checkpoint, working note, scratchpad, decision-in-progress) | `references/hierarchy-and-storage.md` §Capture |
 | **Recall** | Find and load prior short-term or long-term entries | `references/hierarchy-and-storage.md` §Recall + `references/compaction-and-step-recall.md` when the query needs a similar prior trace |
 | **Consolidate (Dream Cycle)** | Promote hot short-term entries to long-term, re-score long-term, propose evictions | `references/dream-cycle.md` + `references/compaction-and-step-recall.md` when context needs compaction |
+| **Consolidate via Subagent** | Same as Consolidate, but delegated to a subagent so the main agent only captures the current work and lets a fresh context do the heavy consolidation pass | `references/dream-cycle.md` §Subagent consolidation + `references/compaction-and-step-recall.md` when needed |
 | **Evict** | Standalone pruning of long-term when size limits are exceeded | `references/eviction-scoring.md` |
 | **Structure** | Apply the same hierarchy pattern to docs (`references/pattern-docs.md`) or code (`references/pattern-code.md`) | `references/progressive-disclosure-pattern.md` |
 
 ### Mode router
 
 - One entry to write or read now → **Capture** or **Recall**.
-- End-of-work signal (commit, "save memory", session close) → **Consolidate**.
+- End-of-work signal (commit, "save memory", session close) → **Consolidate**; default to **Consolidate via Subagent** and fall back to in-agent Consolidate only when delegation is unavailable.
 - Long-term INDEX exceeds size budget → **Evict**.
 - User asks to organize a docs tree or a source module using the same pattern → **Structure**.
+
+### Capture + Subagent consolidation (default path)
+
+To avoid turning every commit into a heavy main-agent consolidation:
+
+1. Main agent performs **Capture**: write a short, self-contained short-term entry covering the current work (goal, decisions, files, next steps). This is the only memory work the main agent must do.
+2. The main agent or the pre-commit checkpoint **must** invoke a subagent to run **Consolidate** on the newly captured note and any unconsolidated short-term entries.
+3. The subagent does not need prior context — it reads the capture note, scans short-term/long-term, extracts candidates, scores, and proposes evictions.
+4. Main agent surfaces the subagent's report and asks for approval before writing anything to long-term or archiving.
 
 ---
 
@@ -122,6 +132,7 @@ Apply it to docs: `references/pattern-docs.md`. Apply it to code: `references/pa
 - **Eviction proposal has no scored ranking**: do not evict. Return to `references/eviction-scoring.md` and score first.
 - **Consolidation would rewrite `corrections.md` without an explicit correction request**: stop. Corrections are user-owned; only add, never silently rewrite.
 - **Long-term hard limit hit and human is unavailable (AFK)**: do not delete. Move the lowest-scored candidates to `archive/` with a note; a human approves the final removal on return.
+- **Subagent consolidation requested but subagent unavailable**: the main agent must run Consolidate directly. Do not treat delegation failure as permission to skip consolidation.
 - **Structure Mode would move or rename source files that are imported elsewhere**: stop and produce an impact list first; do not execute the move until the human confirms.
 
 ---
@@ -130,12 +141,13 @@ Apply it to docs: `references/pattern-docs.md`. Apply it to code: `references/pa
 
 For every invocation:
 
-- [ ] Mode named up front (Capture / Recall / Consolidate / Evict / Structure)
+- [ ] Mode named up front (Capture / Recall / Consolidate / Consolidate via Subagent / Evict / Structure)
 - [ ] `MEMORY_DIR` resolved and printed
 - [ ] Files written listed with paths
 - [ ] If compaction was used: compact state persisted to short-term memory or included in a handoff artifact that was itself saved to short-term memory
 - [ ] If similar-trace recall was used: searched buckets + top matches (or `NONE FOUND`) reported
 - [ ] For Consolidate/Evict: scored ranking + explicit human-approval prompt before any archive/delete
+- [ ] For Consolidate via Subagent: subagent prompt scope and output contract documented
 - [ ] `long-term/INDEX.md` updated last (single source of truth for what exists)
 
 ---
@@ -150,6 +162,8 @@ For every invocation:
 | Rewrite `corrections.md` during Consolidate because an entry "seems outdated" | Corrections encode the user's authority. Silent edits erase that. | Only append. Only edit on an explicit correction request from the user. |
 | Apply Structure Mode aggressively across a whole repo in one pass | Wide file moves collide with in-flight branches. | Scope Structure Mode to one directory or module per invocation. |
 | Load every reference file at once "to be safe" | Defeats the progressive-disclosure design this skill teaches. | Load `hierarchy-and-storage.md` first. Load others only when the selected mode requires them. |
+| Run the full dream cycle inside the main agent on every commit | Wastes context and slows the main agent; prior conversation can leak into consolidation. | Capture first, then delegate Consolidate to a subagent. |
+| Ask the subagent to read the entire conversation transcript | The subagent only needs the capture note and the memory directories; transcripts are noise. | Pass the capture note path and `MEMORY_DIR` to the subagent. |
 
 ---
 
