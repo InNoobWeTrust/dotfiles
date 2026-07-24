@@ -286,8 +286,10 @@
       "prompt": "You are a security auditor. Review code for security vulnerabilities: input validation, authentication/authorization flaws, data exposure, injection risks, dependency vulnerabilities, misconfigurations, and secret leakage. Report findings with severity (critical/high/medium/low) and specific remediation steps. Do not modify files."
     },
     // [Featherless Plan Concurrency] Total account budget is 4 concurrency units.
-    // Concurrency cost depends on model size: Flagship/70B+ models (GLM, DeepSeek, Llama 70B, Kimi, MiniMax, MiMo, Step)
-    // cost 4 units/req (max 1 active request). 20B–30B models (Qwen 3.6 27B) cost 2 units/req (max 2 active requests).
+    // Concurrency cost depends on model size: Flagship/70B+ models (GLM, DeepSeek, DeepSeek Flash, Llama 70B,
+    // Kimi, MiniMax, MiMo, Step, Laguna) cost 4 units/req (max 1 active request). 20B–35B models
+    // (Qwen 3.6 27B, Qwen 3.6 35B-A3B, Mistral, Gemma) cost 2 units/req (max 2 active requests).
+    // Small 10-15B models (Phi-4) cost 1 unit/req (max 4 active requests).
     // NOTE: Featherless subagents are slow — avoid using as daily-driver. Use only for multi-perspective tasks (reviewing/brainstorming).
     "featherless-glm": {
       "mode": "subagent",
@@ -299,14 +301,24 @@
       "description": "DeepSeek V4 Pro viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
       "model": "featherless/deepseek-ai/DeepSeek-V4-Pro",
     },
+    "featherless-deepseek-flash": {
+      "mode": "subagent",
+      "description": "DeepSeek V4 Flash viewpoint (economical V4 lane). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
+      "model": "featherless/deepseek-ai/DeepSeek-V4-Flash",
+    },
     "featherless-kimi": {
       "mode": "subagent",
-      "description": "Kimi K2.7 Code viewpoint (vision). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
+      "description": "Kimi K2.7 Code viewpoint (multimodal: text, image, video). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
       "model": "featherless/moonshotai/Kimi-K2.7-Code",
+    },
+    "featherless-laguna": {
+      "mode": "subagent",
+      "description": "Laguna S 2.1 viewpoint (Poolside agentic coder, 1M context). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
+      "model": "featherless/poolside/Laguna-S-2.1",
     },
     "featherless-minimax": {
       "mode": "subagent",
-      "description": "MiniMax M3 viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
+      "description": "MiniMax M3 viewpoint (multimodal: text, image, video). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
       "model": "featherless/MiniMaxAI/MiniMax-M3",
     },
     "featherless-mimo": {
@@ -321,8 +333,13 @@
     },
     "featherless-qwen": {
       "mode": "subagent",
-      "description": "Qwen 3.6 viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
+      "description": "Qwen 3.6 viewpoint (text, image). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
       "model": "featherless/Qwen/Qwen3.6-27B",
+    },
+    "featherless-qwen-moe": {
+      "mode": "subagent",
+      "description": "Qwen 3.6 35B MoE viewpoint (multimodal: text, image). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
+      "model": "featherless/Qwen/Qwen3.6-35B-A3B",
     },
     "featherless-llama": {
       "mode": "subagent",
@@ -336,7 +353,7 @@
     },
     "featherless-gemma": {
       "mode": "subagent",
-      "description": "Gemma 3 27B viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
+      "description": "Gemma 3 27B viewpoint (text, image). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
       "model": "featherless/unsloth/gemma-3-27b-it",
     },
     "featherless-phi": {
@@ -377,7 +394,7 @@
       "env": [
         "FEATHERLESS_API_KEY"
       ],
-      "models": { // Plan concurrency limit: 4 units total (flagship/70B+ cost 4 units/req, 20-30B cost 2 units/req)
+      "models": { // Plan concurrency limit: 4 units total (flagship/70B+ cost 4 units/req, 20-35B cost 2 units/req, <20B cost 1 unit/req)
         "zai-org/GLM-5.2": {
           "modalities": {
             "input": [
@@ -406,10 +423,26 @@
             "output": 384000,
           },
         },
+        "deepseek-ai/DeepSeek-V4-Flash": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 384000,
+          },
+        },
         "MiniMaxAI/MiniMax-M3": {
           "modalities": {
             "input": [
               "text",
+              "image",
+              "video",
             ],
             "output": [
               "text",
@@ -434,6 +467,20 @@
           "limit": {
             "context": 262144,
             "output": 262144,
+          },
+        },
+        "poolside/Laguna-S-2.1": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1048576,
+            "output": 32768,
           },
         },
         "XiaomiMiMo/MiMo-V2.5": {
@@ -481,6 +528,21 @@
           "limit": {
             "context": 262144,
             "output": 131072,
+          },
+        },
+        "Qwen/Qwen3.6-35B-A3B": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 262144,
+            "output": 65536,
           },
         },
         "unsloth/Llama-3.3-70B-Instruct": {
