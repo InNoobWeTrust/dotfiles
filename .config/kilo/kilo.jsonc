@@ -285,38 +285,64 @@
       },
       "prompt": "You are a security auditor. Review code for security vulnerabilities: input validation, authentication/authorization flaws, data exposure, injection risks, dependency vulnerabilities, misconfigurations, and secret leakage. Report findings with severity (critical/high/medium/low) and specific remediation steps. Do not modify files."
     },
-    // [Featherless cheapest plan] 32k context, 4 concurrent connections shared across ALL
-    // featherless-backed agents below (build, orchestrator, ask, featherless-*). When
-    // running a swarm, limit to ≤3 featherless subagents so the orchestrator has a slot.
+    // [Featherless Plan Concurrency] Total account budget is 4 concurrency units.
+    // Concurrency cost depends on model size: Flagship/70B+ models (GLM, DeepSeek, Llama 70B, Kimi, MiniMax, MiMo, Step)
+    // cost 4 units/req (max 1 active request). 20B–30B models (Qwen 3.6 27B) cost 2 units/req (max 2 active requests).
+    // NOTE: Featherless subagents are slow — avoid using as daily-driver. Use only for multi-perspective tasks (reviewing/brainstorming).
     "featherless-glm": {
       "mode": "subagent",
-      "description": "32k context — swarm perspective agent, GLM-5.2 viewpoint. [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "description": "GLM-5.2 viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
       "model": "featherless/zai-org/GLM-5.2",
     },
     "featherless-deepseek": {
       "mode": "subagent",
-      "description": "32k context — swarm perspective agent, DeepSeek V4 Pro viewpoint. [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "description": "DeepSeek V4 Pro viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
       "model": "featherless/deepseek-ai/DeepSeek-V4-Pro",
     },
     "featherless-kimi": {
       "mode": "subagent",
-      "description": "32k context — swarm perspective agent, Kimi K2.7 Code viewpoint (vision). [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "description": "Kimi K2.7 Code viewpoint (vision). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
       "model": "featherless/moonshotai/Kimi-K2.7-Code",
     },
     "featherless-minimax": {
       "mode": "subagent",
-      "description": "32k context — swarm perspective agent, MiniMax M3 viewpoint. [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "description": "MiniMax M3 viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
       "model": "featherless/MiniMaxAI/MiniMax-M3",
     },
     "featherless-mimo": {
       "mode": "subagent",
-      "description": "32k context — swarm perspective agent, MiMo V2.5 viewpoint (multimodal: text, image, audio, video). [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "description": "MiMo V2.5 viewpoint (multimodal: text, image, audio, video). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
       "model": "featherless/XiaomiMiMo/MiMo-V2.5",
     },
     "featherless-stepfun": {
       "mode": "subagent",
-      "description": "32k context — swarm perspective agent, Step-3.7 Flash viewpoint (text, image). [Featherless] 4 concurrent connections shared across all featherless-backed agents",
+      "description": "Step-3.7 Flash viewpoint (text, image). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
       "model": "featherless/stepfun-ai/Step-3.7-Flash",
+    },
+    "featherless-qwen": {
+      "mode": "subagent",
+      "description": "Qwen 3.6 viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
+      "model": "featherless/Qwen/Qwen3.6-27B",
+    },
+    "featherless-llama": {
+      "mode": "subagent",
+      "description": "Llama 3.3 70B Instruct viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
+      "model": "featherless/unsloth/Llama-3.3-70B-Instruct",
+    },
+    "featherless-mistral": {
+      "mode": "subagent",
+      "description": "Mistral Small 3.2 viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
+      "model": "featherless/mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+    },
+    "featherless-gemma": {
+      "mode": "subagent",
+      "description": "Gemma 3 27B viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
+      "model": "featherless/unsloth/gemma-3-27b-it",
+    },
+    "featherless-phi": {
+      "mode": "subagent",
+      "description": "Phi-4 viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 1 concurrency unit/req — max 4 active requests on 4-unit plan]",
+      "model": "featherless/microsoft/phi-4",
     },
   },
   "mcp": {
@@ -351,7 +377,7 @@
       "env": [
         "FEATHERLESS_API_KEY"
       ],
-      "models": { // plans limits context to 32k and 256k and concurrent connections to 4 and 8
+      "models": { // Plan concurrency limit: 4 units total (flagship/70B+ cost 4 units/req, 20-30B cost 2 units/req)
         "zai-org/GLM-5.2": {
           "modalities": {
             "input": [
@@ -440,6 +466,78 @@
           "limit": {
             "context": 256000,
             "output": 256000,
+          },
+        },
+        "Qwen/Qwen3.6-27B": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 262144,
+            "output": 131072,
+          },
+        },
+        "unsloth/Llama-3.3-70B-Instruct": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 128000,
+            "output": 128000,
+          },
+        },
+        "mistralai/Mistral-Small-3.2-24B-Instruct-2506": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 128000,
+            "output": 16384,
+          },
+        },
+        "unsloth/gemma-3-27b-it": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 32768,
+            "output": 32768,
+          },
+        },
+        "microsoft/phi-4": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 32768,
+            "output": 32768,
           },
         },
       },
