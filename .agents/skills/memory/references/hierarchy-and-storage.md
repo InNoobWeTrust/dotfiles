@@ -209,7 +209,7 @@ Current version: **1** (initial format).
 
 Use when the user asks to save a checkpoint, note, or working state, or when a natural breakpoint is reached and the user opted into auto-save.
 
-1. Resolve `MEMORY_DIR`.
+1. Resolve `MEMORY_DIR`. **If `MEMORY_DIR` or `short-term/` does not exist, create the full directory structure** (`short-term/`, `short-term/archive/`, `long-term/`, `long-term/topics/`, `archive/`) now. A missing directory is the bootstrap case — proceed with Capture, do not abort.
 2. Decide bucket:
    - Session state / active work → `short-term/<created-stamp>--<branch>--<topic>.md`.
    - One-shot durable fact / correction / command → still write to `short-term/` first (a dedicated `capture-notes` short-term file is fine, same naming rule). It will be scored and promoted on the next Consolidate. Never write to `long-term/` directly.
@@ -235,15 +235,16 @@ Never treat Capture as a Consolidate trigger. Consolidate has its own rules in `
 
 Use when the user asks to restore, resume, load context, or lists prior notes.
 
-1. Resolve `MEMORY_DIR`.
+1. Resolve `MEMORY_DIR`. If `MEMORY_DIR` does not exist, report **"No memory directory found — this workspace has no prior memory. Use Capture mode to start recording."** and return. Do not silently return an empty result — the agent (or caller) must know that memory can be created, not that it was searched and found empty.
 2. Choose search scope:
    - Explicit path → load that file.
    - Current branch → glob `short-term/*--<branch-slug>--*.md` (matches both stamped and legacy unstamped names), exclude `status: done` (missing `status` is never treated as `done`; see §Frontmatter resilience).
    - "What was I working on" / generic resume → list non-archived short-term entries sorted by `updated` desc (unparseable/missing `updated` sorts as oldest, per §Frontmatter resilience), plus `long-term/INDEX.md` topic summary. The filename's `created-stamp` is available for an audit-trail view (creation order) but `updated` remains the sort key for "recent work."
    - Topic query → grep `long-term/INDEX.md` first, then follow to the bucket or topic file.
    - Similar-trace query ("have we seen a step like this before?") → load `references/compaction-and-step-recall.md` and search for prior incidents by step shape, blocker type, and recovery pattern — not just by topic name.
-3. If multiple active short-term entries match, present summaries and ask which to load. Do not silently pick one.
-4. Parse the selected file. Print Goal, Current Status, Key Decisions, Next Steps, Blockers. Long-term reads print the matching rows plus their bucket entries.
+3. If `short-term/` and `long-term/` both exist but contain no matching entries, report **"Memory directory exists but no entries match. Use Capture mode to record new knowledge."** This is distinct from "directory not found" — the infrastructure exists but has no relevant content yet.
+4. If multiple active short-term entries match, present summaries and ask which to load. Do not silently pick one.
+5. Parse the selected file. Print Goal, Current Status, Key Decisions, Next Steps, Blockers. Long-term reads print the matching rows plus their bucket entries.
 
 This skill is the source of truth. Do not delegate recall to external environment-managed memory stores or expect them to hold repo memory. If the current environment happens to expose its own memory, treat it as unrelated context — its entries are not authoritative here.
 

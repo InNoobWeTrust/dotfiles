@@ -154,6 +154,8 @@ enforce the same at the automation layer.
 
 For static pages, JSON APIs, and anything that doesn't require JS rendering:
 `httpx` + `ThreadPoolExecutor`. 100+ pages per second, no Chrome overhead.
+Write the script to a temp file and run with
+`uv run --with httpx python /tmp/http_script.py` (`rules/execution-safety.md`).
 See [`cdp-snippets.md`](cdp-snippets.md) for the
 `http_get` / `bulk_get` implementation.
 

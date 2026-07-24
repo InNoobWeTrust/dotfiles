@@ -61,6 +61,8 @@ Resolve `MEMORY_DIR` before any read or write:
 1. `git rev-parse --show-toplevel` succeeds → `MEMORY_DIR=<git-root>/.agents/memory/`
 2. Otherwise → `MEMORY_DIR=~/.agents/memory/`
 
+`MEMORY_DIR` is created lazily on the first Capture mode call or pre-commit memory checkpoint. A missing directory on Recall means no prior memory exists yet.
+
 Layout:
 
 ```
@@ -116,7 +118,7 @@ Apply it to docs: `references/pattern-docs.md`. Apply it to code: `references/pa
 
 ## Stop conditions
 
-- **No `MEMORY_DIR` resolvable and repo not git**: fall back to `~/.agents/memory/`; if that path is unwritable, stop and report.
+- **No `MEMORY_DIR` resolvable and repo not git**: fall back to `~/.agents/memory/`. If the directory does not exist, **create it** (this is the bootstrap case, not an error). If the path exists but is unwritable, stop and report.
 - **Eviction proposal has no scored ranking**: do not evict. Return to `references/eviction-scoring.md` and score first.
 - **Consolidation would rewrite `corrections.md` without an explicit correction request**: stop. Corrections are user-owned; only add, never silently rewrite.
 - **Long-term hard limit hit and human is unavailable (AFK)**: do not delete. Move the lowest-scored candidates to `archive/` with a note; a human approves the final removal on return.

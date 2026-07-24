@@ -9,12 +9,13 @@ This rule is called from `git-safety.md` §Pre-commit. Committing without runnin
 ## Procedure
 
 1. Resolve `MEMORY_DIR`: if `git rev-parse --show-toplevel` succeeds, use `<git-root>/.agents/memory/`; otherwise `~/.agents/memory/`.
-2. **Coverage check** — is the work in this commit represented in short-term memory at all? Look for an active (non-`done`) entry in `MEMORY_DIR/short-term/` matching the current branch and the commit's workstream. If no such entry exists, or the matching entry predates the current conversation's substance (goal, decisions, blockers not reflected), **suggest running Capture** (`../skills/memory/SKILL.md` Capture mode) before committing — the conversation that formed this commit is otherwise recorded nowhere. Present this as a suggestion, not a block: the user may decline and commit anyway.
-3. **Consolidation check** — check for entries in `MEMORY_DIR/short-term/` with `consolidated: false` in their frontmatter. Treat a **missing** `consolidated` field as `false` too — do not skip entries just because they predate the field (see `../skills/memory/references/hierarchy-and-storage.md` §Frontmatter resilience).
-4. If any unconsolidated entries exist, load `../rules/memory.md` and run the Consolidate (dream cycle) from `../skills/memory/references/dream-cycle.md` §Commit-signal integration.
-5. This captures session learnings into `MEMORY_DIR/long-term/` as a pre-commit checkpoint.
-6. **Do not block the commit on eviction** — eviction can defer to the next dream cycle.
-7. **Do not silently stage `.agents/memory/**`** into the commit. Only include memory files if the user explicitly approves.
+2. **Bootstrap check** — if `MEMORY_DIR` or its `short-term/` subdirectory does not exist, this is a fresh workspace. Create the directory structure per `../skills/memory/references/hierarchy-and-storage.md` §Resolve `MEMORY_DIR`, then proceed to step 3. **Do not skip the coverage check just because the directory is new** — the absence of any memory entry is itself a signal that Capture is needed.
+3. **Coverage check** — is the work in this commit represented in short-term memory at all? Look for an active (non-`done`) entry in `MEMORY_DIR/short-term/` matching the current branch and the commit's workstream. If no such entry exists (including when the directory was just bootstrapped), or the matching entry predates the current conversation's substance (goal, decisions, blockers not reflected), **suggest running Capture** (`../skills/memory/SKILL.md` Capture mode) before committing — the conversation that formed this commit is otherwise recorded nowhere. Present this as a suggestion, not a block: the user may decline and commit anyway.
+4. **Consolidation check** — check for entries in `MEMORY_DIR/short-term/` with `consolidated: false` in their frontmatter. Treat a **missing** `consolidated` field as `false` too — do not skip entries just because they predate the field (see `../skills/memory/references/hierarchy-and-storage.md` §Frontmatter resilience).
+5. If any unconsolidated entries exist, load `../rules/memory.md` and run the Consolidate (dream cycle) from `../skills/memory/references/dream-cycle.md` §Commit-signal integration.
+6. This captures session learnings into `MEMORY_DIR/long-term/` as a pre-commit checkpoint.
+7. **Do not block the commit on eviction** — eviction can defer to the next dream cycle.
+8. **Do not silently stage `.agents/memory/**`** into the commit. Only include memory files if the user explicitly approves.
 
 If coverage exists and no unconsolidated entries remain, proceed without loading the memory skill.
 

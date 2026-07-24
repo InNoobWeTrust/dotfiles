@@ -34,11 +34,16 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 - **Deliverable requirement**: You must post the execution of your test command and its passing results in your turn summary.
 
 #### F. Quality Tooling Pass
+
+> **Cross-reference `rules/execution-safety.md`:** Write custom scripts to a temp dir and run with `uv`/`bun`. Use `npx`/`bunx`/`uvx` only for published CLI tools. Never `pip install` or `npm install -g`.
+
 - **Prefer Repo-Native Commands:** Discover and use the repo's existing verification entrypoints first: project scripts, `Makefile`/`justfile`, `tox`/`nox`, `pre-commit`, CI jobs, or documented contributor workflows. These encode the team's actual policy and should win over ad hoc commands.
 - **Run the Relevant Set:** For the files and language you touched, run the formatter, linter, type checker, complexity/maintainability checks, duplication checks when warranted, and dependency audit and/or security scan that materially validate the change. Do not run tools just to create noise.
 - **Use Mainstream Ecosystem Runners When Setup Is Missing:** If the repo lacks a local install or wrapper, prefer widely used, officially documented ephemeral runners for that ecosystem:
-  - JavaScript / TypeScript: `npm exec` / `npx`, `pnpm dlx` / `pnx`, `yarn dlx`, `bunx`
-  - Python tools: `uvx` (`uv tool run`) for isolated tool execution; `uv run` or `uv run --with <package>` when the tool must run against the project environment
+  - **Published CLI tools:** `npx <tool>`, `bunx <tool>`, `pnpm dlx <tool>`, `yarn dlx <tool>`, `uvx <tool>` — these run packages from registries, they do **not** resolve dependencies for custom scripts
+  - **Custom scripts with dependencies (Python):** Write to temp dir → `uv run --with <package> python /tmp/script.py` (or `uv run --with <package> python -c '...'` inline only when file write is unavailable)
+  - **Custom scripts with dependencies (JS/TS):** Write to temp dir → `bun run /tmp/script.ts` (or `bun -e '...'` inline only when file write is unavailable)
+  - **PROHIBITED:** `pip install`, `pip install --user`, `npm install -g`, `yarn global add` — never install dependencies system-wide
 - **Treat `pkgx` and `x-cmd` as Optional Fallbacks:** They can be useful local runners, but they are not the default industry recommendation unless the repo, environment, or user already prefers them.
 - **Use Exact Doc-Backed Invocation Patterns:** If the package name and binary name differ, use the runner's explicit package-selection flag instead of assuming name inference. Examples: `npm exec --package=typescript -- tsc --noEmit`, `bunx -p typescript tsc --noEmit`, `pnpm dlx --package typescript tsc --noEmit`, `yarn dlx -p typescript tsc --noEmit`.
 - **Trigger Complexity Checks on Branch-Heavy Logic:** If you touched parsers, validators, reducers, state machines, policy engines, switch/match-heavy code, nested loops/conditionals, or long data-mapping functions, run an explicit complexity/smell check or document why no suitable check applies.

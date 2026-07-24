@@ -13,6 +13,7 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 | `skill-compliance.md` | After loading any skill (binding commitment) | medium |
 | `self-grounded-verification.md` | Verification, self-review, "done" claims | medium |
 | `autonomy-safety.md` | Auto-approved tools, AFK, waived per-step prompts | medium |
+| `execution-safety.md` | Running commands, scripts, reading env/config | medium |
 | `git-safety.md` | Git staging, committing, pushing | small |
 
 ## On-Demand (load when trigger fires)

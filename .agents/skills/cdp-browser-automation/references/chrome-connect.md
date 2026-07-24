@@ -29,9 +29,11 @@ open -a "Google Chrome" --args \
 ```
 
 The only runtime requirements are `uv` plus Python with `websockets` and
-`httpx`. Prefer ephemeral execution such as
-`uv run --with websockets --with httpx python` so dependencies resolve on
-demand without touching the system environment. See
+`httpx`. Write your CDP script to a temp directory (`/tmp/` or repo scratch
+dir), then run with
+`uv run --with websockets --with httpx python /tmp/cdp_script.py` so
+dependencies resolve on demand without touching the system environment
+(`rules/execution-safety.md`). Do not `pip install` dependencies. See
 [`cdp-snippets.md`](cdp-snippets.md) for the full `CDP`
 class.
 

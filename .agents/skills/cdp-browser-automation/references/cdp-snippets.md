@@ -2,12 +2,18 @@
 
 Minimal, copy-paste-ready implementations. Add to your own CDP class as needed.
 
+> **Execution rule (`rules/execution-safety.md`):** Write CDP scripts to a
+> temp directory (`/tmp/` or repo scratch dir), then run with
+> `uv run --with websockets --with httpx python /tmp/cdp_script.py`.
+> Do not pipe large inline scripts. Do not `pip install` dependencies.
+
 ---
 
 ## Minimal CDP Client
 
-Requires only `websockets`. Run it with `uv run --with websockets python` so
-the dependency is resolved on demand; everything else is stdlib.
+Requires only `websockets`. Write the script to a temp file and run it with
+`uv run --with websockets python /tmp/cdp_script.py` so the dependency is
+resolved on demand; everything else is stdlib.
 
 ```python
 import asyncio, base64, json, platform
@@ -224,7 +230,8 @@ async def wait_for_load(cdp: CDP, timeout: float = 15.0, idle_ms: float = 500) -
 
     WARNING: document.readyState == 'complete' is NOT sufficient for SPAs — the
     spinner dismisses before async data fetches finish. This helper polls the
-    active request count via the Performance API instead.
+    active request count via the Performance API instead. Note: Injected XHR/fetch
+    patches do not survive hard frame navigations and require re-injection.
 
     For known stable selectors, prefer wait_for_selector(); it is more reliable.
     """
@@ -373,7 +380,8 @@ Never hardcode credentials. Accept session file paths from the caller.
 
 ---
 
-Requires `httpx`. Run it with `uv run --with httpx python` so the dependency is
+Requires `httpx`. Write the script to a temp file and run it with
+`uv run --with httpx python /tmp/http_script.py` so the dependency is
 resolved on demand. Use `urllib.request` only if `httpx` is unavailable — it
 does not follow POST redirects by default.
 

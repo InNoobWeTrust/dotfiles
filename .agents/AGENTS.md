@@ -31,6 +31,7 @@ These rules apply automatically. Read `rules/INDEX` for the full map; load a rul
 | Skill Compliance | After loading any skill | `rules/skill-compliance.md` |
 | Self-Grounded Verification | Verification, self-review, "done" claims | `rules/self-grounded-verification.md` |
 | Autonomy Safety | Auto-approved tools, AFK, waived prompts | `rules/autonomy-safety.md` |
+| Execution Safety | Running commands, scripts, reading env/config | `rules/execution-safety.md` |
 | Memory | Session save/restore, dream cycle, eviction | `rules/memory.md` |
 | **Git Safety** | **All git operations (staging, committing, pushing)** | **`rules/git-safety.md`** |
 
@@ -41,8 +42,9 @@ These rules apply automatically. Read `rules/INDEX` for the full map; load a rul
 This means reading the repo-local memory files directly (`.agents/memory/short-term/` and `.agents/memory/long-term/` per `skills/memory/references/hierarchy-and-storage.md`), not any harness-specific memory tool. Memory is portable file state owned by the `memory` skill — any harness-provided memory feature is unrelated context, not authoritative here.
 
 1. Resolve `MEMORY_DIR` (`<git-root>/.agents/memory/` if in a repo, else `~/.agents/memory/`).
-2. Grep `long-term/INDEX.md` and glob `short-term/*--<branch-slug>--*.md` for the current branch and 2-4 keywords from the request.
-3. If a matching short-term entry or long-term topic is found, read it and use it to skip redundant file reads, inform skill selection, and surface prior constraints before planning.
+2. **If `MEMORY_DIR` does not exist or is empty** — this is a fresh workspace with no prior memory. Note this in your working context (the directory will be created on the first Capture or pre-commit memory checkpoint) and continue. **Do not treat "no memory yet" as "memory is not needed"** — the session may still produce knowledge worth capturing later.
+3. If `MEMORY_DIR` exists, grep `long-term/INDEX.md` and glob `short-term/*--<branch-slug>--*.md` for the current branch and 2-4 keywords from the request.
+4. If a matching short-term entry or long-term topic is found, read it and use it to skip redundant file reads, inform skill selection, and surface prior constraints before planning.
 
 This step is nearly free and can replace an entire codebase exploration phase. Do not skip it because a task "seems simple."
 
@@ -64,12 +66,12 @@ Loading or reading a skill's `SKILL.md` is a binding commitment to execute its c
 
 ## Git Safety (summary — full rule in `rules/git-safety.md`)
 
+- **Never auto-stage or auto-commit:** Staging (`git add`), committing (`git commit`), and pushing (`git push`) each require separate, explicit human review and approval.
 - Inspect status and diffs before staging or committing.
 - Stage explicit files only; never `git add .` or `git add -A`.
 - Do not stage secret-bearing files (`.env`, `*.pem`, `*.key`, `auth.json`, `credentials.json`).
 - No destructive git operations without explicit user approval.
 - **Pre-commit memory checkpoint**: before committing, run `rules/memory-checkpoint.md` — suggest capturing session work not yet in short-term memory, then check for unconsolidated entries and run the dream cycle.
-- Commit and push require separate user approvals.
 
 ## Process Management
 
