@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <text x="640" y="58" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="36" fill="#e2e8f0" font-weight="700">Test Pyramid</text>
+  <text x="640" y="96" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#94a3b8">Most checks stay low-cost and easy to diagnose</text>
+
+  <!-- pyramid body -->
+  <polygon points="640,150 980,600 300,600" fill="#1e293b" stroke="#cbd5e1" stroke-width="3"/>
+  <polygon points="640,150 790,360 490,360" fill="#ef4444"/>
+  <polygon points="490,360 790,360 885,480 395,480" fill="#f59e0b"/>
+  <polygon points="395,480 885,480 980,600 300,600" fill="#22c55e"/>
+  <line x1="490" y1="360" x2="790" y2="360" stroke="#0f172a" stroke-width="3"/>
+  <line x1="395" y1="480" x2="885" y2="480" stroke="#0f172a" stroke-width="3"/>
+
+  <!-- labels inside bands -->
+  <text x="640" y="270" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" fill="#ffffff" font-weight="700">Few UI / E2E</text>
+  <text x="640" y="430" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="26" fill="#ffffff" font-weight="700">Some Service / Integration</text>
+  <text x="640" y="555" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="26" fill="#052e16" font-weight="700">Many Unit / Component</text>
+
+  <!-- side captions, fully on canvas -->
+  <text x="1020" y="250" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" fill="#fca5a5">
+    <tspan x="1020" dy="0">High level</tspan>
+    <tspan x="1020" dy="24">broader confidence</tspan>
+    <tspan x="1020" dy="24">higher cost</tspan>
+  </text>
+  <text x="180" y="540" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" fill="#86efac">
+    <tspan x="180" dy="0">Low level</tspan>
+    <tspan x="180" dy="24">faster / cheaper</tspan>
+    <tspan x="180" dy="24">clearer failures</tspan>
+  </text>
+
+  <text x="640" y="670" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#cbd5e1">UI/E2E for broad confidence — not the bulk of the suite</text>
+</svg>

@@ -13,4 +13,4 @@
 | [Stack baselines](./stack-baselines.md) | Java, .NET, JS, Python, PHP, Rails, C/C++ | Picking tools per stack |
 | [Comparison matrix](./comparison-matrix.md) | Category-level tradeoffs | Fast tool comparison |
 
-**Related sections:** [project-lifecycle](../project-lifecycle/INDEX.md) · [slides](../slides/INDEX.md)
+**Related sections:** [project-lifecycle](../project-lifecycle/INDEX.md) · [agentic-qa](../agentic-qa/INDEX.md) · [slides](../slides/INDEX.md)

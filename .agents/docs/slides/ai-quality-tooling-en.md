@@ -315,3 +315,6 @@ Don't drop:
 **Suggested next step:**
 - standardize quality-layers thinking across the team first
 - then lock in specific tools per repo
+
+**Series continuation:**
+- Part 3 — Agentic QA/QC mental model: `ai-agentic-qa-en.md`

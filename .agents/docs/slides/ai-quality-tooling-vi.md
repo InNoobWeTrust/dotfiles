@@ -314,3 +314,6 @@ Không nên bỏ:
 **Gợi ý bước tiếp theo:**
 - chuẩn hóa quality layer trong team trước
 - rồi mới chốt tool cụ thể cho từng repo
+
+**Tiếp series:**
+- Phần 3 — Mental model Agentic QA/QC: `ai-agentic-qa-vi.md`

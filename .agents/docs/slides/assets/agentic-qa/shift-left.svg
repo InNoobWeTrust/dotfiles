@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <text x="640" y="58" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="36" fill="#e2e8f0" font-weight="700">Shift-Left Testing</text>
+  <text x="640" y="96" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#94a3b8">Catch issues earlier — when they are cheaper to understand and fix</text>
+
+  <!-- timeline -->
+  <line x1="120" y1="400" x2="1160" y2="400" stroke="#cbd5e1" stroke-width="6"/>
+  <polygon points="1160,400 1120,380 1120,420" fill="#cbd5e1"/>
+
+  <!-- stages -->
+  <circle cx="220" cy="400" r="58" fill="#22c55e"/>
+  <text x="220" y="395" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#052e16" font-weight="700">design</text>
+  <text x="220" y="420" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#052e16">review</text>
+
+  <circle cx="430" cy="400" r="58" fill="#38bdf8"/>
+  <text x="430" y="408" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#082f49" font-weight="700">code</text>
+
+  <circle cx="640" cy="400" r="58" fill="#f59e0b"/>
+  <text x="640" y="408" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#111827" font-weight="700">PR</text>
+
+  <circle cx="850" cy="400" r="58" fill="#fb7185"/>
+  <text x="850" y="408" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#4c0519" font-weight="700">staging</text>
+
+  <circle cx="1060" cy="400" r="58" fill="#ef4444"/>
+  <text x="1060" y="408" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#ffffff" font-weight="700">prod</text>
+
+  <!-- cost labels -->
+  <text x="220" y="280" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#86efac" font-weight="700">cheapest fix</text>
+  <text x="1060" y="280" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#fca5a5" font-weight="700">most expensive</text>
+
+  <!-- move-left arrow hint -->
+  <path d="M 980 220 C 820 150, 460 150, 280 220" fill="none" stroke="#e2e8f0" stroke-width="4" stroke-dasharray="10 8"/>
+  <text x="640" y="175" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#e2e8f0">Move checks left: design · unit · contract · static</text>
+
+  <text x="640" y="560" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#cbd5e1">Agents help only if they join the early loop</text>
+  <text x="640" y="600" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#94a3b8">Testing only after long generation is shift-right with better marketing</text>
+</svg>

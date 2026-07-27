@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <text x="640" y="58" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="36" fill="#e2e8f0" font-weight="700">Evidence Grades</text>
+  <text x="640" y="96" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#94a3b8">Incomplete evidence must stay incomplete</text>
+
+  <!-- PASS -->
+  <rect x="70" y="150" width="270" height="360" rx="24" fill="#22c55e"/>
+  <text x="205" y="230" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="36" fill="#052e16" font-weight="700">PASS</text>
+  <text x="205" y="320" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#052e16">
+    <tspan x="205" dy="0">Expectation</tspan>
+    <tspan x="205" dy="34">met under the</tspan>
+    <tspan x="205" dy="34">declared env</tspan>
+  </text>
+
+  <!-- FAIL -->
+  <rect x="360" y="150" width="270" height="360" rx="24" fill="#ef4444"/>
+  <text x="495" y="230" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="36" fill="#ffffff" font-weight="700">FAIL</text>
+  <text x="495" y="320" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#ffffff">
+    <tspan x="495" dy="0">Expectation</tspan>
+    <tspan x="495" dy="34">contradicted</tspan>
+    <tspan x="495" dy="34">by evidence</tspan>
+  </text>
+
+  <!-- UNVERIFIED -->
+  <rect x="650" y="150" width="270" height="360" rx="24" fill="#94a3b8"/>
+  <text x="785" y="220" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" fill="#0f172a" font-weight="700">
+    <tspan x="785" dy="0">UN-</tspan>
+    <tspan x="785" dy="34">VERIFIED</tspan>
+  </text>
+  <text x="785" y="330" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#0f172a">
+    <tspan x="785" dy="0">Could not</tspan>
+    <tspan x="785" dy="34">complete the</tspan>
+    <tspan x="785" dy="34">judgment</tspan>
+  </text>
+
+  <!-- BLOCKED -->
+  <rect x="940" y="150" width="270" height="360" rx="24" fill="#f59e0b"/>
+  <text x="1075" y="230" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="32" fill="#111827" font-weight="700">BLOCKED</text>
+  <text x="1075" y="320" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#111827">
+    <tspan x="1075" dy="0">Prerequisite</tspan>
+    <tspan x="1075" dy="34">failed first</tspan>
+  </text>
+
+  <text x="640" y="600" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" fill="#fecaca" font-weight="700">Never convert UNVERIFIED or BLOCKED into PASS</text>
+  <text x="640" y="650" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#cbd5e1">Not in chat. Not in Excel. Not in PDF.</text>
+</svg>

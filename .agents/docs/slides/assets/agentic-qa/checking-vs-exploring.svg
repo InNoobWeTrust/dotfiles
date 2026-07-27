@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <text x="640" y="58" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="34" fill="#e2e8f0" font-weight="700">Checking vs Exploratory Testing</text>
+  <text x="640" y="96" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#94a3b8">Automation checks known expectations. Exploration hunts unknown risks.</text>
+
+  <!-- left card -->
+  <rect x="80" y="140" width="520" height="430" rx="28" fill="#1d4ed8"/>
+  <text x="340" y="200" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="34" fill="#eff6ff" font-weight="700">Checking</text>
+  <text x="120" y="270" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" fill="#dbeafe">
+    <tspan x="120" dy="0">• verifies known expectations</tspan>
+    <tspan x="120" dy="48">• repeatable and scriptable</tspan>
+    <tspan x="120" dy="48">• good for gates / regression</tspan>
+    <tspan x="120" dy="48">• asks: did expected behavior hold?</tspan>
+  </text>
+
+  <!-- right card -->
+  <rect x="680" y="140" width="520" height="430" rx="28" fill="#7c3aed"/>
+  <text x="940" y="200" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="34" fill="#f5f3ff" font-weight="700">Exploring</text>
+  <text x="720" y="270" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" fill="#ede9fe">
+    <tspan x="720" dy="0">• investigates unknown risks</tspan>
+    <tspan x="720" dy="48">• chartered, time-boxed work</tspan>
+    <tspan x="720" dy="48">• good for edges / surprises</tspan>
+    <tspan x="720" dy="48">• asks: what else could go wrong?</tspan>
+  </text>
+
+  <text x="640" y="640" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#cbd5e1">Agents can help both — but must not blur the difference</text>
+</svg>

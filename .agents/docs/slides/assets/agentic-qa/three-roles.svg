@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <text x="640" y="58" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="36" fill="#e2e8f0" font-weight="700">Three Roles in Agentic QA</text>
+  <text x="640" y="96" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#94a3b8">Keep judgment, orchestration, and browser mechanics separate</text>
+
+  <!-- card 1 -->
+  <rect x="60" y="150" width="360" height="360" rx="28" fill="#2563eb"/>
+  <text x="240" y="220" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" fill="#eff6ff" font-weight="700">
+    <tspan x="240" dy="0">Evaluative</tspan>
+    <tspan x="240" dy="36">review</tspan>
+  </text>
+  <text x="240" y="330" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#dbeafe">
+    <tspan x="240" dy="0">What is risky?</tspan>
+    <tspan x="240" dy="40">Do we need</tspan>
+    <tspan x="240" dy="32">live evidence?</tspan>
+  </text>
+
+  <!-- card 2 -->
+  <rect x="460" y="150" width="360" height="360" rx="28" fill="#16a34a"/>
+  <text x="640" y="220" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" fill="#f0fdf4" font-weight="700">
+    <tspan x="640" dy="0">QA</tspan>
+    <tspan x="640" dy="36">orchestration</tspan>
+  </text>
+  <text x="640" y="330" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#dcfce7">
+    <tspan x="640" dy="0">Which scenarios?</tspan>
+    <tspan x="640" dy="40">Which contracts</tspan>
+    <tspan x="640" dy="32">and environments?</tspan>
+  </text>
+
+  <!-- card 3 -->
+  <rect x="860" y="150" width="360" height="360" rx="28" fill="#f59e0b"/>
+  <text x="1040" y="220" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" fill="#fff7ed" font-weight="700">
+    <tspan x="1040" dy="0">Browser</tspan>
+    <tspan x="1040" dy="36">mechanics</tspan>
+  </text>
+  <text x="1040" y="330" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#ffedd5">
+    <tspan x="1040" dy="0">Click, wait, trace,</tspan>
+    <tspan x="1040" dy="40">screenshot</tspan>
+    <tspan x="1040" dy="40">No judgment alone</tspan>
+  </text>
+
+  <text x="640" y="600" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" fill="#fca5a5" font-weight="700">Law: judgment ≠ orchestration ≠ mechanics</text>
+  <text x="640" y="650" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#cbd5e1">Good clicking is not the same as good judgment</text>
+</svg>

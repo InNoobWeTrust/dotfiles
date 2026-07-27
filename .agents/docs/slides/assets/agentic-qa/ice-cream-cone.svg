@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <text x="640" y="58" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="36" fill="#e2e8f0" font-weight="700">Ice-Cream Cone Anti-Pattern</text>
+  <text x="640" y="96" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#94a3b8">Too much confidence depends on brittle UI automation</text>
+
+  <!-- scoop -->
+  <ellipse cx="640" cy="290" rx="250" ry="150" fill="#f472b6"/>
+  <text x="640" y="275" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="30" fill="#ffffff" font-weight="700">Huge UI / E2E top</text>
+  <text x="640" y="315" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#fdf2f8">slow · brittle · hard to debug</text>
+
+  <!-- cone -->
+  <polygon points="470,420 810,420 640,620" fill="#f8fafc" stroke="#cbd5e1" stroke-width="3"/>
+  <text x="640" y="500" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" fill="#0f172a" font-weight="700">Tiny unit / API</text>
+  <text x="640" y="532" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" fill="#0f172a" font-weight="700">base</text>
+
+  <!-- callouts -->
+  <text x="180" y="260" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#fecaca">
+    <tspan x="180" dy="0">Often from</tspan>
+    <tspan x="180" dy="28">record-playback</tspan>
+    <tspan x="180" dy="28">or siloed QA</tspan>
+  </text>
+  <text x="1100" y="260" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#fecaca">
+    <tspan x="1100" dy="0">Agents can</tspan>
+    <tspan x="1100" dy="28">mass-produce</tspan>
+    <tspan x="1100" dy="28">this overnight</tspan>
+  </text>
+
+  <text x="640" y="680" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#cbd5e1">Inverted portfolio: most tests at the expensive, flaky top</text>
+</svg>

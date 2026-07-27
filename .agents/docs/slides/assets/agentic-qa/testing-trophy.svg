@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <text x="640" y="58" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="36" fill="#e2e8f0" font-weight="700">Testing Trophy</text>
+  <text x="640" y="96" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#94a3b8">For UI-heavy apps: static + user-like integration often pay off best</text>
+
+  <!-- cup top (E2E) -->
+  <rect x="560" y="140" width="160" height="70" rx="16" fill="#a78bfa"/>
+  <text x="640" y="185" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="26" fill="#faf5ff" font-weight="700">E2E</text>
+
+  <!-- unit -->
+  <rect x="500" y="230" width="280" height="90" rx="16" fill="#38bdf8"/>
+  <text x="640" y="285" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" fill="#082f49" font-weight="700">Unit</text>
+
+  <!-- integration (widest body) -->
+  <rect x="400" y="340" width="480" height="110" rx="16" fill="#22c55e"/>
+  <text x="640" y="390" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" fill="#052e16" font-weight="700">Integration</text>
+  <text x="640" y="425" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#14532d">user-like flows</text>
+
+  <!-- static base -->
+  <rect x="300" y="470" width="680" height="90" rx="16" fill="#f59e0b"/>
+  <text x="640" y="525" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" fill="#111827" font-weight="700">Static analysis</text>
+
+  <text x="640" y="620" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#cbd5e1">Not a free pass to skip unit tests</text>
+  <text x="640" y="655" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#cbd5e1">Optimize confidence per time spent</text>
+</svg>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <text x="640" y="58" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="36" fill="#e2e8f0" font-weight="700">Feedforward + Feedback</text>
+  <text x="640" y="96" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#94a3b8">Shape generation up front. Evaluate outputs continuously.</text>
+
+  <!-- left box -->
+  <rect x="90" y="180" width="360" height="300" rx="28" fill="#2563eb"/>
+  <text x="270" y="240" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="32" fill="#eff6ff" font-weight="700">Feedforward</text>
+  <text x="270" y="310" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#dbeafe">
+    <tspan x="270" dy="0">rules · specs</tspan>
+    <tspan x="270" dy="36">charters · rubrics</tspan>
+    <tspan x="270" dy="36">constraints</tspan>
+  </text>
+
+  <!-- center agent -->
+  <circle cx="640" cy="330" r="95" fill="#1e293b" stroke="#cbd5e1" stroke-width="4"/>
+  <text x="640" y="320" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" fill="#e2e8f0" font-weight="700">agent</text>
+  <text x="640" y="358" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" fill="#94a3b8">draft / run</text>
+
+  <!-- right box -->
+  <rect x="830" y="180" width="360" height="300" rx="28" fill="#16a34a"/>
+  <text x="1010" y="240" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="32" fill="#f0fdf4" font-weight="700">Feedback</text>
+  <text x="1010" y="310" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#dcfce7">
+    <tspan x="1010" dy="0">lint · type · tests</tspan>
+    <tspan x="1010" dy="36">traces · review</tspan>
+    <tspan x="1010" dy="36">evidence grades</tspan>
+  </text>
+
+  <!-- arrows -->
+  <defs>
+    <marker id="arr" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#cbd5e1"/>
+    </marker>
+  </defs>
+  <line x1="460" y1="330" x2="535" y2="330" stroke="#cbd5e1" stroke-width="5" marker-end="url(#arr)"/>
+  <line x1="745" y1="330" x2="820" y2="330" stroke="#cbd5e1" stroke-width="5" marker-end="url(#arr)"/>
+
+  <text x="640" y="580" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" fill="#cbd5e1">Only feedforward → pretty prompts, weak proof</text>
+  <text x="640" y="620" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="24" fill="#cbd5e1">Only feedback → noisy retries without clear intent</text>
+  <text x="640" y="670" text-anchor="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" fill="#86efac" font-weight="700">Good agentic QA needs both</text>
+</svg>
