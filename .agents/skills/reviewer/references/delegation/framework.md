@@ -7,7 +7,7 @@ This guide helps you decide when to perform reviews directly vs when to delegate
 1. **Single-perspective technical reviews** can be performed by the main agent using sub-reviewer references
 2. **Multi-perspective reviews** should delegate to isolated reviewers with distinct personas to avoid bias contamination
 3. **Audit reviews** must use the strongest available independent reviewer (check reviewer descriptions for capability indicators)
-4. **Specialized aspect reviews** should delegate to domain-specific reviewers when available (debug, architect, security-specialist, etc.)
+4. **Specialized aspect reviews** should delegate to domain-specific reviewers when available (debug, architect, security-specialist, browser-automation QA, etc.)
 
 ---
 
@@ -31,9 +31,14 @@ Review request received
 │           (Main context would bias all perspectives)
 │
 ├─ Does it need SPECIALIZED DOMAIN KNOWLEDGE?
-│  (Performance analysis, accessibility, security-specific threat modeling)
+│  (Performance analysis, accessibility, security-specific threat modeling, browser QA)
 │  └─ YES → Prefer delegation to a specialized reviewer if available
-│           (Check the environment for: debug, architect, security, performance reviewers)
+│           (Check the environment for: debug, architect, security, performance, browser reviewers)
+│
+├─ Does it need LIVE BROWSER EVIDENCE OR TEST MATERIALIZATION?
+│  (Runnable app, E2E proof, accessibility smoke, regression suite generation)
+│  └─ YES → Delegate to a browser-capable reviewer or QA suite architect
+│           (Use QA personas; reviewer should not own the execution workflow itself)
 │
 ├─ Is it PURE TECHNICAL REVIEW?
 │  (Code quality, design patterns, edge cases, security vectors)
@@ -68,6 +73,8 @@ Review request received
 | **Security threat modeling** | Deep security expertise, current CVE/attack pattern knowledge | Security-specialized agent if available, else general with high intelligence |
 | **Performance analysis** | Profiling, bottleneck detection, optimization patterns | Performance/debug agent if available |
 | **Accessibility audit** | WCAG compliance, assistive technology considerations | Accessibility-specialized agent or general with explicit persona |
+| **Browser automation** | Live user-journey proof, screenshots, traces, viewport/browser matrix | Browser-capable agent or automation workflow |
+| **QA suite materialization** | Turning journeys into durable regression tests | Code-oriented or QA-architect reviewer with explicit regression scope |
 | **Architecture review** | System design patterns, trade-off analysis at scale | Architect agent if available, else general with high intelligence |
 | **Ops/SRE perspective** | Operational concerns, observability, failure modes | SRE/ops agent if available, else general with ops persona |
 
@@ -83,6 +90,7 @@ Review request received
 | **Editorial review** | Load `references/sub-reviewers/editorial.md`, check prose clarity |
 | **Quick review** | Single sub-reviewer, artifact <200 lines |
 | **Routine PR review** | Code + tests, standard patterns, no novel architecture |
+| **Heuristic frontend QA** | Load `references/sub-reviewers/black-box-qa.md` when runnable browser evidence is not required yet |
 
 **Critical rule**: If you (main agent) created or edited the artifacts, you MUST delegate to an independent reviewer. Author self-review is ineffective due to confirmation bias.
 
@@ -102,12 +110,13 @@ Review request received
 - **Architecture**: descriptions mentioning "system design", "architecture", "design patterns", "trade-off analysis"
 - **Security**: descriptions mentioning "security", "threat modeling", "vulnerability", "penetration testing"
 - **Performance**: descriptions mentioning "performance", "optimization", "profiling", "bottleneck"
+- **Browser / QA**: descriptions mentioning "browser", "automation", "playwright", "e2e", "accessibility", "lighthouse"
 
 ### General Agents (for persona-based reviews)
 - **General-purpose**: descriptions mentioning "general", "multi-purpose", "flexible", "broad capability"
 - Check if they support: persona prompts, role-playing, stakeholder simulation
 
-**If no suitable independent reviewers exist**: Fallback to main agent review with explicit bias warnings in output.
+**If no suitable independent reviewers exist**: Fallback to main agent review with explicit bias warnings in output **only when the main agent is not the author**. If the main agent authored the artifact, do not fall back to self-review; stop and recommend human or later delegated review instead. If the original request was an audit or browser-evidence request, downgrade the result to heuristic / provisional review and mark any unmet live-evidence claims as `UNVERIFIED`.
 
 ---
 
@@ -184,6 +193,45 @@ Return findings with threat severity and exploitability ratings.
 ```
 
 ### Pattern 3: Specialized Domain Review
+
+**Browser automation / QA audit:**
+
+```
+Review [artifact or running application] for black-box QA using live browser evidence when possible.
+
+You are a QA automation auditor. Your responsibilities:
+- Execute critical user journeys from the outside in
+- Capture screenshots, traces, viewport/browser metadata, and repro steps
+- Separate heuristic concerns from evidence-backed failures
+- Identify regression candidates worth materializing into durable tests
+
+Evaluate:
+- happy path completion
+- form validation and error recovery
+- responsive/mobile behavior
+- accessibility basics and keyboard navigation
+- browser-specific inconsistencies
+
+Return findings with severity, repro steps, evidence, and regression candidates.
+```
+
+**QA suite materialization:**
+
+```
+Review [artifact, audit report, or journey definition] for regression-suite materialization.
+
+You are a regression suite architect. Your responsibilities:
+- Convert stable journeys into durable automated checks
+- Avoid over-automating exploratory or flaky heuristics
+- Recommend the smallest suite that protects the critical path
+- Split tests by purpose: E2E, accessibility smoke, responsive, visual, perf
+
+Return:
+- scenarios to materialize now
+- scenarios to keep heuristic-only
+- recommended suite shape
+- CI tier placement (PR smoke / nightly / release)
+```
 
 **Performance analysis:**
 ```

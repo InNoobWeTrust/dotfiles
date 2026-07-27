@@ -15,6 +15,11 @@ Sub-reviewers live in `references/sub-reviewers/`. To load one, use Read tool on
 | Artifact Type | Sub-Reviewers (load these files) | Order |
 |---|---|---|
 | Code / diffs / pull requests | `references/sub-reviewers/code-quality.md`, `references/sub-reviewers/design-rigor.md`, `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/security.md`, `references/sub-reviewers/edge-case-hunter.md` | Structure first, then design process, then logic, then security, then paths |
+| Web frontend feature / UI review | `references/sub-reviewers/black-box-qa.md`, `references/sub-reviewers/code-quality.md`, `references/sub-reviewers/design-rigor.md`, `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/security.md` | User-visible behavior first, then structure, then design process, then challenge, then trust/safety |
+| Responsive / mobile UI | `references/sub-reviewers/black-box-qa.md`, `references/sub-reviewers/editorial.md` | Operability across viewports first, then wording clarity |
+| Accessibility review | `references/sub-reviewers/black-box-qa.md`, `references/sub-reviewers/editorial.md` | Task completion + keyboard/a11y first, then wording/supporting copy |
+| Browser QA / automation plans | `references/sub-reviewers/black-box-qa.md`, `references/sub-reviewers/adversarial.md` | Execution surface first, then challenge false confidence |
+| Regression suite / test materialization plans | `references/sub-reviewers/black-box-qa.md`, `references/sub-reviewers/adversarial.md` | Durable regression coverage first, then challenge over-automation or false confidence |
 | Specs / PRDs / TRDs | `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/editorial.md` | Challenge reasoning, then structure |
 | Architecture / design docs | `references/sub-reviewers/code-quality.md`, `references/sub-reviewers/design-rigor.md`, `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/security.md` | Structure decisions, then design process, then challenge, then threat model |
 | Documentation / prose | `references/sub-reviewers/editorial.md` | Structure, then prose if needed |
@@ -48,6 +53,7 @@ Quick orientation before loading full references:
 
 | Sub-Reviewer | Axis | Best For |
 |---|---|---|
+| `references/sub-reviewers/black-box-qa.md` | User-visible behavior, journeys, responsive/a11y/browser QA | "Can a real user complete this task?" |
 | `references/sub-reviewers/adversarial.md` | Reasoning, decisions, assumptions | "Why did we do this?" challenges |
 | `references/sub-reviewers/code-quality.md` | Architecture, code smells, AI laziness | Structure rot, SOLID violations, demo-code-in-production |
 | `references/sub-reviewers/design-rigor.md` | Design discipline, investigation process | "Was this designed or grown? Was the root cause found?" |
@@ -63,8 +69,9 @@ Quick orientation before loading full references:
 Use this mode when:
 - Review requires **audit-level independence**
 - Need **multiple stakeholder perspectives** (PO, PM, SRE, end-user, security, ops)
-- Need **specialized domain expertise** (performance, accessibility, threat modeling)
+- Need **specialized domain expertise** (performance, accessibility, threat modeling, browser QA)
 - The environment provides suitable delegated reviewers/workers (check descriptions for capability/intelligence)
+- A runnable application exists and you need **browser audit evidence** or **test materialization** rather than heuristic judgment alone
 
 ### Step 1: Check Available Independent Reviewers
 
@@ -79,6 +86,7 @@ Query your environment for available delegated reviewers/workers. Look for:
 - **Architecture**: "architecture", "design patterns", "system design", "trade-off"
 - **Security**: "security", "threat modeling", "vulnerability", "penetration"
 - **Performance**: "performance", "optimization", "profiling", "bottleneck"
+- **Browser automation / QA**: "browser", "automation", "playwright", "e2e", "accessibility", "lighthouse"
 
 **For persona-based reviews** (need role-playing):
 - **General**: "general-purpose", "multi-task", "flexible", supports persona prompts
@@ -92,6 +100,8 @@ Choose delegation pattern based on review need:
 | Independent audit | Single high-capability independent reviewer | `references/delegation/framework.md` → Audit Review |
 | Multiple stakeholders | Separate reviewer per persona | `references/delegation/personas.md` → Select personas |
 | Specialized domain | Domain-specific reviewer | `references/delegation/framework.md` → Specialized Domain |
+| Browser audit of runnable app | Browser-capable reviewer or executable QA workflow | Load `references/sub-reviewers/black-box-qa.md` + QA personas |
+| Test materialization / regression protection | QA suite architect / code-oriented reviewer | Load `references/sub-reviewers/black-box-qa.md` + QA personas |
 | Mixed (technical + stakeholders) | Technical direct + persona delegation | Hybrid approach |
 
 ### Step 3: Delegate with Persona/Context Isolation

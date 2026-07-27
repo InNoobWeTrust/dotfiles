@@ -1,6 +1,6 @@
 ---
 name: cdp-browser-automation
-description: "Use this skill for any task requiring real browser interaction — scraping, clicking, form-filling, login flows, file downloads, DOM manipulation, and end-to-end page testing via Chrome DevTools Protocol. Also covers web performance diagnostics (Core Web Vitals, Lighthouse, memory leaks). Activate when the user asks to open a browser, automate a website, scrape data, fill forms, test a page, or check web performance."
+description: "Use this skill for any task requiring real browser interaction — scraping, clicking, form-filling, login flows, file downloads, DOM manipulation, quick live repros, mechanical page verification, and end-to-end page testing via Chrome DevTools Protocol. Also covers web performance diagnostics (Core Web Vitals, Lighthouse, memory leaks). Activate when the user asks to open a browser, automate a website, scrape data, fill forms, reproduce browser behavior, verify a page live, test a page, or check web performance."
 ---
 
 # CDP Browser Automation
@@ -12,6 +12,7 @@ Direct browser control via Chrome DevTools Protocol. Dependencies: running Chrom
 | Intent | Load |
 |---|---|
 | UI automation, scrape, login, DOM, files | This skill + `references/cdp-snippets.md` |
+| Quick live repro / mechanical page verification | This skill + `references/operational-loop.md` |
 | Performance / Lighthouse / CWV / leaks / traces | `references/performance-diagnostics.md` |
 | Capture reusable site knowledge | `references/knowledge-system.md` |
 | Connect Chrome / flags / port | `references/chrome-connect.md` |

@@ -4,9 +4,10 @@ If the current environment doesn't provide suitable delegated agents/workers for
 
 ### When main agent is NOT the author:
 1. **Warn the user**: "This review ideally requires independent delegated reviewers, but none are available. Proceeding with single-context review; findings may have confirmation bias."
-2. **Use sub-reviewer references directly**: Load applicable technical reviewers
-3. **Explicitly note bias risks**: In output, mark sections where independent judgment would be beneficial
-4. **Recommend external review**: For audit-critical work, suggest human review or external tool
+2. **Downgrade the mode explicitly**: If the original request was an audit, state that this is now a heuristic or provisional review, not a true independent audit
+3. **Use sub-reviewer references directly**: Load applicable technical reviewers
+4. **Explicitly note bias risks**: In output, mark sections where independent judgment would be beneficial
+5. **Recommend external review**: For audit-critical work, suggest human review or external tool
 
 ### When main agent IS the author:
 1. **Do NOT attempt self-review**: Author self-review is ineffective regardless of methodology
@@ -76,6 +77,7 @@ See `references/examples/delegation-scenarios.md` for worked examples:
 - `references/delegation/personas.md` — Pre-built stakeholder and domain expert persona prompts
 
 **Technical sub-reviewers** (lazy-loaded by artifact type):
+- `references/sub-reviewers/black-box-qa.md` — User-visible behavior, journeys, responsive/a11y/browser QA
 - `references/sub-reviewers/code-quality.md` — Architecture, SOLID, code smells, AI laziness
 - `references/sub-reviewers/design-rigor.md` — Design discipline, investigation process
 - `references/sub-reviewers/adversarial.md` — Challenge decisions, assumptions, reasoning
@@ -127,3 +129,16 @@ See `references/examples/delegation-scenarios.md` for worked examples:
 2. Check delegation framework → Specialized security reviewer available? → Delegate if yes
 3. If not author and no specialized agent → Load: sub-reviewers/security, sub-reviewers/edge-case-hunter
 4. For high-stakes → MUST delegate to the strongest available independent reviewer (audit mode)
+
+### For Web Frontend / Browser QA Review (when NOT the author)
+1. Load: `sub-reviewers/black-box-qa` first
+2. If heuristic review is enough → score journeys, states, responsive behavior, and accessibility basics directly
+3. If the app is runnable and live proof is needed → delegate executable QA rather than expanding the reviewer lens into a run-book
+4. If the journey is stable and regression protection is needed → delegate a dedicated QA automation/materialization workflow rather than repeating manual review
+5. If browser-capable delegation is unavailable → downgrade explicitly to heuristic review and mark any browser-audit-only claims as `UNVERIFIED` rather than implied facts
+
+### For Web Frontend / Browser QA Review (when you ARE the author)
+1. **MUST delegate** → Prefer an independent reviewer with browser or E2E capability
+2. Ask for either browser audit evidence or test-materialization recommendations, depending on the goal
+3. If the needed capability is unavailable, stop instead of self-certifying browser behavior or regression design
+4. Present findings plus any regression candidates worth promoting into a durable suite

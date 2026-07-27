@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: "Use this skill when the user asks you to review, check, audit, challenge, or QA any artifact — code, specs, architecture, config, docs, or infrastructure. Routes to specialized sub-lenses (code-quality, design-rigor, adversarial, security, edge-case, editorial) based on what's being reviewed. Also activate for security reviews of auth flows, input validation, or secrets handling, and for edge-case analysis of parsers, validators, or branching logic."
+description: "Use this skill when the user asks you to review, check, audit, challenge, or QA any artifact — code, specs, architecture, config, docs, infrastructure, or user-facing application behavior. Routes to specialized sub-lenses (black-box-qa, code-quality, design-rigor, adversarial, security, edge-case, editorial) based on what's being reviewed. Keep this skill evaluative: use it to judge frontend behavior heuristically and decide whether executable QA should be delegated, alongside security reviews of auth flows, input validation, and secrets handling."
 ---
 
 # Reviewer
@@ -46,6 +46,11 @@ Worked scenarios: `references/examples/delegation-scenarios.md` (load only if ne
 | Artifact | Load (in order) |
 |---|---|
 | Code / PR | code-quality → design-rigor → adversarial → security → edge-case-hunter |
+| Web frontend feature / UI PR | black-box-qa → code-quality → design-rigor → adversarial → security |
+| Responsive / mobile UI | black-box-qa → editorial |
+| Accessibility audit | black-box-qa → editorial |
+| Browser QA / automation plans | black-box-qa → adversarial |
+| Regression suite / test materialization plans | black-box-qa → adversarial |
 | Specs / PRD / TRD | adversarial → editorial |
 | Architecture | code-quality → design-rigor → adversarial → security |
 | Docs / prose | editorial |
@@ -60,6 +65,7 @@ Paths: `references/sub-reviewers/<name>.md`.
 
 | Lens | Axis |
 |---|---|
+| black-box-qa | user-visible behavior, journeys, responsive/a11y/browser QA |
 | adversarial | assumptions, decisions |
 | code-quality | structure, smells, AI laziness |
 | design-rigor | designed vs grown; root cause |

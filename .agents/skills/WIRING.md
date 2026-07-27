@@ -36,8 +36,15 @@ When debugging or fixing a problem:
 ### Browser Automation
 
 1. `codebase-exploration` — map unfamiliar site structure before writing domain skills
-2. `cdp-browser-automation` — automation implementation
+2. `cdp-browser-automation` — automation implementation and quick live repros / mechanical page verification
 3. `reviewer` (security lens) — for auth flows, cookies, sensitive data
+
+### Web QA Audit
+
+1. `reviewer` (black-box-qa lens) — decide whether executable QA is required
+2. `web-qa-audit` — define audit scope, scenario shape, evidence contract, and materialization plan
+3. `cdp-browser-automation` — execute browser mechanics for live interaction and evidence capture
+4. `reviewer` — judge findings or review the resulting QA plan when needed
 
 ### Bounded Iteration
 
@@ -110,6 +117,9 @@ Natural transitions between skills:
 | `brainstorming` | `code-craft` | "Concepts finalized, ready to prototype/implement" |
 | `code-craft` | `reviewer` | "Implementation complete, ready for review" |
 | `requirements-driven-dev` | `code-craft` | "Specs approved, now implementing" |
+| `reviewer` (black-box-qa lens) | `web-qa-audit` | "Heuristic review says live browser evidence or structured QA is required" |
+| `web-qa-audit` | `cdp-browser-automation` | "Audit scope is set; now perform browser interaction and evidence capture" |
+| `web-qa-audit` | `reviewer` | "Executable QA produced findings or a plan that needs critical judgment" |
 | `requirements-driven-dev` | `reviewer` (editorial lens) | "Polish specs before sharing with stakeholders" |
 | `requirements-driven-dev` | `multi-perspective-deliberation` | "Draft specs completed, launching persona review to challenge assumptions" |
 | `multi-perspective-deliberation` | `code-craft` | "Deliberation complete, starting implementation of the peer-reviewed design" |
