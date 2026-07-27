@@ -130,7 +130,7 @@ Use when the feature is stable enough to convert critical journeys into durable 
 Use when only artifacts are available. Produce findings from the attack vectors above, then call out what requires live browser evidence.
 
 ### Executable QA handoff
-If the app is runnable and live evidence is required, delegate to the project’s executable QA workflow rather than expanding this lens into a run-book. If the need is a quick browser interaction or live repro, use browser automation directly. If the need is a structured audit, scenario pack, or test-materialization plan, hand off to the dedicated QA automation/audit skill.
+If the app is runnable and live evidence is required, delegate to the project’s executable QA workflow rather than expanding this lens into a run-book. If the need is a quick browser interaction or live repro, use browser automation directly. If the need is a structured audit, scenario pack, or test-materialization plan, hand off to the dedicated QA automation/audit skill. If business stakeholders need Excel, PDF, or hosted HTML summaries, that projection also belongs to the executable QA workflow (stakeholder-report path, only when audience is non-dev) — this lens stays evaluative and does not invent stakeholder packs.
 
 Not every heuristic becomes a test. Only stable, repeatable, high-value assertions should graduate into a durable suite.
 

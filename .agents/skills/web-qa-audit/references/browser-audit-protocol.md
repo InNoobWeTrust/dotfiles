@@ -11,6 +11,7 @@ Given a target app and one or more user journeys, produce:
 - pass / fail / unverified per scenario
 - reproducible failures with screenshots/traces
 - regression candidates worth promoting into durable tests
+- audience-adapted report surfaces when non-dev stakeholders must act on the result
 
 ---
 
@@ -94,8 +95,27 @@ stop:
 
 ## Dispatch Template
 
+Lock **audience** before dispatch: `eng-only` | `mixed` | `business` | `release-owner`.
+
+Shared fields for every dispatch (fill once; do not omit on the business branch):
+
+| Field | Example |
+|---|---|
+| Base URL | `https://preview.example.com` |
+| Environment | local / staging / preview |
+| Startup contract | already running / start command separately |
+| Scenario ids / flows | checkout-happy-path, checkout-invalid-card |
+| Browser(s) | chromium / firefox / webkit |
+| Viewports | mobile, desktop |
+| Auth | anonymous / seeded / cookie bootstrap |
+| Fixtures | seed info |
+
+### Eng-only dispatch
+
 ```markdown
 Perform a bounded black-box browser audit.
+
+Audience: eng-only
 
 Target:
 - Base URL: [BASE_URL]
@@ -117,6 +137,7 @@ Rules:
 - Do not bypass CAPTCHAs or anti-bot walls.
 - Stop if startup, auth, or fixture assumptions are missing.
 - Mark missing live evidence as UNVERIFIED.
+- Do **not** load stakeholder-report-pack or emit a Stakeholder Pack section.
 
 Return exactly:
 ## Browser Audit Summary
@@ -125,6 +146,49 @@ Return exactly:
 ## Evidence
 ## Regression Candidates
 ## Blockers / Unverified Claims
+TASK_COMPLETE
+```
+
+### Business / release-owner dispatch
+
+```markdown
+Perform a bounded black-box browser audit, then project a stakeholder pack.
+
+Audience: [mixed | business | release-owner]
+Stakeholder surfaces: [excel | pdf | html | combination]
+
+Target:
+- Base URL: [BASE_URL]
+- Environment: [local/staging/preview]
+- Startup contract: [already running / command separately]
+
+Scope:
+- [scenario id 1]
+- [scenario id 2]
+
+Execution:
+- Browser(s): [chromium / firefox / webkit]
+- Viewports: [mobile, desktop]
+- Auth: [anonymous / seeded / cookie bootstrap]
+- Fixtures: [seed info]
+
+Rules:
+- Use observe → act → verify on every step.
+- Do not bypass CAPTCHAs or anti-bot walls.
+- Stop if startup, auth, or fixture assumptions are missing.
+- Mark missing live evidence as UNVERIFIED.
+- After machine YAML + engineering summary exist, load stakeholder-report-pack.md.
+- Run projection gates before Excel/PDF/HTML; fail closed on gate failure.
+- Never map unverified/blocked to pass/OK.
+
+Return exactly:
+## Browser Audit Summary
+## Passed Journeys
+## Findings
+## Evidence
+## Regression Candidates
+## Blockers / Unverified Claims
+## Stakeholder Pack
 TASK_COMPLETE
 ```
 
@@ -139,6 +203,7 @@ Every finding should include:
 - step where failure occurred
 - expected vs observed behavior
 - severity
+- `evidence_grade`: `browser-audited` | `heuristic` | `unverified` | `blocked`
 - artifact references
 - regression-candidate status
 
@@ -148,6 +213,7 @@ Example:
 finding_id: bbqa-004
 scenario_id: checkout-invalid-card
 severity: high
+evidence_grade: browser-audited
 browser: chromium
 viewport: iphone-12
 expected: inline validation appears and order is not created
@@ -162,27 +228,42 @@ regression_candidate: true
 
 ## Output Format
 
+### Eng-only (default)
+
 ```markdown
 ## Browser Audit Summary
 - Target: [app/env]
+- Audience: eng-only
 - Scope: [scenario ids]
 - Browsers/Viewports: [matrix]
 - Result: [N passed / M failed / K unverified]
+- Verdict: [Go / Go with conditions / No-Go / Blocked]  # optional unless release-facing
 
 ## Passed Journeys
-- ...
-
 ## Findings
-- ...
-
 ## Evidence
-- screenshots:
-- traces:
-- a11y snapshots:
-
 ## Regression Candidates
-- ...
-
 ## Blockers / Unverified Claims
-- ...
 ```
+
+Do **not** include `## Stakeholder Pack` for eng-only.
+
+### Business / release-owner
+
+Same sections as eng-only, plus:
+
+```markdown
+## Stakeholder Pack
+- Audience: [mixed | business | release-owner]
+- Excel: [path | interim CSV | skipped: reason]
+- PDF: [path | interim MD | skipped: reason]
+- HTML: [URL/path | skipped: reason]
+- Projection gates: [pass | fail: reason]
+```
+
+### Audience rule
+
+- **eng-only**: machine YAML + engineering Markdown only; do not load `stakeholder-report-pack.md`.
+- **mixed / business / release-owner**: after machine + engineering record is complete, load `stakeholder-report-pack.md`, run projection gates, derive Excel / PDF / optional static HTML.
+- YAML remains source of truth; Excel/PDF/HTML are projections only.
+- Release / go-no-go with non-dev decision makers: at least one of Excel, PDF, or hosted static HTML (real format or explicitly labeled interim).

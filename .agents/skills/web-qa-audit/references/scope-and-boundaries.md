@@ -30,6 +30,7 @@ Keep responsibilities clean:
 - you need run cards, fixture/auth assumptions, or audit evidence contracts
 - you need a scenario pack or a materialization plan
 - you want reusable QA artifacts rather than one-off clicks
+- you need audience-adapted reports (Excel / PDF / static HTML) derived from QA evidence for business stakeholders
 
 ---
 
@@ -38,7 +39,9 @@ Keep responsibilities clean:
 1. An evaluative review flow identifies risk or the need for evidence.
 2. A QA orchestration flow defines scope, scenario, run profile, and audit contract.
 3. A browser-control flow executes the browser mechanics when live interaction is required.
-4. The QA orchestration flow synthesizes evidence and decides whether to materialize durable tests.
+4. The QA orchestration flow synthesizes machine evidence (YAML + engineering Markdown).
+5. **Only if** audience is non-dev / business / release-owner: run projection gates, then project into Excel / PDF / optional static HTML.
+6. The QA orchestration flow decides whether to materialize durable tests.
 
 ---
 
@@ -48,3 +51,8 @@ Keep responsibilities clean:
 - treating raw browser interaction as a full QA audit
 - escalating every spot check into scenario design and materialization
 - confusing performance-debugging with generic QA evidence collection
+- handing business stakeholders raw scenario YAML as the primary report
+- treating Excel/PDF as the source of truth instead of a projection of machine evidence
+- forcing Stakeholder Pack ceremony on eng-only runs
+- mapping unverified/blocked to pass in polished reports
+- linking sensitive traces/screenshots into business-facing evidence indexes

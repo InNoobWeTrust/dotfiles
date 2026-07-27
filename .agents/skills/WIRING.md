@@ -41,10 +41,20 @@ When debugging or fixing a problem:
 
 ### Web QA Audit
 
+**Default (eng-only audience):**
+
 1. `reviewer` (black-box-qa lens) — decide whether executable QA is required
-2. `web-qa-audit` — define audit scope, scenario shape, evidence contract, and materialization plan
-3. `cdp-browser-automation` — execute browser mechanics for live interaction and evidence capture
+2. `web-qa-audit` — audit scope, scenario shape, evidence contract, materialization plan
+3. `cdp-browser-automation` — browser mechanics for live interaction and evidence capture
 4. `reviewer` — judge findings or review the resulting QA plan when needed
+
+**Branch — non-dev / business / release-owner audience (after machine evidence exists):**
+
+- B1. `web-qa-audit` (stakeholder-report path) — *(intra-skill path switch)* project YAML/MD into Excel / PDF / static HTML under projection gates
+- B2. `data-storytelling` — optional polish for high-stakes executive narrative **after** projection gates pass
+- B3. `reviewer` — judge findings or review the pack when needed
+
+Do **not** run branch steps B1–B2 for eng-only spot checks or eng-only audits.
 
 ### Bounded Iteration
 
@@ -119,6 +129,8 @@ Natural transitions between skills:
 | `requirements-driven-dev` | `code-craft` | "Specs approved, now implementing" |
 | `reviewer` (black-box-qa lens) | `web-qa-audit` | "Heuristic review says live browser evidence or structured QA is required" |
 | `web-qa-audit` | `cdp-browser-automation` | "Audit scope is set; now perform browser interaction and evidence capture" |
+| `web-qa-audit` | `web-qa-audit` (stakeholder-report path) | "Machine evidence ready **and** audience is non-dev/business/release-owner — *(intra-skill path switch)*" |
+| `web-qa-audit` (stakeholder-report path) | `data-storytelling` | "Projection gates passed; high-stakes executive narrative polish requested" |
 | `web-qa-audit` | `reviewer` | "Executable QA produced findings or a plan that needs critical judgment" |
 | `requirements-driven-dev` | `reviewer` (editorial lens) | "Polish specs before sharing with stakeholders" |
 | `requirements-driven-dev` | `multi-perspective-deliberation` | "Draft specs completed, launching persona review to challenge assumptions" |

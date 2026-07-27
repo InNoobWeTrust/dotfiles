@@ -152,10 +152,15 @@ Rules:
 qa/artifacts/browser-audits/2026-07-27/bbqa-checkout-smoke/
   summary.md
   run-card.yaml
+  findings.yaml
   artifacts-manifest.yaml
   screenshots/
   traces/
   a11y/
+  reports/                    # derived stakeholder pack only; git-ignore
+    stakeholder-summary.pdf   # or labeled interim .md
+    stakeholder-results.xlsx  # or labeled interim .csv
+    html/                     # optional; auth or non-guessable URL + TTL if hosted
 ```
 
 Example filenames:
@@ -166,7 +171,7 @@ Example filenames:
 Every stored artifact should be linked from `artifacts-manifest.yaml`.
 Artifact roots should be git-ignored and access-controlled.
 
-Example manifest shape:
+Mark auth-bearing captures explicitly:
 
 ```yaml
 run_id: bbqa-checkout-smoke-2026-07-27
@@ -177,10 +182,22 @@ artifacts:
     required: true
     when: fail
     sensitive: false
+    stakeholder_safe: true   # only after content check
+  - type: trace
+    path: traces/checkout-invalid-card--iphone-12.trace.zip
+    scenario_id: checkout-invalid-card
+    required: true
+    when: fail
+    sensitive: true            # default for traces with network/cookies
+    stakeholder_safe: false  # eng-only; exclude from Excel/HTML evidence index
 retention:
   policy: keep-14-days
   owner: qa-platform
 ```
+
+Stakeholder exports under `reports/` are **derived** from `run-card.yaml`, findings, `summary.md`, and the artifacts manifest — only after projection gates in `stakeholder-report-pack.md` (sanitize, sensitive exclude, evidence_grade provenance, count consistency). Do not treat Excel/PDF/HTML as the canonical record. Do not link `sensitive: true` artifacts into stakeholder Evidence Index or HTML assets.
+
+Hosted HTML under `reports/html/` requires sanctioned hosting plus **authentication or a non-guessable URL**, plus documented TTL/retention for release packs.
 
 ---
 
