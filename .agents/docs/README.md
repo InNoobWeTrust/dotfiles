@@ -23,6 +23,7 @@ Wiki docs outside `slides/` are **English-first** (agent-searchable). Slides kee
 | [project-lifecycle](./project-lifecycle/INDEX.md) | Onboarding, daily AI work, gates, CI/CD, security, maturity | Setting up or joining a project |
 | [quality-tooling](./quality-tooling/INDEX.md) | Quality layers, baselines, Sonar positioning, comparisons | Choosing quality tools |
 | [agentic-qa](./agentic-qa/INDEX.md) | Pre-agentic QA foundation + agentic testing mental model | Learning agent-assisted QA/QC without cargo-culting skills |
+| [playbook](./playbook/INDEX.md) | Operational step-by-step guides for practical adoption | Turning concepts into repeatable team workflows |
 | [research](./research/INDEX.md) | Research-phase material — **not battle-tested** | Investigating external patterns before promoting |
 | [slides](./slides/INDEX.md) | Marp decks (EN/VI) | Presenting workshops |
 
@@ -62,6 +63,7 @@ Wiki docs outside `slides/` are **English-first** (agent-searchable). Slides kee
 1. [slides/INDEX.md](./slides/INDEX.md)
 2. [quality-tooling](./quality-tooling/INDEX.md) as speaker deep-dive for Part 2
 3. [agentic-qa](./agentic-qa/INDEX.md) as speaker deep-dive for Part 3
+4. [playbook](./playbook/INDEX.md) as the operational follow-up after the QA workshop
 
 ---
 
@@ -78,6 +80,7 @@ Wiki docs outside `slides/` are **English-first** (agent-searchable). Slides kee
 | **Evidence grades** | pass / fail / unverified — never launder | [agentic-qa](./agentic-qa/trust-and-evidence.md) |
 | **Memory** | Short-term notes + long-term consolidation | [working with AI](./project-lifecycle/working-with-ai-agents.md) |
 | **Research map** | External patterns → skill backlog (research-phase) | [research](./research/agent-improvement-techniques/agent-improvement-techniques.md) |
+| **Radar Vol 34** | Industry agent/quality blips → gaps for Part 2 (research-phase) | [research](./research/thoughtworks-radar-vol34/thoughtworks-radar-vol34.md) |
 
 ---
 

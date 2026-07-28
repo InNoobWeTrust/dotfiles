@@ -128,6 +128,7 @@ Natural transitions between skills:
 | `code-craft` | `reviewer` | "Implementation complete, ready for review" |
 | `requirements-driven-dev` | `code-craft` | "Specs approved, now implementing" |
 | `reviewer` (black-box-qa lens) | `web-qa-audit` | "Heuristic review says live browser evidence or structured QA is required" |
+| `web-qa-audit` (grooming path) | `web-qa-audit` (browser-audit path) | "Audit-request/run-card is now explicit and QA has approved the scope" |
 | `web-qa-audit` | `cdp-browser-automation` | "Audit scope is set; now perform browser interaction and evidence capture" |
 | `web-qa-audit` | `web-qa-audit` (stakeholder-report path) | "Machine evidence ready **and** audience is non-dev/business/release-owner — *(intra-skill path switch)*" |
 | `web-qa-audit` (stakeholder-report path) | `data-storytelling` | "Projection gates passed; high-stakes executive narrative polish requested" |

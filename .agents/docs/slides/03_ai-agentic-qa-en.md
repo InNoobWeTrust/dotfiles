@@ -496,59 +496,25 @@ Illustrative mapping only:
 
 ---
 
-# Short maturity path
+# Practical follow-up
 
-| Phase | Focus |
-|---|---|
-| **0** | CI + sanctioned env + pyramid literacy |
-| **1** | Feedback sensors inside coding loop |
-| **2** | Independent evaluative discipline |
-| **3** | Evidence-backed bounded audits |
-| **4** | Selective materialization |
-| **5** | Stakeholder projection (optional) |
-| **6** | Portfolio metrics: flakes, unverified, E2E growth |
+This deck stays on the **mental model**.
 
-If Phase 0 is weak, fix that before buying “AI QA.”
+The operational how-to now lives separately in:
+
+- `.agents/docs/playbook/agentic-qa-browser-playbook.md`
+
+Use that when the team is ready to run real browser audits.
 
 ---
 
-# Anti-patterns to call out explicitly
+# What the playbook covers
 
-- Agent ice-cream cone
-- Unverified laundering
-- Author self-QA only
-- Promote-everything materialization
-- Stakeholder deck as source of truth
-- Production wandering
-- Cargo-cult copying of skill repos
-
-Naming the failure modes helps teams resist the hype.
-
----
-
-# Relationship to Part 2
-
-| Part 2 | Part 3 |
-|---|---|
-| Format → SAST → governance tools | Behavior & release evidence |
-| Inner vs governance tool loops | Review / orchestrate / mechanics roles |
-| Sonar as control tower | Machine record as QA source of truth |
-
-Agentic QA extends the quality story.
-It does not replace linting, SAST, or dependency policy.
-
----
-
-# Quick source list for this deck
-
-**Foundation concepts**
-- Test Pyramid — Fowler: https://martinfowler.com/bliki/TestPyramid.html
-- Practical Test Pyramid — Vocke: https://martinfowler.com/articles/practical-test-pyramid.html
-- Testing Trophy — Dodds: https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications
-- Write tests that resemble use — Dodds: https://kentcdodds.com/blog/write-tests
-- Continuous Delivery: https://continuousdelivery.com/
-- Continuous Integration — Fowler: https://martinfowler.com/articles/continuousIntegration.html
-- Thoughtworks Radar: https://www.thoughtworks.com/radar
+- MCP setup for browser control in Kilo
+- How QA should work with the agent on browser-driving tasks
+- How to write **auditable input files** with scenarios + rubrics
+- How to turn browser evidence into the target report template
+- How to reduce QA bottlenecks from the **dev side** too
 
 ---
 
@@ -559,7 +525,7 @@ It does not replace linting, SAST, or dependency policy.
 3. **Separate judgment, orchestration, and mechanics**
 4. **Evidence grades are non-negotiable**
 5. **Materialize selectively**
-6. **Skills are drafts of the model, not the model**
+6. **Operational playbooks should be separate from theory decks**
 
 ---
 
@@ -567,11 +533,11 @@ It does not replace linting, SAST, or dependency policy.
 
 # Questions?
 
-**Docs for deeper reading:**
+**Operational next step:**
+Read `.agents/docs/playbook/agentic-qa-browser-playbook.md` and pilot it on the next 3–5 risky PRs.
+
+**Deep reading remains here:**
 - `.agents/docs/agentic-qa/INDEX.md`
 - `.agents/docs/agentic-qa/pre-agentic-foundation.md`
 - `.agents/docs/agentic-qa/agentic-practices.md`
 - `.agents/docs/agentic-qa/trust-and-evidence.md`
-
-**Suggested next step:**
-Audit your Phase 0–2 readiness before installing any “AI QA” skill pack.

@@ -27,6 +27,7 @@ Keep responsibilities clean:
 ## Use a QA orchestration flow when
 - you need a bounded QA run with explicit pass/fail/unverified outcomes
 - you need a QA-scoped spot check with evidence expectations rather than one-off clicks
+- you need help grooming a PR / bug / test request into an auditable input file before execution
 - you need run cards, fixture/auth assumptions, or audit evidence contracts
 - you need a scenario pack or a materialization plan
 - you want reusable QA artifacts rather than one-off clicks
