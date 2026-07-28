@@ -77,6 +77,10 @@ Also write:
 - `skills/WIRING.md` — symlink to global or minimal local composition
 - `.agents/FOUNDATION.md` — from `references/FOUNDATION.template.md` (source, mode, revision, date)
 
+#### A5.1 — Optional: setup skill overlay
+
+If the project has non-trivial onboarding (more than three setup steps, multiple runtimes, or environment detection), consider creating a project-local `setup` skill. See `references/setup-skills.md` for the pattern, bootstrap commands, and verification checklist.
+
 ### A6 — Makefile
 
 Thin targets: `help`, `fix`, `lint`, `quality`, `test`, `dev`, `dev-up`, `build`. Adapt to stack; never delete existing targets.
@@ -144,6 +148,7 @@ Standalone fix for "bootstrap left stubs / missing companion skills":
 - [ ] AGENTS.md + GLOSSARY.md
 - [ ] Required rules materialized
 - [ ] Required skills materialized (full trees)
+- [ ] (optional) Project-local `setup` skill materialized if stack is non-trivial (§A5.1)
 - [ ] INDEX + WIRING + FOUNDATION.md
 - [ ] Makefile + architecture + quality-gates + DESIGN.md (if UI project via `ui-ux`)
 - [ ] Drift-checks A passed
@@ -178,4 +183,6 @@ Standalone fix for "bootstrap left stubs / missing companion skills":
 
 - `references/core-pack.md`
 - `references/drift-checks.md`
+- `references/setup-skills.md` — executable onboarding skill pattern
+- `references/feedback-flywheel.md` — post-session harness improvement checklist
 - Compose with: `architecture-writer` (deep arch), `devsecops` (pipeline), `skill-author` (new skills), `codebase-exploration` (domain scan for glossary)

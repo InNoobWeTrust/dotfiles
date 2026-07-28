@@ -51,3 +51,5 @@ When this checklist is used, leave lightweight evidence in one of these durable 
 ## Delivery note
 
 If the ACI pass finds ambiguity, fix the interface contract before polishing prose. A beautiful `SKILL.md` with a vague interface is still a bad skill.
+
+Before expanding the interface into `AGENTS.md` or choosing MCP as the delivery mechanism, see `instruction-bloat-and-mcp-caution.md`.

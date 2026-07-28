@@ -20,6 +20,8 @@ Two workflows — choose one first.
 
 Load `references/aci-checklist.md` when designing a new skill, command, prompt interface, or tool-shaped workflow.
 
+Load `references/instruction-bloat-and-mcp-caution.md` before expanding `AGENTS.md`, adding always-on rules, or choosing MCP as the integration path.
+
 Stop / deliverable / anti-patterns: `references/stop-deliverable-antipatterns.md`.
 
 ## Workflow A (summary)

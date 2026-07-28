@@ -44,6 +44,7 @@ Run these checks without rewriting healthy files. Produce a **gap report**, then
 - [ ] Project INDEX does not list unused mega-skills (swarm, video, talent, etc.) unless the team uses them
 - [ ] No full duplicate of global docs/ under project `.agents/docs/` unless intentional
 - [ ] Rules that are global baselines are not re-expanded into multi-hundred-line project forks without reason
+- [ ] `AGENTS.md` length stays within the anti-bloat heuristic; if it exceeds ~150 lines or 8 KB, load `.agents/skills/skill-author/references/instruction-bloat-and-mcp-caution.md` and refactor into references or rules
 
 ## Gap report format
 
@@ -74,3 +75,4 @@ Trigger **Audit/Evolve** (not full Bootstrap) when any of:
 - New major subsystem landed and `docs/architecture.md` / `GLOSSARY.md` were not updated in the same change set
 - Global pack revision in `FOUNDATION.md` is older than 90 days (copy mode) and user is doing foundation-related work
 - First session in a repo that has `AGENTS.md` but no `.agents/FOUNDATION.md`
+- `AGENTS.md` exceeds ~150 lines or 8 KB while governance work is already in scope

@@ -37,3 +37,19 @@ Every 6 months, have someone unfamiliar with the project attempt an AI-assisted 
 Observe where they struggle. Those are the gaps in your agent infrastructure.
 
 ---
+
+### The Feedback Flywheel
+
+Between the quarterly audit and the monthly failure review, run the lightweight feedback flywheel after any session that needed significant correction. It turns one failure into one concrete skill or rule change.
+
+See: `.agents/skills/project-foundation/references/feedback-flywheel.md`
+
+Key questions:
+1. What caught the problem first — sensor, rule, human, or nothing?
+2. Is the gap routing, workflow, a missing rule, an ignored rule, context, or tool design?
+3. What is the smallest change that prevents recurrence?
+4. Was the fix captured in memory or governance?
+
+Completed flywheel entries feed into the Monthly Failure Review. The monthly review aggregates them and looks for patterns; it does not need to re-investigate each case from scratch.
+
+---
