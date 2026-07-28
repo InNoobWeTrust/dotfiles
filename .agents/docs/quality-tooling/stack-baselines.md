@@ -37,9 +37,13 @@ Each stack is broken into 4 implementation layers:
 |---|---|
 | Repo has no hygiene baseline | add a formatter + linter |
 | AI-generated code often breaks contracts | add a type/compile gate |
+| Agents ignore quality until CI fails | wire format/lint/type/test as [in-session sensors](./agent-feedback-sensors.md) |
+| High coverage but bugs still ship | add mutation testing on core modules |
+| UI is AI-touched / regulated markets | add axe-core (or equivalent) in CI |
 | Security team is worried about CVEs | add dependency scanning + Renovate |
 | Secrets have leaked before | add gitleaks pre-commit + CI |
 | Leadership wants portfolio visibility | add Sonar or Dependency-Track after a baseline exists |
+| Unsure where agents should refactor | hotspot / CodeHealth-style analysis before broad agent refactors |
 | Legacy monolith feels too risky to touch | gate only new code / touched files first |
 
 ---
@@ -58,5 +62,7 @@ Each stack is broken into 4 implementation layers:
 
 - Main guide: [`./overview.md`](./overview.md)
 - Comparison matrix: [`./comparison-matrix.md`](./comparison-matrix.md)
-- Presentation slides (Vietnamese): [`../slides/ai-quality-tooling-vi.md`](../slides/ai-quality-tooling-vi.md)
-- Presentation slides (English): [`../slides/ai-quality-tooling-en.md`](../slides/ai-quality-tooling-en.md)
+- Agent feedback sensors: [`./agent-feedback-sensors.md`](./agent-feedback-sensors.md)
+- Extended evidence (mutation, a11y, fuzz): [`./extended-evidence-tools.md`](./extended-evidence-tools.md)
+- Presentation slides (Vietnamese): [`../slides/02_ai-quality-tooling-vi.md`](../slides/02_ai-quality-tooling-vi.md)
+- Presentation slides (English): [`../slides/02_ai-quality-tooling-en.md`](../slides/02_ai-quality-tooling-en.md)

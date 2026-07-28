@@ -49,9 +49,14 @@ Example tools:
 Goals:
 - prove behavior, not just syntax
 - measure coverage on **new code**, without obsessing over legacy coverage across the whole repo
+- (deeper) verify that tests **fail when behavior breaks** — coverage alone can hide hollow AI-generated suites
 
 Example tools:
 - pytest/pytest-cov, JUnit, xUnit/NUnit, Jest/Vitest, SimpleCov, gcov/lcov, Codecov, Sonar coverage ingestion
+- **Mutation testing** (Layer 4 depth): Stryker, PIT/Pitest, cargo-mutants — see [extended-evidence-tools](./extended-evidence-tools.md)
+- **Accessibility automation** (UI quality attribute): axe-core and browser integrations — same leaf
+
+Wire fast tests into the **agent session** as [feedback sensors](./agent-feedback-sensors.md), not only CI.
 
 ### 3.5 Layer 5 — Dependency / Supply Chain Risk
 
@@ -121,5 +126,10 @@ Goals:
 
 Example tools:
 - `scc`, Sonar metrics, NDepend, PMD CPD, Cppcheck reports, custom git-hotspot analysis
+- Behavioral / AI-oriented hotspots: CodeScene (and similar) — complexity × change history; flag zones unsafe for blind LLM refactor
 
 ---
+
+### 3.10 Agent harness note (cross-cutting)
+
+Quality layers are **sensors**. Coding agents need them **in-loop** (feedforward via skills/specs; feedback via exit codes). See [agent-feedback-sensors](./agent-feedback-sensors.md). Industry framing: Thoughtworks Radar Vol 34 — [research map](../research/thoughtworks-radar-vol34/thoughtworks-radar-vol34.md).

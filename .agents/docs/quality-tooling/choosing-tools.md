@@ -137,6 +137,7 @@ This section doesn't try to be exhaustive — it tries to be **industry-grade en
 | PMD CPD | duplication detection across many languages |
 | Sonar | duplication/complexity trends in a governance dashboard |
 | NDepend | deep .NET architecture, trend, dependency graph, quality gates |
+| CodeScene (and similar) | behavioral hotspots (complexity × VCS history); AI-safe refactor prioritization |
 
 ### 5.8 Governance / Portfolio Platforms
 
@@ -147,5 +148,16 @@ This section doesn't try to be exhaustive — it tries to be **industry-grade en
 | GitHub code scanning + CodeQL | GitHub-native code scanning and alerts |
 | NDepend | .NET-centric governance, architecture, quality gates, reports |
 | Snyk / Mend | enterprise SCA/SAST/AI security ecosystems with prioritization and remediation workflows |
+
+### 5.9 Extended evidence (often missing from “lint + coverage” stacks)
+
+| Need | Tools to know | Loop |
+|---|---|---|
+| Mutation testing | Stryker, PIT/Pitest, cargo-mutants | Module-local + async CI |
+| Accessibility | axe-core (+ Playwright/Cypress integrations) | Component/CI; UI surfaces |
+| API fuzz / edge paths | WuppieFuzz, Schemathesis, language fuzzers | CI on critical APIs |
+| Agent-session sensors | same as layers 1–4, **invoked by agent** | In-session before commit — [agent-feedback-sensors](./agent-feedback-sensors.md) |
+
+Detail: [extended-evidence-tools](./extended-evidence-tools.md).
 
 ---

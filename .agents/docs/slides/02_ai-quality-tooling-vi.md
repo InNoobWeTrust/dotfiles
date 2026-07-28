@@ -158,6 +158,54 @@ Chỗ nào phức tạp nhất, thay đổi nhiều nhất, đáng refactor nh�
 
 ---
 
+# Coding Agent Cần Feedback Sensor
+
+Quality gate ở CI là policy.
+Quality gate mà **agent tự chạy và đọc** là sensor.
+
+## Feedforward → lần làm đầu đúng hơn
+- rules + skills
+- spec / acceptance criteria
+
+## Feedback → tự sửa
+- formatter, lint, type/build, focused tests
+- exit code rõ ràng trước commit
+
+**Đừng biến reviewer thành linter của agent.**
+
+---
+
+# Coverage Không Phải Là Bằng Chứng
+
+AI có thể sinh test chạy qua code nhưng assertion rất ít.
+
+## Thêm mutation testing cho core logic
+- chủ động cấy lỗi nhỏ
+- test pass phải **kill** được mutant
+- mutant sống = evidence bị thiếu
+
+| Ecosystem | Ví dụ |
+|---|---|
+| JS / .NET | Stryker |
+| JVM | PIT / Pitest |
+| Rust | cargo-mutants |
+
+**Rollout theo module; full suite thường chạy async trên CI.**
+
+---
+
+# Accessibility Là Quality Gate
+
+UI do AI sinh có thể trông đúng nhưng loại trừ người dùng.
+
+- **axe-core**: check tự động theo hướng WCAG
+- Chạy cùng component/browser flow Playwright/Cypress
+- Gate UI thay đổi ở CI; vẫn cần kiểm tra thủ công/chuyên môn a11y
+
+**Accessibility là quality attribute — không phải trang trí.**
+
+---
+
 # Sonar Nằm Ở Đâu?
 
 Sonar **không chỉ là một linter**.
@@ -196,7 +244,10 @@ Không nên bỏ:
 | Polyglot SAST | Semgrep |
 | GitHub-native deep security | CodeQL |
 | SBOM / supply-chain governance | Dependency-Track |
-| Repo metrics / hotspots | `scc` |
+| Accessibility automation | axe-core (+ Playwright/Cypress) |
+| Mutation test depth | Stryker, PIT, cargo-mutants |
+| API edge-path testing | WuppieFuzz, Schemathesis, fuzzers |
+| Repo metrics / hotspots | `scc`, CodeScene |
 | All-in-one infra/security scan | Trivy |
 | Enterprise SCA / AppSec suite | Snyk, Mend |
 
@@ -251,6 +302,21 @@ Không nên bỏ:
 
 ---
 
+# Hotspot: Agent Nên Refactor Ở Đâu?
+
+Static analysis trả lợi: “cái gì sai?”
+
+Behavioral hotspot trả lợi:
+> **Chỗ nào complexity cao và thay đổi nhiều?**
+
+- `scc` / Sonar / NDepend: phương án OSS/governance
+- CodeScene: complexity × lịch sử git; CodeHealth cho vùng AI-safe
+- Dùng hotspot để ưu tiên design + test của người
+
+**Đừng để agent refactor mù vào hotspot coupled cao.**
+
+---
+
 # Open-Source-First Maturity Path
 
 | Phase | Mục tiêu | Hành động chính |
@@ -278,15 +344,17 @@ Không nên bỏ:
 
 # Leadership Nên Nhìn Vào Đâu?
 
-| Metric | Câu hỏi mà nó trả lời |
+| Metric | Câu hỏi mà nó trả lợi |
 |---|---|
 | New code gate pass rate | Code mới có đủ chuẩn không? |
 | Critical / high vulns | Có đang ship known risk không? |
-| Coverage on new code | Thay đổi mới có evidence không? |
-| Complexity / duplication trend | Tech debt có đang tăng không? |
-| Secret incidents | Hygiene có ổn không? |
+| Coverage + mutation trên code mới quan trọng | Evidence có thật ý nghĩa không? |
+| Accessibility gate trên UI | UI có inclusive mặc định không? |
+| Complexity / hotspot trend | Debt có tăng nơi thay đổi nhiều không? |
+| DORA + rework rate | Code nhanh hơn có làm delivery ổn định hơn? |
+| First-pass acceptance / review burden | Hợp tác người–agent có tốt hơn không? |
 
-**Đừng báo cáo raw lint noise cho leadership.**
+**Không bao giờ dùng AI LOC hay số PR làm KPI năng suất.**
 
 ---
 
@@ -294,10 +362,11 @@ Không nên bỏ:
 
 1. **Mental model trước, tool sau**
 2. **Dùng quality layer để lập luận về tool fit**
-3. **Mỗi stack có baseline khác nhau**
-4. **Sonar là governance layer, không phải tất cả**
-5. **Open-source-first thường là điểm khởi đầu hợp lý**
-6. **Workshop thành công khi người nghe tự đánh giá được tool fit sau buổi này**
+3. **Đưa check nhanh thành feedback sensor agent chạy trước commit**
+4. **Coverage không phải bằng chứng — thêm mutation cho core logic**
+5. **Accessibility là quality attribute**
+6. **Sonar là governance layer, không phải tất cả**
+7. **Đo delivery và chất lượng hợp tác — không đo khối lượng output AI**
 
 ---
 
@@ -307,13 +376,15 @@ Không nên bỏ:
 
 **Tài liệu tham khảo:**
 - `.agents/docs/quality-tooling/INDEX.md`
+- `.agents/docs/quality-tooling/agent-feedback-sensors.md`
+- `.agents/docs/quality-tooling/extended-evidence-tools.md`
 - `.agents/docs/quality-tooling/stack-baselines.md`
 - `.agents/docs/quality-tooling/comparison-matrix.md`
-- `.agents/docs/slides/ai-agents-intro-vi.md`
+- `.agents/docs/slides/01_ai-agents-intro-vi.md`
 
 **Gợi ý bước tiếp theo:**
 - chuẩn hóa quality layer trong team trước
 - rồi mới chốt tool cụ thể cho từng repo
 
 **Tiếp series:**
-- Phần 3 — Mental model Agentic QA/QC: `ai-agentic-qa-vi.md`
+- Phần 3 — Mental model Agentic QA/QC: `03_ai-agentic-qa-vi.md`

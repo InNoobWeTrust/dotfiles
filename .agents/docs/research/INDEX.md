@@ -18,6 +18,9 @@ docs/research/INDEX.md        ← you are here
 |---|---|---|
 | [Agent improvement techniques](./agent-improvement-techniques/agent-improvement-techniques.md) | Karpathy / Anthropic / STAPO / RAPO / T-STAR / SOAR-analog map → skill backlog | Deciding what research to adopt into skills |
 | [→ research notes (leaf)](./agent-improvement-techniques/details/agent-improvement-research-notes.md) | Source fidelity, arXiv links, paper summaries | Validating a claim or deepening context |
+| [Thoughtworks Radar Vol 34](./thoughtworks-radar-vol34/thoughtworks-radar-vol34.md) | Agent harness, skills, sensors, cautions; quality-tool gaps for Part 2 | Aligning industry radar with skills/quality docs |
+| [→ blip catalog (leaf)](./thoughtworks-radar-vol34/details/blip-catalog.md) | Ring + one-line takeaway for agent/quality blips | Looking up a specific Vol 34 item |
+| [→ quality gaps for Part 2 (leaf)](./thoughtworks-radar-vol34/details/quality-gaps-for-part2.md) | Mutation, a11y, sensors, CodeScene, metrics gaps | Enriching quality-tooling workshop |
 
 ## Promotion rules
 

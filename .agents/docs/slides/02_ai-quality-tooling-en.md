@@ -158,7 +158,53 @@ Where is it most complex, most-changed, most worth refactoring?
 
 ---
 
-# Where Does Sonar Fit?
+# Coding Agents Need Feedback Sensors
+
+A quality gate in CI is policy.
+A quality gate the **agent runs and reads** is a sensor.
+
+## Feedforward → better first attempt
+- rules + skills
+- specs / acceptance criteria
+
+## Feedback → self-correction
+- formatter, lint, type/build, focused tests
+- clear exit codes before a commit
+
+**Don’t make the reviewer become the agent’s linter.**
+
+---
+
+# Coverage Is Not Proof
+
+AI can generate tests that execute lines but assert very little.
+
+## Add mutation testing on critical logic
+- deliberately inject small bugs
+- passing tests must **kill** them
+- surviving mutant = missing evidence
+
+| Ecosystem | Examples |
+|---|---|
+| JS / .NET | Stryker |
+| JVM | PIT / Pitest |
+| Rust | cargo-mutants |
+
+**Roll out module-first; full mutation suites are usually async CI.**
+
+---
+
+# Accessibility Is a Quality Gate
+
+AI-generated UI can look correct while excluding users.
+
+- **axe-core**: automated WCAG-oriented checks
+- Run with Playwright/Cypress component or browser flows
+- Gate changed UI in CI; manual/accessibility expertise still matters
+
+**Accessibility is a quality attribute — not visual polish.**
+
+---
 
 Sonar is **not just another linter**.
 
@@ -195,7 +241,10 @@ Don't drop:
 | Polyglot SAST | Semgrep |
 | GitHub-native deep security | CodeQL |
 | SBOM / supply-chain governance | Dependency-Track |
-| Repo metrics / hotspots | `scc` |
+| Accessibility automation | axe-core (+ Playwright/Cypress) |
+| Mutation test depth | Stryker, PIT, cargo-mutants |
+| API edge-path testing | WuppieFuzz, Schemathesis, fuzzers |
+| Repo metrics / hotspots | `scc`, CodeScene |
 | All-in-one infra/security scan | Trivy |
 | Enterprise SCA/AppSec suite | Snyk, Mend |
 
@@ -250,6 +299,21 @@ Don't drop:
 
 ---
 
+# Hotspots: Where Should Agents Refactor?
+
+Static analysis answers: “what is wrong?”
+
+Behavioral hotspots answer:
+> **Where is complexity high and change concentrated?**
+
+- `scc` / Sonar / NDepend: OSS/governance trend options
+- CodeScene: complexity × VCS history; CodeHealth-style AI-safe zones
+- Use hotspots to prioritize human design + tests
+
+**Do not send agents blindly into highly coupled hotspots.**
+
+---
+
 # Open-Source-First Maturity Path
 
 | Phase | Focus | Key actions |
@@ -281,11 +345,13 @@ Don't drop:
 |---|---|
 | New code gate pass rate | Is new code up to standard? |
 | Critical/high vulns | Are we shipping known risk? |
-| Coverage on new code | Does the new change have evidence? |
-| Complexity / duplication trend | Is technical debt growing? |
-| Secret incidents | Is hygiene holding up? |
+| Coverage + mutation on critical new code | Is the evidence meaningful? |
+| Accessibility gates on UI | Are UI changes inclusive by default? |
+| Complexity / hotspot trend | Is debt growing where change happens? |
+| DORA + rework rate | Did faster coding improve delivery stability? |
+| First-pass acceptance / review burden | Is human–agent collaboration improving? |
 
-**Don't report raw lint noise to leadership.**
+**Never use AI LOC or PR count as a productivity KPI.**
 
 ---
 
@@ -293,10 +359,11 @@ Don't drop:
 
 1. **Mental model first, tool second**
 2. **Use quality layers to reason about fit**
-3. **Every stack has a different baseline**
-4. **Sonar is a governance layer, not everything**
-5. **Open-source-first is usually the sensible starting point**
-6. **Success = teams can self-evaluate tool fit on their own**
+3. **Make fast checks feedback sensors agents run before commit**
+4. **Coverage is not proof — add mutation on critical logic**
+5. **Accessibility is a quality attribute**
+6. **Sonar is a governance layer, not everything**
+7. **Measure delivery and collaboration quality, not AI output volume**
 
 ---
 
@@ -306,9 +373,11 @@ Don't drop:
 
 **Full reference:**
 - `.agents/docs/quality-tooling/INDEX.md`
+- `.agents/docs/quality-tooling/agent-feedback-sensors.md`
+- `.agents/docs/quality-tooling/extended-evidence-tools.md`
 - `.agents/docs/quality-tooling/stack-baselines.md`
 - `.agents/docs/quality-tooling/comparison-matrix.md`
-- `.agents/docs/slides/ai-agents-intro-en.md`
+- `.agents/docs/slides/01_ai-agents-intro-en.md`
 
 > These slides are a compact summary. The docs above are the source of truth.
 
@@ -317,4 +386,4 @@ Don't drop:
 - then lock in specific tools per repo
 
 **Series continuation:**
-- Part 3 — Agentic QA/QC mental model: `ai-agentic-qa-en.md`
+- Part 3 — Agentic QA/QC mental model: `03_ai-agentic-qa-en.md`
