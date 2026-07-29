@@ -185,4 +185,4 @@ Standalone fix for "bootstrap left stubs / missing companion skills":
 - `references/drift-checks.md`
 - `references/setup-skills.md` — executable onboarding skill pattern
 - `references/feedback-flywheel.md` — post-session harness improvement checklist
-- Compose with: `architecture-writer` (deep arch), `devsecops` (pipeline), `skill-author` (new skills), `codebase-exploration` (domain scan for glossary)
+- Compose with: `architecture-design` (deep arch / design), `devsecops` (pipeline), `skill-author` (new skills), `codebase-exploration` (domain scan for glossary)

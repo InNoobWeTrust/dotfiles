@@ -17,3 +17,4 @@ This directory contains documentation, prompt contracts, lens definitions, quest
   - `output-engine.md`: Template selection and rendering.
   - `audience-adapter.md`: Tone, density, and framing adaptation.
 - **lenses/**: Built-in analytical lens definitions covering trend, comparison, distribution, driver, anomaly, and root cause analysis.
+- **visuals/**: Chart selection heuristics, Mermaid craft guidance, audience visual budgets, and post-creation QA checklists for explanatory visuals.

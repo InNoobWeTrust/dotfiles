@@ -5,7 +5,7 @@ modules — they describe what THEY do, not what other skills do. This file is
 the single source of truth for how skills relate, compose, and hand off.
 
 > **Maintenance rule**: When adding, renaming, or removing a skill, update
-> this file. Do NOT add cross-references inside individual skills.
+> this file. Composition policy lives here; individual skills may still mention operational handoff triggers when another skill boundary materially affects execution.
 
 ---
 
@@ -32,6 +32,18 @@ When debugging or fixing a problem:
 1. `ui-ux` — design quality lens & DESIGN.md visual system authority
 2. `code-craft` — SOLID/modularity on component logic
 3. `reviewer` (security lens) — input validation, auth on visual interfaces
+
+### Data Story → Visual → Illustration
+
+1. `data-storytelling` — derive the answer-first narrative, evidence, and supporting chart needs
+2. `illustration-craft` — only when Mermaid or standard charts are insufficient and bespoke composition is required
+3. `reviewer` (editorial or design-rigor lens) — optional polish pass for high-stakes deliverables
+
+### Architecture → Story → Illustration
+
+1. `architecture-design` — map the system, tradeoffs, and current/target state
+2. `data-storytelling` — shape the architecture findings into an audience-aware narrative when the audience is non-technical or decision-oriented
+3. `illustration-craft` — produce the final bespoke explainer only if Mermaid/C4 alone cannot carry the message
 
 ### Browser Automation
 
@@ -79,7 +91,7 @@ When setting up or keeping a project's AI-augmented foundation honest:
 
 1. `project-foundation` — Mode A Bootstrap | Mode B Audit/Evolve | Mode C Materialize core pack (full skill trees, not INDEX stubs)
 2. `codebase-exploration` — if glossary/architecture need a domain map of an unfamiliar repo
-3. `architecture-writer` — deep architecture doc when system design is complex
+3. `architecture-design` — deep architecture doc, system design, or ADR writing when system architecture is complex
 4. `devsecops` — CI/CD pipeline + integrated security scanning for the specific platform
 5. `reviewer` — review generated governance files after bootstrap or major evolve
 
@@ -132,6 +144,10 @@ Natural transitions between skills:
 | `web-qa-audit` | `cdp-browser-automation` | "Audit scope is set; now perform browser interaction and evidence capture" |
 | `web-qa-audit` | `web-qa-audit` (stakeholder-report path) | "Machine evidence ready **and** audience is non-dev/business/release-owner — *(intra-skill path switch)*" |
 | `web-qa-audit` (stakeholder-report path) | `data-storytelling` | "Projection gates passed; high-stakes executive narrative polish requested" |
+| `data-storytelling` | `illustration-craft` | "The story is clear, but Mermaid or standard charts cannot carry the message cleanly" |
+| `architecture-design` | `illustration-craft` | "The architecture is documented, but the final artifact needs a bespoke explainer, infographic, or presentation-grade visual beyond Mermaid" |
+| `architecture-design` | `data-storytelling` | "Architecture is mapped, but the audience needs an answer-first narrative or decision framing" |
+| `illustration-craft` | `reviewer` (editorial lens) | "Illustration drafted, ready for critical readability / communication review" |
 | `web-qa-audit` | `reviewer` | "Executable QA produced findings or a plan that needs critical judgment" |
 | `requirements-driven-dev` | `reviewer` (editorial lens) | "Polish specs before sharing with stakeholders" |
 | `requirements-driven-dev` | `multi-perspective-deliberation` | "Draft specs completed, launching persona review to challenge assumptions" |
@@ -154,7 +170,7 @@ Natural transitions between skills:
 | `subagent-dispatch` | `swarm-intelligence` (Full Swarm) | "Prompt constructed, multi-node orchestration (or equivalent explicit full-swarm mode)" |
 | `swarm-intelligence` (Single-Node) | `swarm-intelligence` (Full Swarm) | "Bounded node insufficient; escalate to full swarm" |
 | `multi-perspective-deliberation` | `subagent-dispatch` | "Launching delegated persona workers for the deliberation" |
-| `project-foundation` | `architecture-writer` | "Project scaffolded, now writing detailed architecture doc" |
+| `project-foundation` | `architecture-design` | "Project scaffolded, now writing detailed architecture doc or selecting patterns" |
 | `project-foundation` | `ui-ux` | "Project scaffolded with UI/frontend components; initializing DESIGN.md visual system" |
 | `project-foundation` | `devsecops` | "Project scaffolded, now designing CI/CD with integrated security" |
 | `project-foundation` | `reviewer` | "Governance files created, ready for review" |
@@ -162,8 +178,8 @@ Natural transitions between skills:
 | `project-foundation` (Mode C) | `project-foundation` (Mode B) | "Core pack materialized; run full drift audit" |
 | `devsecops` | `code-craft` | "Vulnerabilities found, now implementing remediations" |
 | `devsecops` | `reviewer` (security lens) | "Pipeline and security config complete, verifying" |
-| `architecture-writer` | `project-foundation` | "Architecture mapped, updating GLOSSARY.md with discovered terms" |
-| `architecture-writer` | `reviewer` (design-rigor lens) | "Architecture doc written, now reviewing for design discipline" |
+| `architecture-design` | `project-foundation` | "Architecture mapped, updating GLOSSARY.md with discovered terms" |
+| `architecture-design` | `reviewer` (design-rigor lens) | "Architecture doc written, now reviewing for design discipline" |
 | `skill-author` (Workflow B) | `skill-author` (Workflow A) | "Audit reveals skill gap — creating new skill to fill it" |
 | `skill-author` (Workflow B) | `project-foundation` | "Audit reveals missing foundational files — bootstrapping them" |
 | `skill-author` (Workflow B) | `reviewer` | "Audit complete, challenging conclusions" |

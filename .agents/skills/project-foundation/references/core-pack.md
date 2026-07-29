@@ -35,7 +35,7 @@ Do **not** invent project-only rule bodies that duplicate global content. Materi
 | `project-foundation` | Yes | Re-audit / evolve this pack |
 | `skill-author` | Recommended | Governance maintenance |
 | `bounded-iteration` | Recommended | AFK / verify loops |
-| `architecture-writer` | Optional | Deep architecture docs |
+| `architecture-design` | Optional | Deep architecture docs, system design, ADRs |
 | `devsecops` | Optional | CI/CD + security scanning |
 
 Also materialize:

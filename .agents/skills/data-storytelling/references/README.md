@@ -11,8 +11,9 @@ Use this skill when the user wants more than a descriptive summary, including:
 - Audience-adapted output for exec, analyst, ops, or customer readers.
 - Explicit claim calibration and caveats.
 - Iterative storytelling with human corrections.
+- Choosing and crafting supporting charts when a visual clarifies the message better than text alone.
 
-Do not use it as a replacement for data plumbing, dashboard implementation, or formal econometric modeling.
+Do not use it as a replacement for data plumbing, dashboard implementation, formal econometric modeling, or bespoke infographic / poster illustration work better handled by `illustration-craft`.
 
 ## Invocation
 
@@ -26,6 +27,10 @@ Find the biggest drivers of checkout abandonment in `weekly checkout funnel mart
 
 ```text
 Summarize customer-facing reliability changes from `incident review export + SLA trend table` for a `customer` audience, using `adaptive` mode with `trend-time-series` and `anomaly-context-breach-changepoint`, in `review-and-revise` HITL mode.
+```
+
+```text
+Explain the most decision-relevant changes in the quarterly architecture adoption metrics for an `exec` audience, using `adaptive` mode and include Mermaid-ready supporting visuals only where they sharpen the takeaway.
 ```
 
 Accepted arguments:
@@ -148,7 +153,17 @@ The skeptic layer must look for:
 
 Final rendering must use the canonical post-QA claim set and exclude any blocked claim.
 
-### 8. Human-In-The-Loop Revision
+### 8. Visual Craft
+
+When a visual materially improves comprehension:
+
+- Use `visuals/chart-selection-heuristics.md` to choose the simplest chart that matches the claim.
+- Use `visuals/mermaid-craft.md` when Mermaid is sufficient.
+- Run `visuals/visual-qa-checklist.md` before finalizing any chart.
+- Respect `visuals/audience-visual-budget.md` so the number and density of visuals match the audience.
+- Escalate to `illustration-craft` when Mermaid or standard charts cannot carry the message cleanly.
+
+### 9. Human-In-The-Loop Revision
 
 Default mode: `continuous-feedback`
 
@@ -332,6 +347,18 @@ Expected output:
 - Analyst deep-dive template unless the user overrides it.
 - Only the requested lenses, minus any excluded lenses.
 - Checkpoint pauses after lens planning and first formatted draft.
+
+### Example 5: Escalate To Illustration Craft
+
+```text
+Summarize the architecture migration tradeoffs for an `exec` audience and include supporting visuals, but escalate only if the message needs a multi-panel explainer with annotated phases and callouts that Mermaid cannot carry cleanly.
+```
+
+Expected output:
+
+- Start in `data-storytelling` for the answer-first narrative and evidence-backed chart choices.
+- Stay with Mermaid if one or two simple visuals are enough.
+- Route to `illustration-craft` only when the final artifact needs bespoke layout, multiple coordinated panels, or annotation-heavy explanation.
 
 ## Implementation Notes
 

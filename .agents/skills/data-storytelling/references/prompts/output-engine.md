@@ -11,6 +11,7 @@ Render the approved narrative in the most useful output format for the audience 
 - Selected or recommended template.
 - Audience adaptation guidance.
 - HITL mode.
+- Optional visual plan and any approved Mermaid chart source.
 
 ## Confidence Contract
 
@@ -42,9 +43,10 @@ Interpretation rules:
 2. Treat the post-QA claim set from skeptic QA as the canonical rendering artifact.
 3. Map only `approved` or `downgraded` claims from that canonical artifact into the required sections for the selected template.
 4. Carry forward confidence notes and caveats; every rendered material claim must include `confidence_label`, `confidence_basis`, and `claim_ceiling`, while `confidence_score` and `limitation_notes` remain internal-only support fields. In multi-claim sections, attach those fields per claim or per insight row rather than once per document.
-5. Add the mandatory `## Lenses Used` section required by the template contract.
-6. Add revision notes if the draft reflects user feedback.
-7. Keep the output concise enough for the intended audience.
+5. If a visual plan is approved, place each visual immediately after the claim it supports, with a takeaway-oriented caption or lead-in.
+6. Add the mandatory `## Lenses Used` section required by the template contract.
+7. Add revision notes if the draft reflects user feedback.
+8. Keep the output concise enough for the intended audience.
 
 ## Template Selection Rules
 
@@ -61,6 +63,7 @@ The final output must always contain:
 - The strongest supporting evidence.
 - A `## Lenses Used` section that lists each lens, the signal it revealed, and the baseline or comparator used.
 - Confidence and caveats, with `confidence_label`, `confidence_basis`, and `claim_ceiling` shown for each material claim.
+- Any approved supporting visual placed near the claim it supports, with a takeaway title or caption.
 - Next actions or open questions, if relevant.
 
 ## HITL Rules
