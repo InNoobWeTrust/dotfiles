@@ -963,5 +963,8 @@
   "experimental": {
     "batch_tool": true,
     "openTelemetry": false,
+    "swe_pruner": true,
+    "codebase_search": true,
   },
+  "remote_control": true,
 }
