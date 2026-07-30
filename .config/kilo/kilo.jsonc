@@ -19,7 +19,7 @@
     },
     "general": {
       "description": "Read-only general research. USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
-      "model": "ink-gw/deepseek/deepseek-v4-pro",
+      "model": "github-copilot/claude-sonnet-4.6",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -130,7 +130,7 @@
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      "model": "ink-gw/deepseek/deepseek-v4-pro",
+      "model": "ink-gw/GLM-5.2",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -249,7 +249,7 @@
     "docs-writer": {
       "mode": "subagent",
       "description": "Writes and edits documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
-      "model": "github-copilot/claude-haiku-4.5",
+      "model": "github-copilot/claude-sonnet-4.6",
       "permission": {
         "edit": {
           "*.md": "allow",
@@ -627,6 +627,20 @@
           "limit": {
             "context": 1000000,
             "output": 16384,
+          },
+        },
+        "GLM-5.2": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 131072,
           },
         },
         "deepseek/deepseek-v4-pro": {
