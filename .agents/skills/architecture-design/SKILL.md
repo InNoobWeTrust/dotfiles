@@ -1,12 +1,12 @@
 ---
 name: architecture-design
-description: "Use this skill for software architecture work — system design, architecture documentation, pattern selection, migration planning, ADR writing, architecture audits, API/data/security architecture, and fitness functions. Routes to scenario-specific workflows with embedded pattern catalog and mermaid illustrations. Skip for code changes that don't affect system architecture."
+description: "Use this skill for software architecture work — system design, architecture documentation, pattern selection (Modular Monolith default), modular component design (C4 L1-L3), DDD bounded contexts, ADR writing, architecture audits, API/data/security architecture, and fitness functions. Composes with db-design and code-craft."
 ---
 
 # Architecture Design
 
-Architecture work across the full lifecycle: design, document, audit, evolve.
-Illustration-first — prefer mermaid diagrams over prose.
+Software architecture design across the full lifecycle: design, document, audit, evolve.
+Modular-first & illustration-first — prefer clear component boundaries and mermaid diagrams over prose.
 
 Progressive disclosure: this file is the workflow router.
 Deep detail lives in `references/`.
@@ -14,6 +14,8 @@ Deep detail lives in `references/`.
 | When | Load |
 |---|---|
 | Selecting an architecture pattern | `references/patterns/INDEX.md` → specific category |
+| Modular Monolith & Bounded Context design | `references/patterns/modular-architecture.md` |
+| Operational Database Schema Design | Route to `db-design` skill |
 | Drawing C4 diagrams | `references/visualization/c4-mermaid-templates.md` |
 | Writing an ADR | `references/adr-templates.md` |
 | Analyzing tradeoffs or fitness | `references/analysis/fitness-functions.md` |
@@ -27,24 +29,27 @@ Before starting, determine:
 | Question | Action |
 |---|---|
 | Existing architecture docs? | Read first. Audit before rewriting. |
+| DB schema design needed? | Compose with `db-design` skill. |
 | Code change only, no arch impact? | STOP — skill not needed. |
 | Code review request? | Route to `reviewer` instead. |
 
-## Gate 2 — C4 Level Calibration
+## Gate 2 — C4 Level Calibration & Modular Boundaries
 
 ```mermaid
 graph LR
     A["Project Size"] --> B{Complexity?}
-    B -->|"Single service"| C["L1-2: Context + Container"]
-    B -->|"Multi-service"| D["L1-3: + Component"]
-    B -->|"Enterprise"| E["L1-4: + Code for critical models"]
+    B -->|"Single service / Monolith"| C["L1-3: Context + Container + Component (Modular Monolith)"]
+    B -->|"Multi-service"| D["L1-3: + Component boundaries per service"]
+    B -->|"Enterprise"| E["L1-4: + Code for critical domain models"]
 ```
 
-| Project Size | Default C4 Depth | Notes |
+| Project Size | Default C4 Depth | Architectural Mandate |
 |---|---|---|
-| Single-service / monolith | Level 1–2 (Context + Container) | Skip Component unless complex |
-| Multi-service / microservices | Level 1–3 (+ Component) | One component diagram per critical service |
-| Enterprise / platform | Level 1–4 (all levels) | Code level only for critical domain models |
+| Single service / monolith | Level 1–3 (Context + Container + Component) | **Mandatory Component breakdown (C4 L3)**: define Modular Monolith bounded contexts & public module APIs |
+| Multi-service / microservices | Level 1–3 (+ Component per service) | Define component boundaries & inter-service contract DTOs per deployable |
+| Enterprise / platform | Level 1–4 (all levels) | Define enterprise domain contexts, trust boundaries, & data ownership |
+
+---
 
 ## Gate 3 — Illustration Budget
 
@@ -52,9 +57,9 @@ Architecture docs that are walls of text have failed. Minimum diagrams:
 
 | Artifact | Minimum Illustrations |
 |---|---|
-| Architecture overview | 1× system context + 1× container diagram |
+| Architecture overview | 1× system context + 1× container diagram + 1× component/bounded context diagram |
 | Migration plan | 1× current state + 1× target state + 1× transition sequence |
-| Data architecture | 1× data flow + 1× ownership table |
+| Data & Schema architecture | 1× component data flow + 1× ER diagram (compose with `db-design`) |
 | Security review | 1× trust boundary diagram (STRIDE overlay) |
 | ADR | 1× options comparison diagram (optional) |
 
@@ -88,72 +93,41 @@ Default when nothing matches: **brownfield documentation**.
 
 ---
 
-## Pattern Selection (cross-cutting)
+## Pattern Selection (Modular Monolith Default)
 
-When any workflow requires choosing an architecture pattern:
-
-1. Load `references/patterns/INDEX.md`
-2. Search by category or concern keyword
-3. Load only the matching category file
-4. Each pattern: mermaid diagram + compact table (use/skip/tradeoffs)
-5. For deeper analysis on a pattern, load the deep-dive section within the same file
+When choosing an architecture pattern:
+1. Default to **Modular Monolith** with DDD Bounded Contexts (`references/patterns/modular-architecture.md`) before breaking into premature microservices.
+2. Load `references/patterns/INDEX.md` to explore pattern categories.
+3. Enforce **Hexagonal Architecture (Ports & Adapters)** for domain components — domain logic must not depend on databases, HTTP frameworks, or third-party SDKs.
+4. Enforce **Explicit Contract DTOs** across component interfaces — positional tuples and untyped dictionaries across module boundaries are forbidden.
 
 ---
 
 ## Hard Rules
 
-- **Illustration-first**: Every architecture section MUST have at least one mermaid diagram. Walls-of-text architecture docs are a failure mode.
-- **Evidence over aspiration**: Document what IS, not what you wish it were. Mark aspirational targets as "Target State" with a separate diagram.
-- **Mermaid default**: Use mermaid for all diagrams unless the project uses Structurizr/D2.
-- **Mark unknowns**: Do not invent services, components, or data flows. Mark `[UNKNOWN]`.
-- **Link domain terms**: Reference `GLOSSARY.md` when present.
-- **Ask before overwriting**: If architecture docs exist and differ substantially, audit first.
+- **Modular Monolith default**: Prefer in-process bounded contexts with explicit interfaces over distributed microservices for single applications.
+- **Mandatory Component Breakdown (C4 L3)**: Never present a single service as a black box without specifying its internal component boundaries.
+- **Illustration-first**: Every architecture section MUST have at least one mermaid diagram.
+- **Explicit types over tuples**: Inter-component interfaces must use explicit DTO types.
+- **Evidence over aspiration**: Document what IS, mark aspirational targets as "Target State".
 
 ---
 
 ## Deliverables
 
 - [ ] Scope check passed (Gate 1)
-- [ ] C4 depth calibrated (Gate 2)
+- [ ] C4 depth calibrated to Level 3 Component boundaries (Gate 2)
 - [ ] Illustration budget met (Gate 3)
-- [ ] Scenario-specific workflow completed
-- [ ] All diagrams render correctly in mermaid
-- [ ] Architecture anti-patterns checked
+- [ ] Modular Monolith / Bounded Context breakdown specified
+- [ ] Database schema delegated to `db-design` (ER diagram + typed repository DTOs)
 - [ ] ADR written for any significant decision made during the process
 
-## Stop Conditions
-
-- **Not architecture work**: Code change with no structural impact → STOP, no skill needed.
-- **Existing docs are current**: Audit against workflow sections; report gaps, don't overwrite.
-- **Project too simple**: Static sites / simple frontends → minimal doc (responsibility split + data flow only).
-- **Unknowns block progress**: Mark `[UNKNOWN]`, deliver partial, ask for input.
-
-## Anti-Patterns
-
-| Temptation | Why Wrong | Correct Path |
-|---|---|---|
-| Skip diagrams, just write prose | Prose-only arch docs are unreadable and unmaintainable | Gate 3 — minimum illustration budget |
-| Document aspirational architecture | Creates drift between docs and reality | Evidence-first; separate "Current State" and "Target State" |
-| Copy a framework template verbatim | Empty sections signal cargo-cult documentation | Fill only relevant sections; delete empty ones |
-| Use only ASCII art | ASCII is universal but mermaid is searchable, renderable, diffable | Mermaid default; ASCII only as fallback |
-| Skip ADR for "obvious" decisions | Nothing is obvious in 6 months | Write an ADR if the decision is costly to reverse |
-| Over-engineer a small project | C4 Level 4 for a single-service app is waste | Gate 2 calibrates depth to project size |
-| Describe every class and module | Architecture doc ≠ code tour | Describe components and relationships, not internals |
-| Generate architecture from directory structure | Code structure reflects implementation, not intent | Infer boundaries from deployable units, not directories |
-
-## Modes of Use
-
-1. **Standalone** — user asks for architecture work directly.
-2. **Composed with code-craft** — architecture phase before implementation.
-3. **Composed with reviewer** — architecture lens during review (design-rigor sub-lens).
-4. **Composed with project-foundation** — architecture docs during project bootstrap.
+---
 
 ## References
 
-- `references/INDEX.md` — master index of all reference files
-- `references/patterns/` — 33 patterns in 6 searchable categories
-- `references/workflows/` — 10 scenario-specific workflows
-- `references/visualization/` — C4 mermaid templates
-- `references/analysis/` — ATAM, fitness functions, architecture anti-patterns
-- `references/adr-templates.md` — ADR templates and lifecycle
-- Compose with: `code-craft` (implementation), `reviewer` (design-rigor lens), `project-foundation` (bootstrap), `codebase-exploration` (domain scan), `illustration-craft` (presentation-grade explainers or infographics beyond Mermaid)
+- `references/INDEX.md` — Master index of architecture references
+- `references/patterns/modular-architecture.md` — Modular Monoliths, Bounded Contexts, Ports & Adapters
+- `references/visualization/c4-mermaid-templates.md` — C4 L1-L3 templates
+- `references/adr-templates.md` — ADR templates
+- Compose with: `db-design` (operational DB engineering), `code-craft` (implementation), `reviewer` (design-rigor lens)

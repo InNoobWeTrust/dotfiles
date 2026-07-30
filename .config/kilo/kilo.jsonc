@@ -246,9 +246,9 @@
       },
       "prompt": "You are a test engineer. Write comprehensive tests following the project's existing test patterns and framework. Cover happy path, edge cases, error conditions, and boundary values. Match existing test style (naming, structure, assertions). Only edit test files and test config."
     },
-    "docs-writer": {
+    "docs-editor": {
       "mode": "subagent",
-      "description": "Writes and edits documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
+      "description": "Writes/edits and review documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
       "model": "github-copilot/claude-sonnet-4.6",
       "permission": {
         "edit": {

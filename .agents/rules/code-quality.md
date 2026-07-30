@@ -6,7 +6,7 @@ This rule applies to **every coding task** without exception. No user request is
 
 ## Pre-Implementation Design Checkpoint
 
-Before writing any new function, class, or module, answer all seven questions. If you cannot answer any one of them, redesign first.
+Before writing any new function, class, or module, answer all eight questions. If you cannot answer any one of them, redesign first.
 
 1. **Single responsibility** — What is the one thing this unit does? If you need "and", it does too much — split it.
 2. **Minimal interface** — What is the smallest surface callers need? Define only that.
@@ -14,7 +14,8 @@ Before writing any new function, class, or module, answer all seven questions. I
 4. **Human traceability** — Can a reader follow the logic from names and structure alone, without reading implementation bodies?
 5. **Deep Module encapsulation** — Does this module hide significant internal complexity behind a highly simplified interface? (Interface Complexity << Implementation Complexity). If it's a shallow wrapper, merge it or redesign it.
 6. **Interface-First specification** — Have you fully defined and agreed on the type signatures, enums, or abstract contracts *before* writing any implementation logic?
-7. **Ambiguity policy** — If an edge case or failure path has multiple reasonable caller-visible behaviors, what contract chooses the behavior? If none does, stop and clarify instead of inventing a fallback.
+7. **Explicit Type Contracts** — Are parameters and return types defined as explicit, named DTOs/types instead of positional tuples or untyped maps (`dict[str, Any]`, `Map<String, Object>`)?
+8. **Ambiguity policy** — If an edge case or failure path has multiple reasonable caller-visible behaviors, what contract chooses the behavior? If none does, stop and clarify instead of inventing a fallback.
 
 ---
 
@@ -40,25 +41,6 @@ Before writing any new function, class, or module, answer all seven questions. I
 - **Deep Modules & Inlining Over-Abstraction.** Do not extract 1-3 line functions that only add indirection. Keep registry logic, mapping dictionaries, and simple computations inline to maintain cohesive readability.
 - **One public export per file** when the language and framework allow it. Co-locate private helpers in the same file; move shared helpers to a named shared module.
 - **Deep Modules over Shallow Modules.** Avoid scattering logic across tiny, fragmented helper files that expose all their implementation details. Combine related logic into unified, deep modules with clean APIs to reduce cognitive overhead for both humans and AI.
-  *   *Example (Shallow Module Anti-Pattern)*: Exposes all internals, requiring callers to do heavy coordination:
-      ```javascript
-      class TextParser {
-        constructor() { this.buffer = ''; }
-        append(c) { this.buffer += c; }
-        tokenize() { return this.buffer.split(' '); }
-      }
-      // Caller must manage buffer state and parse details manually
-      ```
-  *   *Example (Deep Module Pattern)*: Hides immense complexity behind a single simple call:
-      ```javascript
-      class DeepParser {
-        static parse(filepath) {
-          // Encapsulates buffer management, file IO, encoding, and error handling internals
-          return result;
-        }
-      }
-      // Caller simply gets result in one clean, bulletproof invocation
-      ```
 
 ---
 
@@ -108,8 +90,8 @@ When you encounter a code smell but cannot fix it in the current task scope, mar
 | `feature-envy` | Function uses more data from another module than its own |
 | `god-object` | Class or module owns more than one domain concept |
 | `shotgun-surgery` | A single logical change requires edits in 4+ separate files |
-| `primitive-obsession` | Raw primitive (string, int) where a domain type should be used |
-| `long-param-list` | Function takes 4+ parameters — should use a config object |
+| `primitive-obsession` | Raw primitive (string, int, positional tuple) where a domain DTO should be used |
+| `long-param-list` | Function takes 4+ parameters — should use a config DTO object |
 | `implicit-coupling` | Two modules share undocumented state or rely on call ordering |
 
 ---
@@ -121,23 +103,12 @@ Every distinct module or component directory must contain a `README.md` document
 1. **Existence**: A `README.md` is mandatory for every module. If you create a new module, you must create its `README.md` immediately.
 2. **Maintenance**: If you modify a module in a way that changes its public interface (API), core responsibility, or internal design, you must update its `README.md` to reflect these changes before delivering code.
 3. **Auditability**: The `README.md` must be complete and clear enough for a human auditor to understand what the module does, how to use it, and how it works internally without having to read the source code.
-4. **Flexible Guidelines**: The documentation should cover:
-   - **Purpose**: Clear, high-level summary of the module's role and responsibility.
-   - **Architecture & Design**: Key design patterns, data flow, components, and design decisions.
-   - **Public Interface**: API contracts, public parameters, return types, and exceptions.
-   - **Dependencies**: Coupling to external systems, libraries, or other internal modules.
-   - **Resilience & Errors**: Error handling strategy, escalation rules, boundaries, and any contract-approved fallbacks.
+
+---
 
 ## Required Docstring and API Documentation
 
 All public APIs, classes, exported interfaces, and functions MUST have a comprehensive docstring preceding their definition.
-
-* **Format**: Use the ecosystem standard (e.g. JSDoc for TS/JS, PEP 257 for Python, Go doc comments for Go).
-* **Requirements**:
-  - A clear one-line summary of what it does.
-  - Argument names, types (if not compiler-enforced), and descriptive roles.
-  - Return value descriptions.
-  - Detail on errors, exceptions, or failure modes (e.g. `@throws` in JSDoc, `Raises` in Python).
 
 ---
 
@@ -158,4 +129,6 @@ Do NOT write code that violates these:
 | Extend-by-parameter | Adding yet another parameter to grow a function's behavior — use composition |
 | Guessing through ambiguity | Choosing a business rule for an unclear edge case instead of asking the user or surfacing a typed/domain error |
 | Undocumented public units | Exported/public classes, interfaces, methods, or functions without docstrings conforming to ecosystem standards |
-| Shallow helper over-extraction | Extracting 1-3 line helper functions that add indirection without hiding complexity (e.g., trivial calculations, registry mappings) |
+| Shallow helper over-extraction | Extracting 1-3 line helper functions that add indirection without hiding complexity |
+| Positional tuple returns across boundaries | Positional tuples `(id, status)` create fragile implicit coupling; use named DTOs/dataclasses/structs/interfaces |
+| Untyped dynamic maps for domain concepts | `dict[str, Any]` or `Map<String, Object>` for domain models erases type safety; use typed DTOs/interfaces |
