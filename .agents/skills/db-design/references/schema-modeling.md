@@ -42,4 +42,5 @@ erDiagram
 ## 4. Anti-Patterns to Avoid
 
 - **JSONB Dumping**: Avoid replacing relational schema tables with a single `data JSONB` column. JSONB is reserved for dynamic, unsearchable tenant/third-party metadata.
-- **Polymorphic Foreign Keys**: Avoid `parent_id` + `parent_type` columns. Use concrete junction tables or exclusive foreign keys with `CHECK` constraints instead.
+- **Polymorphic Foreign Keys**: Avoid `parent_id` + `parent_type` columns for live business relationships. Use concrete junction tables or exclusive foreign keys with `CHECK` constraints instead.
+- **Exception — Append-Only Audit Tables**: A single `audit_log` table that records changes across many entity types MAY use a polymorphic `target_id` (UUID) + `target_type` (discriminator string) with no DB-level FK constraint. This is the standard pattern for cross-entity audit logs because: (a) splitting into per-entity audit tables fragments the timeline, (b) N nullable FK columns is sparse and error-prone, and (c) audit rows are immutable historical snapshots — referential integrity is enforced by the audit writer, not by live FK constraints. See `references/state-auditing-history.md` §2 for the full pattern.

@@ -47,6 +47,18 @@ Every database schema design delivered by an agent MUST pass these 7 gates:
 6. **Concurrency**: High-contention entities MUST include an optimistic locking column (`version INT DEFAULT 1`).
 7. **Strongly-Typed Repository Mapping**: Query results MUST map to explicit DTOs/Entities (e.g. `@dataclass`, Pydantic `BaseModel`, TS `interface`, Go/Rust `struct`). Returning raw tuples or untyped dicts is forbidden.
 
+### Artifact Level Calibration
+
+The 7 gates check the **schema design**, but the depth of evidence required depends on the artifact being reviewed or produced:
+
+| Artifact | What the gates check | What belongs elsewhere |
+|---|---|---|
+| **Engineering design doc (TRD)** | The design *specifies* PK strategy (e.g. "UUIDv7"), normalization level, audit model, concurrency approach, and typed contracts. ER diagram shows entities, relationships, key types. | Exact DDL, index definitions, migration scripts, repository method signatures — these are implementation details for the code phase. |
+| **Implementation / migration script** | The code *enforces* all 7 gates in actual DDL: `CREATE TABLE` with `NOT NULL`, `CHECK`, `FK`, `UNIQUE`, `CREATE INDEX`, `version` column, typed repository returns. | Design rationale, ADR, alternative analysis — these belong in the TRD. |
+| **Code review (PR)** | The diff *implements* the gates correctly: no raw tuples, no missing indexes, no naive soft-delete, no missing FK. | Design-level questions — defer to TRD review. |
+
+**Do not fail a design doc for not containing implementation DDL.** A TRD that specifies "UUIDv7 PK, 3NF, append-only audit with polymorphic target, optimistic locking on mutable entities, typed repository DTOs" has passed the gates at the design level. The exact `CREATE INDEX` statements belong in the migration script.
+
 ---
 
 ## Workflow Routing

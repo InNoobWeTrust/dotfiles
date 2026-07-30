@@ -111,6 +111,19 @@ When choosing an architecture pattern:
 - **Explicit types over tuples**: Inter-component interfaces must use explicit DTO types.
 - **Evidence over aspiration**: Document what IS, mark aspirational targets as "Target State".
 
+### Artifact Level Calibration
+
+The hard rules and illustration budget scale to the artifact being produced or reviewed:
+
+| Artifact | What the rules require | What is out of scope |
+|---|---|---|
+| **Canonical architecture doc** | Full C4 L1-L3 (system context + containers + components/bounded contexts), complete illustration budget, all hard rules. | Implementation DDL, code, migration scripts. |
+| **Subsystem engineering design doc (TRD)** | Component-level diagrams for the subsystem scope, ER diagram if schema is involved, ADR for decisions, dependency direction. Does NOT need to re-draw system context or container diagrams if the canonical architecture doc already has them — reference it instead. | Full C4 L1 system context, container diagram, exact module port interfaces (those are implementation), migration DDL. |
+| **Delivery spec / migration plan** | Current-state + target-state + transition-sequence diagrams, exit criteria, rollback guidance. | Design rationale, ADR (defer to TRD), component diagrams (defer to TRD). |
+| **Code review (PR)** | Code implements the design correctly: dependency direction, typed interfaces, no black-box components. | Design-level questions (defer to TRD review). |
+
+**Do not fail a subsystem TRD for not containing a full C4 L1 system context diagram.** If the canonical architecture doc (`docs/architecture.md` or equivalent) already covers system context and containers, a subsystem TRD only needs the component-level diagrams, ER diagrams, and decision records relevant to its scope. The TRD's job is to specify *what* and *why* for the subsystem, not to re-document the entire system topology.
+
 ---
 
 ## Deliverables
