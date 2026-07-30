@@ -185,6 +185,7 @@
       "mode": "primary",
       "description": "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts.",
       "model": "ink-gw/openai/chatbot-5.4",
+      "reasoningEffort": "xhigh",
       "permission": {
         "bash": "allow",
         "edit": "allow",
@@ -213,7 +214,8 @@
     "code-reviewer": {
       "mode": "subagent",
       "description": "Code quality review: best practices, security, maintainability, and SOLID/KISS compliance. Read-only. Use after any non-trivial implementation.",
-      "model": "llm-agg/forbiddengun/gpt",
+      "model": "github-copilot/gpt-5.4",
+      "reasoningEffort": "xhigh",
       "permission": {
         "bash": {
           "*": "deny",
