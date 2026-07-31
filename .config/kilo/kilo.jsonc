@@ -620,7 +620,8 @@
           "modalities": {
             "input": [
               "text",
-              "image"
+              "image",
+              "pdf",
             ],
             "output": [
               "text"
@@ -629,6 +630,38 @@
           "limit": {
             "context": 1000000,
             "output": 16384,
+          },
+        },
+        "Kimi-K3": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1048576,
+            "output": 131072,
+          },
+        },
+        "moonshotai/kimi-k2.7-code": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1048576,
+            "output": 131072,
           },
         },
         "GLM-5.2": {
