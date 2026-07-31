@@ -19,7 +19,7 @@
     },
     "general": {
       "description": "Read-only general research. USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
-      "model": "github-copilot/claude-sonnet-4.5",
+      "model": "ink-gw/deepseek/deepseek-v4-pro",
       "reasoningEffort": "high",
       "permission": {
         "edit": "allow",
@@ -74,6 +74,7 @@
       "hidden": true,
       "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
       "model": "llm-agg/forbiddengun/mimo",
+      "reasoningEffort": "high",
     },
     "ask": {
       "description": "A knowledgeable technical assistant focused on answering questions without changing your codebase",
@@ -133,7 +134,7 @@
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
       "model": "ink-gw/openai/chatbot-5.4",
-      "reasoningEffort": "xhigh",
+      "reasoningEffort": "high",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -160,7 +161,7 @@
     "debug": {
       "mode": "all",
       "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
-      "model": "ink-gw/deepseek/deepseek-v4-pro",
+      "model": "github-copilot/claude-sonnet-4.6",
       "reasoningEffort": "high",
       "permission": {
         "edit": "deny",
@@ -189,7 +190,7 @@
       "mode": "primary",
       "description": "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts.",
       "model": "ink-gw/openai/chatbot-5.4",
-      "reasoningEffort": "xhigh",
+      "reasoningEffort": "high",
       "permission": {
         "bash": "allow",
         "edit": "allow",
