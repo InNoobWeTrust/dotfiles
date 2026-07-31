@@ -19,7 +19,8 @@
     },
     "general": {
       "description": "Read-only general research. USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
-      "model": "github-copilot/claude-sonnet-4.6",
+      "model": "github-copilot/claude-sonnet-4.5",
+      "reasoningEffort": "high",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -104,6 +105,7 @@
       "mode": "all",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
       "model": "llm-agg/forbiddengun/grok",
+      "reasoningEffort": "high",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -130,7 +132,8 @@
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      "model": "ink-gw/GLM-5.2",
+      "model": "ink-gw/openai/chatbot-5.4",
+      "reasoningEffort": "xhigh",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -157,7 +160,8 @@
     "debug": {
       "mode": "all",
       "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
-      "model": "llm-agg/forbiddengun/minimax",
+      "model": "ink-gw/deepseek/deepseek-v4-pro",
+      "reasoningEffort": "high",
       "permission": {
         "edit": "deny",
         "read": "allow",
@@ -233,6 +237,7 @@
       "mode": "subagent",
       "description": "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only.",
       "model": "ink-gw/deepseek/deepseek-v4-pro",
+      "reasoningEffort": "high",
       "permission": {
         "edit": {
           "*.test.*": "allow",
@@ -252,6 +257,7 @@
       "mode": "subagent",
       "description": "Writes/edits and review documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
       "model": "github-copilot/claude-sonnet-4.6",
+      "reasoningEffort": "high",
       "permission": {
         "edit": {
           "*.md": "allow",
@@ -270,7 +276,8 @@
     "security-auditor": {
       "mode": "subagent",
       "description": "Security audit: vulnerability assessment, secret exposure, dependency risks, input validation, auth/authz flaws. Read-only. Use for security reviews and pre-deployment audits.",
-      "model": "llm-agg/forbiddengun/claude",
+      "model": "github-copilot/claude-sonnet-4.6",
+      "reasoningEffort": "high",
       "permission": {
         "edit": "deny",
         "bash": {
