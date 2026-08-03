@@ -241,6 +241,7 @@
       "reasoningEffort": "high",
       "permission": {
         "edit": {
+          "*": "deny", // Lowest priority first
           "*.test.*": "allow",
           "*.spec.*": "allow",
           "*test*/**": "allow",
@@ -249,7 +250,6 @@
           "vitest.config.*": "allow",
           "jest.config.*": "allow",
           "playwright.config.*": "allow",
-          "*": "deny"
         }
       },
       "prompt": "You are a test engineer. Write comprehensive tests following the project's existing test patterns and framework. Cover happy path, edge cases, error conditions, and boundary values. Match existing test style (naming, structure, assertions). Only edit test files and test config."
@@ -261,6 +261,7 @@
       "reasoningEffort": "high",
       "permission": {
         "edit": {
+          "*": "deny", // Lowest priority first
           "*.md": "allow",
           "*.mdx": "allow",
           "*.rst": "allow",
@@ -268,9 +269,8 @@
           "README": "allow",
           "CHANGELOG*": "allow",
           "CONTRIBUTING*": "allow",
-          "*": "deny"
         },
-        "bash": "deny"
+        "bash": "deny",
       },
       "prompt": "You are a technical writer. Write clear, concise, well-structured documentation. Follow existing documentation style and conventions. Focus on clarity, accuracy, and completeness. Include code examples where helpful. Use proper markdown formatting."
     },
