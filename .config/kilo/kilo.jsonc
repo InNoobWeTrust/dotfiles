@@ -105,7 +105,7 @@
     "plan": {
       "mode": "all",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
-      "model": "ink-gw/GLM-5.2",
+      "model": "ink-gw/Kimi-K3",
       "reasoningEffort": "high",
       "permission": {
         "edit": "allow",
@@ -133,7 +133,7 @@
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      "model": "ink-gw/openai/gpt-5.6-luna",
+      "model": "ink-gw/openai/gpt-5.6-terra",
       "reasoningEffort": "high",
       "permission": {
         "edit": "allow",
@@ -624,6 +624,22 @@
         "INK_GATEWAY_API_KEY"
       ],
       "models": {
+        "openai/gpt-5.6-terra": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
         "openai/gpt-5.6-luna": {
           "modalities": {
             "input": [
