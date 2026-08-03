@@ -73,7 +73,7 @@
     "orchestrator": {
       "hidden": true,
       "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
-      "model": "llm-agg/forbiddengun/mimo",
+      "model": "ink-gw/Kimi-K3",
       "reasoningEffort": "high",
     },
     "ask": {
@@ -105,7 +105,7 @@
     "plan": {
       "mode": "all",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
-      "model": "llm-agg/forbiddengun/grok",
+      "model": "ink-gw/GLM-5.2",
       "reasoningEffort": "high",
       "permission": {
         "edit": "allow",
@@ -133,7 +133,7 @@
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      "model": "ink-gw/openai/chatbot-5.4",
+      "model": "ink-gw/openai/gpt-5.6-luna",
       "reasoningEffort": "high",
       "permission": {
         "edit": "allow",
@@ -189,7 +189,7 @@
     "autonomous": {
       "mode": "primary",
       "description": "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts.",
-      "model": "ink-gw/openai/chatbot-5.4",
+      "model": "ink-gw/openai/gpt-5.6-luna",
       "reasoningEffort": "high",
       "permission": {
         "bash": "allow",
@@ -624,6 +624,38 @@
         "INK_GATEWAY_API_KEY"
       ],
       "models": {
+        "openai/gpt-5.6-luna": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
+        "gpt-5.6-terra": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
         "openai/chatbot-5.4": {
           "modalities": {
             "input": [
