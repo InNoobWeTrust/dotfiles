@@ -108,6 +108,7 @@
       "model": "ink-gw/Kimi-K3",
       "reasoningEffort": "high",
       "permission": {
+        "bash": "allow",
         "edit": "allow",
         "read": "allow",
         "glob": "allow",
@@ -136,6 +137,7 @@
       "model": "ink-gw/openai/gpt-5.6-terra",
       "reasoningEffort": "high",
       "permission": {
+        "bash": "allow",
         "edit": "allow",
         "read": "allow",
         "glob": "allow",
@@ -164,6 +166,7 @@
       "model": "github-copilot/claude-sonnet-4.6",
       "reasoningEffort": "high",
       "permission": {
+        "bash": "allow",
         "edit": "deny",
         "read": "allow",
         "glob": "allow",
