@@ -1,6 +1,6 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
-  "small_model": "kilo/kilo-auto/free",
+  "small_model": "github-copilot/claude-haiku-4.5",
   "default_agent": "autonomous",
   "instructions": [
     "~/.agents/instructions/agent-instructions.md",
@@ -19,7 +19,7 @@
     },
     "general": {
       "description": "Read-only general research. USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
-      "model": "ink-gw/deepseek/deepseek-v4-pro",
+      "model": "ink-gw/deepseek-v4-flash",
       "reasoningEffort": "high",
       "permission": {
         "edit": "allow",
@@ -73,7 +73,7 @@
     "orchestrator": {
       "hidden": true,
       "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
-      "model": "ink-gw/Kimi-K3",
+      "model": "ink-gw/deepseek-v4-flash",
       "reasoningEffort": "high",
     },
     "ask": {
@@ -134,7 +134,7 @@
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      "model": "ink-gw/openai/gpt-5.6-terra",
+      "model": "ink-gw/deepseek-v4-flash",
       "reasoningEffort": "high",
       "permission": {
         "bash": "allow",
@@ -159,6 +159,36 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
+    },
+    "ui-coder": {
+      "mode": "subagent",
+      "description": "Specialized UI/frontend coder powered by Gemini (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic — delegate non-UI concerns to code.",
+      "model": "github-copilot/gemini-3.5-flash",
+      "reasoningEffort": "high",
+      "permission": {
+        "bash": "allow",
+        "edit": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "deny",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "semantic_search": "allow",
+        "codesearch": "allow",
+        "skill": "allow",
+        "lsp": "allow",
+        "external_directory": "allow",
+        "todowrite": "allow",
+        "todoread": "allow",
+        "question": "allow",
+        "doom_loop": "allow",
+        "kilo_memory_save": "allow",
+        "kilo_memory_recall": "allow",
+        "recall": "allow",
+      },
+      "prompt": "You are a specialized UI/frontend engineer. Your strength is visual and interaction craft: layout, spacing, typography, color, contrast, responsiveness, motion, and accessibility. Focus your edits strictly on UI concerns (components, styles, markup, interaction) and touch business logic only when a UI change directly requires it. Before writing code, inspect the existing UI patterns, design system, and component conventions in the repo and match them. Prioritize: consistent spacing scale, clear visual hierarchy, sufficient contrast (WCAG AA), keyboard navigation, focus states, semantic HTML, and responsive behavior across breakpoints. Do not over-engineer or add dependencies when plain CSS/classes suffice."
     },
     "debug": {
       "mode": "all",
@@ -192,7 +222,7 @@
     "autonomous": {
       "mode": "primary",
       "description": "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts.",
-      "model": "ink-gw/openai/gpt-5.6-luna",
+      "model": "ink-gw/openai/gpt-5.6-terra",
       "reasoningEffort": "high",
       "permission": {
         "bash": "allow",
@@ -240,7 +270,7 @@
     "tester": {
       "mode": "subagent",
       "description": "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only.",
-      "model": "ink-gw/deepseek/deepseek-v4-pro",
+      "model": "ink-gw/deepseek-v4-flash",
       "reasoningEffort": "high",
       "permission": {
         "edit": {
@@ -308,6 +338,11 @@
       "mode": "subagent",
       "description": "GLM-5.2 viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
       "model": "featherless/zai-org/GLM-5.2",
+    },
+    "featherless-deepseek-flash-0731": {
+      "mode": "subagent",
+      "description": "DeepSeek Flash 0731 viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
+      "model": "featherless/deepseek-ai/DeepSeek-V4-Flash-0731",
     },
     "featherless-deepseek": {
       "mode": "subagent",
@@ -420,6 +455,20 @@
           "limit": {
             "context": 1000000,
             "output": 131072,
+          },
+        },
+        "deepseek-ai/DeepSeek-V4-Flash-0731": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 384000,
           },
         },
         "deepseek-ai/DeepSeek-V4-Pro": {
@@ -707,22 +756,6 @@
             "output": 131072,
           },
         },
-        "moonshotai/kimi-k2.7-code": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1048576,
-            "output": 131072,
-          },
-        },
         "GLM-5.2": {
           "modalities": {
             "input": [
@@ -737,7 +770,7 @@
             "output": 131072,
           },
         },
-        "deepseek/deepseek-v4-pro": {
+        "deepseek-v4-flash": {
           "modalities": {
             "input": [
               "text",
@@ -747,7 +780,21 @@
             ]
           },
           "limit": {
-            "context": 1048576,
+            "context": 1000000,
+            "output": 384000,
+          },
+        },
+        "deepseek-v4-pro": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
             "output": 384000,
           },
         },
