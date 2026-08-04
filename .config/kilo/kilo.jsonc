@@ -20,7 +20,6 @@
     "general": {
       "description": "Read-only general research. USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
       "model": "ink-gw/openai/gpt-5.6-luna",
-      "reasoningEffort": "high",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -74,7 +73,10 @@
       "hidden": true,
       "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
       "model": "ink-gw/openai/gpt-5.6-luna",
-      "reasoningEffort": "high",
+      "variant": "high",
+      "options": {
+        "reasoningEffort": "high",
+      },
     },
     "ask": {
       "description": "A knowledgeable technical assistant focused on answering questions without changing your codebase",
@@ -106,7 +108,10 @@
       "mode": "all",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
       "model": "openai/gpt-5.6-sol",
-      "reasoningEffort": "high",
+      "variant": "high",
+      "options": {
+        "reasoningEffort": "high",
+      },
       "permission": {
         "bash": "allow",
         "edit": "allow",
@@ -135,7 +140,10 @@
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
       "model": "ink-gw/openai/gpt-5.6-terra",
-      "reasoningEffort": "high",
+      "variant": "high",
+      "options": {
+        "reasoningEffort": "high",
+      },
       "permission": {
         "bash": "allow",
         "edit": "allow",
@@ -164,7 +172,9 @@
       "mode": "all",
       "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
       "model": "llm-agg/forbiddengun/grok",
-      "reasoningEffort": "high",
+      "options": {
+        "reasoningEffort": "high",
+      },
       "permission": {
         "bash": "allow",
         "edit": "deny",
@@ -193,7 +203,9 @@
       "mode": "subagent",
       "description": "Specialized UI/frontend coder powered by Gemini (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic — delegate non-UI concerns to code.",
       "model": "github-copilot/gemini-3.5-flash",
-      "reasoningEffort": "high",
+      "options": {
+        "reasoningEffort": "high",
+      },
       "permission": {
         "bash": "allow",
         "edit": "allow",
@@ -223,7 +235,10 @@
       "mode": "primary",
       "description": "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts.",
       "model": "openai/gpt-5.6-terra",
-      "reasoningEffort": "high",
+      "variant": "high",
+      "options": {
+        "reasoningEffort": "high",
+      },
       "permission": {
         "bash": "allow",
         "edit": "allow",
@@ -253,7 +268,10 @@
       "mode": "subagent",
       "description": "Code quality review: best practices, security, maintainability, and SOLID/KISS compliance. Read-only. Use after any non-trivial implementation.",
       "model": "openai/gpt-5.6-luna",
-      "reasoningEffort": "high",
+      "variant": "high",
+      "options": {
+        "reasoningEffort": "high",
+      },
       "permission": {
         "bash": {
           "*": "deny",
@@ -271,7 +289,9 @@
       "mode": "subagent",
       "description": "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only.",
       "model": "ink-gw/deepseek-v4-flash",
-      "reasoningEffort": "high",
+      "options": {
+        "reasoningEffort": "high",
+      },
       "permission": {
         "edit": {
           "*": "deny", // Lowest priority first
@@ -291,7 +311,9 @@
       "mode": "subagent",
       "description": "Writes/edits and review documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
       "model": "github-copilot/claude-sonnet-4.6",
-      "reasoningEffort": "high",
+      "options": {
+        "reasoningEffort": "high",
+      },
       "permission": {
         "edit": {
           "*": "deny", // Lowest priority first
@@ -311,7 +333,9 @@
       "mode": "subagent",
       "description": "Security audit: vulnerability assessment, secret exposure, dependency risks, input validation, auth/authz flaws. Read-only. Use for security reviews and pre-deployment audits.",
       "model": "github-copilot/claude-sonnet-4.6",
-      "reasoningEffort": "high",
+      "options": {
+        "reasoningEffort": "high",
+      },
       "permission": {
         "edit": "deny",
         "bash": {
