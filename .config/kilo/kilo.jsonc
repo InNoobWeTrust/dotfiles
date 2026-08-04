@@ -253,7 +253,7 @@
       "mode": "subagent",
       "description": "Code quality review: best practices, security, maintainability, and SOLID/KISS compliance. Read-only. Use after any non-trivial implementation.",
       "model": "github-copilot/gpt-5.4",
-      "reasoningEffort": "xhigh",
+      "reasoningEffort": "high",
       "permission": {
         "bash": {
           "*": "deny",
