@@ -185,6 +185,9 @@ Natural transitions between skills:
 | `skill-author` (Workflow B) | `reviewer` | "Audit complete, challenging conclusions" |
 | `skill-author` (Workflow A) | `reviewer` | "New skill written, ready for adversarial review" |
 | `skill-author` (Workflow A) | `skill-author` (Workflow B) | "New skill registered, queued for next quarterly audit" |
+| `architecture-design` | `mermaid-validation` | "Mermaid diagram generated, validating syntax before embedding" |
+| `data-storytelling` | `mermaid-validation` | "Mermaid visual created, validating syntax before embedding" |
+| `db-design` | `mermaid-validation` | "ER diagram generated, validating syntax before embedding" |
 
 ---
 
