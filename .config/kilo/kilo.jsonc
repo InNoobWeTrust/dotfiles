@@ -267,7 +267,7 @@
     "code-reviewer": {
       "mode": "subagent",
       "description": "Code quality review: best practices, security, maintainability, and SOLID/KISS compliance. Read-only. Use after any non-trivial implementation.",
-      "model": "openai/gpt-5.6-luna",
+      "model": "openai/gpt-5.6-terra",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -749,67 +749,7 @@
             "output": 128000,
           },
         },
-        "openai/chatbot-5.4": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 16384,
-          },
-        },
-        "Kimi-K3": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1048576,
-            "output": 131072,
-          },
-        },
-        "GLM-5.2": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 131072,
-          },
-        },
         "deepseek-v4-flash": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 384000,
-          },
-        },
-        "deepseek-v4-pro": {
           "modalities": {
             "input": [
               "text",
