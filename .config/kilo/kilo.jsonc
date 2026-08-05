@@ -293,6 +293,7 @@
         "reasoningEffort": "high",
       },
       "permission": {
+        "bash": "allow",
         "edit": {
           "*": "deny", // Lowest priority first
           "*.test.*": "allow",
@@ -315,6 +316,7 @@
         "reasoningEffort": "high",
       },
       "permission": {
+        "bash": "allow",
         "edit": {
           "*": "deny", // Lowest priority first
           "*.md": "allow",
@@ -325,7 +327,6 @@
           "CHANGELOG*": "allow",
           "CONTRIBUTING*": "allow",
         },
-        "bash": "deny",
       },
       "prompt": "You are a technical writer. Write clear, concise, well-structured documentation. Follow existing documentation style and conventions. Focus on clarity, accuracy, and completeness. Include code examples where helpful. Use proper markdown formatting."
     },

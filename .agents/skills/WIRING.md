@@ -29,9 +29,10 @@ When debugging or fixing a problem:
 
 ### UI/UX Implementation
 
-1. `ui-ux` — design quality lens & DESIGN.md visual system authority
-2. `code-craft` — SOLID/modularity on component logic
+1. `ui-ux` — design-driven workflow: discover → journey → layout → states → style → code → verify (writes UX-SPEC.md as design contract)
+2. `code-craft` — Phase 6 implementation methodology (SOLID/modularity on component logic)
 3. `reviewer` (security lens) — input validation, auth on visual interfaces
+4. `web-qa-audit` — optional Phase 7 browser-based verification for Deep track
 
 ### Data Story → Visual → Illustration
 

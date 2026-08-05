@@ -1,164 +1,218 @@
 ---
 name: ui-ux
-description: "Use this skill when building or polishing user interfaces — layout, typography, color, motion, responsive design, dark mode, visual polish, or DESIGN.md design systems. Activate when the user asks to design a UI, make something look better, add animations, create or audit a DESIGN.md visual system, or do any frontend work where visual quality matters. Uses taste sliders, DESIGN.md specs, and audit-first methodology to prevent generic output."
+description: "Use this skill when building or polishing user interfaces — user journey mapping, interaction design, layout planning, visual design, DESIGN.md systems, and frontend implementation with design-code drift prevention. Activate when designing a UI feature, building a multi-screen experience, creating a design system, polishing visual quality, or doing any frontend work where UX methodology matters. Enforces design-before-code: written UX specs must exist before implementation begins. Uses UX-SPEC.md as the design contract, 10-State UI Matrix for state exhaustion, and DESIGN.md tokens for visual consistency."
 ---
 
 # UI-UX Design Skill
 
-Design companion for creating polished, accessible interfaces. Combines "High-Agency" creative principles with the Google Labs `DESIGN.md` specification for structured, token-driven visual identity.
+Design-driven UI development: discover → journey → layout → states → style → code → verify.
 
-Progressive disclosure: this file is the workflow router. Deep specification detail lives in `references/design-md-spec.md`.
+**Core principle**: No UI code before written design specs. Every design decision lives in `UX-SPEC.md`, not in the agent's context window.
+
+Progressive disclosure — load refs only when the phase needs them:
+
+| When | Load |
+|---|---|
+| Phase 1 (Discovery interview) | `references/discovery-questions.md` |
+| Phase 4 (State Matrix) | `references/state-matrix.md` |
+| Creating UX-SPEC.md | `references/ux-spec-template.md` |
+| Choosing track or composing skills | `references/scaling-and-composition.md` |
+| Phase 5 (DESIGN.md work) | `references/design-md-spec.md` |
 
 ---
 
-## Phase 1 — Establish Design Context
+## Phase 0 — Route & Scale
 
-Before writing any UI code, gather context and calibrate creative direction.
+Before starting, determine the track. Load `references/scaling-and-composition.md` if unsure.
 
-### 1a. DESIGN.md Check
+| Track | When | Phases |
+|---|---|---|
+| **Quick** | Single component, existing design system, unambiguous spec | 5 → 6 → 7 |
+| **Standard** (default) | New feature, multi-screen, ambiguous requirements | All 1–7 |
+| **Deep** | Product redesign, design system creation, multi-persona | All 1–7 + extra gates |
 
-Look for a root `DESIGN.md` in the project. Three outcomes:
+**Default to Standard.** Scale down to Quick only when ALL Quick criteria are met (see reference).
+
+For redesigns or polish of existing UI, perform a brief visual audit as part of Phase 3 context gathering — check for generic colors, poor spacing, token violations, and a11y failures.
+
+---
+
+## Phase 1 — Discovery
+
+**Purpose**: Understand what we're building, for whom, under what constraints.
+
+1. Load `references/discovery-questions.md`
+2. Select 3–5 highest-impact questions based on the request
+3. Interview the user (or self-groom per `rules/grooming.md` AFK mode)
+4. Create `UX-SPEC.md` from `references/ux-spec-template.md`
+5. Write findings to `UX-SPEC.md` § Discovery
+
+**GATE**: UX-SPEC.md § Discovery must be written to file before proceeding.
+
+---
+
+## Phase 2 — User Journey & Flow
+
+**Purpose**: Map user paths through the feature before designing screens.
+
+1. Identify user personas and entry points from Discovery
+2. Map the primary journey: phases → actions → goals → emotions → pain points → opportunities
+3. Create user flow with decision branches (Mermaid `flowchart TD`)
+4. Build screen inventory — every view/screen the feature needs
+5. Write to `UX-SPEC.md` § User Journey, § User Flow, § Screen Inventory
+
+**GATE**: Journey map + flow diagram + screen inventory must be written before proceeding.
+
+---
+
+## Phase 3 — Layout & Wireframe
+
+**Purpose**: Define information architecture and spatial organization per screen.
+
+For each screen in the inventory:
+1. Define content hierarchy (primary → secondary → tertiary)
+2. Describe layout structure and grid
+3. Create an **SVG wireframe** for every non-trivial screen (more than two regions) — save it inline in `UX-SPEC.md` § Layout in an `xml` fenced block. Use ASCII art only for trivial one- or two-region splits where SVG adds no clarity.
+4. Specify responsive behavior at mobile / tablet / desktop breakpoints in prose alongside the SVG
+5. Note navigation and wayfinding elements
+6. Write all content to `UX-SPEC.md` § Layout
+
+For redesigns: audit existing UI here — identify token violations, spacing issues, a11y failures.
+
+**GATE**: Layout descriptions, written responsive behavior at desktop/tablet/mobile breakpoints, and SVG wireframes for all non-trivial screens must be written to `UX-SPEC.md` § Layout before proceeding.
+
+---
+
+## Phase 4 — State Matrix
+
+**Purpose**: Exhaustively enumerate component states to prevent happy-path-only UI.
+
+1. Load `references/state-matrix.md` for the 10-State UI Matrix and applicability guide
+2. For each interactive component identified in layout, fill applicable states
+3. Document loading strategy (skeleton vs. spinner vs. progressive)
+4. Document error recovery UX and empty state content
+5. Write to `UX-SPEC.md` § State Matrix
+
+**GATE**: State matrix for all interactive components must be written before proceeding.
+
+---
+
+## Phase 5 — Visual Design
+
+**Purpose**: Define the visual identity — colors, typography, spacing, motion.
+
+### 5a. DESIGN.md Check
 
 | Situation | Action |
 |---|---|
-| `DESIGN.md` exists and passes lint | Extract tokens; use them as the source of truth for all color, typography, spacing, and component decisions. |
-| `DESIGN.md` exists but is incomplete/failing | Run `npx @google/design.md lint DESIGN.md`, fix findings, then proceed. |
-| No `DESIGN.md` and project has UI | Offer to scaffold one per the spec (`references/design-md-spec.md`). If the user declines, derive implicit tokens from existing CSS/Tailwind and document assumptions. |
+| `DESIGN.md` exists and passes lint | Extract tokens; use as source of truth |
+| `DESIGN.md` exists but incomplete | Run `npx @google/design.md lint DESIGN.md`, fix, proceed |
+| No `DESIGN.md` and project has UI | Offer to scaffold per `references/design-md-spec.md` |
 
-### 1b. Taste Sliders (1–10)
+### 5b. Taste Sliders (1–10)
 
-Calibrate the creative budget. Ask the user or infer from context:
+Calibrate creative direction. Ask or infer from Discovery context:
 
-- **DESIGN_VARIANCE** — 1–3: standard layouts, system fonts, predictable grids. 4–7: curated type pairings, considered asymmetry. 8–10: boutique typography, experimental overlapping elements.
-- **MOTION_INTENSITY** — 1–3: discrete 200ms transitions, subtle hover scale. 4–7: entrance animations, scroll-reveal. 8–10: scroll-linked parallax, magnetic cursors, 3D CSS transforms.
-- **VISUAL_DENSITY** — 1–3: high whitespace (luxury), 1–2 elements per viewport. 4–7: balanced information display. 8–10: compact data grids, multi-pane dashboards.
+- **DESIGN_VARIANCE** — 1–3: standard layouts, system fonts. 4–7: curated pairings, considered asymmetry. 8–10: experimental, boutique.
+- **MOTION_INTENSITY** — 1–3: subtle 200ms transitions. 4–7: entrance animations, scroll-reveal. 8–10: parallax, 3D transforms.
+- **VISUAL_DENSITY** — 1–3: generous whitespace. 4–7: balanced. 8–10: compact data grids.
 
 Defaults when unspecified: DESIGN_VARIANCE=5, MOTION_INTENSITY=4, VISUAL_DENSITY=5.
 
-### 1c. Tech Stack Awareness
+### 5c. Token Mapping
 
-Identify the project's styling approach (Vanilla CSS, Tailwind, CSS Modules, styled-components, etc.) and map `DESIGN.md` tokens to the appropriate format. Never introduce a new CSS methodology without asking.
+Map design tokens to layout decisions from Phase 3. Define motion tokens if MOTION_INTENSITY > 3.
 
----
+Write to `UX-SPEC.md` § Visual Design.
 
-## Phase 2 — Audit Existing UI
-
-Before rewriting code, perform a brief visual audit:
-
-1. **Identify issues**: Generic colors, poor spacing, inconsistent typography, accessibility failures, outdated patterns (heavy borders, standard drop shadows).
-2. **Prioritize by visual impact**: Rank fixes from highest to lowest visual improvement per effort.
-3. **Modernize**: Replace outdated patterns with modern alternatives — subtle depth cues, glassmorphism, refined shadows, fluid spacing.
-4. **Validate against DESIGN.md**: Cross-check existing styles against token values. Flag hardcoded magic numbers and rogue colors that don't trace back to the design system.
-
-**Skip this phase** for greenfield projects where no existing UI exists.
+**GATE**: Visual design decisions documented before proceeding to code.
 
 ---
 
-## Phase 3 — Implement
+## Phase 6 — Implement
 
-Apply changes following these core principles:
+**Purpose**: Write code that faithfully implements the written specs.
 
-### Visual Hierarchy & Typography
-- Guide the eye using size, weight, color, and spacing contrast.
-- Prefer modern typefaces (Inter, Geist, Playfair Display, Space Grotesk) over system defaults. Use `DESIGN.md` typography tokens when available.
-- Maintain 60–75 character line lengths for body text readability.
+**PREREQUISITE**: `UX-SPEC.md` must exist with Phases 1–5 sections populated.
 
-### Spacing & Layout
-- Use a base-4 grid (4, 8, 12, 16, 24, 32, 48, 64, 96 px). Map to `DESIGN.md` spacing tokens.
-- Group related elements tightly; separate unrelated sections with generous whitespace.
-- Ensure responsive behavior — test at mobile, tablet, and desktop breakpoints.
-
-### Color & Accessibility
-- Apply the **60-30-10 rule**: 60% neutral/background, 30% secondary, 10% accent.
-- **WCAG AA minimum** (4.5:1 text contrast, 3:1 non-text). Color must never be the sole indicator of state.
-- Use `DESIGN.md` color tokens exclusively — no ad-hoc hex values in component files.
-
-### Output Policy
-- Deliver full, production-ready files. Never use placeholders (`// ... rest of code`, `/* implementation here */`).
-- Exception: files exceeding 1000 lines may use targeted surgical edits via `replace` tools, but all logic within the edited scope must be complete.
+1. **Read UX-SPEC.md** as the source of truth — all sections
+2. **Check existing components** — search project component tree before writing new HTML
+3. **Follow code-craft** — load `code-craft` skill for implementation methodology
+4. **Token compliance** — zero hardcoded hex colors or arbitrary px values; all styling references DESIGN.md tokens or CSS variables
+5. **State exhaustion** — implement ALL states from the State Matrix
+6. **Accessibility by default**:
+   - Semantic HTML (`<button>`, `<nav>`, `<main>`, `<article>`)
+   - ARIA labels and roles where semantic HTML is insufficient
+   - Keyboard navigation and visible focus states
+   - WCAG AA minimum (4.5:1 text, 3:1 non-text contrast)
+   - `prefers-reduced-motion` respected
+   - Touch targets ≥ 44×44px
+7. **Responsive implementation** — test at breakpoints specified in Layout section
+8. **Output policy** — deliver full production-ready files, no placeholders
 
 ---
 
-## Phase 4 — Validate
+## Phase 7 — Verify
 
-1. **DESIGN.md lint** (if the project has one):
-   ```bash
-   npx @google/design.md lint DESIGN.md
-   ```
-2. **Visual regression**: Verify no unintended style changes outside the target scope.
-3. **Accessibility check**: Confirm contrast ratios, keyboard navigation, and ARIA attributes.
-4. **Token compliance**: Grep for hardcoded color/spacing values that should reference design tokens.
+**Purpose**: Verify implementation matches written design specs.
 
----
+1. **Spec cross-reference** — walk UX-SPEC.md § Verification Checklist, checking each item
+2. **Token compliance** — grep for hardcoded hex colors (`#[0-9a-fA-F]{3,8}`) and arbitrary px values in component files
+3. **State audit** — verify each state from the State Matrix is implemented
+4. **DESIGN.md lint** (if applicable): `npx @google/design.md lint DESIGN.md`
+5. **Accessibility check** — contrast ratios, keyboard nav, ARIA attributes, focus management
+6. **Responsive check** — verify layout at specified breakpoints
+7. **Produce verification report** — pass/fail per checklist item
 
-## DESIGN.md Specification (Quick Reference)
-
-Full spec: `references/design-md-spec.md`. Key points:
-
-- **Format**: YAML frontmatter (tokens) + Markdown body (rationale). Tokens are normative; prose explains intent.
-- **Token groups**: `colors`, `typography`, `rounded`, `spacing`, `components`. Cross-reference with `{path.to.token}` syntax.
-- **Section order**: Overview → Colors → Typography → Layout → Elevation & Depth → Shapes → Components → Do's and Don'ts.
-- **Validation**: `npx @google/design.md lint` checks schema, token references, and WCAG contrast. `npx @google/design.md diff` detects regressions between versions.
-- **Consumer behavior**: Unknown section headings and unknown token names with valid values are accepted — do not error on extensibility.
-
----
-
-## Data Augmentation
-
-Curated design data (palettes, component specs) synced as raw CSV files from external repositories.
-
-- **Cache**: `$UI_UX_CACHE` or `~/.cache/ui-ux-skill/ui-ux-pro-max/`
-- **Query with csvkit**: `csvgrep -c color -m "#3B82F6" ~/.cache/ui-ux-skill/ui-ux-pro-max/*.csv`
-- **Query with ripgrep**: `rg "glassmorphism" ~/.cache/ui-ux-skill/ui-ux-pro-max/`
-- **Sync**: `../../scripts/sync-remotes.sh --apply`
-
----
-
-## Aesthetic Patterns
-
-Reference patterns for high variance/motion calibration:
-
-| Pattern | Characteristics | Slider Profile |
-|---|---|---|
-| Premium Minimalist (Linear/Notion) | Monochrome palettes, 1px borders, generous whitespace | V:3 M:2 D:3 |
-| Modern Brutalist | Bold Swiss typography, stark contrast, raw mechanical feel | V:8 M:3 D:6 |
-| Glassmorphism | Frosted glass via `backdrop-filter: blur(20px)`, layered depth | V:6 M:5 D:5 |
-| 3D Scroll (Apple-style) | Interactive motion driven by scroll progress, cinematic | V:7 M:9 D:4 |
+For Deep track: delegate browser verification to `web-qa-audit` skill.
 
 ---
 
 ## Stop Conditions
 
-- **No design context**: If no `DESIGN.md` exists and the user declines to create one, proceed with inferred tokens but document the gap.
-- **Accessibility violation**: Do not ship UI that fails WCAG AA. Halt and fix before proceeding.
-- **Tech stack conflict**: If the requested change would introduce a conflicting CSS methodology, stop and ask.
-- **Scope creep**: If a "make it look better" request implies a full redesign beyond the original scope, confirm scope with the user.
+- **Ambiguous requirements**: If Discovery interview reveals fundamental ambiguity, STOP and clarify with user before proceeding
+- **No design spec**: Do NOT write UI code if UX-SPEC.md doesn't exist or relevant sections are empty
+- **Accessibility violation**: Do not ship UI that fails WCAG AA — halt and fix
+- **Tech stack conflict**: If changes would introduce a conflicting CSS methodology, STOP and ask
+- **Scope creep**: If a request implies redesign beyond original scope, confirm with user
+- **Missing states**: If State Matrix is incomplete for a component, fill it before coding
 
 ## Deliverables
 
-- [ ] Design context established (DESIGN.md check + taste sliders calibrated)
-- [ ] Visual audit completed (or skipped for greenfield with justification)
-- [ ] Implementation delivered with full production-ready code
-- [ ] All colors, spacing, and typography trace to DESIGN.md tokens or documented CSS variables
-- [ ] WCAG AA contrast verified
-- [ ] `npx @google/design.md lint DESIGN.md` passes (if applicable)
+- [ ] Track selected (Quick / Standard / Deep) with justification
+- [ ] Discovery completed — UX-SPEC.md § Discovery written (Standard/Deep)
+- [ ] User journey + flow mapped — UX-SPEC.md § Journey + Flow written (Standard/Deep)
+- [ ] Layout defined — `UX-SPEC.md` § Layout written with SVG wireframes for all non-trivial screens at desktop, tablet, and mobile breakpoints (Standard/Deep)
+- [ ] State matrix filled — UX-SPEC.md § State Matrix written (Standard/Deep)
+- [ ] Visual design established — DESIGN.md check + taste sliders + tokens mapped
+- [ ] Implementation: full production-ready code, all states, all breakpoints
+- [ ] All colors/spacing/typography trace to tokens — zero hardcoded values
+- [ ] WCAG AA contrast verified, keyboard nav works, ARIA complete
+- [ ] Verification checklist completed — pass/fail per item
 
 ## Anti-Patterns
 
 | Temptation | Why Wrong | Correct Path |
 |---|---|---|
-| Jump straight to code without checking DESIGN.md | Produces styles that drift from the design system, creating token/implementation mismatch | Phase 1a first — read or scaffold DESIGN.md |
-| Hardcode hex colors and px values inline | Creates unmaintainable, un-auditable styling that can't be lint-checked | Reference DESIGN.md tokens via CSS variables or theme config |
-| Skip the audit on existing UI | Misses the highest-impact improvements and risks introducing inconsistencies | Phase 2 audit takes 2 minutes and shapes the entire approach |
-| Use system fonts "for performance" | Visually generic output that fails the premium quality bar | Load 1–2 curated fonts via DESIGN.md typography tokens |
-| Ignore accessibility until review | Retrofitting contrast and ARIA is 5× harder than building it in | Apply WCAG AA during implementation, not as a post-hoc fix |
-| Introduce Tailwind into a Vanilla CSS project (or vice versa) | Methodology conflicts create maintenance debt | Match the existing tech stack; ask before switching |
-| Treat taste sliders as decorative | Without calibration, output defaults to safe/generic | Set explicit slider values — even defaults are a conscious choice |
+| Jump to code after reading requirements | Produces UI that drifts from intent — no written spec to anchor against | Complete Phases 1–5, write UX-SPEC.md, THEN code |
+| Skip Discovery ("requirements are clear") | Every ambiguity becomes an ad-hoc decision conflicting with user intent | Ask at least 3 questions; write findings to file |
+| Design only the happy path | Users spend 80% of time in edge states (loading, error, empty) | Fill 10-State Matrix before coding |
+| Pick colors/fonts before understanding user journey | Visual decisions without UX context produce pretty but unusable UI | Journey → Layout → States → THEN Visual |
+| Keep designs in context window only | Context eviction = design amnesia mid-implementation | Write every decision to UX-SPEC.md |
+| Hardcode hex colors and px values | Unmaintainable styling that drifts from design system | Reference DESIGN.md tokens via CSS variables |
+| Write new components without checking existing ones | Fragments the design system, duplicates effort | Search project component tree first |
+| Skip responsive planning | Desktop-only UI that breaks on mobile | Specify breakpoint behavior in Layout |
+| Treat accessibility as post-hoc | Retrofitting ARIA and contrast is 5× harder than building in | Semantic HTML + WCAG AA from Phase 6 start |
+| Default to Quick track to save time | Skips journey/states, produces shallow UI | Standard is default; Quick requires ALL criteria met |
+| Use ASCII art for complex multi-region layouts | Ambiguous spatial relationships, no breakpoint semantics, hard to review | Create an SVG wireframe per `references/ux-spec-template.md` § Layout covering desktop, tablet, and mobile breakpoints; save in `UX-SPEC.md` § Layout |
 
 ---
 
 ## References
 
-- `references/design-md-spec.md` — Full DESIGN.md format specification, token schema, and implementation mapping
-- Upstream spec: https://github.com/google-labs-code/design.md
-- Compose with: `code-craft` (component logic), `reviewer` (security lens for visual interfaces), `project-foundation` (DESIGN.md setup during bootstrap)
+- `references/discovery-questions.md` — Stakeholder question bank (6 categories, 25 questions)
+- `references/state-matrix.md` — 10-State UI Matrix with applicability guide and motion tokens
+- `references/ux-spec-template.md` — UX-SPEC.md template with section completion rules
+- `references/scaling-and-composition.md` — Quick/Standard/Deep tracks and skill composition
+- `references/design-md-spec.md` — Full DESIGN.md format specification (Google Labs)
+- Compose with: `code-craft` (Phase 6 methodology), `reviewer` (design audit), `web-qa-audit` (Phase 7 browser verification), `project-foundation` (DESIGN.md bootstrap), `illustration-craft` (empty state graphics)
