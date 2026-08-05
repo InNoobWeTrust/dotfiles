@@ -23,6 +23,7 @@ Use Mermaid when it can express the message cleanly and quickly. Prefer Mermaid 
 4. Use restrained color: one accent for focus, neutrals for context.
 5. Start quantitative axes at zero for bars unless there is an explicit reason not to; if not, say so in the caption.
 6. Do not force complex infographic layouts in Mermaid; escalate to `illustration-craft`.
+7. **One question / flow / layer per node-based diagram**: When a flowchart, graph, or sequence diagram covers multiple distinct questions, independent flows, or separate logical layers (e.g., data ingestion flow mixed with aggregation logic mixed with output routing), split it into focused sub-diagrams rather than combining them into a dense composite. Link the sub-diagrams from a brief orientation note so the reader knows the full picture. This rule applies to node-based visuals (flowchart, graph, sequence, journey); it does not affect the quantitative readability limits above (those remain as-is for xychart-beta / sankey-beta / category axes).
 
 ## Escalation triggers
 

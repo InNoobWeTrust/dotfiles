@@ -63,6 +63,23 @@ Architecture docs that are walls of text have failed. Minimum diagrams:
 | Security review | 1× trust boundary diagram (STRIDE overlay) |
 | ADR | 1× options comparison diagram (optional) |
 
+### Diagram Scoping — One Concern Per Diagram
+
+Each Mermaid diagram must represent **one logical concern**. Mixing multiple concerns (e.g., data flow + deployment topology + component relationships) into a single diagram makes it unreadable and defeats the purpose.
+
+**Hard rules:**
+
+- **One concern per diagram**: A diagram covers one of: system context, container boundaries, component internals, data flow, deployment topology, sequence/interaction, or decision tree — not multiple at once.
+- **Scannable heuristic (~10–15 nodes)**: When a diagram approaches ~10–15 nodes, treat it as a signal to review whether it is mixing concerns. This is a heuristic, not a hard node count — a well-bounded diagram with 20 nodes is better than splitting a coherent flow arbitrarily. Use judgment: if nodes belong to different concerns, split; if they belong to the same concern, keep together.
+- **Split dense/multi-concern diagrams**: When a single diagram spans multiple concerns or becomes dense, split it into logically scoped sub-diagrams — one per concern.
+- **Overview-first navigation**: When a topic is covered by multiple sub-diagrams, provide a concise overview diagram (or a brief prose orientation) that names and links each sub-diagram so readers know where to navigate.
+- **Illustration-first is preserved**: Splitting does not reduce the illustration count — it replaces one overloaded diagram with multiple focused ones. The minimum illustration budget from the table above still applies.
+
+**Anti-patterns to reject:**
+- A single flowchart that shows both runtime data flow and static component ownership.
+- A sequence diagram that also encodes deployment zones as swim-lanes.
+- A C4 component diagram that annotates every node with data schema details (those belong in the ER diagram).
+
 ---
 
 ## Workflow Routing
