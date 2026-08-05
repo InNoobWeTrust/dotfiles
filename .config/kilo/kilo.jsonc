@@ -19,7 +19,7 @@
     },
     "general": {
       "description": "Read-only general research. USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
-      "model": "ink-gw/deepseek-v4-flash",
+      "model": "forbiddengun/auto-small",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -80,7 +80,7 @@
     },
     "ask": {
       "description": "A knowledgeable technical assistant focused on answering questions without changing your codebase",
-      "model": "openai/gpt-5.6-luna",
+      "model": "ink-gw/deepseek-v4-flash",
       "permission": {
         "edit": "deny",
         "read": "allow",
@@ -139,7 +139,7 @@
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      "model": "ink-gw/openai/gpt-5.6-terra",
+      "model": "openai/gpt-5.6-luna",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -267,7 +267,7 @@
     "code-reviewer": {
       "mode": "subagent",
       "description": "Code quality review: best practices, security, maintainability, and SOLID/KISS compliance. Read-only. Use after any non-trivial implementation.",
-      "model": "openai/gpt-5.6-terra",
+      "model": "ink-gw/openai/gpt-5.6-terra",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
