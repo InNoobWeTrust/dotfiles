@@ -171,7 +171,7 @@
     "debug": {
       "mode": "all",
       "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
-      "model": "llm-agg/forbiddengun/grok",
+      "model": "llm-agg/forbiddengun/minimax",
       "options": {
         "reasoningEffort": "high",
       },
@@ -296,7 +296,7 @@
     "code-reviewer": {
       "mode": "subagent",
       "description": "Code quality review: best practices, security, maintainability, and SOLID/KISS compliance. Read-only. Use after any non-trivial implementation.",
-      "model": "ink-gw/openai/gpt-5.6-terra",
+      "model": "openai/gpt-5.6-luna",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
