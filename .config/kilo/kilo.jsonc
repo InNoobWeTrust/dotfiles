@@ -19,7 +19,7 @@
     },
     "general": {
       "description": "Read-only general research. USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
-      "model": "forbiddengun/auto-small",
+      "model": "ink-gw/deepseek-v4-flash",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -72,7 +72,7 @@
     "orchestrator": {
       "hidden": true,
       "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
-      "model": "ink-gw/deepseek-v4-flash",
+      "model": "openai/gpt-5.6-luna",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -80,7 +80,7 @@
     },
     "ask": {
       "description": "A knowledgeable technical assistant focused on answering questions without changing your codebase",
-      "model": "ink-gw/deepseek-v4-flash",
+      "model": "kilo/kilo-auto/free",
       "permission": {
         "edit": "deny",
         "read": "allow",
@@ -823,6 +823,24 @@
           "limit": {
             "context": 1050000,
             "output": 128000,
+          },
+        },
+        "muse-spark-1.2-contributor": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+              "pdf",
+              "audio",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1048576,
+            "output": 131072,
           },
         },
         "deepseek-v4-flash": {
