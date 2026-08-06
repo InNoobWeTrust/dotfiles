@@ -17,6 +17,19 @@
         "-lc",
         "npx -y @azure-devops/mcp $ADO_ORG -d core work work-items --authentication envvar"
       ]
+    },
+    "serena": {
+      "enabled": true,
+      "command": "uvx",
+      "args": [
+        "-p",
+        "3.13",
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--project-from-cwd"
+      ]
     }
   }
 }

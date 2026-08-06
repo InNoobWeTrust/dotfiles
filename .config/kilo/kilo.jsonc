@@ -518,6 +518,20 @@
       ],
       "enabled": false
     },
+    "serena": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "-p",
+        "3.13",
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--project-from-cwd"
+      ],
+      "enabled": true
+    },
   },
   "provider": {
     "featherless": {
