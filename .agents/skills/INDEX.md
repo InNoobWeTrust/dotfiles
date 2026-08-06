@@ -35,6 +35,7 @@ Use this index before loading any skill body. Select one primary skill by defaul
 | `mermaid-validation` | low | **Validate mermaid diagram syntax** before embedding in artifacts or docs. Self-executing Bun script — no npm install required. Use after generating mermaid, when a diagram failed to render, or when batch-validating `.mmd` files. | No mermaid diagrams are being produced |
 
 | `db-design` | medium | **Operational database design — OLTP schema modeling, 1NF-3NF normalization, PK/FK strategies (UUIDv7/ULID), indexing optimization, constraints, state auditing, concurrency/locking, zero-downtime migrations, and strongly-typed repository DTO mapping.** Composes with `architecture-design` and `code-craft`. | Simple database config edits, typos, or high-level analytical data warehouse pipelines (use `architecture-design` data-architecture workflow) |
+| `database-access` | medium | **Implementing or reviewing database access code — ORM/data mapper session lifecycle, Active Record patterns, query builders, parameterized raw SQL, document DB/ODM access, bulk/native operations, unit-of-work boundaries, write contracts, idempotency, concurrency, aggregate sync, and adapter testing.** Load after `db-design` (schema done, now implement the access layer) or after `architecture-design` (data-access boundaries decided). | Schema design, migrations, or indexing strategy (use `db-design`); simple single-query config changes; high-level analytical pipelines |
 
 
 ## Routing Rules

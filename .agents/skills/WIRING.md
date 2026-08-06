@@ -114,6 +114,22 @@ When public signals should shape outreach, direction, or decision-making:
 4. `requirements-driven-dev` — formalize the chosen direction into a PRD/TRD/spec if needed
 5. `reviewer` (editorial or adversarial lens) — stress-test the resulting narrative or recommendation
 
+### Database Design → Database Access Implementation
+
+When schema design is complete and the access layer must be implemented:
+
+1. `db-design` — schema modeling, migrations, typed DTO mapping design
+2. `database-access` — implement repositories/adapters, session lifecycle, write contracts, test strategy
+3. `code-craft` — disciplined implementation of non-trivial adapter code (SOLID, modularity)
+4. `reviewer` (security lens) — verify parameterization, entity boundary, injection risks
+
+When data-access boundaries or capabilities must be decided at an architectural level first:
+
+1. `architecture-design` — decide data-access boundaries, facade selection, capability declaration
+2. `database-access` — implement the declared boundaries and capability contract
+3. `code-craft` — disciplined adapter implementation
+4. `reviewer` (design-rigor lens) — verify boundary discipline
+
 ### Skill Authoring & Maintenance
 
 When creating or maintaining the .agents/ governance layer:
@@ -188,6 +204,10 @@ Natural transitions between skills:
 | `skill-author` (Workflow A) | `skill-author` (Workflow B) | "New skill registered, queued for next quarterly audit" |
 | `architecture-design` | `mermaid-validation` | "Mermaid diagram generated, validating syntax before embedding" |
 | `data-storytelling` | `mermaid-validation` | "Mermaid visual created, validating syntax before embedding" |
+| `db-design` | `database-access` | Schema finalized — implement the access layer (repositories, session lifecycle, write contracts) |
+| `architecture-design` | `database-access` | Data-access boundaries and capability contract decided — implement them |
+| `database-access` | `code-craft` | Non-trivial adapter implementation needs SOLID/modularity discipline |
+| `database-access` | `reviewer` | Access layer complete — security lens (injection, entity exposure) or design-rigor lens (boundary discipline) |
 | `db-design` | `mermaid-validation` | "ER diagram generated, validating syntax before embedding" |
 
 ---

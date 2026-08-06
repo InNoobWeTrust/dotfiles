@@ -44,7 +44,7 @@ Your project's `AGENTS.md` should have these sections, adapted to your stack and
 | **Source of Truth Order** | Resolve conflicts between docs and code | Ranked list of canonical documents |
 | **Project Rules** | Hard constraints that must never be violated | Business logic location, data integrity rules, system-critical constraints |
 | **Tooling Rules** | How to run things, what tools NOT to use | Package managers, build systems, environment isolation |
-| **Database Rules** | Schema management protocol | Migration workflow, raw SQL vs ORM boundaries, seed data setup |
+| **Data Access Contract** | What the data layer supports and how it must be used | Read this section in AGENTS.md first; if it links a dedicated document (e.g. `docs/data-access.md`), read that second. Covers: facade type (ORM / Active Record / raw SQL / ODM), transaction guarantees, unit-of-work ownership, entity/DTO boundary, retry and idempotency policy, and any declared optional extensions (tenancy, soft-delete, replicas). If no contract exists, ask before risky writes. See the discovery template in the `.agents` pack at [`../../skills/database-access/references/capability-contract.md`](../../skills/database-access/references/capability-contract.md). |
 | **Agent Operating Rules** | How the AI agent should behave | Default skill, when to load/not load skills, verification protocol |
 | **Code Quality Rules** | Minimum engineering bar | Naming conventions, nesting limits, function length, prohibited patterns |
 | **Routing & Memory Rules** | Context management | When to save/restore short-term entries, when to consolidate, file locations |
