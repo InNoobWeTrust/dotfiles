@@ -201,7 +201,7 @@
     },
     "ui-coder": {
       "mode": "subagent",
-      "description": "Specialized UI/frontend coder powered by Gemini (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic — delegate non-UI concerns to code.",
+      "description": "Specialized UI/frontend coder powered by Gemini (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic or any frontend logic (composables, api handling, etc...) — delegate non-UI concerns to code.",
       "model": "github-copilot/gemini-3.5-flash",
       "options": {
         "reasoningEffort": "high",
@@ -229,7 +229,7 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "You are a specialized UI/frontend engineer. Your strength is visual and interaction craft: layout, spacing, typography, color, contrast, responsiveness, motion, and accessibility. Focus your edits strictly on UI concerns (components, styles, markup, interaction) and touch business logic only when a UI change directly requires it. Before writing code, inspect the existing UI patterns, design system, and component conventions in the repo and match them. Prioritize: consistent spacing scale, clear visual hierarchy, sufficient contrast (WCAG AA), keyboard navigation, focus states, semantic HTML, and responsive behavior across breakpoints. Do not over-engineer or add dependencies when plain CSS/classes suffice."
+      "prompt": "You are a specialized UI/frontend engineer. Your strength is visual and interaction craft: layout, spacing, typography, color, contrast, responsiveness, motion, and accessibility. Focus your edits strictly on UI concerns (components, styles, markup, interaction) and delegate business logic back when a UI change directly requires it (put placeholder code and require to fill it later). Before writing code, inspect the existing UI patterns, design system, and component conventions in the repo and match them. Prioritize: consistent spacing scale, clear visual hierarchy, sufficient contrast (WCAG AA), keyboard navigation, focus states, semantic HTML, and responsive behavior across breakpoints. Do not over-engineer or add dependencies when plain CSS/classes suffice."
     },
     "autonomous": {
       "mode": "primary",
@@ -386,7 +386,7 @@
     },
     "security-auditor": {
       "mode": "subagent",
-      "description": "Security audit: vulnerability assessment, secret exposure, dependency risks, input validation, auth/authz flaws. Read-only. Use for security reviews and pre-deployment audits.",
+      "description": "Security audit: vulnerability assessment, secret exposure, dependency risks, input validation, auth/authz flaws. Read-only. Use for security reviews and pre-deployment audits. Only call this when all works are completed and before handing back to user, reason for this is that security audit usually takes very long time to run and we don't want to waste time reviewing minor incomplete changes.",
       "model": "openai/gpt-5.6-sol",
       "variant": "high",
       "options": {
@@ -1158,6 +1158,24 @@
     },
     "kilo_memory_recall": {
       "*": "allow",
+    },
+    "serena_initial_instructions": {
+      "*": "allow"
+    },
+    "serena_activate_project": {
+      "*": "allow"
+    },
+    "serena_list_dir": {
+      "*": "allow"
+    },
+    "serena_find_file": {
+      "*": "allow"
+    },
+    "serena_search_for_pattern": {
+      "*": "allow"
+    },
+    "serena_get_symbols_overview": {
+      "*": "allow"
     },
   },
   "experimental": {
