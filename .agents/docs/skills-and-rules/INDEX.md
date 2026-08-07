@@ -4,6 +4,7 @@
 
 | Entry | Summary | Read when |
 |---|---|---|
+| [Installing skills via npx](./installing-skills.md) | Installing skills via `npx skills add` & pairing with rules | Installing skills in new or existing repos |
 | [Why rules and skills exist](./why-rules-and-skills.md) | Mental model: rules constrain, skills direct | Starting the section |
 | [Essential rules](./essential-rules.md) | Core always-on rules every project needs | Implementing baseline rules |
 | [Nice-to-have rules](./nice-to-have-rules.md) | Memory, discovery, routing optional rules | Expanding beyond baseline |

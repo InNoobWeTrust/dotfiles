@@ -33,11 +33,12 @@ Wiki docs outside `slides/` are **English-first** (agent-searchable). Slides kee
 
 ### Setting up AI-augmented development for the first time
 
-1. [project-lifecycle → Guiding philosophy](./project-lifecycle/guiding-philosophy.md)
-2. [project-lifecycle → Architecture](./project-lifecycle/architecture-of-governance.md)
-3. [project-lifecycle → Adaptation checklist](./project-lifecycle/adaptation-checklist.md)
-4. [skills-and-rules → Essential rules](./skills-and-rules/essential-rules.md)
-5. [skills-and-rules → Designing skills](./skills-and-rules/designing-skills.md)
+1. [skills-and-rules → Installing skills via npx](./skills-and-rules/installing-skills.md)
+2. [project-lifecycle → Guiding philosophy](./project-lifecycle/guiding-philosophy.md)
+3. [project-lifecycle → Architecture](./project-lifecycle/architecture-of-governance.md)
+4. [project-lifecycle → Adaptation checklist](./project-lifecycle/adaptation-checklist.md)
+5. [skills-and-rules → Essential rules](./skills-and-rules/essential-rules.md)
+6. [skills-and-rules → Designing skills](./skills-and-rules/designing-skills.md)
 
 ### Joining an existing project
 
@@ -71,6 +72,7 @@ Wiki docs outside `slides/` are **English-first** (agent-searchable). Slides kee
 
 | Concept | One-liner | Where |
 |---|---|---|
+| **Installing skills** | Quick install via `npx skills add` + pairing with `.agents/rules` | [skills-and-rules](./skills-and-rules/installing-skills.md) |
 | **Rules** | Non-negotiable constraints on every task | [skills-and-rules](./skills-and-rules/why-rules-and-skills.md) |
 | **Skills** | Full workflows loaded on demand | [skills-and-rules](./skills-and-rules/why-rules-and-skills.md) |
 | **AI as junior engineer** | Fast junior who needs explicit guidance | [project-lifecycle](./project-lifecycle/guiding-philosophy.md) |
