@@ -202,7 +202,7 @@
     "ui-coder": {
       "mode": "subagent",
       "description": "Specialized UI/frontend coder powered by Gemini (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic or any frontend logic (composables, api handling, etc...) — delegate non-UI concerns to code.",
-      "model": "github-copilot/gemini-3.5-flash",
+      "model": "llm-agg/forbiddengun/gemini",
       "options": {
         "reasoningEffort": "high",
       },
@@ -357,7 +357,7 @@
     "docs-editor": {
       "mode": "subagent",
       "description": "Writes/edits and review documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
-      "model": "github-copilot/claude-sonnet-4.6",
+      "model": "llm-agg/forbiddengun/claude",
       "options": {
         "reasoningEffort": "high",
       },
