@@ -234,6 +234,89 @@ Don't drop:
 
 ---
 
+# Self-Hosted Quality Telemetry
+
+## A composition — not a SonarQube drop-in
+
+| Component | Responsibility |
+|---|---|
+| **MegaLinter** | Executes heterogeneous language, format, and repository linters in CI |
+| **OpenObserve** | Stores/query/dashboards normalized run + finding telemetry |
+
+- Both OSS components are **AGPL-3.0** and self-hostable.
+- OSS use can avoid a **commercial license fee**.
+- AGPL obligations, compute/storage/network, backups, upgrades, CI time, and operations remain.
+- Raw MegaLinter reports stay as artifacts; a versioned adapter emits normalized streams.
+
+**Think: self-hosted quality telemetry — not “Sonar, but free.”**
+
+---
+
+# Material Semantic Gaps
+
+## What this composition does not provide by itself
+
+- centralized quality gates across repositories
+- consistent new-code / diff semantics
+- coverage governance
+- normalized issue lifecycle and rule profiles
+- duplication governance
+- PR decoration
+- normalized security analysis and remediation governance
+
+**CI still owns pass/fail policy.** OpenObserve dashboards make evidence queryable; they do not create the policy.
+
+> GitLab Code Quality widgets need a separate compliant JSON-array transform. MegaLinter does not document native GitLab Code Quality output.
+
+**Use it for polyglot CI visibility and data ownership; keep Sonar or another governance layer when these semantics are release-critical.**
+
+---
+
+# Coverage & Complexity Need Separate Jobs
+
+| Job | Producer | Owns |
+|---|---|---|
+| **lint** | MegaLinter | heterogeneous lint/policy findings |
+| **test/coverage** | native runner + JaCoCo, Coverlet, Istanbul/Jest, or pytest-cov | tests, coverage report, threshold |
+| **complexity** | dedicated producer such as Lizard | mean/max complexity, NLOC, threshold |
+
+- **MegaLinter does not replace test coverage or trendable complexity metrics.**
+- PMD/ESLint/Ruff complexity rules are language-specific findings, not one cross-language score.
+- Lizard is a separate job; do not imply it is bundled with MegaLinter.
+
+---
+
+# Gate in CI, Trend in OpenObserve
+
+- Test/coverage and complexity jobs own threshold failures and original exit status.
+- GitLab coverage/unit-test artifacts serve MR/CI UI; OpenObserve receives data only after an explicit normalizer/uploader reads artifacts or summaries.
+- Keep flat event fields such as `commit_sha`, `pipeline_id`, and `mr_iid`; keep metric labels low-cardinality.
+- Use `after_script` or saved exit status so telemetry uploads on failure without masking the job result.
+- Compare trends within the same tool/language/module; OpenObserve observes and alerts on drift, not the only merge gate.
+
+**Canonical guide:** [coverage, complexity, and telemetry design](../quality-tooling/openobserve-megalinter.md)
+
+---
+
+# Primary Sources: Platform
+
+- **OpenObserve OSS/AGPL:** [editions](https://openobserve.ai/downloads/) · [license](https://raw.githubusercontent.com/openobserve/openobserve/main/LICENSE)
+- **Ingestion and schema:** [`_json` array](https://openobserve.ai/docs/reference/api/ingestion/logs/json/) · [schema settings](https://openobserve.ai/docs/user-guide/data-processing/streams/schema-settings/) · [data/index types](https://openobserve.ai/docs/user-guide/data-processing/streams/data-type-and-index-type-in-streams/)
+- **Explore:** [SQL](https://openobserve.ai/docs/reference/sql-reference/) · [dashboards](https://openobserve.ai/docs/user-guide/analytics/dashboards/dashboards-in-openobserve/)
+- **Docs:** [canonical guide](../quality-tooling/openobserve-megalinter.md) · [full evidence leaf](../quality-tooling/details/openobserve-megalinter-sources.md)
+
+---
+
+# Primary Sources: CI & Comparison
+
+- **MegaLinter OSS/AGPL:** [license](https://raw.githubusercontent.com/oxsecurity/megalinter/main/LICENSE) · [current version](https://megalinter.io/latest/install-version/) · [GitLab install](https://megalinter.io/latest/install-gitlab/)
+- **Reports/config:** [activation](https://megalinter.io/latest/config-activation/) · [reporters](https://megalinter.io/latest/reporters/)
+- **GitLab:** [Code Quality format](https://docs.gitlab.com/ci/testing/code_quality/)
+- **SonarSource:** [quality standards](https://docs.sonarsource.com/sonarqube-community-build/quality-standards-administration/managing-quality-gates/introduction-to-quality-gates.md)
+- **Docs:** [canonical guide](../quality-tooling/openobserve-megalinter.md) · [full evidence leaf](../quality-tooling/details/openobserve-megalinter-sources.md)
+
+---
+
 # Key Alternatives Worth Knowing
 
 | Need | Tool family |
@@ -362,7 +445,7 @@ Behavioral hotspots answer:
 3. **Make fast checks feedback sensors agents run before commit**
 4. **Coverage is not proof — add mutation on critical logic**
 5. **Accessibility is a quality attribute**
-6. **Sonar is a governance layer, not everything**
+6. **Sonar is a governance layer; telemetry is not a drop-in replacement**
 7. **Measure delivery and collaboration quality, not AI output volume**
 
 ---
@@ -377,6 +460,7 @@ Behavioral hotspots answer:
 - `.agents/docs/quality-tooling/extended-evidence-tools.md`
 - `.agents/docs/quality-tooling/stack-baselines.md`
 - `.agents/docs/quality-tooling/comparison-matrix.md`
+- `.agents/docs/quality-tooling/openobserve-megalinter.md`
 - `.agents/docs/slides/01_ai-agents-intro-en.md`
 
 > These slides are a compact summary. The docs above are the source of truth.

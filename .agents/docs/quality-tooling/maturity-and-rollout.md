@@ -31,6 +31,7 @@ Examples:
 - Dependency-Track
 - Codecov
 - NDepend for .NET-heavy organizations
+- OpenObserve + MegaLinter when self-hosted, polyglot CI telemetry is needed and the team accepts a team-owned normalization contract
 
 ### Phase 4 — Portfolio Intelligence
 
@@ -41,6 +42,7 @@ Examples:
 - SBOM ingestion at scale
 - policy exceptions with expiry
 - reporting by business domain / system criticality
+- normalized quality-run and finding trends in OpenObserve, with retention and security controls owned by the team
 
 ---
 
@@ -63,6 +65,8 @@ Good examples:
 - `.editorconfig` + formatter first
 - OWASP Dependency-Check / pip-audit / Trivy in report mode before hard-failing
 - Renovate scheduling + grouping to reduce noise
+
+For a MegaLinter + OpenObserve rollout, preserve raw CI reports first, normalize only the fields the team can define reliably, and add dashboards after the failure path and retention policy are tested. Do not treat a dashboard as a replacement for a quality gate.
 
 ### 8.3 Start from the most convincing pain point
 

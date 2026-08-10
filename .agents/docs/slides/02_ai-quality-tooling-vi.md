@@ -237,6 +237,89 @@ Không nên bỏ:
 
 ---
 
+# Self-Hosted Quality Telemetry
+
+## Một composition — không phải SonarQube drop-in
+
+| Component | Trách nhiệm |
+|---|---|
+| **MegaLinter** | Chạy các linter khác nhau cho language, format và repository trong CI |
+| **OpenObserve** | Lưu, query và làm dashboard cho telemetry run + finding đã normalize |
+
+- Cả hai OSS component đều **AGPL-3.0** và self-host được.
+- Có thể dùng OSS mà không phải trả **commercial license fee**.
+- Vẫn còn nghĩa vụ AGPL, compute/storage/network, backup, upgrade, CI time và vận hành.
+- Giữ raw MegaLinter report ở artifact; adapter có version tạo các normalized stream.
+
+**Hãy nghĩ: self-hosted quality telemetry — không phải “Sonar miễn phí”.**
+
+---
+
+# Các Semantic Gap Quan Trọng
+
+## Composition này tự nó không cung cấp
+
+- centralized quality gate giữa nhiều repository
+- new-code / diff semantics nhất quán
+- governance cho coverage
+- issue lifecycle và rule profile đã normalize
+- duplication governance
+- PR decoration
+- security analysis và remediation governance đã normalize
+
+**CI vẫn giữ pass/fail policy.** Dashboard OpenObserve làm evidence dễ query; nó không tự tạo policy.
+
+> GitLab Code Quality widget cần một transform riêng ra JSON array đúng chuẩn. MegaLinter không document native GitLab Code Quality output.
+
+**Dùng nó cho polyglot CI visibility và data ownership; vẫn giữ Sonar hoặc governance layer khác khi các semantics này quan trọng với release.**
+
+---
+
+# Coverage & Complexity: Cần Job Riêng
+
+| Job | Producer | Sở hữu |
+|---|---|---|
+| **lint** | MegaLinter | lint/policy findings khác nhau theo stack |
+| **test/coverage** | native runner + JaCoCo, Coverlet, Istanbul/Jest hoặc pytest-cov | test, coverage report, threshold |
+| **complexity** | producer riêng như Lizard | mean/max complexity, NLOC, threshold |
+
+- **MegaLinter không thay thế test coverage hay trendable complexity metrics.**
+- Rule complexity của PMD/ESLint/Ruff là finding theo language, không phải một score xuyên language.
+- Lizard là job riêng; không ngụ ý Lizard được bundle trong MegaLinter.
+
+---
+
+# Gate ở CI, Trend ở OpenObserve
+
+- Job test/coverage và complexity sở hữu threshold failure và exit status gốc.
+- GitLab coverage/unit-test artifact phục vụ MR/CI UI; OpenObserve chỉ nhận dữ liệu sau khi normalizer/uploader đọc artifact hoặc summary một cách tường minh.
+- Giữ các event field phẳng như `commit_sha`, `pipeline_id`, `mr_iid`; metric label phải low-cardinality.
+- Dùng `after_script` hoặc lưu exit status để upload telemetry khi failure mà không che mất kết quả job.
+- So sánh trend trong cùng tool/language/module; OpenObserve quan sát và alert drift, không phải merge gate duy nhất.
+
+**Tài liệu chính:** [thiết kế coverage, complexity và telemetry](../quality-tooling/openobserve-megalinter.md)
+
+---
+
+# Nguồn Chính: Platform
+
+- **OpenObserve OSS/AGPL:** [editions](https://openobserve.ai/downloads/) · [license](https://raw.githubusercontent.com/openobserve/openobserve/main/LICENSE)
+- **Ingestion và schema:** [`_json` array](https://openobserve.ai/docs/reference/api/ingestion/logs/json/) · [schema settings](https://openobserve.ai/docs/user-guide/data-processing/streams/schema-settings/) · [data/index types](https://openobserve.ai/docs/user-guide/data-processing/streams/data-type-and-index-type-in-streams/)
+- **Explore:** [SQL](https://openobserve.ai/docs/reference/sql-reference/) · [dashboards](https://openobserve.ai/docs/user-guide/analytics/dashboards/dashboards-in-openobserve/)
+- **Tài liệu:** [canonical guide](../quality-tooling/openobserve-megalinter.md) · [full evidence leaf](../quality-tooling/details/openobserve-megalinter-sources.md)
+
+---
+
+# Nguồn Chính: CI & Comparison
+
+- **MegaLinter OSS/AGPL:** [license](https://raw.githubusercontent.com/oxsecurity/megalinter/main/LICENSE) · [current version](https://megalinter.io/latest/install-version/) · [GitLab install](https://megalinter.io/latest/install-gitlab/)
+- **Reports/config:** [activation](https://megalinter.io/latest/config-activation/) · [reporters](https://megalinter.io/latest/reporters/)
+- **GitLab:** [Code Quality format](https://docs.gitlab.com/ci/testing/code_quality/)
+- **SonarSource:** [quality standards](https://docs.sonarsource.com/sonarqube-community-build/quality-standards-administration/managing-quality-gates/introduction-to-quality-gates.md)
+- **Tài liệu:** [canonical guide](../quality-tooling/openobserve-megalinter.md) · [full evidence leaf](../quality-tooling/details/openobserve-megalinter-sources.md)
+
+---
+
 # Alternatives Quan Trọng Cần Biết
 
 | Need | Tool family |
@@ -365,7 +448,7 @@ Behavioral hotspot trả lợi:
 3. **Đưa check nhanh thành feedback sensor agent chạy trước commit**
 4. **Coverage không phải bằng chứng — thêm mutation cho core logic**
 5. **Accessibility là quality attribute**
-6. **Sonar là governance layer, không phải tất cả**
+6. **Sonar là governance layer; telemetry không phải drop-in replacement**
 7. **Đo delivery và chất lượng hợp tác — không đo khối lượng output AI**
 
 ---
@@ -380,6 +463,7 @@ Behavioral hotspot trả lợi:
 - `.agents/docs/quality-tooling/extended-evidence-tools.md`
 - `.agents/docs/quality-tooling/stack-baselines.md`
 - `.agents/docs/quality-tooling/comparison-matrix.md`
+- `.agents/docs/quality-tooling/openobserve-megalinter.md`
 - `.agents/docs/slides/01_ai-agents-intro-vi.md`
 
 **Gợi ý bước tiếp theo:**

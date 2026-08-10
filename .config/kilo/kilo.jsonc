@@ -76,9 +76,9 @@
       "hidden": true,
       "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
       "model": "openai/gpt-5.6-luna",
-      "variant": "high",
+      "variant": "medium",
       "options": {
-        "reasoningEffort": "high",
+        "reasoningEffort": "medium",
       },
     },
     "ask": {
@@ -110,8 +110,8 @@
     "plan": {
       "mode": "all",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
-      "model": "openai/gpt-5.6-terra",
-      "variant": "xhigh",
+      "model": "ink-gw/openai/gpt-5.6-terra",
+      "variant": "high",
       "options": {
         "reasoningEffort": "high",
       },
@@ -143,9 +143,9 @@
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
       "model": "ink-gw/openai/gpt-5.6-luna",
-      "variant": "xhigh",
+      "variant": "medium",
       "options": {
-        "reasoningEffort": "high",
+        "reasoningEffort": "medium",
       },
       "permission": {
         "bash": "allow",
@@ -175,7 +175,7 @@
       "mode": "all",
       "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
       "model": "openai/gpt-5.6-terra",
-      "variant": "xhigh",
+      "variant": "high",
       "options": {
         "reasoningEffort": "high",
       },
@@ -239,7 +239,10 @@
       "mode": "primary",
       "description": "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts.",
       "model": "openai/gpt-5.6-terra",
-      "variant": "xhigh",
+      "variant": "medium",
+      "options": {
+        "reasoningEffort": "medium",
+      },
       "permission": {
         "bash": "allow",
         "edit": "allow",
@@ -268,7 +271,7 @@
     "research": {
       "mode": "subagent",
       "description": "Deep web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs. Read-only.",
-      "model": "llm-agg/forbiddengun/gemini",
+      "model": "github-copilot/gemini-3.5-flash",
       "options": {
         "reasoningEffort": "high",
       },
@@ -301,7 +304,7 @@
       "mode": "subagent",
       "description": "Code quality review: best practices, security, maintainability, and SOLID/KISS compliance. Read-only. Use after any non-trivial implementation.",
       "model": "ink-gw/openai/gpt-5.6-terra",
-      "variant": "xhigh",
+      "variant": "high",
       "options": {
         "reasoningEffort": "high",
       },
@@ -362,9 +365,9 @@
       "mode": "subagent",
       "description": "Writes/edits and review documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
       "model": "openai/gpt-5.6-luna",
-      "variant": "xhigh",
+      "variant": "medium",
       "options": {
-        "reasoningEffort": "high",
+        "reasoningEffort": "medium",
       },
       "permission": {
         "bash": "allow",
@@ -393,7 +396,7 @@
       "mode": "subagent",
       "description": "Security audit: vulnerability assessment, secret exposure, dependency risks, input validation, auth/authz flaws. Read-only. Use for security reviews and pre-deployment audits. Because security review is time consuming, only offer to run this after commit to review the changes. For plans and engineering doc, offer to run this when complete the writing. Don't call this when user is in a rush or there are still incomplete work, only offer to run this when the user have spare time and nothing more to do.",
       "model": "openai/gpt-5.6-terra",
-      "variant": "xhigh",
+      "variant": "high",
       "options": {
         "reasoningEffort": "high",
       },

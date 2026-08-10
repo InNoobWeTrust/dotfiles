@@ -114,6 +114,8 @@ Goals:
 Example tools/platforms:
 - SonarQube / SonarCloud, GitHub code scanning + CodeQL, Dependency-Track, NDepend, Codecov, enterprise SCA/SAST platforms
 
+[OpenObserve + MegaLinter](./openobserve-megalinter.md) can add a self-hosted telemetry plane for heterogeneous CI lint runs. It stores normalized run/finding streams and dashboards, but it does not automatically provide centralized quality gates, new-code semantics, coverage/duplication governance, PR decoration, or normalized security lifecycle. Treat it as an observation and aggregation component, not as a SonarQube drop-in.
+
 ### 3.9 Layer 9 — Metrics / Hotspots / Technical Debt Intelligence
 
 **Question this layer answers:**

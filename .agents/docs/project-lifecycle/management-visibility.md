@@ -16,6 +16,8 @@ Track quantifiable metrics that management can understand:
 | Test coverage | Are we testing what we build? | Target 80%+ (adjust per project) |
 | Build time | How long from commit to deployable artifact? | Under target threshold |
 
+For a self-hosted quality-telemetry option, [MegaLinter + OpenObserve](../quality-tooling/openobserve-megalinter.md) can provide normalized run/finding streams and dashboards across polyglot CI. Treat these as trend evidence, not as proof of centralized quality gates: define the schema, metadata, retention, access controls, and failure-path behavior explicitly. The OSS components can be used without a commercial license fee, but AGPL obligations and infrastructure/operations costs remain.
+
 ### Delivery Velocity
 
 Track per sprint or month:

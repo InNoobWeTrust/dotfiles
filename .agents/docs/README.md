@@ -21,7 +21,7 @@ Wiki docs outside `slides/` are **English-first** (agent-searchable). Slides kee
 |---|---|---|
 | [skills-and-rules](./skills-and-rules/INDEX.md) | Designing rules & skills, failure patterns, templates | Creating or evolving rules/skills |
 | [project-lifecycle](./project-lifecycle/INDEX.md) | Onboarding, daily AI work, gates, CI/CD, security, maturity | Setting up or joining a project |
-| [quality-tooling](./quality-tooling/INDEX.md) | Quality layers, baselines, Sonar positioning, comparisons | Choosing quality tools |
+| [quality-tooling](./quality-tooling/INDEX.md) | Quality layers, OSS-first baselines, Sonar positioning, self-hosted telemetry, comparisons | Choosing quality tools |
 | [agentic-qa](./agentic-qa/INDEX.md) | Pre-agentic QA foundation + agentic testing mental model | Learning agent-assisted QA/QC without cargo-culting skills |
 | [playbook](./playbook/INDEX.md) | Operational step-by-step guides for practical adoption | Turning concepts into repeatable team workflows |
 | [research](./research/INDEX.md) | Research-phase material — **not battle-tested** | Investigating external patterns before promoting |
@@ -79,6 +79,7 @@ Wiki docs outside `slides/` are **English-first** (agent-searchable). Slides kee
 | **AI as junior engineer** | Fast junior who needs explicit guidance | [project-lifecycle](./project-lifecycle/guiding-philosophy.md) |
 | **Quality layers** | Format → lint → type → test → risk → governance | [quality-tooling](./quality-tooling/mental-model.md) |
 | **Two loops** | Inner (dev/agent) vs governance (CI/leadership) | [quality-tooling](./quality-tooling/mental-model.md) |
+| **Self-hosted quality telemetry** | MegaLinter execution + OpenObserve dashboards; not a drop-in SonarQube replacement | [quality-tooling](./quality-tooling/openobserve-megalinter.md) |
 | **Agentic QA roles** | Review ≠ orchestration ≠ browser mechanics | [agentic-qa](./agentic-qa/mental-model.md) |
 | **Evidence grades** | pass / fail / unverified — never launder | [agentic-qa](./agentic-qa/trust-and-evidence.md) |
 | **Memory** | Short-term notes + long-term consolidation | [working with AI](./project-lifecycle/working-with-ai-agents.md) |

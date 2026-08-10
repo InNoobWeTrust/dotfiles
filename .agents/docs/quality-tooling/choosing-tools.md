@@ -55,6 +55,10 @@ This is why some tools are especially good for rolling into an old codebase:
 - Renovate scheduling
 - Dependency-Track portfolio ingestion
 
+### 4.6 Ask "do we need a self-hosted telemetry plane?"
+
+If the problem is fragmented polyglot CI evidence, consider [OpenObserve + MegaLinter](./openobserve-megalinter.md): MegaLinter runs the heterogeneous lint/policy checks and OpenObserve stores/query/dashboards a versioned normalized run/finding contract. Keep native test/coverage jobs and a dedicated complexity producer (for example Lizard) separate, then normalize their summaries too. This is useful when data ownership and no commercial license fee matter, but it adds adapters, retention/security work, and operational infrastructure. It does not supply SonarQube's centralized gates, new-code/diff semantics, coverage, issue lifecycle/rule profiles, duplication governance, PR decoration, or security normalization.
+
 ---
 
 ## 5. Tool Groups by Layer
@@ -133,7 +137,9 @@ This section doesn't try to be exhaustive — it tries to be **industry-grade en
 
 | Tool | Best use |
 |---|---|
+| Lizard | dedicated cross-language complexity metric generation; trend within the same tool/language/module |
 | `scc` | LOC, complexity, ULOC/DRYness, hotspots, coupling, HTML report, COCOMO/LOCOMO |
+| PMD / ESLint / Ruff complexity rules | language-specific lint findings and policy thresholds, not one comparable cross-language score |
 | PMD CPD | duplication detection across many languages |
 | Sonar | duplication/complexity trends in a governance dashboard |
 | NDepend | deep .NET architecture, trend, dependency graph, quality gates |
