@@ -15,7 +15,10 @@
       "model": "kilo/kilo-auto/free",
     },
     "summary": {
-      "model": "kilo/kilo-auto/free",
+      "model": "ink-gw/deepseek-v4-flash",
+    },
+    "compaction": {
+      "model": "ink-gw/deepseek-v4-flash",
     },
     "general": {
       "description": "Read-only general research. USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
@@ -203,7 +206,7 @@
     "ui-coder": {
       "mode": "subagent",
       "description": "Specialized UI/frontend coder powered by Gemini (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic or any frontend logic (composables, api handling, etc...) — delegate non-UI concerns to code.",
-      "model": "llm-agg/forbiddengun/gemini",
+      "model": "github-copilot/gemini-3.5-flash",
       "options": {
         "reasoningEffort": "high",
       },
@@ -389,7 +392,7 @@
     "security-auditor": {
       "mode": "subagent",
       "description": "Security audit: vulnerability assessment, secret exposure, dependency risks, input validation, auth/authz flaws. Read-only. Use for security reviews and pre-deployment audits. Because security review is time consuming, only offer to run this after commit to review the changes. For plans and engineering doc, offer to run this when complete the writing. Don't call this when user is in a rush or there are still incomplete work, only offer to run this when the user have spare time and nothing more to do.",
-      "model": "openai/gpt-5.6-sol",
+      "model": "openai/gpt-5.6-terra",
       "variant": "xhigh",
       "options": {
         "reasoningEffort": "high",
@@ -438,11 +441,6 @@
       "description": "DeepSeek V4 Pro viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
       "model": "featherless/deepseek-ai/DeepSeek-V4-Pro",
     },
-    "featherless-deepseek-flash": {
-      "mode": "subagent",
-      "description": "DeepSeek V4 Flash viewpoint (economical V4 lane). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
-      "model": "featherless/deepseek-ai/DeepSeek-V4-Flash",
-    },
     "featherless-kimi": {
       "mode": "subagent",
       "description": "Kimi K2.7 Code viewpoint (multimodal: text, image, video). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
@@ -472,31 +470,6 @@
       "mode": "subagent",
       "description": "Qwen 3.6 viewpoint (text, image). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
       "model": "featherless/Qwen/Qwen3.6-27B",
-    },
-    "featherless-qwen-moe": {
-      "mode": "subagent",
-      "description": "Qwen 3.6 35B MoE viewpoint (multimodal: text, image). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
-      "model": "featherless/Qwen/Qwen3.6-35B-A3B",
-    },
-    "featherless-llama": {
-      "mode": "subagent",
-      "description": "Llama 3.3 70B Instruct viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 4 concurrency units/req — max 1 active request on 4-unit plan]",
-      "model": "featherless/unsloth/Llama-3.3-70B-Instruct",
-    },
-    "featherless-mistral": {
-      "mode": "subagent",
-      "description": "Mistral Small 3.2 viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
-      "model": "featherless/mistralai/Mistral-Small-3.2-24B-Instruct-2506",
-    },
-    "featherless-gemma": {
-      "mode": "subagent",
-      "description": "Gemma 3 27B viewpoint (text, image). Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 2 concurrency units/req — max 2 active requests on 4-unit plan]",
-      "model": "featherless/unsloth/gemma-3-27b-it",
-    },
-    "featherless-phi": {
-      "mode": "subagent",
-      "description": "Phi-4 viewpoint. Slow performance (avoid using as daily-driver); use only for multi-perspective tasks like reviewing and brainstorming with multiple viewpoints. [Featherless: 1 concurrency unit/req — max 4 active requests on 4-unit plan]",
-      "model": "featherless/microsoft/phi-4",
     },
   },
   "mcp": {
