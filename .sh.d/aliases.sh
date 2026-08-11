@@ -44,9 +44,6 @@ alias ps-me-not='ps -U `whoami` -u `whoami` u'
 # Kill parallel processes running in another session
 alias rampage='printf "what to kill? => "; victim=; read victim; ps -A | grep $victim | awk "{print $1}" | xargs -r kill'
 
-# Random number generator
-alias gacha='printf "Lower limit: "; read low; printf "Upper limit: "; read high; diff=$(($high - $low)); echo "Press ENTER key to stop!"; while ! read -t 0.25 -rsn 1; do printf "\r%5d" $(($RANDOM % $((diff + 1)) + $low)); done'
-
 # Random string generators
 alias alnumer='cat /dev/random | base64 | tr -cd "[:alnum:]" | head -c'
 alias hexer='cat /dev/random | base64 | tr -cd "[0-9a-fA-F]" | head -c'
@@ -54,9 +51,6 @@ alias passgen="tr -dc 'A-Za-z0-9!@#$%^&*()_+-=[]{}|;:,.<>?' < /dev/urandom | hea
 
 # Create tmpdir and cd into it
 alias isekai='cd `mktemp -d`'
-
-# Dummy sleep 5s with a spinner
-alias lag5s='sleep 5 & job=$!; while kill -0 $job 2>/dev/null; do for s in / - \\ \|; do printf "\r%s" $s; sleep .1; done; done'
 
 # Cron utilities
 alias cron-routine='cron_routine'
@@ -233,8 +227,6 @@ usable npx && \
         ! usable marp-serve && alias marp-serve='npx --yes @marp-team/marp-cli@latest -s'
         # run commands from markdown files
         ! usable runme && alias runme='npx --yes runme'
-        # MiniMax CLI
-        ! usable mmx-cli && alias mmx-cli='npx --yes mmx-cli'
         # Copilot CLI
         ! usable copilot && alias copilot='npx --yes @github/copilot'
         # Claude code
@@ -249,8 +241,6 @@ usable npx && \
         ! usable skills && alias skills="npx --yes skills"
         ! usable openskills && alias openskills="npx --yes openskills"
         ! usable skillfish && alias skillfish="npx --yes skillfish"
-        # AI-Agile Development
-        ! usable starter-bmad-method && alias starter-bmad-method="npx --yes bmad-method install"
         # Tree-sitter CLI
         ! usable tree-sitter && alias tree-sitter='npx --yes tree-sitter-cli'
     }
@@ -357,11 +347,7 @@ usable curl && alias install-pkgx='curl -fsS https://pkgx.sh | sh'
 
 usable curl && alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
 
-alias update-brew='usable brew && yes | brew update && yes | brew upgrade'
-
-#################### Sdkman ####################
-
-usable curl && alias install-sdkman='mkdir -p $HOME/.local && export SDKMAN_DIR="$HOME/.local/sdkman" && curl -s "https://get.sdkman.io" | bash'
+usable brew && alias update-brew='yes | brew update && yes | brew upgrade'
 
 ################# Cheat sheet ##################
 
@@ -393,8 +379,6 @@ alias install-poetry-by-pipx='pipx install poetry'
 usable curl && alias install-micromamba='usable curl && "${SHELL}" <(curl -L micro.mamba.pm/install.sh)'
 alias update-micromamba='usable micromamba && micromamba self-update'
 
-# Nice interface for coding Agent
-usable uv && alias install-toad='uv tool install -U batrachian-toad --python 3.14'
 
 ################### NodeJs #####################
 
@@ -404,13 +388,13 @@ usable curl && alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.gith
 # automate nvm update node
 alias update-nvm='usable nvm && nvm install node --reinstall-packages-from=node -y && nvm use default'
 
+# cleanup unused version of node
+alias cleanup-nvm='nvm ls --no-colors | grep -o "^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*" | tr -d "[[:blank:]]v" | xargs -I % $SHELL -c ". $NVM_DIR/nvm.sh && nvm uninstall %"'
+
 # install volta
 usable curl && alias install-volta='mkdir -p $VOLTA_HOME && curl https://get.volta.sh | bash -s -- --skip-setup'
 
 usable curl && alias install-bun='usable bash && usable curl && BUN_INSTALL="$HOME/.local/bun" bash <(curl -fsSL https://bun.sh/install)'
-
-# cleanup unused version of node
-alias cleanup-nvm='nvm ls --no-colors | grep -o "^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*" | tr -d "[[:blank:]]v" | xargs -I % $SHELL -c ". $NVM_DIR/nvm.sh && nvm uninstall %"'
 
 ################### PHP ########################
 
@@ -421,14 +405,15 @@ usable curl && alias install-convertio='mkdir -p ~/.local/$USER/bin && curl -LJo
 # Update stable build of neovim
 usable curl && alias install-nvim-stable='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage && chmod +x ~/.local/$USER/bin/nvim'
 
-# Update nightly build of neovim
-usable curl && alias install-nvim-nightly='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage'
-
 # Update code-server
 usable curl && alias install-code-server='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards "**/code-server" --strip-components 1'
 
-# Download latest eclipse jdt language server
-usable curl && alias install-jls='mkdir -p ~/.local/eclipse.jdt.ls/ && curl -s http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz | tar xvz -C ~/.local/eclipse.jdt.ls/'
+# Install vscode CLI
+usable curl && alias install-vscode-cli-mac-silicon='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/code.zip https://code.visualstudio.com/sha/download?build=stable&os=cli-darwin-arm64 && unzip -o ~/.local/$USER/bin/code.zip -d ~/.local/$USER/bin/ && rm ~/.local/$USER/bin/code.zip'
+usable curl && alias install-vscode-cli-linux='mkdir -p ~/.local/$USER/bin && curl -Lko ~/.local/$USER/bin/code.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64" && tar -xzf ~/.local/$USER/bin/code.tar.gz -C ~/.local/$USER/bin/ --strip-components 1 && rm ~/.local/$USER/bin/code.tar.gz'
+
+# Start vscode CLI tunnel with accepted license terms
+usable code && alias code-tunnel='code tunnel --accept-server-license-terms'
 
 ################### Rust #######################
 
@@ -438,18 +423,16 @@ usable curl && alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https:
 alias install-rustup-noprompt='install-rustup -y'
 
 # automate rustup update
-alias update-rustup='usable rustup && rustup update'
+usable rustup && alias update-rustup='rustup update'
 
 # automate cargo update
-alias update-cargo='usable cargo && cargo install --list | grep -o "^\S*" | xargs cargo install --force'
-
-alias cargo-cross-install-armv6l='usable cargo && cargo install --target arm-unknown-linux-gnueabihf --root . '
+usable cargo && alias update-cargo='cargo install --list | grep -o "^\S*" | xargs cargo install --force'
 
 # use cargo binstall to install cargo binaries
-alias install-cargo-binstall='cargo install cargo-binstall'
+usable cargo && alias install-cargo-binstall='cargo install cargo-binstall'
 
 # Jupyer kernel for Rust language
-alias install-evcxr='(command -v cargo-binstall && cargo binstall evcxr_jupyter || cargo install --locked evcxr_jupyter) && evcxr_jupyter --install'
+usable cargo && alias install-evcxr='(command -v cargo-binstall && cargo binstall evcxr_jupyter || cargo install --locked evcxr_jupyter) && evcxr_jupyter --install'
 
 ################ Shell toolings ################
 
@@ -463,8 +446,10 @@ usable curl && alias install-zoxide='curl -sSfL https://raw.githubusercontent.co
 ## Terminal multiplexer
 alias install-zellij-cargo='cargo install --locked zellij'
 
-## AI Agent CLI
-usable curl && usable bash && alias install-opencode='curl -fsSL https://opencode.ai/install | bash'
+################ AI Agent CLI ################
+
+# Nice interface for coding Agent
+usable uv && alias install-toad='uv tool install -U batrachian-toad --python 3.14'
 
 usable curl && usable bash && alias install-hermes='curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash'
 

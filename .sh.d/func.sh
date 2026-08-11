@@ -162,6 +162,32 @@ batch_open() {
 }
 
 #
+# # lag - Dummy sleep with a spinner and customizable sleep time
+# # usage: lag [seconds]
+lag() {
+    sleep_time=${1:-5}
+    sleep "$sleep_time" & job=$!
+    while kill -0 "$job" 2>/dev/null; do
+        for s in / - \\ \|; do
+            printf "\r%s" "$s"
+            sleep .1
+        done
+    done
+}
+
+#
+# # gacha - Animated number generator with optional range. Press ENTER to stop the animation and get a random number.
+# # usage: gacha [min] [max]
+gacha() {
+    min=${1:-1}
+    max=${2:-100}
+    while ! read -t 0.25 -rsn 1; do
+        printf "\r%5d" $((RANDOM % (max - min + 1) + min))
+    done
+    echo
+}
+
+#
 # # mux - pickup terminal multiplexer or download and execute one
 # # usage: mux [zellij_args]
 mux() {
