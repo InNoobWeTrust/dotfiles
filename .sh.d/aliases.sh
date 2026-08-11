@@ -410,7 +410,7 @@ usable curl && alias install-code-server='mkdir -p ~/.local/$USER/bin && curl -s
 
 # Install vscode CLI
 usable curl && alias install-vscode-cli-mac-silicon='mkdir -p ~/.local/$USER/bin && curl -Lko ~/.local/$USER/bin/code.zip "https://code.visualstudio.com/sha/download?build=stable&os=cli-darwin-arm64" && unzip -o ~/.local/$USER/bin/code.zip -d ~/.local/$USER/bin/ && rm ~/.local/$USER/bin/code.zip'
-usable curl && alias install-vscode-cli-linux='mkdir -p ~/.local/$USER/bin && curl -Lko ~/.local/$USER/bin/code.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64" && tar -xzf ~/.local/$USER/bin/code.tar.gz -C ~/.local/$USER/bin/ --strip-components 1 && rm ~/.local/$USER/bin/code.tar.gz'
+usable curl && alias install-vscode-cli-linux='mkdir -p ~/.local/$USER/bin && curl -Lko ~/.local/$USER/bin/code.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64" && tar -xzf ~/.local/$USER/bin/code.tar.gz -C ~/.local/$USER/bin/ && rm ~/.local/$USER/bin/code.tar.gz'
 
 # Start vscode CLI tunnel with accepted license terms
 usable code && alias code-tunnel='code tunnel --accept-server-license-terms'
