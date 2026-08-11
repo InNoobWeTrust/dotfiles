@@ -1,0 +1,107 @@
+# Illustrative local actions for a hypothetical backend/ + frontend/ application.
+# Adapt the producer commands and pinned tool versions to the application repo.
+---
+apiVersion: garden.io/v1
+kind: Run
+type: exec
+name: mega-linter
+description: Generate the fixed MegaLinter JSON artifact and producer metadata.
+spec:
+  command:
+    - sh
+    - -c
+    - >-
+      mkdir -p quality-reports/megalinter;
+      docker run --rm -v "$PWD:/tmp/lint" -w /tmp/lint
+      -e REPORT_OUTPUT_FOLDER=quality-reports/megalinter
+      -e JSON_REPORTER=true -e JSON_REPORTER_FILE_NAME=report.json
+      ghcr.io/oxsecurity/megalinter:v10;
+      exit_code=$?; status=passed;
+      if [ "$exit_code" -ne 0 ]; then status=failed; fi;
+      printf 'producer=megalinter\nstatus=%s\nexit_code=%s\n' "$status" "$exit_code"
+      > quality-reports/megalinter/producer.env;
+      exit 0
+---
+apiVersion: garden.io/v1
+kind: Run
+type: exec
+name: backend-coverage
+description: Generate hypothetical backend Cobertura XML and producer metadata.
+spec:
+  command:
+    - sh
+    - -c
+    - >-
+      mkdir -p quality-reports/backend-coverage;
+      (cd backend && uv run pytest --cov --cov-report=xml:../quality-reports/backend-coverage/coverage.xml);
+      exit_code=$?; status=passed;
+      if [ "$exit_code" -ne 0 ]; then status=failed; fi;
+      printf 'producer=backend-coverage\nstatus=%s\nexit_code=%s\n' "$status" "$exit_code"
+      > quality-reports/backend-coverage/producer.env;
+      exit 0
+---
+apiVersion: garden.io/v1
+kind: Run
+type: exec
+name: frontend-coverage
+description: Generate hypothetical frontend Cobertura XML and producer metadata.
+spec:
+  command:
+    - sh
+    - -c
+    - >-
+      mkdir -p quality-reports/frontend-coverage;
+      (cd frontend && npm test -- --coverage --coverageReporters=cobertura);
+      exit_code=$?; status=passed;
+      if [ "$exit_code" -ne 0 ]; then status=failed; fi;
+      if [ "$exit_code" -eq 0 ]; then
+        cp frontend/coverage/cobertura-coverage.xml quality-reports/frontend-coverage/coverage.xml;
+        exit_code=$?;
+        if [ "$exit_code" -ne 0 ]; then status=failed; fi;
+      fi;
+      printf 'producer=frontend-coverage\nstatus=%s\nexit_code=%s\n' "$status" "$exit_code"
+      > quality-reports/frontend-coverage/producer.env;
+      exit 0
+---
+apiVersion: garden.io/v1
+kind: Run
+type: exec
+name: lizard-complexity
+description: Generate documented Lizard CSV and producer metadata.
+spec:
+  command:
+    - sh
+    - -c
+    - >-
+      mkdir -p quality-reports/lizard;
+      uvx --from lizard==1.23.0 lizard --csv --verbose backend frontend > quality-reports/lizard/complexity.csv;
+      exit_code=$?; status=passed;
+      if [ "$exit_code" -ne 0 ]; then status=failed; fi;
+      printf 'producer=lizard\nstatus=%s\nexit_code=%s\n' "$status" "$exit_code"
+      > quality-reports/lizard/producer.env;
+      exit 0
+---
+apiVersion: garden.io/v1
+kind: Run
+type: exec
+name: publish-quality
+description: Publish one normalized JSON array after every local producer records its outcome.
+dependencies:
+  - run.mega-linter
+  - run.backend-coverage
+  - run.frontend-coverage
+  - run.lizard-complexity
+spec:
+  command:
+    - uv
+    - run
+    - openobserve-quality
+    - --report-root
+    - quality-reports
+    - --threshold
+    - "15"
+    - --fail-on-producer-failure
+  env:
+    OPENOBSERVE_INGEST_URL: ${local.env.OPENOBSERVE_INGEST_URL}
+    OPENOBSERVE_INGEST_USER: ${local.env.OPENOBSERVE_INGEST_USER}
+    OPENOBSERVE_INGEST_TOKEN: ${local.env.OPENOBSERVE_INGEST_TOKEN}

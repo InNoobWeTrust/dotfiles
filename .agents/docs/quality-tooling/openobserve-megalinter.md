@@ -2,7 +2,7 @@
 
 > **Validated 2026-08-10.** This page documents a composition, not a drop-in SonarQube replacement.
 
-> **MVP operational setup:** Start with the [OpenObserve + MegaLinter GitLab CI MVP getting-started guide](../playbook/openobserve-megalinter-gitlab-cicd-playbook.md) for one repository. Return to this canonical guide for advanced operating decisions.
+> **MVP operational setup:** Start with the [OpenObserve Quality Garden MVP playbook](../playbook/openobserve-megalinter-garden-playbook.md) for one local monorepo. Return to this canonical guide for advanced operating decisions.
 
 ## Positioning
 

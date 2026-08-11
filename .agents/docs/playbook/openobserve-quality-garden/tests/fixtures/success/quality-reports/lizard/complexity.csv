@@ -1,0 +1,3 @@
+NLOC,CCN,token,PARAM,length,location,file,function,long_name,start,end
+10,4,30,0,5,"small@1-5@src/example.py","src/example.py","small","small( )",1,5
+40,11,120,1,20,"complex@10-30@src/example.py","src/example.py","complex","complex( value : int )",10,30

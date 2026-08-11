@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling==1.25.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openobserve-quality-garden"
+version = "0.1.0"
+description = "Deterministic dry-run quality event example."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.15.0",
+    "typer==0.27.1",
+]
+
+[dependency-groups]
+dev = ["pytest==9.1.1"]
+
+[project.scripts]
+openobserve-quality = "openobserve_quality.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/openobserve_quality"]
