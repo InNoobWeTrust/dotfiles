@@ -21,8 +21,8 @@
       "model": "ink-gw/deepseek-v4-flash",
     },
     "general": {
-      "description": "Read-only general research. USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
-      "model": "ink-gw/deepseek-v4-flash",
+      "description": "USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
+      "model": "github-copilot/claude-haiku-4.5",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -142,10 +142,11 @@
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      "model": "ink-gw/openai/gpt-5.6-luna",
-      "variant": "medium",
+      //"model": "ink-gw/openai/gpt-5.6-luna",
+      //"variant": "medium",
+      "model": "ink-gw/muse-spark-1.2-contributor",
       "options": {
-        "reasoningEffort": "medium",
+        "reasoningEffort": "high",
       },
       "permission": {
         "bash": "allow",
@@ -204,7 +205,7 @@
       },
     },
     "ui-coder": {
-      "mode": "subagent",
+      "mode": "primary",
       "description": "Specialized UI/frontend coder powered by Gemini (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic or any frontend logic (composables, api handling, etc...) — delegate non-UI concerns to code.",
       "model": "github-copilot/gemini-3.5-flash",
       "variant": "high",
