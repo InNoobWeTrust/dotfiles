@@ -1,4 +1,5 @@
-/node_modules
-/package.json
-/bun.lock
-/package-lock.json
+# Ignore by default
+*
+
+# Explicit tracking
+!/commands/

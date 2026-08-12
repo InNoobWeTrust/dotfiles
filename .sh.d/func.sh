@@ -244,7 +244,9 @@ vscode_cli_install() {
     esac
     # Download and install VSCode CLI
     TMP_DIR=$(mktemp -d)
-    DEST_DIR="~/.local/$USER/bin/"
+    DEST_DIR="$HOME/.local/$USER/bin/"
+    # Ensure destination directory exists
+    mkdir -p "$DEST_DIR"
     case "$OS" in
         Darwin)
             curl -Lko "$TMP_DIR/code.zip"  "$URL"

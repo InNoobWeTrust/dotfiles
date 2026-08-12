@@ -1,18 +1,17 @@
-# Claude/Kilo temp files
-/backups/
-/cache/
-/file-history/
-/history.jsonl
-/plans/
-/projects/
-/paste-cache/
-/plugins/
-/session-env/
-/sessions/
-/shell-snapshots/
-/settings.local.json
-/stats-cache.json
-/node_modules
-/bun.lock
-/package.json
-/package-lock.json
+# Ignore by default
+*
+
+# Explicit tracking
+!/commands/
+!/docs/
+!/instructions/
+!/memory/
+!/prompts/
+!/rules/
+!/scripts/
+!/skills/
+!/workflows/
+!/AGENTS.md
+!/ai-modernization-services.md
+!/mcp.json
+!/settings.json

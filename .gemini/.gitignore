@@ -1,14 +1,8 @@
-/antigravity/
-/antigravity-cli/
-/antigravity-browser-profile/
-/config/
-/history/
-/tmp/
-/google_accounts.json
-/installation_id
-/oauth_creds.json
-/projects.json
-/settings.json
-/state.json
-/trustedFolders.json
-/google_account_id
+# Ignore by default
+*
+
+# Explicit tracking
+!/rules/
+!/skills/
+!/workflows/
+!/GEMINI.md
