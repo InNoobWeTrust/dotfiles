@@ -207,6 +207,59 @@ mux() {
 }
 
 #
+# # vscode_cli_install - Install VSCode CLI per OS and architecture
+# # usage: vscode_cli_install
+vscode_cli_install() {
+    if usable code; then
+        echo "VSCode CLI is already installed."
+        return 0
+    fi
+    # Determine OS and architecture
+    OS=$(uname -s)
+    ARCH=$(uname -m)
+    # Determine download URL based on OS and architecture (Mac/Linux)
+    case "$OS" in
+        Darwin)
+            if [ "$ARCH" = "arm64" ]; then
+                URL="https://code.visualstudio.com/sha/download?build=stable&os=cli-darwin-arm64"
+            else
+                echo "Unsupported architecture: $ARCH"
+                return 1
+            fi
+            ;;
+        Linux)
+            if [ "$ARCH" = "x86_64" ]; then
+                URL="https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64"
+            elif [ "$ARCH" = "aarch64" ]; then
+                URL="https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-arm64"
+            else
+                echo "Unsupported architecture: $ARCH"
+                return 1
+            fi
+            ;;
+        *)
+            echo "Unsupported OS: $OS"
+            return 1
+            ;;
+    esac
+    # Download and install VSCode CLI
+    TMP_DIR=$(mktemp -d)
+    DEST_DIR="~/.local/$USER/bin/"
+    case "$OS" in
+        Darwin)
+            curl -Lko "$TMP_DIR/code.zip"  "$URL"
+            unzip "$TMP_DIR/code.zip" -d "$TMP_DIR"
+            mv "$TMP_DIR/code" "$DEST_DIR"
+            ;;
+        Linux)
+            curl -Lko "$TMP_DIR/code.tar.gz" "$URL"
+            tar -xzf "$TMP_DIR/code.tar.gz" -C "$TMP_DIR"
+            mv "$TMP_DIR/code" "$DEST_DIR"
+            ;;
+    esac
+}
+
+#
 # # cron_routine - cron at random time over a day
 # # usage: cron_routine [shell_script_file] [number_of_runs]
 cron_routine() {

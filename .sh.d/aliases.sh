@@ -409,14 +409,14 @@ usable curl && alias install-nvim-stable='mkdir -p ~/.local/$USER/bin && curl -L
 usable curl && alias install-code-server='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards "**/code-server" --strip-components 1'
 
 # Install vscode CLI
-usable curl && alias install-vscode-cli-mac-silicon='mkdir -p ~/.local/$USER/bin && curl -Lko ~/.local/$USER/bin/code.zip "https://code.visualstudio.com/sha/download?build=stable&os=cli-darwin-arm64" && unzip -o ~/.local/$USER/bin/code.zip -d ~/.local/$USER/bin/ && rm ~/.local/$USER/bin/code.zip'
-usable curl && alias install-vscode-cli-linux='mkdir -p ~/.local/$USER/bin && curl -Lko ~/.local/$USER/bin/code.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64" && tar -xzf ~/.local/$USER/bin/code.tar.gz -C ~/.local/$USER/bin/ && rm ~/.local/$USER/bin/code.tar.gz'
-
+usable curl && alias install-vscode-cli='vscode_cli_install'
 # Start vscode CLI tunnel with accepted license terms
 usable code && alias code-tunnel='code tunnel --accept-server-license-terms'
+usable code-tunnel && alias code-tunnel-service='code-tunnel service'
 # Install/uninstall code tunnel service
-usable code-tunnel && alias code-tunnel-install='code-tunnel service install'
-usable code-tunnel && alias code-tunnel-uninstall='code-tunnel service uninstall'
+usable code-tunnel-service && alias code-tunnel-service-install='code-tunnel-service install'
+usable code-tunnel-service && alias code-tunnel-service-uninstall='code-tunnel-service uninstall'
+usable code-tunnel-service && alias code-tunnel-service-log='code-tunnel-service log'
 
 ################### Rust #######################
 
