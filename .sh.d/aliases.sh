@@ -411,7 +411,7 @@ usable curl && alias install-code-server='mkdir -p ~/.local/$USER/bin && curl -s
 # Install vscode CLI
 usable curl && alias install-vscode-cli='vscode_cli_install'
 # Start vscode CLI tunnel with accepted license terms
-usable code && alias code-tunnel='code tunnel --accept-server-license-terms'
+usable code && alias code-tunnel='VSCODE_CLI_USE_FILE_KEYCHAIN=1 code tunnel --accept-server-license-terms'
 usable code-tunnel && alias code-tunnel-service='code-tunnel service'
 # Install/uninstall code tunnel service
 usable code-tunnel-service && alias code-tunnel-service-install='code-tunnel-service install'
