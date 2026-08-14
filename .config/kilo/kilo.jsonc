@@ -1161,6 +1161,9 @@
     "serena_get_symbols_overview": {
       "*": "allow"
     },
+    "serena_create_text_file": {
+      "*": "allow"
+    },
   },
   "experimental": {
     "batch_tool": true,

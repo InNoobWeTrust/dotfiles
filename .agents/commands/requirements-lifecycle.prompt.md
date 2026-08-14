@@ -16,12 +16,10 @@ The skill owns the requirements methodology, packaged references, templates, rev
 
 ## Invocation Arguments
 
+
+Follow this command for the user's requirements-lifecycle request.
 Additional command input, if any, appears below exactly as provided:
 
 ```text
 $ARGUMENTS
 ```
-
-Use the block above as raw additional user input. Preserve whitespace, blank lines, and quoting exactly. If the block is empty, rely on the conversation context instead.
-
-Follow this command for the user's requirements-lifecycle request below.

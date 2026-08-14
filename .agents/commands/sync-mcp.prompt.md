@@ -89,14 +89,9 @@ Kilo Code (≥v7.3) uses a different MCP schema inside its main config file (`ki
 
 ## Invocation Arguments
 
+Follow the instructions above to work on the user's actual request.
 Additional command input, if any, appears below exactly as provided:
 
 ```text
 $ARGUMENTS
 ```
-
-Use the block above as raw additional user input. Preserve whitespace, blank lines, and quoting exactly. If the block is empty, rely on the conversation context instead.
-
-Follow the instructions above to work on the user's actual request right below.
-
----

@@ -24,10 +24,9 @@ To ensure the session is structured, premium, and highly productive, **load and 
 
 ## Invocation Arguments
 
+Follow the instructions above to facilitate the user's brainstorming request.
 Additional command input, if any, appears below exactly as provided:
 
 ```text
 $ARGUMENTS
 ```
-
-Follow the instructions above to facilitate the user's brainstorming request right below.

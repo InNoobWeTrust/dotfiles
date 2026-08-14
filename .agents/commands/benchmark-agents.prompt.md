@@ -26,10 +26,9 @@ To ensure your cost estimates, ELO mapping, and schema checks align with standar
 
 ## Invocation Arguments
 
+Follow the instructions above to work on the user's benchmarking request.
 Additional command input, if any, appears below exactly as provided:
 
 ```text
 $ARGUMENTS
 ```
-
-Follow the instructions above to work on the user's benchmarking request right below.

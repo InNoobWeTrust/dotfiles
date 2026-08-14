@@ -26,12 +26,9 @@ $SHELL -l -c 'command -v swarminator >/dev/null 2>&1 || { echo "ERROR: swarminat
 
 ## Invocation Arguments
 
+Follow the instructions above for the user's bounded external delegation request.
 Additional command input, if any, appears below exactly as provided:
 
 ```text
 $ARGUMENTS
 ```
-
-Use the block above as raw additional user input. Preserve whitespace, blank lines, and quoting exactly. If the block is empty, rely on the conversation context instead.
-
-Follow this command for the user's bounded external delegation request below.

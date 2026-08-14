@@ -21,10 +21,10 @@ To ensure strict moderation, authentic adversarial role-play, and seamless deleg
 
 ## Invocation Arguments
 
+
+Follow the instructions above to work on the user's deliberation request.
 Additional command input, if any, appears below exactly as provided:
 
 ```text
 $ARGUMENTS
 ```
-
-Follow the instructions above to work on the user's deliberation request right below.
