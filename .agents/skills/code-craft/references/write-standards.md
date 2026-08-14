@@ -26,14 +26,19 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 - **No Loose Types:** Do not use `any`, `unknown`, `object`, or unstructured dictionaries for core logic.
 - **Discriminated Unions / ADTs:** Represent states and outcomes using strong types, union types, and enums rather than raw string matching or magic numbers.
 
-#### E. Test-Driven Development (TDD Cycle)
+#### E. Technology Selection
+- **Default:** Follow the technology-fit checkpoint in `rules/code-quality.md` and record the decision in Code Craft's Design Intent. Preserve repository conventions first; otherwise, prefer a suitable standard-library/platform capability, then a mature and maintained ecosystem dependency.
+- **Vendoring / reimplementation:** Do not create a third-party copy or dependency-free substitute merely for ownership. Require explicit user opt-in or existing repository policy, then document long-term ownership, updates, and vulnerability response.
+- **Language-specific defaults:** When selecting a language or framework stack, load the matching `languages/*.md` reference. These references are greenfield defaults; they never override established project constraints, compatibility, licensing, security, or performance requirements.
+
+#### F. Test-Driven Development (TDD Cycle)
 - **Write Test Cases First:** In accordance with `rules/tdd.md`, implement your test cases and interface stubs *before* writing the logic bodies.
 - **RED**: Execute the test command and confirm that the test fails as expected.
 - **GREEN**: Write the minimal code to satisfy the test cases. Confirm all tests pass.
 - **Refactor**: Refactor to meet all code quality criteria, maintaining passing test states.
 - **Deliverable requirement**: You must post the execution of your test command and its passing results in your turn summary.
 
-#### F. Quality Tooling Pass
+#### G. Quality Tooling Pass
 
 > **Cross-reference `rules/execution-safety.md`:** Write custom scripts to a temp dir and run with `uv`/`bun`. Use `npx`/`bunx`/`uvx` only for published CLI tools. Never `pip install` or `npm install -g`.
 
@@ -65,14 +70,14 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 - **Do Not Install Permanent Tooling for a One-Off Check:** Avoid adding devDependencies or project config solely to validate a single task unless the user explicitly asked to establish that tooling permanently.
 - **Deliverable requirement:** Post the repo-native commands you ran, or the exact fallback commands you recommend, and summarize the results. If you only suggested commands because the repo lacked setup, say so explicitly.
 
-#### G. Docstring & API Documentation Standards
+#### H. Docstring & API Documentation Standards
 All new or modified public modules, classes, functions, and interfaces MUST include detailed docstrings conforming to ecosystem standards:
 - **TypeScript / JavaScript**: Use JSDoc (`/** ... */`) specifying parameters (`@param`), return values (`@returns`), and thrown errors (`@throws`).
 - **Python**: Use PEP 257 docstrings (triple quotes) detailing arguments (`Args:`), return types (`Returns:`), and exceptions raised (`Raises:`).
 - **Go**: Standard Go doc comments directly preceding the declaration.
 - **Content**: The docstring must state *what* the unit does, its invariants, its input preconditions, output postconditions, and all potential side effects or errors.
 
-#### H. Abstraction & Boundary Rules (Avoiding Shallow Helpers)
+#### I. Abstraction & Boundary Rules (Avoiding Shallow Helpers)
 - **The Abstraction Ratio**: Only extract a function if `Interface Complexity < Implementation Complexity`. Do not extract 1-to-3-line helpers that simply wrap standard operations or lookups.
 - **Inline Registry/Mapping Calculations**: Keep lookups, mapping matrices, and registry computations inline using clean, declarative structures (like mapping tables or inline dictionaries) rather than scattering them across single-line helper functions.
 - **Single-Use Helpers**: Avoid creating private helpers that are only called once unless they reduce deep nesting or isolate a heavy, self-contained algorithm. Keep linear code linear.
@@ -95,7 +100,7 @@ After writing, read the code as a new engineer with zero context. Answer these:
 
 For any "no" or weak answer, refactor or add a `// CLARITY:` annotation explaining what the code does and why.
 
-#### I. Module README & Architecture Design Audit
+#### J. Module README & Architecture Design Audit
 For any module directory created or modified, you must ensure it has an up-to-date, high-quality `README.md` documenting its architecture, responsibility, public interface, and behavior:
 - **Create**: If the module directory has no `README.md`, create it immediately.
 - **Update**: If the changes modify the module's public interface, internal logic flow, dependencies, or core responsibility, update the directory's `README.md`.

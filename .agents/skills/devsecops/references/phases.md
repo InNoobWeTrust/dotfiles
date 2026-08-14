@@ -26,7 +26,11 @@
 
 Before writing YAML, design on paper:
 
-1. **Define stages**: test → build → deploy → release (standard; adapt if needed)
+1. **Define stages**:
+   - For complete quality pipelines: use the **Consolidated Quality Architecture** (see `docs/quality-tooling/consolidated-quality-pipeline-playbook.md`):
+     `env-setup` → `megalinter` (all static/SAST/SCA) + `runtime-tests` (unit tests + coverage in parallel) → `quality` (telemetry aggregation & gate enforcement).
+     Keep container image builds (`kind: Build`) separate from quality verification.
+   - Traditional: test → build → deploy → release.
 2. **Define triggers**:
    - Merge request → pre-merge validation (test + build only)
    - Push to main → dev deploy (test + build + deploy to dev)

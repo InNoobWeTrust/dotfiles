@@ -23,6 +23,8 @@ Progressive disclosure: load refs only when the phase needs them.
 
 ### Phase 1 — Design Intent (before writing)
 
+When choosing a greenfield language/framework stack or adding a substantial platform capability, first load `references/languages/README.md`, then the smallest matching reference. Existing repository conventions and explicit project constraints always win.
+
 Produce this block:
 
 ```
@@ -36,7 +38,9 @@ Interface contract: [signature / schema]
 Docstring Spec  : yes/no
 Interface sign-off: yes/no/assumed-approved (AFK only)
 Module README   : yes/no/updated
-Dependencies    :
+Technology choice: [repo-native stack / established package + why]
+Dependencies    : [existing first; new packages + maintenance/license/security fit]
+Vendoring        : no / explicit user opt-in + rationale
 Quality tools   : [repo-native commands first]
 Complexity guard:
 Isolation test  : yes/no
@@ -46,7 +50,9 @@ Ambiguity policy:
 Traceability    :
 ```
 
-**STOP if:** isolation = no → redesign; interface sign-off = no (interactive) → get approval; edge-case semantics unspecified → ask (AFK: fail closed, do not invent fallbacks).
+**Technology default:** preserve the repository's established stack. Prefer the standard library/platform when it is suitable; otherwise, use a mature, maintained, production-proven ecosystem package rather than recreating an adequately supplied capability. Vendored third-party copies and deliberate dependency-free reimplementations are exceptions: require explicit user opt-in, or an existing repository policy, and record their ownership, update, and security rationale.
+
+**STOP if:** isolation = no → redesign; interface sign-off = no (interactive) → get approval; edge-case semantics unspecified → ask (AFK: fail closed, do not invent fallbacks); a proposed vendored/reimplemented capability lacks explicit opt-in or documented repository policy → choose the platform/established dependency or clarify.
 
 ### Phase 2 — SOLID checklist (before writing)
 
@@ -69,8 +75,9 @@ Unchecked → fix or `// TODO(debt):`.
 
 1. Obey `rules/code-quality.md` + `rules/tdd.md` (RED → GREEN → REFACTOR; post test output).
 2. Load `references/write-standards.md` for: defensive boundaries, immutability, invariants, types, quality tooling pass, docstrings, abstraction rules.
-3. If the task crosses a long tool chain, confidence drops, or you detect thrash/re-reading, run the micro-protocol in `references/trajectory-checkpoint.md` before continuing.
-4. Prefer repo-native `make` / scripts over ad-hoc tool installs.
+3. Re-check the selected language/framework reference before implementation when Phase 1 identified a new stack or substantial platform capability.
+4. If the task crosses a long tool chain, confidence drops, or you detect thrash/re-reading, run the micro-protocol in `references/trajectory-checkpoint.md` before continuing.
+5. Prefer repo-native `make` / scripts over ad-hoc tool installs.
 
 ### Phase 4 — Readability audit
 

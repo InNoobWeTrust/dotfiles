@@ -1152,6 +1152,9 @@
     "serena_find_file": {
       "*": "allow"
     },
+    "serena_read_file": {
+      "*": "allow"
+    },
     "serena_search_for_pattern": {
       "*": "allow"
     },

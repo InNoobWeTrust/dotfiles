@@ -33,6 +33,10 @@
 | "No scanner available, I'll visually inspect" | Visual inspection misses 95% of secrets and vulnerabilities; proceeding with incomplete scans gives false confidence | Halt and route to `project-foundation` skill to bootstrap quality commands, then re-run scans |
 | "This vulnerability doesn't apply because we don't use that feature" | Applying untested assumptions to security gaps | Verify against actual code — grep for the vulnerable API usage |
 | "I'll add every available scanner — better safe than sorry" | Long-running pipelines with noisy output slow the team down | Add essential scanners first; add more when failure patterns emerge |
+| "I'll set PARALLEL_PROCESS_NUMBER=0 to use all cores" | In MegaLinter v10, `0` crashes `multiprocessing.Pool(0)` | Leave `PARALLEL_PROCESS_NUMBER` unset to natively use `mp.cpu_count()` |
+| "I'll run pure HTML linters on Angular/React templates" | Pure HTML linters reject framework bindings (`*ngIf`, JSX), creating thousands of false positives | Use framework AST linters (e.g. `@angular-eslint/template`) and format with Prettier |
+| "I'll fail producer steps immediately on lint error" | Aborts the pipeline DAG, preventing report normalization and telemetry publishing | Use non-blocking producers with status envelopes (`producer.env`) and enforce at tail gate |
+| "I'll put container build in the test step" | Redundant, slow, and couples build artifacts with test verification | Decouple build (`kind: Build`) into an independent job from quality verification |
 | "Change detection is too complex, I'll skip it" | Every docs commit triggers a full build | Implement basic path filters; they're 5 lines each |
 | "I'll generate the pipeline and skip documentation" | The next person debugging a failure has zero context | Write a concise pipeline doc with the debug checklist |
 

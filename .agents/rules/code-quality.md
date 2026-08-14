@@ -6,7 +6,7 @@ This rule applies to **every coding task** without exception. No user request is
 
 ## Pre-Implementation Design Checkpoint
 
-Before writing any new function, class, or module, answer all eight questions. If you cannot answer any one of them, redesign first.
+Before writing any new function, class, or module, answer all nine questions. If you cannot answer any one of them, redesign first.
 
 1. **Single responsibility** — What is the one thing this unit does? If you need "and", it does too much — split it.
 2. **Minimal interface** — What is the smallest surface callers need? Define only that.
@@ -16,6 +16,7 @@ Before writing any new function, class, or module, answer all eight questions. I
 6. **Interface-First specification** — Have you fully defined and agreed on the type signatures, enums, or abstract contracts *before* writing any implementation logic?
 7. **Explicit Type Contracts** — Are parameters and return types defined as explicit, named DTOs/types instead of positional tuples or untyped maps (`dict[str, Any]`, `Map<String, Object>`)?
 8. **Ambiguity policy** — If an edge case or failure path has multiple reasonable caller-visible behaviors, what contract chooses the behavior? If none does, stop and clarify instead of inventing a fallback.
+9. **Technology fit** — Does this use the repository's established stack, a suitable standard-library/platform capability, or a maintained, production-proven dependency? A vendored third-party copy or deliberate reimplementation of an adequately supplied capability needs explicit user opt-in or repository policy.
 
 ---
 
