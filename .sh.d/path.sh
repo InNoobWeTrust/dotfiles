@@ -55,3 +55,6 @@ fi
 
 # Rancher desktop
 [ -d "$HOME/.rd/bin" ] && setPath "$HOME/.rd/bin"
+
+# Garden.io
+[ -d "$HOME/.garden/bin" ] && setPath "$HOME/.garden/bin"
