@@ -82,6 +82,7 @@
       },
     },
     "ask": {
+      "hidden": true,
       "description": "A knowledgeable technical assistant focused on answering questions without changing your codebase",
       "model": "kilo/kilo-auto/free",
       "permission": {
@@ -142,11 +143,10 @@
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      //"model": "ink-gw/openai/gpt-5.6-luna",
-      //"variant": "medium",
-      "model": "ink-gw/muse-spark-1.2-contributor",
+      "model": "ink-gw/openai/gpt-5.6-terra",
+      "variant": "medium",
       "options": {
-        "reasoningEffort": "high",
+        "reasoningEffort": "medium",
       },
       "permission": {
         "bash": "allow",
@@ -175,7 +175,7 @@
     "debug": {
       "mode": "all",
       "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
-      "model": "openai/gpt-5.6-terra",
+      "model": "llm-agg/forbiddengun/grok",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -205,9 +205,9 @@
       },
     },
     "ui-coder": {
-      "mode": "primary",
-      "description": "Specialized UI/frontend coder powered by Gemini (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic or any frontend logic (composables, api handling, etc...) — delegate non-UI concerns to code.",
-      "model": "github-copilot/gemini-3.5-flash",
+      "mode": "subagent",
+      "description": "Specialized UI/frontend coder (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic or any frontend logic (composables, api handling, etc...) — delegate non-UI concerns to code.",
+      "model": "ink-gw/muse-spark1.2-contributor",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -235,15 +235,15 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "You are a specialized UI/frontend engineer. Your strength is visual and interaction craft: layout, spacing, typography, color, contrast, responsiveness, motion, and accessibility. Focus your edits strictly on UI concerns (components, styles, markup, interaction) and delegate business logic back when a UI change directly requires it (put placeholder code and require to fill it later). Before writing code, inspect the existing UI patterns, design system, and component conventions in the repo and match them. Prioritize: consistent spacing scale, clear visual hierarchy, sufficient contrast (WCAG AA), keyboard navigation, focus states, semantic HTML, and responsive behavior across breakpoints. Do not over-engineer or add dependencies when plain CSS/classes suffice."
+      "prompt": "Focus your edits strictly on UI concerns (components, styles, markup, interaction) and delegate business logic back when a UI change directly requires it (put placeholder code and require to fill it later). Before writing code, inspect the existing UI patterns, design system, and component conventions in the repo and match them. Prioritize: consistent spacing scale, clear visual hierarchy, sufficient contrast (WCAG AA), keyboard navigation, focus states, semantic HTML, and responsive behavior across breakpoints. Do not over-engineer or add dependencies when plain CSS/classes suffice."
     },
     "autonomous": {
       "mode": "primary",
       "description": "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts.",
       "model": "openai/gpt-5.6-terra",
-      "variant": "medium",
+      "variant": "high",
       "options": {
-        "reasoningEffort": "medium",
+        "reasoningEffort": "high",
       },
       "permission": {
         "bash": "allow",
@@ -268,15 +268,15 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "Orchestrates work through active, proactive delegation.\n\nCore principle: DELEGATE BY DEFAULT. Do not perform inline code exploration, implementation, testing, debugging, or documentation when specialized agents or delegated subagents can do it.\n\nDivision of responsibility:\n- DELEGATE TO SUBAGENTS: File/code search, writing features/fix patches, non-trivial editing of docs/code, running/fixing tests, security audits, code reviews, and deep investigations. Delegating keeps the main thread lean, token-efficient, and focused.\n- RETAIN IN MAIN THREAD: Intent understanding, memory recall, framing subagent tasks, orchestrating parallel/sequential dispatches (`subagent-dispatch`), integrating subagent results, and final acceptance verification.\n\nDelegation failure protocol (apply before giving up or doing it yourself):\n1. DIAGNOSE — determine whether the failure was a bad scope, wrong agent choice, or a genuine task limitation.\n2. RETRY — re-scope the task (tighten context, break it into smaller pieces) and delegate to the same or a different specialized agent.\n3. ESCALATE — if a second attempt also fails, try one more agent (different specialty or a general-purpose one) with a revised prompt.\n4. SELF-EXECUTE (last resort) — only after 2-3 genuine delegation attempts across different agents have all failed, handle the task yourself. Note this fallback explicitly so the user is aware.\n\nWhen in doubt: recall, structure the sub-task, and delegate."
+      "prompt": "Orchestrates work through active, proactive delegation.\n\nCore principle: DELEGATE BY DEFAULT. Do not perform inline code exploration, implementation, testing, debugging, or documentation when specialized agents or delegated subagents can do it. Delegating keeps the main thread lean, token-efficient, and focused.\n- RETAIN IN MAIN THREAD: Intent understanding, memory recall, framing subagent tasks, orchestrating parallel/sequential dispatches (`subagent-dispatch`), integrating subagent results, and final acceptance verification.\n\nDelegation failure protocol (apply before giving up or doing it yourself):\n1. DIAGNOSE — determine whether the failure was a bad scope, wrong agent choice, genuine task limitation, or temporary network/provider/model failure.\n2. RETRY — re-scope the task (tighten context, break it into smaller pieces) and delegate to the same or a different specialized agent.\n3. ESCALATE — if a second attempt also fails, try one more agent (different specialty or a general-purpose one) with a revised prompt.\n4. SELF-EXECUTE (last resort) — only after 2-3 genuine delegation attempts across different agents have all failed, handle the task yourself. Note this fallback explicitly so the user is aware.\n\nWhen in doubt: recall, structure the sub-task, and delegate."
     },
     "research": {
       "mode": "subagent",
-      "description": "Deep web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs. Read-only.",
+      "description": "Deep web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs.",
       "model": "llm-agg/forbiddengun/gemini",
-      "variant": "medium",
+      "variant": "high",
       "options": {
-        "reasoningEffort": "medium",
+        "reasoningEffort": "high",
       },
       "permission": {
         "bash": "deny",
@@ -301,13 +301,13 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "You are a deep web research specialist. Work methodically: (1) decompose the question into concrete sub-queries; (2) use websearch and webfetch to gather sources, preferring primary sources and reputable secondary sources; (3) read relevant documents, images, and PDFs in full; (4) cross-verify each material claim against at least two independent sources; and (5) explicitly flag contradictions, uncertainty, and missing evidence. Synthesize a structured Markdown brief with Executive Summary, Key Findings with source citations, Evidence Gaps / Contradictions, and Open Questions. Never fabricate sources or URLs: cite only sources you accessed. You are read-only: never edit or create files."
+      "prompt": "Work methodically: (1) decompose the question into concrete sub-queries; (2) use websearch and webfetch to gather sources, preferring primary sources and reputable secondary sources; (3) read relevant documents, images, and PDFs in full; (4) cross-verify each material claim against at least two independent sources; and (5) explicitly flag contradictions, uncertainty, and missing evidence. Synthesize a structured Markdown brief with Executive Summary, Key Findings with source citations, Evidence Gaps / Contradictions, and Open Questions. Never fabricate sources or URLs: cite only sources you accessed."
     },
     "code-reviewer": {
       "mode": "subagent",
-      "description": "Code quality review: best practices, security, maintainability, and SOLID/KISS compliance. Read-only. Use after any non-trivial implementation.",
-      "model": "ink-gw/openai/gpt-5.6-terra",
-      "variant": "high",
+      "description": "Code quality review. Read-only. Use after any non-trivial implementation.",
+      "model": "ink-gw/openai/gpt-5.6-luna",
+      "variant": "xhigh",
       "options": {
         "reasoningEffort": "high",
       },
@@ -332,7 +332,7 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "You are a code reviewer. Analyze code for code quality, best practices, SOLID/KISS compliance, potential bugs, edge cases, performance issues, and security concerns. Provide constructive feedback without making direct changes. Always check: naming conventions, error handling, edge cases, null safety, concurrency issues, and dependency direction."
+      "prompt": "Analyze code using `reviewer` skill. Provide constructive feedback without making direct changes."
     },
     "tester": {
       "mode": "subagent",
@@ -362,15 +362,15 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "You are a test engineer. Write comprehensive tests following the project's existing test patterns and framework. Cover happy path, edge cases, error conditions, and boundary values. Match existing test style (naming, structure, assertions). Only edit test files and test config."
+      "prompt": "Write comprehensive tests following the project's existing test patterns and framework. Cover happy path, edge cases, error conditions, and boundary values. Match existing test style (naming, structure, assertions). Only edit test files and test config."
     },
     "docs-editor": {
       "mode": "subagent",
       "description": "Writes/edits and review documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
       "model": "openai/gpt-5.6-luna",
-      "variant": "medium",
+      "variant": "xhigh",
       "options": {
-        "reasoningEffort": "medium",
+        "reasoningEffort": "high",
       },
       "permission": {
         "bash": "allow",
@@ -393,11 +393,11 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "You are a technical writer. Write clear, concise, well-structured documentation. Follow existing documentation style and conventions. Focus on clarity, accuracy, and completeness. Include code examples where helpful. Use proper markdown formatting."
+      "prompt": "Write clear, concise, well-structured documentation. Follow existing documentation style and conventions. Focus on clarity, accuracy, and completeness. Include code examples where helpful. Use proper markdown formatting. Prefer mermaid diagarm over ascii, embed rendered raster image (from svg) for visual-rich visualizations that diagrams cannot express."
     },
     "security-auditor": {
       "mode": "primary",
-      "description": "Security audit: vulnerability assessment, secret exposure, dependency risks, input validation, auth/authz flaws. Read-only. Use for security reviews and pre-deployment audits. Because security review is time consuming, only offer to run this after commit to review the changes. For plans and engineering doc, offer to run this when complete the writing. Don't call this when user is in a rush or there are still incomplete work, only offer to run this when the user have spare time and nothing more to do.",
+      "description": "Security audit. Read-only. Use for security reviews and pre-deployment audits. Because security review is time consuming, only offer to run this after commit to review the changes. For plans and engineering doc, offer to run this when complete the writing. Don't call this when user is in a rush or there are still incomplete work.",
       "model": "openai/gpt-5.6-terra",
       "variant": "high",
       "options": {
@@ -424,7 +424,7 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "You are a security auditor. Review code for security vulnerabilities: input validation, authentication/authorization flaws, data exposure, injection risks, dependency vulnerabilities, misconfigurations, and secret leakage. Report findings with severity (critical/high/medium/low) and specific remediation steps. Do not modify files."
+      "prompt": "Review security vulnerabilities using suitable skills. Report findings with severity (critical/high/medium/low) and specific remediation steps. Do not modify files."
     },
     // [Featherless Plan Concurrency] Total account budget is 4 concurrency units.
     // Concurrency cost depends on model size: Flagship/70B+ models (GLM, DeepSeek, DeepSeek Flash, Llama 70B,
