@@ -20,6 +20,6 @@ The skill owns the requirements methodology, packaged references, templates, rev
 Follow this command for the user's requirements-lifecycle request.
 Additional command input, if any, appears below exactly as provided:
 
-```text
+<arguments>
 $ARGUMENTS
-```
+</arguments>

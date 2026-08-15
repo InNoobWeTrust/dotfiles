@@ -18,6 +18,6 @@ Use the `bounded-iteration` skill for the bounded iterative execution workflow.
 Follow the instructions above for the user's loop request.
 Additional command input, if any, appears below exactly as provided:
 
-```text
+<arguments>
 $ARGUMENTS
-```
+</arguments>

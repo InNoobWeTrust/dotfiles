@@ -25,6 +25,6 @@ To ensure strict moderation, authentic adversarial role-play, and seamless deleg
 Follow the instructions above to work on the user's deliberation request.
 Additional command input, if any, appears below exactly as provided:
 
-```text
+<arguments>
 $ARGUMENTS
-```
+</arguments>

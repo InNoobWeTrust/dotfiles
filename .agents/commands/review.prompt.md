@@ -12,6 +12,6 @@
 Follow this command for the user's review request.
 Additional command input, if any, appears below exactly as provided:
 
-```text
+<arguments>
 $ARGUMENTS
-```
+</arguments>

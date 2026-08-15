@@ -63,6 +63,6 @@ Remote skill sources are defined in `../skills/remote-skills-manifest.json`:
 Follow the instructions above to work on the user's actual request.
 Additional command input, if any, appears below exactly as provided:
 
-```text
+<arguments>
 $ARGUMENTS
-```
+</arguments>

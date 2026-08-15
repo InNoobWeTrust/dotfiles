@@ -23,6 +23,6 @@ $SHELL -l -c 'command -v swarminator >/dev/null 2>&1 || { echo "ERROR: swarminat
 
 Additional command input, if any, appears below exactly as provided:
 
-```text
+<arguments>
 $ARGUMENTS
-```
+</arguments>

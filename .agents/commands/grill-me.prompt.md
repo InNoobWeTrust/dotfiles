@@ -49,8 +49,8 @@ To ensure maximum alignment and architectural rigor, **load and adhere to the `g
 
 
 Follow the instructions above to start grilling the user.
-Let's begin the reverse interview!Additional command input, if any, appears below exactly as provided:
+Let's begin the reverse interview! Additional command input, if any, appears below exactly as provided:
 
-```text
+<arguments>
 $ARGUMENTS
-```
+</arguments>

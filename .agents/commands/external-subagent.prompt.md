@@ -29,6 +29,6 @@ $SHELL -l -c 'command -v swarminator >/dev/null 2>&1 || { echo "ERROR: swarminat
 Follow the instructions above for the user's bounded external delegation request.
 Additional command input, if any, appears below exactly as provided:
 
-```text
+<arguments>
 $ARGUMENTS
-```
+</arguments>
