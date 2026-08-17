@@ -109,7 +109,8 @@
       },
     },
     "plan": {
-      "mode": "all",
+      "hidden": true,
+      "mode": "primary",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
       "model": "ink-gw/openai/gpt-5.6-terra",
       "variant": "high",
@@ -269,6 +270,38 @@
         "recall": "allow",
       },
       "prompt": "Orchestrates work through active, proactive delegation.\n\nCore principle: DELEGATE BY DEFAULT, max 2 parallel subagents. Do not perform inline code exploration, implementation, testing, debugging, researching, or documentation when specialized agents or delegated subagents can do it. Delegating keeps the main thread lean, token-efficient, and focused.\n- RETAIN IN MAIN THREAD: Intent understanding, memory recall, framing subagent tasks, orchestrating parallel/sequential dispatches (`subagent-dispatch`), integrating subagent results, and final acceptance verification.\n\nDelegation failure protocol (apply before giving up or doing it yourself):\n1. DIAGNOSE — determine whether the failure was a bad scope, wrong agent choice, genuine task limitation, or temporary network/provider/model failure.\n2. RETRY — re-scope the task (tighten context, break it into smaller pieces) and delegate to the same or a different specialized agent.\n3. ESCALATE — if a second attempt also fails, try one more agent (different specialty or a general-purpose one) with a revised prompt.\n4. SELF-EXECUTE (last resort) — only after 2-3 genuine delegation attempts across different agents have all failed, handle the task yourself. Note this fallback explicitly so the user is aware.\n\nWhen in doubt: recall, structure the sub-task, and delegate."
+    },
+    "software-architect": {
+      "mode": "subagent",
+      "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
+      "model": "ink-gw/openai/gpt-5.6-terra",
+      "variant": "high",
+      "options": {
+        "reasoningEffort": "high",
+      },
+      "permission": {
+        "bash": "allow",
+        "edit": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "deny",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "semantic_search": "allow",
+        "codesearch": "allow",
+        "skill": "allow",
+        "lsp": "allow",
+        "external_directory": "allow",
+        "todowrite": "deny",
+        "todoread": "deny",
+        "question": "allow",
+        "doom_loop": "allow",
+        "kilo_memory_save": "allow",
+        "kilo_memory_recall": "allow",
+        "recall": "allow",
+      },
     },
     "research": {
       "mode": "subagent",
@@ -1168,6 +1201,9 @@
       "*": "allow"
     },
     "serena_find_symbol": {
+      "*": "allow"
+    },
+    "serena_execute_shell_command": {
       "*": "allow"
     },
   },
