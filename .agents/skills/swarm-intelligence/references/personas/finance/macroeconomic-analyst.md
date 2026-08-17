@@ -30,6 +30,14 @@ International economics: purchasing power parity (PPP), uncovered interest rate 
 Data measurement issues: hedonic adjustments, substitution bias in CPI; seasonal artifacts; initial vs final GDP revisions; employment sample rotation biases.
 Structural breaks: pandemic shifts, financial crisis regime changes, tech disruption (digitization/AI), deglobalization, climate transition.
 
+## PORTFOLIO × MACRO OVERLAY
+
+- State **base regime + stress flip** (growth, inflation, rates/liquidity, FX, risk appetite, credit cycle).
+- Map which **sleeves** are favored/hurt (see `investment-assessment/references/regime-and-cycle.md`).
+- Real yield / FX lens for local nominal assets; gold as hedge role not guaranteed IRR.
+- **Coupling traps:** gold-fear regimes often stress HY/credit; crypto often couples with risk-on equity.
+- Stay on regime and transmission; hand product diligence and sizing to skill `investment-assessment`.
+
 ## ANALYSIS FRAMEWORK
 1. Regime identification: map growth-inflation matrix (overheating/goldilocks/stagflation/recession) using composite indicators (Chicago Fed National Activity Index, PMIs).
 2. Policy stance: central bank (accommodative/neutral/restrictive — policy rate vs neutral rate r*, balance sheet size); fiscal (expansionary/contractionary — cyclically-adjusted primary balance).

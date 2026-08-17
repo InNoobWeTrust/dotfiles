@@ -31,6 +31,8 @@ Sub-reviewers live in `references/sub-reviewers/`. To load one, use Read tool on
 | Skill / command definitions | `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/editorial.md` | Challenge logic, then clarity |
 | Quality gates / governance docs | `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/design-rigor.md` | Challenge coverage gaps, then design process |
 | Management reports / metrics | `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/editorial.md` | Challenge data confidence, then clarity |
+| Investment memo / portfolio allocation / multi-asset sizing | `references/sub-reviewers/investment-memo.md`, `references/sub-reviewers/adversarial.md`, `references/sub-reviewers/editorial.md` | Rails/regime/roles first, then assumptions, then clarity |
+| Bond / credit-only memo | `references/sub-reviewers/investment-memo.md` | Same lens; credit checks are a subsection |
 
 ### Orchestration
 
@@ -61,6 +63,7 @@ Quick orientation before loading full references:
 | `references/sub-reviewers/edge-case-hunter.md` | Control-flow paths, boundary conditions | Unhandled branches, off-by-one, null handling |
 | `references/sub-reviewers/editorial.md` | Prose clarity, document structure | Ambiguous writing, poor organization |
 | `references/sub-reviewers/doc-attack-vectors.md` | Documentation threats, compliance gaps | Docs that mislead, omit, or contradict governance rules |
+| `references/sub-reviewers/investment-memo.md` | Multi-asset suitability, regime, roles, sizing vs pain | Pairs with skill `investment-assessment` |
 
 ---
 

@@ -21,3 +21,7 @@ Phase detail and techniques: `references/phases.md`.
 ## Output (minimum)
 
 Problem statement; raw idea dump; prioritized top 3–5 with rationale; next actions. Not a PRD — hand off to `requirements-driven-dev` when ready to specify.
+
+## Investment handoff
+
+When ideation is about **allocation, what to own, or how much**, frame goals/rails here, then hand off to `investment-assessment` for regime fit, class diligence, and sizing. Do not end with enthusiasm and no left-tail or role-of-money path.

@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: "Use this skill when the user asks you to review, check, audit, challenge, or QA any artifact — code, specs, architecture, config, docs, infrastructure, or user-facing application behavior. Routes to specialized sub-lenses (black-box-qa, code-quality, design-rigor, adversarial, security, edge-case, editorial) based on what's being reviewed. Keep this skill evaluative: use it to judge frontend behavior heuristically and decide whether executable QA should be delegated, alongside security reviews of auth flows, input validation, and secrets handling."
+description: "Use this skill when the user asks you to review, check, audit, challenge, or QA any artifact — code, specs, architecture, config, docs, infrastructure, user-facing application behavior, or investment/portfolio assessment memos. Routes to specialized sub-lenses (black-box-qa, code-quality, design-rigor, adversarial, security, edge-case, editorial, investment-memo) based on what's being reviewed. Keep this skill evaluative. For investment allocation or opportunity memos use investment-memo lens; authoring uses investment-assessment skill first."
 ---
 
 # Reviewer
@@ -58,6 +58,8 @@ Worked scenarios: `references/examples/delegation-scenarios.md` (load only if ne
 | Bug fix / incident | design-rigor → code-quality → adversarial → edge-case-hunter |
 | API contracts | code-quality → design-rigor → adversarial → security → edge-case-hunter |
 | Skills / commands | adversarial → editorial |
+| Investment memo / portfolio allocation / position sizing | investment-memo → adversarial → editorial |
+| Bond / credit subset of investment memo | investment-memo → adversarial |
 
 Paths: `references/sub-reviewers/<name>.md`.
 
@@ -72,6 +74,7 @@ Paths: `references/sub-reviewers/<name>.md`.
 | security | threats, secrets, auth |
 | edge-case-hunter | boundaries, null paths |
 | editorial | prose clarity |
+| investment-memo | rails, regime, role-of-money, multi-asset sizing, tax/fee net, left-tail budget; credit waterline when credit present |
 
 ---
 

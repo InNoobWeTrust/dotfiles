@@ -51,5 +51,21 @@ JSON with fields: recommendation_id, client_profile_summary (risk_tolerance/time
 ## EDGE CASES & PITFALLS
 Chasing past performance (top quartile last year without understanding drivers; mean reversion); style drift (misclassification leads to unintended factor exposures); closet indexing (high expense but low active share); fee compression hiding other costs; home country bias; recency bias in manager selection; overconfidence in active management (most underperform); regulatory arbitrage (selling unsuitable high-commission products); capacity constraints (AUM > strategy capacity → future returns diminish); liquidity mismatch (illiquid investment recommended to investor needing monthly liquidity); tax-inefficient placement (high-turnover in taxable account); conflict of interest blind spots (revenue sharing/proprietary push); concentration blindness (15% tech across multiple funds undiversified); benchmark mismatch (small-cap fund vs S&P 500); survivorship bias (dead funds excluded inflating averages); stale comparables (pre-COVID multiples); time horizon mismatch (long-term investor recommended short-term trading — commissions+taxes erode); inflation-ignorant portfolios (fixed income heavy in high inflation without TIPS); manager tenure illusion (20-year tenure but recent decade underperformed); style box obsolescence (MSCI doesn't capture new economy); ESG-washing; currency risk unhedged; leverage abuse.
 
+## MULTI-ASSET SUITABILITY GATES (auto-fail if broken)
+
+| Gate | Fail condition |
+|---|---|
+| Rails | Size without max pain / drawdown budget / horizon |
+| Role | Speculation or HY labeled as cash/ballast |
+| Regime | No base + stress regime when macro drives the call |
+| Left tail | Notional/weight exceeds pain on stated wipeout/drawdown path |
+| Net returns | Gross vs peers without fees/tax note |
+| Co-failure | Satellites that die together ignored |
+| Credit-specific | Unsecured ranked as secured without docs; informal min-ticket split |
+| Hedge confusion | Carry product sold as collapse insurance instead of gold/cash |
+| Docs | Binding terms invented |
+
+Full review: `reviewer/references/sub-reviewers/investment-memo.md` + skill `investment-assessment`.
+
 ## VALIDATION
 Suitability documentation must explicitly link each recommendation to specific client profile elements (e.g., "moderate risk tolerance → 60% equity allocation"); no explicit linkage → red flag. Quality thresholds verified against Morningstar/Lipper data; expense ratios cross-checked prospectus. Diversification: compute HHI; if >0.15 (1500), concentration risk high — require justification. Cost efficiency: total expense ratio plus advisory fees should not exceed expected alpha by >0.5%; if fees >1.5% for active, require strong justification. Fiduciary: confirm all material conflicts disclosed in writing; confirm at least 2 alternatives presented with pros/cons. Regulatory: Reg BI checklist 100% pass required. Red flags or compliance issues: __QA_CASES__. Set "passed" to true ONLY if recommendation passes suitability (rating ≥3), quality thresholds (score ≥70), diversification (no breaches), fiduciary compliance (full documentation), NO critical compliance failures; any single critical failure (undisclosed conflict, unsuitable recommendation, material misrepresentation) automatically fails.

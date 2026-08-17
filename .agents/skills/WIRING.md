@@ -176,6 +176,12 @@ Natural transitions between skills:
 | `strategic-osint` | `brainstorming` | "The public-signal map is clear; now generate options or paths" |
 | `strategic-osint` | `requirements-driven-dev` | "OSINT clarified priorities; now formalize the chosen direction" |
 | `strategic-osint` | `reviewer` (editorial lens) | "Positioning draft is ready; now polish or challenge the narrative" |
+| `strategic-osint` | `investment-assessment` | "Public signals gathered; now size/allocate or diligence a product" |
+| `brainstorming` | `investment-assessment` | "Options framed; now diligence or allocate capital" |
+| `investment-assessment` | `multi-perspective-deliberation` | "Draft memo ready; finance cast challenge" |
+| `investment-assessment` | `reviewer` (investment-memo lens) | "Memo complete; independent suitability/regime review" |
+| `investment-assessment` | `swarm-intelligence` (finance domain) | "High-stakes allocation; multi-model finance personas" |
+| `reviewer` (investment-memo lens) | `investment-assessment` | "Review failed gates; revise size/allocation" |
 | Any skill | `memory` (Capture) | "Handoff requested, serializing context and saving progress" |
 | `memory` (Recall) | Any skill | "Session restored, resuming active work" |
 | Any skill | `memory` (Consolidate via Subagent) | "Commit pending or explicit dream-cycle request, running report-only consolidation first" |
@@ -221,6 +227,7 @@ skill.
 | Reviewer Sub-Lens | Derived From | Relationship |
 |---|---|---|
 | `reviewer/references/sub-reviewers/design-rigor.md` | `code-craft`, `systematic-investigation` | Reviews whether design discipline and investigation rigor were applied |
+| `reviewer/references/sub-reviewers/investment-memo.md` | `investment-assessment`, swarm finance personas | Reviews rails, regime, role discipline, class-fit, sizing vs pain |
 
 ---
 
@@ -236,4 +243,5 @@ skill.
 - **Project setup**: `project-foundation` → `devsecops` (foundation first, then secure the pipeline).
 - **Security hardening**: `devsecops` → `code-craft` → `reviewer` (security lens).
 - **Governance maintenance**: `skill-author` is the entry point; it routes to `project-foundation` or back to itself (Workflow A) as gaps are found.
+- **Personal/portfolio investing (multi-asset)**: `investment-assessment` (author) → optional `multi-perspective-deliberation` finance cast or `reviewer` investment-memo lens → `swarm-intelligence` finance domain only for high-stakes multi-model. Personas under `swarm-intelligence/references/personas/finance/` via `discover-personas.sh`.
 - **Management reporting**: Not a skill — refer to `docs/ai-augmented-project-setup-and-evolution.md` §9 for what to report. Define your org's reporting template and generate ad-hoc using `data-storytelling` for data interpretation.

@@ -42,6 +42,7 @@ Provide a concise brief with:
 - Stop if the task drifts into private, deceptive, or personally invasive investigation.
 - Stop if evidence is too thin to support directional advice; return unknowns instead of stretching.
 - Stop and reroute if the real task is candidate vetting rather than target-positioning research.
+- Stop and hand off to `investment-assessment` when the real decision is **allocate capital, size a position, or GO/NO-GO on a product** — OSINT may feed issuer/country signals, but must not replace rails, regime, and product diligence.
 
 ## Deliverable checklist
 
@@ -66,3 +67,4 @@ Provide a concise brief with:
 ## References
 
 - `references/phases.md` — detailed workflow, source ladder, and output template
+- Capital decisions: `investment-assessment` (compose: OSINT for signals → investment skill for rails, regime, class module, size)

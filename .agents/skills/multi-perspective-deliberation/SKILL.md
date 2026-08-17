@@ -1,6 +1,6 @@
 ---
 name: multi-perspective-deliberation
-description: "Use this skill to run multi-persona deliberation sessions — challenging assumptions, debating architectural decisions, and performing pre-mortems with diverse expert perspectives. Activate when the user wants a second opinion, asks to debate or challenge a design, or says \"party mode\" Uses concurrent delegated agents when available, or simulated dialogue in single-context environments."
+description: "Use this skill to run multi-persona deliberation sessions — challenging assumptions, debating architectural decisions, investment/portfolio memos, and performing pre-mortems with diverse expert perspectives. Activate when the user wants a second opinion, asks to debate or challenge a design or allocation, or says \"party mode\". Uses concurrent delegated agents when available, or simulated dialogue in single-context environments. For authoring investment assessments first load investment-assessment; use this skill to challenge the draft with the finance cast."
 ---
 
 # Multi-Perspective Deliberation & Deliberative Dialogue
@@ -11,6 +11,8 @@ A framework to challenge designs, stress-test plans, and synthesize multi-discip
 
 ## Deliberation Personas
 
+### Default product/engineering cast
+
 | Persona | Role | Key Lens |
 | :--- | :--- | :--- |
 | **Product Owner** | User & Value Advocate | "Does this solve a real user problem? Is the value worth the complexity?" |
@@ -18,6 +20,28 @@ A framework to challenge designs, stress-test plans, and synthesize multi-discip
 | **Developer** | Implementation Reality | "Can we build this easily? What are the hidden complexities and debt?" |
 | **Security Auditor** | Trust & Security Skeptic | "What are the attack vectors, input hazards, and trust boundary risks?" |
 | **Devil's Advocate** | Adversarial Challenger | "Why is this approach guaranteed to fail? What are the blind spots?" |
+
+### Finance / investment cast (swarm personas)
+
+Use when deliberating **allocation, any asset class, cycle fit, or position sizing**. Load prompts via:
+
+`swarm-intelligence/references/discover-personas.sh prompt "Persona Name"`
+
+| Persona | Key lens |
+| :--- | :--- |
+| **Financial Investment Analyst** | Thesis, alternatives, risk/return |
+| **Portfolio Manager** | Weights, correlation, risk budget |
+| **Macroeconomic Analyst** | Regime, CPI, FX, rates, cycle |
+| **Microeconomic Analyst** | Issuer/business quality |
+| **Money Flow Analyst** | Liquidity, funding, flows |
+| **Sentiment Analyst** | Crowding / narrative extremes |
+| **Investment Quality Reviewer** | Suitability gate |
+| **Financial Reviewer** | Assumptions & disclosure integrity |
+| **Devil's Advocate** (always) | Left tails, co-failure, role mismatch |
+
+**Default investment-memo cast:** Investment Analyst + Portfolio Manager + Macro (if regime in scope) + Financial Reviewer or IQ Reviewer + Devil's Advocate.  
+Add Money Flow for credit refinance; Sentiment for crowded crypto/thematic.  
+**Authoring:** `investment-assessment`. This skill only **challenges** a draft.
 
 ---
 

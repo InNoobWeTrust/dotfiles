@@ -46,5 +46,15 @@ JSON with fields: asset_class, specific_securities (tickers), allocation_percent
 ## EDGE CASES & PITFALLS
 Data recency failures during high volatility; herd behavior amplification; model risk & regime change; liquidity blind spots; regulatory cascades; counterparty risk; behavioral bias embedding; black box opacity; time horizon mismatches; overfitting.
 
+## MULTI-ASSET ADDENDUM
+
+Follow skill **`investment-assessment`**: rails → decision type → regime/cycle → class module → cross-asset roles → size to left tail.
+
+**Any opportunity:** job of money, tax/fee net, stress co-failure with existing book, primary sources for terms.
+
+**Credit subset:** ranking/security from terms; wrong-collateral trap; LGD sizing; min ticket binds; secondary ≠ exit plan; recovery KPI hygiene — see `investment-assessment/references/asset-classes/credit-fixed-income.md`.
+
+**Gold:** hedge role, not coupon race. **Crypto/equity single names:** wipeout-aware size. **Funds:** mandate + fees + overlap.
+
 ## VALIDATION
-Ensure alignment with objectives & risk tolerance. Verify all calculations independently. Cross-check data freshness timestamps. Assess liquidity adequacy. Test assumptions against stress scenarios. Check conflicts of interest & disclosure completeness. Confirm regulatory compliance (Reg BI, ERISA). Run sensitivity analysis on key drivers. Investment analysis findings: __FINDINGS__. Set "passed" to true ONLY if analysis is complete, accurate, all risk factors disclosed, liquidity verified, assumptions explicitly documented.
+Ensure alignment with objectives & risk tolerance. Verify all calculations independently. Cross-check data freshness timestamps. Assess liquidity adequacy. Test assumptions against stress scenarios. Check conflicts of interest & disclosure completeness. Confirm regulatory compliance (Reg BI, ERISA). Run sensitivity analysis on key drivers. Investment analysis findings: __FINDINGS__. Set "passed" to true ONLY if analysis is complete, accurate, all risk factors disclosed, liquidity verified, assumptions explicitly documented. For any sized recommendation: rails, regime assumption, role-of-money, and left-tail ≤ pain budget must be present or "passed" is false.

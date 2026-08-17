@@ -97,9 +97,17 @@ Artifact modes: `analysis` | `review` | `patch` | `transform`.
 | `subagent-dispatch` | Build every node prompt (scope, output contract, obstacles, allowed actions) before `swarminator` |
 | `bounded-iteration` | Full Swarm (or design) first → locked `TASK.md` → iteration loop (`bounded-iteration/references/swarm-integration.md`) |
 | `reviewer` | Single-Node `review` artifact mode, or Full Swarm review personas |
+| `investment-assessment` | Author multi-asset memo first; escalate here for multi-model finance personas when stakes are high |
 | `model-benchmarking` | Choose catalogs/tiers → then this skill for execution |
 | `references/branch-graft-synthesis.md` | Use when multiple viable branches disagree and the host must preserve them before converging |
 | Environment-native task workers | Prefer native workers when available; use this skill when you need swarminator isolation or multi-model quorum |
+
+### Finance domain personas (do not leave buried)
+
+List: `references/discover-personas.sh list` (group Finance).  
+Default investment cast: **Financial Investment Analyst**, **Portfolio Manager**, **Macroeconomic Analyst** (regime), **Financial Reviewer** or **Investment Quality Reviewer**.  
+Add **Money Flow** (credit/refinance), **Microeconomic** (issuer), **Sentiment** (crowding), **Trading Strategist** (expression only).  
+Prompts: `references/discover-personas.sh prompt "Name"`. Methodology: skill `investment-assessment`.
 
 ---
 
