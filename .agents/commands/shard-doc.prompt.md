@@ -66,10 +66,7 @@ Sections: [N]
 
 ---
 
-## Invocation Arguments
-
-Follow the instructions above to work on the user's actual request.
-Additional command input, if any, appears below exactly as provided:
+Additional input, if any, appears below exactly as provided:
 
 <arguments>
 $ARGUMENTS

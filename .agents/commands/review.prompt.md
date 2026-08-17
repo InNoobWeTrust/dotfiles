@@ -7,10 +7,9 @@
 3. Apply explicit user overrides (e.g., "skip security", "architecture only", "deep mode").
 4. Aggregate findings by severity with file/line references.
 
-## Invocation Arguments
+---
 
-Follow this command for the user's review request.
-Additional command input, if any, appears below exactly as provided:
+Additional input, if any, appears below exactly as provided:
 
 <arguments>
 $ARGUMENTS

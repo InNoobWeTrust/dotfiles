@@ -59,10 +59,7 @@ Files: [N] | Directories: [M]
 
 ---
 
-## Invocation Arguments
-
-Follow the instructions above to work on the user's indexing request.
-Additional command input, if any, appears below exactly as provided:
+Additional input, if any, appears below exactly as provided:
 
 <arguments>
 $ARGUMENTS

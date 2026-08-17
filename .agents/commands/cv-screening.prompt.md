@@ -18,10 +18,7 @@ To ensure strict compliance with legal, OSINT, and assessment standards, **load 
 
 ---
 
-## Invocation Arguments
-
-Follow the instructions above to work on the user's talent screening request.
-Additional command input, if any, appears below exactly as provided:
+Additional input, if any, appears below exactly as provided:
 
 <arguments>
 $ARGUMENTS

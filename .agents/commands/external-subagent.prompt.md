@@ -22,12 +22,10 @@ Default runtime priority: `command-code` + `deepseek-v4-pro` while documented qu
 
 ```bash
 $SHELL -l -c 'command -v swarminator >/dev/null 2>&1 || { echo "ERROR: swarminator not found — install via: brew tap InNoobWeTrust/tap && brew install swarminator" >&2; exit 1; }'
+
+---
 ```
-
-## Invocation Arguments
-
-Follow the instructions above for the user's bounded external delegation request.
-Additional command input, if any, appears below exactly as provided:
+Additional input, if any, appears below exactly as provided:
 
 <arguments>
 $ARGUMENTS

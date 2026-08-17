@@ -17,11 +17,10 @@ Load **`swarm-intelligence`** and select **Mode Full Swarm** (complete preflight
 
 ```bash
 $SHELL -l -c 'command -v swarminator >/dev/null 2>&1 || { echo "ERROR: swarminator not found — install via: brew tap InNoobWeTrust/tap && brew install swarminator" >&2; exit 1; }'
-```
 
-## Invocation Arguments
+---
 
-Additional command input, if any, appears below exactly as provided:
+Additional input, if any, appears below exactly as provided:
 
 <arguments>
 $ARGUMENTS

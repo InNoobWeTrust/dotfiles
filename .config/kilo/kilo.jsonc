@@ -1167,6 +1167,9 @@
     "serena_list_memories": {
       "*": "allow"
     },
+    "serena_find_symbol": {
+      "*": "allow"
+    },
   },
   "experimental": {
     "batch_tool": true,

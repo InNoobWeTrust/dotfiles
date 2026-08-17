@@ -14,11 +14,9 @@ The skill owns the requirements methodology, packaged references, templates, rev
 - Start with the lightest flow that can produce testable acceptance criteria.
 - Stop when requirements conflict, verification criteria cannot be made concrete, approval is needed, or a git write lacks explicit user approval.
 
-## Invocation Arguments
+---
 
-
-Follow this command for the user's requirements-lifecycle request.
-Additional command input, if any, appears below exactly as provided:
+Additional input, if any, appears below exactly as provided:
 
 <arguments>
 $ARGUMENTS
