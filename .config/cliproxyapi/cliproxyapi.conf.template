@@ -3,7 +3,7 @@ port: 8317
 
 api-keys: []
 
-auth-dir: "~/.local/share/cli-proxy-api"
+auth-dir: "${HOME}/.local/share/cli-proxy-api"
 
 # Remote management configuration, used with EasyCLI or WebUI
 remote-management:
@@ -78,3 +78,5 @@ claude-api-key:
         alias: "forbiddengun/mistral"
       - name: "forbiddengun/auto-small"
         alias: "forbiddengun/auto-small"
+      - name: "forbiddengun/auto-free"
+        alias: "forbiddengun/auto-free"

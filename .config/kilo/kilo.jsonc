@@ -15,10 +15,10 @@
       "model": "kilo/kilo-auto/free",
     },
     "summary": {
-      "model": "ink-gw/deepseek-v4-flash",
+      "model": "kilo/kilo-auto/free",
     },
     "compaction": {
-      "model": "ink-gw/deepseek-v4-flash",
+      "model": "proxy/llm-agg/forbiddengun/deepseek",
     },
     "general": {
       "description": "USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
@@ -48,7 +48,7 @@
     },
     "explore": {
       "description": "Can only use tools with no side-effect",
-      "model": "ink-gw/deepseek-v4-flash",
+      "model": "proxy/llm-agg/forbiddengun/deepseek",
       "permission": {
         "edit": "deny",
         "read": "allow",
@@ -112,7 +112,7 @@
       "hidden": true,
       "mode": "primary",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
-      "model": "ink-gw/openai/gpt-5.6-terra",
+      "model": "proxy/ink-gw/openai/gpt-5.6-terra",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -144,7 +144,7 @@
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      "model": "ink-gw/openai/gpt-5.6-terra",
+      "model": "proxy/ink-gw/openai/gpt-5.6-terra",
       "variant": "medium",
       "options": {
         "reasoningEffort": "medium",
@@ -176,7 +176,7 @@
     "debug": {
       "mode": "all",
       "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
-      "model": "llm-agg/forbiddengun/grok",
+      "model": "proxy/llm-agg/forbiddengun/grok",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -208,7 +208,7 @@
     "ui-coder": {
       "mode": "subagent",
       "description": "Specialized UI/frontend coder (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic or any frontend logic (composables, api handling, etc...) — delegate non-UI concerns to code.",
-      "model": "ink-gw/muse-spark1.2-contributor",
+      "model": "proxy/llm-agg/forbiddengun/gemini",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -274,7 +274,7 @@
     "software-architect": {
       "mode": "subagent",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
-      "model": "ink-gw/openai/gpt-5.6-terra",
+      "model": "proxy/ink-gw/openai/gpt-5.6-terra",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -306,7 +306,7 @@
     "research": {
       "mode": "subagent",
       "description": "Deep web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs.",
-      "model": "llm-agg/forbiddengun/gemini",
+      "model": "proxy/llm-agg/forbiddengun/gemini",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -336,10 +336,42 @@
       },
       "prompt": "Work methodically: (1) decompose the question into concrete sub-queries; (2) use websearch and webfetch to gather sources, preferring primary sources and reputable secondary sources; (3) read relevant documents, images, and PDFs in full; (4) cross-verify each material claim against at least two independent sources; and (5) explicitly flag contradictions, uncertainty, and missing evidence. Synthesize a structured Markdown brief with Executive Summary, Key Findings with source citations, Evidence Gaps / Contradictions, and Open Questions. Never fabricate sources or URLs: cite only sources you accessed."
     },
+    "finance-specialist": {
+      "mode": "subagent",
+      "description": "Investment and financial analysis specialist. Use for financial planning, portfolio and risk assessment, investment-product diligence, and market or macroeconomic context.",
+      "model": "proxy/llm-agg/forbiddengun/grok",
+      "options": {
+        "reasoningEffort": "high",
+      },
+      "permission": {
+        "bash": "allow",
+        "edit": "allow",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "allow",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "semantic_search": "allow",
+        "codesearch": "allow",
+        "skill": "allow",
+        "lsp": "allow",
+        "external_directory": "allow",
+        "todowrite": "allow",
+        "todoread": "allow",
+        "question": "allow",
+        "doom_loop": "allow",
+        "kilo_memory_save": "allow",
+        "kilo_memory_recall": "allow",
+        "recall": "allow",
+      },
+      "prompt": "Use the `investment-assessment` skill. Analyze investment and financial-planning questions, portfolios and risks, financial products, and market or macroeconomic context. Clearly distinguish educational analysis from personalized, regulated financial advice. State assumptions, data freshness, material risks, uncertainty, fees, taxes, liquidity constraints, and conflicts of interest. Favor primary sources, cross-check material claims, and never promise returns. Structure findings as a decision memo with an executive summary, evidence and sources, scenario or risk analysis, trade-offs, and open questions."
+    },
     "code-reviewer": {
       "mode": "subagent",
       "description": "Code quality review. Read-only. Use after any non-trivial implementation.",
-      "model": "ink-gw/openai/gpt-5.6-luna",
+      "model": "proxy/ink-gw/openai/gpt-5.6-luna",
       "variant": "xhigh",
       "options": {
         "reasoningEffort": "high",
@@ -370,7 +402,7 @@
     "tester": {
       "mode": "subagent",
       "description": "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only.",
-      "model": "ink-gw/deepseek-v4-flash",
+      "model": "proxy/llm-agg/forbiddengun/deepseek",
       "options": {
         "reasoningEffort": "high",
       },
@@ -497,17 +529,17 @@
     },
   },
   "provider": {
-    "ink-gw": {
-      "name": "INK AI Gateway",
+    "proxy": {
+      "name": "Local proxy",
       "npm": "@ai-sdk/anthropic",
       "options": {
-        "baseURL": "${INK_GATEWAY_BASE_URL}/anthropic/v1",
+        "baseURL": "http://localhost:8317/v1",
       },
       "env": [
         "INK_GATEWAY_API_KEY"
       ],
       "models": {
-        "openai/gpt-5.6-terra": {
+        "ink-gw/openai/gpt-5.6-terra": {
           "modalities": {
             "input": [
               "text",
@@ -523,7 +555,7 @@
             "output": 128000,
           },
         },
-        "openai/gpt-5.6-luna": {
+        "ink-gw/openai/gpt-5.6-luna": {
           "modalities": {
             "input": [
               "text",
@@ -539,7 +571,7 @@
             "output": 128000,
           },
         },
-        "gpt-5.6-terra": {
+        "ink-gw/gpt-5.6-terra": {
           "modalities": {
             "input": [
               "text",
@@ -555,7 +587,7 @@
             "output": 128000,
           },
         },
-        "muse-spark-1.2-contributor": {
+        "ink-gw/muse-spark-1.2-contributor": {
           "modalities": {
             "input": [
               "text",
@@ -573,7 +605,7 @@
             "output": 131072,
           },
         },
-        "deepseek-v4-flash": {
+        "ink-gw/deepseek-v4-flash": {
           "modalities": {
             "input": [
               "text",
@@ -587,19 +619,7 @@
             "output": 384000,
           },
         },
-      },
-    },
-    "llm-agg": {
-      "name": "LLM Broker",
-      "npm": "@ai-sdk/anthropic",
-      "options": {
-        "baseURL": "${LLM_BROKER_BASE_URL}/v1",
-      },
-      "env": [
-        "LLM_BROKER_API_KEY",
-      ],
-      "models": {
-        "forbiddengun/grok": {
+        "llm-agg/forbiddengun/grok": {
           "modalities": {
             "input": [
               "text",
@@ -615,7 +635,7 @@
             "output": 30000,
           },
         },
-        "forbiddengun/gpt": {
+        "llm-agg/forbiddengun/gpt": {
           "modalities": {
             "input": [
               "text",
@@ -631,7 +651,7 @@
             "output": 128000,
           },
         },
-        "forbiddengun/claude": {
+        "llm-agg/forbiddengun/claude": {
           "modalities": {
             "input": [
               "text",
@@ -647,7 +667,7 @@
             "output": 128000,
           },
         },
-        "forbiddengun/gemini": {
+        "llm-agg/forbiddengun/gemini": {
           "modalities": {
             "input": [
               "text",
@@ -665,7 +685,7 @@
             "output": 65536,
           },
         },
-        "forbiddengun/deepseek": {
+        "llm-agg/forbiddengun/deepseek": {
           "modalities": {
             "input": [
               "text",
@@ -679,7 +699,7 @@
             "output": 384000,
           },
         },
-        "forbiddengun/glm": {
+        "llm-agg/forbiddengun/glm": {
           "modalities": {
             "input": [
               "text",
@@ -693,7 +713,7 @@
             "output": 131072,
           },
         },
-        "forbiddengun/kimi": {
+        "llm-agg/forbiddengun/kimi": {
           "modalities": {
             "input": [
               "text",
@@ -709,7 +729,7 @@
             "output": 262144,
           },
         },
-        "forbiddengun/mimo": {
+        "llm-agg/forbiddengun/mimo": {
           "modalities": {
             "input": [
               "text",
@@ -723,7 +743,7 @@
             "output": 131072,
           },
         },
-        "forbiddengun/qwen": {
+        "llm-agg/forbiddengun/qwen": {
           "modalities": {
             "input": [
               "text",
@@ -737,7 +757,7 @@
             "output": 64000,
           },
         },
-        "forbiddengun/minimax": {
+        "llm-agg/forbiddengun/minimax": {
           "modalities": {
             "input": [
               "text",
@@ -753,11 +773,24 @@
             "output": 128000,
           },
         },
-        "forbiddengun/auto-small": {
+        "llm-agg/forbiddengun/auto-small": {
           "modalities": {
             "input": [
               "text",
-              "image",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 200000,
+            "output": 32768,
+          },
+        },
+        "llm-agg/forbiddengun/auto-free": {
+          "modalities": {
+            "input": [
+              "text",
             ],
             "output": [
               "text",
