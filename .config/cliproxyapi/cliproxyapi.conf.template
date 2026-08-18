@@ -21,45 +21,6 @@ remote-management:
   # blank.
   secret-key: "lorem"
 
-# OpenAI Compatibility Providers (Featherless)
-openai-compatibility:
-  - name: "featherless"
-    prefix: "featherless"
-    base-url: "${FEATHERLESS_BASE_URL}/v1"
-    api-key-entries:
-      - api-key: "${FEATHERLESS_API_KEY}"
-    models:
-      - name: "zai-org/GLM-5.2"
-        alias: "zai-org/GLM-5.2"
-      - name: "deepseek-ai/DeepSeek-V4-Pro"
-        alias: "deepseek-ai/DeepSeek-V4-Pro"
-      - name: "deepseek-ai/DeepSeek-V4-Flash-0731"
-        alias: "deepseek-ai/DeepSeek-V4-Flash-0731"
-      - name: "deepseek-ai/DeepSeek-V4-Flash"
-        alias: "deepseek-ai/DeepSeek-V4-Flash"
-      - name: "MiniMaxAI/MiniMax-M3"
-        alias: "MiniMaxAI/MiniMax-M3"
-      - name: "moonshotai/Kimi-K2.7-Code"
-        alias: "moonshotai/Kimi-K2.7-Code"
-      - name: "poolside/Laguna-S-2.1"
-        alias: "poolside/Laguna-S-2.1"
-      - name: "XiaomiMiMo/MiMo-V2.5"
-        alias: "XiaomiMiMo/MiMo-V2.5"
-      - name: "stepfun-ai/Step-3.7-Flash"
-        alias: "stepfun-ai/Step-3.7-Flash"
-      - name: "Qwen/Qwen3.6-27B"
-        alias: "Qwen/Qwen3.6-27B"
-      - name: "Qwen/Qwen3.6-35B-A3B"
-        alias: "Qwen/Qwen3.6-35B-A3B"
-      - name: "unsloth/Llama-3.3-70B-Instruct"
-        alias: "unsloth/Llama-3.3-70B-Instruct"
-      - name: "mistralai/Mistral-Small-3.2-24B-Instruct-2506"
-        alias: "mistralai/Mistral-Small-3.2-24B-Instruct-2506"
-      - name: "unsloth/gemma-3-27b-it"
-        alias: "unsloth/gemma-3-27b-it"
-      - name: "microsoft/phi-4"
-        alias: "microsoft/phi-4"
-
 # Claude API Keys (INK Gateway & LLM Broker)
 claude-api-key:
   - api-key: "${INK_GATEWAY_API_KEY}"
