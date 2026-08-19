@@ -936,6 +936,9 @@
     "serena_read_file": {
       "*": "allow"
     },
+    "serena_get_diagnostics_for_file": {
+      "*": "allow"
+    },
     "serena_search_for_pattern": {
       "*": "allow"
     },
