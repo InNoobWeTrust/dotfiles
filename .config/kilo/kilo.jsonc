@@ -112,7 +112,7 @@
       "hidden": true,
       "mode": "primary",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
-      "model": "proxy/ink-gw/openai/gpt-5.6-terra",
+      "model": "proxy/llm-agg/forbiddengun/auto-frontier",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -144,10 +144,10 @@
     "code": {
       "mode": "all",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
-      "model": "proxy/ink-gw/openai/gpt-5.6-terra",
-      "variant": "medium",
+      "model": "openai/gpt-5.6-luna",
+      "variant": "high",
       "options": {
-        "reasoningEffort": "medium",
+        "reasoningEffort": "high",
       },
       "permission": {
         "bash": "allow",
@@ -208,7 +208,7 @@
     "ui-coder": {
       "mode": "subagent",
       "description": "Specialized UI/frontend coder (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic or any frontend logic (composables, api handling, etc...) — delegate non-UI concerns to code.",
-      "model": "proxy/llm-agg/forbiddengun/gemini",
+      "model": "github-copilot/gemini-3.5-flash",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -274,7 +274,7 @@
     "software-architect": {
       "mode": "subagent",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
-      "model": "proxy/ink-gw/openai/gpt-5.6-terra",
+      "model": "proxy/llm-agg/forbiddengun/auto-frontier",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -371,10 +371,10 @@
     "code-reviewer": {
       "mode": "subagent",
       "description": "Code quality review. Read-only. Use after any non-trivial implementation.",
-      "model": "proxy/ink-gw/openai/gpt-5.6-luna",
-      "variant": "xhigh",
+      "model": "openai/gpt-5.6-sol",
+      "variant": "medium",
       "options": {
-        "reasoningEffort": "high",
+        "reasoningEffort": "medium",
       },
       "permission": {
         "bash": "allow",
@@ -402,7 +402,7 @@
     "tester": {
       "mode": "subagent",
       "description": "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only.",
-      "model": "proxy/llm-agg/forbiddengun/deepseek",
+      "model": "proxy/llm-agg/forbiddengun/minimax",
       "options": {
         "reasoningEffort": "high",
       },
@@ -432,8 +432,8 @@
     "docs-editor": {
       "mode": "subagent",
       "description": "Writes/edits and review documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
-      "model": "openai/gpt-5.6-luna",
-      "variant": "xhigh",
+      "model": "proxy/llm-agg/forbiddengun/claude",
+      "variant": "high",
       "options": {
         "reasoningEffort": "high",
       },
@@ -463,7 +463,7 @@
     "security-auditor": {
       "mode": "primary",
       "description": "Security audit. Read-only. Use for security reviews and pre-deployment audits. Because security review is time consuming, only offer to run this after commit to review the changes. For plans and engineering doc, offer to run this when complete the writing. Don't call this when user is in a rush or there are still incomplete work.",
-      "model": "openai/gpt-5.6-terra",
+      "model": "proxy/llm-agg/forbiddengun/claude",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -535,9 +535,6 @@
       "options": {
         "baseURL": "http://localhost:8317/v1",
       },
-      "env": [
-        "INK_GATEWAY_API_KEY"
-      ],
       "models": {
         "ink-gw/openai/gpt-5.6-terra": {
           "modalities": {
@@ -556,22 +553,6 @@
           },
         },
         "ink-gw/openai/gpt-5.6-luna": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-        },
-        "ink-gw/gpt-5.6-terra": {
           "modalities": {
             "input": [
               "text",
@@ -771,6 +752,21 @@
           "limit": {
             "context": 512000,
             "output": 128000,
+          },
+        },
+        "llm-agg/forbiddengun/auto-frontier": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 500000,
+            "output": 64000,
           },
         },
         "llm-agg/forbiddengun/auto-small": {

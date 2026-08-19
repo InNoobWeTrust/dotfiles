@@ -76,6 +76,8 @@ claude-api-key:
         alias: "forbiddengun/gemma"
       - name: "forbiddengun/mistral"
         alias: "forbiddengun/mistral"
+      - name: "forbiddengun/auto-frontier"
+        alias: "forbiddengun/auto-frontier"
       - name: "forbiddengun/auto-small"
         alias: "forbiddengun/auto-small"
       - name: "forbiddengun/auto-free"
