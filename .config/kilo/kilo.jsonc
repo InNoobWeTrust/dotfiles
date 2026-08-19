@@ -18,7 +18,7 @@
       "model": "kilo/kilo-auto/free",
     },
     "compaction": {
-      "model": "proxy/ink-gw/deepseek-v4-flash",
+      "model": "proxy/deepseek-v4-flash",
     },
     "general": {
       "description": "USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
@@ -112,7 +112,7 @@
       "hidden": true,
       "mode": "primary",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
-      "model": "proxy/llm-agg/forbiddengun/auto-frontier",
+      "model": "proxy/forbiddengun/auto-frontier",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -144,8 +144,7 @@
     "code": {
       "mode": "subagent",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access. Must pass detailed implementation plan before calling, only delegate the implementation of functional units not every decisions. Architecture design, contract and implementation plan must be controlled/synthesized by the main agent before delegating to this subagent for implementation.",
-      "model": "proxy/ink-gw/muse-spark-1.2-contributor",
-      "variant": "high",
+      "model": "proxy/deepseek-v4-pro",
       "options": {
         "reasoningEffort": "high",
       },
@@ -177,7 +176,7 @@
     "debug": {
       "mode": "all",
       "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
-      "model": "proxy/llm-agg/forbiddengun/grok",
+      "model": "proxy/forbiddengun/grok",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -275,7 +274,7 @@
     "software-architect": {
       "mode": "subagent",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features. Also, call this subagent to craft implementation plan before calling any implementer.",
-      "model": "proxy/llm-agg/forbiddengun/auto-frontier",
+      "model": "proxy/forbiddengun/auto-frontier",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -308,7 +307,7 @@
     "research": {
       "mode": "subagent",
       "description": "Deep web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs.",
-      "model": "proxy/llm-agg/forbiddengun/gemini",
+      "model": "proxy/forbiddengun/gemini",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -341,7 +340,7 @@
     "finance-specialist": {
       "mode": "subagent",
       "description": "Investment and financial analysis specialist. Use for financial planning, portfolio and risk assessment, investment-product diligence, and market or macroeconomic context.",
-      "model": "proxy/llm-agg/forbiddengun/grok",
+      "model": "proxy/forbiddengun/grok",
       "options": {
         "reasoningEffort": "high",
       },
@@ -404,7 +403,7 @@
     "tester": {
       "mode": "subagent",
       "description": "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only.",
-      "model": "proxy/llm-agg/forbiddengun/minimax",
+      "model": "proxy/forbiddengun/minimax",
       "options": {
         "reasoningEffort": "high",
       },
@@ -465,7 +464,7 @@
     "security-auditor": {
       "mode": "primary",
       "description": "Security audit. Read-only. Use for security reviews and pre-deployment audits. Because security review is time consuming, only offer to run this after commit to review the changes. For plans and engineering doc, offer to run this when complete the writing. Don't call this when user is in a rush or there are still incomplete work.",
-      "model": "proxy/llm-agg/forbiddengun/claude",
+      "model": "proxy/forbiddengun/claude",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -541,7 +540,7 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
-        "ink-gw/openai/gpt-5.6-terra": {
+        "openai/gpt-5.6-terra": {
           "modalities": {
             "input": [
               "text",
@@ -557,7 +556,7 @@
             "output": 128000,
           },
         },
-        "ink-gw/openai/gpt-5.6-luna": {
+        "openai/gpt-5.6-luna": {
           "modalities": {
             "input": [
               "text",
@@ -573,7 +572,7 @@
             "output": 128000,
           },
         },
-        "ink-gw/muse-spark-1.2-contributor": {
+        "muse-spark-1.2-contributor": {
           "modalities": {
             "input": [
               "text",
@@ -591,7 +590,7 @@
             "output": 131072,
           },
         },
-        "ink-gw/deepseek-v4-flash": {
+        "deepseek-v4-pro": {
           "modalities": {
             "input": [
               "text",
@@ -605,7 +604,21 @@
             "output": 384000,
           },
         },
-        "llm-agg/forbiddengun/grok": {
+        "deepseek-v4-flash": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 384000,
+          },
+        },
+        "forbiddengun/grok": {
           "modalities": {
             "input": [
               "text",
@@ -621,7 +634,7 @@
             "output": 500000,
           },
         },
-        "llm-agg/forbiddengun/gpt": {
+        "forbiddengun/gpt": {
           "modalities": {
             "input": [
               "text",
@@ -637,7 +650,7 @@
             "output": 128000,
           },
         },
-        "llm-agg/forbiddengun/claude": {
+        "forbiddengun/claude": {
           "modalities": {
             "input": [
               "text",
@@ -653,7 +666,7 @@
             "output": 128000,
           },
         },
-        "llm-agg/forbiddengun/gemini": {
+        "forbiddengun/gemini": {
           "modalities": {
             "input": [
               "text",
@@ -671,7 +684,7 @@
             "output": 65536,
           },
         },
-        "llm-agg/forbiddengun/deepseek": {
+        "forbiddengun/deepseek": {
           "modalities": {
             "input": [
               "text",
@@ -685,7 +698,7 @@
             "output": 384000,
           },
         },
-        "llm-agg/forbiddengun/glm": {
+        "forbiddengun/glm": {
           "modalities": {
             "input": [
               "text",
@@ -699,7 +712,7 @@
             "output": 131072,
           },
         },
-        "llm-agg/forbiddengun/kimi": {
+        "forbiddengun/kimi": {
           "modalities": {
             "input": [
               "text",
@@ -715,7 +728,7 @@
             "output": 262144,
           },
         },
-        "llm-agg/forbiddengun/mimo": {
+        "forbiddengun/mimo": {
           "modalities": {
             "input": [
               "text",
@@ -729,7 +742,7 @@
             "output": 131072,
           },
         },
-        "llm-agg/forbiddengun/qwen": {
+        "forbiddengun/qwen": {
           "modalities": {
             "input": [
               "text",
@@ -743,7 +756,7 @@
             "output": 64000,
           },
         },
-        "llm-agg/forbiddengun/minimax": {
+        "forbiddengun/minimax": {
           "modalities": {
             "input": [
               "text",
@@ -759,7 +772,7 @@
             "output": 128000,
           },
         },
-        "llm-agg/forbiddengun/auto-frontier": {
+        "forbiddengun/auto-frontier": {
           "modalities": {
             "input": [
               "text",
@@ -774,7 +787,7 @@
             "output": 64000,
           },
         },
-        "llm-agg/forbiddengun/auto-small": {
+        "forbiddengun/auto-small": {
           "modalities": {
             "input": [
               "text",
@@ -788,7 +801,21 @@
             "output": 32768,
           },
         },
-        "llm-agg/forbiddengun/auto-free": {
+        "forbiddengun/auto-free": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 200000,
+            "output": 32768,
+          },
+        },
+        "forbiddengun/coder": {
           "modalities": {
             "input": [
               "text",
@@ -898,6 +925,13 @@
       "pgrep *": "allow",
       "ss *": "allow",
       "fuser *": "allow",
+      "uv *": "allow",
+      "uvx *": "allow",
+      "npm *": "allow",
+      "npx *": "allow",
+      "bun *": "allow",
+      "bunx *": "allow",
+      "bun x *": "allow",
     },
     "recall": {
       "search": "allow"
