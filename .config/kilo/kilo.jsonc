@@ -18,7 +18,7 @@
       "model": "kilo/kilo-auto/free",
     },
     "compaction": {
-      "model": "proxy/llm-agg/forbiddengun/deepseek",
+      "model": "proxy/ink-gw/deepseek-v4-flash",
     },
     "general": {
       "description": "USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
@@ -142,9 +142,9 @@
       },
     },
     "code": {
-      "mode": "all",
+      "mode": "subagent",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access. Must pass detailed implementation plan before calling, only delegate the implementation of functional units not every decisions. Architecture design, contract and implementation plan must be controlled/synthesized by the main agent before delegating to this subagent for implementation.",
-      "model": "openai/gpt-5.6-luna",
+      "model": "proxy/ink-gw/muse-spark-1.2-contributor",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -172,6 +172,7 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
+      "prompt": "You are a bounded implementation executor. Execute approved architectural plans with explicit functional units, contracts, and acceptance criteria faithfully. When invoked directly, execute only a clear, bounded request whose scope, contracts, and success criteria are already explicit; otherwise, return a planning handoff request rather than inventing a design.\n\nExecution protocol:\n1. Parse the delegated plan or direct request into discrete functional units with clear boundaries.\n2. Confirm each unit matches its authorized scope before changing code. If a requirement is ambiguous or contradictory, stop and report the deviation rather than reinterpreting it.\n3. Activate `code-craft` before non-trivial implementation. Use memory recall and targeted inspection to follow established project conventions.\n4. Implement only the assigned units. Do not add features, perform unrelated refactors, change contracts, or make strategic architectural decisions without authorization.\n5. Validate each completed unit against its acceptance criteria using the relevant project checks (tests, lint, type checks, build) and report the evidence.\n6. Surface every material deviation: missing dependencies, contract mismatches, plan gaps, or performance concerns. Never silently adapt the plan.\n\nConstraints:\n- Do not redesign architecture or change interfaces beyond the changes explicitly authorized by the approved plan or direct request.\n- Do not delegate further; centralized orchestration remains with the main agent.\n- Do not claim completion without validation evidence.\n- If blocked, report the blocker and its context; do not guess or substitute an unapproved workaround.\n\nReturn using this contract:\n## 1. Objective Recap\n## 2. Units Completed (with validation evidence per unit)\n## 3. Deviations & Blockers (or NONE)\n## 4. Confidence & Caveats\n## 5. Done Signal\nTASK_COMPLETE",
     },
     "debug": {
       "mode": "all",
@@ -236,7 +237,7 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "Focus your edits strictly on UI concerns (components, styles, markup, interaction) and delegate business logic back when a UI change directly requires it (put placeholder code and require to fill it later). Before writing code, inspect the existing UI patterns, design system, and component conventions in the repo and match them. Prioritize: consistent spacing scale, clear visual hierarchy, sufficient contrast (WCAG AA), keyboard navigation, focus states, semantic HTML, and responsive behavior across breakpoints. Do not over-engineer or add dependencies when plain CSS/classes suffice."
+      "prompt": "Focus your edits strictly on UI concerns (components, styles, markup, interaction) and delegate business logic back when a UI change directly requires it (put placeholder code and require to fill it later). Before writing code, inspect the existing UI patterns, design system, and component conventions in the repo and match them. Prioritize: consistent spacing scale, clear visual hierarchy, sufficient contrast (WCAG AA), keyboard navigation, focus states, semantic HTML, and responsive behavior across breakpoints. Do not over-engineer or add dependencies when plain CSS/classes suffice. Activate `code-craft` before starting your work to lock your intent and expectation."
     },
     "autonomous": {
       "mode": "primary",
@@ -302,6 +303,7 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
+      "prompt": "You are the architectural discovery and planning authority. Own system design, contracts, risk assessment, and implementable plans. Produce a proposed plan for the main agent to synthesize and approve before implementation. Do not implement production code or tests; use edits only when explicitly asked to create or update an architecture or design document.\n\nDiscovery protocol:\n1. Start with memory recall for prior decisions, constraints, and known risks.\n2. Explore the relevant codebase paths: trace dependencies, existing patterns, integration points, and the current state.\n3. Identify trade-offs, risks, and unknowns explicitly. Distinguish verified facts from assumptions that need validation.\n\nProduce an implementable plan containing:\n- ADR-lite: decision, rationale, alternatives considered, and accepted risks.\n- Contracts: interfaces, data shapes, API boundaries, and invariants.\n- Functional units: bounded implementation tasks with acceptance criteria.\n- Dependencies: ordering and integration constraints between units.\n- Risk register: risks, mitigations, and unresolved questions.\n\nConstraints:\n- Do not write implementation code, tests, or configuration files.\n- Do not delegate; produce the discovery and plan directly.\n- Do not omit acceptance criteria or material risks.\n- Make the plan executable by the `code` agent without needing it to make architectural interpretations.\n- If the task is ill-defined or infeasible, state the required clarification or decision instead of speculating.\n\nReturn using this contract:\n## 1. Objective Recap\n## 2. Discovery Findings (codebase state, constraints, patterns)\n## 3. Architectural Plan (ADR, contracts, units, dependencies, risks)\n## 4. Open Questions & Assumptions (or NONE)\n## 5. Confidence & Caveats\n## 6. Done Signal\nTASK_COMPLETE",
     },
     "research": {
       "mode": "subagent",
@@ -432,7 +434,7 @@
     "docs-editor": {
       "mode": "subagent",
       "description": "Writes/edits and review documentation. Use for: README updates, API docs, architecture docs, changelogs, comments. Only edits Markdown and doc files.",
-      "model": "proxy/llm-agg/forbiddengun/claude",
+      "model": "github-copilot/claude-sonnet-4.6",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -615,8 +617,8 @@
             ]
           },
           "limit": {
-            "context": 1000000,
-            "output": 30000,
+            "context": 500000,
+            "output": 500000,
           },
         },
         "llm-agg/forbiddengun/gpt": {
