@@ -22,7 +22,7 @@
     },
     "general": {
       "description": "USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
-      "model": "github-copilot/claude-haiku-4.5",
+      "model": "github-copilot/gpt-5.4",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -48,7 +48,7 @@
     },
     "explore": {
       "description": "Can only use tools with no side-effect",
-      "model": "proxy/llm-agg/forbiddengun/deepseek",
+      "model": "github-copilot/claude-haiku-4.5",
       "permission": {
         "edit": "deny",
         "read": "allow",
@@ -143,7 +143,7 @@
     },
     "code": {
       "mode": "all",
-      "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access.",
+      "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access. Must pass detailed implementation plan before calling, only delegate the implementation of functional units not every decisions. Architecture design, contract and implementation plan must be controlled/synthesized by the main agent before delegating to this subagent for implementation.",
       "model": "openai/gpt-5.6-luna",
       "variant": "high",
       "options": {
@@ -273,7 +273,7 @@
     },
     "software-architect": {
       "mode": "subagent",
-      "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features.",
+      "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features. Also, call this subagent to craft implementation plan before calling any implementer.",
       "model": "proxy/llm-agg/forbiddengun/auto-frontier",
       "variant": "high",
       "options": {
@@ -535,6 +535,9 @@
       "options": {
         "baseURL": "http://localhost:8317/v1",
       },
+      "env": [
+        "LLM_BROKER_API_KEY",
+      ],
       "models": {
         "ink-gw/openai/gpt-5.6-terra": {
           "modalities": {
