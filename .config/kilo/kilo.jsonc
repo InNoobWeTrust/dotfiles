@@ -144,9 +144,10 @@
     "code": {
       "mode": "subagent",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access. Must pass detailed implementation plan before calling, only delegate the implementation of functional units not every decisions. Architecture design, contract and implementation plan must be controlled/synthesized by the main agent before delegating to this subagent for implementation.",
-      "model": "proxy/deepseek-v4-pro",
+      "model": "openai/gpt-5.6-terra",
+      "variant": "medium",
       "options": {
-        "reasoningEffort": "high",
+        "reasoningEffort": "medium",
       },
       "permission": {
         "bash": "allow",
@@ -307,7 +308,7 @@
     "research": {
       "mode": "subagent",
       "description": "Deep web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs.",
-      "model": "proxy/forbiddengun/gemini",
+      "model": "openai/gpt-5.6-luna",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
