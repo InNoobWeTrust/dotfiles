@@ -21,7 +21,7 @@ remote-management:
   # blank.
   secret-key: "lorem"
 
-# Claude API Keys (INK Gateway & LLM Broker)
+# Claude API Keys
 claude-api-key:
   - api-key: "${INK_GATEWAY_API_KEY}"
     base-url: "${INK_GATEWAY_BASE_URL}/anthropic"
@@ -44,8 +44,15 @@ claude-api-key:
         alias: "deepseek-v4-flash"
       - name: "deepseek-v4-pro"
         alias: "deepseek-v4-pro"
+      - name: "Qwen3.8-27B"
+        alias: "Qwen3.8-27B"
       - name: "muse-spark-1.2-contributor"
         alias: "muse-spark-1.2-contributor"
+  - api-key: "${KILO_API_KEY}"
+    base-url: "${KILO_BASE_URL}"
+    models:
+      - name: "kilo-auto/free"
+        alias: "kilo-auto/free"
   - api-key: "${LLM_BROKER_API_KEY}"
     base-url: "${LLM_BROKER_BASE_URL}"
     models:

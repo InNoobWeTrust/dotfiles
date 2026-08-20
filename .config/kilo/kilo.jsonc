@@ -144,7 +144,7 @@
     "code": {
       "mode": "subagent",
       "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access. Must pass detailed implementation plan before calling, only delegate the implementation of functional units not every decisions. Architecture design, contract and implementation plan must be controlled/synthesized by the main agent before delegating to this subagent for implementation.",
-      "model": "openai/gpt-5.6-terra",
+      "model": "proxy/openai/gpt-5.6-terra",
       "variant": "medium",
       "options": {
         "reasoningEffort": "medium",
@@ -275,7 +275,7 @@
     "software-architect": {
       "mode": "subagent",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features. Also, call this subagent to craft implementation plan before calling any implementer.",
-      "model": "proxy/forbiddengun/auto-frontier",
+      "model": "openai/gpt-5.6-sol",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -342,6 +342,7 @@
       "mode": "subagent",
       "description": "Investment and financial analysis specialist. Use for financial planning, portfolio and risk assessment, investment-product diligence, and market or macroeconomic context.",
       "model": "proxy/forbiddengun/grok",
+      "variant": "high",
       "options": {
         "reasoningEffort": "high",
       },
@@ -373,10 +374,10 @@
     "code-reviewer": {
       "mode": "subagent",
       "description": "Code quality review. Read-only. Use after any non-trivial implementation.",
-      "model": "openai/gpt-5.6-sol",
-      "variant": "medium",
+      "model": "openai/gpt-5.6-terra",
+      "variant": "high",
       "options": {
-        "reasoningEffort": "medium",
+        "reasoningEffort": "high",
       },
       "permission": {
         "bash": "allow",
@@ -404,7 +405,7 @@
     "tester": {
       "mode": "subagent",
       "description": "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only.",
-      "model": "proxy/forbiddengun/minimax",
+      "model": "proxy/deepseek-v4-flash",
       "options": {
         "reasoningEffort": "high",
       },
@@ -465,7 +466,7 @@
     "security-auditor": {
       "mode": "primary",
       "description": "Security audit. Read-only. Use for security reviews and pre-deployment audits. Because security review is time consuming, only offer to run this after commit to review the changes. For plans and engineering doc, offer to run this when complete the writing. Don't call this when user is in a rush or there are still incomplete work.",
-      "model": "proxy/forbiddengun/claude",
+      "model": "proxy/forbiddengun/auto-frontier",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -571,6 +572,22 @@
           "limit": {
             "context": 1050000,
             "output": 128000,
+          },
+        },
+        "Qwen3.8-27B": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 262144,
+            "output": 32768,
           },
         },
         "muse-spark-1.2-contributor": {
