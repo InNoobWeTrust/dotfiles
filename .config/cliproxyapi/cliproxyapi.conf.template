@@ -88,3 +88,8 @@ claude-api-key:
         alias: "forbiddengun/auto-free"
       - name: "forbiddengun/coder"
         alias: "forbiddengun/coder"
+debug: true
+logging-to-file: true
+commercial-mode: true
+usage-statistics-enabled: true
+logs-max-total-size-mb: 64

@@ -17,9 +17,9 @@
     "summary": {
       "model": "kilo/kilo-auto/free",
     },
-    "compaction": {
-      "model": "proxy/deepseek-v4-flash",
-    },
+    //"compaction": {
+    //  "model": "github-copilot/gpt-5.4",
+    //},
     "general": {
       "description": "USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
       "model": "github-copilot/gpt-5.4",
@@ -405,7 +405,7 @@
     "tester": {
       "mode": "subagent",
       "description": "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only.",
-      "model": "proxy/deepseek-v4-flash",
+      "model": "proxy/forbiddengun/deepseek",
       "options": {
         "reasoningEffort": "high",
       },
