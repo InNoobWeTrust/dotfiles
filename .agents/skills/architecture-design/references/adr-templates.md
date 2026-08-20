@@ -1,15 +1,15 @@
 # ADR Templates & Lifecycle
 
-Architecture Decision Records capture significant, hard-to-reverse decisions.
+Apply `.agents/rules/phased-delivery.md`: create an ADR only for a consequential,
+hard-to-reverse architecture choice with competing options (or when explicitly
+requested or regulation/coordination requires it). ADRs capture those decisions.
 
 ## When to Write an ADR
 
-- Technology or framework selection
-- Architecture pattern choice
-- Data store selection
-- API protocol decision
-- Security model changes
-- Any decision costly to reverse
+- A technology/framework, pattern, data-store, protocol, security-model, or other
+  architecture choice only when it is consequential, hard to reverse, and has
+  competing options
+- An ADR explicitly requested by the user or required for regulation/coordination
 
 ## Template A — Nygard (Minimal)
 
@@ -112,7 +112,7 @@ stateDiagram-v2
 
 - Location: `docs/architecture/decisions/` or `docs/adr/`
 - Naming: `NNNN-short-kebab-title.md` (e.g., `0001-use-postgresql.md`)
-- Index: Maintain `INDEX.md` or auto-generate with `adr-tools`
+- Index: Maintain `INDEX.md` or auto-generate with `adr-tools` when an ADR collection is used
 - Never delete: Mark superseded/deprecated, don't remove
 
 ## Tooling

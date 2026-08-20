@@ -28,8 +28,8 @@ When this rule is activated (by a plan request, the `/grill-me` command, or ambi
 
 ## ⚡ Graceful Scaling (Process Efficiency)
 
-*   **Standard / Deep Tasks**: Perform a full reverse interview. Wait for the user's answers before drafting a plan or spec.
-*   **Quick Tasks / Simple Edits** (e.g., spelling fixes, config value changes, single-line modifications): **Skip the interview** to avoid process bloat. If there is a small ambiguity, ask *one* quick question in your inline response, but do not block execution if the risk is negligible.
+*   **Standard / Deep Tasks**: Perform a full reverse interview when ambiguity is genuine, reversibility is expensive, or the work needs standard/deep design scrutiny. Wait for the user's answers before drafting the corresponding plan or spec.
+*   **Quick / MVP Slice**: Proceed when the user intent, current task scope boundary, acceptance check, and non-deferrable safety constraints are clear. Do not impose a full interview gate. If a small ambiguity remains, ask *one* focused question or record a reversible assumption; escalate to the full interview if it materially affects outcome, cost of reversal, safety, data, or a public contract.
 *   **Non-Interactive / Automated / AFK Mode** (e.g., scheduled cron, background bounded iteration): Do not block execution waiting for a prompt. Instead, perform a **Self-Grooming Audit** by analyzing the codebase, documenting your design concept and assumptions clearly in the task log or scratch space, and proceeding with execution. The Self-Grooming block MUST use this structure:
     ```markdown
     ### 🤖 Self-Grooming Audit (AFK Mode)

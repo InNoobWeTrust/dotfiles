@@ -22,10 +22,20 @@ When debugging or fixing a problem:
 
 ### Feature Implementation
 
-1. `requirements-driven-dev` — if the feature is large or ambiguous
-2. `codebase-exploration` — if touching unfamiliar areas
-3. `code-craft` — disciplined implementation
-4. `reviewer` — post-implementation review
+Apply `rules/phased-delivery.md` for its trigger. Keep the active milestone
+packet as the contract passed between steps.
+
+1. Shallow research (`codebase-exploration` only for unfamiliar areas) — stop
+   when the active decision, slice boundary, and non-deferrable boundaries are clear
+2. Roadmap — only for multi-milestone work; otherwise select the active milestone
+3. Active-milestone architecture calibration → phase and vertical-slice planning
+4. `code-craft` — implement and verify one active slice at a time
+5. `reviewer` — phase-aware review of the active contract, evidence, and compromises
+6. Record evidence and feedback; select the canonical feedback decision in `rules/phased-delivery.md`
+
+Use `requirements-driven-dev` and PRD/TRD/BDD artifacts only when the
+phased-delivery escalation rules require formalization. When delegating,
+`subagent-dispatch` receives the complete Active Milestone Packet contract.
 
 ### UI/UX Implementation
 
@@ -149,6 +159,9 @@ Natural transitions between skills:
 |---|---|---|
 | `codebase-exploration` | `systematic-investigation` | "I understand the codebase, now I need to debug" |
 | `codebase-exploration` | `code-craft` | "I understand the codebase, now I need to implement" |
+| Feature planning | `requirements-driven-dev` | "The active milestone has a material PRD/TRD/BDD escalation trigger" |
+| `code-craft` | `reviewer` | "Active slice complete; review its contract, evidence, and compromises" |
+| `reviewer` | Feature planning | "Select or revisit the canonical phased-delivery feedback decision" |
 | `systematic-investigation` | `brainstorming` | "Root cause analyzed, now brainstorming potential solutions" |
 | `systematic-investigation` | `code-craft` | "Root cause found, now implementing the fix" |
 | `systematic-investigation` | `skill-author` | "Failure pattern discovered, cataloging for governance review" |

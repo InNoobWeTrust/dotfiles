@@ -52,9 +52,10 @@ graph TD
 1. Load `../patterns/INDEX.md`
 2. Match project concerns to pattern tags (scaling, decoupling, consistency, etc.)
 3. Load the relevant category file
-4. Document chosen patterns with rationale → write an ADR
+4. Document chosen-pattern rationale in the active design; select an ADR only when
+   the canonical ADR threshold in `.agents/rules/phased-delivery.md` is met.
 
-**Key decisions to record as ADRs:**
+**Potential ADR candidates (only at the canonical threshold):**
 - Monolith vs microservices vs modular monolith
 - Sync vs async communication
 - Data store selection
@@ -86,7 +87,7 @@ flowchart LR
 
 ---
 
-## Phase 5 — Document & ADR
+## Phase 5 — Document & Conditional ADR
 
 Produce these deliverables:
 
@@ -95,7 +96,7 @@ Produce these deliverables:
 - [ ] Component diagram for critical services (Level 3, if multi-service)
 - [ ] Data ownership table
 - [ ] API contract strategy (format, source of truth, sync, drift detection)
-- [ ] ADR for each significant pattern/technology choice
+- [ ] ADR for each consequential, hard-to-reverse pattern/technology choice with competing options
 - [ ] Non-goals section (explicit out-of-scope)
 
 **Data ownership table format:**
@@ -111,7 +112,7 @@ Produce these deliverables:
 | Temptation | Mitigation |
 |---|---|
 | Premature microservice decomposition | Start modular monolith; split when evidence demands it |
-| Choosing tech by hype | Require ADR with 3+ alternatives evaluated |
+| Choosing tech by hype | Evaluate alternatives; create an ADR only when the canonical threshold is met |
 | Under-specifying NFRs | Phase 1 must produce measurable quality attributes |
 | Skipping the spike | Phase 4 catches wrong assumptions early — 3 days saves 3 months |
 | Designing for 10× current scale on day 1 | Design for 2× with clear scaling path; over-engineering kills velocity |

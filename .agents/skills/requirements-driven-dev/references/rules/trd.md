@@ -2,9 +2,10 @@
 
 ## Purpose
 
-A TRD captures **how** to build something architecturally — the technical decisions,
-system components, and interfaces that implement one or more PRD goals. It bridges
-the gap between product intent (PRD) and verifiable behavior (BDD specs).
+Apply `.agents/rules/phased-delivery.md`: select a TRD independently only when its
+formal-artifact threshold, an explicit user request, or regulation/coordination requires it.
+A TRD captures **how** to build a cross-system, operational, or technical contract
+that needs durable coordination; it neither requires a parent PRD nor child BDD specs.
 
 ## File Convention
 
@@ -14,22 +15,23 @@ the gap between product intent (PRD) and verifiable behavior (BDD specs).
   - Example: `auth-service.md`, `search-indexing.md`
 - **One technical component or subsystem per file** — split cross-cutting concerns into separate TRDs
 
-## Required Structure
+## Structure When a TRD Is Selected
 
-Every TRD MUST contain these sections in order:
+Use the applicable sections below to cover the canonical operational minimum. Parent
+and child links are optional and appear only for separately selected related artifacts.
 
 ```markdown
 # TRD: <Technical Component Title>
 
-## Parent PRD
-{PRD_DIR}<product-slug>.md — <which goals this TRD addresses>
+## Related PRD (optional)
+{PRD_DIR}<product-slug>.md — <relevant outcome or goals, when a PRD is independently selected>
 
 ## Technical Overview
 <1-3 paragraphs: what this component does, high-level approach, key constraints>
 
 ## Architecture Decisions
 
-### ADR-1: <Decision Title>
+### ADR (only when the canonical ADR threshold is met): <Decision Title>
 - **Context**: <what situation or trade-off prompted this decision>
 - **Decision**: <what was decided>
 - **Rationale**: <why this option was chosen>
@@ -63,35 +65,34 @@ whatever is relevant to the domain.>
 ### Supply Chain & Dependencies
 ### Failure Modes
 
-## Child BDD Specs
-- {SPEC_DIR}<feature-slug>.md — <brief description of the verifiable behavior>
+## Related BDD Specs (optional)
+- {SPEC_DIR}<feature-slug>.md — <brief description, only when the BDD spec is independently selected>
 ```
 
 ## Authoring Rules
 
 1. **Human owns the TRD** — AI may draft architecture proposals, but human must review and approve all decisions
-2. **Every section traces to a PRD goal** — if a component doesn't serve a product goal, question whether it belongs
-3. **Architecture decisions use ADR format** — context, decision, rationale, alternatives. This avoids "we just chose X" without reasoning
+2. **Trace to the selected need** — connect each section to the relevant outcome, contract, or PRD goal when a related PRD exists
+3. **Architecture decisions use ADR format only at the canonical ADR threshold** — consequential, hard-to-reverse choices with competing options need context, decision, rationale, alternatives, consequences, and revisit conditions
 4. **Non-functional requirements must be specific** — "fast" is meaningless; "p95 < 200ms at 1000 rps" is testable
 5. **Security is mandatory, not optional** — the Security Assessment section must be filled for every TRD. Apply a security-lens review to audit it. An empty or hand-waved security section blocks the challenge gate
 6. **Interfaces are contracts** — define them clearly enough that two teams could build against them independently
-7. **Versioned** — if architecture changes, update the TRD first, then cascade to BDD specs
-8. **Immutable during execution** — once BDD specs are approved, freeze the TRD for that iteration
+7. **Versioned** — update the TRD when its coordinated contract changes; update only separately selected linked artifacts affected by that change
+8. **Review proportionately** — use formal review when independently selected, explicitly requested, or required for regulation/coordination
 
 ## Quality Checklist
 
-- [ ] Parent PRD is referenced and specific goals are identified
-- [ ] Architecture decisions have rationale (not just "we chose X")
-- [ ] Alternatives were considered for non-trivial decisions
+- [ ] Related PRD is referenced when independently selected; otherwise the coordinated outcome/contract is identified
+- [ ] ADRs document rationale, alternatives, consequences, and revisit conditions when the canonical threshold is met
 - [ ] Interfaces are defined clearly (inputs, outputs, error cases)
 - [ ] Non-functional requirements have concrete targets
 - [ ] Security Assessment is complete — all 6 subsections addressed
 - [ ] Security Assessment has received a security-lens review
-- [ ] Child BDD specs are listed (or planned)
+- [ ] Related BDD specs are linked only when independently selected
 - [ ] No product-level concerns (those belong in the PRD)
 
 ## Linking
 
-- Reference parent PRD: `Parent: {PRD_DIR}<product-slug>.md`
-- Reference child BDD specs: `See: {SPEC_DIR}<feature-slug>.md`
+- Reference related PRD: `See: {PRD_DIR}<product-slug>.md`
+- Reference related selected BDD specs: `See: {SPEC_DIR}<feature-slug>.md`
 - Reference sibling TRDs: `See also: {TRD_DIR}<related-component>.md`

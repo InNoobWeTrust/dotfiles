@@ -81,7 +81,7 @@ timeline
 - [ ] Risk assessment matrix with severity scores (Phase 3)
 - [ ] Architectural recommendations with tradeoffs (Phase 3)
 - [ ] Phased remediation roadmap (Phase 4)
-- [ ] ADRs drafted for major structural recommendations
+- [ ] ADRs drafted only for consequential, hard-to-reverse structural recommendations with competing options
 
 ## Pitfalls
 

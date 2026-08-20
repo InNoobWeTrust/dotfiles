@@ -3,6 +3,7 @@
 > **Status**: draft | approved | in-progress | delivered
 > **Owner**: <human name>
 > **Created**: <YYYY-MM-DD>
+> **Selection basis**: <canonical PRD threshold | explicit request | regulation/coordination>
 
 ## Problem Statement
 
@@ -52,10 +53,10 @@ List the major capabilities or deliverables.>
 - <External system, team, or prerequisite this depends on>
 - <Decision that must be made before work can begin>
 
-## Child TRDs
+## Related TRDs (optional)
 
-- `{TRD_DIR}<component-slug>.md` — <brief description>
-- `{TRD_DIR}<component-slug>.md` — <brief description>
+- `{TRD_DIR}<component-slug>.md` — <brief description; include only when independently selected>
+- `{TRD_DIR}<component-slug>.md` — <brief description; include only when independently selected>
 
 ## ⚔ Challenge Gate
 
@@ -63,8 +64,9 @@ List the major capabilities or deliverables.>
 > **Challenger**: <agent or human name>
 > **Date**: <YYYY-MM-DD>
 
-This PRD must survive adversarial challenge before advancing to TRD.
-Record all challenges and their outcomes below for traceability.
+Use this gate only when formal review is independently selected, explicitly requested,
+or required for regulation/coordination. A passed gate does not require a TRD; record
+only challenges and outcomes needed for the selected review.
 
 ### Debate Record
 

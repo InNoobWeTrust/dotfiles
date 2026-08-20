@@ -5,7 +5,7 @@ description: "Use this skill when the user needs formal specifications before im
 
 # Requirements-Driven Dev
 
-Requirements-driven development is an opt-in workflow for turning product intent into verifiable delivery. Do not use it for small, well-scoped code/config/docs edits unless the user asks for specs or the task becomes ambiguous.
+Requirements-driven development is an opt-in workflow for turning product intent into verifiable delivery. Do not use it for small, well-scoped code/config/docs edits unless the user asks for specs or the task becomes ambiguous. For multi-step delivery, the lightweight default is an Active Milestone Packet; add a roadmap only for multi-milestone work. Use the cross-skill contract at `../../rules/phased-delivery.md` as the lifecycle source of truth rather than reproducing it here.
 
 ## Route First
 
@@ -20,36 +20,45 @@ Requirements-driven development is an opt-in workflow for turning product intent
 
 ## Full-Lifecycle Flow
 
-1. **Grooming Interview (Gate 0)**: Before writing any specs, load `rules/grooming.md`. If standard/deep, ask the user 3-5 clarifying questions to align on the Design Concept. Do not proceed until aligned.
-2. Identify the smallest required artifact: PRD, TRD, BDD spec, changelog, or verification plan.
-3. Select the lightest safe track: Quick, Standard, or Deep.
-4. Load only the packaged rule and template needed for the current artifact.
-5. **Vertical Slicing**: When defining architecture (TRD) or planning execution checklists (`task.md`), load `rules/slicing.md` and decompose requirements into end-to-end vertical slices.
-6. If deriving a child artifact, read the approved parent first.
-7. Preserve parent-child traceability across PRD -> TRD -> BDD -> changelog.
-8. Execute only after acceptance criteria are concrete enough to verify.
+1. **Grooming Interview (Gate 0)**: Before writing formal specs, load `rules/grooming.md`. If standard/deep, ask the user 3-5 clarifying questions to align on the Design Concept. Do not proceed until aligned.
+2. For multi-step work, establish or update the Active Milestone Packet required by `../../rules/phased-delivery.md`; add or update the roadmap only when delivery has multiple milestones, and keep only the current milestone operationally detailed.
+3. Identify the smallest required artifact: inline acceptance criteria/slice card, PRD, milestone architecture note/TRD, BDD spec, changelog, or verification plan.
+4. Select the lightest safe track: Quick, Standard, or Deep.
+5. Load only the packaged rule and template needed for the current artifact.
+6. **Vertical Slicing**: When defining architecture (TRD) or planning execution checklists (`task.md`), load `rules/slicing.md` and decompose requirements into end-to-end vertical slices.
+7. If deriving a formal child artifact, read its approved parent first. Formal traceability is optional unless regulation or coordinated delivery requires it.
+8. Execute only after the active milestone's acceptance criteria are concrete enough to verify.
 9. Verify against the selected artifact and report gaps.
 10. Stop when requirements conflict, verification cannot be made concrete, approval is needed, or a git write lacks explicit approval.
 
 ## Default Flow
 
 1. **Groom Interview**: Load `rules/grooming.md` and clarify Design Concept boundaries if ambiguous.
-2. Identify the smallest required artifact: PRD, TRD, BDD spec, changelog, or verification plan.
-3. Load only the rule/template for that artifact.
-4. **Vertical Slicing**: Decompose the task checklist into vertical slices using `rules/slicing.md`.
-5. Preserve parent-child traceability when a parent artifact exists.
-6. Execute only after requirements are clear enough for verification.
-7. Verify against the selected artifact and report gaps.
+2. For multi-step work, use an Active Milestone Packet as the minimum delivery shape; add a roadmap only for multi-milestone work, and follow `../../rules/phased-delivery.md` for lifecycle details.
+3. Start with the smallest artifact that makes the current slice verifiable: inline acceptance criteria or a slice card.
+4. Load a formal rule/template only when the canonical escalation table in `../../rules/phased-delivery.md` calls for it.
+5. **Vertical Slicing**: Decompose the task checklist into vertical slices using `rules/slicing.md`.
+6. Preserve parent-child traceability only when a formal parent exists or coordinated/regulatory delivery requires it.
+7. Execute only after requirements are clear enough for verification.
+8. Verify against the selected artifact and report gaps.
 
 ## Scale
 
 | Track | Use When | Required Artifacts |
 | --- | --- | --- |
-| Quick | One small, clear change | Inline acceptance criteria or one BDD spec |
-| Standard | Moderate feature or multiple components | PRD or brief, TRD if architecture matters, BDD specs |
-| Deep | Platform, security-sensitive, or multi-team work | Full PRD -> TRD -> BDD cascade plus review gates |
+| Quick | Clear change or one independently shippable slice | Inline acceptance criteria or a slice card in the active milestone packet; no formal artifact by default |
+| Standard | Moderate milestone, multiple components, or a material boundary/decision | Active Milestone Packet; roadmap only for multiple milestones; milestone architecture note and independently selected formal artifacts when justified |
+| Deep | Platform, security-sensitive, regulated, high-risk migration, or multi-team work | Active Milestone Packet; roadmap only for multiple milestones; independently selected formal artifacts and review gates where coordination/risk requires them |
 
-Escalate only when ambiguity, risk, or scope demands it.
+Escalate only when ambiguity, risk, or scope demands it—not to make the documentation set look complete.
+
+### Formal-Artifact Escalation
+
+Use the authoritative positive escalation criteria and operational minimums in
+`../../rules/phased-delivery.md`. Do not select PRD, TRD, or BDD solely for
+completeness, template availability, or because another formal artifact exists.
+When escalation is unnecessary, record the decision in the Active Milestone
+Packet rather than creating speculative artifacts.
 
 ## Review And Safety
 
@@ -72,6 +81,7 @@ Escalate only when ambiguity, risk, or scope demands it.
 - Commit rule: `references/rules/commit.md`
 - Configuration: `references/rules/config.md`
 - Project context: `references/rules/project-context.md`
+- Cross-skill lifecycle and milestone-packet contract: `../../rules/phased-delivery.md`
 - Review gates: request adversarial-, security-, edge-case-, or editorial-lens review as needed
 
 ## Tool Integration

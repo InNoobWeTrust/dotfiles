@@ -31,6 +31,28 @@ description: "Use this skill before launching any delegated agent, background wo
 3. **Obstacle reporting** — force listing of workarounds / env quirks (or NONE).
 4. **Allowed actions** — READ / EDIT / RUN / FORBIDDEN lists (soft contract; pair with environment-level permissions when available).
 
+### Delivery Contract (when the canonical trigger applies)
+
+When the `../../rules/phased-delivery.md` trigger applies, delegated
+implementation, exploration, and review prompts must include and populate the
+canonical `Delivery Contract` from that rule. Do not copy its policy here. Add
+only these delegation-specific instructions:
+
+- scope-expansion handling: STOP and report; do not absorb without approval;
+- adjacent findings: report them with their contract classification, but do not
+  implement them; and
+- allowed actions; and
+- continuation/resumption state: completed work, current location, remaining
+  steps, evidence, blockers, and the next safe action if incomplete.
+
+Incomplete results must distinguish a true Never Defer blocker from Must Ship
+work remaining, May Defer items, and Out of Scope items. For non-phased work,
+do not add a Delivery Contract solely because work is delegated.
+
+Do not duplicate the shared lifecycle, compromise schema, or trajectory table
+in the prompt. State only the populated contract and delegation behavior. A
+worker must stop and report an unapproved scope expansion rather than absorb it.
+
 Full pillar text, domain findings templates, and allowed-action examples:  
 `references/pillars-and-templates.md`
 
@@ -47,8 +69,10 @@ Copy-paste full prompt skeleton + anti-patterns + receive protocol:
 ## 3. Obstacles Encountered  (or NONE)
 ## 4. Confidence & Caveats
 ## 5. Done Signal
-TASK_COMPLETE
+TASK_COMPLETE | INCOMPLETE + continuation/resumption state
 ```
+
+`TASK_COMPLETE` means the assigned work is complete. If work is incomplete, use `INCOMPLETE` in the done-signal section and provide the continuation/resumption state. Do not force a retry merely to obtain `TASK_COMPLETE` when the evidence already returned is sufficient for the main thread to make the next decision.
 
 ---
 
@@ -56,9 +80,12 @@ TASK_COMPLETE
 
 - [ ] Decision gate says delegate
 - [ ] Scope + out-of-scope written
+- [ ] When the phased-delivery trigger applies, the canonical Delivery Contract is included for implementation, exploration, or review
+- [ ] Decision authority and scope-expansion handling declared
+- [ ] Continuation/resumption state requested when incomplete work is possible
 - [ ] Output contract included
 - [ ] Allowed / forbidden actions declared
 - [ ] Stop conditions stated
 - [ ] Context budget reasonable
 
-After return: scan for `TASK_COMPLETE`, read obstacles, treat missing sections as incomplete.
+After return: scan for `TASK_COMPLETE` or `INCOMPLETE`, read obstacles and continuation state, and treat missing sections as incomplete. Re-delegate only when missing evidence prevents a decision or the declared output contract was materially violated.

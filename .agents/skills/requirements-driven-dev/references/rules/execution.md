@@ -2,7 +2,7 @@
 
 ## Core Principles
 
-1. **Spec-Driven**: Only produce what's defined in `{SPEC_DIR}<feature-slug>.md`. Path placeholders resolve inside the host project, not inside the shared agent or skill repository. BDD specs cascade from TRDs and PRDs — when in doubt, check the parent TRD for architectural context. If still unsure, ask.
+1. **Acceptance-Driven**: Produce only what the selected acceptance contract defines: inline acceptance criteria, a BDD spec, TRD, or PRD as independently selected under `.agents/rules/phased-delivery.md`, explicitly requested, or required for regulation/coordination. Path placeholders resolve inside the host project, not inside the shared agent or skill repository. Consult related formal artifacts only when they exist and are relevant; if the contract remains unclear, ask.
 2. **Context-Aware**: Before starting, look for guidance in the host project in this order:
    - **Primary**: `project-context.md`
    - **Fallback**: project instruction files such as `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, or equivalent tool-specific guidance
@@ -21,7 +21,7 @@
 ## Quality Gates
 
 Before presenting deliverables to human:
-- [ ] Deliverables address every scenario in the spec
+- [ ] Deliverables address every applicable acceptance scenario in the selected contract
 - [ ] No hardcoded secrets, credentials, or sensitive data
 - [ ] Error handling covers all known failure modes
 - [ ] Complex areas have clear documentation explaining "why"
@@ -33,4 +33,4 @@ Before presenting deliverables to human:
 - **Never** delete artifacts without explicit instruction — deletions are irreversible and high-risk
 - **Never** modify sensitive configurations without warning — unintended changes can cascade
 - **Never** introduce new dependencies or tools without declaring them — hidden dependencies create maintenance burden
-- **Never** produce deliverables not defined in the behavior spec — scope discipline prevents drift
+- **Never** produce deliverables outside the selected acceptance contract — scope discipline prevents drift

@@ -3,10 +3,11 @@
 > **Status**: draft | approved | implementing | verified
 > **Owner**: <human name>
 > **Created**: <YYYY-MM-DD>
+> **Selection basis**: <canonical TRD threshold | explicit request | regulation/coordination>
 
-## Parent PRD
+## Related PRD (optional)
 
-`{PRD_DIR}<product-slug>.md` — Addresses goals: <list specific goals from the PRD>
+`{PRD_DIR}<product-slug>.md` — Addresses goals: <list specific goals when a PRD is independently selected>
 
 ## Technical Overview
 
@@ -16,7 +17,7 @@ architectural level — not code-level details.>
 
 ## Architecture Decisions
 
-### ADR-1: <Decision Title>
+### ADR (only when consequential, hard-to-reverse, and competing options): <Decision Title>
 
 - **Context**: <what situation, constraint, or trade-off prompted this decision>
 - **Decision**: <what was decided>
@@ -25,7 +26,7 @@ architectural level — not code-level details.>
   - <Alternative A> — <why rejected>
   - <Alternative B> — <why rejected>
 
-### ADR-2: <Decision Title>
+### ADR (only when consequential, hard-to-reverse, and competing options): <Decision Title>
 
 - **Context**: <context>
 - **Decision**: <decision>
@@ -116,10 +117,10 @@ Errors:
 - **Observability**: <logging, monitoring, alerting, SLO targets>
 - **Reliability**: <uptime target, failure modes, recovery strategy>
 
-## Child BDD Specs
+## Related BDD Specs (optional)
 
-- `{SPEC_DIR}<feature-slug>.md` — <brief description of the verifiable behavior>
-- `{SPEC_DIR}<feature-slug>.md` — <brief description of the verifiable behavior>
+- `{SPEC_DIR}<feature-slug>.md` — <brief description; include only when independently selected>
+- `{SPEC_DIR}<feature-slug>.md` — <brief description; include only when independently selected>
 
 ## ⚔ Challenge Gate
 
@@ -127,9 +128,10 @@ Errors:
 > **Challenger**: <agent or human name>
 > **Date**: <YYYY-MM-DD>
 
-This TRD must survive adversarial challenge before advancing to BDD specs.
-The challenge MUST include a security-lens review of the Security Assessment section.
-Record all challenges and their outcomes below for traceability.
+Use this gate only when formal review is independently selected, explicitly requested,
+or required for regulation/coordination. The challenge MUST include a security-lens
+review of the Security Assessment section. A passed gate does not require BDD specs;
+record only challenges and outcomes needed for the selected review.
 
 ### Debate Record
 

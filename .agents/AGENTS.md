@@ -7,6 +7,9 @@
 
 Personal dotfiles and AI-agent infrastructure (rules, skills, workflows, memory) for cross-harness agent development.
 
+**Operating principle:** Software delivery is phased and MVP-first; load the
+Phased Delivery rule only when its delivery trigger applies.
+
 ## Source of Truth Hierarchy
 
 ```
@@ -28,6 +31,7 @@ These rules apply automatically. Read `rules/INDEX` for the full map; load a rul
 | Ubiquitous Language | Logic modification | `rules/ubiquitous-language.md` |
 | TDD | Logic modules, services, algorithms | `rules/tdd.md` |
 | Vertical Slicing | Feature plans, checklists | `rules/slicing.md` |
+| Phased Delivery | Multi-step product/feature delivery, roadmaps, phased execution | `rules/phased-delivery.md` |
 | Skill Compliance | After loading any skill | `rules/skill-compliance.md` |
 | Self-Grounded Verification | Verification, self-review, "done" claims | `rules/self-grounded-verification.md` |
 | Autonomy Safety | Auto-approved tools, AFK, waived prompts | `rules/autonomy-safety.md` |

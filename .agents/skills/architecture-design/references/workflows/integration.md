@@ -76,7 +76,7 @@ sequenceDiagram
 
 ## Deliverables
 - [ ] Interface discovery document & API audit
-- [ ] Integration pattern & protocol ADR
+- [ ] Integration-pattern/protocol ADR only when the canonical ADR threshold is met
 - [ ] Canonical data mapping schema & versioning rules
 - [ ] Resilience configuration (Circuit breaker, Retry, DLQ specs)
 - [ ] Consumer-driven contract test suite & sandbox validation

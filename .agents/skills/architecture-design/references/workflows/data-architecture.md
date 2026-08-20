@@ -76,7 +76,7 @@ flowchart LR
 
 ## Deliverables
 - [ ] Conceptual, logical, and physical ER data models
-- [ ] Database engine selection ADR & access pattern benchmark
+- [ ] Access-pattern benchmark and a database-engine ADR only when the canonical ADR threshold is met
 - [ ] Ingestion pipeline topology spec (CDC, ETL/ELT, streaming)
 - [ ] Data contract, lineage, and schema registry configuration
 - [ ] Storage lifecycle, partitioning, and compliance retention policy

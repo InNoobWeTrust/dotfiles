@@ -43,7 +43,7 @@ graph LR
     B -->|"Enterprise"| E["L1-4: + Code for critical domain models"]
 ```
 
-| Project Size | Default C4 Depth | Architectural Mandate |
+| Project Size | Default C4 Depth for canonical docs | Architectural Mandate |
 |---|---|---|
 | Single service / monolith | Level 1–3 (Context + Container + Component) | **Mandatory Component breakdown (C4 L3)**: define Modular Monolith bounded contexts & public module APIs |
 | Multi-service / microservices | Level 1–3 (+ Component per service) | Define component boundaries & inter-service contract DTOs per deployable |
@@ -53,7 +53,7 @@ graph LR
 
 ## Gate 3 — Illustration Budget
 
-Architecture docs that are walls of text have failed. Minimum diagrams:
+Canonical architecture docs that are walls of text have failed. Their minimum diagrams are:
 
 | Artifact | Minimum Illustrations |
 |---|---|
@@ -93,7 +93,7 @@ Match the scenario, load only the matching workflow file.
 | **Greenfield design** | New system, no existing architecture | `references/workflows/greenfield.md` |
 | **Brownfield documentation** | Existing system, missing/outdated docs | `references/workflows/brownfield.md` |
 | **Architecture audit** | Review existing system, fitness check | `references/workflows/architecture-audit.md` |
-| **ADR writing** | Record a significant decision | `references/workflows/adr-writing.md` |
+| **ADR writing** | Consequential, hard-to-reverse architecture choice with competing options; see `../../rules/phased-delivery.md` | `references/workflows/adr-writing.md` |
 | **Migration planning** | Monolith→micro, cloud migration, DB migration | `references/workflows/migration.md` |
 
 ### Specialized Scenarios (if common ones don't match)
@@ -123,8 +123,8 @@ When choosing an architecture pattern:
 ## Hard Rules
 
 - **Modular Monolith default**: Prefer in-process bounded contexts with explicit interfaces over distributed microservices for single applications.
-- **Mandatory Component Breakdown (C4 L3)**: Never present a single service as a black box without specifying its internal component boundaries.
-- **Illustration-first**: Every architecture section MUST have at least one mermaid diagram.
+- **Mandatory Component Breakdown (C4 L3)**: Canonical architecture documentation must not present a single service as a black box without specifying its internal component boundaries.
+- **Illustration-first for canonical docs**: Every canonical architecture section MUST have at least one mermaid diagram. Milestone notes follow their lighter diagram rule below.
 - **Explicit types over tuples**: Inter-component interfaces must use explicit DTO types.
 - **Evidence over aspiration**: Document what IS, mark aspirational targets as "Target State".
 
@@ -135,22 +135,35 @@ The hard rules and illustration budget scale to the artifact being produced or r
 | Artifact | What the rules require | What is out of scope |
 |---|---|---|
 | **Canonical architecture doc** | Full C4 L1-L3 (system context + containers + components/bounded contexts), complete illustration budget, all hard rules. | Implementation DDL, code, migration scripts. |
-| **Subsystem engineering design doc (TRD)** | Component-level diagrams for the subsystem scope, ER diagram if schema is involved, ADR for decisions, dependency direction. Does NOT need to re-draw system context or container diagrams if the canonical architecture doc already has them — reference it instead. | Full C4 L1 system context, container diagram, exact module port interfaces (those are implementation), migration DDL. |
-| **Delivery spec / migration plan** | Current-state + target-state + transition-sequence diagrams, exit criteria, rollback guidance. | Design rationale, ADR (defer to TRD), component diagrams (defer to TRD). |
+| **Milestone architecture note** | Only the touched boundaries, contracts, invariants, data ownership, failure behavior, and a one-step evolutionary runway. Add one diagram only when the relevant interactions are unclear; otherwise concise structured prose is sufficient. Preserve high-risk security, data, and migration requirements. | Canonical C4 completeness, re-documenting unaffected topology, speculative future architecture. |
+| **Subsystem engineering design doc (TRD)** | Component-level diagrams for the subsystem scope, ER diagram if schema is involved, ADR only for a consequential, hard-to-reverse architecture choice with competing options per `../../rules/phased-delivery.md`, dependency direction. Does NOT need to re-draw system context or container diagrams if the canonical architecture doc already has them — reference it instead. | Full C4 L1 system context, container diagram, exact module port interfaces (those are implementation), migration DDL. |
+| **Delivery spec / migration plan** | Current-state + target-state + transition-sequence diagrams, exit criteria, rollback guidance. | Design rationale, ADR only when the `../../rules/phased-delivery.md` consequential + hard-to-reverse + competing-options threshold applies (defer to TRD), component diagrams (defer to TRD). |
 | **Code review (PR)** | Code implements the design correctly: dependency direction, typed interfaces, no black-box components. | Design-level questions (defer to TRD review). |
 
 **Do not fail a subsystem TRD for not containing a full C4 L1 system context diagram.** If the canonical architecture doc (`docs/architecture.md` or equivalent) already covers system context and containers, a subsystem TRD only needs the component-level diagrams, ER diagrams, and decision records relevant to its scope. The TRD's job is to specify *what* and *why* for the subsystem, not to re-document the entire system topology.
+
+### Milestone Architecture Note
+
+Use this artifact for an active delivery milestone when architecture is touched but a full TRD is not justified. It is deliberately narrow and must state:
+
+1. **Touched boundaries and contracts** — callers, owners, and compatibility expectations.
+2. **Invariants and data ownership** — what must remain true and which component owns each changed datum.
+3. **Failure behavior** — expected failures, propagation/recovery, and fail-open/fail-closed behavior where relevant.
+4. **One-step evolutionary runway** — the next credible extension or migration seam, without prebuilding it.
+
+Use one focused interaction, sequence, data-flow, or boundary diagram only when prose would leave the interaction unclear. Do not add C4 diagrams merely to satisfy a milestone note. Security-sensitive changes, material data changes, and migrations retain their applicable security review, data architecture/ER, transition, rollback, and recovery requirements.
 
 ---
 
 ## Deliverables
 
 - [ ] Scope check passed (Gate 1)
-- [ ] C4 depth calibrated to Level 3 Component boundaries (Gate 2)
-- [ ] Illustration budget met (Gate 3)
-- [ ] Modular Monolith / Bounded Context breakdown specified
+- [ ] Artifact level calibrated: milestone note or canonical/subsystem/migration artifact
+- [ ] C4 depth and illustration budget met when producing canonical architecture documentation
+- [ ] Milestone note records touched boundaries/contracts/invariants/data ownership/failure behavior and one-step runway when using milestone delivery
+- [ ] Modular Monolith / Bounded Context breakdown specified when the artifact's scope needs it
 - [ ] Database schema delegated to `db-design` (ER diagram + typed repository DTOs)
-- [ ] ADR written for any significant decision made during the process
+- [ ] ADR written only for a consequential, hard-to-reverse architecture choice with competing options, per `../../rules/phased-delivery.md`
 
 ---
 

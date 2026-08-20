@@ -24,6 +24,7 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 | `grooming.md` | Plans, ambiguous requirements, complex tasks | small |
 | `ubiquitous-language.md` | Logic that introduces or renames domain terms | small |
 | `slicing.md` | Feature plans / `task.md` checklists | small |
+| `phased-delivery.md` | Multi-step product/feature delivery, roadmap/milestone planning, or phased execution | medium |
 | `skills-discovery.md` | Need to choose a skill (index-first) | small |
 | `command-routing.md` | User request maps to a slash/command workflow | tiny |
 | `memory.md` | Capture / recall / consolidate / evict memory | small |
@@ -44,4 +45,3 @@ AGENTS.md / instructions (always) → rule pointer → rule body (on fire)
 - Duplicating rule text into every skill (link instead)
 - Project forks of global rules without a documented overlay reason
 - Loading skills without checking `skills/INDEX.md` first
-

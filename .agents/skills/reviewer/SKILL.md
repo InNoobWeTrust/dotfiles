@@ -21,6 +21,26 @@ Any in-context review must follow `rules/self-grounded-verification.md`: criteri
 
 In research terms, Reviewer is the repo's **evaluator** half of an evaluator–optimizer loop. It must score against declared criteria, not vibe-check or rewrite the rubric after seeing the artifact.
 
+## Gate 3 — Contract-Bounded Phase Review
+
+When the artifact belongs to phased delivery, obtain the populated Delivery
+Contract from `../../rules/phased-delivery.md` or its active packet before
+judging it. Apply that canonical contract; do not reproduce its lifecycle,
+classification, budgets, compromise schema, or trajectory table here.
+
+Every finding must include evidence, severity, and exactly one canonical
+classification. Reviewers recommend a classification and remediation; the
+orchestrator alone decides scope, acceptance, correction, or trajectory.
+Review only the declared acceptance evidence and contracted surface. Future
+scale, elegance, preference, or hypothetical flexibility cannot expand scope.
+
+Use the contract's review budget. After a fix, verify only failed acceptance
+items and the changed surface—not a fresh broad review. Budget exhaustion
+forbids broader review unless evidence identifies a Never Defer blocker.
+Preserve all risk-specific lenses and independent-review requirements: they may
+be used only when predeclared or when an evidenced Never Defer blocker requires
+escalation.
+
 ---
 
 ## Direct vs delegate (summary)
@@ -63,7 +83,7 @@ Worked scenarios: `references/examples/delegation-scenarios.md` (load only if ne
 
 Paths: `references/sub-reviewers/<name>.md`.
 
-- **Quick:** first lens only. **Deep:** all listed. Aggregate by severity with file:line.
+- **Quick:** first lens only. **Deep:** all listed. Aggregate by severity and phase-aware disposition with file:line evidence.
 
 | Lens | Axis |
 |---|---|

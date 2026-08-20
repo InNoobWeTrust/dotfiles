@@ -79,7 +79,7 @@ flowchart LR
 ## Deliverables
 - [ ] Profiling baseline report (Flame graphs, APM, slow query logs)
 - [ ] Bottleneck classification & root cause analysis
-- [ ] Performance redesign ADR (Caching, read replicas, sharding, query tuning)
+- [ ] Performance-redesign ADR only when the canonical ADR threshold is met
 - [ ] Staging load test report (k6/Locust throughput & p95/p99 latency)
 - [ ] Canary deployment pipeline & automated rollback rules
 

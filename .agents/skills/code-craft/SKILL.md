@@ -19,17 +19,34 @@ Progressive disclosure: load refs only when the phase needs them.
 
 ---
 
-## Workflow (5 phases — all required for non-trivial work)
+## Track Selection (before workflow)
+
+Select the smallest delivery track that preserves the current acceptance criteria, hard invariants, and safety. Only when the phased-delivery trigger applies, use the roadmap or active milestone packet's phase/slice reference and canonical compromise-register references; lifecycle ownership remains with `../../rules/phased-delivery.md`.
+
+| Track | Use when | Minimum phases / outputs | Strongest mandatory controls |
+| --- | --- | --- | --- |
+| **Patch** | Bounded defect or logic correction with no new slice | Compact Phase 1 intent, Phase 3 change, targeted Phase 4 audit | Reproduce or state the fault contract; tests and quality evidence for changed logic |
+| **MVP Slice** | One independently valuable, shippable slice | Compact Phase 1, relevant Phase 2 checks, Phase 3 implementation/tests, Phase 4 audit | In-scope/non-goal boundary, acceptance criteria, explicit constraints, do not prebuild the next slice |
+| **Expansion / Refactor** | Multiple slices, public-surface evolution, or structural change | All five phases and phased slice ordering | Compatibility, migration/rollback where relevant, full SOLID and quality review |
+| **Hardening** | Security, data integrity, reliability, recoverability, or high-risk compatibility work | All five phases plus risk-specific verification | Fail-safe behavior, recovery evidence, relevant security/data controls, no unresolved hard-invariant breach |
+
+## Workflow (5 phases — calibrated by track)
 
 ### Phase 1 — Design Intent (before writing)
 
 When choosing a greenfield language/framework stack or adding a substantial platform capability, first load `references/languages/README.md`, then the smallest matching reference. Existing repository conventions and explicit project constraints always win.
 
-Produce this block:
+For Expansion / Refactor and Hardening, produce the full block. For Patch and MVP Slice, it may be compact but must include the required slice fields first:
 
 ```
 DESIGN INTENT
 =============
+In scope        :
+Non-goals       :
+Milestone/phase/slice reference: [when present]
+Acceptance criteria:
+Constraints     :
+Known compromises: [canonical register references when phased; local deferrals otherwise; or none]
 Unit name       :
 Responsibility  : [one sentence, no "and"]
 Caller interface: [in → out]
@@ -50,6 +67,8 @@ Ambiguity policy:
 Traceability    :
 ```
 
+For a Patch, `In scope`, `Non-goals`, acceptance criteria, constraints, and known compromises may be one line each. For an MVP Slice, they are mandatory even when every other field is compact. Do not invent a milestone or canonical-register reference when none exists.
+
 **Technology default:** preserve the repository's established stack. Prefer the standard library/platform when it is suitable; otherwise, use a mature, maintained, production-proven ecosystem package rather than recreating an adequately supplied capability. Vendored third-party copies and deliberate dependency-free reimplementations are exceptions: require explicit user opt-in, or an existing repository policy, and record their ownership, update, and security rationale.
 
 **STOP if:** isolation = no → redesign; interface sign-off = no (interactive) → get approval; edge-case semantics unspecified → ask (AFK: fail closed, do not invent fallbacks); a proposed vendored/reimplemented capability lacks explicit opt-in or documented repository policy → choose the platform/established dependency or clarify.
@@ -69,7 +88,7 @@ Traceability    :
 | SoC — logic free of framework/IO details | ☐ |
 | Complexity budget OK | ☐ |
 
-Unchecked → fix or `// TODO(debt):`.
+For Patch and MVP Slice, apply only checks relevant to the touched boundary and record N/A explicitly. Unchecked applicable items → fix or, when the phased-delivery trigger applies, record a material, cross-slice compromise through the shared compromise register. Otherwise record only a small local deferral in the change context; never use a local debt marker as a substitute for a required safety or correctness fix.
 
 ### Phase 3 — Write
 
@@ -85,25 +104,20 @@ As a new engineer: entry point, flow by names, side effects, error path, resilie
 
 ### Phase 5 — Tech debt inventory
 
-```
-TECH DEBT INVENTORY
-===================
-[none]
-— OR —
-- TODO(debt): [where] — [what] — [why deferred] — [cleanup trigger]
-```
+When the phased-delivery trigger applies, inventory material deferred debt through the canonical compromise register in `../../rules/phased-delivery.md`. For Patch and MVP Slice in that context, create or update a shared canonical entry only when the debt is material or crosses slices. For non-phased work, record only small local deferrals in the change context. Do not create future infrastructure, abstractions, flags, or extension points solely to anticipate it.
 
 ---
 
 ## Deliverable
 
-- [ ] Phase 1 design intent complete; stop gates honored
-- [ ] Phase 2 checklist passed or debt marked
+- [ ] Track selected; outputs and strongest controls satisfied
+- [ ] Phase 1 design intent includes in scope, non-goals, milestone/phase/slice reference when present, acceptance criteria, constraints, and canonical compromise-register references when phased or local deferrals otherwise
+- [ ] Phase 2 applicable checklist passed or material cross-slice compromise recorded
 - [ ] Code follows `rules/code-quality.md` / `rules/tdd.md`
 - [ ] Write-standards applied (Phase 3 ref when needed)
 - [ ] Trajectory checkpoint used when drift/thrash signals appeared
 - [ ] Tests: written first, evidence posted
 - [ ] No invented semantic fallbacks
-- [ ] Readability audit + module README
-- [ ] Tech debt inventory stated (even if empty)
+- [ ] Readability audit + module README when module responsibility/public surface changed
+- [ ] When phased delivery applies, material/cross-slice future debt is entered in the shared compromise register; non-phased small local deferrals stay in the change context; no speculative prebuild
 - [ ] Prohibited patterns: see `rules/code-quality.md` (not duplicated here)

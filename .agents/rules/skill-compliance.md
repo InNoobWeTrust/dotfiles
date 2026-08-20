@@ -2,25 +2,26 @@
 
 ## Core Commitment
 
-**Loading or reading a skill's SKILL.md is a binding commitment to execute its complete workflow.** Complexity, length, and effort cost are NOT valid reasons to skip steps.
+**Loading or reading a skill's SKILL.md is a binding commitment to select its lightest valid track and execute that track faithfully.** Complexity, length, and effort cost are not valid reasons to silently skip required work.
 
-> You do not have discretion to simplify or abbreviate a skill's workflow once you have loaded it. Simplification is a violation, not a shortcut.
+> Before execution, select the scope-calibrated track and artifacts the skill permits. Then execute every mandatory step of that selected track. If work is deferred or compromised, document it through the canonical compromise-register schema in `phased-delivery.md` when that rule applies.
 
 ## What Compliance Means
 
 **DO:**
 - Read the full SKILL.md before beginning work.
 - Identify every step marked as mandatory, required, must, or hard stop.
-- Execute every mandatory step in order.
-- Produce the exact artifacts the skill specifies.
-- Report blockers explicitly — do not silently skip around them.
+- Select the lightest valid track and artifact set before execution.
+- Execute every mandatory step of the selected track in order.
+- Produce the artifacts required by the selected track.
+- Report blockers, deferrals, and compromises explicitly — do not silently skip around them.
 
 **DO NOT:**
 - Announce you are using a skill and then deviate from its workflow.
-- Skip preflight, setup, or phase steps.
+- Skip a mandatory selected-track preflight, setup, or phase step.
 - Use fewer models, agents, or personas than the skill requires.
 - Produce a Markdown document summarizing what the skill would do instead of actually executing it.
-- Say "I'll use a simplified version of this workflow" — this is a violation.
+- Claim a lighter track while omitting its mandatory steps or required deferral record.
 
 ## Swarm-Intelligence: Hard Stop Gates
 
@@ -81,15 +82,17 @@ For every loaded skill that is not `swarm-intelligence` Mode Full Swarm:
 
 1. Read the full SKILL.md.
 2. Identify every section marked mandatory / required / must / hard stop.
-3. Complete all mandatory sections in the specified order.
-4. If a step is blocked, report the specific blocker — never silently skip.
-5. Produce the artifacts the skill's workflow specifies.
+3. Select the lightest valid track and artifact set before execution.
+4. Complete all mandatory sections of that track in the specified order.
+5. If a step is blocked or deferred, report the specific blocker or documented compromise — never silently skip.
+6. Produce the artifacts required by that track.
 
 ## Self-Check Before Final Output
 
 Before producing the final output from any skill-based task, confirm:
 
-- [ ] I executed the complete workflow defined in the skill's SKILL.md
-- [ ] I did not skip any step marked as mandatory, required, must, or hard stop
-- [ ] I produced all artifacts the skill's workflow specifies
+- [ ] I selected the lightest valid track and artifact set before execution
+- [ ] I executed every mandatory step of that selected track
+- [ ] I documented every blocked, deferred, or compromised item rather than silently skipping it
+- [ ] I produced all artifacts required by the selected track
 - [ ] I used the minimum number of models/agents/personas the skill requires

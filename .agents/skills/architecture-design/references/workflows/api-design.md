@@ -75,7 +75,7 @@ flowchart LR
 ---
 
 ## Deliverables
-- [ ] Protocol selection ADR (REST, gRPC, or GraphQL)
+- [ ] Protocol-selection ADR when the choice is consequential, hard-to-reverse, and has competing options
 - [ ] Linted OpenAPI 3.1 / Protobuf specification
 - [ ] RFC 7807 error format & DX guideline checklist
 - [ ] Active mock server instance (Prism / WireMock)
