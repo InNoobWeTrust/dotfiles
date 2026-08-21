@@ -35,6 +35,8 @@ Run phases in order. Adapt to what exists; never overwrite substantive local con
 
 Read README, manifests (`package.json` / `pyproject.toml` / `go.mod`), `docs/`, and primary source trees.
 
+**Conditional rapid-demo decision:** select `rapid-demo` only when the user explicitly states hackathon, prototype, rapid-demo, or funding-demo intent. When active, establish the project archetype/capability need, fixed delivery window, confirmation that synthetic data suffices, and whether remote sharing/hosting is needed; then load `references/rapid-demo-profile.md`. Requests involving real customer/production data, production intent, or non-deferrable security, compliance, recovery, or public-compatibility needs are ineligible: stay on the standard path and use canonical delivery guidance. Otherwise, standard behavior remains unchanged.
+
 Deliverable:
 
 ```
@@ -90,6 +92,8 @@ Thin targets: `help`, `fix`, `lint`, `quality`, `test`, `dev`, `dev-up`, `build`
 - `docs/architecture.md` — responsibility split, data ownership, data flow, API contracts, integration modes, non-goals
 - `docs/engineering/quality-gates.md` — command matrix, thresholds, escalation, rollout
 - `DESIGN.md` — **For projects with UI/frontend or brand identity**: reference `ui-ux` to initialize `DESIGN.md` at repo root per Google Labs spec (YAML frontmatter tokens + canonical prose sections) and add `npx @google/design.md lint DESIGN.md` to visual quality checks.
+
+When the `rapid-demo` profile is active, also complete the compact **Demo Receipt** and production checkpoint in `references/rapid-demo-profile.md`. Reuse the existing phased-delivery Delivery Contract and Active Milestone Packet architecture note; do not duplicate them.
 
 ### A8 — Verify
 
@@ -185,4 +189,5 @@ Standalone fix for "bootstrap left stubs / missing companion skills":
 - `references/drift-checks.md`
 - `references/setup-skills.md` — executable onboarding skill pattern
 - `references/feedback-flywheel.md` — post-session harness improvement checklist
+- `references/rapid-demo-profile.md` — conditional local-first, synthetic-data demo profile matrix
 - Compose with: `architecture-design` (deep arch / design), `devsecops` (pipeline), `skill-author` (new skills), `codebase-exploration` (domain scan for glossary)

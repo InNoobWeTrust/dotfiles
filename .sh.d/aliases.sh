@@ -409,7 +409,7 @@ usable curl && alias install-nvim-stable='mkdir -p ~/.local/$USER/bin && curl -L
 usable curl && alias install-code-server='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards "**/code-server" --strip-components 1'
 
 # Install vscode CLI
-usable curl && alias install-vscode-cli='vscode_cli_install'
+usable curl && alias install-vscode-cli='vscode_cli_install && reload-shell'
 # Start vscode CLI tunnel with accepted license terms
 usable code && alias code-tunnel='VSCODE_CLI_USE_FILE_KEYCHAIN=1 code tunnel --accept-server-license-terms'
 usable code-tunnel && alias code-tunnel-service='code-tunnel service'
