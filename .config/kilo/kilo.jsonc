@@ -8,7 +8,7 @@
   "compaction": {
     "auto": true,
     "prune": true,
-    "tail_turns": 3,
+    "tail_turns": 1,
   },
   "agent": {
     "title": {
@@ -22,7 +22,7 @@
     //},
     "general": {
       "description": "USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
-      "model": "github-copilot/gpt-5.4",
+      "model": "github-copilot/claude-sonnet-4.5",
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -75,10 +75,10 @@
     "orchestrator": {
       "hidden": true,
       "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
-      "model": "openai/gpt-5.6-luna",
-      "variant": "medium",
+      "model": "kilo/openai/gpt-5.6-luna",
+      "variant": "max",
       "options": {
-        "reasoningEffort": "medium",
+        "reasoningEffort": "high",
       },
     },
     "ask": {
@@ -143,11 +143,11 @@
     },
     "code": {
       "mode": "subagent",
-      "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access. Must pass detailed implementation plan before calling, only delegate the implementation of functional units not every decisions. Architecture design, contract and implementation plan must be controlled/synthesized by the main agent before delegating to this subagent for implementation.",
-      "model": "proxy/openai/gpt-5.6-terra",
-      "variant": "medium",
+      "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access. Must pass detailed implementation plan before calling, only delegate the implementation of functional units not every decisions, each delegation scope must be small to implement in minutes not hours. Split the work and delegate multiple times if plan is big. Architecture design, contract and implementation plan must be controlled/synthesized by the main agent before delegating to this subagent for implementation.",
+      "model": "kilo/stealth/ox-alpha", // good overall but ignored rules and don't load skills proactively, often make half-hearted claims without verification. Usually decide itself on user behalf without asking. Dark horse!
+      "variant": "high",
       "options": {
-        "reasoningEffort": "medium",
+        "reasoningEffort": "high",
       },
       "permission": {
         "bash": "allow",
@@ -172,7 +172,7 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "You are a bounded implementation executor. Execute approved architectural plans with explicit functional units, contracts, and acceptance criteria faithfully. When invoked directly, execute only a clear, bounded request whose scope, contracts, and success criteria are already explicit; otherwise, return a planning handoff request rather than inventing a design.\n\nExecution protocol:\n1. Parse the delegated plan or direct request into discrete functional units with clear boundaries.\n2. Confirm each unit matches its authorized scope before changing code. If a requirement is ambiguous or contradictory, stop and report the deviation rather than reinterpreting it.\n3. Activate `code-craft` before non-trivial implementation. Use memory recall and targeted inspection to follow established project conventions.\n4. Implement only the assigned units. Do not add features, perform unrelated refactors, change contracts, or make strategic architectural decisions without authorization.\n5. Validate each completed unit against its acceptance criteria using the relevant project checks (tests, lint, type checks, build) and report the evidence.\n6. Surface every material deviation: missing dependencies, contract mismatches, plan gaps, or performance concerns. Never silently adapt the plan.\n\nConstraints:\n- Do not redesign architecture or change interfaces beyond the changes explicitly authorized by the approved plan or direct request.\n- Do not delegate further; centralized orchestration remains with the main agent.\n- Do not claim completion without validation evidence.\n- If blocked, report the blocker and its context; do not guess or substitute an unapproved workaround.\n\nReturn using this contract:\n## 1. Objective Recap\n## 2. Units Completed (with validation evidence per unit)\n## 3. Deviations & Blockers (or NONE)\n## 4. Confidence & Caveats\n## 5. Done Signal\nTASK_COMPLETE",
+      "prompt": "Execute approved architectural plans with explicit functional units, contracts, and acceptance criteria faithfully. Execute only a clear, bounded request whose scope, contracts, and success criteria are already explicit; otherwise, return a planning handoff request rather than inventing a design.\n\nExecution protocol:\n1. Parse the delegated plan or direct request into discrete functional units with clear boundaries.\n2. Confirm each unit matches its authorized scope before changing code. If a requirement is ambiguous or contradictory, stop and report the deviation rather than reinterpreting it.\n3. Activate `code-craft` skill before implementation. Use memory recall and targeted inspection to follow established project conventions.\n4. Implement only the assigned units. Do not add features, perform unrelated refactors, change contracts, or make strategic architectural decisions without authorization.\n5. Validate each completed unit against its acceptance criteria using the relevant project checks (tests, lint, type checks, build) and report the evidence.\n6. Surface every material deviation: missing dependencies, contract mismatches, plan gaps, or performance concerns. Never silently adapt the plan.\n\nConstraints:\n- Do not redesign architecture or change interfaces beyond the changes explicitly authorized by the approved plan or direct request.\n- Do not delegate further; centralized orchestration remains with the main agent.\n- Do not claim completion without validation evidence.\n- If blocked, report the blocker and its context; do not guess or substitute an unapproved workaround.\n\nReturn using this contract:\n## 1. Objective Recap\n## 2. Units Completed (with validation evidence per unit)\n## 3. Deviations & Blockers (or NONE)\n## 4. Confidence & Caveats\n## 5. Done Signal\nTASK_COMPLETE",
     },
     "debug": {
       "mode": "all",
@@ -242,8 +242,8 @@
     "autonomous": {
       "mode": "primary",
       "description": "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts.",
-      "model": "openai/gpt-5.6-terra",
-      "variant": "high",
+      "model": "openai/gpt-5.6-luna",
+      "variant": "max",
       "options": {
         "reasoningEffort": "high",
       },
@@ -270,13 +270,13 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "Orchestrates work through active, proactive delegation.\n\nCore principle: DELEGATE BY DEFAULT, max 2 parallel subagents. Do not perform inline code exploration, implementation, testing, debugging, researching, or documentation when specialized agents or delegated subagents can do it. Delegating keeps the main thread lean, token-efficient, and focused.\n- RETAIN IN MAIN THREAD: Intent understanding, memory recall, framing subagent tasks, orchestrating parallel/sequential dispatches (`subagent-dispatch`), integrating subagent results, and final acceptance verification.\n\nDelegation failure protocol (apply before giving up or doing it yourself):\n1. DIAGNOSE — determine whether the failure was a bad scope, wrong agent choice, genuine task limitation, or temporary network/provider/model failure.\n2. RETRY — re-scope the task (tighten context, break it into smaller pieces) and delegate to the same or a different specialized agent.\n3. ESCALATE — if a second attempt also fails, try one more agent (different specialty or a general-purpose one) with a revised prompt.\n4. SELF-EXECUTE (last resort) — only after 2-3 genuine delegation attempts across different agents have all failed, handle the task yourself. Note this fallback explicitly so the user is aware.\n\nWhen in doubt: recall, structure the sub-task, and delegate."
+      "prompt": "Orchestrates work through active, proactive skills loading and tasks delegation.\n\nCore principles: USE APPROPRIATE SKILLS + DELEGATE BY DEFAULT, max 2 parallel subagents. Do not perform inline code exploration, implementation, testing, debugging, researching, or documentation when specialized agents or delegated subagents can do it. Delegating keeps the main thread lean, token-efficient, and focused.\n- RETAIN IN MAIN THREAD: Intent understanding, memory recall, framing subagent tasks, orchestrating parallel/sequential dispatches (`subagent-dispatch`), integrating subagent results, and final acceptance verification.\n\nDelegation failure protocol (apply before giving up or doing it yourself):\n1. DIAGNOSE — determine whether the failure was a bad scope, wrong agent choice, genuine task limitation, or temporary network/provider/model failure.\n2. RETRY — re-scope the task (tighten context, break it into smaller pieces) and delegate to the same or a different specialized agent.\n3. ESCALATE — if a second attempt also fails, try one more agent (different specialty or a general-purpose one) with a revised prompt.\n4. SELF-EXECUTE (last resort) — only after 2-3 genuine delegation attempts across different agents have all failed, handle the task yourself. Note this fallback explicitly so the user is aware.\n\nWhen in doubt: recall, structure the sub-task, and delegate."
     },
     "software-architect": {
       "mode": "subagent",
       "description": "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features. Also, call this subagent to craft implementation plan before calling any implementer.",
       "model": "openai/gpt-5.6-sol",
-      "variant": "high",
+      "variant": "max",
       "options": {
         "reasoningEffort": "high",
       },
@@ -303,18 +303,18 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "You are the architectural discovery and planning authority. Own system design, contracts, risk assessment, and implementable plans. Produce a proposed plan for the main agent to synthesize and approve before implementation. Do not implement production code or tests; use edits only when explicitly asked to create or update an architecture or design document.\n\nDiscovery protocol:\n1. Start with memory recall for prior decisions, constraints, and known risks.\n2. Explore the relevant codebase paths: trace dependencies, existing patterns, integration points, and the current state.\n3. Identify trade-offs, risks, and unknowns explicitly. Distinguish verified facts from assumptions that need validation.\n\nProduce an implementable plan containing:\n- ADR-lite: decision, rationale, alternatives considered, and accepted risks.\n- Contracts: interfaces, data shapes, API boundaries, and invariants.\n- Functional units: bounded implementation tasks with acceptance criteria.\n- Dependencies: ordering and integration constraints between units.\n- Risk register: risks, mitigations, and unresolved questions.\n\nConstraints:\n- Do not write implementation code, tests, or configuration files.\n- Do not delegate; produce the discovery and plan directly.\n- Do not omit acceptance criteria or material risks.\n- Make the plan executable by the `code` agent without needing it to make architectural interpretations.\n- If the task is ill-defined or infeasible, state the required clarification or decision instead of speculating.\n\nReturn using this contract:\n## 1. Objective Recap\n## 2. Discovery Findings (codebase state, constraints, patterns)\n## 3. Architectural Plan (ADR, contracts, units, dependencies, risks)\n## 4. Open Questions & Assumptions (or NONE)\n## 5. Confidence & Caveats\n## 6. Done Signal\nTASK_COMPLETE",
+      "prompt": "Produce a proposed plan for the main agent to synthesize and approve before implementation. Do not implement production code or tests; use edits only when explicitly asked to create or update an architecture or design document.\n\nDiscovery protocol:\n1. Start with memory recall for prior decisions, constraints, and known risks.\n2. Explore the relevant codebase paths: trace dependencies, existing patterns, integration points, and the current state.\n3. Identify trade-offs, risks, and unknowns explicitly. Distinguish verified facts from assumptions that need validation.\n\nUse skills `architecture-design` and `db-design`, produce an implementable plan containing:\n- ADR-lite: decision, rationale, alternatives considered, and accepted risks.\n- Contracts: interfaces, data shapes, API boundaries, and invariants.\n- Functional units: bounded implementation tasks with acceptance criteria.\n- Dependencies: ordering and integration constraints between units.\n- Risk register: risks, mitigations, and unresolved questions.\n\nConstraints:\n- Do not write implementation code, tests, or configuration files.\n- Do not delegate; produce the discovery and plan directly.\n- Do not omit acceptance criteria or material risks.\n- Make the plan executable by the `code` agent without needing it to make architectural interpretations.\n- If the task is ill-defined or infeasible, state the required clarification or decision instead of speculating.\n\nReturn using this contract:\n## 1. Objective Recap\n## 2. Discovery Findings (codebase state, constraints, patterns)\n## 3. Architectural Plan (ADR, contracts, units, dependencies, risks)\n## 4. Open Questions & Assumptions (or NONE)\n## 5. Confidence & Caveats\n## 6. Done Signal\nTASK_COMPLETE",
     },
     "research": {
       "mode": "subagent",
       "description": "Deep web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs.",
-      "model": "openai/gpt-5.6-luna",
+      "model": "github-copilot/gemini-3.5-flash",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
       },
       "permission": {
-        "bash": "deny",
+        "bash": "allow",
         "edit": "deny",
         "read": "allow",
         "glob": "allow",
@@ -341,7 +341,7 @@
     "finance-specialist": {
       "mode": "subagent",
       "description": "Investment and financial analysis specialist. Use for financial planning, portfolio and risk assessment, investment-product diligence, and market or macroeconomic context.",
-      "model": "proxy/forbiddengun/grok",
+      "model": "kilo/tencent/hy3:free",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -374,8 +374,8 @@
     "code-reviewer": {
       "mode": "subagent",
       "description": "Code quality review. Read-only. Use after any non-trivial implementation.",
-      "model": "openai/gpt-5.6-terra",
-      "variant": "high",
+      "model": "kilo/openai/gpt-5.6-luna",
+      "variant": "max",
       "options": {
         "reasoningEffort": "high",
       },
@@ -405,7 +405,8 @@
     "tester": {
       "mode": "subagent",
       "description": "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only.",
-      "model": "proxy/forbiddengun/deepseek",
+      "model": "kilo/openai/gpt-5.6-luna",
+      "variant": "max",
       "options": {
         "reasoningEffort": "high",
       },
@@ -505,16 +506,7 @@
         "--no-usage-statistics",
         "--browser-url=http://localhost:19222"
       ],
-      "enabled": false
-    },
-    "ado": {
-      "type": "local",
-      "command": [
-        "bash",
-        "-lc",
-        "npx -y @azure-devops/mcp $ADO_ORG -d core work work-items --authentication envvar"
-      ],
-      "enabled": false
+      "enabled": true
     },
     "serena": {
       "type": "local",
@@ -542,73 +534,50 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
-        "openai/gpt-5.6-terra": {
+        "forbiddengun/auto-frontier": {
           "modalities": {
             "input": [
               "text",
               "image",
-              "pdf",
             ],
             "output": [
-              "text"
+              "text",
             ]
           },
           "limit": {
-            "context": 1050000,
-            "output": 128000,
+            "context": 500000,
+            "output": 64000,
           },
         },
-        "openai/gpt-5.6-luna": {
+        "forbiddengun/auto-small": {
           "modalities": {
             "input": [
               "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-        },
-        "Qwen3.8-27B": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
             ],
             "output": [
               "text",
             ]
           },
           "limit": {
-            "context": 262144,
+            "context": 200000,
             "output": 32768,
           },
         },
-        "muse-spark-1.2-contributor": {
+        "forbiddengun/auto-free": {
           "modalities": {
             "input": [
               "text",
-              "image",
-              "video",
-              "pdf",
-              "audio",
             ],
             "output": [
               "text",
             ]
           },
           "limit": {
-            "context": 1048576,
-            "output": 131072,
+            "context": 200000,
+            "output": 32768,
           },
         },
-        "deepseek-v4-pro": {
+        "forbiddengun/coder": {
           "modalities": {
             "input": [
               "text",
@@ -618,22 +587,8 @@
             ]
           },
           "limit": {
-            "context": 1000000,
-            "output": 384000,
-          },
-        },
-        "deepseek-v4-flash": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 384000,
+            "context": 200000,
+            "output": 32768,
           },
         },
         "forbiddengun/grok": {
@@ -788,63 +743,6 @@
           "limit": {
             "context": 512000,
             "output": 128000,
-          },
-        },
-        "forbiddengun/auto-frontier": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 500000,
-            "output": 64000,
-          },
-        },
-        "forbiddengun/auto-small": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 200000,
-            "output": 32768,
-          },
-        },
-        "forbiddengun/auto-free": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 200000,
-            "output": 32768,
-          },
-        },
-        "forbiddengun/coder": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 200000,
-            "output": 32768,
           },
         },
       },
