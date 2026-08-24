@@ -375,7 +375,7 @@
       "mode": "subagent",
       "description": "Code quality review. Read-only. Use after any non-trivial implementation.",
       "model": "kilo/openai/gpt-5.6-luna",
-      "variant": "max",
+      "variant": "xhigh",
       "options": {
         "reasoningEffort": "high",
       },
@@ -406,7 +406,7 @@
       "mode": "subagent",
       "description": "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only.",
       "model": "kilo/openai/gpt-5.6-luna",
-      "variant": "max",
+      "variant": "xhigh",
       "options": {
         "reasoningEffort": "high",
       },
