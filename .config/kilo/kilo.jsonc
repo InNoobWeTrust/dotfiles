@@ -177,7 +177,7 @@
     "debug": {
       "mode": "all",
       "description": "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs.",
-      "model": "proxy/forbiddengun/grok",
+      "model": "kilo/tencent/hy3:free",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -782,10 +782,12 @@
       "brew upgrade *": "allow",
       "cargo check *": "allow",
       "cargo test *": "allow",
-      "rustfmt *": "allow",
-      "rustc *": "allow",
       "cargo info *": "allow",
       "cargo doc *": "allow",
+      "cargo fmt *": "allow",
+      "cargo clippy *": "allow",
+      "rustfmt *": "allow",
+      "rustc *": "allow",
       "go mod *": "allow",
       "go get *": "allow",
       "go doc *": "allow",
