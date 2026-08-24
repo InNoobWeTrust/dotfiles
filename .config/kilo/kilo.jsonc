@@ -17,12 +17,13 @@
     "summary": {
       "model": "kilo/kilo-auto/free",
     },
-    //"compaction": {
-    //  "model": "github-copilot/gpt-5.4",
-    //},
     "general": {
-      "description": "USE SPARINGLY: only for vague questions with no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
+      "description": "USE SPARINGLY: general fallback when no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs.",
       "model": "github-copilot/claude-sonnet-4.5",
+      "variant": "xhigh",
+      "options": {
+        "reasoningEffort": "high",
+      },
       "permission": {
         "edit": "allow",
         "read": "allow",
@@ -75,7 +76,7 @@
     "orchestrator": {
       "hidden": true,
       "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
-      "model": "proxy/gpt-5.6-luna",
+      "model": "kilo/openai/gpt-5.6-luna",
       "variant": "max",
       "options": {
         "reasoningEffort": "high",
@@ -84,7 +85,11 @@
     "ask": {
       "hidden": true,
       "description": "A knowledgeable technical assistant focused on answering questions without changing your codebase",
-      "model": "kilo/kilo-auto/free",
+      "model": "openrouter/z-ai/glm-5.2:free",
+      "variant": "xhigh",
+      "options": {
+        "reasoningEffort": "high",
+      },
       "permission": {
         "edit": "deny",
         "read": "allow",
@@ -144,7 +149,8 @@
     "code": {
       "mode": "subagent",
       "description": "Bounded implementation executor for exactly one approved functional unit per call. Receives a single small, independently verifiable unit (or an explicit atomic-patch exception) and implements it against given acceptance criteria. Refuses planning, orchestration, multi-unit batches, architecture decisions, contract design, and scope expansion — returns INCOMPLETE with continuation state instead. Orchestration, unit splitting, and all design decisions stay in the main agent.",
-      "model": "kilo/stealth/ox-alpha", // good overall but ignored rules and don't load skills proactively, often make half-hearted claims without verification. Usually decide itself on user behalf without asking. Dark horse!
+      //"model": "kilo/stealth/ox-alpha", // good overall but ignored rules and don't load skills proactively, often make half-hearted claims without verification. Usually decide itself on user behalf without asking. Dark horse!
+      "model": "openai/gpt-5.6-terra",
       "variant": "high",
       "options": {
         "reasoningEffort": "high",
@@ -245,70 +251,6 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
-        "gpt-5.6-terra": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-        },
-        "gpt-5.6-luna": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-        },
-        "oai_api/gpt-5.6-terra": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-        },
-        "oai_api/gpt-5.6-luna": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-        },
         "forbiddengun/auto-frontier": {
           "modalities": {
             "input": [

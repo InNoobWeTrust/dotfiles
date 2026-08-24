@@ -1,10 +1,7 @@
 ---
 description: "Rapid prototyping and scaffold engineer. Use for: generating file skeletons, type definitions, interfaces, function/class stubs, and minimal happy-path baselines without overthinking. Hands back immediately to orchestrator for review and detailed refinement by code or ui-coder."
 mode: subagent
-model: "proxy/forbiddengun/gemini"
-variant: high
-options:
-  reasoningEffort: high
+model: "kilo/tencent/hy3:free"
 permission:
   bash: allow
   edit: allow
