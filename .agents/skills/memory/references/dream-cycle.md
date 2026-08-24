@@ -105,6 +105,8 @@ Do not extract:
 - Next Steps — same.
 - Raw diffs, transcripts, or tool output.
 
+Before promoting any candidate, apply the add/update threshold from `hierarchy-and-storage.md` §Content quality: promote only stable, non-obvious conventions whose absence would force complex rediscovery. Quick-read facts, generic knowledge, one-off notes, volatile line details, and behavior likely to change soon do not belong in long-term.
+
 Each candidate gets a **stable key** in `snake_case`. Reuse an existing key when the candidate refines the same fact; otherwise mint a new one.
 
 Print the candidate table before writing anything.

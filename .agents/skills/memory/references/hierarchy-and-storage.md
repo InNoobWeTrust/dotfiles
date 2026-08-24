@@ -170,8 +170,10 @@ Each bucket file is a flat list of records. Order: `updated` descending.
 ```markdown
 | Key | Bucket | Type | Score | Updated | Summary |
 |---|---|---|---|---|---|
-| swarm_intelligence_mode_router | project.md | project_decision | 0.88 | 2026-07-14 | Router rule for Single-Node vs Full Swarm |
+| swarm_intelligence_mode_router | project.md | project_decision | 0.88 | 2026-07-14 | Router rule for Single-Node vs Full Swarm — read bucket when choosing between orchestration modes |
 ```
+
+**Summary field contract**: one sentence that (a) identifies the covered content or decision and (b) states the condition that warrants descending to the bucket or topic detail (pattern: `<what it covers> — read <bucket> when <condition>`). A row whose Summary only names the entry is not actionable; an agent cannot decide whether to descend without opening the file.
 
 INDEX.md also carries the size-limit frontmatter (defaults live in the main `SKILL.md` §Size limits — override here per project):
 
@@ -202,6 +204,33 @@ last_dream_cycle: 2026-07-14T09:12:00+07:00
 When reading a `MEMORY_DIR` whose `schema_version` is older than the current skill expects, stop and report the mismatch. Do not silently read or write entries in an outdated format. Migration scripts live outside this skill — the skill's job is to detect the drift.
 
 Current version: **1** (initial format).
+
+---
+
+## Content quality
+
+Applies at every Capture and every Consolidate extraction. Non-negotiable gates, not suggestions.
+
+### Style
+
+Dense agent notes. Terse bullets. Invariants and constraints first. Omit obvious context and rationale unless their absence would cause a likely mistake. Guidance must be durable and generalizable — no task-local color, no prose narrative.
+
+### Add / update threshold
+
+Add or update a long-term entry only when the candidate is **stable and non-obvious** and its absence would force complex rediscovery later. Exclude:
+
+- Quick-read facts (look them up each time; memorizing them adds noise)
+- Generic language, framework, or tool knowledge
+- One-off task notes and session-local observations
+- Volatile line-level details (file paths, line numbers, transient config values)
+- Behavior likely to change before the next recall
+
+When in doubt, leave it in short-term. Consolidate promotes only what clears this bar.
+
+### Maintenance — rename and stale-pointer hygiene
+
+- **Rename**: when an entry key, topic file, or index row is renamed, use the environment's reference-aware migration tool if one exists; otherwise search `long-term/` and every index for the old name and update all pointers in the same commit. Never rename in isolation.
+- **Delete**: after removing any entry, scan `long-term/INDEX.md` and all bucket/topic files for pointers to the deleted key. Remove or redirect stale rows before the next dream cycle.
 
 ---
 
