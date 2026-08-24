@@ -1,7 +1,7 @@
 ---
 description: "Code quality review. Read-only. Use after any non-trivial implementation."
 mode: subagent
-model: "kilo/openai/gpt-5.6-luna"
+model: "proxy/gpt-5.6-luna"
 variant: high
 options:
   reasoningEffort: high

@@ -1,4 +1,4 @@
-## Delegation Prompt Template
+ Delegation Prompt Template
 
 Copy this template and fill in the `[BRACKETS]` before launching a delegated worker/agent.
 
@@ -11,6 +11,33 @@ You are acting as a [ROLE, e.g. "code reviewer", "research analyst", "debugging 
 ## Context
 [Paste only the relevant context — file paths, excerpts, error messages, URLs.
 Do not paste the whole codebase. Be surgical.]
+
+## Implementation Dispatch Gate (only when the delegated target is code implementer)
+[Applies whenever implementation work is dispatched to code implementer, regardless of
+whether the phased-delivery trigger below also applies. You are assigned
+EXACTLY ONE approved functional unit — never a whole plan, milestone, or set
+of units. An approved plan or Active Milestone Packet may be pasted above as
+context for non-atomic work; it is never executable scope. Alternatively, an
+explicit `Atomic patch exception` may be used for ONE coherent, independently
+verifiable outcome where phased delivery does not apply and no design or
+contract decision remains open; no plan file is required for that exception.]
+
+### Selected Unit (all eight fields must be bounded)
+1. Plan basis: [cite the specific approved plan / Active Milestone Packet] OR Atomic patch exception rationale: [why the outcome is coherent, independently verifiable, and leaves no design/contract decision open]
+2. Unit ID and one-sentence outcome: [...]
+3. Exact writable surface: [files and, where applicable, fields/symbols]
+4. Contracts and hard invariants to preserve: [...]
+5. Prerequisites already satisfied: [...]
+6. Explicit out-of-scope list: [...]
+7. Acceptance criteria and required evidence: [...]
+8. Stop conditions: [see below]
+
+If you find zero or multiple units, missing acceptance criteria/evidence, an
+unresolved design or contract decision, or a request that expands scope: do
+NOT dispatch substitutes, rescope silently, or absorb adjacent units. Return
+`INCOMPLETE` in the Done Signal with continuation state (completed changes,
+current location, remaining steps, evidence so far, blockers, next safe
+action) so the main orchestrator can replan.
 
 ## Delivery Contract (only when `../../rules/phased-delivery.md` applies)
 [Populate the canonical inline template from `../../rules/phased-delivery.md`.
@@ -94,6 +121,7 @@ Stop immediately and report partial findings with `INCOMPLETE` and continuation/
 - The task scope is larger than described here.
 - You encounter an action not listed in Allowed Actions.
 - You are approaching the context limit and have not yet filled all five output sections — report what you have so far.
+- For a code implementer target: any Selected Unit stop condition holds, or the work would require touching anything outside the declared writable surface or absorbing another unit.
 
 ---
 
@@ -102,6 +130,9 @@ Stop immediately and report partial findings with `INCOMPLETE` and continuation/
 Run through this before every delegated worker launch:
 
 - [ ] **Scope**: Does the prompt name the exact files, URLs, or data — not a vague domain?
+- [ ] **Code target — exactly one unit**: If dispatching implementation to code implementer, does the prompt carry exactly one selected functional unit (plan pasted as context only), with the dispatch basis declared (approved plan / Active Milestone Packet, or explicit `Atomic patch exception`)?
+- [ ] **Code target — unit payload complete**: Are all eight fields bounded — plan basis/exception rationale, unit ID + one-sentence outcome, exact writable surface, contracts/invariants, satisfied prerequisites, explicit out-of-scope list, acceptance criteria/evidence, stop conditions?
+- [ ] **Code target — no stop-before-dispatch condition**: Confirm none of these holds: zero or multiple units · missing acceptance criteria/evidence · an unresolved design or contract decision · a scope-expansion request. If one holds, do NOT dispatch; report `INCOMPLETE` + continuation state to the main orchestrator instead.
 - [ ] **Delivery Contract**: When the phased-delivery trigger applies, does every implementation, exploration, or review prompt include the canonical populated contract plus scope-expansion, adjacent-work, and continuation/resumption instructions?
 - [ ] **Output template**: Is the five-section format included verbatim?
 - [ ] **Domain template**: Is the correct Findings sub-template slotted into section 2?
@@ -122,6 +153,7 @@ When the delegated worker returns:
 4. **Reject and re-delegate** if:
     - The delegated worker broadened scope beyond what was described. _Detect this by checking whether findings reference files, URLs, or data sources not listed in the delegation prompt's context or Allowed Actions block._
     - The delegated worker performed a forbidden action (e.g., wrote a file it was not allowed to touch).
+    - For a code implementer target: the worker executed more than the single selected unit, silently rescoped, touched anything outside the declared writable surface, or returned without a continuation state after hitting a stop condition. Treat these as `INCOMPLETE`; re-delegate with corrected unit boundaries only.
     - The output format is missing or materially incomplete for the decision required.
 
 ---
@@ -138,6 +170,7 @@ When the delegated worker returns:
 | Treating a missing TASK_COMPLETE as success | Silent partial results slip through | Always scan for the Done Signal |
 | Forcing a retry just to obtain `TASK_COMPLETE` | Wastes work when partial evidence already supports the decision | Accept `INCOMPLETE` with a continuation state; retry only for decision-blocking evidence |
 | Delegating phased work without a bounded contract | Worker optimizes for a future state or expands scope | When the phased-delivery trigger applies, include the canonical Delivery Contract and delegation-only behavior |
+| Sending a whole multi-unit plan to code implementer | Worker absorbs adjacent units, expands scope, and returns partial work that cannot be verified against any single acceptance criterion | Dispatch exactly ONE functional unit per code implementer call (approved-plan basis or explicit atomic-patch exception); paste the plan as context only |
 | "You are a Python expert" persona | underlying LLM model already has that knowledge; label adds nothing | Drop the persona; use a role that changes *context*, not just claimed expertise |
 | Sequential pipeline where step B needs step A's discoveries | Information degrades at every handoff; bugs compound | Keep sequential dependent work in the main thread |
 | Test-runner delegated worker | Returns "tests failed" — hides the output needed to diagnose | Run tests directly in main thread; delegate only post-analysis summaries (except blind test loops in Clean-Room TDD) |
@@ -158,7 +191,9 @@ GOOD DELEGATE TARGETS:
 BAD DELEGATE TARGETS:
   expert persona labels · sequential dependent pipelines · test runners (except blind test loops in Clean-Room TDD)
 
-DELEGATION PROMPT = Role + Task + Context (surgical) + [canonical Delivery Contract when its trigger applies] + delegation-only action boundaries + Output Template + Stop Conditions
+DELEGATION PROMPT = Role + Task + Context (surgical) + [Implementation Dispatch Gate for code implementer targets: ONE selected unit, 8 bounded fields, plan as context only] + [canonical Delivery Contract when its trigger applies] + delegation-only action boundaries + Output Template + Stop Conditions
+
+CODE TARGET = one unit per dispatch · basis = approved plan / Active Milestone Packet OR explicit atomic-patch exception · zero/multiple units or missing evidence → no dispatch, report `INCOMPLETE` + continuation state
 
 OUTPUT TEMPLATE =
   1. Objective Recap

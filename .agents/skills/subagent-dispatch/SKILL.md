@@ -61,6 +61,40 @@ Copy-paste full prompt skeleton + anti-patterns + receive protocol:
 
 ---
 
+## Implementation dispatch gate (code implementer targets)
+
+Before delegating an implementation call (code implementer), require the main
+orchestrator to select **exactly one approved functional unit**. The whole
+plan may be included as context only; it is never executable scope.
+
+**Accepted bases** (exactly one):
+
+| Basis | When |
+|---|---|
+| Approved plan / Active Milestone Packet | Non-atomic work: multi-step or phased delivery; cite the specific plan basis |
+| Explicit `Atomic patch exception` | One coherent, independently verifiable outcome where no design/contract decision remains open; no plan file required |
+
+**Minimum unit payload** — all fields must be bounded before launch:
+
+1. Plan basis citation, or atomic-exception rationale;
+2. Unit ID and one-sentence outcome;
+3. Exact writable surface (files and, where applicable, fields/symbols);
+4. Contracts and hard invariants to preserve;
+5. Prerequisites that are already satisfied;
+6. Explicit out-of-scope list;
+7. Acceptance criteria and required evidence;
+8. Stop conditions.
+
+**Stop before dispatch** when any of these holds: zero or multiple units,
+missing acceptance criteria/evidence, an unresolved design or contract
+decision, or a request for scope expansion. Report the refusal through the
+existing output contract as `INCOMPLETE` + continuation state rather than
+silently rescoping. Lifecycle stages, compromise schema, trajectory decisions,
+and budget policy remain owned by `../../rules/phased-delivery.md`; do not
+restate them in the delegation prompt.
+
+---
+
 ## Minimal output contract (always include)
 
 ```
@@ -79,6 +113,10 @@ TASK_COMPLETE | INCOMPLETE + continuation/resumption state
 ## Preflight (before launch)
 
 - [ ] Decision gate says delegate
+- [ ] For a code implementer target: exactly one functional unit selected; the plan is context only, not executable scope
+- [ ] Dispatch basis declared (approved plan / Active Milestone Packet, or explicit `Atomic patch exception`)
+- [ ] Unit payload complete: surface, contracts/invariants, satisfied prerequisites, out-of-scope list, acceptance criteria/evidence, stop conditions
+- [ ] No stop-before-dispatch condition applies (zero/multiple units, missing evidence, unresolved design/contract, scope expansion)
 - [ ] Scope + out-of-scope written
 - [ ] When the phased-delivery trigger applies, the canonical Delivery Contract is included for implementation, exploration, or review
 - [ ] Decision authority and scope-expansion handling declared

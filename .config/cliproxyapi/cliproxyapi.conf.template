@@ -69,6 +69,23 @@ claude-api-key:
       - name: "forbiddengun/minimax"
       - name: "forbiddengun/gemma"
       - name: "forbiddengun/mistral"
+
+
+# OpenAI compatibility providers
+openai-compatibility:
+  - name: "oai_api"
+    prefix: oai_api
+    base-url: "https://api.openai.com/v1"
+    api-key-entries:
+      - api-key: "${OPENAI_PLATFORM_API_KEY}"
+    models:
+      - name: "gpt-5.6-luna"
+      - name: "gpt-5.6-terra"
+      - name: "gpt-5.6-sol"
+      - name: "gpt-5.5"
+      - name: "gpt-5.4"
+      - name: "gpt-5.4-mini"
+
 debug: true
 logging-to-file: true
 commercial-mode: true

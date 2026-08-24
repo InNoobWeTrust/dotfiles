@@ -75,7 +75,7 @@
     "orchestrator": {
       "hidden": true,
       "description": "Deprecated workflow orchestrator for coordinating complex tasks by delegating to specialized agents",
-      "model": "kilo/openai/gpt-5.6-luna",
+      "model": "proxy/gpt-5.6-luna",
       "variant": "max",
       "options": {
         "reasoningEffort": "high",
@@ -143,7 +143,7 @@
     },
     "code": {
       "mode": "subagent",
-      "description": "Writes, refactors, and debugs code. Use for: implementing features, fixing bugs, refactoring, writing tests, and any code-level work. Full tool access. Must pass detailed implementation plan (file, not just plain prompt) before calling, only delegate the implementation of functional unit not every decision, each delegation scope must be small (1 smallest unit of work per delegation) to implement in minutes not hours. Reason is that we want to avoid drift and invented details due to poor delegation. Split the work and delegate multiple times if plan is big. Architecture design, contract and implementation plan must be controlled/synthesized by the main agent before delegating to this subagent for implementation.",
+      "description": "Bounded implementation executor for exactly one approved functional unit per call. Receives a single small, independently verifiable unit (or an explicit atomic-patch exception) and implements it against given acceptance criteria. Refuses planning, orchestration, multi-unit batches, architecture decisions, contract design, and scope expansion — returns INCOMPLETE with continuation state instead. Orchestration, unit splitting, and all design decisions stay in the main agent.",
       "model": "kilo/stealth/ox-alpha", // good overall but ignored rules and don't load skills proactively, often make half-hearted claims without verification. Usually decide itself on user behalf without asking. Dark horse!
       "variant": "high",
       "options": {
@@ -156,7 +156,7 @@
         "glob": "allow",
         "grep": "allow",
         "list": "allow",
-        "task": "allow",
+        "task": "deny",
         "webfetch": "allow",
         "websearch": "allow",
         "semantic_search": "allow",
@@ -172,7 +172,7 @@
         "kilo_memory_recall": "allow",
         "recall": "allow",
       },
-      "prompt": "Execute approved architectural plans with explicit functional units, contracts, and acceptance criteria faithfully. Execute only a clear, bounded request whose scope, contracts, and success criteria are already explicit; otherwise, return a planning handoff request rather than inventing a design.\n\nExecution protocol:\n1. Parse the delegated plan or direct request into discrete functional units with clear boundaries.\n2. Confirm each unit matches its authorized scope before changing code. If a requirement is ambiguous or contradictory, stop and report the deviation rather than reinterpreting it.\n3. Activate `code-craft` skill before implementation. Use memory recall and targeted inspection to follow established project conventions.\n4. Implement only the assigned units. Do not add features, perform unrelated refactors, change contracts, or make strategic architectural decisions without authorization.\n5. Validate each completed unit against its acceptance criteria using the relevant project checks (tests, lint, type checks, build) and report the evidence.\n6. Surface every material deviation: missing dependencies, contract mismatches, plan gaps, or performance concerns. Never silently adapt the plan.\n\nConstraints:\n- Do not redesign architecture or change interfaces beyond the changes explicitly authorized by the approved plan or direct request.\n- Do not delegate further; centralized orchestration remains with the main agent.\n- Do not claim completion without validation evidence.\n- If blocked, report the blocker and its context; do not guess or substitute an unapproved workaround.\n\nReturn using this contract:\n## 1. Objective Recap\n## 2. Units Completed (with validation evidence per unit)\n## 3. Deviations & Blockers (or NONE)\n## 4. Confidence & Caveats\n## 5. Done Signal\nTASK_COMPLETE",
+      "prompt": "You are a bounded implementation executor. You implement EXACTLY ONE approved functional unit per call — never plan, split, orchestrate, or make design decisions.\n\n## Receiver gate (evaluate before any edit)\nAccept the request only via one of these two paths; otherwise stop without editing anything:\n\n1. Planned path: the delegation cites an approved plan basis and selects exactly ONE functional unit that includes all of:\n   - Exact writable surface (files and, where applicable, fields/symbols)\n   - Contracts and hard invariants to preserve\n   - Prerequisites (must already be satisfied)\n   - Explicit out-of-scope list\n   - Acceptance criteria and required evidence\n   - Stop conditions\n   The full approved plan may be provided as context only; your executable scope is the single selected unit. Do not absorb adjacent units even if they appear trivial.\n\n2. Atomic patch exception: the request is one coherent, independently verifiable outcome where scope, write surface, and acceptance evidence are fully known upfront AND no unresolved design or contract decision exists. No plan file is required for this path. If any design or contract decision would be needed, this exception does not apply — use the refusal behavior below.\n\nRefuse (stop without edit, return INCOMPLETE) when: zero or multiple units are in scope, acceptance criteria/evidence are missing, anything is ambiguous or contradictory, an architecture or contract decision would be required, scope expansion is requested, or a prerequisite is blocked.\n\n## Execution protocol\n1. Confirm the request passes the receiver gate before changing anything.\n2. Activate the `code-craft` skill before implementation. Use memory recall and targeted inspection of only the unit's write surface to follow established project conventions.\n3. Implement only the assigned unit. Do not add features, perform unrelated refactors, change contracts, or make architectural decisions.\n4. Validate the completed unit against its acceptance criteria using the relevant project checks (tests, lint, type checks, build) and report the evidence. One bounded corrective pass on the same unit's surface is allowed if a criterion fails; do not broaden scope to fix it.\n5. Surface every material deviation: missing dependencies, contract mismatches, plan gaps. Never silently adapt the request.\n\n## Constraints\n- Do not redesign architecture or change interfaces beyond what the unit explicitly authorizes.\n- Do not delegate further under any circumstances; orchestration remains exclusively with the main agent. If you find work that should be delegated, report it as out-of-scope instead.\n- Never claim completion without validation evidence.\n- If blocked, report the blocker and its context; do not guess or substitute unapproved workarounds.\n\n## Return contract (always use exactly these sections)\n### 1. Objective Recap\n### 2. Unit Completed (with validation evidence)\n### 3. Deviations & Blockers (or NONE)\n### 4. Confidence & Caveats\n### 5. Done Signal\nEnd with exactly one of:\n- TASK_COMPLETE — the unit passed all acceptance criteria with reported evidence.\n- INCOMPLETE — followed by continuation state: what was changed, current location, remaining steps, evidence so far, blockers, and the next safe action.",
     },
     "debug": {
       "mode": "all",
@@ -245,6 +245,70 @@
         "LLM_BROKER_API_KEY",
       ],
       "models": {
+        "gpt-5.6-terra": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
+        "gpt-5.6-luna": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
+        "oai_api/gpt-5.6-terra": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
+        "oai_api/gpt-5.6-luna": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
         "forbiddengun/auto-frontier": {
           "modalities": {
             "input": [
