@@ -61,6 +61,39 @@ Copy-paste full prompt skeleton + anti-patterns + receive protocol:
 
 ---
 
+## Planning dispatch gate
+
+Before delegating a planning call, the orchestrator
+selects **exactly one depth level** and, for L1/L2, **exactly one target
+section**. Plans are built iteratively — never request a full detailed plan in
+one dispatch.
+
+**Depth levels** (exactly one per call):
+
+| Level | Scope | Produces |
+|---|---|---|
+| L0 — Strategic Outline | Full goal; first pass | Numbered sections with 1–3 sentence goal statements; no functional units |
+| L1 — Section Decomposition | ONE named L0 section | Sub-headings flagged `[ATOMIC]` or `[NEEDS L2]` |
+| L2 — Atomic Unit Specification | ONE `[NEEDS L2]` sub-heading | Dispatchable functional units with acceptance criteria |
+
+**Minimum planning payload** — all applicable fields must be set before launch:
+
+1. Depth level (L0, L1, or L2);
+2. Plan file path (where to read/write the evolving plan);
+3. Target section or sub-heading name (L1/L2 only);
+4. Goal context — the full goal for L0; only the targeted section's context and
+   cross-cutting constraints for L1/L2;
+5. Out-of-scope list (what this pass must NOT expand into);
+6. Stop conditions (do not skip levels; do not produce detail beyond the
+   declared level).
+
+**Stop before dispatch** when: no level is declared, multiple sections are
+targeted in one call, or the full goal context is sent for an L1/L2 pass
+(send only the section's slice). The orchestrator reviews each pass's output
+and selects the next section to drill down before dispatching again.
+
+---
+
 ## Implementation dispatch gate (code implementer targets)
 
 Before delegating an implementation call (code implementer), require the main
@@ -113,10 +146,11 @@ TASK_COMPLETE | INCOMPLETE + continuation/resumption state
 ## Preflight (before launch)
 
 - [ ] Decision gate says delegate
-- [ ] For a code implementer target: exactly one functional unit selected; the plan is context only, not executable scope
+- [ ] **Planning target**: exactly one depth level declared (L0/L1/L2); plan file path set; target section named (L1/L2); context scoped to level
+- [ ] **Implementation target**: exactly one functional unit selected; the plan is context only, not executable scope
 - [ ] Dispatch basis declared (approved plan / Active Milestone Packet, or explicit `Atomic patch exception`)
-- [ ] Unit payload complete: surface, contracts/invariants, satisfied prerequisites, out-of-scope list, acceptance criteria/evidence, stop conditions
-- [ ] No stop-before-dispatch condition applies (zero/multiple units, missing evidence, unresolved design/contract, scope expansion)
+- [ ] Payload complete: planning payload (level, path, target, context, out-of-scope, stop conditions) or unit payload (surface, contracts/invariants, satisfied prerequisites, out-of-scope list, acceptance criteria/evidence, stop conditions)
+- [ ] No stop-before-dispatch condition applies (zero/multiple units or sections, missing evidence, unresolved design/contract, scope expansion, full goal sent for L1/L2)
 - [ ] Scope + out-of-scope written
 - [ ] When the phased-delivery trigger applies, the canonical Delivery Contract is included for implementation, exploration, or review
 - [ ] Decision authority and scope-expansion handling declared
