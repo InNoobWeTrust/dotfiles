@@ -2,9 +2,6 @@
 description: "Specialized UI/frontend coder (strong at layout, spacing, color, and accessibility). Use for: implementing or polishing UI components, styling, responsive design, dark mode, accessibility, and visual details. Not suited for deep backend logic or any frontend logic (composables, api handling, etc...) - delegate non-UI concerns to code."
 mode: subagent
 model: "github-copilot/gemini-3.5-flash"
-variant: high
-options:
-  reasoningEffort: high
 permission:
   bash: allow
   edit: allow

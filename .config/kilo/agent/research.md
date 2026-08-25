@@ -2,9 +2,6 @@
 description: "Deep web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs."
 mode: subagent
 model: "github-copilot/gemini-3.5-flash"
-variant: high
-options:
-  reasoningEffort: high
 permission:
   bash: allow
   edit: deny

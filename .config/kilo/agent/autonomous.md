@@ -1,10 +1,7 @@
 ---
 description: "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts."
 mode: primary
-model: "openai/gpt-5.6-luna"
-variant: max
-options:
-  reasoningEffort: high
+model: "kilo/stealth/ox-alpha"
 permission:
   bash: allow
   edit: allow

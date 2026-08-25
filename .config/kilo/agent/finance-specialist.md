@@ -3,8 +3,6 @@ description: "Investment and financial analysis specialist. Use for financial pl
 mode: subagent
 model: "kilo/tencent/hy3:free"
 variant: high
-options:
-  reasoningEffort: high
 permission:
   bash: allow
   edit: allow

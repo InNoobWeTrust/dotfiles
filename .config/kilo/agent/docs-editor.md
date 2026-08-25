@@ -3,8 +3,6 @@ description: "Expert in writing/reviewing for clear, concise, well-structured do
 mode: subagent
 model: "github-copilot/claude-sonnet-4.6"
 variant: high
-options:
-  reasoningEffort: high
 permission:
   bash: allow
   edit: allow

@@ -3,8 +3,6 @@ description: "System design, architecture decisions, technical planning, and imp
 mode: subagent
 model: "openai/gpt-5.6-sol"
 variant: high
-options:
-  reasoningEffort: high
 permission:
   bash: allow
   edit: allow

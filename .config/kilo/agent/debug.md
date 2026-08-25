@@ -1,7 +1,7 @@
 ---
-description: "Code quality review. Read-only. Use after any non-trivial implementation."
-mode: subagent
-model: "openai/gpt-5.6-luna"
+description: "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs."
+model: "kilo/tencent/hy3:free"
+mode: all
 variant: high
 permission:
   bash: allow
@@ -10,6 +10,7 @@ permission:
   glob: allow
   grep: allow
   list: allow
+  task: allow
   webfetch: allow
   websearch: allow
   semantic_search: allow
@@ -19,10 +20,9 @@ permission:
   external_directory: allow
   todowrite: allow
   todoread: allow
+  question: allow
   doom_loop: allow
   kilo_memory_save: allow
   kilo_memory_recall: allow
   recall: allow
 ---
-
-Analyze code using `reviewer` skill. Provide constructive feedback without making direct changes.

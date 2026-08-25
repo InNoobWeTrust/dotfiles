@@ -2,9 +2,6 @@
 description: "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only."
 mode: subagent
 model: "kilo/openai/gpt-5.6-luna"
-variant: xhigh
-options:
-  reasoningEffort: high
 permission:
   bash: allow
   edit: allow
