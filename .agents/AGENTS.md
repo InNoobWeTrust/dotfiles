@@ -34,6 +34,7 @@ These rules apply automatically. Read `rules/INDEX` for the full map; load a rul
 | Phased Delivery | Multi-step product/feature delivery, roadmaps, phased execution | `rules/phased-delivery.md` |
 | Skill Compliance | After loading any skill | `rules/skill-compliance.md` |
 | Self-Grounded Verification | Verification, self-review, "done" claims | `rules/self-grounded-verification.md` |
+| **Tool-Call Integrity** | **Every tool call with side effects (file write, move, API call, shell command)** | **`rules/tool-call-integrity.md`** |
 | Autonomy Safety | Auto-approved tools, AFK, waived prompts | `rules/autonomy-safety.md` |
 | Execution Safety | Running commands, scripts, reading env/config | `rules/execution-safety.md` |
 | Memory | Session save/restore, dream cycle, eviction | `rules/memory.md` |

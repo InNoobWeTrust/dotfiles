@@ -4,6 +4,7 @@
 
 | Entry | Summary | Read when |
 |---|---|---|
+| [Agent orchestration design](./agent-orchestration-design.md) | Orchestrator selection, prompt engineering for model tiers, rate limit budgeting | Configuring multi-agent orchestration layers |
 | [Installing skills via npx](./installing-skills.md) | Installing skills via `npx skills add` & pairing with rules | Installing skills in new or existing repos |
 | [Serena MCP setup](./serena-mcp-setup.md) | Setting up `serena-mcp` for semantic code context & LSP search | Boosting agents with symbol indexing & AST context |
 | [Why rules and skills exist](./why-rules-and-skills.md) | Mental model: rules constrain, skills direct | Starting the section |

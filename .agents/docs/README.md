@@ -49,9 +49,10 @@ Wiki docs outside `slides/` are **English-first** (agent-searchable). Slides kee
 
 ### Engineering lead maintaining rules/skills
 
-1. [Failure → rule evolution](./skills-and-rules/failure-pattern-evolution.md)
-2. [Maintaining over time](./skills-and-rules/maintaining-rules-and-skills.md)
-3. [Skill lifecycle](./skills-and-rules/skill-lifecycle.md)
+1. [Agent orchestration design](./skills-and-rules/agent-orchestration-design.md)
+2. [Failure → rule evolution](./skills-and-rules/failure-pattern-evolution.md)
+3. [Maintaining over time](./skills-and-rules/maintaining-rules-and-skills.md)
+4. [Skill lifecycle](./skills-and-rules/skill-lifecycle.md)
 
 ### Management visibility
 
@@ -72,6 +73,7 @@ Wiki docs outside `slides/` are **English-first** (agent-searchable). Slides kee
 
 | Concept | One-liner | Where |
 |---|---|---|
+| **Agent orchestration** | Orchestrator ≠ reasoning model; structure prompts for model tier; budget rate limits | [skills-and-rules](./skills-and-rules/agent-orchestration-design.md) |
 | **Installing skills** | Quick install via `npx skills add` + pairing with `.agents/rules` | [skills-and-rules](./skills-and-rules/installing-skills.md) |
 | **Serena MCP** | Semantic code indexer & LSP context engine for agents | [skills-and-rules](./skills-and-rules/serena-mcp-setup.md) |
 | **Rules** | Non-negotiable constraints on every task | [skills-and-rules](./skills-and-rules/why-rules-and-skills.md) |
