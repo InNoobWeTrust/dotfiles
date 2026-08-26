@@ -70,6 +70,21 @@ This skill is enhanced by curated prompts and style seeds synced via:
 
 ---
 
+## Editframe Integration
+
+When the rendering engine is Editframe (HTML web components or React compositions), load the relevant reference below. These are external-synced references — run the sync script to pull the latest versions from editframe.com/skills.
+
+| When | Load |
+|---|---|
+| Setting up project, dev server, API, or editor GUI | `references/editframe-tooling.md` |
+| Step 0 (Visual DNA) — defining motion language | `references/editframe-motion-design.md` |
+| Step 1 (Story & Scripting) — brand video from URL/description | `references/editframe-brand-video.md` |
+| Step 5 (Synthesis & Rendering) — building compositions | `references/editframe-composition.md` |
+
+All references: MIT License · Author: editframe · Source: [editframe.com/llms.txt](https://editframe.com/llms.txt) · [github.com/editframe/skills](https://github.com/editframe/skills)
+
+---
+
 ## Rules
 1. **Visual DNA First**: Never generate assets before the Style Guide is approved.
 2. **Character Anchors**: Every character prompt MUST include their visual anchor.

@@ -1,7 +1,8 @@
 ---
 description: "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts."
 mode: primary
-model: "kilo/stealth/ox-alpha"
+model: "openai/gpt-5.5"
+variant: high
 permission:
   bash: allow
   edit: allow

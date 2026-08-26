@@ -1,6 +1,6 @@
 ---
 description: "A knowledgeable technical assistant focused on answering questions without changing your codebase"
-model: "openrouter/z-ai/glm-5.2:free"
+model: "kilo/meituan/longcat-2.0-free"
 mode: subagent
 hidden: true
 variant: xhigh

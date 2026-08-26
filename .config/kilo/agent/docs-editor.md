@@ -1,7 +1,7 @@
 ---
 description: "Expert in writing/reviewing for clear, concise, well-structured documentation. Use for: docs, changelogs, comments or any plain doc files/strings that need clear communication to reader. Cover documentation for various domains: coding, business, agentic setup (skills/rules/AGENTS.md/DESIGN.md), advertising/marketing/promotional/creative writings, etc..."
 mode: subagent
-model: "github-copilot/claude-sonnet-4.6"
+model: "github-copilot/claude-sonnet-4.5"
 variant: high
 permission:
   bash: allow

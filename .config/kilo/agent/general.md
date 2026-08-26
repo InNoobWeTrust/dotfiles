@@ -1,6 +1,6 @@
 ---
 description: "USE SPARINGLY: general fallback when no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs."
-model: "github-copilot/claude-sonnet-4.5"
+model: "kilo/meituan/longcat-2.0-free"
 mode: primary
 permission:
   bash: allow

@@ -1,7 +1,7 @@
 ---
 description: "Security audit. Read-only. Use for security reviews and pre-deployment audits. Because security review is time consuming, only offer to run this after commit to review the changes. For plans and engineering doc, offer to run this when complete the writing. Don't call this when user is in a rush or there are still incomplete work."
 mode: primary
-model: "proxy/forbiddengun/auto-frontier"
+model: "kilo/thinkingmachines/inkling:free"
 permission:
   bash: allow
   edit: deny

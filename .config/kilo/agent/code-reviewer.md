@@ -1,7 +1,7 @@
 ---
 description: "Code quality review. Read-only. Use after any non-trivial implementation."
 mode: subagent
-model: "openai/gpt-5.6-luna"
+model: "github-copilot/claude-sonnet-4.5"
 variant: high
 permission:
   bash: allow
