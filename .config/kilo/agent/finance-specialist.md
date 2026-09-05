@@ -1,8 +1,8 @@
 ---
 description: "Investment and financial analysis specialist. Use for financial planning, portfolio and risk assessment, investment-product diligence, and market or macroeconomic context."
 mode: subagent
-model: "kilo/tencent/hy3:free"
-variant: high
+model: "kilo/inclusionai/ling-3.0-flash-fin:free"
+variant: thinking
 permission:
   bash: allow
   edit: allow

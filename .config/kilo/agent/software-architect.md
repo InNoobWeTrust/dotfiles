@@ -1,7 +1,7 @@
 ---
 description: "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features. Call this subagent before any implementer when work is multi-step or non-atomic; genuinely atomic, independently verifiable patches may skip planning under an orchestrator-declared atomic exception."
 mode: subagent
-model: "openai/gpt-5.5"
+model: "proxy/gpt-6-astra"
 variant: high
 permission:
   bash: allow

@@ -1,5 +1,6 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
+  "model": "openai/gpt-5.5",
   "small_model": "kilo/kilo-auto/free",
   "default_agent": "autonomous",
   "instructions": [
@@ -52,9 +53,6 @@
       "options": {
         "baseURL": "http://localhost:8317/v1",
       },
-      "env": [
-        "LLM_BROKER_API_KEY",
-      ],
       "models": {
         "forbiddengun/auto-frontier": {
           "modalities": {
@@ -282,6 +280,86 @@
           },
           "limit": {
             "context": 512000,
+            "output": 128000,
+          },
+        },
+        "gpt-5.5": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
+        "gpt-5.6-luna": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
+        "gpt-5.6-terra": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
+        "gpt-5.6-sol": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+        },
+        "gpt-6-astra": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
             "output": 128000,
           },
         },

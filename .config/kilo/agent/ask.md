@@ -1,9 +1,8 @@
 ---
 description: "A knowledgeable technical assistant focused on answering questions without changing your codebase"
-model: "kilo/meituan/longcat-2.0-free"
+model: "proxy/forbiddengun/gemini"
 mode: subagent
 hidden: true
-variant: xhigh
 permission:
   edit: deny
   read: allow

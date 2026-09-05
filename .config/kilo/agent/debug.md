@@ -1,6 +1,6 @@
 ---
 description: "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs."
-model: "kilo/tencent/hy3:free"
+model: "github-copilot/claude-sonnet-4.6"
 mode: all
 variant: high
 permission:

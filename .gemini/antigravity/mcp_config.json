@@ -1,7 +1,6 @@
 {
   "mcpServers": {
     "chrome-devtools": {
-      "enabled": false,
       "command": "npx",
       "args": [
         "-y",
@@ -11,7 +10,6 @@
       ]
     },
     "serena": {
-      "enabled": true,
       "command": "uvx",
       "args": [
         "-p",
