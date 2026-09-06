@@ -1,7 +1,8 @@
 ---
 description: "USE SPARINGLY: general fallback when no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs."
-model: "kilo/minimax/minimax-m3:free"
-mode: primary
+model: "proxy/forbiddengun/muse"
+mode: all
+hidden: true
 permission:
   bash: allow
   edit: allow

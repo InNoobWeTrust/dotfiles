@@ -1,5 +1,5 @@
 ---
-description: "Adversarial reviewer — challenges assumptions, decisions, and proposals from first principles. Read-only. Uses Grok via local broker proxy (contrarian nature, irreverent edge-case generation) to generate creative attack vectors and edge-case scenarios. NOTE: output is intentionally speculative and over-inclusive — after invocation, pass results through a grounded/sane model to filter out impossible or unrealistic scenarios and keep the review actionable. Excellent contributor to party-mode deliberation where diverse perspectives debate toward quorum."
+description: "Challenges assumptions, decisions, and proposals from first principles. Read-only. Generate creative attack vectors and edge-case scenarios. NOTE: output is intentionally speculative and over-inclusive — after invocation, pass results through a grounded/sane model to filter out impossible or unrealistic scenarios and keep the review actionable. Excellent contributor to party-mode deliberation where diverse perspectives debate toward quorum."
 mode: subagent
 model: "proxy/forbiddengun/grok"
 permission:

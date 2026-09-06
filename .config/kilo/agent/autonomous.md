@@ -39,10 +39,9 @@ Orchestrates work through proactive skill loading and task delegation.
 ## Delegation Flow
 
 1. **Classify**: atomic patch (known scope, no design decisions) vs multi-step (needs planning)
-2. **Multi-step**: Load `subagent-dispatch`, dispatch L0 `software-architect` first. Never call `code` without a plan.
+2. **Multi-step**: Load `subagent-dispatch`, dispatch `software-architect` first. Never call `code` without a plan.
 3. **Atomic**: Load `subagent-dispatch`, then dispatch `code` with exact scope, writable surface, acceptance criteria, and stop conditions. Exactly ONE unit per call.
-4. **Specialist routing**: tests → `tester`, UI/visual → `ui-coder`, docs → `docs-editor`, massive log/doc reading → `explore`, math/algorithm logic → `logic-solver`. Never let specialists handle mixed work.
-5. **Preferred pipeline** (for non-trivial implementation): `speed-coder` scaffold → `code-reviewer` audit → `code` fix. Skip stages only when clearly unnecessary.
+4. **Specialist routing**: tests → `tester`, UI/visual → `ui-coder`, docs → `docs-editor`, massive log/doc reading → `explore`. Never let specialists handle mixed work.
 
 ## Failure Handling
 
