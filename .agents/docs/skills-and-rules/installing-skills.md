@@ -46,7 +46,6 @@ If you install `.agents/skills/` without `.agents/rules/`, AI agents may attempt
 | `code-quality.md` & `tdd.md` | `code-craft`, `db-design` | Enforces SOLID, DRY, KISS, and test-driven standards during feature creation and refactoring. |
 | `self-grounded-verification.md` | `reviewer`, `web-qa-audit` | Requires machine-verifiable proof before claiming tasks are "done" or tests pass. |
 | `git-safety.md` & `execution-safety.md` | `subagent-dispatch`, `devsecops` | Protects git status/staging, prevents destructive shell commands, and guards credentials. |
-| `memory.md` | `memory` | Standardizes short-term handoffs and long-term dream-cycle consolidation across agent sessions. |
 
 ---
 

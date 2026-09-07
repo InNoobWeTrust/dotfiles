@@ -1,6 +1,6 @@
 ---
 name: skill-author
-description: "Use this skill whenever creating, modifying, editing, auditing, or maintaining skills, rules, or governance files in .agents/. Mandatory whenever editing files in .agents/skills, .agents/rules, or .agents/instructions. Follows official specs from https://agentskills.io and https://agents.md."
+description: "Use this skill whenever creating, modifying, editing, auditing, or maintaining skills, rules, or governance files in .agents/. Mandatory whenever editing files in .agents/skills or .agents/rules. Follows official specs from https://agentskills.io and https://agents.md."
 ---
 
 # Skill Author

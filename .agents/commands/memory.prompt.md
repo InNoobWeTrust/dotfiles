@@ -8,7 +8,7 @@ description: >
   "save handoff", "checkpoint", "save context", "resume", "restore",
   "what was I working on", "consolidate memory", "dream cycle",
   "prune memory", "forget", "structure docs", "split module".
-  For auto-triggers, see ../rules/memory.md.
+  Memory operations are opt-in only — this command runs on explicit user request.
 ---
 
 ## Setup

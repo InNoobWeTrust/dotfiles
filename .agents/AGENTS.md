@@ -1,7 +1,6 @@
 # AGENTS.md — Universal Agent Instructions
 
-> Entry point for any AI agent harness working in this repository.
-> Kilo uses `instructions/agent-instructions.md`; all other harnesses (Claude, Codex, Gemini/Antigravity, Hermes, etc.) use this file.
+> Universal entry point for all AI agent harnesses (Kilo, Claude, Codex, Gemini/Antigravity, Hermes, etc.) working in this repository.
 
 ## Project
 
@@ -18,44 +17,19 @@ AGENTS.md (this file — product constraints, operating rules, harness wiring)
       └─ skills/INDEX.md      → SKILL.md → references/*
 ```
 
-**Do not bulk-load every rule or skill.** Use `rules/INDEX` as the map; load a rule body only when its trigger fires.
+**Do not bulk-load rules or skills.** Use `rules/INDEX` as the map, load a rule body only when its trigger fires, and load a skill reference only when its workflow requires it.
 
-## Rules (always-on pointers)
+## Core Principles
 
-These rules apply automatically. Read `rules/INDEX` for the full map; load a rule body only when its trigger fires or you must enforce a gate.
-
-| Rule | Applies to | File |
-|---|---|---|
-| Code Quality Baseline | Every file you write or modify | `rules/code-quality.md` |
-| Grooming (Reverse Interview) | Plans, complex tasks | `rules/grooming.md` |
-| Ubiquitous Language | Logic modification | `rules/ubiquitous-language.md` |
-| TDD | Logic modules, services, algorithms | `rules/tdd.md` |
-| Vertical Slicing | Feature plans, checklists | `rules/slicing.md` |
-| Phased Delivery | Multi-step product/feature delivery, roadmaps, phased execution | `rules/phased-delivery.md` |
-| Skill Compliance | After loading any skill | `rules/skill-compliance.md` |
-| Self-Grounded Verification | Verification, self-review, "done" claims | `rules/self-grounded-verification.md` |
-| **Tool-Call Integrity** | **Every tool call with side effects (file write, move, API call, shell command)** | **`rules/tool-call-integrity.md`** |
-| Autonomy Safety | Auto-approved tools, AFK, waived prompts | `rules/autonomy-safety.md` |
-| Execution Safety | Running commands, scripts, reading env/config | `rules/execution-safety.md` |
-| Memory | Session save/restore, dream cycle, eviction | `rules/memory.md` |
-| **Git Safety** | **All git operations (staging, committing, pushing)** | **`rules/git-safety.md`** |
-
-## Memory Recall (Before Routing)
-
-**Before selecting a skill, exploring the codebase, or planning any multi-step task, run the `memory` skill's Recall mode.** Prior sessions may have already mapped the repo, identified constraints, or recorded decisions that eliminate entire investigation phases.
-
-This means reading the repo-local memory files directly (`.agents/memory/short-term/` and `.agents/memory/long-term/` per `skills/memory/references/hierarchy-and-storage.md`), not any harness-specific memory tool. Memory is portable file state owned by the `memory` skill — any harness-provided memory feature is unrelated context, not authoritative here.
-
-1. Resolve `MEMORY_DIR` (`<git-root>/.agents/memory/` if in a repo, else `~/.agents/memory/`).
-2. **If `MEMORY_DIR` does not exist or is empty** — this is a fresh workspace with no prior memory. Note this in your working context (the directory will be created on the first Capture or pre-commit memory checkpoint) and continue. **Do not treat "no memory yet" as "memory is not needed"** — the session may still produce knowledge worth capturing later.
-3. If `MEMORY_DIR` exists, grep `long-term/INDEX.md` and glob `short-term/*--<branch-slug>--*.md` for the current branch and 2-4 keywords from the request.
-4. If a matching short-term entry or long-term topic is found, read it and use it to skip redundant file reads, inform skill selection, and surface prior constraints before planning.
-
-This step is nearly free and can replace an entire codebase exploration phase. Do not skip it because a task "seems simple."
+- Treat the triggered rules in `rules/INDEX` as binding; load the applicable body before acting.
+- Verify tool outcomes, protect secrets, and use the repository's quality and verification gates.
+- Delivery is phased and MVP-first; load Phased Delivery only when its trigger applies.
 
 ## Skill Routing
 
 Match user **intent** against skill descriptions in `skills/INDEX.md` to select one primary skill; optionally add one review/safety lens.
+
+**Rewrite / overhaul / delete-and-rebuild work:** load Grooming, then `code-craft`. Before implementation, identify each old semantic/interface as **delete** or **preserve**; when a public API or consumer app is affected, require an approved consumer-facing contract/stub and sign-off.
 
 **Default for implementation tasks: load `code-craft`.** It is the baseline for ANY non-trivial code write, feature, refactor, or restructuring. Do not skip it because the task seems simple — if it touches logic, load it.
 
@@ -63,20 +37,16 @@ Match user **intent** against skill descriptions in `skills/INDEX.md` to select 
 
 **High-frequency skills** (load on matching intent):
 - `systematic-investigation` — debugging, root cause, "why is this broken"
-- `codebase-exploration` — unfamiliar repo, "where is X," trace call chains (run Memory Recall first — prior sessions may have already mapped this)
+- `codebase-exploration` — unfamiliar repo, "where is X," trace call chains
 - `reviewer` — explicit review/audit/check requests, security lens, edge-case analysis
 - `skill-author` — creating/modifying/auditing skills, rules, or `.agents/` governance
 
-Loading or reading a skill's `SKILL.md` is a binding commitment to execute its complete workflow. See `rules/skill-compliance.md`.
+Activating a skill by reading its `SKILL.md` is a binding commitment to execute its smallest applicable workflow. Catalog/index inspection for routing is not activation. See `rules/skill-compliance.md`.
 
 ## Git Safety (summary — full rule in `rules/git-safety.md`)
 
-- **Never auto-stage or auto-commit:** Staging (`git add`), committing (`git commit`), and pushing (`git push`) each require separate, explicit human review and approval.
-- Inspect status and diffs before staging or committing.
-- Stage explicit files only; never `git add .` or `git add -A`.
-- Do not stage secret-bearing files (`.env`, `*.pem`, `*.key`, `auth.json`, `credentials.json`).
-- No destructive git operations without explicit user approval.
-- **Pre-commit memory checkpoint**: before committing, run `rules/memory-checkpoint.md` — capture session work not yet in short-term memory, then run the mandatory report-only consolidation pass (subagent by default, main agent only if delegation is unavailable).
+- Never stage, commit, push, or use destructive Git actions without the required explicit approval; inspect status and diffs first.
+- Stage explicit non-secret files only; never use `git add .` or `git add -A`.
 
 ## Process Management
 

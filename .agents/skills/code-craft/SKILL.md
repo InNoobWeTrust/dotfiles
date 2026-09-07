@@ -5,119 +5,55 @@ description: "Use this skill for any non-trivial code write, feature implementat
 
 # Code Craft
 
-Implementation workflow for non-trivial code. **Hard constraints** (naming, nesting, prohibited patterns, debt markers) live in always-on `rules/code-quality.md` and `rules/tdd.md` — obey them; do not restate them here.
+Core delivery router for non-trivial implementation. Obey always-on `rules/code-quality.md` and `rules/tdd.md`; they own hard constraints, naming, prohibited patterns, and debt markers. Skip only for typos, formatting, config values, and logic-neutral renames.
 
-**Skip only for:** typos, formatting, config values, renames with no logic change.
+## Track selection
 
-Progressive disclosure: load refs only when the phase needs them.
+Choose the smallest track that preserves acceptance criteria, hard invariants, and safety. When phased delivery applies, use the roadmap or active milestone packet and canonical compromise register in `../../rules/phased-delivery.md`.
 
-| When | Load |
-|---|---|
-| Writing implementation (Phase 3) | `references/write-standards.md` |
-| Long tool chain, confidence drop, or thrash smell during Phase 3/4 | `references/trajectory-checkpoint.md` |
-| Tempted by a shortcut | `references/anti-patterns.md` |
+| Track | Use when | Required controls |
+|---|---|---|
+| **Patch** | Bounded defect or logic correction, no new slice | Compact Phase 1; fault contract; tests/quality evidence; targeted Phase 4 audit |
+| **MVP Slice** | One independently valuable shippable slice | Scope/non-goal boundary; acceptance criteria; relevant Phase 2 checks; do not prebuild the next slice |
+| **Expansion / Refactor** | Multiple slices, public-surface evolution, or structural change | All phases; phased slice ordering; compatibility and migration/rollback where relevant; full SOLID review |
+| **Hardening** | Security, data integrity, reliability, recoverability, or high-risk compatibility work | All phases; risk-specific verification; fail-safe/recovery evidence; no unresolved hard-invariant breach |
 
----
+## Rewrite and consumer hard gate
 
-## Track Selection (before workflow)
+For rewrite, overhaul, or delete-and-rebuild work, load Grooming first. Before Phase 1, classify every old semantic/interface as **delete** or **preserve**. If a public API or consumer app is affected, define consumer-facing signatures/schema and stubs and obtain sign-off before implementation. Do not infer the contract, preserve old behavior by default, or patch old code when deletion is intended.
 
-Select the smallest delivery track that preserves the current acceptance criteria, hard invariants, and safety. Only when the phased-delivery trigger applies, use the roadmap or active milestone packet's phase/slice reference and canonical compromise-register references; lifecycle ownership remains with `../../rules/phased-delivery.md`.
+## Workflow
 
-| Track | Use when | Minimum phases / outputs | Strongest mandatory controls |
-| --- | --- | --- | --- |
-| **Patch** | Bounded defect or logic correction with no new slice | Compact Phase 1 intent, Phase 3 change, targeted Phase 4 audit | Reproduce or state the fault contract; tests and quality evidence for changed logic |
-| **MVP Slice** | One independently valuable, shippable slice | Compact Phase 1, relevant Phase 2 checks, Phase 3 implementation/tests, Phase 4 audit | In-scope/non-goal boundary, acceptance criteria, explicit constraints, do not prebuild the next slice |
-| **Expansion / Refactor** | Multiple slices, public-surface evolution, or structural change | All five phases and phased slice ordering | Compatibility, migration/rollback where relevant, full SOLID and quality review |
-| **Hardening** | Security, data integrity, reliability, recoverability, or high-risk compatibility work | All five phases plus risk-specific verification | Fail-safe behavior, recovery evidence, relevant security/data controls, no unresolved hard-invariant breach |
+1. **Phase 1 — Design Intent:** Before writing, load `references/design-intent-template.md` for non-trivial work or when a full/compact intent is required. For a greenfield language/framework choice or substantial platform capability, first load `references/languages/README.md`, then the smallest matching language reference. Repository conventions and explicit constraints win.
+2. **Phase 2 — SOLID review:** Before writing, load `references/solid-checklist.md`. Patch and MVP Slice apply relevant boundary checks and explicitly mark N/A; Expansion / Refactor and Hardening complete the full checklist.
+3. **Phase 3 — Write:** Follow TDD (RED → GREEN → REFACTOR) and post test evidence. Load `references/write-standards.md`; re-check a selected language reference when Phase 1 selected a new stack/capability. Prefer repo-native `make` or scripts. On drift, long tool chains, confidence loss, or thrash, load `references/trajectory-checkpoint.md` before continuing.
+4. **Phase 4 — Readability audit:** Load `references/write-standards.md` and audit as a new engineer. Fix clarity issues or mark `// CLARITY:`; create or update module `README.md` when responsibility or public surface changes.
+5. **Phase 5 — Tech-debt inventory:** For phased delivery, record material or cross-slice deferred debt in the canonical compromise register. Otherwise record only small local deferrals in change context. Never prebuild infrastructure, abstractions, flags, or extension points speculatively.
 
-## Workflow (5 phases — calibrated by track)
+## Hard stops
 
-### Phase 1 — Design Intent (before writing)
-
-When choosing a greenfield language/framework stack or adding a substantial platform capability, first load `references/languages/README.md`, then the smallest matching reference. Existing repository conventions and explicit project constraints always win.
-
-For Expansion / Refactor and Hardening, produce the full block. For Patch and MVP Slice, it may be compact but must include the required slice fields first:
-
-```
-DESIGN INTENT
-=============
-In scope        :
-Non-goals       :
-Milestone/phase/slice reference: [when present]
-Acceptance criteria:
-Constraints     :
-Known compromises: [canonical register references when phased; local deferrals otherwise; or none]
-Unit name       :
-Responsibility  : [one sentence, no "and"]
-Caller interface: [in → out]
-Glossary Sync   : yes/no
-Interface contract: [signature / schema]
-Docstring Spec  : yes/no
-Interface sign-off: yes/no/assumed-approved (AFK only)
-Module README   : yes/no/updated
-Technology choice: [repo-native stack / established package + why]
-Dependencies    : [existing first; new packages + maintenance/license/security fit]
-Vendoring        : no / explicit user opt-in + rationale
-Quality tools   : [repo-native commands first]
-Complexity guard:
-Isolation test  : yes/no
-Error budget    :
-Failure contract:
-Ambiguity policy:
-Traceability    :
-```
-
-For a Patch, `In scope`, `Non-goals`, acceptance criteria, constraints, and known compromises may be one line each. For an MVP Slice, they are mandatory even when every other field is compact. Do not invent a milestone or canonical-register reference when none exists.
-
-**Technology default:** preserve the repository's established stack. Prefer the standard library/platform when it is suitable; otherwise, use a mature, maintained, production-proven ecosystem package rather than recreating an adequately supplied capability. Vendored third-party copies and deliberate dependency-free reimplementations are exceptions: require explicit user opt-in, or an existing repository policy, and record their ownership, update, and security rationale.
-
-**STOP if:** isolation = no → redesign; interface sign-off = no (interactive) → get approval; edge-case semantics unspecified → ask (AFK: fail closed, do not invent fallbacks); a proposed vendored/reimplemented capability lacks explicit opt-in or documented repository policy → choose the platform/established dependency or clarify.
-
-### Phase 2 — SOLID checklist (before writing)
-
-| Check | Pass? |
-|---|---|
-| S — one responsibility | ☐ |
-| O — extend without rewrite | ☐ |
-| L — no weakened contracts | ☐ / N/A |
-| I — minimal public surface | ☐ |
-| D — depend on abstractions | ☐ |
-| Docstrings on public APIs | ☐ |
-| Deep modules (no shallow 1–3 line helpers) | ☐ |
-| YAGNI | ☐ |
-| SoC — logic free of framework/IO details | ☐ |
-| Complexity budget OK | ☐ |
-
-For Patch and MVP Slice, apply only checks relevant to the touched boundary and record N/A explicitly. Unchecked applicable items → fix or, when the phased-delivery trigger applies, record a material, cross-slice compromise through the shared compromise register. Otherwise record only a small local deferral in the change context; never use a local debt marker as a substitute for a required safety or correctness fix.
-
-### Phase 3 — Write
-
-1. Obey `rules/code-quality.md` + `rules/tdd.md` (RED → GREEN → REFACTOR; post test output).
-2. Load `references/write-standards.md` for: defensive boundaries, immutability, invariants, types, quality tooling pass, docstrings, abstraction rules.
-3. Re-check the selected language/framework reference before implementation when Phase 1 identified a new stack or substantial platform capability.
-4. If the task crosses a long tool chain, confidence drops, or you detect thrash/re-reading, run the micro-protocol in `references/trajectory-checkpoint.md` before continuing.
-5. Prefer repo-native `make` / scripts over ad-hoc tool installs.
-
-### Phase 4 — Readability audit
-
-As a new engineer: entry point, flow by names, side effects, error path, resilience, ambiguity handling, metric smells, docstrings, deep helpers. Fix or `// CLARITY:`. Create/update module `README.md` when the public surface or responsibility changes.
-
-### Phase 5 — Tech debt inventory
-
-When the phased-delivery trigger applies, inventory material deferred debt through the canonical compromise register in `../../rules/phased-delivery.md`. For Patch and MVP Slice in that context, create or update a shared canonical entry only when the debt is material or crosses slices. For non-phased work, record only small local deferrals in the change context. Do not create future infrastructure, abstractions, flags, or extension points solely to anticipate it.
-
----
+- Isolation fails: redesign.
+- Required consumer contract/stubs or interface sign-off is missing or unapproved: obtain approval.
+- Edge-case semantics are unspecified: clarify; AFK fails closed and invents no fallback.
+- Vendoring or reimplementing an adequately supplied capability lacks explicit opt-in or repository policy: use the platform/established dependency or clarify.
+- Applicable SOLID, safety, or correctness check fails: fix; only material cross-slice phased debt may enter the canonical register. Local debt never substitutes for a required safety or correctness fix.
 
 ## Deliverable
 
-- [ ] Track selected; outputs and strongest controls satisfied
-- [ ] Phase 1 design intent includes in scope, non-goals, milestone/phase/slice reference when present, acceptance criteria, constraints, and canonical compromise-register references when phased or local deferrals otherwise
-- [ ] Phase 2 applicable checklist passed or material cross-slice compromise recorded
-- [ ] Code follows `rules/code-quality.md` / `rules/tdd.md`
-- [ ] Write-standards applied (Phase 3 ref when needed)
-- [ ] Trajectory checkpoint used when drift/thrash signals appeared
-- [ ] Tests: written first, evidence posted
-- [ ] No invented semantic fallbacks
-- [ ] Readability audit + module README when module responsibility/public surface changed
-- [ ] When phased delivery applies, material/cross-slice future debt is entered in the shared compromise register; non-phased small local deferrals stay in the change context; no speculative prebuild
-- [ ] Prohibited patterns: see `rules/code-quality.md` (not duplicated here)
+- [ ] Track controls, Phase 1 intent, and applicable Phase 2 review are complete.
+- [ ] TDD/write standards are applied, tests are written first, and evidence is posted.
+- [ ] No invented semantic fallback; rewrite transitions and required consumer contracts/stubs are approved.
+- [ ] Readability audit and required module README maintenance are complete.
+- [ ] Drift checkpoint and debt-recording rules are followed; no speculative prebuild.
+
+## References
+
+| When to read | Reference |
+|---|---|
+| Phase 1 detail; full/compact Design Intent; technology, vendoring, consumer, rewrite, and stop-gate requirements | `references/design-intent-template.md` |
+| Phase 2 design-quality checks and deferral handling | `references/solid-checklist.md` |
+| Phase 3 writing or Phase 4 readability/module-README details | `references/write-standards.md` |
+| Greenfield stack or substantial platform capability | `references/languages/README.md` and the smallest matching language reference |
+| Long tool chain, confidence drop, re-reading, or thrash in Phase 3/4 | `references/trajectory-checkpoint.md` |
+| Tempted by a design shortcut | `references/anti-patterns.md` |
+| Phased delivery or material cross-slice debt | `../../rules/phased-delivery.md` |

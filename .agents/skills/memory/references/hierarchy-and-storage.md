@@ -75,7 +75,7 @@ tags: [session, decision, blocker]
 
 ### Frontmatter resilience
 
-Frontmatter drifts over time — entries get created by different tools, hand-edited, or predate a field being added. Any process that scans `short-term/` (Consolidate gather, Recall listing, the git-safety pre-commit checkpoint) must fail open toward inclusion, never fail closed toward silent skipping:
+Frontmatter drifts over time — entries get created by different tools, hand-edited, or predate a field being added. Any process that scans `short-term/` (Consolidate gather, Recall listing, or any explicit user-requested memory operation) must fail open toward inclusion, never fail closed toward silent skipping:
 
 | Missing / malformed field | Treat as | Why |
 |---|---|---|
@@ -236,7 +236,7 @@ When in doubt, leave it in short-term. Consolidate promotes only what clears thi
 
 ## Capture mode
 
-Use when the user asks to save a checkpoint, note, or working state, or when a natural breakpoint is reached and the user opted into auto-save.
+Use when the user explicitly asks to save a checkpoint, note, or working state.
 
 1. Resolve `MEMORY_DIR`. **If `MEMORY_DIR` or `short-term/` does not exist, create the full directory structure** (`short-term/`, `short-term/archive/`, `long-term/`, `long-term/topics/`, `archive/`) now. A missing directory is the bootstrap case — proceed with Capture, do not abort.
 2. Decide bucket:
@@ -248,13 +248,6 @@ Use when the user asks to save a checkpoint, note, or working state, or when a n
    - No match → create new, with `created-stamp` = now (UTC, compact form) and frontmatter `created` = now (ISO 8601 with offset).
 4. Inline crucial state from plans, review findings, or scratchpads so the entry is self-contained.
 5. Print: mode, file path (noting any rename), sections touched, whether Consolidate is now pending.
-
-**Auto-save triggers** (only if the user has enabled autonomy for this session):
-
-- Direct request ("save handoff", "checkpoint", "note this").
-- Major milestone (bounded-iteration phase completes, feature slice merges).
-- Before any destructive command.
-- Context length near budget.
 
 Never treat Capture as a Consolidate trigger. Consolidate has its own rules in `references/dream-cycle.md`.
 

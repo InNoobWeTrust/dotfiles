@@ -1,7 +1,7 @@
 ---
 description: "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs."
-model: "github-copilot/claude-sonnet-4.6"
 mode: subagent
+model: "github-copilot/claude-sonnet-4.6"
 variant: high
 permission:
   bash: allow

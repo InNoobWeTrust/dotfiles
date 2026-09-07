@@ -14,9 +14,8 @@ Materialize this pack into `<project>/.agents/` so agents work **even when globa
 | `skill-compliance.md` | Yes | Binding skill execution |
 | `self-grounded-verification.md` | Yes | Anti agreement-bias |
 | `autonomy-safety.md` | Yes | Elevated autonomy / AFK |
-| `INDEX` | Yes (project) | Rule map required by `agent-instructions.md` |
+| `INDEX` | Yes (project) | Rule map and routing foundation |
 | `skills-discovery.md` | Yes (project) | Index-first routing |
-| `memory.md` | Yes (project) | Capture / recall / consolidate / evict |
 | `command-routing.md` | Optional | Only if project has local commands |
 
 Do **not** invent project-only rule bodies that duplicate global content. Materialize from the global pack, then add **project overlays** only for true local exceptions (prefer `AGENTS.md` for product constraints). Treat a missing `rules/INDEX` as a broken instruction-routing foundation.

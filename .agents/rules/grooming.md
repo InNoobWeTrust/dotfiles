@@ -22,7 +22,7 @@ When this rule is activated (by a plan request, the `/grill-me` command, or ambi
     *   **Goal & Boundaries**: What is the ultimate "Definition of Done"? What is explicitly *out of scope*?
     *   **Edge Cases & Failure Modes**: How should the system handle missing data, network timeouts, or filesystem limits?
     *   **Dependencies**: What libraries, services, or files does this hook into? Are there strict versioning or performance bounds?
-    *   **Interface Concept**: What does the inputs-outputs flow look like from the perspective of the caller/user?
+    *   **Interface Concept & Compatibility**: What does the inputs-outputs flow look like from the caller/user perspective? For rewrites or major overhauls, which old interfaces or semantics are deleted, which remain, and is this a breaking public-contract change?
 
 ---
 
@@ -30,6 +30,7 @@ When this rule is activated (by a plan request, the `/grill-me` command, or ambi
 
 *   **Standard / Deep Tasks**: Perform a full reverse interview when ambiguity is genuine, reversibility is expensive, or the work needs standard/deep design scrutiny. Wait for the user's answers before drafting the corresponding plan or spec.
 *   **Quick / MVP Slice**: Proceed when the user intent, current task scope boundary, acceptance check, and non-deferrable safety constraints are clear. Do not impose a full interview gate. If a small ambiguity remains, ask *one* focused question or record a reversible assumption; escalate to the full interview if it materially affects outcome, cost of reversal, safety, data, or a public contract.
+*   **Rewrite-Scoped Tasks**: When the user says "rewrite," "overhaul," "delete and rebuild," or "complete redesign," ask one additional probe: "Which prior interfaces or behaviors must be deleted rather than preserved?" If the answer is vague or affects a public contract, escalate to the full interview.
 *   **Non-Interactive / Automated / AFK Mode** (e.g., scheduled cron, background bounded iteration): Do not block execution waiting for a prompt. Instead, perform a **Self-Grooming Audit** by analyzing the codebase, documenting your design concept and assumptions clearly in the task log or scratch space, and proceeding with execution. The Self-Grooming block MUST use this structure:
     ```markdown
     ### 🤖 Self-Grooming Audit (AFK Mode)
@@ -38,3 +39,13 @@ When this rule is activated (by a plan request, the `/grill-me` command, or ambi
     - **Assumptions Made**: [list of critical assumptions that bypass human review]
     - **Perceived Risks & Mitigations**: [risk points e.g., thread safety, backwards compatibility, and how they are handled]
     ```
+
+---
+
+## Rewrite & Consumer Interface Gate
+
+For a rewrite, overhaul, or delete-and-rebuild task, complete this gate before handing work to `code-craft`:
+
+1. List the old semantics and interfaces, marking each **delete** or **preserve**. Do not retain behavior by default.
+2. If a public API or consumer app is affected, define consumer-facing signatures/schema and stubs, then obtain sign-off.
+3. **Stop and clarify** if that consumer contract is missing or unapproved; implementation must not infer or hide it.

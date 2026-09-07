@@ -118,7 +118,7 @@ Eviction is two-step. Never delete on the first pass.
 - Present them to the user for permanent deletion.
 - Only then remove the archive file.
 
-**AFK / autonomy-safety exception**: If the user is AFK and a hard limit is breached, run Step 1 for the lowest-scored entries so the workspace stays functional, but do not proceed to Step 2 without human approval. Log the archive action in the next handoff/short-term entry.
+Both steps require explicit human approval. Do not archive or delete automatically regardless of AFK status, autonomy settings, or how far over a size limit the store is.
 
 ---
 

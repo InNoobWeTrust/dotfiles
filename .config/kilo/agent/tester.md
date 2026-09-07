@@ -1,8 +1,8 @@
 ---
 description: "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only."
 mode: subagent
-model: "github-copilot/gpt-5.4"
-variant: instant
+model: "kilo/openai/gpt-5.6-luna"
+variant: xhigh
 permission:
   bash: allow
   edit: allow

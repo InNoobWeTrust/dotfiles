@@ -1,8 +1,8 @@
 ---
 description: "An assistant focused on answering questions without changing your codebase"
-model: "proxy/forbiddengun/auto-free"
 mode: primary
 hidden: true
+model: "proxy/forbiddengun/auto-free"
 permission:
   edit: deny
   read: allow

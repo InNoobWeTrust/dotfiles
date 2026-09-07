@@ -1,11 +1,8 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
-  "model": "openai/gpt-5.5",
+  "model": "openai/gpt-5.6-terra",
   "small_model": "kilo/kilo-auto/free",
   "default_agent": "autonomous",
-  "instructions": [
-    "~/.agents/instructions/agent-instructions.md",
-  ],
   "compaction": {
     "auto": true,
     "prune": true,

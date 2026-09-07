@@ -1,7 +1,7 @@
 # Rules map (index-first routing)
 
 **Do not load every file in this directory into context.**  
-Always-on entries are `../AGENTS.md` (universal, all harnesses) and `../instructions/agent-instructions.md` (kilo). Both **point** at rules. Load a rule body only when its trigger fires or you must enforce a gate.
+`../AGENTS.md` is the universal always-on entry point for all harnesses. It **points** at rules. Load a rule body only when its trigger fires or you must enforce a gate.
 
 ## Always-Active (pointers in AGENTS.md / instructions)
 
@@ -28,8 +28,6 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 | `phased-delivery.md` | Multi-step product/feature delivery, roadmap/milestone planning, or phased execution | medium |
 | `skills-discovery.md` | Need to choose a skill (index-first) | small |
 | `command-routing.md` | User request maps to a slash/command workflow | tiny |
-| `memory.md` | Capture / recall / consolidate / evict memory | small |
-| `memory-checkpoint.md` | Pre-commit memory checkpoint; invoked from `git-safety.md` before every commit | small |
 | `requirements-driven-dev.md` | Adapter → load `requirements-driven-dev` skill | tiny |
 
 ## Layering

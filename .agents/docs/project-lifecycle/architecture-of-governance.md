@@ -34,7 +34,6 @@ The project's `.agents/` directory follows this structure:
 │   ├── slicing.md            # Vertical slicing for feature work
 │   ├── skill-compliance.md   # Loading a skill = binding commitment to full workflow
 │   └── self-grounded-verification.md # Anti-agreement-bias: separate criteria from artifact
-│   ├── memory.md             # When to capture/recall/consolidate/evict memory
 │   └── skills-discovery.md   # How to select the right skill for a task
 │
 ├── skills/                   # Complete workflows loaded per-task

@@ -197,7 +197,7 @@ Natural transitions between skills:
 | `reviewer` (investment-memo lens) | `investment-assessment` | "Review failed gates; revise size/allocation" |
 | Any skill | `memory` (Capture) | "Handoff requested, serializing context and saving progress" |
 | `memory` (Recall) | Any skill | "Session restored, resuming active work" |
-| Any skill | `memory` (Consolidate via Subagent) | "Commit pending or explicit dream-cycle request, running report-only consolidation first" |
+| Any skill | `memory` (Consolidate via Subagent) | "Explicit consolidation request — user says 'consolidate memory', 'dream cycle', 'run consolidation', or 'review my notes'" |
 | `memory` (Consolidate via Subagent) | `memory` (Consolidate) | "Approval received or delegation unavailable; applying approved memory writes" |
 | `memory` (Consolidate) | `memory` (Evict) | "Long-term size limits passed, running eviction pass" |
 | Any skill | `memory` (Structure) | "Applying progressive-disclosure pattern to a docs directory or code module" |

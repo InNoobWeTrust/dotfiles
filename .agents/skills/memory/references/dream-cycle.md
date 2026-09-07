@@ -1,6 +1,6 @@
 # Dream Cycle — Consolidation
 
-The dream cycle is the only path from short-term memory to long-term memory. It runs on **explicit request** or a **git commit signal**. It never runs silently on every message.
+The dream cycle is the only path from short-term memory to long-term memory. It runs on **explicit user request only**. It never runs silently — not on every message, not on commits, not on context thresholds.
 
 The cycle has four phases. Phases run in order; do not skip.
 
@@ -11,27 +11,27 @@ The cycle has four phases. Phases run in order; do not skip.
 Trigger the cycle when any of these fire:
 
 - User says "consolidate memory", "dream cycle", "run consolidation", "review my notes".
-- User says "save handoff" or "checkpoint" **and** more than one short-term entry has `consolidated: false`.
-- A git commit is about to be made and short-term memory has `consolidated: false` entries. Detect by:
-  - `git diff --cached --name-only` returns non-empty, **or**
-  - User typed a commit command in the same message ("commit this", "make a commit").
-- `long-term/INDEX.md` frontmatter `last_dream_cycle` older than 7 days and short-term has any `consolidated: false` entry. This is advisory — offer the cycle, do not auto-run.
+
+**"checkpoint" and "save handoff" trigger Capture only** — not consolidation. Consolidation requires an explicit consolidation request as above.
 
 Do **not** trigger on:
 
 - Every Capture.
 - Individual short-term captures that add a single line to an existing entry.
 - Session start.
+- A git commit event — commit does not auto-trigger the dream cycle.
+- Context length thresholds or session startup.
+- `long-term/INDEX.md` age (a stale `last_dream_cycle` timestamp is informational; do not auto-run).
 
 ---
 
-## Subagent consolidation (default at commit time)
+## Subagent consolidation (recommended path)
 
 To avoid main-agent context bloat, the main agent should **Capture** the current work and then **delegate consolidation to a subagent**. The subagent does not need the prior conversation transcript — it only needs the capture note and access to the memory directories.
 
 ### When to use
 
-- A commit is imminent and the main agent is in the middle of a task.
+- The user explicitly requests consolidation and the main agent is in the middle of a task.
 - The short-term entry is long or mixes multiple workstreams.
 - The main agent wants to avoid loading the full `dream-cycle.md`, `eviction-scoring.md`, and `compaction-and-step-recall.md` workflow.
 
@@ -68,7 +68,7 @@ Return:
 
 ### Fallback if subagent is unavailable
 
-The main agent runs the same Consolidate procedure directly. Do not skip consolidation just because delegation is unavailable.
+Report the limitation to the user (e.g. "subagent delegation is unavailable for consolidation"). Ask whether to proceed with in-agent consolidation or defer to a later session. Do not automatically switch to in-agent Consolidate.
 
 ---
 
@@ -153,25 +153,25 @@ Ranked candidates (low score first):
 Action requested: approve to move to archive/<bucket>/<key>.md
 ```
 
-5. Wait for human approval. In AFK / autonomy-safety mode, move the lowest-scored candidates to `archive/` but **do not delete**; the human confirms deletion on return. See `SKILL.md` §Stop conditions. **This AFK carveout applies only to the existing hard-limit archive exception in Phase 4. It does not authorize ordinary report-only consolidators to archive without approval.**
+5. Wait for human approval. Do not move, archive, or delete anything before the user approves — regardless of AFK status or autonomy settings.
 6. On approval, follow `eviction-scoring.md` §Archive-then-delete protocol.
 
 Never evict from `corrections.md` without an explicit user request naming the correction key.
 
 ---
 
-## Commit-signal integration
+## Optional: Pre-commit memory checkpoint (explicit only)
 
-When the trigger is a pending commit:
+This section applies only when the user explicitly requests a pre-commit memory checkpoint (e.g., "checkpoint before committing", "save memory before commit"). It is **not** an automatic trigger — commits do not invoke this workflow unless the user asks.
 
-1. Coverage first: if no active short-term entry covers the commit's workstream, run a Capture (`hierarchy-and-storage.md` §Capture mode) before running the cycle — there is nothing to consolidate from a conversation that was never recorded. See `rules/memory-checkpoint.md` §Procedure, step 3.
-2. **Default to subagent consolidation**: delegate to a subagent using `../skills/memory/references/dream-cycle.md` §Subagent consolidation. The subagent runs the report-only form of Phases 1–4 and returns a report.
+When the user explicitly requests a pre-commit checkpoint:
+
+1. Coverage check: if no active short-term entry covers the commit's workstream, run a Capture (`hierarchy-and-storage.md` §Capture mode) before running the cycle — there is nothing to consolidate from a conversation that was never recorded. Capture procedure: look for an active (non-`done`) short-term entry for the current branch/workstream; if absent or stale, run `SKILL.md` Capture mode and write a self-contained short-term entry (goal, status, decisions, next steps, blockers).
+2. **Default to subagent consolidation**: delegate to a subagent using §Subagent consolidation above. The subagent runs the report-only form of Phases 1–4 and returns a report.
 3. If subagent delegation is unavailable, run the same analytical pass in the main agent. This may take a minute; tell the user.
-4. For commit-time checkpoints, the mandatory part is the **report-only consolidation pass**. Approval-gated apply work may happen immediately after approval or in a follow-up apply pass.
+4. Run the report-only form of Phases 1–4 and return the report for user approval before any writes. Approval-gated apply work may happen immediately after approval or in a follow-up apply pass.
 5. Show the eviction proposal from Phase 4 but do **not** block the commit on eviction. Eviction can defer to the next dream cycle.
-6. If any long-term files were changed during an approved apply pass, add them to the commit **only if the user asked to include memory changes**. Do not silently stage `.agents/memory/**`.
-
-This keeps the "human dreams after a day of work" behaviour: commit closes the day, consolidation curates memory for the next one without forcing all writes into the main agent's hot path.
+6. If any long-term files were changed during an approved apply pass, include them in the commit **only if the user asked to include memory changes**. Do not silently stage `.agents/memory/**`.
 
 ---
 
@@ -186,10 +186,10 @@ This keeps the "human dreams after a day of work" behaviour: commit closes the d
 
 ## Deliverable
 
-- [ ] Trigger named (explicit request / commit signal / soft-limit advisory).
+- [ ] Trigger named (explicit user request — user's exact phrase quoted).
 - [ ] Subagent path noted if used; subagent report surfaced to user before long-term writes.
 - [ ] Candidate table printed before writing (Phase 2).
 - [ ] Report-only pass lists proposed long-term writes with keys, buckets, and score.
 - [ ] Apply pass regenerates `long-term/INDEX.md` and bumps `last_dream_cycle`.
 - [ ] Apply pass flips approved short-term entries to `consolidated: true`.
-- [ ] Eviction proposal presented (Phase 4); no deletions without approval except the pre-existing AFK hard-limit archive carveout.
+- [ ] Eviction proposal presented (Phase 4); no moves, archives, or deletions without explicit user approval.

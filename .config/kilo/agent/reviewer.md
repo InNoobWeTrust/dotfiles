@@ -1,7 +1,7 @@
 ---
-description: "Code quality review. Read-only. Use after any non-trivial implementation."
+description: "Read-only. Use after any non-trivial implementation/materialization."
 mode: subagent
-model: "github-copilot/claude-sonnet-4.5"
+model: "github-copilot/claude-sonnet-4.6"
 variant: high
 permission:
   bash: allow
@@ -25,4 +25,4 @@ permission:
   recall: allow
 ---
 
-Analyze code using `reviewer` skill. Provide constructive feedback without making direct changes.
+Analyze artifacts using `reviewer` skill. Provide constructive feedback without making direct changes.
