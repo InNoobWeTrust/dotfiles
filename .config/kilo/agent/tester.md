@@ -2,7 +2,7 @@
 description: "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only."
 mode: subagent
 model: "proxy/gpt-5.6-luna"
-variant: xhigh
+variant: max
 permission:
   bash: allow
   edit: allow

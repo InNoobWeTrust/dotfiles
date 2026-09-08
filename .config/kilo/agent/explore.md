@@ -1,7 +1,8 @@
 ---
 description: "Can only use tools with no side-effect"
 mode: subagent
-model: "github-copilot/claude-haiku-4.5"
+model: "github-copilot/mai-code-1.1-flash"
+variant: high
 permission:
   edit: deny
   read: allow

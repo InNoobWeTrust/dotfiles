@@ -2,7 +2,8 @@
 description: "USE SPARINGLY: general fallback when no specialized subagent match."
 mode: all
 hidden: true
-model: "proxy/forbiddengun/auto-frontier"
+model: "github-copilot/gpt-5.4"
+variant: xhigh
 permission:
   bash: allow
   edit: allow
