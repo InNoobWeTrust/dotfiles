@@ -295,6 +295,39 @@
             "context": 1050000,
             "output": 128000,
           },
+          "reasoning": true,
+          "variants": {
+            "none": {
+              "reasoning": {
+                "enabled": false,
+                "effort": "none",
+              },
+            },
+            "low": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "low",
+              },
+            },
+            "medium": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "medium",
+              },
+            },
+            "high": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "high",
+              },
+            },
+            "xhigh": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "xhigh",
+              },
+            },
+          },
         },
         "gpt-5.6-luna": {
           "modalities": {
@@ -310,6 +343,45 @@
           "limit": {
             "context": 1050000,
             "output": 128000,
+          },
+          "reasoning": true,
+          "variants": {
+            "none": {
+              "reasoning": {
+                "enabled": false,
+                "effort": "none",
+              },
+            },
+            "low": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "low",
+              },
+            },
+            "medium": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "medium",
+              },
+            },
+            "high": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "high",
+              },
+            },
+            "xhigh": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "xhigh",
+              },
+            },
+            "max": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "max",
+              },
+            },
           },
         },
         "gpt-5.6-terra": {
@@ -327,6 +399,45 @@
             "context": 1050000,
             "output": 128000,
           },
+          "reasoning": true,
+          "variants": {
+            "none": {
+              "reasoning": {
+                "enabled": false,
+                "effort": "none",
+              },
+            },
+            "low": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "low",
+              },
+            },
+            "medium": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "medium",
+              },
+            },
+            "high": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "high",
+              },
+            },
+            "xhigh": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "xhigh",
+              },
+            },
+            "max": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "max",
+              },
+            },
+          },
         },
         "gpt-5.6-sol": {
           "modalities": {
@@ -343,6 +454,45 @@
             "context": 1050000,
             "output": 128000,
           },
+          "reasoning": true,
+          "variants": {
+            "none": {
+              "reasoning": {
+                "enabled": false,
+                "effort": "none",
+              },
+            },
+            "low": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "low",
+              },
+            },
+            "medium": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "medium",
+              },
+            },
+            "high": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "high",
+              },
+            },
+            "xhigh": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "xhigh",
+              },
+            },
+            "max": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "max",
+              },
+            },
+          },
         },
         "gpt-6-astra": {
           "modalities": {
@@ -358,6 +508,39 @@
           "limit": {
             "context": 1050000,
             "output": 128000,
+          },
+          "reasoning": true,
+          "variants": {
+            "low": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "low",
+              },
+            },
+            "medium": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "medium",
+              },
+            },
+            "high": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "high",
+              },
+            },
+            "xhigh": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "xhigh",
+              },
+            },
+            "max": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "max",
+              },
+            },
           },
         },
       },

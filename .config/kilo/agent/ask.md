@@ -2,7 +2,7 @@
 description: "An assistant focused on answering questions without changing your codebase"
 mode: primary
 hidden: true
-model: "proxy/forbiddengun/auto-free"
+model: "kilo/kilo-auto/free"
 permission:
   edit: deny
   read: allow

@@ -1,8 +1,8 @@
 ---
 description: "Bounded implementation executor for exactly one approved functional unit per call. Receives a single small, independently verifiable unit (or an explicit atomic-patch exception) and implements it against given acceptance criteria. Refuses planning, orchestration, multi-unit batches, architecture decisions, contract design, and scope expansion — returns INCOMPLETE with continuation state instead. Orchestration, unit splitting, and all design decisions stay in the main agent."
 mode: subagent
-model: "github-copilot/gpt-5.4"
-variant: high
+model: "proxy/gpt-5.6-luna"
+variant: max
 permission:
   bash: allow
   edit: allow

@@ -1,8 +1,8 @@
 ---
-description: "USE SPARINGLY: general fallback when no specialized subagent match. Prefer explore for codebase nav, plan for design, code for implementation, debug for bugs."
+description: "USE SPARINGLY: general fallback when no specialized subagent match."
 mode: all
 hidden: true
-model: "proxy/forbiddengun/muse"
+model: "proxy/forbiddengun/auto-frontier"
 permission:
   bash: allow
   edit: allow
