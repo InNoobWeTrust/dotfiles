@@ -11,6 +11,7 @@ Progressive disclosure: this file is the decision gate and router. Deep technica
 
 | Concern | Load |
 |---|---|
+| Querying database patterns, decisions, traps via CLI | `references/pattern-catalog.md` |
 | Entity modeling, 1NF–3NF, PK/FK strategy | `references/schema-modeling.md` |
 | Indexing, composite order, query tuning | `references/indexing-performance.md` |
 | Integrity, structural constraints, enum storage, FK rules | `references/integrity-constraints.md` |
@@ -31,7 +32,7 @@ graph TD
     B -->|"Unstructured / Ephemeral"| E["Redis / Key-Value / Document Store"]
 ```
 
-If the task involves operational OLTP application state (user data, billing, orders, domain entities), proceed with `db-design`. If building analytical warehouses or streaming data pipelines, route to `architecture-design` (`data-architecture.md`).
+If the task involves operational OLTP application state (user data, billing, orders, domain entities), proceed with `db-design`. If building analytical warehouses or streaming data pipelines, route to `architecture-design` (`data-architecture.md`). Query the database pattern catalog (`./.agents/skills/db-design/scripts/search.py "<query>"` or `--decide` / `--traps`) per `references/pattern-catalog.md` to evaluate PK/FK strategies, indexing rules, and zero-downtime migration patterns.
 
 ---
 
@@ -100,6 +101,7 @@ The 7 gates check the **schema design**, but the depth of evidence required depe
 ## References
 
 - `references/INDEX.md` — Master index of DB design reference guides
+- `references/pattern-catalog.md` — Database schema, indexing, and migration pattern search CLI
 - `references/schema-modeling.md` — Normalization, PK/FK strategies, entity modeling
 - `references/indexing-performance.md` — B-Tree, composite indexes, partial indexes, GIN
 - `references/integrity-constraints.md` — Database-level safety & constraints

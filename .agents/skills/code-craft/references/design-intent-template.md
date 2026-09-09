@@ -24,6 +24,7 @@ Docstring Spec  : yes/no
 Interface sign-off: yes/no/assumed-approved (AFK only)
 Module README   : yes/no/updated
 Technology choice: [repo-native stack / established package + why]
+Pattern Grounding : [query / pattern-id from pattern-catalog.md / none]
 Dependencies    : [existing first; new packages + maintenance/license/security fit]
 Vendoring        : no / explicit user opt-in + rationale
 Quality tools   : [repo-native commands first]

@@ -1,7 +1,8 @@
 ---
 description: "Can only use tools with no side-effect"
 mode: subagent
-model: "github-copilot/mai-code-1.1-flash"
+model: "proxy/gpt-5.6-luna"
+model_alt: "github-copilot/mai-code-1.1-flash"
 variant: high
 permission:
   edit: deny

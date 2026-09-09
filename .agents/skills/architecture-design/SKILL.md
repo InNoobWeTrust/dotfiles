@@ -13,6 +13,7 @@ Deep detail lives in `references/`.
 
 | When | Load |
 |---|---|
+| Querying architecture pattern catalog / decisions via CLI | `references/pattern-catalog.md` |
 | Selecting an architecture pattern | `references/patterns/INDEX.md` → specific category |
 | Modular Monolith & Bounded Context design | `references/patterns/modular-architecture.md` |
 | Operational Database Schema Design | Route to `db-design` skill |
@@ -30,6 +31,7 @@ Before starting, determine:
 |---|---|
 | Existing architecture docs? | Read first. Audit before rewriting. |
 | DB schema design needed? | Compose with `db-design` skill. |
+| Micro code implementation / class patterns? | Route to `code-craft` instead. |
 | Code change only, no arch impact? | STOP — skill not needed. |
 | Code review request? | Route to `reviewer` instead. |
 
@@ -115,8 +117,9 @@ Default when nothing matches: **brownfield documentation**.
 When choosing an architecture pattern:
 1. Default to **Modular Monolith** with DDD Bounded Contexts (`references/patterns/modular-architecture.md`) before breaking into premature microservices.
 2. Load `references/patterns/INDEX.md` to explore pattern categories.
-3. Enforce **Hexagonal Architecture (Ports & Adapters)** for domain components — domain logic must not depend on databases, HTTP frameworks, or third-party SDKs.
-4. Enforce **Explicit Contract DTOs** across component interfaces — positional tuples and untyped dictionaries across module boundaries are forbidden.
+3. Query the architecture pattern catalog (`./.agents/skills/architecture-design/scripts/search.py "<query>"` or `--decide` / `--traps`) per `references/pattern-catalog.md` to evaluate system topologies, messaging patterns (Outbox, Sagas, Event Sourcing), and architectural trade-offs.
+4. Enforce **Hexagonal Architecture (Ports & Adapters)** for domain components — domain logic must not depend on databases, HTTP frameworks, or third-party SDKs.
+5. Enforce **Explicit Contract DTOs** across component interfaces — positional tuples and untyped dictionaries across module boundaries are forbidden.
 
 ---
 
@@ -170,6 +173,7 @@ Use one focused interaction, sequence, data-flow, or boundary diagram only when 
 ## References
 
 - `references/INDEX.md` — Master index of architecture references
+- `references/pattern-catalog.md` — Architecture pattern catalog, decision trees, and anti-pattern traps CLI
 - `references/patterns/modular-architecture.md` — Modular Monoliths, Bounded Contexts, Ports & Adapters
 - `references/visualization/c4-mermaid-templates.md` — C4 L1-L3 templates
 - `references/adr-templates.md` — ADR templates

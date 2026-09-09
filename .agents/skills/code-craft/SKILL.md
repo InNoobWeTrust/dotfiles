@@ -24,7 +24,7 @@ For rewrite, overhaul, or delete-and-rebuild work, load Grooming first. Before P
 
 ## Workflow
 
-1. **Phase 1 — Design Intent:** Before writing, load `references/design-intent-template.md` for non-trivial work or when a full/compact intent is required. For a greenfield language/framework choice or substantial platform capability, first load `references/languages/README.md`, then the smallest matching language reference. Repository conventions and explicit constraints win.
+1. **Phase 1 — Design Intent:** Before writing, load `references/design-intent-template.md` for non-trivial work or when a full/compact intent is required. For a greenfield language/framework choice or substantial platform capability, first load `references/languages/README.md`, then the smallest matching language reference. Repository conventions and explicit constraints win. For micro code patterns (Result, Typestate, Functional Options, Builder, Strategy, Specification, Value Object, Discriminated Union, Constructor DI), local concurrency/resilience (worker pools, task groups, backoff/jitter), stack-specific language blueprints, or model traps, query the code-craft pattern catalog (`./.agents/skills/code-craft/scripts/search.py "<query>" --stack <stack>`) per `references/pattern-catalog.md` to prevent model training bias. For macro system topology (Modular Monolith, Hexagonal, CQRS, Sagas, Outbox), route to `architecture-design`; for storage schemas, indexing, and migrations, route to `db-design`.
 2. **Phase 2 — SOLID review:** Before writing, load `references/solid-checklist.md`. Patch and MVP Slice apply relevant boundary checks and explicitly mark N/A; Expansion / Refactor and Hardening complete the full checklist.
 3. **Phase 3 — Write:** Follow TDD (RED → GREEN → REFACTOR) and post test evidence. Load `references/write-standards.md`; re-check a selected language reference when Phase 1 selected a new stack/capability. Prefer repo-native `make` or scripts. On drift, long tool chains, confidence loss, or thrash, load `references/trajectory-checkpoint.md` before continuing.
 4. **Phase 4 — Readability audit:** Load `references/write-standards.md` and audit as a new engineer. Fix clarity issues or mark `// CLARITY:`; create or update module `README.md` when responsibility or public surface changes.
@@ -51,6 +51,7 @@ For rewrite, overhaul, or delete-and-rebuild work, load Grooming first. Before P
 | When to read | Reference |
 |---|---|
 | Phase 1 detail; full/compact Design Intent; technology, vendoring, consumer, rewrite, and stop-gate requirements | `references/design-intent-template.md` |
+| Phase 1 micro code pattern grounding, stack blueprints, resilience, model traps | `references/pattern-catalog.md` |
 | Phase 2 design-quality checks and deferral handling | `references/solid-checklist.md` |
 | Phase 3 writing or Phase 4 readability/module-README details | `references/write-standards.md` |
 | Greenfield stack or substantial platform capability | `references/languages/README.md` and the smallest matching language reference |

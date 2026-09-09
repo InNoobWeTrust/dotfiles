@@ -1,7 +1,7 @@
 ---
 description: "Read-only. Use after any non-trivial implementation/materialization."
 mode: subagent
-model: "github-copilot/claude-sonnet-4.6"
+model: "proxy/gpt-5.6-terra"
 variant: high
 permission:
   bash: allow
