@@ -94,24 +94,6 @@
             "output": 32768,
           },
         },
-        "forbiddengun/muse": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
-              "pdf",
-              "audio",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1048576,
-            "output": 131072,
-          },
-        },
         "forbiddengun/gemini": {
           "modalities": {
             "input": [
@@ -250,33 +232,48 @@
             "output": 131072,
           },
         },
-        "forbiddengun/mimo": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1048576,
-            "output": 131072,
-          },
-        },
-        "forbiddengun/minimax": {
+        "z-ai/glm-5.3-flash-free": {
           "modalities": {
             "input": [
               "text",
               "image",
               "video",
+              "pdf",
             ],
             "output": [
               "text",
             ]
           },
           "limit": {
-            "context": 512000,
+            "context": 1000000,
+            "output": 131072,
+          },
+        },
+        "deepseek/deepseek-v4-flash-free": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 384000,
+          },
+        },
+        "tencent/hy3-free": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 256000,
             "output": 128000,
           },
         },

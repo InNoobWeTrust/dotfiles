@@ -26,25 +26,6 @@ claude-api-key:
   - api-key: "${KILO_API_KEY}"
     base-url: "${KILO_BASE_URL}"
     models:
-      - name: "cohere/north-mini-code:free"
-      - name: "dots-studio/dots-3-note-preview:free"
-      - name: "inclusionai/ling-3.0-flash-fin:free"
-      - name: "inclusionai/ling-3.0-flash-sante:free"
-      - name: "kilo-auto/free"
-      - name: "liquid/lfm-2.5-2.6b:free"
-      - name: "minimax/minimax-m2.7:free"
-      - name: "minimax/minimax-m3:free"
-      - name: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
-      - name: "nvidia/nemotron-3-super-120b-a12b:free"
-      - name: "nvidia/nemotron-3-ultra-550b-a55b:free"
-      - name: "nvidia/nemotron-3.5-content-safety:free"
-      - name: "nvidia/nemotron-3.5-lightning:free"
-      - name: "openrouter/free"
-      - name: "poolside/laguna-s-2.1:free"
-      - name: "poolside/laguna-xs-2.1:free"
-      - name: "stepfun/step-3.7-flash:free"
-      - name: "thinkingmachines/inkling-small:free"
-      - name: "thinkingmachines/inkling:free"
       - name: "openai/gpt-5.4"
       - name: "openai/gpt-5.4-mini"
       - name: "openai/gpt-5.5"
@@ -92,6 +73,14 @@ openai-compatibility:
       - name: "ling-3.0-flash-fin-free"
       - name: "nemotron-3-ultra-free"
       - name: "nemotron-3.5-lightning-free"
+  - name: "orcarouter"
+    base-url: "${ORCAROUTER_BASE_URL}"
+    api-key-entries:
+      - api-key: "${ORCAROUTER_API_KEY}"
+    models:
+      - name: "deepseek/deepseek-v4-flash-free"
+      - name: "z-ai/glm-5.3-flash-free"
+      - name: "tencent/hy3-free"
 
 debug: true
 logging-to-file: true
