@@ -41,9 +41,9 @@ For redesigns or polish of existing UI, perform a brief visual audit as part of 
 
 **Purpose**: Understand what we're building, for whom, under what constraints.
 
-1. Load `references/discovery-questions.md`
-2. Select 3–5 highest-impact questions based on the request
-3. Interview the user (or self-groom per `rules/grooming.md` AFK mode)
+1. Load `references/discovery-questions.md` and `rules/grooming.md` (informed alignment)
+2. Explain observed UI context, decision-relevant terminology, and why pending choices matter before asking
+3. Select at most 3–5 highest-impact questions from the bank; ask only unresolved decisions (or self-groom per `rules/grooming.md` AFK mode)
 4. Create `UX-SPEC.md` from `references/ux-spec-template.md`
 5. Write findings to `UX-SPEC.md` § Discovery
 
@@ -111,7 +111,7 @@ For redesigns: audit existing UI here — identify token violations, spacing iss
 
 ### 5b. Taste Sliders (1–10)
 
-Calibrate creative direction. Ask or infer from Discovery context:
+Calibrate creative direction. Explain what each slider controls and its consequences before asking, or infer from Discovery context:
 
 - **DESIGN_VARIANCE** — 1–3: standard layouts, system fonts. 4–7: curated pairings, considered asymmetry. 8–10: experimental, boutique.
 - **MOTION_INTENSITY** — 1–3: subtle 200ms transitions. 4–7: entrance animations, scroll-reveal. 8–10: parallax, 3D transforms.
@@ -195,7 +195,7 @@ For Deep track: delegate browser verification to `web-qa-audit` skill.
 | Temptation | Why Wrong | Correct Path |
 |---|---|---|
 | Jump to code after reading requirements | Produces UI that drifts from intent — no written spec to anchor against | Complete Phases 1–5, write UX-SPEC.md, THEN code |
-| Skip Discovery ("requirements are clear") | Every ambiguity becomes an ad-hoc decision conflicting with user intent | Ask at least 3 questions; write findings to file |
+| Skip Discovery ("requirements are clear") | Every ambiguity becomes an ad-hoc decision conflicting with user intent | Explain observed context, terms, and consequences first, then ask only unresolved questions (at most 3–5 from the bank); write findings to file |
 | Design only the happy path | Users spend 80% of time in edge states (loading, error, empty) | Fill 10-State Matrix before coding |
 | Pick colors/fonts before understanding user journey | Visual decisions without UX context produce pretty but unusable UI | Journey → Layout → States → THEN Visual |
 | Keep designs in context window only | Context eviction = design amnesia mid-implementation | Write every decision to UX-SPEC.md |

@@ -37,6 +37,10 @@ For implementation, use exactly one basis: a cited approved plan/Active Mileston
 
 When `../../rules/phased-delivery.md` applies, implementation, exploration, and review prompts must populate its canonical Delivery Contract. Do not duplicate its lifecycle, compromise, trajectory, or budget policy. Add only delegation-specific scope-expansion handling, adjacent-finding classification, allowed actions, and incomplete-work continuation state.
 
+## Host-side synthesis gate (mandatory before user-facing decision)
+
+Delegated results are internal evidence, not shared context. Before requesting a user decision/approval grounded in delegated work, follow `../../rules/grooming.md` and synthesize the canonical `Material decision brief` in `references/pillars-and-templates.md`. This skill adds only delegated-specific constraints: do not forward worker prose or transcripts verbatim, do not expose chain-of-thought or orchestration mechanics, and do not ask questions whose meaning depends on unseen files/results. If worker evidence cannot support the brief, verify or report the gap; never manufacture certainty. After the user answers, restate the agreed model and remaining uncertainties. Low-risk factual work with no decision requested needs only a proportional summary. Receiving procedure in `references/prompt-template-and-anti-patterns.md` is mandatory.
+
 ## Essential stop conditions
 
 Do not launch when a planning depth or target is ambiguous, when L1/L2 receives the full goal rather than its section slice, or when an implementation target has zero or multiple units. Stop and report `INCOMPLETE` when acceptance criteria/evidence are missing, a prerequisite is blocked, design or contract decisions remain unresolved, required consumer contracts are missing or unapproved, scope expands, or work would leave the declared writable surface. Never silently rescope or absorb adjacent units.

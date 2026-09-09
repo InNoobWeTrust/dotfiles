@@ -130,6 +130,7 @@ When choosing an architecture pattern:
 - **Illustration-first for canonical docs**: Every canonical architecture section MUST have at least one mermaid diagram. Milestone notes follow their lighter diagram rule below.
 - **Explicit types over tuples**: Inter-component interfaces must use explicit DTO types.
 - **Evidence over aspiration**: Document what IS, mark aspirational targets as "Target State".
+- **Informed alignment for decisions**: Before asking non-trivial choices, present a plain-language decision brief per `rules/grooming.md` — current understanding, evidence, options with consequences — and define C4/DDD/ports-adapters and other jargon only insofar as it affects the decision. Ask only unresolved questions.
 
 ### Artifact Level Calibration
 

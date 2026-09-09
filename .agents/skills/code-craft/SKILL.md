@@ -20,7 +20,7 @@ Choose the smallest track that preserves acceptance criteria, hard invariants, a
 
 ## Rewrite and consumer hard gate
 
-For rewrite, overhaul, or delete-and-rebuild work, load Grooming first. Before Phase 1, classify every old semantic/interface as **delete** or **preserve**. If a public API or consumer app is affected, define consumer-facing signatures/schema and stubs and obtain sign-off before implementation. Do not infer the contract, preserve old behavior by default, or patch old code when deletion is intended.
+For rewrite, overhaul, or delete-and-rebuild work, load `rules/grooming.md` first. Before Phase 1, classify every old semantic/interface as **delete** or **preserve**. If a public API or consumer app is affected, define consumer-facing signatures/schema and stubs and obtain informed sign-off per `rules/grooming.md` — show caller-visible examples, define decision-relevant terms, and explain alternatives/consequences — before implementation. Do not infer the contract, preserve old behavior by default, or patch old code when deletion is intended.
 
 ## Workflow
 
@@ -33,7 +33,7 @@ For rewrite, overhaul, or delete-and-rebuild work, load Grooming first. Before P
 ## Hard stops
 
 - Isolation fails: redesign.
-- Required consumer contract/stubs or interface sign-off is missing or unapproved: obtain approval.
+- Required consumer contract/stubs or informed interface sign-off is missing or unapproved: obtain informed sign-off per `rules/grooming.md` (caller-visible examples + terms + alternatives/consequences) before implementation.
 - Edge-case semantics are unspecified: clarify; AFK fails closed and invents no fallback.
 - Vendoring or reimplementing an adequately supplied capability lacks explicit opt-in or repository policy: use the platform/established dependency or clarify.
 - Applicable SOLID, safety, or correctness check fails: fix; only material cross-slice phased debt may enter the canonical register. Local debt never substitutes for a required safety or correctness fix.
@@ -42,7 +42,7 @@ For rewrite, overhaul, or delete-and-rebuild work, load Grooming first. Before P
 
 - [ ] Track controls, Phase 1 intent, and applicable Phase 2 review are complete.
 - [ ] TDD/write standards are applied, tests are written first, and evidence is posted.
-- [ ] No invented semantic fallback; rewrite transitions and required consumer contracts/stubs are approved.
+- [ ] No invented semantic fallback; rewrite transitions and required consumer contracts/stubs have informed sign-off.
 - [ ] Readability audit and required module README maintenance are complete.
 - [ ] Drift checkpoint and debt-recording rules are followed; no speculative prebuild.
 

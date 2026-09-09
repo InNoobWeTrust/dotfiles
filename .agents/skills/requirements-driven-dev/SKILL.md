@@ -20,7 +20,7 @@ Requirements-driven development is an opt-in workflow for turning product intent
 
 ## Full-Lifecycle Flow
 
-1. **Grooming Interview (Gate 0)**: Before writing formal specs, load `rules/grooming.md`. If standard/deep, ask the user 3-5 clarifying questions to align on the Design Concept. Do not proceed until aligned.
+1. **Grooming Interview (Gate 0)**: Before writing formal specs, load `rules/grooming.md` and follow its informed-alignment sequence. Explain current understanding, evidence, terms, and consequences first, then ask only unresolved questions. Request explicit decision confirmation only when a material unresolved decision exists (per `rules/grooming.md`); do not require ritual confirmation when no material unresolved decision remains.
 2. For multi-step work, establish or update the Active Milestone Packet required by `../../rules/phased-delivery.md`; add or update the roadmap only when delivery has multiple milestones, and keep only the current milestone operationally detailed.
 3. Identify the smallest required artifact: inline acceptance criteria/slice card, PRD, milestone architecture note/TRD, BDD spec, changelog, or verification plan.
 4. Select the lightest safe track: Quick, Standard, or Deep.
@@ -33,7 +33,7 @@ Requirements-driven development is an opt-in workflow for turning product intent
 
 ## Default Flow
 
-1. **Groom Interview**: Load `rules/grooming.md` and clarify Design Concept boundaries if ambiguous.
+1. **Groom Interview**: Load `rules/grooming.md` and follow its informed-alignment sequence — explain understanding, evidence, terms, and consequences first, then clarify only unresolved Design Concept boundaries if ambiguous.
 2. For multi-step work, use an Active Milestone Packet as the minimum delivery shape; add a roadmap only for multi-milestone work, and follow `../../rules/phased-delivery.md` for lifecycle details.
 3. Start with the smallest artifact that makes the current slice verifiable: inline acceptance criteria or a slice card.
 4. Load a formal rule/template only when the canonical escalation table in `../../rules/phased-delivery.md` calls for it.

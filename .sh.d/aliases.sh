@@ -235,6 +235,8 @@ usable npx && \
         ! usable codex && alias codex='npx --yes @openai/codex'
         # Kilo code
         ! usable kilo && alias kilo="npx --yes @kilocode/cli@latest"
+        # Freebuff
+        ! usable frebuff && alias frebuff='npx --yes freebuff'
         # Command code
         ! usable cmdc && alias cmdc='npx --yes command-code@latest'
         # Agent skills manager

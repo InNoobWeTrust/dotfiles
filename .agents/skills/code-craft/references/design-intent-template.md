@@ -21,7 +21,7 @@ Interface contract: [signature / schema]
 Rewrite transition: [old semantics/interfaces → delete | preserve; or N/A]
 Consumer contract/stubs: [required approved / N/A]
 Docstring Spec  : yes/no
-Interface sign-off: yes/no/assumed-approved (AFK only)
+Interface sign-off: informed yes/no/assumed-approved (AFK only; informed = caller-visible examples + terms + alternatives/consequences per rules/grooming.md)
 Module README   : yes/no/updated
 Technology choice: [repo-native stack / established package + why]
 Pattern Grounding : [query / pattern-id from pattern-catalog.md / none]
@@ -47,8 +47,8 @@ When choosing a greenfield language/framework stack or adding a substantial plat
 ## Stop conditions
 
 - **Isolation test = no:** redesign.
-- **Required consumer contract/stubs or interface sign-off missing or unapproved:** obtain approval before implementation.
+- **Required consumer contract/stubs or informed interface sign-off missing or unapproved:** obtain informed sign-off per `rules/grooming.md` (caller-visible examples + terms + alternatives/consequences) before implementation.
 - **Edge-case semantics unspecified:** ask; AFK must fail closed and not invent a fallback.
 - **Proposed vendoring/reimplementation lacks explicit opt-in or documented repository policy:** choose the platform/established dependency or clarify.
 
-For rewrite, overhaul, or delete-and-rebuild work, load Grooming first. Record each old semantic/interface as **delete** or **preserve** before Phase 1. When a public API or consumer app is affected, define consumer-facing signatures/schema and stubs and obtain sign-off; do not infer the contract, preserve old behavior by default, or patch old code when deletion is intended.
+For rewrite, overhaul, or delete-and-rebuild work, load `rules/grooming.md` first. Record each old semantic/interface as **delete** or **preserve** before Phase 1. When a public API or consumer app is affected, define consumer-facing signatures/schema and stubs and obtain informed sign-off (caller-visible examples + terms + alternatives/consequences); do not infer the contract, preserve old behavior by default, or patch old code when deletion is intended.

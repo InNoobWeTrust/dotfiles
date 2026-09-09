@@ -155,6 +155,9 @@ When the delegated worker returns:
     - The delegated worker performed a forbidden action (e.g., wrote a file it was not allowed to touch).
     - For a code implementer target: the worker executed more than the single selected unit, silently rescoped, touched anything outside the declared writable surface, or returned without a continuation state after hitting a stop condition. Treat these as `INCOMPLETE`; re-delegate with corrected unit boundaries only.
     - The output format is missing or materially incomplete for the decision required.
+5. **Treat results as internal evidence.** Do not paste worker prose or transcripts to the user and do not describe orchestration mechanics or chain-of-thought.
+6. **Explain before asking.** Before any approval or choice grounded in delegated work, present the canonical `Material decision brief` from `pillars-and-templates.md` (observed facts/evidence; interpretation/inference; unknowns; plain-language mental model; decision-relevant definitions; project-specific example; options with practical consequences; recommendation when justified). Never ask a question whose meaning depends on files or results the user has not seen explained. If evidence is insufficient for the brief, verify or report the gap — do not manufacture certainty.
+7. **Close the loop.** After the user answers, restate the agreed model and remaining uncertainties. Low-risk factual work with no decision requested needs only a proportional summary — skip the full brief.
 
 ---
 
@@ -175,6 +178,7 @@ When the delegated worker returns:
 | Sequential pipeline where step B needs step A's discoveries | Information degrades at every handoff; bugs compound | Keep sequential dependent work in the main thread |
 | Test-runner delegated worker | Returns "tests failed" — hides the output needed to diagnose | Run tests directly in main thread; delegate only post-analysis summaries (except blind test loops in Clean-Room TDD) |
 | Biased TDD Implementation | Writing tests and implementing them in the same context, leading to tests being "cheated" with hardcoded values. | Delegate implementation to a separate worker or new session, explicitly forbidding it from reading test file contents (Clean-Room TDD). |
+| Asking "Should we go with the worker's recommended approach in `src/auth/jwt.ts`?" with no prior explanation | Question depends on hidden context — user never saw the findings, files, or terms | Present the canonical `Material decision brief` first (facts, model, definitions, project-specific example, options with consequences), then ask |
 
 ---
 
@@ -203,5 +207,5 @@ OUTPUT TEMPLATE =
   5. Done Signal: TASK_COMPLETE or INCOMPLETE + continuation state
 
 RECEIVE =
-  scan TASK_COMPLETE/INCOMPLETE → surface Obstacles → check continuation and Confidence → retry only if decision-blocking or contract-broken
+  scan TASK_COMPLETE/INCOMPLETE → surface Obstacles → check continuation and Confidence → retry only if decision-blocking or contract-broken → synthesize host-side decision brief before any user question; never forward worker prose verbatim
 ```

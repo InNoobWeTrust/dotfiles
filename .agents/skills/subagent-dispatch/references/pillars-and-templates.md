@@ -109,8 +109,8 @@ What to undo and how if the change needs reverting.
 ### Root Cause
 One clear sentence.
 
-### Evidence Chain
-Step-by-step reasoning from symptom to cause.
+### Evidence Trail
+Observable symptoms, commands/results, code locations, and minimal causal explanation linking them. Do not include private chain-of-thought or reasoning traces.
 
 ### Proposed Fix
 Concrete code or config change. State UNKNOWN if not found.
@@ -174,3 +174,27 @@ For **Clean-Room TDD implementation agents**:
 ```
 
 ---
+
+## Material decision brief (explain-before-question)
+
+Use for any material decision, regardless of whether evidence came from main-thread investigation or delegated work. Worker output stays internal when delegation was used; this brief is the only user-facing handoff for the decision. Keep it concise and proportional — full shape when options differ materially, compact form otherwise; one-line summary for low-risk factual work with no decision requested.
+
+```
+### Decision brief: [the approval or choice needed]
+- Observed facts / evidence: [verifiable findings + sources; no inference]
+- Interpretation: [what the facts suggest; labeled as inference]
+- Unknowns: [what could not be confirmed and why]
+- Mental model: [2–3 plain-language sentences on how the relevant part works]
+- Key terms: [each decision-relevant term — one-line definition]
+- Example: [one project-specific consequence, e.g. "in `src/auth/jwt.ts` this means ..."]
+- Options & consequences:
+  - A — [what changes] → [practical consequence / reversibility / risk]
+  - B — [what changes] → [practical consequence / reversibility / risk]
+- Recommendation: [A/B + one sentence why when justified; otherwise "No recommendation — insufficient evidence" with the verification or gap report]
+```
+
+Rules:
+- Never forward worker prose or transcripts verbatim; never expose chain-of-thought or orchestration mechanics; keep user-facing output to a concise evidence summary.
+- Never ask a question that depends on unseen files or results — explain first.
+- If evidence cannot support the brief, verify or report the gap; do not manufacture certainty.
+- After the user answers, restate the agreed model and remaining uncertainties. An answer given without adequate context is non-binding: explicitly say the earlier answer lacked context, present the missing context, and ask the user to confirm or change that decision; never silently upgrade the old answer.
