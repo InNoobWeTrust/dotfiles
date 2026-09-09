@@ -14,7 +14,7 @@ Use this router immediately before a delegated launch. The worker's system promp
 | No; only the result matters | Delegate |
 | Yes; later steps depend on prior discovery | Keep work in the main thread |
 
-Good targets: bounded exploration, independent review, persona/tone work, and clean-room TDD implementation after main-thread tests exist. Do not delegate tightly coupled diagnosis or work that requires raw tool output in the main thread, except clean-room TDD loops.
+Good targets: bounded factual exploration, independent review, persona/tone work, and clean-room TDD implementation after main-thread tests exist. Do not delegate tightly coupled diagnosis, active user Q&A/discovery, collaborative interface design, or work that requires raw tool output in the main thread, except clean-room TDD loops.
 
 ## Four prompt pillars
 
@@ -39,11 +39,11 @@ When `../../rules/phased-delivery.md` applies, implementation, exploration, and 
 
 ## Host-side synthesis gate (mandatory before user-facing decision)
 
-Delegated results are internal evidence, not shared context. Before requesting a user decision/approval grounded in delegated work, follow `../../rules/grooming.md` and synthesize the canonical `Material decision brief` in `references/pillars-and-templates.md`. This skill adds only delegated-specific constraints: do not forward worker prose or transcripts verbatim, do not expose chain-of-thought or orchestration mechanics, and do not ask questions whose meaning depends on unseen files/results. If worker evidence cannot support the brief, verify or report the gap; never manufacture certainty. After the user answers, restate the agreed model and remaining uncertainties. Low-risk factual work with no decision requested needs only a proportional summary. Receiving procedure in `references/prompt-template-and-anti-patterns.md` is mandatory.
+Delegated results are internal evidence, not shared context. Before requesting a user decision/approval grounded in delegated work, follow `../../rules/grooming.md` and synthesize the canonical `Material decision brief` in `references/pillars-and-templates.md` (reserved for commitment gates; do not use for active exploratory Q&A). This skill adds only delegated-specific constraints: do not forward worker prose or transcripts verbatim, do not expose chain-of-thought or orchestration mechanics, and do not ask questions whose meaning depends on unseen files/results. If worker evidence cannot support the brief, verify or report the gap; never manufacture certainty. After the user answers, restate the agreed model and remaining uncertainties. Low-risk factual work with no decision requested needs only a proportional summary. Receiving procedure in `references/prompt-template-and-anti-patterns.md` is mandatory.
 
 ## Essential stop conditions
 
-Do not launch when a planning depth or target is ambiguous, when L1/L2 receives the full goal rather than its section slice, or when an implementation target has zero or multiple units. Stop and report `INCOMPLETE` when acceptance criteria/evidence are missing, a prerequisite is blocked, design or contract decisions remain unresolved, required consumer contracts are missing or unapproved, scope expands, or work would leave the declared writable surface. Never silently rescope or absorb adjacent units.
+Do not launch when a planning depth or target is ambiguous, during active user Q&A or interface co-design, when L1/L2 receives the full goal rather than its section slice, or when an implementation target has zero or multiple units. Stop and report `INCOMPLETE` when acceptance criteria/evidence are missing, a prerequisite is blocked, design or contract decisions remain unresolved, required consumer contracts are missing or unapproved, scope expands, or work would leave the declared writable surface. Never silently rescope or absorb adjacent units.
 
 ## Minimal output contract
 

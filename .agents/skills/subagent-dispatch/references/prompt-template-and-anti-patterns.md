@@ -179,6 +179,7 @@ When the delegated worker returns:
 | Test-runner delegated worker | Returns "tests failed" — hides the output needed to diagnose | Run tests directly in main thread; delegate only post-analysis summaries (except blind test loops in Clean-Room TDD) |
 | Biased TDD Implementation | Writing tests and implementing them in the same context, leading to tests being "cheated" with hardcoded values. | Delegate implementation to a separate worker or new session, explicitly forbidding it from reading test file contents (Clean-Room TDD). |
 | Asking "Should we go with the worker's recommended approach in `src/auth/jwt.ts`?" with no prior explanation | Question depends on hidden context — user never saw the findings, files, or terms | Present the canonical `Material decision brief` first (facts, model, definitions, project-specific example, options with consequences), then ask |
+| Delegating interactive brainstorming or interface co-design | Worker produces speculative all-in RFCs in isolation, causing wall-of-text synthesis, breaking conversational cadence, and missing overall consistency | Keep interactive design and Q&A in the main thread; iterate outside-in in small steps (topology → abstraction → shape) |
 
 ---
 

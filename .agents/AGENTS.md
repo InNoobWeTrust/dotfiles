@@ -29,15 +29,16 @@ AGENTS.md (this file — product constraints, operating rules, harness wiring)
 
 A decision is material when it changes user-visible behavior, data semantics, security/privacy, compatibility, operational cost, reversibility, or architecture boundaries. The explain-first minimum below applies to every material decision, whether based on main-thread investigation or delegated work.
 
-Before asking the user for a material decision:
-- Explain verified facts vs. inferences vs. unknowns in plain language.
-- Define decision-relevant technical terms before using them in questions.
-- Give one concrete project-specific example or small before/after flow when the abstraction is non-obvious.
-- State why the decision matters and the practical consequences of the options.
-- Ask only genuinely unresolved decisions; 3–5 questions is a maximum for deep interviews, never a quota.
-- After answers, restate the resulting model and remaining uncertainty. Request explicit decision confirmation only when a material unresolved decision exists; quick clear tasks with no material unresolved decision proceed without ritual confirmation.
-- Revalidation: an answer given without adequate context is non-binding. If that happens, explicitly say the earlier answer lacked context, present the missing context, and ask the user to confirm or change that decision; never silently upgrade the old answer.
-- Never expose chain-of-thought, raw subagent transcripts, or orchestration noise; report only a concise evidence summary leading to the decision.
+- **Exploratory dialogue vs. commitment gate**: Distinguish active problem exploration (Q&A) from commitment gates. In active Q&A, keep turns conversational ("ping-pong") in the main thread (never delegate collaborative discovery); explain context proportionally (1–2 sentences framing the specific trade-off) and address one architectural layer per turn (macro-consistency before micro-signatures). Do not go "all-in" or dump a monolithic brief mid-dialogue.
+- **Before asking for a material decision (commitment gate)**:
+  - Explain verified facts vs. inferences vs. unknowns in plain language.
+  - Define decision-relevant technical terms before using them in questions.
+  - Give one concrete project-specific example or small before/after flow when the abstraction is non-obvious.
+  - State why the decision matters and the practical consequences of the options.
+  - Ask only genuinely unresolved decisions; 3–5 questions is a maximum for deep interviews, never a quota.
+- **After answers**: restate the resulting model and remaining uncertainty. Request explicit decision confirmation only when a material unresolved decision exists; quick clear tasks with no material unresolved decision proceed without ritual confirmation.
+- **Revalidation**: an answer given without adequate context is non-binding. If that happens, explicitly say the earlier answer lacked context, present the missing context, and ask the user to confirm or change that decision; never silently upgrade the old answer.
+- **Evidence discipline**: never expose chain-of-thought, raw subagent transcripts, or orchestration noise; report only a concise evidence summary leading to the decision.
 - Full sequence lives in `rules/grooming.md`. Keep quick tasks proportional; do not gate when intent, scope, verification, and safety are already clear.
 
 ## Skill Routing

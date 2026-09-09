@@ -177,7 +177,7 @@ For **Clean-Room TDD implementation agents**:
 
 ## Material decision brief (explain-before-question)
 
-Use for any material decision, regardless of whether evidence came from main-thread investigation or delegated work. Worker output stays internal when delegation was used; this brief is the only user-facing handoff for the decision. Keep it concise and proportional — full shape when options differ materially, compact form otherwise; one-line summary for low-risk factual work with no decision requested.
+Use for any material decision, regardless of whether evidence came from main-thread investigation or delegated work. Worker output stays internal when delegation was used; this brief is the only user-facing handoff for the decision. Keep it concise and proportional — full shape when options differ materially, compact form otherwise; one-line summary for low-risk factual work with no decision requested. Do not use this multi-section template during active exploratory Q&A / problem discovery; reserve it for formal commitment gates (locking breaking contracts, irreversible architecture choices, or finalizing plans). In active Q&A, use 1–2 sentences of proportional context instead.
 
 ```
 ### Decision brief: [the approval or choice needed]

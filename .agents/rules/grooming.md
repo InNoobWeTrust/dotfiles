@@ -12,11 +12,24 @@ The **Design Concept** is the ephemeral mental model of what is being built. Mis
 
 ---
 
+## Two Modes: Active Exploration vs. Commitment Gate
+
+1. **Active Exploration (Interactive Q&A / Design Discovery)**:
+   - **Main thread only**: Never delegate active problem exploration, brainstorming, or interface co-design to subagents. Intermediate thinking belongs in the main thread.
+   - **Ping-pong cadence**: Focus on one architectural tension or layer per turn. Do not go "all-in" or attempt to resolve the entire problem in a single turn.
+   - **Outside-in ordering**: Always align on macro-consistency and topology first (how does this fit existing system architecture and caller conventions?) before descending into interface shapes, state mechanics, and edge cases.
+   - **Proportional context**: Provide 1–2 plain-language sentences framing the specific trade-off or tension before asking the question. Do not generate an 8-part `Material decision brief` for exploratory turns.
+
+2. **Commitment Gate (Formal Material Decision)**:
+   - Triggered when exploration converges and an irreversible choice, breaking contract, or implementation plan must be locked. Follow the Informed Alignment Sequence below.
+
+---
+
 ## Informed Alignment Sequence (explain → questions → synthesis)
 
 A decision is material when it changes user-visible behavior, data semantics, security/privacy, compatibility, operational cost, reversibility, or architecture boundaries. The explain-first minimum applies to material decisions based on main-thread investigation as well as delegated work.
 
-When this rule is activated (by a plan request, the `/grill-me` command, or ambiguity in requirements), follow this order. Do not ask questions first:
+When this rule is activated at a commitment gate (by a plan request, the `/grill-me` command, or ambiguity in requirements), follow this order. Do not ask questions first:
 
 1.  **Explain**: state verified facts vs. inferences vs. unknowns in plain language. Define decision-relevant technical terms before using them. Give one concrete project-specific example or small before/after flow when the abstraction is non-obvious. State why each pending decision matters and the practical consequences of the options. Keep internal reasoning, subagent transcripts, and orchestration noise out; report only a concise evidence summary leading to the decision.
 2.  **Ask**: ask only genuinely unresolved decisions — never a mandatory quota. For deep interviews, 3–5 questions is a maximum, prioritized by architectural impact. Target the core dimensions:
@@ -28,7 +41,7 @@ When this rule is activated (by a plan request, the `/grill-me` command, or ambi
 
 ## Material decision brief
 
-For material decisions, use the canonical `Material decision brief` in `../skills/subagent-dispatch/references/pillars-and-templates.md` — do not duplicate it here. Require its full form when options differ materially; allow a proportional compact form otherwise. Include a recommendation when evidence justifies one; otherwise state explicitly that there is no recommendation and what evidence is missing.
+For material decisions at commitment gates, use the canonical `Material decision brief` in `../skills/subagent-dispatch/references/pillars-and-templates.md` — do not duplicate it here. Require its full form when options differ materially; allow a proportional compact form otherwise. Do not generate this multi-section template during active exploratory Q&A turns. Include a recommendation when evidence justifies one; otherwise state explicitly that there is no recommendation and what evidence is missing.
 
 ---
 
