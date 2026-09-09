@@ -18,7 +18,7 @@ Bound all fields before launch:
 1. Plan-basis citation or Atomic patch exception rationale.
 2. Unit ID and one-sentence outcome.
 3. Exact writable surface, including files and applicable fields/symbols.
-4. Contracts and hard invariants to preserve.
+4. Locked interface & DTO contracts: concrete code signatures, data schemas/types, and error variants to implement or preserve (zero contract degrees of freedom; no loose prose descriptions).
 5. Prerequisites already satisfied.
 6. Explicit out-of-scope list.
 7. Acceptance criteria and required evidence.
@@ -28,7 +28,7 @@ For a rewrite, overhaul, or delete-and-rebuild unit, classify each old semantic/
 
 ## Stop-before-dispatch conditions
 
-Do not dispatch if there are zero or multiple units; acceptance criteria/evidence are absent; any design or contract decision is unresolved; a prerequisite is blocked; a required consumer contract is absent or unapproved; or scope expansion is requested. Return `INCOMPLETE` with continuation state rather than substituting, silently rescoping, or absorbing adjacent work.
+Do not dispatch if there are zero or multiple units; acceptance criteria/evidence are absent; boundary interfaces or DTO contracts are described in loose prose rather than locked code types; any design or contract decision is unresolved; a prerequisite is blocked; a required consumer contract is absent or unapproved; or scope expansion is requested. Return `INCOMPLETE` with continuation state rather than substituting, silently rescoping, or absorbing adjacent work.
 
 ## Preflight
 
@@ -36,6 +36,7 @@ Do not dispatch if there are zero or multiple units; acceptance criteria/evidenc
 - [ ] Exactly one functional unit is selected; any plan is context only.
 - [ ] Exactly one accepted dispatch basis is declared.
 - [ ] Every required unit-payload field is bounded.
+- [ ] Boundary interfaces, method signatures, DTO types, and error variants are locked as concrete code, leaving zero contract degrees of freedom to the implementer.
 - [ ] Rewrite semantics/interfaces are classified delete or preserve.
 - [ ] Affected public APIs or consumer apps have approved contract/stubs and sign-off.
 - [ ] The declared writable surface, allowed actions, out-of-scope boundary, and stop conditions agree.

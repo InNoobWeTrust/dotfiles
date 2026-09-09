@@ -11,6 +11,8 @@ Rules:
 - State what is out of scope explicitly.
 - Never say "investigate the code" — say "read `src/auth/jwt.ts` lines 40–90 and identify any token expiry edge cases."
 - **Context budget**: limit pasted context to the minimum that would let a competent engineer start immediately — typically under 500 lines or one logical unit. A delegated worker receiving a 50k-token blob will still wander regardless of how precise the task statement is.
+- **Code Implementer Contract Locking**: For code implementation tasks, include the exact locked interface signatures, DTO types, and error variants as code. Explicitly instruct the worker:
+  > *"The provided interface signatures and DTO schemas are FROZEN. Do not rename methods, alter parameter orders, change types, or reinvent public shapes. Implement internal logic to satisfy this exact contract. If the contract is deficient or cannot be satisfied, STOP and report `INCOMPLETE: CONTRACT_DEFECT`."*
 
 ### Pillar 2 — Structured Output Contract
 
@@ -157,6 +159,7 @@ For **standard implementation agents** that must write:
 - READ: all files under src/
 - WRITE: <specific files only, e.g. src/auth/jwt.ts, src/auth/jwt.test.ts>
 - RUN: npm test, npm run lint
+- NO modifying locked interface/DTO contracts or public signatures
 - NO changes outside the listed write targets
 - NO git commits or pushes
 ```
@@ -169,6 +172,7 @@ For **Clean-Room TDD implementation agents**:
 - WRITE: <specific implementation files only, e.g. src/auth/jwt.ts>
 - RUN: <specific test runner command, e.g. npm test -- src/auth/jwt.test.ts>
 - NO reading or viewing of the unit test files
+- NO modifying locked interface/DTO contracts or public signatures
 - NO changes outside the listed write targets
 - NO git commits or pushes
 ```

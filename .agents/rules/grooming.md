@@ -8,7 +8,7 @@ This rule applies to **all planning, requirements definition, and high-ambiguity
 
 The **Design Concept** is the ephemeral mental model of what is being built. Misalignment between human and AI occurs when this concept remains unexpressed.
 *   **Do not** assume the initial prompt contains all requirements or constraints.
-*   **Do not** begin implementation or generate an `implementation_plan.md` until the Design Concept is externalized and aligned.
+*   **Do not** begin implementation until the Design Concept is aligned and the Interface & DTO Contract Locking Gate is satisfied in the plan.
 
 ---
 
@@ -58,6 +58,17 @@ For material decisions at commitment gates, use the canonical `Material decision
     - **Assumptions Made**: [list of critical assumptions that bypass human review]
     - **Perceived Risks & Mitigations**: [risk points e.g., thread safety, backwards compatibility, and how they are handled]
     ```
+
+## 🔒 Interface & DTO Contract Locking Gate (before plan approval)
+
+An implementation plan (`implementation_plan.md`, `task.md`, or atomic slice specification) is **incomplete and non-executable** if boundary seams or inter-component contracts are described only in natural language prose.
+
+Before approving an implementation plan or handing units to `code-craft` / delegated implementers:
+
+1. **Lock DTOs & Schemas as Code**: Explicitly specify types, field names, optionality, nullability, and validation rules in code blocks (e.g. TypeScript interfaces, Pydantic schemas, Go structs). Never describe payload fields in loose prose.
+2. **Lock Port & Service Signatures**: Explicitly write the exact method names, parameter types, and return types (including explicit error variants/unions such as `Result<T, E>`).
+3. **Zero Contract Degrees of Freedom for Implementers**: The implementer's mandate is to satisfy the locked contract and write corresponding tests. Implementers are forbidden from altering method signatures, reordering parameters, changing DTO shapes, or inventing public contracts.
+4. **Contract Defect Stop Condition**: If an implementer discovers during coding that a locked contract is flawed or unworkable, it must NOT silently modify the interface or write ad-hoc adapters. It must stop immediately and report `INCOMPLETE: CONTRACT_DEFECT` back to the planner with the proposed adjustment.
 
 ---
 

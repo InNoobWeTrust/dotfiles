@@ -43,7 +43,7 @@ Delegated results are internal evidence, not shared context. Before requesting a
 
 ## Essential stop conditions
 
-Do not launch when a planning depth or target is ambiguous, during active user Q&A or interface co-design, when L1/L2 receives the full goal rather than its section slice, or when an implementation target has zero or multiple units. Stop and report `INCOMPLETE` when acceptance criteria/evidence are missing, a prerequisite is blocked, design or contract decisions remain unresolved, required consumer contracts are missing or unapproved, scope expands, or work would leave the declared writable surface. Never silently rescope or absorb adjacent units.
+Do not launch when a planning depth or target is ambiguous, during active user Q&A or interface co-design, when boundary interfaces/DTOs are described in loose prose rather than locked code contracts, when L1/L2 receives the full goal rather than its section slice, or when an implementation target has zero or multiple units. Stop and report `INCOMPLETE` (or `INCOMPLETE: CONTRACT_DEFECT` for unworkable contracts) when acceptance criteria/evidence are missing, a prerequisite is blocked, design or contract decisions remain unresolved, required consumer contracts are missing or unapproved, scope expands, or work would leave the declared writable surface. Never silently rescope or absorb adjacent units.
 
 ## Minimal output contract
 
@@ -56,7 +56,7 @@ Do not launch when a planning depth or target is ambiguous, during active user Q
 TASK_COMPLETE | INCOMPLETE + continuation/resumption state
 ```
 
-`TASK_COMPLETE` means the assigned work is complete. `INCOMPLETE` must state completed work, current location, remaining steps, evidence, blockers, and the next safe action. Re-delegate only when missing evidence blocks the next decision or the output contract was materially violated.
+`TASK_COMPLETE` means the assigned work is complete. `INCOMPLETE` must state completed work, current location, remaining steps, evidence, blockers, and the next safe action (for contract defects: use `INCOMPLETE: CONTRACT_DEFECT` with the flawed signature and proposed fix). Re-delegate only when missing evidence blocks the next decision or the output contract was materially violated.
 
 ## References
 
