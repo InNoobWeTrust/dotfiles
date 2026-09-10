@@ -12,6 +12,7 @@
 4. **Single Responsibility**: One artifact = one concern. No monoliths.
 5. **Minimal Diff**: Make the smallest change that satisfies the spec. Don't refactor unrelated areas.
 6. **Readable > Clever**: Prefer clarity over cleverness. Work product is read 10x more than written.
+7. **Locked Plan Fidelity & Phase Sharding**: When implementing from a plan, execute against the referenced separate phase files sequentially. Concur strictly with locked code interfaces/DTOs (zero invented interfaces) and the locked final file tree structure (zero invented files, complete cleanup).
 
 ## Organization
 
@@ -22,6 +23,9 @@
 
 Before presenting deliverables to human:
 - [ ] Deliverables address every applicable acceptance scenario in the selected contract
+- [ ] Implementation strictly satisfies locked code interfaces and DTO contracts with zero invented interfaces
+- [ ] Workspace file tree strictly matches approved locked file tree structure with zero unapproved files and all scratch artifacts cleaned up
+- [ ] Deliverables are verified against the active phase file criteria
 - [ ] No hardcoded secrets, credentials, or sensitive data
 - [ ] Error handling covers all known failure modes
 - [ ] Complex areas have clear documentation explaining "why"
@@ -31,6 +35,8 @@ Before presenting deliverables to human:
 
 - **Never** commit directly without human approval — the human owns the final decision on what enters the project
 - **Never** delete artifacts without explicit instruction — deletions are irreversible and high-risk
+- **Never** invent new interfaces, alter approved method signatures, or adapt contracts on the fly (halt with `CONTRACT_DEFECT` if flawed)
+- **Never** create unapproved files, ad-hoc helper modules, or leave temporary scratch files behind in the repo
 - **Never** modify sensitive configurations without warning — unintended changes can cascade
 - **Never** introduce new dependencies or tools without declaring them — hidden dependencies create maintenance burden
 - **Never** produce deliverables outside the selected acceptance contract — scope discipline prevents drift

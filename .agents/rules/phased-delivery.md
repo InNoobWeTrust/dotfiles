@@ -1,3 +1,10 @@
+---
+description: "Applies to multi-step product or feature delivery, roadmap/milestone planning, or explicitly phased execution. Governs Active Milestone Packets, canonical compromise registers, and trajectory decisions."
+globs: "*"
+alwaysApply: false
+trigger: model_decision
+---
+
 # Rule: Phased Delivery (MVP-First)
 
 Use this rule only for multi-step product or feature delivery, roadmap or
@@ -22,8 +29,10 @@ simple patch, isolated fix, or routine single-step edit.
   outcome, ordered milestones, dependencies, and decision points; do not turn
   it into a detailed backlog.
 - **Active Milestone Packet** — the working source of truth. It embeds the
-  lifecycle stage, phases and vertical slices, current architecture contract,
-  acceptance criteria, compromises, evidence, feedback, and next decision.
+  lifecycle stage, referenced separate phase files for vertical slices, locked
+  code interfaces and DTO contracts (zero invented contracts), locked final file
+  tree structure with complete cleanup (zero invented files), acceptance criteria,
+  compromises, evidence, feedback, and next decision.
 - Keep both in the task context, existing delivery artifact, or handoff; do
   not create a document merely to satisfy this rule.
 
@@ -116,6 +125,9 @@ new artifact by default.
 - Finding classification: [Never Defer blocker / Must Ship defect / May Defer / Out of Scope; map evidence to the contract threshold; orchestrator is final scope authority]
 - Acceptance evidence: [observable criteria and required proof]
 - Hard invariants / current public contract: [must-not-break properties]
+- Locked contracts to implement: [concrete code signatures and DTO schemas; zero invented interfaces]
+- Locked file tree & cleanup: [target file structure; zero unapproved files; scratch cleanup required]
+- Active phase file: [path to specific referenced phase file being executed]
 - Authority: [orchestrator; who may accept, redirect, or change scope]
 - Review budget: [default or explicitly predeclared specialist review]
 - Corrective-change budget: [default or approved exception]

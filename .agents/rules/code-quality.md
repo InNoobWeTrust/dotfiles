@@ -1,3 +1,10 @@
+---
+description: "Applies to every file written or modified. Enforces core code quality principles, interface-first specifications, locked plan fidelity, and prohibited anti-patterns."
+globs: "*"
+alwaysApply: true
+trigger: always_on
+---
+
 # Code Quality Baseline
 
 Applies to every file written or modified. Use this rule for the core design gates and hard stops; load a reference only when its trigger applies.
@@ -33,6 +40,8 @@ Do not:
 - Swallow errors, return fake success, or silently use defaults, degraded results, cached data, partial success, or no-ops without an explicit approved contract.
 - Guess an ambiguous business rule; surface a typed/domain error or obtain clarification instead.
 - Expose undocumented public units or leak internal library implementation details to consumers.
+- Invent new interfaces, altered method signatures, or ad-hoc contract adaptations during implementation that were not approved in the plan (if a contract defect is discovered, stop immediately and report `CONTRACT_DEFECT`).
+- Create unexpected files, unapproved helpers, or leave temporary/scratch files in the workspace; all file additions, modifications, and deletions must strictly conform to the approved locked file tree structure with full cleanup.
 - Use magic literals for meaningful values, shallow 1–3 line helper extractions, positional tuple returns across boundaries, or untyped dynamic maps for domain concepts.
 
 ## Just-in-Time References

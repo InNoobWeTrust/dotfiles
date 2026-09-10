@@ -1,6 +1,8 @@
 ---
-trigger: requirements-driven-dev
-description: Flat adapter for requirements-driven PRD, TRD, BDD, changelog, execution, and commit workflows.
+description: "Adapter rule for requirements-driven PRD, TRD, BDD, changelog, execution, and commit workflows. Routes execution to the requirements-driven-dev skill."
+globs: "*"
+alwaysApply: false
+trigger: model_decision
 ---
 
 # Requirements-Driven Dev Rule

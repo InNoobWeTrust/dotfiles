@@ -1,3 +1,10 @@
+---
+description: "Applies to every tool call with side effects (file writes, edits, moves, shell commands, API calls). Enforces verification of tool outcomes, schema adherence, and state sanity."
+globs: "*"
+alwaysApply: true
+trigger: always_on
+---
+
 # Tool-Call Integrity
 
 **Applies to:** Every tool call with side effects (file writes, moves, API calls, shell commands, MCP tools).

@@ -1,3 +1,10 @@
+---
+description: "Applies to non-trivial logic implementations, algorithms, service additions, and refactoring. Enforces strict Red-Green-Refactor cycles and Clean-Room context isolation."
+globs: "*"
+alwaysApply: false
+trigger: model_decision
+---
+
 # Rule: Test-Driven Development (TDD) Enforcement & Context Isolation
 
 This rule applies to **all non-trivial logic implementations, service additions, validators, and refactoring tasks**. It enforces a strict Red-Green-Refactor loop paired with **Clean-Room Context Isolation** to ensure code correctness, modularity, and high design quality.

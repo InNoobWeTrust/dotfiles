@@ -10,7 +10,7 @@ Select exactly one level per call. Never skip levels or request a complete detai
 |---|---|---|
 | L0 — Strategic Outline | Full goal, first pass | Numbered sections with one-to-three-sentence goal statements; no functional units. |
 | L1 — Section Decomposition | One named L0 section | Subheadings marked `[ATOMIC]` or `[NEEDS L2]`. |
-| L2 — Atomic Unit Specification | One `[NEEDS L2]` subheading | Dispatchable functional units with locked code-level interface signatures, DTO contracts, and acceptance criteria. |
+| L2 — Atomic Unit Specification | One `[NEEDS L2]` subheading | Dispatchable functional units with locked code interfaces/DTO contracts (avoid invented interfaces), locked final file tree structure with cleanup (avoid invented files/incomplete cleanup), and smaller separate phase files referenced in the main plan file. |
 
 ## Required payload
 
@@ -25,7 +25,7 @@ Set every applicable field before launch:
 
 ## Stop-before-dispatch conditions
 
-Do not dispatch if no level is declared, more than one section is targeted, an L1/L2 prompt includes the full goal rather than the section slice, or an L2 spec leaves boundary interfaces or DTO schemas in loose prose rather than locked code contracts. Review each result before selecting the next section to drill down.
+Do not dispatch if no level is declared, more than one section is targeted, an L1/L2 prompt includes the full goal rather than the section slice, an L2 spec leaves boundary interfaces or DTO schemas in loose prose rather than locked code contracts, the target file tree structure is omitted or permits invented files, or multi-phase implementation is not sharded into referenced separate phase files. Review each result before selecting the next section to drill down.
 
 ## Preflight
 
@@ -34,6 +34,8 @@ Do not dispatch if no level is declared, more than one section is targeted, an L
 - [ ] The plan file path is explicit.
 - [ ] L1/L2 names exactly one target.
 - [ ] Context matches the selected level; L1/L2 include only the target slice and cross-cutting constraints.
-- [ ] For L2: boundary units define locked code-level interface signatures and DTO schemas, not loose prose descriptions.
+- [ ] For L2: boundary units define locked code-level interface signatures and DTO schemas, not loose prose descriptions (zero invented interfaces).
+- [ ] For L2: target final file tree structure is explicitly locked with `[CREATE]`, `[MODIFY]`, `[DELETE]`, and `[CLEANUP]` annotations (zero invented files).
+- [ ] For L2: implementation phases are sharded into separate phase files referenced in the main plan file.
 - [ ] Out-of-scope boundary and stop conditions are explicit.
 - [ ] Allowed and forbidden actions, output contract, and surgical context are present.

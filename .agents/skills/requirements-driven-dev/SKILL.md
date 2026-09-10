@@ -25,7 +25,7 @@ Requirements-driven development is an opt-in workflow for turning product intent
 3. Identify the smallest required artifact: inline acceptance criteria/slice card, PRD, milestone architecture note/TRD, BDD spec, changelog, or verification plan.
 4. Select the lightest safe track: Quick, Standard, or Deep.
 5. Load only the packaged rule and template needed for the current artifact.
-6. **Vertical Slicing**: When defining architecture (TRD) or planning execution checklists (`task.md`), load `rules/slicing.md` and decompose requirements into end-to-end vertical slices.
+6. **Vertical Slicing & Implementation Plan Locking**: When defining architecture (TRD) or planning execution checklists/plans (`task.md`, `implementation_plan.md`), load `rules/slicing.md` and `rules/grooming.md`. Ensure the resulting plan contains the locked core parts: (a) locked code interfaces and DTOs/contracts to avoid invented interfaces, (b) locked final file tree structure with cleanup to avoid unexpected files or incomplete cleanup, and (c) smaller separate implementation phases in separate files referenced in the main plan file.
 7. If deriving a formal child artifact, read its approved parent first. Formal traceability is optional unless regulation or coordinated delivery requires it.
 8. Execute only after the active milestone's acceptance criteria are concrete enough to verify.
 9. Verify against the selected artifact and report gaps.
@@ -37,7 +37,7 @@ Requirements-driven development is an opt-in workflow for turning product intent
 2. For multi-step work, use an Active Milestone Packet as the minimum delivery shape; add a roadmap only for multi-milestone work, and follow `../../rules/phased-delivery.md` for lifecycle details.
 3. Start with the smallest artifact that makes the current slice verifiable: inline acceptance criteria or a slice card.
 4. Load a formal rule/template only when the canonical escalation table in `../../rules/phased-delivery.md` calls for it.
-5. **Vertical Slicing**: Decompose the task checklist into vertical slices using `rules/slicing.md`.
+5. **Vertical Slicing & Implementation Plan Locking**: Decompose the task checklist/plan into vertical slices using `rules/slicing.md` and `rules/grooming.md`, locking core parts (interfaces/DTOs in code, final file tree structure with cleanup, and smaller separate phase files referenced in the main plan).
 6. Preserve parent-child traceability only when a formal parent exists or coordinated/regulatory delivery requires it.
 7. Execute only after requirements are clear enough for verification.
 8. Verify against the selected artifact and report gaps.

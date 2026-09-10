@@ -41,14 +41,27 @@ and child links are optional and appear only for separately selected related art
 - **<Component A>**: <responsibility, interfaces>
 - **<Component B>**: <responsibility, interfaces>
 
-## API Contracts / Interfaces
-<Define inputs, outputs, protocols, and contracts between components.
-Use whatever format fits the domain: REST endpoints, function signatures,
-message schemas, CLI arguments, etc.>
+## API Contracts / Interfaces (Locked as Code)
+<Define concrete, strongly typed code contracts and DTO schemas (TypeScript interfaces,
+Go structs, Pydantic models). Specify exact method signatures, parameter types,
+return types, and explicit error variants. Loose prose is forbidden to avoid
+invented interfaces during implementation.>
 
 ## Data Models
 <Entities, relationships, storage decisions. Tables, schemas, object models —
 whatever is relevant to the domain.>
+
+## Target Final File Tree Structure (Locked)
+<Explicit target file tree showing all affected files. Annotate each entry:
+`[CREATE]` for new files with paths and roles, `[MODIFY]` for existing files,
+`[DELETE]` for removed files, and `[CLEANUP]` for temporary/scratch artifacts.
+Zero unapproved files permitted.>
+
+## Implementation Phases (Sharded into Separate Phase Files)
+<Decompose execution into smaller, sequentially numbered phase files referenced here:
+- Phase 01: `{PHASE_DIR}01-<phase-slug>.md` — <objective, slice-specific locked contracts & file delta>
+- Phase 02: `{PHASE_DIR}02-<phase-slug>.md` — <objective, slice-specific locked contracts & file delta>
+Do not dump multi-phase execution into a monolithic block.>
 
 ## Non-Functional Requirements
 - **Performance**: <specific targets, e.g., "p95 latency < 200ms">
@@ -76,15 +89,19 @@ whatever is relevant to the domain.>
 3. **Architecture decisions use ADR format only at the canonical ADR threshold** — consequential, hard-to-reverse choices with competing options need context, decision, rationale, alternatives, consequences, and revisit conditions
 4. **Non-functional requirements must be specific** — "fast" is meaningless; "p95 < 200ms at 1000 rps" is testable
 5. **Security is mandatory, not optional** — the Security Assessment section must be filled for every TRD. Apply a security-lens review to audit it. An empty or hand-waved security section blocks the challenge gate
-6. **Interfaces are contracts** — define them clearly enough that two teams could build against them independently
-7. **Versioned** — update the TRD when its coordinated contract changes; update only separately selected linked artifacts affected by that change
-8. **Review proportionately** — use formal review when independently selected, explicitly requested, or required for regulation/coordination
+6. **Interfaces are locked code contracts** — define them in concrete code blocks with explicit types, parameters, return types, and error variants to eliminate invented interfaces during implementation
+7. **Target file tree structure is locked** — define the exact end-state tree with `[CREATE]`, `[MODIFY]`, `[DELETE]`, and `[CLEANUP]` annotations to prevent unapproved files or incomplete cleanup
+8. **Implementation phases are sharded** — break multi-phase work into smaller separate phase files referenced in the main plan rather than a monolithic dump
+9. **Versioned** — update the TRD when its coordinated contract changes; update only separately selected linked artifacts affected by that change
+10. **Review proportionately** — use formal review when independently selected, explicitly requested, or required for regulation/coordination
 
 ## Quality Checklist
 
 - [ ] Related PRD is referenced when independently selected; otherwise the coordinated outcome/contract is identified
 - [ ] ADRs document rationale, alternatives, consequences, and revisit conditions when the canonical threshold is met
-- [ ] Interfaces are defined clearly (inputs, outputs, error cases)
+- [ ] Interfaces and DTOs are locked as concrete code blocks (zero invented interfaces)
+- [ ] Target final file tree structure is explicitly declared with complete cleanup (zero invented files)
+- [ ] Implementation phases are sharded into referenced separate phase files
 - [ ] Non-functional requirements have concrete targets
 - [ ] Security Assessment is complete — all 6 subsections addressed
 - [ ] Security Assessment has received a security-lens review

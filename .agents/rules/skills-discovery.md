@@ -1,3 +1,10 @@
+---
+description: "Applies when discovering and selecting skills. Enforces index-first routing using skills/INDEX.md to prevent bulk-loading and context bloat."
+globs: "*"
+alwaysApply: false
+trigger: model_decision
+---
+
 # Skills Discovery
 
 The active agent config root keeps skills in `skills/`, normally `../skills/`. Use index-first routing; do not recursively inspect every skill at task start.

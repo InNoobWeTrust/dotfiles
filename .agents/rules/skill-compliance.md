@@ -1,3 +1,10 @@
+---
+description: "Applies after loading any skill. Mandates binding commitment to execute the loaded skill's workflow, deliverable checklists, and stop conditions."
+globs: "*"
+alwaysApply: true
+trigger: always_on
+---
+
 # Skill Compliance
 
 ## Scope

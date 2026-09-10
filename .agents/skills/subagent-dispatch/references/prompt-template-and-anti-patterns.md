@@ -23,10 +23,10 @@ verifiable outcome where phased delivery does not apply and no design or
 contract decision remains open; no plan file is required for that exception.]
 
 ### Selected Unit (all eight fields must be bounded)
-1. Plan basis: [cite the specific approved plan / Active Milestone Packet] OR Atomic patch exception rationale: [why the outcome is coherent, independently verifiable, and leaves no design/contract decision open]
+1. Plan basis: [cite the specific approved separate phase file referenced in main plan] OR Atomic patch exception rationale: [why the outcome is coherent, independently verifiable, and leaves no design/contract decision open]
 2. Unit ID and one-sentence outcome: [...]
-3. Exact writable surface: [files and, where applicable, fields/symbols]
-4. Contracts and hard invariants to preserve: [...]
+3. Exact writable surface: [files matching the locked file tree delta; zero unapproved files; cleanup required]
+4. Contracts and hard invariants to preserve: [locked code interfaces and DTOs; zero invented interfaces]
 5. Prerequisites already satisfied: [...]
 6. Explicit out-of-scope list: [...]
 7. Acceptance criteria and required evidence: [...]
@@ -182,6 +182,8 @@ When the delegated worker returns:
 | Delegating interactive brainstorming or interface co-design | Worker produces speculative all-in RFCs in isolation, causing wall-of-text synthesis, breaking conversational cadence, and missing overall consistency | Keep interactive design and Q&A in the main thread; iterate outside-in in small steps (topology → abstraction → shape) |
 | Dispatching implementer with prose-only contracts | Worker invents DTO fields and method shapes, breaking consistency across units and causing compiler/runtime hallucination loops | Lock concrete DTO schemas, method signatures, and error variants as code in the plan/payload before dispatch |
 | Implementer silently altering declared interfaces | Subtle contract drift breaks callers across the repository; cascading compiler errors | Enforce frozen contract rule; worker must report INCOMPLETE: CONTRACT_DEFECT instead of modifying signatures |
+| Dispatching without a locked file tree structure | Worker invents ad-hoc helper files, scrambles folder structure, or leaves uncleaned scratch artifacts | Lock the exact target file tree with [CREATE], [MODIFY], [DELETE], [CLEANUP] before dispatch |
+| Dispatching from a monolithic plan mega-file | Worker gets distracted, absorbs out-of-scope phases, or hallucinates cross-phase changes | Shard execution into smaller separate phase files referenced in the main plan; dispatch one phase file at a time |
 
 ---
 

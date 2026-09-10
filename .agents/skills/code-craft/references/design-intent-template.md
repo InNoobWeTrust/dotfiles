@@ -10,6 +10,9 @@ DESIGN INTENT
 In scope        :
 Non-goals       :
 Milestone/phase/slice reference: [when present]
+Active Phase File: [path/link to referenced phase file from main plan]
+Locked Interfaces: [exact code signatures/schemas from plan; zero invented interfaces]
+Locked File Tree: [exact files created/modified/deleted in this phase; cleanup verified]
 Acceptance criteria:
 Constraints     :
 Known compromises: [canonical register references when phased; local deferrals otherwise; or none]
@@ -48,6 +51,8 @@ When choosing a greenfield language/framework stack or adding a substantial plat
 
 - **Isolation test = no:** redesign.
 - **Required consumer contract/stubs or informed interface sign-off missing or unapproved:** obtain informed sign-off per `rules/grooming.md` (caller-visible examples + terms + alternatives/consequences) before implementation.
+- **Contract defect:** if an approved contract is defective or unworkable, STOP immediately and report `INCOMPLETE: CONTRACT_DEFECT` with proposed adjustment; do not invent ad-hoc interfaces or alter signatures.
+- **File tree violation:** creating files not declared in the approved locked file tree or leaving uncleaned scratch files; stop and align strictly with the locked file tree.
 - **Edge-case semantics unspecified:** ask; AFK must fail closed and not invent a fallback.
 - **Proposed vendoring/reimplementation lacks explicit opt-in or documented repository policy:** choose the platform/established dependency or clarify.
 

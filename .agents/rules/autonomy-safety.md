@@ -1,3 +1,10 @@
+---
+description: "Applies whenever operating with elevated autonomy, auto-approved tools, unattended/AFK runs, or waived per-step prompts. Enforces consequence-first agency, pre-approved bounds, and stop conditions."
+globs: "*"
+alwaysApply: true
+trigger: always_on
+---
+
 # Autonomy Safety (Consequence-First Agency)
 
 This rule applies whenever you operate with **elevated autonomy**: auto-approved tools, unattended/AFK runs, "just do it" sessions, or any execution environment that will not ask before each side effect. No special config is required for the rule to apply — if the environment will not gate you, **you gate yourself**.

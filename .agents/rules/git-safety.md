@@ -1,3 +1,10 @@
+---
+description: "Applies to all git operations. Mandates explicit human-in-the-loop review and approval before staging (git add), committing (git commit), pushing, or running destructive git actions."
+globs: "*"
+alwaysApply: true
+trigger: always_on
+---
+
 # Git Safety Rule
 
 Applies to all git operations: staging, committing, pushing, and any destructive git command.

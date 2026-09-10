@@ -39,23 +39,23 @@ architectural level — not code-level details.>
 - **<Component A>**: <responsibility, key interfaces, where it lives>
 - **<Component B>**: <responsibility, key interfaces, where it lives>
 
-## API Contracts / Interfaces
+## API Contracts / Interfaces (Locked Code Interfaces & DTOs)
 
-<Define the interfaces between components. Use whatever format fits the domain.>
+> Specify exact code-level interfaces, port signatures, parameter types, return types (with error variants), and DTO schemas. Loose prose descriptions are forbidden to avoid invented interfaces during implementation.
 
-### <Interface Name>
+### <Interface / Contract Name>
 
-```
-<Method / Endpoint / Function signature>
+```typescript
+// Example: Concrete locked interface and DTO contract
+export interface CreateUserDTO {
+  email: string;
+  role: 'admin' | 'user';
+  metadata?: Record<string, string>;
+}
 
-Input:
-  - <parameter>: <type> — <description>
-
-Output:
-  - <field>: <type> — <description>
-
-Errors:
-  - <error code / exception>: <when it occurs>
+export interface IUserService {
+  createUser(dto: CreateUserDTO): Promise<Result<User, UserCreationError>>;
+}
 ```
 
 ## Data Models
@@ -67,6 +67,31 @@ Errors:
 | Field | Type | Constraints | Description |
 |-------|------|-------------|-------------|
 | <field> | <type> | <constraints> | <description> |
+
+## Target Final File Tree Structure (Locked)
+
+```text
+# Complete end-state of touched/new files. Implementers may not invent unapproved files.
+# Annotate every entry: [CREATE], [MODIFY], [DELETE], or [CLEANUP].
+src/
+├── domain/
+│   ├── models.ts          # [MODIFY] Added User entity
+│   └── user-service.ts    # [CREATE] IUserService and implementation
+├── api/
+│   └── user-routes.ts     # [CREATE] HTTP route handlers
+tests/
+└── user-service.test.ts   # [CREATE] Unit and integration tests
+scratch/
+└── test-fixture.json      # [CLEANUP] Must be removed before completion
+```
+
+## Implementation Phases (Sharded into Separate Phase Files)
+
+> Execution is partitioned into smaller separate phase files. Implementers execute one phase file at a time.
+
+- **Phase 01**: [`{PHASE_DIR}01-domain-contracts.md`]({PHASE_DIR}01-domain-contracts.md) — Domain interfaces, entities, and tests.
+- **Phase 02**: [`{PHASE_DIR}02-service-implementation.md`]({PHASE_DIR}02-service-implementation.md) — Service layer and integration tests.
+- **Phase 03**: [`{PHASE_DIR}03-api-routes-and-cleanup.md`]({PHASE_DIR}03-api-routes-and-cleanup.md) — API routes, E2E validation, and artifact cleanup.
 
 ## Security Assessment
 

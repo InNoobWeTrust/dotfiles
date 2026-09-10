@@ -1,3 +1,10 @@
+---
+description: "Applies when user requests or slash commands map to prompt templates in commands/*.prompt.md. Governs argument substitution, thin wrappers, and command execution flow."
+globs: "*"
+alwaysApply: false
+trigger: model_decision
+---
+
 # Command Routing
 
 Canonical command prompts live in `../commands/*.prompt.md`, or `commands/*.prompt.md` relative to the active agent config root. CLI-specific command discovery paths may symlink to that directory, but must not duplicate command content.

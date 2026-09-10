@@ -59,6 +59,9 @@ This is the core defense against AI laziness. Before showing code to the user:
 - Verify every external I/O call has timeout and error handling
 - Ensure module boundaries have input validation
 - Confirm no placeholder implementations (`pass`, `return []`, `throw NotImplementedError`) remain on happy paths
+- Verify zero invented interfaces: confirm code strictly satisfies locked code interfaces/DTOs without ad-hoc methods or modified signatures
+- Check file tree conformity: confirm all files match the approved locked file tree and all scratch/temporary artifacts are cleaned up
+- Verify phase boundary: ensure changes strictly address the active referenced phase file without bleeding into adjacent phases
 
 Surface tensions inline:
 

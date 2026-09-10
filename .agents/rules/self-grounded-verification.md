@@ -1,3 +1,10 @@
+---
+description: "Applies to every verification, self-review, and completion-claim moment. Mitigates agreement bias using two-step evaluation (elicit priors before looking at artifacts)."
+globs: "*"
+alwaysApply: true
+trigger: always_on
+---
+
 # Rule: Self-Grounded Verification (Anti Agreement-Bias)
 
 This rule applies to **every verification, self-review, and completion-claim moment**. It defends against *agreement bias* — the well-documented tendency of an LLM to validate whatever is already in its context window (its own output, a candidate solution, a user's claim, a passing-looking test run) and to generate plausible reasoning that *rationalizes* flaws rather than detecting them.
@@ -32,6 +39,8 @@ State what a *correct* outcome must satisfy, derived **only** from the requireme
 - [ ] <observable behavior 1 the requirement demands>
 - [ ] <edge case / failure mode that MUST be handled>
 - [ ] <contract/invariant that MUST hold>
+- [ ] <locked interfaces/DTOs adhered to with zero invented interfaces>
+- [ ] <locked file tree structure matched with zero unapproved files and complete cleanup>
 - [ ] <what would prove this is WRONG — the disconfirming test>
 ```
 

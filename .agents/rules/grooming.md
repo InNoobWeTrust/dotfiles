@@ -1,3 +1,10 @@
+---
+description: "Applies to all planning, requirements definition, and high-ambiguity execution tasks. Enforces explain-first informed alignment, Design Concept discovery, and the Locked Core Implementation Plan Gate."
+globs: "*"
+alwaysApply: false
+trigger: model_decision
+---
+
 # Rule: Grooming & Design Concept Alignment
 
 This rule applies to **all planning, requirements definition, and high-ambiguity execution tasks**. It establishes explain-first informed alignment to construct a shared mental model (the "Design Concept") between you and the user before any implementation begins.
@@ -8,7 +15,7 @@ This rule applies to **all planning, requirements definition, and high-ambiguity
 
 The **Design Concept** is the ephemeral mental model of what is being built. Misalignment between human and AI occurs when this concept remains unexpressed.
 *   **Do not** assume the initial prompt contains all requirements or constraints.
-*   **Do not** begin implementation until the Design Concept is aligned and the Interface & DTO Contract Locking Gate is satisfied in the plan.
+*   **Do not** begin implementation until the Design Concept is aligned and the Locked Core Implementation Plan Gate is satisfied in the plan.
 
 ---
 
@@ -59,16 +66,30 @@ For material decisions at commitment gates, use the canonical `Material decision
     - **Perceived Risks & Mitigations**: [risk points e.g., thread safety, backwards compatibility, and how they are handled]
     ```
 
-## 🔒 Interface & DTO Contract Locking Gate (before plan approval)
+## 🔒 Locked Core Implementation Plan Gate (before plan approval)
 
-An implementation plan (`implementation_plan.md`, `task.md`, or atomic slice specification) is **incomplete and non-executable** if boundary seams or inter-component contracts are described only in natural language prose.
+An implementation plan (`implementation_plan.md`, `plan.md`, `task.md`, or atomic slice specification) is **incomplete and non-executable** if it lacks any of the three locked core parts:
 
-Before approving an implementation plan or handing units to `code-craft` / delegated implementers:
+1. **Locked Code Interfaces & DTO Contracts**:
+   - Explicitly specify all types, field names, optionality, nullability, validation rules, port/service method signatures, parameter types, and return types (including explicit error variants/unions such as `Result<T, E>`) in concrete code blocks (e.g., TypeScript interfaces, Pydantic schemas, Go structs). Never describe payload fields or boundary contracts in loose prose.
+   - **Avoid Invented Interfaces**: Zero contract degrees of freedom for implementers. Implementers are strictly forbidden from altering method signatures, reordering parameters, changing DTO shapes, or inventing public/internal contracts not approved during planning.
+   - **Contract Defect Stop Condition**: If an implementer discovers during coding that a locked contract is flawed or unworkable, it must NOT silently modify the interface or write ad-hoc adapters. It must stop immediately and report `INCOMPLETE: CONTRACT_DEFECT` back to the planner with the proposed adjustment.
 
-1. **Lock DTOs & Schemas as Code**: Explicitly specify types, field names, optionality, nullability, and validation rules in code blocks (e.g. TypeScript interfaces, Pydantic schemas, Go structs). Never describe payload fields in loose prose.
-2. **Lock Port & Service Signatures**: Explicitly write the exact method names, parameter types, and return types (including explicit error variants/unions such as `Result<T, E>`).
-3. **Zero Contract Degrees of Freedom for Implementers**: The implementer's mandate is to satisfy the locked contract and write corresponding tests. Implementers are forbidden from altering method signatures, reordering parameters, changing DTO shapes, or inventing public contracts.
-4. **Contract Defect Stop Condition**: If an implementer discovers during coding that a locked contract is flawed or unworkable, it must NOT silently modify the interface or write ad-hoc adapters. It must stop immediately and report `INCOMPLETE: CONTRACT_DEFECT` back to the planner with the proposed adjustment.
+2. **Locked Final File Tree Structure**:
+   - Provide an explicit target file tree representing the complete, clean end-state of the workspace after implementation.
+   - Explicitly annotate every file operation: `[CREATE]` for new files (with exact relative path and concise role), `[MODIFY]` for existing files, `[DELETE]` for removed files, and `[CLEANUP]` for temporary/scratch artifacts.
+   - **Avoid Invented Files & Incomplete Cleanup**: Zero file degrees of freedom for implementers. Implementers are forbidden from creating files not declared in the approved locked file tree. All temporary, intermediate, or scratch files must be explicitly cleaned up before completing work. No unexpected or orphaned files may remain.
+
+3. **Smaller Separate Implementation Phases in Separate Files (Referenced in Main Plan)**:
+   - The main plan file (`plan.md` or `implementation_plan.md`) serves as the orchestrator and index: containing high-level goals, the overall locked file tree, cross-cutting contracts, and markdown links to each separate phase file. Never dump an entire multi-phase implementation into a single monolithic file.
+   - Decompose execution into smaller, sequentially numbered phase files (e.g., `phases/01-phase-name.md`, `phases/02-phase-name.md`, or `phase-01-*.md`).
+   - Each phase file is self-contained and specifies:
+     - Exact slice objective & dependencies
+     - The specific subset of locked interfaces/DTOs to be implemented in this phase
+     - The exact file tree delta for this phase (files created, modified, or deleted from the locked tree)
+     - Concrete step-by-step TDD implementation steps (RED → GREEN → REFACTOR)
+     - Concrete verification criteria and exact test/check commands
+   - Implementers execute against one referenced phase file at a time, keeping context bounded and preventing hallucination or drift.
 
 ---
 

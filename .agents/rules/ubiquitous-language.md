@@ -1,3 +1,10 @@
+---
+description: "Applies to implementation, design, and codebase tasks that introduce or rename domain concepts. Mandates maintaining a shared domain vocabulary synchronized with GLOSSARY.md."
+globs: "*"
+alwaysApply: false
+trigger: model_decision
+---
+
 # Rule: Ubiquitous Language (Domain Glossary Sync)
 
 This rule applies to **all implementation, design, and codebase-modifying tasks**. It mandates the creation and maintenance of a shared domain vocabulary (Ubiquitous Language) to ensure consistent names for variables, methods, classes, and logic components across the codebase.

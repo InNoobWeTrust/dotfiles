@@ -1,3 +1,10 @@
+---
+description: "Applies whenever running shell commands, executing scripts, or accessing configuration. Enforces secret isolation, ephemeral runners, and script execution hygiene."
+globs: "*"
+alwaysApply: true
+trigger: always_on
+---
+
 # Execution Safety
 
 This rule applies whenever you execute shell commands, run scripts, or access configuration. It covers two mandatory concerns: **secret isolation** and **script execution hygiene**.
