@@ -2,7 +2,7 @@
 description: "USE SPARINGLY: general fallback when no specialized subagent match."
 mode: all
 hidden: true
-model: "proxy/forbiddengun/grok"
+model: "kilo/inclusionai/ling-3.0-flash-vl:free"
 model_alt: "github-copilot/gpt-5.4"
 variant_alt: high
 permission:

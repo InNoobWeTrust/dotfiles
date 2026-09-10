@@ -2,7 +2,8 @@
 description: "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features. Call this subagent before any implementer when work is multi-step or non-atomic; genuinely atomic, independently verifiable patches may skip planning under an orchestrator-declared atomic exception."
 mode: primary
 hidden: true
-model: "kilo/thinkingmachines/inkling:free"
+model: "github-copilot/gpt-5.4"
+variant: xhigh
 permission:
   bash: allow
   edit: allow

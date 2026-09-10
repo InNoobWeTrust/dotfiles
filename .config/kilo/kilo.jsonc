@@ -1,6 +1,6 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
-  "model": "openai/gpt-5.6-terra",
+  "model": "kilo/inclusionai/ling-3.0-flash-vl:free",
   "small_model": "kilo/kilo-auto/free",
   "default_agent": "autonomous",
   "compaction": {
@@ -230,100 +230,6 @@
           "limit": {
             "context": 1000000,
             "output": 131072,
-          },
-        },
-        "z-ai/glm-5.3-flash-free": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
-              "pdf",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 131072,
-          },
-        },
-        "deepseek/deepseek-v4-flash-free": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 384000,
-          },
-        },
-        "tencent/hy3-free": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 256000,
-            "output": 128000,
-          },
-        },
-        "gpt-5.5": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-          "reasoning": true,
-          "variants": {
-            "none": {
-              "reasoning": {
-                "enabled": false,
-                "effort": "none",
-              },
-            },
-            "low": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "low",
-              },
-            },
-            "medium": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "medium",
-              },
-            },
-            "high": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "high",
-              },
-            },
-            "xhigh": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "xhigh",
-              },
-            },
           },
         },
         "gpt-5.6-luna": {
