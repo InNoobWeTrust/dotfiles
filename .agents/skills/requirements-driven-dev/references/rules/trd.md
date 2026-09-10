@@ -51,11 +51,16 @@ invented interfaces during implementation.>
 <Entities, relationships, storage decisions. Tables, schemas, object models —
 whatever is relevant to the domain.>
 
-## Target Final File Tree Structure (Locked)
-<Explicit target file tree showing all affected files. Annotate each entry:
+## Scope Boundary & Target Scoped File Tree (Locked)
+### Scope Boundary
+- **In-Scope Paths / Components**: <Explicit list of directories, files, or subsystems affected>
+- **Out-of-Scope Boundary**: <Explicitly state adjacent or tempting components that must NOT be touched. Other irrelevant parts of the repository are implicitly understood to be unchanged.>
+
+### Target Scoped File Tree Structure
+<Explicit target file tree showing affected in-scope files only. Do NOT dump the entire repository tree. Annotate each entry:
 `[CREATE]` for new files with paths and roles, `[MODIFY]` for existing files,
 `[DELETE]` for removed files, and `[CLEANUP]` for temporary/scratch artifacts.
-Zero unapproved files permitted.>
+Zero unapproved files or out-of-scope modifications permitted.>
 
 ## Implementation Phases (Sharded into Separate Phase Files)
 <Decompose execution into smaller, sequentially numbered phase files referenced here:
@@ -90,7 +95,7 @@ Do not dump multi-phase execution into a monolithic block.>
 4. **Non-functional requirements must be specific** — "fast" is meaningless; "p95 < 200ms at 1000 rps" is testable
 5. **Security is mandatory, not optional** — the Security Assessment section must be filled for every TRD. Apply a security-lens review to audit it. An empty or hand-waved security section blocks the challenge gate
 6. **Interfaces are locked code contracts** — define them in concrete code blocks with explicit types, parameters, return types, and error variants to eliminate invented interfaces during implementation
-7. **Target file tree structure is locked** — define the exact end-state tree with `[CREATE]`, `[MODIFY]`, `[DELETE]`, and `[CLEANUP]` annotations to prevent unapproved files or incomplete cleanup
+7. **Scope boundary & scoped target file tree are locked** — explicitly define in-scope and out-of-scope boundaries (irrelevant repo parts implicitly unchanged); define the scoped target file tree with `[CREATE]`, `[MODIFY]`, `[DELETE]`, and `[CLEANUP]` annotations to prevent unapproved files or incomplete cleanup
 8. **Implementation phases are sharded** — break multi-phase work into smaller separate phase files referenced in the main plan rather than a monolithic dump
 9. **Versioned** — update the TRD when its coordinated contract changes; update only separately selected linked artifacts affected by that change
 10. **Review proportionately** — use formal review when independently selected, explicitly requested, or required for regulation/coordination
@@ -100,7 +105,7 @@ Do not dump multi-phase execution into a monolithic block.>
 - [ ] Related PRD is referenced when independently selected; otherwise the coordinated outcome/contract is identified
 - [ ] ADRs document rationale, alternatives, consequences, and revisit conditions when the canonical threshold is met
 - [ ] Interfaces and DTOs are locked as concrete code blocks (zero invented interfaces)
-- [ ] Target final file tree structure is explicitly declared with complete cleanup (zero invented files)
+- [ ] Scope boundary and target scoped file tree structure are explicitly declared with complete cleanup (zero invented files)
 - [ ] Implementation phases are sharded into referenced separate phase files
 - [ ] Non-functional requirements have concrete targets
 - [ ] Security Assessment is complete — all 6 subsections addressed

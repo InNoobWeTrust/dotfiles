@@ -68,10 +68,15 @@ export interface IUserService {
 |-------|------|-------------|-------------|
 | <field> | <type> | <constraints> | <description> |
 
-## Target Final File Tree Structure (Locked)
+## Scope Boundary & Target Scoped File Tree (Locked)
 
+### Scope Boundary
+- **In-Scope Paths / Components**: `src/domain/`, `src/api/`, `tests/`
+- **Out-of-Scope Boundary**: `src/legacy/`, `src/auth/` (remain untouched; other repo parts implicitly unchanged)
+
+### Scoped Target File Tree
 ```text
-# Complete end-state of touched/new files. Implementers may not invent unapproved files.
+# Target end-state for affected scope ONLY. Do not dump the entire repo tree.
 # Annotate every entry: [CREATE], [MODIFY], [DELETE], or [CLEANUP].
 src/
 ├── domain/

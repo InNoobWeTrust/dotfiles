@@ -59,9 +59,9 @@ tech debt inventory.
 | **State hygiene leaks** | Do core logic functions mutate input arguments or deep objects instead of returning shallow copies or using pure operations? |
 | **Contract/invariant gaps** | Do complex algorithmic units lack preconditions and runtime assertions checking state invariants at entry/exit boundaries? |
 | **Weak typing structures** | Do loose types (`any`, `unknown`, unstructured dictionaries) bleed into logic instead of strong types (Discriminated Unions, ADTs, protocols)? |
-| **Implementation plan rigor** | For plans (`plan.md`, `implementation_plan.md`, TRD): are the three locked core parts present? (1) Concrete code interfaces and DTOs (reject if loose prose allows invented interfaces), (2) Locked final file tree structure with cleanup (reject if vague layout allows invented files or incomplete cleanup), and (3) Smaller separate implementation phases in separate files referenced in the main plan (reject monolithic plans). |
+| **Implementation plan rigor** | For plans (`plan.md`, `implementation_plan.md`, TRD): are the three locked core parts present? (1) Concrete code interfaces and DTOs (reject if loose prose allows invented interfaces), (2) Locked scope boundary (explicit in-scope and out-of-scope paths; irrelevant parts implicitly unchanged) and scoped target file tree with cleanup (reject full-repo tree dumps or vague layout that allows invented files/incomplete cleanup), and (3) Smaller separate implementation phases in separate files referenced in the main plan (reject monolithic plans). |
 | **Invented interfaces / Contract drift** | Did the implementation invent interfaces, alter method signatures, or add unapproved DTO shapes not locked during planning? If so, flag as severe contract drift (requires `CONTRACT_DEFECT` halt). |
-| **Unapproved files & incomplete cleanup** | Did the implementation create files not declared in the locked file tree, or leave scratch/temporary/debug files behind in the repository? |
+| **Unapproved files, scope breach & incomplete cleanup** | Did the implementation touch files designated out-of-scope, create files not declared in the locked scoped file tree, or leave scratch/temporary/debug files behind in the repository? |
 
 #### Design Discipline Smells
 

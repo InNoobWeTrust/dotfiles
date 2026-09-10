@@ -40,7 +40,7 @@ State what a *correct* outcome must satisfy, derived **only** from the requireme
 - [ ] <edge case / failure mode that MUST be handled>
 - [ ] <contract/invariant that MUST hold>
 - [ ] <locked interfaces/DTOs adhered to with zero invented interfaces>
-- [ ] <locked file tree structure matched with zero unapproved files and complete cleanup>
+- [ ] <scoped in-scope file tree matched, out-of-scope boundary respected, zero unapproved files, complete cleanup>
 - [ ] <what would prove this is WRONG — the disconfirming test>
 ```
 

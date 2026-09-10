@@ -75,18 +75,21 @@ An implementation plan (`implementation_plan.md`, `plan.md`, `task.md`, or atomi
    - **Avoid Invented Interfaces**: Zero contract degrees of freedom for implementers. Implementers are strictly forbidden from altering method signatures, reordering parameters, changing DTO shapes, or inventing public/internal contracts not approved during planning.
    - **Contract Defect Stop Condition**: If an implementer discovers during coding that a locked contract is flawed or unworkable, it must NOT silently modify the interface or write ad-hoc adapters. It must stop immediately and report `INCOMPLETE: CONTRACT_DEFECT` back to the planner with the proposed adjustment.
 
-2. **Locked Final File Tree Structure**:
-   - Provide an explicit target file tree representing the complete, clean end-state of the workspace after implementation.
-   - Explicitly annotate every file operation: `[CREATE]` for new files (with exact relative path and concise role), `[MODIFY]` for existing files, `[DELETE]` for removed files, and `[CLEANUP]` for temporary/scratch artifacts.
-   - **Avoid Invented Files & Incomplete Cleanup**: Zero file degrees of freedom for implementers. Implementers are forbidden from creating files not declared in the approved locked file tree. All temporary, intermediate, or scratch files must be explicitly cleaned up before completing work. No unexpected or orphaned files may remain.
+2. **Locked Scope Boundary & Scoped File Tree Structure**:
+   - **Do NOT dump the full repository tree**: A full repo tree is excessive and bloats context. Limit the file tree strictly to the **affected scope / boundary** covered by the plan.
+   - **Explicit Scope Boundaries**:
+     - **In-Scope Boundary**: Explicitly lock which directories, files, or subsystems are in-scope (to be created, modified, or deleted).
+     - **Out-of-Scope Boundary**: Explicitly lock adjacent or tempting components/paths that must NOT be touched. Other irrelevant parts of the repository are implicitly understood to be out-of-scope and unchanged.
+   - **Scoped Target File Tree**: Provide an explicit target file tree covering only the in-scope boundary. Explicitly annotate every file operation: `[CREATE]` for new files (with exact relative path and concise role), `[MODIFY]` for existing files, `[DELETE]` for removed files, and `[CLEANUP]` for temporary/scratch artifacts.
+   - **Avoid Invented Files & Incomplete Cleanup**: Zero file degrees of freedom within or outside the declared boundary. Implementers are forbidden from creating files not declared in the locked scoped tree or touching out-of-scope paths. All temporary, intermediate, or scratch files must be explicitly cleaned up before completing work. No unexpected or orphaned files may remain.
 
 3. **Smaller Separate Implementation Phases in Separate Files (Referenced in Main Plan)**:
-   - The main plan file (`plan.md` or `implementation_plan.md`) serves as the orchestrator and index: containing high-level goals, the overall locked file tree, cross-cutting contracts, and markdown links to each separate phase file. Never dump an entire multi-phase implementation into a single monolithic file.
+   - The main plan file (`plan.md` or `implementation_plan.md`) serves as the orchestrator and index: containing high-level goals, the locked scope boundaries, the scoped target file tree, cross-cutting contracts, and markdown links to each separate phase file. Never dump an entire multi-phase implementation into a single monolithic file.
    - Decompose execution into smaller, sequentially numbered phase files (e.g., `phases/01-phase-name.md`, `phases/02-phase-name.md`, or `phase-01-*.md`).
    - Each phase file is self-contained and specifies:
      - Exact slice objective & dependencies
      - The specific subset of locked interfaces/DTOs to be implemented in this phase
-     - The exact file tree delta for this phase (files created, modified, or deleted from the locked tree)
+     - The exact file tree delta for this phase (files created, modified, or deleted within the in-scope boundary)
      - Concrete step-by-step TDD implementation steps (RED → GREEN → REFACTOR)
      - Concrete verification criteria and exact test/check commands
    - Implementers execute against one referenced phase file at a time, keeping context bounded and preventing hallucination or drift.

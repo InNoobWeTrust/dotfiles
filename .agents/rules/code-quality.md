@@ -41,7 +41,7 @@ Do not:
 - Guess an ambiguous business rule; surface a typed/domain error or obtain clarification instead.
 - Expose undocumented public units or leak internal library implementation details to consumers.
 - Invent new interfaces, altered method signatures, or ad-hoc contract adaptations during implementation that were not approved in the plan (if a contract defect is discovered, stop immediately and report `CONTRACT_DEFECT`).
-- Create unexpected files, unapproved helpers, or leave temporary/scratch files in the workspace; all file additions, modifications, and deletions must strictly conform to the approved locked file tree structure with full cleanup.
+- Create unexpected files, unapproved helpers, breach declared in-scope/out-of-scope boundaries, or leave temporary/scratch files in the workspace; all file additions, modifications, and deletions must strictly conform to the approved locked scoped file tree within the in-scope boundary, with complete cleanup.
 - Use magic literals for meaningful values, shallow 1–3 line helper extractions, positional tuple returns across boundaries, or untyped dynamic maps for domain concepts.
 
 ## Just-in-Time References

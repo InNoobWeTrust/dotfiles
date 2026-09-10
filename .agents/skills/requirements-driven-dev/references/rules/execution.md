@@ -12,7 +12,7 @@
 4. **Single Responsibility**: One artifact = one concern. No monoliths.
 5. **Minimal Diff**: Make the smallest change that satisfies the spec. Don't refactor unrelated areas.
 6. **Readable > Clever**: Prefer clarity over cleverness. Work product is read 10x more than written.
-7. **Locked Plan Fidelity & Phase Sharding**: When implementing from a plan, execute against the referenced separate phase files sequentially. Concur strictly with locked code interfaces/DTOs (zero invented interfaces) and the locked final file tree structure (zero invented files, complete cleanup).
+7. **Locked Plan Fidelity, Scope Boundary & Phase Sharding**: When implementing from a plan, execute against the referenced separate phase files sequentially. Concur strictly with locked code interfaces/DTOs (zero invented interfaces), respected in-scope and out-of-scope boundaries (other parts of repo implicitly unchanged), and the locked scoped file tree structure (zero invented files, complete cleanup).
 
 ## Organization
 
@@ -24,7 +24,7 @@
 Before presenting deliverables to human:
 - [ ] Deliverables address every applicable acceptance scenario in the selected contract
 - [ ] Implementation strictly satisfies locked code interfaces and DTO contracts with zero invented interfaces
-- [ ] Workspace file tree strictly matches approved locked file tree structure with zero unapproved files and all scratch artifacts cleaned up
+- [ ] Workspace file tree strictly matches approved locked scoped file tree structure within the in-scope boundary, out-of-scope files remain untouched, zero unapproved files exist, and all scratch artifacts are cleaned up
 - [ ] Deliverables are verified against the active phase file criteria
 - [ ] No hardcoded secrets, credentials, or sensitive data
 - [ ] Error handling covers all known failure modes

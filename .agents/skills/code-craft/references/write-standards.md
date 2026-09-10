@@ -98,7 +98,7 @@ After writing, read the code as a new engineer with zero context. Answer these:
 8. **Docstring Check** — Do all public declarations have complete and accurate docstrings detailing inputs, outputs, errors, and side effects?
 9. **Abstraction Boundary** — Are all helper functions deep modules? Did we inline any shallow, single-use, or trivial logic to maintain flow readability?
 10. **Locked Interface Check** — Did we implement only the locked contracts without inventing new interfaces or modifying method signatures?
-11. **File Tree Cleanliness Check** — Does the repository state strictly match the locked file tree? Have all temporary, scratch, and intermediate files been completely cleaned up?
+11. **Scoped File Tree & Boundary Check** — Does the repository state strictly match the locked scoped file tree? Were out-of-scope boundaries respected with no files touched outside scope? Have all temporary, scratch, and intermediate files been completely cleaned up?
 
 For any "no" or weak answer, refactor or add a `// CLARITY:` annotation explaining what the code does and why.
 
@@ -108,8 +108,8 @@ For any module directory created or modified, you must ensure it has an up-to-da
 - **Update**: If the changes modify the module's public interface, internal logic flow, dependencies, or core responsibility, update the directory's `README.md`.
 - **Content guidelines (flexible but thorough)**: The `README.md` must contain sufficient detail to allow a human auditor to understand what the module does, its responsibility, public APIs, key design decisions, and external coupling without having to read the source code.
 
-#### K. Adherence to Locked Plan Core Parts & File Tree Cleanliness
+#### K. Adherence to Locked Plan Core Parts & Scoped File Tree Cleanliness
 When implementing from an approved plan:
 - **Strict Interface Fidelity (Zero Invented Interfaces)**: Implement code strictly adhering to the approved code interfaces, method signatures, return types, and DTO contracts. Implementers must not invent new interfaces, alter parameter types or orders, or add ad-hoc contracts on the fly. If an approved contract is found to be unworkable or defective during coding, halt execution immediately and report `INCOMPLETE: CONTRACT_DEFECT`.
-- **File Tree Cleanliness & Mandatory Cleanup (Zero Invented Files)**: All files created, modified, or removed must match the approved locked file tree structure. Do not create unapproved helper files, scripts, or extra modules in ad-hoc paths. All scratch scripts, temporary files, test outputs, or debug files must be completely removed before completing the task.
+- **Scoped File Tree Cleanliness, Scope Boundaries & Mandatory Cleanup (Zero Invented Files)**: All files created, modified, or removed must match the approved locked scoped file tree within the designated in-scope boundary. Do not touch files or components designated out-of-scope (other parts of the repository are implicitly unchanged). Do not create unapproved helper files, scripts, or extra modules in ad-hoc paths. All scratch scripts, temporary files, test outputs, or debug files must be completely removed before completing the task.
 - **Sequential Phase Execution**: Implementers must execute against the designated separate phase file (e.g., `phases/01-*.md`), completing and verifying its acceptance criteria before advancing.

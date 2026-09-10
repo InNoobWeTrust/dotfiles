@@ -126,7 +126,7 @@ new artifact by default.
 - Acceptance evidence: [observable criteria and required proof]
 - Hard invariants / current public contract: [must-not-break properties]
 - Locked contracts to implement: [concrete code signatures and DTO schemas; zero invented interfaces]
-- Locked file tree & cleanup: [target file structure; zero unapproved files; scratch cleanup required]
+- Scope boundary & scoped file tree: [explicit in-scope/out-of-scope boundaries; scoped target file structure; zero unapproved files; scratch cleanup required]
 - Active phase file: [path to specific referenced phase file being executed]
 - Authority: [orchestrator; who may accept, redirect, or change scope]
 - Review budget: [default or explicitly predeclared specialist review]
