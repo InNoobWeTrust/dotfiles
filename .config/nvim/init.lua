@@ -137,7 +137,9 @@ local function nvim_create_augroups(definitions)
         execute("augroup " .. group_name)
         execute("autocmd!")
         for _, def in ipairs(definition) do
-            local command = table.concat(vim.tbl_flatten({ "autocmd", def }), " ")
+            local parts = vim.iter and vim.iter({ "autocmd", def }):flatten():totable()
+                or vim.tbl_flatten({ "autocmd", def })
+            local command = table.concat(parts, " ")
             execute(command)
         end
         execute("augroup END")
@@ -159,11 +161,11 @@ function _G.ReloadConfig()
 end
 
 local autocmds = {
-    reload_vimrc = {
-        -- Reload vim config automatically
-        { "BufWritePost", [[$VIM_PATH/{*.vim,*.yaml,vimrc} nested source $MYVIMRC | redraw]] },
-        { "BufWritePre", "$MYVIMRC", "lua ReloadConfig()" },
-    },
+    -- reload_vimrc = {
+    --     -- Reload vim config automatically (incompatible with lazy.nvim)
+    --     { "BufWritePost", [[$VIM_PATH/{*.vim,*.yaml,vimrc} nested source $MYVIMRC | redraw]] },
+    --     { "BufWritePre", "$MYVIMRC", "lua ReloadConfig()" },
+    -- },
     terminal_job = {
         --{ 'TermOpen', '*', [[tnoremap <buffer> <Esc> <c-\><c-n>]] };
         { "TermOpen", "*", "startinsert" },
@@ -255,9 +257,9 @@ require("lazy").setup({
                         file_browser = {
                             theme = "ivy",
                             -- disables netrw and use telescope-file-browser in its place
-                            hijack_netrw = true,
+                            hijack_netrw = false,
                             collapse_dirs = true,
-                            auto_depth = true,
+                            auto_depth = false,
                         },
                     },
                 })
@@ -277,6 +279,46 @@ require("lazy").setup({
                 map("n", "<leader><leader>g", "<cmd>Telescope live_grep<cr>")
                 map("n", "<leader><leader>bu", "<cmd>Telescope buffers<cr>")
                 map("n", "<leader><leader>h", "<cmd>Telescope help_tags<cr>")
+            end,
+        },
+        -- File explorer with Miller columns
+        {
+            "echasnovski/mini.files",
+            version = false,
+            dependencies = { "kyazdani42/nvim-web-devicons" },
+            config = function()
+                local MiniFiles = require("mini.files")
+                MiniFiles.setup({
+                    mappings = {
+                        go_in_plus = "<CR>",
+                    },
+                    windows = {
+                        preview = true,
+                        width_focus = 30,
+                        width_preview = 40,
+                    },
+                    options = {
+                        use_as_default_explorer = true,
+                    },
+                })
+
+                local toggle_files = function()
+                    if not MiniFiles.close() then
+                        local bufname = vim.api.nvim_buf_get_name(0)
+                        if vim.fn.filereadable(bufname) == 1 then
+                            MiniFiles.open(bufname, true)
+                        else
+                            MiniFiles.open(vim.uv.cwd(), true)
+                        end
+                    end
+                end
+
+                vim.keymap.set("n", "<leader>e", toggle_files, { desc = "explorer toggle mini.files (current file)" })
+                vim.keymap.set("n", "<leader>E", function()
+                    if not MiniFiles.close() then
+                        MiniFiles.open(vim.uv.cwd(), true)
+                    end
+                end, { desc = "explorer open mini.files (cwd)" })
             end,
         },
         -- Editor toolings
@@ -339,6 +381,23 @@ require("lazy").setup({
                             })
                         end,
                         -- Next, you can provide a dedicated handler for specific servers.
+                        ["copilot"] = function()
+                            vim.lsp.config("copilot", {
+                                autostart = true,
+                                single_file_support = true,
+                            })
+                        end,
+                        ["lua_ls"] = function()
+                            vim.lsp.config("lua_ls", {
+                                settings = {
+                                    Lua = {
+                                        format = {
+                                            enable = false,
+                                        },
+                                    },
+                                },
+                            })
+                        end,
                         -- For example, a handler override for the `rust_analyzer`:
                         ["rust_analyzer"] = function()
                             vim.lsp.config("rust_analyzer", {
@@ -355,6 +414,34 @@ require("lazy").setup({
                             })
                         end,
                     },
+                })
+
+                -- LSP Attach configurations
+                vim.api.nvim_create_autocmd("LspAttach", {
+                    group = vim.api.nvim_create_augroup("LspCustomAttach", { clear = true }),
+                    callback = function(args)
+                        local client = vim.lsp.get_client_by_id(args.data.client_id)
+                        if not client then
+                            return
+                        end
+
+                        -- Disable lua_ls formatting to avoid conflict with stylua
+                        if client.name == "lua_ls" then
+                            client.server_capabilities.documentFormattingProvider = false
+                            client.server_capabilities.documentRangeFormattingProvider = false
+                        end
+
+                        -- Inline ghost text for Copilot
+                        if client:supports_method(vim.lsp.protocol.Methods.textDocument_inlineCompletion, args.buf) then
+                            vim.lsp.inline_completion.enable(true)
+
+                            -- Accept ghost text with Ctrl-f (non-conflicting with Zellij)
+                            vim.keymap.set("i", "<C-f>", vim.lsp.inline_completion.get, {
+                                desc = "LSP: accept inline completion",
+                                buffer = args.buf,
+                            })
+                        end
+                    end,
                 })
             end,
         },
@@ -374,6 +461,8 @@ require("lazy").setup({
                 require("navigator").setup({
                     mason = true,
                     lsp = {
+                        format_on_save = false,
+                        disable_format_cap = { "lua_ls" },
                         diagnostic = {
                             virtual_text = true,
                             underline = true,
@@ -437,6 +526,10 @@ require("lazy").setup({
                         cmd = "uvx",
                         args = { "ruff", "format", fn.expand("%") },
                     })
+                end
+                -- Lua
+                if fn.executable("stylua") == 1 then
+                    ft("lua"):fmt("stylua")
                 end
                 -- Lint protobuf
                 if fn.executable("buf") == 1 then
@@ -576,15 +669,42 @@ require("lazy").setup({
                 "FelipeLema/cmp-async-path",
             },
             config = function()
-                local has_words_before = function()
-                    unpack = unpack or table.unpack
-                    local line, col = unpack(api.nvim_win_get_cursor(0))
-                    return col ~= 0
-                        and api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+                --local has_words_before = function()
+                --    unpack = unpack or table.unpack
+                --    local line, col = unpack(api.nvim_win_get_cursor(0))
+                --    return col ~= 0
+                --        and api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+                --end
+
+                local cycle_inline_completion = function(delta)
+                    local ok, cap = pcall(require, "vim.lsp._capability")
+                    if not ok then
+                        return false
+                    end
+                    local inline_comp = cap.all and cap.all["inline_completion"]
+                    local completor = inline_comp
+                        and inline_comp.active
+                        and inline_comp.active[api.nvim_get_current_buf()]
+                    if not (completor and completor.current) then
+                        return false
+                    end
+
+                    if completor:count_items() > 1 then
+                        vim.lsp.inline_completion.select({ count = delta })
+                    else
+                        pcall(function()
+                            completor:request(vim.lsp.protocol.InlineCompletionTriggerKind.Invoked)
+                        end)
+                        vim.lsp.inline_completion.select({ count = delta })
+                    end
+                    return true
                 end
 
                 local cmp = require("cmp")
                 cmp.setup({
+                    completion = {
+                        autocomplete = false,
+                    },
                     snippet = {
                         -- REQUIRED - you must specify a snippet engine
                         expand = function(args)
@@ -597,26 +717,30 @@ require("lazy").setup({
                         ["<Tab>"] = cmp.mapping(function(fallback)
                             if cmp.visible() then
                                 cmp.select_next_item()
-                            elseif has_words_before() then
-                                cmp.complete()
+                            elseif cycle_inline_completion(1) then
+                                -- cycled inline completion candidate
                             else
-                                fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+                                fallback()
                             end
                         end, { "i", "s" }),
-                        ["<S-Tab>"] = cmp.mapping(function()
+                        ["<S-Tab>"] = cmp.mapping(function(fallback)
                             if cmp.visible() then
                                 cmp.select_prev_item()
+                            elseif cycle_inline_completion(-1) then
+                                -- cycled inline completion candidate
+                            else
+                                fallback()
                             end
                         end, { "i", "s" }),
                         ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-                        ["<C-f>"] = cmp.mapping.scroll_docs(4),
-                        --['<C-Space>'] = cmp.mapping(function()
-                        --  if require("tabnine.keymaps").has_suggestion() then
-                        --    return require("tabnine.keymaps").accept_suggestion()
-                        --  else
-                        --    return cmp.complete()
-                        --  end
-                        --end, { "i", "s" }),
+                        ["<C-f>"] = cmp.mapping(function(fallback)
+                            if cmp.visible() then
+                                cmp.scroll_docs(4)
+                            elseif not vim.lsp.inline_completion.get() then
+                                fallback()
+                            end
+                        end, { "i", "s" }),
+                        ["<C-Space>"] = cmp.mapping.complete(),
                         ["<C-e>"] = cmp.mapping.abort(),
                         ["<CR>"] = cmp.mapping.confirm({
                             select = true,
@@ -838,6 +962,9 @@ require("lazy").setup({
         -- Language packs
         {
             "sheerun/vim-polyglot",
+            init = function()
+                g.polyglot_disabled = { "markdown" }
+            end,
             config = function()
                 -- Dart
                 g.dart_html_in_string = true
@@ -854,14 +981,9 @@ require("lazy").setup({
                 elseif mac then
                     g.rust_clip_command = "pbcopy"
                 end
-
-                -- Override conceal level for markdown
-                cmd([[autocmd FileType markdown setlocal conceallevel=1]])
-                -- Override concealcursor for markdown
-                cmd([[autocmd FileType markdown setlocal concealcursor=]])
             end,
         },
-        { "jidn/vim-dbml" },
+        --{ "jidn/vim-dbml" },
         {
             "saecki/crates.nvim",
             event = { "BufRead Cargo.toml" },
@@ -872,38 +994,37 @@ require("lazy").setup({
         -- Highlight using language servers
         {
             "nvim-treesitter/nvim-treesitter",
+            branch = "main",
             lazy = false,
             build = ":TSUpdate",
+            config = function()
+                vim.api.nvim_create_autocmd("FileType", {
+                    pattern = "*",
+                    callback = function()
+                        pcall(vim.treesitter.start)
+                    end,
+                })
+            end,
         },
         { "nvim-treesitter/nvim-treesitter-locals" },
-        -- Render preview for Markdown/HTML/Latex
-        --{
-        --  "OXY2DEV/markview.nvim",
-        --  requires = {
-        --    { "nvim-treesitter/nvim-treesitter" },
-        --    { "nvim-tree/nvim-web-devicons" },
-        --  },
-        --  config = function()
-        --    require('markview').setup({
-        --      initial_state = false,
-        --      --hybrid_modes = { 'n' }
-        --    })
-        --  end,
-        --},
-        --{
-        --  "MeanderingProgrammer/render-markdown.nvim",
-        --  after = { "nvim-treesitter" },
-        --  dependencies = { "echasnovski/mini.nvim", opt = true }, -- if you use the mini.nvim suite
-        --  -- dependencies = { 'echasnovski/mini.icons', opt = true }, -- if you use standalone mini plugins
-        --  -- dependencies = { 'nvim-tree/nvim-web-devicons', opt = true }, -- if you prefer nvim-web-devicons
-        --  config = function()
-        --    require("render-markdown").setup({})
-        --  end,
-        --},
+        -- Render preview for Markdown
+        {
+            "MeanderingProgrammer/render-markdown.nvim",
+            dependencies = {
+                "nvim-treesitter/nvim-treesitter",
+                "kyazdani42/nvim-web-devicons",
+            },
+            ft = { "markdown", "codecompanion" },
+            opts = {
+                anti_conceal = {
+                    enabled = true,
+                },
+            },
+        },
         -- Detect file encoding
         { "s3rvac/AutoFenc" },
         -- Indent line for code wrapping
-        { "Yggdroot/indentLine" },
+        -- { "Yggdroot/indentLine" },
         -- Theme
         {
             "morhetz/gruvbox",
@@ -917,6 +1038,9 @@ require("lazy").setup({
                 g.gruvbox_transparent_bg = 1
                 cmd([[colorscheme gruvbox]])
                 cmd([[highlight Normal ctermbg=none ctermfg=white guibg=none]])
+                -- LSP inline completion ghost text (Gruvbox NonText defaults to #504945 which has poor contrast)
+                api.nvim_set_hl(0, "ComplHint", { fg = "#a89984", ctermfg = 246, italic = true })
+                api.nvim_set_hl(0, "ComplHintMore", { fg = "#b8bb26", ctermfg = 142, bold = true })
             end,
         },
     },

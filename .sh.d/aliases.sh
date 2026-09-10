@@ -459,6 +459,7 @@ usable uv && alias install-toad='uv tool install -U batrachian-toad --python 3.1
 usable curl && usable bash && alias install-hermes='curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash'
 
 usable curl && usable bash && alias install-agy='curl -fsSL https://antigravity.google/cli/install.sh | bash'
+usable agy && alias agyolo='agy --dangerously-skip-permissions'
 
 ################ DevSecMLOps ###################
 

@@ -87,3 +87,7 @@ logging-to-file: true
 commercial-mode: true
 usage-statistics-enabled: true
 logs-max-total-size-mb: 64
+routing:
+  strategy: weighted-round-robin
+claude-header-defaults:
+  stabilize-device-profile: true
