@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 
 # Batch check commonly used commands for efficiency
-usable_batch git docker curl npx uv pkgx rg exa nvim ssh neovide python3 corepack uvx brew rustup conda pyenv nvm yarn pnpm
+usable_batch git docker curl npx uv pkgx rg exa nvim ssh neovide python3 corepack uvx brew rustup conda pyenv nvm yarn pnpm socat
+
 
 ########################### Fancy prompt ######################################
 if [ -n "$use_color" ]; then
@@ -470,6 +471,11 @@ usable curl && alias install-garden='curl -sL https://get.garden.io/install.sh |
 ############################# Custom ##########################################
 # Remote user provisioning utility
 alias setup-user='setup_remote_user'
+
+# Port forwarding via socat
+usable socat && {
+    alias socat-bind='socat_bind'
+}
 
 # Import custom alias
 # shellcheck source=/dev/null

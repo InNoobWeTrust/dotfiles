@@ -408,6 +408,148 @@ chrome_debug() {
     fi
 }
 
+#
+# # socat_bind - Bind and forward a port to external LAN using socat
+# # usage: socat_bind --port <port> [--host <host>]
+socat_bind() {
+    usable local && local bind_host bind_port target_host target_port lan_ip listen_opts
+
+    if ! usable socat; then
+        echo "Error: socat is not installed or not in PATH" >&2
+        return 1
+    fi
+
+    bind_host=""
+    bind_port=""
+    target_host="127.0.0.1"
+    target_port=""
+
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --help)
+                cat <<'EOF'
+Usage: socat_bind --port <port> [--host <host>]
+
+Options:
+  -p, --port <port>        Port to listen on and forward (required)
+  -h, --host <host>        Interface/host to bind on (optional, default: TCP-LISTEN)
+  -t, --target <host>      Target host to forward to (default: 127.0.0.1)
+      --target-port <port> Target port to forward to (default: same as port)
+      --help               Show this help message
+
+Formats supported:
+  --port 8317 / -p 8317 / --port=8317 / port=8317
+  --host TCP-LISTEN / -h TCP-LISTEN / --host=192.168.1.187 / host=TCP-LISTEN
+EOF
+                return 0
+                ;;
+            -p|--port)
+                [ -n "${2-}" ] || { echo "Error: --port requires a value" >&2; return 1; }
+                bind_port="$2"
+                shift 2
+                ;;
+            --port=*)
+                bind_port="${1#*=}"
+                shift
+                ;;
+            port=*)
+                bind_port="${1#*=}"
+                shift
+                ;;
+            -h|--host)
+                [ -n "${2-}" ] || { echo "Error: --host requires a value" >&2; return 1; }
+                bind_host="$2"
+                shift 2
+                ;;
+            --host=*)
+                bind_host="${1#*=}"
+                shift
+                ;;
+            host=*)
+                bind_host="${1#*=}"
+                shift
+                ;;
+            -t|--target)
+                [ -n "${2-}" ] || { echo "Error: --target requires a value" >&2; return 1; }
+                target_host="$2"
+                shift 2
+                ;;
+            --target=*)
+                target_host="${1#*=}"
+                shift
+                ;;
+            target=*)
+                target_host="${1#*=}"
+                shift
+                ;;
+            --target-port)
+                [ -n "${2-}" ] || { echo "Error: --target-port requires a value" >&2; return 1; }
+                target_port="$2"
+                shift 2
+                ;;
+            --target-port=*)
+                target_port="${1#*=}"
+                shift
+                ;;
+            [0-9]*)
+                if [ -z "$bind_port" ]; then
+                    bind_port="$1"
+                fi
+                shift
+                ;;
+            *)
+                echo "Error: unrecognized argument '$1'" >&2
+                echo "Run 'socat_bind --help' for usage." >&2
+                return 1
+                ;;
+        esac
+    done
+
+    if [ -z "$bind_port" ]; then
+        echo "Error: port is required (--port <port> or port=<port>)" >&2
+        return 1
+    fi
+
+    case "$bind_port" in
+        ''|*[!0-9]*)
+            echo "Error: port must be a valid number: '$bind_port'" >&2
+            return 1
+            ;;
+    esac
+
+    if [ "$bind_port" -lt 1 ] || [ "$bind_port" -gt 65535 ]; then
+        echo "Error: port must be between 1 and 65535: '$bind_port'" >&2
+        return 1
+    fi
+
+    target_port="${target_port:-$bind_port}"
+
+    case "$bind_host" in
+        ""|[lL][aA][nN])
+            bind_host="TCP-LISTEN"
+            listen_opts="TCP-LISTEN:${bind_port},reuseaddr,fork"
+            ;;
+        *LISTEN*)
+            listen_opts="${bind_host}:${bind_port},reuseaddr,fork"
+            ;;
+        *)
+            listen_opts="TCP-LISTEN:${bind_port},bind=${bind_host},reuseaddr,fork"
+            ;;
+    esac
+
+    lan_ip=$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || hostname -I 2>/dev/null | awk '{print $1}')
+
+    echo "Forwarding ${bind_host}:${bind_port} -> ${target_host}:${target_port} via socat (Ctrl+C to stop)..."
+    if [ "$bind_host" = "TCP-LISTEN" ] || [ "$bind_host" = "0.0.0.0" ]; then
+        [ -n "$lan_ip" ] && echo "Accessible on LAN at: http://${lan_ip}:${bind_port}"
+    else
+        echo "Accessible at: http://${bind_host}:${bind_port}"
+    fi
+
+    socat "$listen_opts" "TCP:${target_host}:${target_port}"
+}
+
 # Custom functions
 # shellcheck source=/dev/null
 [ -r "$CONF_SH_DIR/func.user.sh" ] && . "$CONF_SH_DIR/func.user.sh"
+
