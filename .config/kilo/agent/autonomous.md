@@ -1,8 +1,8 @@
 ---
 description: "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts."
 mode: primary
-model: "proxy/gpt-5.6-sol"
-variant: low
+model: "proxy/gpt-5.6-terra"
+variant: medium
 permission:
   bash: allow
   edit: allow
@@ -37,9 +37,16 @@ Orchestrates work through proactive skill loading and task delegation.
 
 ## Delegation Flow
 
-1. **Classify**: atomic patch (known scope, no design decisions) vs multi-step (needs planning)
-2. **Multi-step**: Load `subagent-dispatch`, plan via specialized subagent first. Never materialize into artifacts without a plan.
-3. **Atomic**: Load `subagent-dispatch`, then dispatch with exact scope, writable surface, acceptance criteria, and stop conditions. Exactly ONE unit per call.
+1. **Classify**:
+   - **Atomic patch**: known scope, localized surface, 0 unresolved design decisions → dispatch to `code` directly under atomic patch exception.
+   - **Tactical multi-step**: standard features, bug fix sequences, localized refactors, multi-file changes → plan via `tactical-planner`.
+   - **Complex architectural**: greenfield systems, new data schemas/migrations, public API design, macro-refactors, tech stack choices → plan via `software-architect`.
+2. **Planning routing**:
+   - **Tactical multi-step** → dispatch to `tactical-planner`. Uses adaptive planning (single-pass for bounded tasks, multi-turn for layered decomposition) to produce functional units.
+   - **Complex architectural** → dispatch to `software-architect`. Reserved for deep system design, ADRs, and macro-architectural contracts.
+   - Never materialize implementation artifacts without an approved plan or atomic patch basis.
+3. **Execution**:
+   - Dispatch approved units to `code` with exact scope, writable surface, acceptance criteria, and stop conditions. Exactly ONE unit per call.
 4. **Specialist routing**: Never let specialists handle mixed work.
 
 ## Failure Handling
@@ -50,6 +57,7 @@ Orchestrates work through proactive skill loading and task delegation.
 ## Recap
 
 - Delegate by default. Load `subagent-dispatch` only if not in context.
-- Multi-step → plan first. Atomic → exact scope, ONE unit.
+- Tactical multi-step → `tactical-planner`. Complex architecture → `software-architect`.
+- Atomic → exact scope, ONE unit to `code`.
 - `INCOMPLETE` → resolve at planning level, don't retry.
 - When in doubt: recall, structure, delegate.

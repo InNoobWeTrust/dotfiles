@@ -2,7 +2,8 @@
 description: "USE SPARINGLY: general fallback when no specialized subagent match."
 mode: all
 hidden: true
-model: "kilo/inclusionai/ling-3.0-flash-vl:free"
+model: "opencode/muse-spark-1.3-contributor-free"
+variant: xhigh
 model_alt: "github-copilot/gpt-5.4"
 variant_alt: high
 permission:

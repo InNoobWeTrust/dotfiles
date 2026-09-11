@@ -1,8 +1,10 @@
 ---
 description: "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs."
 mode: subagent
-model: "proxy/gpt-5.6-terra"
+model: "kilo/nex-agi/nex-n2.5-pro:free"
 variant: high
+model_alt: "proxy/gpt-5.6-terra"
+variant_alt: low
 permission:
   bash: allow
   edit: deny

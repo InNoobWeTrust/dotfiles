@@ -1,8 +1,8 @@
 ---
-description: "System design, architecture decisions, technical planning, and implementation roadmaps. Use for: design docs, architecture, API contracts, data modeling, tech stack decisions, or planning complex features. Call this subagent before any implementer when work is multi-step or non-atomic; genuinely atomic, independently verifiable patches may skip planning under an orchestrator-declared atomic exception."
+description: "High-complexity system design, macro-architecture decisions, technical planning, and implementation roadmaps. Reserved for: greenfield design docs, system architecture, public API contracts, data modeling, tech stack decisions, or high-ambiguity system initiatives. For routine feature planning, localized refactoring, or multi-step execution plans, use tactical-planner instead."
 mode: subagent
 model: "proxy/gpt-5.6-sol"
-variant: high
+variant: medium
 permission:
   bash: allow
   edit: allow
