@@ -274,22 +274,6 @@
             "output": 384000,
           },
         },
-        "forbiddengun/grok": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 500000,
-            "output": 500000,
-          },
-        },
         "forbiddengun/qwen": {
           "modalities": {
             "input": [

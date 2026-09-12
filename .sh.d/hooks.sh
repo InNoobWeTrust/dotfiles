@@ -26,7 +26,7 @@ if usable cliproxyapi; then
             # Create directory if it doesn't exist
             mkdir -p "$(dirname "$OUTPUT_CONF")"
             # Safe replacement: only expand the specified environment variables
-            envsubst '$HOME $FEATHERLESS_API_KEY $FEATHERLESS_BASE_URL $INK_GATEWAY_API_KEY $INK_GATEWAY_BASE_URL $LLM_BROKER_API_KEY $LLM_BROKER_BASE_URL' \
+            envsubst '$HOME $KILO_API_KEY $KILO_BASE_URL $LLM_BROKER_API_KEY $LLM_BROKER_BASE_URL $OPENCODE_API_KEY $ORCAROUTER_API_KEY $ORCAROUTER_BASE_URL $FEATHERLESS_API_KEY $FEATHERLESS_BASE_URL $INK_GATEWAY_API_KEY $INK_GATEWAY_BASE_URL' \
                 < "$TEMPLATE_CONF" > "$OUTPUT_CONF"
         fi
     fi
