@@ -13,8 +13,8 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 | `skill-compliance.md` | After loading any skill (binding commitment) | medium |
 | `self-grounded-verification.md` | Verification, self-review, "done" claims | medium |
 | `tool-call-integrity.md` | Every tool call that produces a side effect (file write, move, API call, shell command) | medium |
-| `autonomy-safety.md` | Auto-approved tools, AFK, waived per-step prompts | medium |
-| `execution-safety.md` | Running commands, scripts, reading env/config | medium |
+| `autonomy-safety.md` | Always-on autonomy gate; especially before delegation or self-execution that may spawn, recurse, fan out, parallelize, or stress processes | medium |
+| `execution-safety.md` | Running commands, scripts, reading env/config; mandatory preflight before process-spawning or resource-stressing work | medium |
 | `git-safety.md` | Git staging, committing, pushing | small |
 
 ## On-Demand (load when trigger fires)

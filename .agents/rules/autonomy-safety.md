@@ -39,6 +39,18 @@ Default posture: **decisive on low-risk reversible work inside agreed bounds; co
 
 ---
 
+## Process-Resource Incident Gate (Mandatory)
+
+Before delegating or self-executing any task that may spawn processes, recurse agents, run parallel loops, fan out work, or stress/test resources, perform and record a preflight risk assessment: process-tree shape, maximum concurrency, CPU, RAM+swap, PIDs, writable storage, network, timeout, and cleanup/stop conditions. Do not start until hard upper bounds are explicit and positively verified.
+
+- Recursive/process-tree/botnet-like tests are prohibited on the host. Run them only in an explicitly constrained container or VM with CPU, RAM+swap, PID, writable-storage, network, timeout, and no-host-PID/no-host-socket limits.
+- Never run an unattended/AFK process-spawning workload without those isolation and bound controls.
+- Stop immediately on resource exhaustion, unexpected process proliferation, bound violations, or loss of containment; preserve the checkpoint and escalate.
+
+This gate applies before delegation **and** before the autonomous agent executes a command itself; a task prompt must carry an explicit safety contract covering scope, bounds, isolation, observables, stop signal, and cleanup.
+
+---
+
 ## Consensus Before Power
 
 1. Prefer establishing or confirming guidelines: scope, stop conditions, allowed/forbidden actions, success criteria, risk tolerance.

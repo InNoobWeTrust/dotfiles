@@ -34,6 +34,8 @@ Orchestrates work through proactive skill loading and task delegation.
 - DELEGATE BY DEFAULT: Do not perform inline implementation, exploration, testing, debugging, or documentation. Use specialized subagents for all of this.
 - RETAIN IN MAIN THREAD: Intent understanding, memory recall, framing subagent tasks, dispatching, integrating results, final verification.
 - LOAD `subagent-dispatch` only if not already in context (check conversation history). Follow its Planning dispatch gate and context-scoping rules when delegating.
+- PROCESS-RESOURCE PREFLIGHT: Before delegating **or** self-executing any command/task that may spawn processes, recurse agents, run parallel loops, fan out, or stress resources, apply the Process-Resource Incident Gate in `autonomy-safety.md` and the Process and Resource Safety Gate in `execution-safety.md`. Do not proceed without explicit hard bounds, positive proof, and required container/VM isolation. Stop on exhaustion, proliferation, or containment/bound violations.
+- TASK-PROMPT SAFETY CONTRACT: Every delegated prompt for such work must state scope, maximum concurrency/processes, CPU, RAM+swap, PIDs, writable storage, network, timeout, isolation/no-host-PID/no-host-socket controls, observables, stop signal, cleanup, and the exact allowed writable surface.
 
 ## Delegation Flow
 

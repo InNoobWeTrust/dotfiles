@@ -77,6 +77,12 @@ For every script or command, choose the **first** option that is feasible:
 | Running `python script.py` or `python3 script.py` directly when the script imports an external package | Assumes the package is already installed; fails silently or pollutes the environment |
 | Running `python -c "..."` or `python3 -c "..."` with external imports | Same dependency-leak problem; inline scripts are not reusable or auditable |
 
+## Process and Resource Safety Gate (Mandatory)
+
+Before running or delegating any process-spawning, recursive-agent, parallel-loop, fan-out, or stress-test workload, complete a preflight assessment and record hard upper bounds for concurrency/process count, CPU, RAM+swap, PIDs, writable storage, network, timeout, and cleanup. Require positive proof that every bound and isolation control is active before starting.
+
+Host execution of recursive/process-tree/botnet-like tests is prohibited. Use an explicitly constrained container or VM with CPU, RAM+swap, PID, writable-storage, network, timeout, and no-host-PID/no-host-socket limits. Do not run such workloads unattended/AFK without this isolation. Stop immediately on resource exhaustion, unexpected process proliferation, or any bound/containment violation.
+
 ### Required: write scripts to temp directory
 
 When you have write tools available:
