@@ -2,10 +2,10 @@
 description: "USE SPARINGLY: general fallback when no specialized subagent match."
 mode: all
 hidden: true
-model: "opencode/muse-spark-1.3-contributor-free"
-variant: xhigh
-model_alt: "github-copilot/gpt-5.4"
-variant_alt: high
+model: "kilo/nex-agi/nex-n2.5-pro:free"
+variant: medium
+model_alt: "opencode/muse-spark-1.3-contributor-free"
+variant_alt: xhigh
 permission:
   bash: allow
   edit: allow

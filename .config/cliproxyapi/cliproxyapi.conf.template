@@ -36,13 +36,10 @@ claude-api-key:
     base-url: "${LLM_BROKER_BASE_URL}"
     models:
       - name: "forbiddengun/gemini"
-      - name: "forbiddengun/kimi"
-      - name: "forbiddengun/qwen"
-      - name: "forbiddengun/grok"
-      - name: "forbiddengun/gpt"
-      - name: "forbiddengun/claude"
-      - name: "forbiddengun/deepseek"
       - name: "forbiddengun/glm"
+      - name: "forbiddengun/deepseek"
+      - name: "forbiddengun/grok"
+      - name: "forbiddengun/qwen"
 
 # OpenCode Zen Responses API
 codex-api-key:

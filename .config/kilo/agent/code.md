@@ -1,10 +1,10 @@
 ---
 description: "Bounded implementation executor for exactly one approved functional unit per call. Receives a single small, independently verifiable unit (or an explicit atomic-patch exception) and implements it against given acceptance criteria. Refuses planning, orchestration, multi-unit batches, architecture decisions, contract design, and scope expansion — returns INCOMPLETE with continuation state instead. Orchestration, unit splitting, and all design decisions stay in the main agent."
-mode: subagent
-model: "kilo/nex-agi/nex-n2.5-pro:free"
-variant: medium
-model_alt: "opencode/muse-spark-1.3-contributor-free"
-variant_alt: xhigh
+mode: all
+model: "opencode/muse-spark-1.3-contributor-free"
+variant: xhigh
+model_alt: "kilo/nex-agi/nex-n2.5-pro:free"
+variant_alt: medium
 permission:
   bash: allow
   edit: allow
