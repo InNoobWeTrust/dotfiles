@@ -1,8 +1,8 @@
 ---
-description: "High-complexity system design, macro-architecture decisions, technical planning, and implementation roadmaps. Reserved for: greenfield design docs, system architecture, public API contracts, data modeling, tech stack decisions, or high-ambiguity system initiatives. For routine feature planning, localized refactoring, or multi-step execution plans, use tactical-planner instead."
+description: "Architecture fallback agent using DeepSeek-V4.1-Flash for high-complexity system design, macro-architecture decisions, technical planning, and implementation roadmaps with high throughput and 1M context."
 mode: all
-model: "proxy/gpt-5.6-sol"
-variant: low
+model: "ckey/forbiddengun/architect"
+variant: high
 permission:
   bash: allow
   edit: allow

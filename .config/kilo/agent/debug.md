@@ -3,8 +3,6 @@ description: "Systematic troubleshooting and root cause analysis. Use for: diagn
 mode: all
 model: "proxy/gpt-5.6-terra"
 variant: low
-model_alt: "kilo/nex-agi/nex-n2.5-pro:free"
-variant_alt: high
 permission:
   bash: allow
   edit: deny

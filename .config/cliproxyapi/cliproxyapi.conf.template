@@ -35,6 +35,7 @@ claude-api-key:
   - api-key: "${LLM_BROKER_API_KEY}"
     base-url: "${LLM_BROKER_BASE_URL}"
     models:
+      - name: "forbiddengun/architect"
       - name: "forbiddengun/gemini"
       - name: "forbiddengun/glm"
       - name: "forbiddengun/deepseek"

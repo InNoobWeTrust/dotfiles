@@ -2,8 +2,6 @@
 description: "Writes and fixes tests. Use for: writing unit/integration/e2e tests, fixing flaky tests, improving coverage. Targets test files only."
 mode: subagent
 model: "ckey/forbiddengun/deepseek"
-model_alt: "proxy/gpt-5.6-terra"
-variant_alt: medium
 permission:
   bash: allow
   edit: allow

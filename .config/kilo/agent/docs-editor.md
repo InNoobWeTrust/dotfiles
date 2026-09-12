@@ -3,8 +3,6 @@ description: "Expert in writing/reviewing for clear, concise, well-structured do
 mode: subagent
 model: "proxy/gpt-5.6-luna"
 variant: medium
-model_alt: "opencode/muse-spark-1.3-contributor-free"
-variant_alt: xhigh
 permission:
   bash: allow
   edit: allow

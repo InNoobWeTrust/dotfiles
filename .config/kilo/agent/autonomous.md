@@ -1,8 +1,9 @@
 ---
 description: "Fully autonomous primary agent with unrestricted tool access. Use for unattended end-to-end work, long-running tasks, and AFK automation without approval prompts."
 mode: primary
-model: "proxy/gpt-5.6-terra"
-variant: medium
+model: "ckey/forbiddengun/qwen"
+model_alt: "proxy/gpt-5.6-terra"
+variant_alt: medium
 permission:
   bash: allow
   edit: allow

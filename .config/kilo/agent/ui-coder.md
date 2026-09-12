@@ -3,7 +3,6 @@ description: "Specialized UI/frontend coder (strong at layout, spacing, color, a
 mode: primary
 model: "opencode/muse-spark-1.3-contributor-free"
 variant: xhigh
-model_alt: "opencode/mimo-v2.5-free"
 permission:
   bash: allow
   edit: allow

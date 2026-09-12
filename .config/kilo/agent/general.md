@@ -4,8 +4,6 @@ mode: all
 hidden: true
 model: "kilo/nex-agi/nex-n2.5-pro:free"
 variant: medium
-model_alt: "opencode/muse-spark-1.3-contributor-free"
-variant_alt: xhigh
 permission:
   bash: allow
   edit: allow
