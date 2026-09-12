@@ -304,6 +304,13 @@ nvim_ssh_server() {
 }
 
 #
+# # editor - Open default editor
+# # usage: editor [file ...] [+line file]
+editor() {
+    eval "${EDITOR:-vi} \"\$@\""
+}
+
+#
 # # colors - Print colors on terminal
 # # usage: colors
 colors() {

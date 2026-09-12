@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
+os:
+  edit: '${EDITOR:-editor} {{filename}}'
+  editAtLine: '${EDITOR:-editor} +{{line}} {{filename}}'
+  editAtLineAndWait: '${EDITOR:-editor} +{{line}} {{filename}}'
+  openDirInEditor: '${EDITOR:-editor} {{dir}}'
+  editInTerminal: true
+  shellFunctionsFile: ~/.sh.d/func.sh

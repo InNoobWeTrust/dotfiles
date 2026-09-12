@@ -6,16 +6,6 @@
         setPath "$d"
     done
 
-# Set neovim as default editor
-if usable nvim ; then
-    EDITOR="$(command -v nvim)"
-    VISUAL="$(command -v nvim)"
-    export EDITOR
-    export VISUAL
-else
-    export EDITOR=/usr/bin/nano
-fi
-
 # dart-sdk
 [ -d /usr/lib/dart/bin ] && setPath '/usr/lib/dart/bin'
 
