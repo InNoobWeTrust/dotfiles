@@ -1,9 +1,7 @@
 ---
 description: "Web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs."
 mode: subagent
-model: "ckey/forbiddengun/gemini"
-model_alt: "proxy/gpt-5.6-luna"
-variant: high
+model: "github-copilot/gemini-3.5-flash"
 permission:
   bash: allow
   edit: deny

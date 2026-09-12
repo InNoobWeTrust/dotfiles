@@ -2,8 +2,6 @@
 description: "Adaptive tactical planner for routine multi-step tasks, feature breakdowns, bug fix sequencing, and localized refactoring. Produces executable, independently verifiable functional units via single-pass (for bounded tasks) or multi-turn decomposition. Does not execute code or trigger implementers directly."
 mode: subagent
 model: "ckey/forbiddengun/deepseek"
-model_alt: "proxy/gpt-5.6-terra"
-variant_alt: low
 permission:
   bash: allow
   edit: allow

@@ -3,8 +3,6 @@ description: "Bounded implementation executor for exactly one approved functiona
 mode: all
 model: "opencode/muse-spark-1.3-contributor-free"
 variant: xhigh
-model_alt: "kilo/nex-agi/nex-n2.5-pro:free"
-variant_alt: medium
 permission:
   bash: allow
   edit: allow

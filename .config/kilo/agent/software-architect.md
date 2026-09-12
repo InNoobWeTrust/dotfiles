@@ -1,8 +1,8 @@
 ---
 description: "High-complexity system design, macro-architecture decisions, technical planning, and implementation roadmaps. Reserved for: greenfield design docs, system architecture, public API contracts, data modeling, tech stack decisions, or high-ambiguity system initiatives. For routine feature planning, localized refactoring, or multi-step execution plans, use tactical-planner instead."
-mode: all
+mode: subagent
 model: "proxy/gpt-5.6-sol"
-variant: medium
+variant: low
 permission:
   bash: allow
   edit: allow

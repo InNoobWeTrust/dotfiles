@@ -1,7 +1,7 @@
 ---
-description: "Architecture fallback agent using Claude Sonnet 4.6 for high-complexity system design, macro-architecture decisions, technical planning, and implementation roadmaps when preferred model is unavailable."
+description: "Architecture fallback agent using DeepSeek-V4.1-Flash for high-complexity system design, macro-architecture decisions, technical planning, and implementation roadmaps with high throughput and 1M context."
 mode: subagent
-model: "github-copilot/claude-sonnet-4.6"
+model: "ckey/forbiddengun/architect"
 variant: high
 permission:
   bash: allow

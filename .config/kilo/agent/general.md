@@ -1,11 +1,9 @@
 ---
 description: "USE SPARINGLY: general fallback when no specialized subagent match."
-mode: all
+mode: subagent
 hidden: true
-model: "kilo/nex-agi/nex-n2.5-pro:free"
+model: "kilo/kilo-auto/free"
 variant: medium
-model_alt: "opencode/muse-spark-1.3-contributor-free"
-variant_alt: xhigh
 permission:
   bash: allow
   edit: allow

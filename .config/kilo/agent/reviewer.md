@@ -2,8 +2,6 @@
 description: "Read-only independent code and artifact reviewer. Use after implementation to verify changes against acceptance criteria, invariants, and quality gates before finalizing."
 mode: subagent
 model: "ckey/forbiddengun/deepseek"
-model_alt: "proxy/gpt-5.6-terra"
-variant_alt: low
 permission:
   bash: allow
   edit: deny
