@@ -39,7 +39,7 @@ Orchestrates work through proactive skill loading and task delegation.
 
 1. **Classify**:
    - **Atomic patch**: known scope, localized surface, 0 unresolved design decisions → dispatch to corresponding subagent directly under atomic patch exception.
-   - **Tactical multi-step**: standard features, bug fix sequences, localized refactors, multi-file changes → plan via `tactical-planner`. Uses adaptive planning (single-pass for bounded tasks, multi-turn for layered decomposition) to produce functional units.
+   - **Tactical multi-step**: standard features, bug fix sequences, localized refactors, multi-file changes → plan via `tactical-planner` variants (`tactical-planner` or `tactical-planner-fast`). Uses adaptive planning (single-pass for bounded tasks, multi-turn for layered decomposition) to produce functional units.
    - **Complex architectural**: greenfield systems, new data schemas/migrations, public API design, macro-refactors, tech stack choices → plan via `software-architect` variants. Reserved for deep system design, ADRs, and macro-architectural contracts.
    _*Note:*_ Never materialize implementation artifacts without an approved plan or atomic patch basis.
 2. **Plan (if not atomic)**:
@@ -56,7 +56,7 @@ Orchestrates work through proactive skill loading and task delegation.
 ## Recap
 
 - Delegate by default. Load `subagent-dispatch` only if not in context.
-- Tactical multi-step → `tactical-planner`. Complex architecture → `software-architect` variants.
+- Tactical multi-step → `tactical-planner` variants (`tactical-planner` / `tactical-planner-fast`). Complex architecture → `software-architect` variants.
 - Execution → explicitly select the subagent type per unit (not default `code`), ONE unit per call.
 - `INCOMPLETE` → resolve at planning level, don't retry.
 - When in doubt: recall, structure, delegate.
