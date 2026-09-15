@@ -1,0 +1,29 @@
+### configuration file for openfortivpn ###
+
+# Remote Gateway
+host = ${OPENFORTIVPN_HOST}
+port = ${OPENFORTIVPN_PORT}
+
+# SAML SSO Authentication
+# Starts a local HTTP listener on the configured port (e.g. 8020)
+# to capture the SAML redirect callback during SSO login.
+saml-login = ${OPENFORTIVPN_SAML_PORT}
+
+# Optional Credentials (uncomment or supply via environment variables if required)
+# username = ${OPENFORTIVPN_USERNAME}
+# password = ${OPENFORTIVPN_PASSWORD}
+
+# Optional Gateway Certificate Pinning
+# trusted-cert = ${OPENFORTIVPN_TRUSTED_CERT}
+
+# Routing Configuration
+# Split routing: routes pushed by the gateway are added to the routing table
+set-routes = 1
+half-internet-routes = 0
+
+# DNS Configuration
+set-dns = 1
+pppd-use-peerdns = 1
+
+# Connection Persistence (seconds between reconnect attempts; 0 to disable)
+persistent = 0

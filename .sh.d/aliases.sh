@@ -477,6 +477,15 @@ usable socat && {
     alias socat-bind='socat_bind'
 }
 
+# OpenFortiVPN shortcuts
+usable openfortivpn && {
+    alias vpn-connect='vpn connect'
+    alias vpn-up='vpn connect'
+    alias vpn-disconnect='vpn disconnect'
+    alias vpn-down='vpn disconnect'
+    alias vpn-status='vpn status'
+}
+
 # Import custom alias
 # shellcheck source=/dev/null
 [ -r "$CONF_SH_DIR/aliases.user.sh" ] && . "$CONF_SH_DIR/aliases.user.sh"

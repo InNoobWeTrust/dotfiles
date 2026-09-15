@@ -31,3 +31,24 @@ if usable cliproxyapi; then
         fi
     fi
 fi
+
+# openfortivpn hook
+if usable openfortivpn; then
+    TEMPLATE_CONF="$HOME/.config/openfortivpn/config.template"
+    OUTPUT_CONF="$HOME/.config/openfortivpn/config"
+    
+    if [ -f "$TEMPLATE_CONF" ]; then
+        # Regenerate if output is missing or older than the template
+        if [ ! -f "$OUTPUT_CONF" ] || [ "$TEMPLATE_CONF" -nt "$OUTPUT_CONF" ]; then
+            # Create directory if it doesn't exist
+            mkdir -p "$(dirname "$OUTPUT_CONF")"
+            # Default fallbacks if not explicitly exported
+            export OPENFORTIVPN_PORT="${OPENFORTIVPN_PORT:-443}"
+            export OPENFORTIVPN_SAML_PORT="${OPENFORTIVPN_SAML_PORT:-8020}"
+            # Safe replacement: only expand the specified environment variables
+            envsubst '$HOME $OPENFORTIVPN_HOST $OPENFORTIVPN_PORT $OPENFORTIVPN_SAML_PORT $OPENFORTIVPN_USERNAME $OPENFORTIVPN_PASSWORD $OPENFORTIVPN_TRUSTED_CERT' \
+                < "$TEMPLATE_CONF" > "$OUTPUT_CONF"
+            chmod 600 "$OUTPUT_CONF"
+        fi
+    fi
+fi

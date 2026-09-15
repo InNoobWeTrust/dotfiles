@@ -556,6 +556,109 @@ EOF
     socat "$listen_opts" "TCP:${target_host}:${target_port}"
 }
 
+#
+# # vpn_connect - Start openfortivpn directly with SAML SSO browser automation
+# # usage: vpn_connect [extra_openfortivpn_flags]
+vpn_connect() {
+    if ! usable openfortivpn; then
+        echo "Error: openfortivpn binary not found in PATH." >&2
+        return 1
+    fi
+
+    local conf="$HOME/.config/openfortivpn/config"
+    if [ ! -f "$conf" ]; then
+        echo "Error: Config file not found at $conf" >&2
+        return 1
+    fi
+
+    if pgrep openfortivpn >/dev/null 2>&1; then
+        echo "openfortivpn is already running (PID: $(pgrep openfortivpn | tr '\n' ' '))."
+        echo "Run 'vpn status' or 'vpn disconnect' first."
+        return 0
+    fi
+
+    local host port saml_port
+    host=$(awk -F'=[[:space:]]*' '/^[[:space:]]*host[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
+    port=$(awk -F'=[[:space:]]*' '/^[[:space:]]*port[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
+    saml_port=$(awk -F'=[[:space:]]*' '/^[[:space:]]*saml-login[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
+
+    if [ -n "$host" ] && [ -n "$saml_port" ]; then
+        local saml_url="https://${host}:${port:-443}/remote/saml/start?redirect=1"
+        if command -v open >/dev/null 2>&1; then
+            ( sleep 1.5 && open "$saml_url" ) &
+        elif command -v xdg-open >/dev/null 2>&1; then
+            ( sleep 1.5 && xdg-open "$saml_url" ) &
+        fi
+    fi
+
+    echo "Starting openfortivpn (press Ctrl+C to disconnect)..."
+    sudo openfortivpn -c "$conf" "$@"
+}
+
+#
+# # vpn_disconnect - Disconnect active openfortivpn session cleanly
+# # usage: vpn_disconnect
+vpn_disconnect() {
+    if ! pgrep openfortivpn >/dev/null 2>&1; then
+        echo "openfortivpn is not currently running."
+        return 0
+    fi
+
+    echo "Stopping openfortivpn..."
+    sudo pkill -SIGTERM openfortivpn
+    sleep 1
+    if ! pgrep openfortivpn >/dev/null 2>&1; then
+        echo "VPN disconnected."
+    else
+        echo "Waiting for tunnel shutdown..."
+        sleep 1
+        sudo pkill -SIGKILL openfortivpn 2>/dev/null || true
+    fi
+}
+
+#
+# # vpn_status - Check openfortivpn connection status and network interface
+# # usage: vpn_status
+vpn_status() {
+    local pids
+    pids=$(pgrep openfortivpn 2>/dev/null || true)
+    if [ -n "$pids" ]; then
+        echo "Status: Connected (openfortivpn PID: $(echo "$pids" | tr '\n' ' '))"
+        if command -v ifconfig >/dev/null 2>&1; then
+            local ppp_info
+            ppp_info=$(ifconfig 2>/dev/null | awk '/^ppp[0-9]:/{iface=$1} /inet /{if (iface) {print iface, $2; iface=""}}')
+            [ -n "$ppp_info" ] && echo "Interface: $ppp_info"
+        fi
+    else
+        echo "Status: Disconnected"
+    fi
+}
+
+#
+# # vpn - Unified openfortivpn control dispatcher
+# # usage: vpn [connect|disconnect|status|config]
+vpn() {
+    case "${1:-connect}" in
+        start|up|connect)
+            shift 2>/dev/null || true
+            vpn_connect "$@"
+            ;;
+        stop|down|disconnect)
+            vpn_disconnect
+            ;;
+        status|info)
+            vpn_status
+            ;;
+        config|edit)
+            "${EDITOR:-vi}" "$HOME/.config/openfortivpn/config"
+            ;;
+        *)
+            echo "Usage: vpn [connect|disconnect|status|config]"
+            return 1
+            ;;
+    esac
+}
+
 # Custom functions
 # shellcheck source=/dev/null
 [ -r "$CONF_SH_DIR/func.user.sh" ] && . "$CONF_SH_DIR/func.user.sh"
