@@ -1,5 +1,5 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses OpenCode model opencode/muse-spark-1.3-contributor-free at xhigh and 1M context, does not delegate nested tasks."
+description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses OpenCode model muse-spark-1.3-contributor-free at xhigh and 1M context, does not delegate nested tasks."
 mode: subagent
 model: "opencode/muse-spark-1.3-contributor-free"
 variant: xhigh

@@ -1,5 +1,5 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses GitHub Copilot model github-copilot/mai-code-1.1-flash and 256k context, does not delegate nested tasks."
+description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses GitHub Copilot model mai-code-1.1-flash and 256k context, does not delegate nested tasks."
 mode: subagent
 model: "github-copilot/mai-code-1.1-flash"
 permission:

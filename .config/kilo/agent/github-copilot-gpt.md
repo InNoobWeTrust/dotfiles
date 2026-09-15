@@ -1,5 +1,5 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses GitHub Copilot model github-copilot/gpt-5.4 at xhigh and 1M context, does not delegate nested tasks."
+description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses GitHub Copilot model gpt-5.4 at xhigh and 1M context, does not delegate nested tasks."
 mode: subagent
 model: "github-copilot/gpt-5.4"
 variant: xhigh

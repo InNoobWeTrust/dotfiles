@@ -1,5 +1,5 @@
 ---
-description: "Writes and fixes tests using GPT-5.6 Terra with 1M context. Fast, high-accuracy test authoring for unit/integration/e2e tests, flaky test diagnostics, and coverage expansion. Targets test files only. For DeepSeek test authoring fallback, use tester-deepseek."
+description: "Writes and fixes tests. Fast, high-accuracy test authoring for unit/integration/e2e tests, flaky test diagnostics, and coverage expansion. Targets test files only. For test authoring fallback, use tester-deepseek."
 mode: subagent
 model: "proxy/gpt-5.6-terra"
 variant: medium

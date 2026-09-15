@@ -1,5 +1,5 @@
 ---
-description: "High-throughput tactical planner alternative using GPT-5.6 Terra with medium-tier reasoning. Fast-path option for routine multi-step tasks, straightforward feature breakdowns, and rapid bug fix sequencing where quick turnaround is prioritized over deep dependency analysis. Produces executable functional units via single-pass or multi-turn decomposition. For deeper, high-intelligence planning, use tactical-planner."
+description: "High-throughput tactical planner. Fast-path option for routine multi-step tasks, straightforward feature breakdowns, and rapid bug fix sequencing where quick turnaround is prioritized over deep dependency analysis. Produces executable functional units via single-pass or multi-turn decomposition. For deeper, high-intelligence planning, use tactical-planner."
 mode: subagent
 model: "proxy/gpt-5.6-terra"
 variant: medium

@@ -1,5 +1,5 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses Kilo model kilo/z-ai/glm-5.2:free at high and 256k context, does not delegate nested tasks."
+description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses Kilo model glm-5.2:free at high and 256k context, does not delegate nested tasks."
 mode: subagent
 model: "kilo/z-ai/glm-5.2:free"
 variant: high

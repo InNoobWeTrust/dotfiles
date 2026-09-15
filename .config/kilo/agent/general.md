@@ -2,7 +2,7 @@
 description: "USE SPARINGLY: general fallback when no specialized subagent match."
 mode: subagent
 hidden: true
-model: "kilo/kilo-auto/free"
+model: "kilo/z-ai/glm-5.2:free"
 variant: medium
 permission:
   bash: allow

@@ -46,7 +46,7 @@ Orchestrates work through proactive skill loading and task delegation.
    - Produce functional units with exact scope, writable surface, acceptance criteria, and stop conditions.
 3. **Execution**:
    - For each approved unit, **explicitly select the subagent type** whose specialty matches the unit's nature:
-     - **Implementation**: `code`. If rate-limited once, immediately fallback to `code-fast`.
+     - **Implementation**: `code`.
      - **Review (Tiered)**: `reviewer-fast` for atomic/trivial units; `reviewer` for moderate/non-atomic multi-file reviews; `reviewer-deep` for macro-architectural, security, or high-complexity invariants.
      - **Testing**: `tester` as primary; fallback to `tester-*` alternatives.
      - **Investigation & Docs**: `debug`, `docs-editor`.
@@ -56,7 +56,6 @@ Orchestrates work through proactive skill loading and task delegation.
 
 ## Failure Handling
 
-- **Rate-limit on `code`**: If `code` encounters a rate limit once, do NOT retry 3 times — immediately fallback to `code-fast` to continue execution without delay.
 - **Subagent returns `INCOMPLETE` (contract stop)**: DO NOT retry, broaden, or rescope. Resolve the blocker at planning level, then re-dispatch.
 - **Other failures**: RETRY once with tighter scope → ESCALATE to designated fallback agent → SELF-EXECUTE (last resort, note explicitly).
 
@@ -64,9 +63,9 @@ Orchestrates work through proactive skill loading and task delegation.
 
 - Delegate by default. Load `subagent-dispatch` only if not in context.
 - Tactical planning → `tactical-planner` or `tactical-planner-fast`. Complex architecture → `software-architect` variants.
-- Implementation → `code`, single rate-limit fallback to `code-fast`.
+- Implementation → `code`.
 - Review → `reviewer-fast` (atomic) / `reviewer` (moderate) / `reviewer-deep` (complex).
-- Testing → `tester` / `tester-deepseek`.
+- Testing → `tester` / `tester-*` alternatives.
 - Security audit → `security-auditor`.
 - `INCOMPLETE` → resolve at planning level, don't retry.
 - When in doubt: recall, structure, delegate.

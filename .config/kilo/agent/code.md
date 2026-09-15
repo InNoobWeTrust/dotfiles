@@ -1,8 +1,8 @@
 ---
-description: "Bounded implementation executor for exactly one approved functional unit per call using OpenCode Muse Spark for highest intelligence and cleaner code craft. Receives a single small, independently verifiable unit (or an explicit atomic-patch exception) and implements it against given acceptance criteria. If rate-limited even once, fallback immediately to code-fast (using GPT-5.6 Terra) rather than retrying. Refuses planning, orchestration, multi-unit batches, architecture decisions, contract design, and scope expansion — returns INCOMPLETE with continuation state instead. Orchestration, unit splitting, and all design decisions stay in the main agent."
+description: "Bounded implementation executor for exactly one approved functional unit per call using OpenCode Muse Spark for highest intelligence and cleaner code craft. Receives a single small, independently verifiable unit (or an explicit atomic-patch exception) and implements it against given acceptance criteria. Refuses planning, orchestration, multi-unit batches, architecture decisions, contract design, and scope expansion — returns INCOMPLETE with continuation state instead. Orchestration, unit splitting, and all design decisions stay in the main agent."
 mode: all
-model: "opencode/muse-spark-1.3-contributor-free"
-variant: xhigh
+model: "proxy/gpt-5.6-terra"
+variant: medium
 permission:
   bash: allow
   edit: allow

@@ -1,5 +1,5 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses Kilo model kilo/inclusionai/ling-3.0-flash-vl:free with variant thinking and 256k context, does not delegate nested tasks."
+description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses Kilo model ling-3.0-flash-vl:free with variant thinking and 256k context, does not delegate nested tasks."
 mode: subagent
 model: "kilo/inclusionai/ling-3.0-flash-vl:free"
 variant: thinking

@@ -1,5 +1,5 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses Kilo model kilo/nex-agi/nex-n2.5-pro:free at medium and 256k context, does not delegate nested tasks."
+description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses Kilo model nex-n2.5-pro:free at medium and 256k context, does not delegate nested tasks."
 mode: subagent
 model: "kilo/nex-agi/nex-n2.5-pro:free"
 variant: medium
