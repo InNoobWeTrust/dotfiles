@@ -65,14 +65,6 @@ openai-compatibility:
       - name: "ling-3.0-flash-fin-free"
       - name: "nemotron-3-ultra-free"
       - name: "nemotron-3.5-lightning-free"
-  - name: "orcarouter"
-    base-url: "${ORCAROUTER_BASE_URL}"
-    api-key-entries:
-      - api-key: "${ORCAROUTER_API_KEY}"
-    models:
-      - name: "deepseek/deepseek-v4-flash-free"
-      - name: "z-ai/glm-5.3-flash-free"
-      - name: "tencent/hy3-free"
 
 debug: true
 logging-to-file: true

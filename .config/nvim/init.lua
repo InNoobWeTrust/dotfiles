@@ -65,6 +65,27 @@ if fn.executable("pyenv") then
     g.python_host_prog = fn.system('pyenv shims | grep "/python2$" | tr -d "\n"')
     g.python3_host_prog = fn.system('pyenv shims | grep "/python3$" | tr -d "\n"')
 end
+if not vim.env.PUPPETEER_EXECUTABLE_PATH then
+    local chrome_candidates = mac
+            and {
+                "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+                "/Applications/Chromium.app/Contents/MacOS/Chromium",
+                "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+            }
+        or linux and {
+            "/usr/bin/google-chrome-stable",
+            "/usr/bin/google-chrome",
+            "/usr/bin/chromium",
+            "/usr/bin/chromium-browser",
+        }
+        or {}
+    for _, path in ipairs(chrome_candidates) do
+        if fn.executable(path) == 1 then
+            vim.env.PUPPETEER_EXECUTABLE_PATH = path
+            break
+        end
+    end
+end
 ------------------------------------------------ End General
 
 ----------------------------------------------- Highlighting
@@ -602,32 +623,108 @@ require("lazy").setup({
             opts = {
                 adapters = {
                     http = {
-                        groq = function()
-                            return require("codecompanion.adapters").extend("openai", {
-                                name = "groq",
-                                url = "https://api.groq.com/openai/v1/chat/completions",
+                        cliproxyapi = function()
+                            return require("codecompanion.adapters").extend("anthropic", {
+                                name = "cliproxyapi",
+                                formatted_name = "CLIProxyAPI",
+                                url = "http://127.0.0.1:8317/v1/messages",
                                 env = {
-                                    api_key = "GROQ_API_KEY",
+                                    api_key = function()
+                                        return os.getenv("CLIPROXYAPI_API_KEY") or "cliproxyapi"
+                                    end,
                                 },
                                 schema = {
                                     model = {
-                                        default = "groq/compound",
+                                        default = "gpt-5.6-luna",
                                         choices = {
-                                            "groq/compound",
-                                            "groq/compound-mini",
-                                            "allam-2-7b",
-                                            "meta-llama/llama-prompt-guard-2-86m",
-                                            "moonshotai/kimi-k2-instruct-0905",
-                                            "meta-llama/llama-4-scout-17b-16e-instruct",
-                                            "qwen/qwen3-32b",
-                                            "llama-3.1-8b-instant",
-                                            "meta-llama/llama-4-maverick-17b-128e-instruct",
-                                            "meta-llama/llama-guard-4-12b",
-                                            "moonshotai/kimi-k2-instruct",
-                                            "openai/gpt-oss-20b",
-                                            "openai/gpt-oss-120b",
-                                            "llama-3.3-70b-versatile",
-                                            "meta-llama/llama-prompt-guard-2-22m",
+                                            -- OAuth / Codex session models
+                                            "gpt-5.6-luna",
+                                            "gpt-5.6-terra",
+                                            "gpt-5.6-sol",
+                                            "gpt-5.5",
+                                            "gpt-5.3-codex-spark",
+                                            "gpt-6-astra",
+                                        },
+                                    },
+                                },
+                            })
+                        end,
+                        ckey = function()
+                            return require("codecompanion.adapters").extend("anthropic", {
+                                name = "ckey",
+                                formatted_name = "CKey",
+                                url = "https://api.xah.io/v1/messages",
+                                env = {
+                                    api_key = function()
+                                        return os.getenv("CKEY_API_KEY") or "CKEY_API_KEY"
+                                    end,
+                                },
+                                schema = {
+                                    model = {
+                                        default = "forbiddengun/deepseek",
+                                        choices = {
+                                            "forbiddengun/architect",
+                                            "forbiddengun/gemini",
+                                            "forbiddengun/glm",
+                                            "forbiddengun/deepseek",
+                                            "forbiddengun/qwen",
+                                        },
+                                    },
+                                },
+                            })
+                        end,
+                        kilo = function()
+                            return require("codecompanion.adapters").extend("openai_compatible", {
+                                name = "kilo",
+                                formatted_name = "Kilo",
+                                env = {
+                                    url = function()
+                                        return os.getenv("KILO_BASE_URL") or "https://api.kilo.ai/api/gateway"
+                                    end,
+                                    chat_url = "/v1/chat/completions",
+                                    api_key = function()
+                                        return os.getenv("KILO_API_KEY") or "KILO_API_KEY"
+                                    end,
+                                },
+                                schema = {
+                                    model = {
+                                        default = "kilo-auto/free",
+                                        choices = {
+                                            -- OpenAI Models (BYOK)
+                                            "openai/gpt-5.6-luna",
+                                            "openai/gpt-5.6-terra",
+                                            "openai/gpt-5.6-sol",
+                                            "openai/gpt-5.5",
+                                            "openai/gpt-5.4",
+                                            "openai/gpt-5.4-mini",
+                                            "openai/gpt-6-astra",
+                                            "openai/o3",
+                                            "openai/o4-mini",
+                                            "openai/gpt-4.1",
+                                            "openai/gpt-4o",
+                                            "openai/gpt-4o-mini",
+
+                                            -- Kilo Free Models
+                                            "kilo-auto/free",
+                                            "openrouter/free",
+                                            "stepfun/step-3.7-flash:free",
+                                            "poolside/laguna-s-2.1:free",
+                                            "poolside/laguna-xs-2.1:free",
+                                            "nvidia/nemotron-3.5-lightning:free",
+                                            "nvidia/nemotron-3-ultra-550b-a55b:free",
+                                            "nvidia/nemotron-3.5-content-safety:free",
+                                            "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+                                            "nvidia/nemotron-3-super-120b-a12b:free",
+                                            "dots-studio/dots-3-note-preview:free",
+                                            "nex-agi/nex-n2.5-pro:free",
+                                            "nex-agi/nex-n2.5-mini:free",
+                                            "inclusionai/ling-3.0-flash-vl:free",
+                                            "inclusionai/ling-3.0-flash-sante:free",
+                                            "inclusionai/ling-3.0-flash-fin:free",
+                                            "liquid/lfm-2.5-2.6b:free",
+                                            "thinkingmachines/inkling-small:free",
+                                            "cohere/north-mini-code:free",
+                                            "z-ai/glm-5.2:free",
                                         },
                                     },
                                 },
@@ -637,14 +734,14 @@ require("lazy").setup({
                 },
                 strategies = {
                     chat = {
-                        --adapter = "gemini",
-                        adapter = "copilot",
-                        model = "gpt-5-mini",
+                        --adapter = "copilot",
+                        adapter = "cliproxyapi",
+                        model = "gpt-5.6-luna",
                     },
                     inline = {
-                        --adapter = "gemini",
-                        adapter = "copilot",
-                        model = "gpt-5-mini",
+                        --adapter = "copilot",
+                        adapter = "cliproxyapi",
+                        model = "gpt-5.6-luna",
                     },
                 },
                 opts = {
@@ -1018,6 +1115,95 @@ require("lazy").setup({
             opts = {
                 anti_conceal = {
                     enabled = true,
+                },
+            },
+        },
+        -- Image rendering in Neovim (Kitty graphics protocol supported by Zellij 0.45+ and iTerm2 3.5+)
+        {
+            "3rd/image.nvim",
+            build = false,
+            opts = {
+                backend = "kitty",
+                processor = "magick_cli",
+                integrations = {
+                    markdown = {
+                        enabled = true,
+                        clear_in_insert_mode = false,
+                        download_remote_images = true,
+                        only_render_image_at_cursor = false,
+                        filetypes = { "markdown", "vimwiki" },
+                    },
+                },
+                max_width = 210,
+                max_height = 210,
+                max_width_window_percentage = math.huge,
+                max_height_window_percentage = 50,
+                window_overlap_clear_enabled = false,
+            },
+        },
+        -- Inline diagram rendering (Mermaid, PlantUML, D2) powered by image.nvim
+        {
+            "3rd/diagram.nvim",
+            dependencies = {
+                "3rd/image.nvim",
+            },
+            ft = { "markdown", "norg" },
+            opts = {
+                -- Manual rendering only to avoid textlock (E565) during plugin setup.
+                events = { render_buffer = {}, clear_buffer = { "BufLeave" } },
+                renderer_options = {
+                    mermaid = {
+                        background = "transparent",
+                        theme = "dark",
+                        scale = 1,
+                    },
+                    plantuml = {
+                        charset = "utf-8",
+                    },
+                    d2 = {
+                        theme_id = 1,
+                    },
+                },
+            },
+            config = function(_, opts)
+                require("diagram").setup(opts)
+                local supported_fts = { markdown = true, norg = true }
+                local function schedule_render(buf)
+                    vim.schedule(function()
+                        if not vim.api.nvim_buf_is_valid(buf) then
+                            return
+                        end
+                        if not supported_fts[vim.bo[buf].filetype] then
+                            return
+                        end
+                        for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+                            if vim.api.nvim_win_is_valid(win) then
+                                vim.api.nvim_win_call(win, function()
+                                    require("diagram").render()
+                                end)
+                                return
+                            end
+                        end
+                    end)
+                end
+                local group = vim.api.nvim_create_augroup("DiagramInlineRender", { clear = true })
+                vim.api.nvim_create_autocmd({ "BufWinEnter", "InsertLeave", "TextChanged" }, {
+                    group = group,
+                    callback = function(args)
+                        schedule_render(args.buf)
+                    end,
+                })
+                schedule_render(vim.api.nvim_get_current_buf())
+            end,
+            keys = {
+                {
+                    "<leader>md",
+                    function()
+                        require("diagram").show_diagram_hover()
+                    end,
+                    mode = "n",
+                    ft = { "markdown" },
+                    desc = "Diagram: View diagram under cursor in new tab",
                 },
             },
         },

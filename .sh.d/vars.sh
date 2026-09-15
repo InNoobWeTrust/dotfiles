@@ -46,3 +46,23 @@ fi
 export VISUAL="$EDITOR"
 # Set huggingface token
 [ -e "$HOME/.cache/huggingface/token" ] && export HF_TOKEN="$(head -n 1 "$HOME/.cache/huggingface/token")"
+
+# Puppeteer / mermaid-cli browser path
+if [ -z "$PUPPETEER_EXECUTABLE_PATH" ]; then
+    if [ "$(uname -s)" = "Darwin" ]; then
+        if [ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]; then
+            export PUPPETEER_EXECUTABLE_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+        elif [ -x "/Applications/Chromium.app/Contents/MacOS/Chromium" ]; then
+            export PUPPETEER_EXECUTABLE_PATH="/Applications/Chromium.app/Contents/MacOS/Chromium"
+        fi
+    elif [ "$(uname -s)" = "Linux" ]; then
+        if command -v google-chrome-stable >/dev/null 2>&1; then
+            export PUPPETEER_EXECUTABLE_PATH="$(command -v google-chrome-stable)"
+        elif command -v google-chrome >/dev/null 2>&1; then
+            export PUPPETEER_EXECUTABLE_PATH="$(command -v google-chrome)"
+        elif command -v chromium >/dev/null 2>&1; then
+            export PUPPETEER_EXECUTABLE_PATH="$(command -v chromium)"
+        fi
+    fi
+fi
+
