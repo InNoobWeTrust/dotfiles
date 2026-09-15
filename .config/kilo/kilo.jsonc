@@ -218,6 +218,61 @@
             },
           },
         },
+        "gpt-6-astra": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+          "reasoning": true,
+          "variants": {
+            "none": {
+              "reasoning": {
+                "enabled": false,
+                "effort": "none",
+              },
+            },
+            "low": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "low",
+              },
+            },
+            "medium": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "medium",
+              },
+            },
+            "high": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "high",
+              },
+            },
+            "xhigh": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "xhigh",
+              },
+            },
+            "max": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "max",
+              },
+            },
+          },
+        },
       },
     },
     "ckey": {

@@ -1,5 +1,5 @@
 ---
-description: "Adaptive tactical planner for routine multi-step tasks, feature breakdowns, bug fix sequencing, and localized refactoring. Produces executable, independently verifiable functional units via single-pass (for bounded tasks) or multi-turn decomposition. Does not execute code or trigger implementers directly."
+description: "Deep, high-intelligence tactical planner powered by DeepSeek with 1M context. Superior at thorough multi-step task decomposition, nuanced architectural dependency mapping, subtle invariant preservation, and rigorous functional unit specification for complex refactors and non-trivial features. For rapid, routine single-pass plans, use tactical-planner-fast."
 mode: subagent
 model: "ckey/forbiddengun/deepseek"
 permission:

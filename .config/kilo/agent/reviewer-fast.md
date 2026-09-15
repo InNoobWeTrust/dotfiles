@@ -1,7 +1,8 @@
 ---
-description: "Moderate-complexity independent code and artifact reviewer using DeepSeek with 1M context. Use for standard multi-file functional changes, non-atomic logic flow, and contextual verification against acceptance criteria, invariants, and quality gates. For fast atomic/trivial reviews use reviewer-fast; for high-complexity/macro-architectural reviews use reviewer-deep."
+description: "Fast, high-throughput independent reviewer using GPT-5.6 Terra with medium-tier reasoning. Optimized for atomic patches, shallow diffs, trivial single-unit verification, and rapid turnaround against declared acceptance criteria. For moderate non-atomic reviews use reviewer; for complex/architectural reviews use reviewer-deep."
 mode: subagent
-model: "ckey/forbiddengun/deepseek"
+model: "proxy/gpt-5.6-terra"
+variant: medium
 permission:
   bash: allow
   edit: deny

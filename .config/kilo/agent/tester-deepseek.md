@@ -1,8 +1,7 @@
 ---
-description: "Writes and fixes tests using GPT-5.6 Terra with 1M context. Fast, high-accuracy test authoring for unit/integration/e2e tests, flaky test diagnostics, and coverage expansion. Targets test files only. For DeepSeek test authoring fallback, use tester-deepseek."
+description: "Alternative test authoring subagent powered by DeepSeek with 1M context. Use for deep edge-case discovery, complex fixture setup, or fallback testing when proxy quota is constrained. Targets test files only."
 mode: subagent
-model: "proxy/gpt-5.6-terra"
-variant: medium
+model: "ckey/forbiddengun/deepseek"
 permission:
   bash: allow
   edit: allow

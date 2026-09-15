@@ -1,2 +1,7 @@
 /cache
 /project.local.yml
+/language_servers
+/logs
+/prompt_templates
+/news*
+/serena_config.yml
