@@ -26,12 +26,12 @@ to the `memory` skill**.
    - Recall — restore a prior entry.
    - Consolidate — run the dream cycle.
    - Evict — prune long-term memory.
-   - Structure — apply progressive disclosure to docs or code.
+   - Structure — apply progressive disclosure to code.
 3. **Execute the mode**:
    - Capture / Recall → `../skills/memory/references/hierarchy-and-storage.md`.
    - Consolidate → `../skills/memory/references/dream-cycle.md`.
    - Evict → `../skills/memory/references/eviction-scoring.md`.
-   - Structure → `../skills/memory/references/progressive-disclosure-pattern.md` + `../skills/memory/references/pattern-docs.md` / `../skills/memory/references/pattern-code.md`.
+   - Structure → `../skills/memory/references/progressive-disclosure-pattern.md` + `../skills/memory/references/pattern-code.md`.
 4. **Never evict or rewrite `corrections.md` silently.** Scored ranking + human approval.
 
 ---

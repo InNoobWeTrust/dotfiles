@@ -1,11 +1,11 @@
 ---
 name: memory
-description: "Use this skill to save, restore, or manage agent memory across sessions. Handles session checkpoints, context handoffs, progress saves, and session resumption. Also runs dream-cycle consolidation (promoting short-term notes to curated long-term memory) and memory eviction. Use when the user says \"save this,\" \"checkpoint,\" \"remember,\" \"resume,\" \"what was I working on,\" \"consolidate memory,\" or \"forget.\" Also applies progressive-disclosure structuring to docs and code modules."
+description: "Use this skill to save, restore, or manage agent memory across sessions. Handles session checkpoints, context handoffs, progress saves, and session resumption. Also runs dream-cycle consolidation (promoting short-term notes to curated long-term memory) and memory eviction. Use when the user says \"save this,\" \"checkpoint,\" \"remember,\" \"resume,\" \"what was I working on,\" \"consolidate memory,\" or \"forget.\""
 ---
 
 # Memory
 
-Working memory and consolidated long-term memory for agents, plus the same progressive-disclosure pattern applied to docs and code. Session checkpoints are one kind of short-term memory entry — this skill is the single home for anything an agent needs to remember, recall, consolidate, or forget.
+Working memory and consolidated long-term memory for agents. Session checkpoints are one kind of short-term memory entry — this skill is the single home for anything an agent needs to remember, recall, consolidate, or forget.
 
 Two hard rules:
 
@@ -23,7 +23,6 @@ For recall shaping and context compaction tactics, load `references/compaction-a
 - Save, checkpoint, or restore session state
 - User says "remember this", "note this", "save context", "resume", "what was I working on"
 - User says "consolidate memory", "dream cycle", "prune memory", "forget X"
-- User asks to apply progressive disclosure to a docs directory or code module ("shard doc", "split module", "structure this")
 
 Do **not** load this skill for:
 
@@ -43,7 +42,6 @@ Pick one mode per invocation. Modes are separate procedures; do not interleave.
 | **Consolidate (Dream Cycle)** | Promote hot short-term entries to long-term, re-score long-term, propose evictions | `references/dream-cycle.md` + `references/compaction-and-step-recall.md` when context needs compaction |
 | **Consolidate via Subagent** | Same as Consolidate, but delegated to a subagent so the main agent only captures the current work and lets a fresh context do the heavy consolidation pass | `references/dream-cycle.md` §Subagent consolidation + `references/compaction-and-step-recall.md` when needed |
 | **Evict** | Standalone pruning of long-term when size limits are exceeded | `references/eviction-scoring.md` |
-| **Structure** | Apply the same hierarchy pattern to docs (`references/pattern-docs.md`) or code (`references/pattern-code.md`) | `references/progressive-disclosure-pattern.md` |
 
 ### Mode router
 
@@ -51,7 +49,6 @@ Pick one mode per invocation. Modes are separate procedures; do not interleave.
 - User says "resume", "restore", "load context", "what was I working on" → **Recall**.
 - User says "consolidate memory", "dream cycle", "run consolidation", "review my notes" → **Consolidate**; prefer **Consolidate via Subagent** when delegation is available; if unavailable, report to the user and ask before switching to in-agent Consolidate.
 - User says "prune memory", "forget X", "evict Y" → **Evict**.
-- User asks to organize a docs tree or a source module → **Structure**.
 
 ### Capture + Subagent consolidation (recommended path)
 
@@ -130,14 +127,13 @@ Working memory (leaf) ↔ long-term memory (index) is one instance of the same s
 | Layer | Leaf (short-term) | Index / entry point (long-term) |
 |---|---|---|
 | Agent memory | `short-term/<created-stamp>--<branch>--<topic>.md` | `long-term/INDEX.md` |
-| Docs | `docs/**/detail-*.md` | `docs/README.md` + section indexes |
 | Code | Individual functions, files | Module `index.ts` / `__init__.py` / `mod.rs` |
 | Rules | `rules/<name>.md` | `rules/INDEX` |
 | Skills | `skills/<name>/references/*.md` | `SKILL.md` |
 
 **Rule**: the index carries only the smallest key facts + pointers. The leaf carries detail and is loaded on demand. This is exactly the routing pattern the project already uses for skills (`skills/INDEX.md` → `SKILL.md` → `references/*`).
 
-Apply it to docs: `references/pattern-docs.md`. Apply it to code: `references/pattern-code.md`.
+Apply it to code: `references/pattern-code.md`.
 
 ---
 
@@ -188,7 +184,6 @@ For every invocation:
 - `references/dream-cycle.md` — consolidation workflow and scoring inputs
 - `references/eviction-scoring.md` — scoring function, ranking, archive-then-delete protocol
 - `references/progressive-disclosure-pattern.md` — the leaf/index abstraction and the four properties an index must have
-- `references/pattern-docs.md` — applying the pattern to a docs directory (shard-doc / index-docs style)
 - `references/pattern-code.md` — applying the pattern to a code module (public surface vs internals)
 
 Base directory: `file:///home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/memory`

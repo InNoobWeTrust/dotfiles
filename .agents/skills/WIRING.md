@@ -56,6 +56,12 @@ phased-delivery escalation rules require formalization. When delegating,
 2. `data-storytelling` — shape the architecture findings into an audience-aware narrative when the audience is non-technical or decision-oriented
 3. `illustration-craft` — produce the final bespoke explainer only if Mermaid/C4 alone cannot carry the message
 
+### Documentation Craftsmanship
+
+1. `doc-craft` — structure, information layering (Index → Entry → Leaf), visual rhythm (tables over prose, callouts, diagram anchors, anti-wall-of-text)
+2. `mermaid-validation` — validate any embedded Mermaid diagrams before publishing
+3. `reviewer` (editorial lens) — grammar, tone, clarity, and scannability review
+
 ### Browser Automation
 
 1. `codebase-exploration` — map unfamiliar site structure before writing domain skills

@@ -94,6 +94,103 @@ An implementation plan (`implementation_plan.md`, `plan.md`, `task.md`, or atomi
      - Concrete verification criteria and exact test/check commands
    - Implementers execute against one referenced phase file at a time, keeping context bounded and preventing hallucination or drift.
 
+### 📋 Canonical Plan Template (`plan.md` / `implementation_plan.md`)
+
+All implementation plans MUST adopt this scannable Markdown structure. Do not generate walls of discursive prose or deeply nested conversational bullet lists.
+
+```markdown
+# [Plan] <Feature or Task Title>
+
+## Executive Summary
+
+| Question | Answer |
+|---|---|
+| **Why change?** | Root motivation in 1–2 plain-language sentences |
+| **What is being built?** | Primary artifact, package, or subsystem |
+| **What stays out of scope?** | Explicit boundaries preserved untouched |
+| **Key invariant / Safety guardrail?** | Non-negotiable integrity or correctness rule |
+
+## Roadmap at a Glance
+
+| # | Work Area / Phase | Primary Outcome | Phase Spec |
+|---|---|---|---|
+| 1 | <Slice 1 Name> | <One-line crisp outcome> | [`phases/01-<slice>.md`](phases/01-<slice>.md) |
+| 2 | <Slice 2 Name> | <One-line crisp outcome> | [`phases/02-<slice>.md`](phases/02-<slice>.md) |
+
+## ADR-Lite
+
+- **Decision**: <1–2 sentence concrete architectural choice>
+- **Rationale**: <Why this path was chosen over others>
+- **Alternatives Rejected**: <Specific alternative rejected and reason>
+- **Accepted Risks**: <Known trade-offs or technical debt accepted>
+
+## 1. Scoped File Operations
+| Op | Path | Responsibility |
+|---|---|---|
+| `[CREATE]` | `path/to/new_file.ts` | Concise purpose of the new file |
+| `[MODIFY]` | `path/to/existing_file.ts` | Specific changes being introduced |
+| `[DELETE]` | `path/to/deprecated.ts` | Rationale for removal |
+| `[CLEANUP]`| `/tmp/scratch_fixture.json` | Temporary artifact to be deleted before done |
+
+## 2. Locked Interface Contracts
+> **RULE**: All boundary types and service signatures must be explicit code blocks. Zero prose descriptions.
+
+```<language>
+// Concrete DTOs, parameters, return types, and Result/Error unions
+```
+
+## 3. Phase Roadmap & Execution Index
+- [ ] **Phase 1: <Slice Title>** → [`phases/01-<slice-name>.md`](phases/01-<slice-name>.md)
+  - Objective: <one line summary>
+- [ ] **Phase 2: <Slice Title>** → [`phases/02-<slice-name>.md`](phases/02-<slice-name>.md)
+  - Objective: <one line summary>
+
+## 4. Integrated Verification
+- **Test Suite**: `<exact bash test command>`
+- **Acceptance Criteria**:
+  - [ ] Observable behavior 1
+  - [ ] Observable behavior 2
+```
+
+### 📋 Canonical Phase File Template (`phases/01-<slice-name>.md`)
+
+Each vertical slice MUST use this structure to guarantee bounded, executable context for implementers:
+
+```markdown
+# Phase 01: <Slice Name>
+
+| Property | Value |
+|---|---|
+| **Slice Objective** | One-sentence concrete outcome delivered by this slice |
+| **Prerequisites** | Prior phase(s) required, or "None" |
+| **Target Files** | Exact subset of files created, modified, or deleted |
+
+## 1. File Delta
+| Op | Path | Notes |
+|---|---|---|
+| `[CREATE]` / `[MODIFY]` | `path/to/file.ts` | Specific role in this slice |
+| `[CLEANUP]` | `path/to/scratch.tmp` | Must be removed before phase sign-off |
+
+## 2. Phase Contracts
+```<language>
+// Specific subset of locked types/DTOs implemented in this phase
+```
+
+## 3. Step-by-Step TDD Implementation
+1. **RED (Test)**: Write failing test in `<test-file>` asserting `<expected behavior>`.
+   - Command: `<run test command>` (must fail with `<specific assertion error>`).
+2. **GREEN (Code)**: Implement minimal logic in `<target-file>` to pass the test.
+   - Command: `<run test command>` (must pass).
+3. **REFACTOR (Polish)**: Clean up duplication, enforce `code-quality.md`, verify zero extraneous files.
+
+## 4. Phase Verification & Exit Criteria
+- **Verification Command**: `<exact shell command to verify slice>`
+- [ ] Test ran green
+- [ ] Zero invented interfaces outside locked contracts
+- [ ] Zero unapproved files or scratch artifacts remaining
+- [ ] Phase complete; ready for trajectory check (KEEP / ADJUST / ADVANCE / STOP)
+```
+
 ---
 
 ## Rewrite & Consumer Interface Gate

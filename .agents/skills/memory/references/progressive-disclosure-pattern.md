@@ -110,7 +110,6 @@ Apply this pattern when any of these fire:
 
 Concrete recipes live in:
 
-- `pattern-docs.md` — applying the shape to a docs directory (shard-doc / index-docs).
 - `pattern-code.md` — applying the shape to a source module (public surface, private detail).
 
 The memory storage layout in `hierarchy-and-storage.md` is the canonical example.

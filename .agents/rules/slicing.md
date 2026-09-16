@@ -24,7 +24,7 @@ Instead of building a system "horizontally" (e.g., spending 3 days implementing 
 When designing task checklists (`task.md`), implementation plans (`plan.md`), and implementing features:
 
 1.  **Decompose Vertically & Shard into Phase Files**: Group tasks by user story or thin functional flows rather than technical layers. Rank slices by user value and risk reduction, not implementation convenience.
-    *   *Shard into Separate Phase Files*: Write each vertical slice into its own separate phase file (e.g., `phases/01-save-item.md`, `phases/02-list-items.md`) referenced in the main plan file. Do not pack multiple complex slices into a single monolithic plan.
+    *   *Shard into Separate Phase Files*: Write each vertical slice into its own separate phase file (e.g., `phases/01-save-item.md`, `phases/02-list-items.md`) referenced in the main plan file. Do not pack multiple complex slices into a single monolithic plan. Slices and plans MUST follow the canonical Plan and Phase templates in `.agents/rules/grooming.md` §Locked Core Implementation Plan Gate.
     *   *Lock Cross-Layer Seams as Code*: Before coding a slice, specify the concrete DTO types and port/service interface signatures connecting the layers in code blocks within the slice spec. Never leave contracts in prose; locking contract code upfront prevents invented interfaces or drift.
     *   *Lock Scoped File Tree Delta & Cleanup*: For each slice, explicitly declare the exact in-scope files created, modified, or deleted within the defined boundary. No invented files or out-of-scope modifications are permitted, and all temporary scratch/test files must be cleaned up before marking the slice complete.
     *   *Bad (Horizontal)*: "1. Create database schema; 2. Implement API; 3. Create UI."
