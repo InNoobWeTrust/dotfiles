@@ -150,14 +150,26 @@ When the delegated worker returns:
 1. **Scan for `TASK_COMPLETE` or `INCOMPLETE`** in section 5. `INCOMPLETE` is an explicit partial result, not an automatic retry: continue only if the evidence is insufficient for the next decision.
 2. **Read section 3 (Obstacles Encountered)**. Surface any workarounds or quirks to the main context so they are not rediscovered.
 3. **Read section 4 (Confidence & Caveats)**. Low-confidence findings must be verified before acting on them.
-4. **Reject and re-delegate** if:
+4. **Challenge gate — route through independent reviewer before synthesis.**
+   The host produced nothing, so agreement bias is the primary risk: you are primed to accept what the delegated worker returned. Before synthesizing for the user, route the output through a **separate** challenger agent using the `reviewer` skill with the appropriate lens. Do not self-review — delegate the challenge.
+
+   | Delegated output type | Challenge lens (loaded by separate agent) | Purpose |
+   |---|---|---|
+   | Plan, architecture, design proposal, threat model | `pragmatic-triage` → then `adversarial` | Filter unjustified complexity; challenge reasoning on surviving design |
+   | Review findings, audit report, security assessment, scanner output | `findings-skeptic` → then `pragmatic-triage` | Cross-validate findings for false positives and severity inflation; challenge any recommended defensive complexity |
+   | Factual research, exploration, data collection | Skip — proportional summary suffices | Low-risk read-only output; no design or severity claims to challenge |
+   | Implementation (code) | Existing review gates in `code-craft` / `reviewer` apply | Code review is already wired; this gate adds nothing new for code |
+
+   The challenger receives the delegated output as its artifact and the original task context. Its findings feed into step 6 synthesis. If the challenger identifies CRITICAL issues (false findings presented as blockers, or HIGH×HIGH complexity that is actually LOW×LOW), reject and re-scope the delegated work before synthesizing.
+
+5. **Reject and re-delegate** if:
     - The delegated worker broadened scope beyond what was described. _Detect this by checking whether findings reference files, URLs, or data sources not listed in the delegation prompt's context or Allowed Actions block._
     - The delegated worker performed a forbidden action (e.g., wrote a file it was not allowed to touch).
     - For a code implementer target: the worker executed more than the single selected unit, silently rescoped, touched anything outside the declared writable surface, or returned without a continuation state after hitting a stop condition. Treat these as `INCOMPLETE`; re-delegate with corrected unit boundaries only.
     - The output format is missing or materially incomplete for the decision required.
-5. **Treat results as internal evidence.** Do not paste worker prose or transcripts to the user and do not describe orchestration mechanics or chain-of-thought.
-6. **Explain before asking.** Before any approval or choice grounded in delegated work, present the canonical `Material decision brief` from `pillars-and-templates.md` (observed facts/evidence; interpretation/inference; unknowns; plain-language mental model; decision-relevant definitions; project-specific example; options with practical consequences; recommendation when justified). Never ask a question whose meaning depends on files or results the user has not seen explained. If evidence is insufficient for the brief, verify or report the gap — do not manufacture certainty.
-7. **Close the loop.** After the user answers, restate the agreed model and remaining uncertainties. Low-risk factual work with no decision requested needs only a proportional summary — skip the full brief.
+6. **Treat results as internal evidence.** Do not paste worker prose or transcripts to the user and do not describe orchestration mechanics or chain-of-thought.
+7. **Explain before asking.** Before any approval or choice grounded in delegated work, present the canonical `Material decision brief` from `pillars-and-templates.md` (observed facts/evidence; interpretation/inference; unknowns; plain-language mental model; decision-relevant definitions; project-specific example; options with practical consequences; recommendation when justified). Never ask a question whose meaning depends on files or results the user has not seen explained. If evidence is insufficient for the brief, verify or report the gap — do not manufacture certainty. **Include the challenge gate results**: surface any complexity the challenger flagged as unjustified, any findings downgraded or marked FALSE, and any severity recalibrations. The user should see what was challenged and what survived.
+8. **Close the loop.** After the user answers, restate the agreed model and remaining uncertainties. Low-risk factual work with no decision requested needs only a proportional summary — skip the full brief.
 
 ---
 
@@ -212,5 +224,7 @@ OUTPUT TEMPLATE =
   5. Done Signal: TASK_COMPLETE or INCOMPLETE + continuation state
 
 RECEIVE =
-  scan TASK_COMPLETE/INCOMPLETE → surface Obstacles → check continuation and Confidence → retry only if decision-blocking or contract-broken → synthesize host-side decision brief before any user question; never forward worker prose verbatim
+  scan TASK_COMPLETE/INCOMPLETE → surface Obstacles → check Confidence →
+  CHALLENGE GATE: plan/arch/threat → pragmatic-triage+adversarial; review/audit → findings-skeptic+pragmatic-triage; research → skip →
+  reject if scope-blown or forbidden-action → synthesize host-side decision brief (include challenge results) before any user question; never forward worker prose verbatim
 ```

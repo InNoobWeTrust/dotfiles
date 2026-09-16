@@ -71,8 +71,8 @@ Worked scenarios: `references/examples/delegation-scenarios.md` (load only if ne
 | Accessibility audit | black-box-qa → editorial |
 | Browser QA / automation plans | black-box-qa → adversarial |
 | Regression suite / test materialization plans | black-box-qa → adversarial |
-| Specs / PRD / TRD | adversarial → editorial |
-| Architecture | code-quality → design-rigor → adversarial → security |
+| Specs / PRD / TRD | pragmatic-triage → adversarial → editorial |
+| Architecture | pragmatic-triage → code-quality → design-rigor → adversarial → security |
 | Docs / prose | editorial |
 | Config / infra | security → edge-case-hunter |
 | Bug fix / incident | design-rigor → code-quality → adversarial → edge-case-hunter |
@@ -80,6 +80,7 @@ Worked scenarios: `references/examples/delegation-scenarios.md` (load only if ne
 | Skills / commands | adversarial → editorial |
 | Investment memo / portfolio allocation / position sizing | investment-memo → adversarial → editorial |
 | Bond / credit subset of investment memo | investment-memo → adversarial |
+| Delegated review / audit / scanner output | findings-skeptic → pragmatic-triage |
 
 Paths: `references/sub-reviewers/<name>.md`.
 
@@ -88,6 +89,8 @@ Paths: `references/sub-reviewers/<name>.md`.
 | Lens | Axis |
 |---|---|
 | black-box-qa | user-visible behavior, journeys, responsive/a11y/browser QA |
+| pragmatic-triage | complexity justification, probability × impact, Ostrich algorithm |
+| findings-skeptic | cross-validation of review/audit/scanner findings, false-positive detection |
 | adversarial | assumptions, decisions |
 | code-quality | structure, smells, AI laziness |
 | design-rigor | designed vs grown; root cause |

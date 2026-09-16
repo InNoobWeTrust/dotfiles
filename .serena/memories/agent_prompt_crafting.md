@@ -2,10 +2,11 @@
 
 Rules for editing agent prompts, system instructions, documentation, and configuration code in this repository.
 
-## 1. Prompt & Text Editing: Context Economy
+## 1. Prompt & Text Editing: Context Economy & Clean Framing
 
 - Every token in agent descriptions and instructions is repeatedly injected into context across every invocation, routing check, and tool call.
 - **Zero benchmark / marketing fluff**: Never include benchmark scores, parameter counts, or architecture trivia in prompts or descriptions (e.g. ban `74.3%+ DeepSWE`, `552B asymmetric MoE`, `frontier-tier`). The model does not need to know its ELO or benchmark ranking to execute tasks.
+- **Zero conversational / meta-framing leakage**: Never leak conversational metaphors or meta-discussion terms into production prompt text or headings (e.g. do not write `## Core Mindset & Soul` when the user says "give the agent soul"; use clean, professional headings like `## Core Mindset`).
 - Keep agent `description` strictly functional:
   - 1-2 terse sentences defining: role, operational trigger, scope/invariant boundaries, and routing alternatives.
 - **Terse, directive instructions**: State actions directly as invariants; omit rationale, historical context, and conversational explanations.

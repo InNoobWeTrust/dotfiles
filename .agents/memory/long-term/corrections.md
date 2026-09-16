@@ -1,3 +1,0 @@
-# Corrective Memory
-
-## Corrections

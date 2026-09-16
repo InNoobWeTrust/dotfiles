@@ -4,19 +4,40 @@ Every read or write goes through this file first. Storage layout, filename rules
 
 ---
 
-## Resolve `MEMORY_DIR`
+## Resolve Memory Backend & `MEMORY_DIR`
 
-Run once per invocation. Print the resolved path before any file operation.
+Run once per invocation. Print the resolved backend and path before any file operation. Always prefer an **existing repo-local, file-based memory system** (such as Serena) over creating duplicate infrastructure.
 
 ```
 if git rev-parse --show-toplevel succeeds:
-    MEMORY_DIR = <git-root>/.agents/memory
+    if <git-root>/.serena/memories exists or serena MCP is available:
+        MEMORY_BACKEND = serena
+        MEMORY_DIR = <git-root>/.serena/memories
+    elif <other-repo-local-file-memory-exists>:
+        MEMORY_BACKEND = custom
+        MEMORY_DIR = <custom-path>
+    else:
+        MEMORY_BACKEND = default
+        MEMORY_DIR = <git-root>/.agents/memory
 else:
+    MEMORY_BACKEND = default
     MEMORY_DIR = ~/.agents/memory
 ```
 
-Create missing directories on first use:
+### Backend Selection & Behavior
 
+#### 1. Serena Backend (`MEMORY_BACKEND = serena`)
+When the repository already maintains a Serena file-based memory system under `<git-root>/.serena/memories/`:
+- **Single Source of Truth**: Do not create or scaffold `.agents/memory/`. Use `.serena/memories/` exclusively.
+- **Discovery Root**: `core.md` (`mem:core`) serves as the graph root, pointing to domain memories via `` `mem:<name>` `` references.
+- **Storage Layout**: Flat markdown files inside `<git-root>/.serena/memories/<topic>.md`.
+- **Capture**: Write or update topic-specific Markdown files directly in `<git-root>/.serena/memories/<topic>.md` (or call Serena MCP `write_memory`). When adding a new domain memory, register its reference in `core.md`.
+- **Recall**: Inspect `core.md` to discover domain pointers, then load the relevant `<topic>.md` files (or call Serena MCP `read_memory`).
+- **Conventions**: Follow `memory_maintenance.md` style — dense invariant bullets, durable non-obvious conventions, zero conversational filler.
+
+#### 2. Default Backend (`MEMORY_BACKEND = default`)
+Used as fallback when no established repo-local memory system exists.
+Maintains the two-tier layout:
 ```
 <MEMORY_DIR>/
 ├── README.md
@@ -32,7 +53,6 @@ Create missing directories on first use:
 ```
 
 Never scan a `MEMORY_DIR` outside the repo when working in a repo unless the user asks for global memory explicitly.
-
 Repo-local `.agents/memory/` is runtime state first: keep it gitignored by default unless the repository explicitly decides to version selected scaffolding or long-term memory files.
 
 ---
@@ -238,16 +258,16 @@ When in doubt, leave it in short-term. Consolidate promotes only what clears thi
 
 Use when the user explicitly asks to save a checkpoint, note, or working state.
 
-1. Resolve `MEMORY_DIR`. **If `MEMORY_DIR` or `short-term/` does not exist, create the full directory structure** (`short-term/`, `short-term/archive/`, `long-term/`, `long-term/topics/`, `archive/`) now. A missing directory is the bootstrap case — proceed with Capture, do not abort.
-2. Decide bucket:
-   - Session state / active work → `short-term/<created-stamp>--<branch>--<topic>.md`.
-   - One-shot durable fact / correction / command → still write to `short-term/` first (a dedicated `capture-notes` short-term file is fine, same naming rule). It will be scored and promoted on the next Consolidate. Never write to `long-term/` directly.
-3. Look up existing entry by glob `short-term/*--<branch-slug>--<topic-slug>.md` (the timestamp prefix is not part of the lookup key):
-   - Match found, has a `created-stamp` prefix → update that file in place (bump `updated`, set `consolidated: false`). Do not touch its `created` field or its stamp.
-   - Match found, no `created-stamp` prefix (legacy name) → rename it to add the stamp per §Frontmatter resilience rule 4, then update it in place.
-   - No match → create new, with `created-stamp` = now (UTC, compact form) and frontmatter `created` = now (ISO 8601 with offset).
-4. Inline crucial state from plans, review findings, or scratchpads so the entry is self-contained.
-5. Print: mode, file path (noting any rename), sections touched, whether Consolidate is now pending.
+1. Resolve `MEMORY_BACKEND` and `MEMORY_DIR`.
+2. **When using Serena (`MEMORY_BACKEND = serena`)**:
+   - For durable knowledge, decisions, or conventions: write or update `<MEMORY_DIR>/<topic>.md` (or call Serena MCP `write_memory`). Ensure `core.md` has a reference to the topic.
+   - For temporary scratchpad/in-progress notes: write to `<appDataDir>/brain/<conversation-id>/scratch/` or maintain in conversation context.
+   - Print: backend (`serena`), file path, memory name, whether `core.md` was updated.
+3. **When using Default (`MEMORY_BACKEND = default`)**:
+   - **If `MEMORY_DIR` or `short-term/` does not exist, create the full directory structure** (`short-term/`, `short-term/archive/`, `long-term/`, `long-term/topics/`, `archive/`) now.
+   - Decide bucket: session state → `short-term/<created-stamp>--<branch>--<topic>.md`; durable fact → write to `short-term/` first (scored and promoted on Consolidate).
+   - Look up existing entry by glob `short-term/*--<branch-slug>--<topic-slug>.md` and update or create with timestamp.
+   - Print: backend (`default`), file path, sections touched, whether Consolidate is pending.
 
 Never treat Capture as a Consolidate trigger. Consolidate has its own rules in `references/dream-cycle.md`.
 
@@ -257,18 +277,18 @@ Never treat Capture as a Consolidate trigger. Consolidate has its own rules in `
 
 Use when the user asks to restore, resume, load context, or lists prior notes.
 
-1. Resolve `MEMORY_DIR`. If `MEMORY_DIR` does not exist, report **"No memory directory found — this workspace has no prior memory. Use Capture mode to start recording."** and return. Do not silently return an empty result — the agent (or caller) must know that memory can be created, not that it was searched and found empty.
-2. Choose search scope:
-   - Explicit path → load that file.
-   - Current branch → glob `short-term/*--<branch-slug>--*.md` (matches both stamped and legacy unstamped names), exclude `status: done` (missing `status` is never treated as `done`; see §Frontmatter resilience).
-   - "What was I working on" / generic resume → list non-archived short-term entries sorted by `updated` desc (unparseable/missing `updated` sorts as oldest, per §Frontmatter resilience), plus `long-term/INDEX.md` topic summary. The filename's `created-stamp` is available for an audit-trail view (creation order) but `updated` remains the sort key for "recent work."
-   - Topic query → grep `long-term/INDEX.md` first, then follow to the bucket or topic file.
-   - Similar-trace query ("have we seen a step like this before?") → load `references/compaction-and-step-recall.md` and search for prior incidents by step shape, blocker type, and recovery pattern — not just by topic name.
-3. If `short-term/` and `long-term/` both exist but contain no matching entries, report **"Memory directory exists but no entries match. Use Capture mode to record new knowledge."** This is distinct from "directory not found" — the infrastructure exists but has no relevant content yet.
-4. If multiple active short-term entries match, present summaries and ask which to load. Do not silently pick one.
-5. Parse the selected file. Print Goal, Current Status, Key Decisions, Next Steps, Blockers. Long-term reads print the matching rows plus their bucket entries.
+1. Resolve `MEMORY_BACKEND` and `MEMORY_DIR`. If `MEMORY_DIR` does not exist, report **"No memory directory found — this workspace has no prior memory. Use Capture mode to start recording."** and return.
+2. **When using Serena (`MEMORY_BACKEND = serena`)**:
+   - Read `core.md` (`mem:core`) to discover available domain memory references.
+   - Load the relevant `<topic>.md` file (or call Serena MCP `read_memory`).
+   - Print the matching memory content or present summaries if multiple topics are relevant.
+3. **When using Default (`MEMORY_BACKEND = default`)**:
+   - Choose search scope: explicit path, current branch (`short-term/*--<branch-slug>--*.md`), recent work summary, topic query via `long-term/INDEX.md`, or similar-trace query via `references/compaction-and-step-recall.md`.
+   - If `short-term/` and `long-term/` both exist but contain no matching entries, report **"Memory directory exists but no entries match. Use Capture mode to record new knowledge."**
+   - If multiple active short-term entries match, present summaries and ask which to load. Do not silently pick one.
+   - Parse the selected file. Print Goal, Current Status, Key Decisions, Next Steps, Blockers. Long-term reads print the matching rows plus their bucket entries.
 
-This skill is the source of truth. Do not delegate recall to external environment-managed memory stores or expect them to hold repo memory. If the current environment happens to expose its own memory, treat it as unrelated context — its entries are not authoritative here.
+4. **Authority**: When using a file-based repo-local system (like Serena) or default `.agents/memory/`, the repo-local files are the source of truth. Do not delegate recall to external ungrounded environment stores.
 
 ---
 

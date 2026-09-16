@@ -64,32 +64,47 @@ To keep the main agent focused when consolidation is requested:
 
 ---
 
-## Storage (repo-local first, global fallback)
+## Storage & Backend Resolution
 
-Resolve `MEMORY_DIR` before any read or write:
+Always prefer an **existing repo-local, file-based memory system** to avoid maintaining duplicate stores.
 
-1. `git rev-parse --show-toplevel` succeeds → `MEMORY_DIR=<git-root>/.agents/memory/`
-2. Otherwise → `MEMORY_DIR=~/.agents/memory/`
+Resolve `MEMORY_BACKEND` and `MEMORY_DIR` before any read or write:
 
-`MEMORY_DIR` is created lazily on the first Capture mode call. A missing directory on Recall means no prior memory exists yet.
+1. **Existing Repo-Local Memory (Highest Priority)**:
+   - If `<git-root>/.serena/memories/` exists (or Serena MCP is available), select `MEMORY_BACKEND=serena` and `MEMORY_DIR=<git-root>/.serena/memories/`. Memories are stored as Markdown documents in the repository, with `mem:core` (`core.md`) as the root entry point.
+   - If another documented repo-local, file-based memory directory exists (e.g. `.docs/memory/`), select `MEMORY_BACKEND=custom`.
+2. **Default `.agents/memory/` (Fallback)**:
+   - If in a git repository and no existing memory system is present: `MEMORY_BACKEND=default` and `MEMORY_DIR=<git-root>/.agents/memory/`. Created lazily on first Capture.
+3. **Global Fallback**:
+   - If outside a git repository and no repo-local system exists: `MEMORY_BACKEND=default` and `MEMORY_DIR=~/.agents/memory/`.
 
-Layout:
+### Layout by Backend
 
+**Serena Backend (`MEMORY_BACKEND=serena`)**:
+```
+<git-root>/.serena/memories/
+├── core.md                      # Graph root entry point (references domain memories)
+├── memory_maintenance.md        # Discovery model and style guidelines
+└── <topic>.md                   # Focused domain memories (e.g., project_governance.md)
+```
+*Operations adapt*: Capture/Recall read and write markdown files directly under `.serena/memories/` (or via Serena MCP tools `read_memory`/`write_memory` when active).
+
+**Default Backend (`MEMORY_BACKEND=default`)**:
 ```
 <MEMORY_DIR>/
 ├── README.md                    # directory protocol
 ├── short-term/                  # unbounded, append-only per session
 │   └── <created-stamp>--<branch>--<topic>.md  # session checkpoints + working notes
 ├── long-term/                   # size-limited, INDEX-gated
-│   ├── INDEX.md                 # topic map + entry catalog (the "consolidated" view)
+│   ├── INDEX.md                 # topic map + entry catalog
 │   ├── project.md               # facts / decisions / constraints
 │   ├── environment.md           # commands / paths / tooling
-│   ├── corrections.md           # user corrections (never auto-evict without confirmation)
+│   ├── corrections.md           # user corrections
 │   └── topics/<topic>.md        # topic-scoped long-term entries
-└── archive/                     # evicted long-term entries (kept for audit trail)
+└── archive/                     # evicted long-term entries
 ```
 
-Full contract, filename rules, frontmatter, and templates: `references/hierarchy-and-storage.md`.
+Full contract, filename rules, backend adaptation, and templates: `references/hierarchy-and-storage.md`.
 
 ---
 

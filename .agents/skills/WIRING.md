@@ -149,6 +149,36 @@ When creating or maintaining the .agents/ governance layer:
 3. `reviewer` (adversarial lens) — challenge the new skill or audit conclusions
 4. `codebase-exploration` — if the new skill needs domain knowledge of the codebase
 
+### Plan / Architecture Challenge (Swarm-Based)
+
+When a delegated architect, planner, or design agent produces a plan or
+architecture proposal, route it through a challenger before presenting to
+the user. This prevents over-engineering and hallucinated complexity from
+reaching the decision-maker unchallenged.
+
+1. Delegated agent (architect, planner) produces the plan
+2. `reviewer` (pragmatic-triage lens) — independent agent challenges every proposed complexity against probability × impact
+3. `reviewer` (adversarial lens) — challenge reasoning and assumptions on the surviving design
+4. Host synthesizes the plan + challenge into a Material Decision Brief for the user
+
+**Key principle:** The producer agent does NOT load pragmatic-triage — a
+*separate* agent loads it to challenge the producer's output. This is
+swarm-based correction, not self-discipline.
+
+### Review / Audit Cross-Validation
+
+When a delegated reviewer, security auditor, or scanner produces findings,
+route those findings through a skeptical second pass before acting on them.
+
+1. Delegated reviewer/auditor produces findings
+2. `reviewer` (findings-skeptic lens) — independent agent cross-validates each finding for evidence, context, and severity calibration
+3. `reviewer` (pragmatic-triage lens) — for any findings that recommend defensive measures, verify the complexity is justified
+4. Host presents only VERIFIED findings at their calibrated severity
+
+**Key principle:** Auditor output is treated as claims, not facts. A
+second agent challenges those claims. False positives are filtered before
+reaching the user.
+
 ---
 
 ## Handoff Points
@@ -221,6 +251,10 @@ Natural transitions between skills:
 | `skill-author` (Workflow B) | `reviewer` | "Audit complete, challenging conclusions" |
 | `skill-author` (Workflow A) | `reviewer` | "New skill written, ready for adversarial review" |
 | `skill-author` (Workflow A) | `skill-author` (Workflow B) | "New skill registered, queued for next quarterly audit" |
+| Delegated architect/planner | `reviewer` (pragmatic-triage lens) | "Plan/architecture produced by delegated agent — challenge complexity before presenting to user" |
+| `reviewer` (pragmatic-triage lens) | `reviewer` (adversarial lens) | "Unjustified complexity filtered — challenge reasoning on surviving design" |
+| Delegated reviewer/auditor/scanner | `reviewer` (findings-skeptic lens) | "Findings produced by delegated reviewer — cross-validate before acting" |
+| `reviewer` (findings-skeptic lens) | `reviewer` (pragmatic-triage lens) | "Findings verified — challenge any recommended defensive complexity" |
 | `architecture-design` | `mermaid-validation` | "Mermaid diagram generated, validating syntax before embedding" |
 | `data-storytelling` | `mermaid-validation` | "Mermaid visual created, validating syntax before embedding" |
 | `db-design` | `database-access` | Schema finalized — implement the access layer (repositories, session lifecycle, write contracts) |
@@ -241,6 +275,8 @@ skill.
 |---|---|---|
 | `reviewer/references/sub-reviewers/design-rigor.md` | `code-craft`, `systematic-investigation` | Reviews whether design discipline and investigation rigor were applied |
 | `reviewer/references/sub-reviewers/investment-memo.md` | `investment-assessment`, swarm finance personas | Reviews rails, regime, role discipline, class-fit, sizing vs pain |
+| `reviewer/references/sub-reviewers/pragmatic-triage.md` | Ostrich algorithm, YAGNI, probability × impact triage | Challenges whether proposed complexity is justified; filters before adversarial/design-rigor drill in |
+| `reviewer/references/sub-reviewers/findings-skeptic.md` | `rules/self-grounded-verification.md`, agreement-bias research | Cross-validates review/audit/scanner findings for false positives and severity inflation |
 
 ---
 
