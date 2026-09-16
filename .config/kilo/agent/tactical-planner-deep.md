@@ -1,8 +1,7 @@
 ---
-description: "High-throughput tactical planner. Fast-path option for routine multi-step tasks, straightforward feature breakdowns, and rapid bug fix sequencing where quick turnaround is prioritized over deep dependency analysis. Produces executable functional units via single-pass or multi-turn decomposition. For deeper, high-intelligence planning, use tactical-planner."
+description: "Deep, high-intelligence tactical planner. Superior at thorough multi-step task decomposition, nuanced architectural dependency mapping, subtle invariant preservation, and rigorous functional unit specification for complex refactors and non-trivial features. For rapid, routine single-pass plans, use tactical-planner-fast."
 mode: subagent
-model: "proxy/gpt-5.6-terra"
-variant: medium
+model: "ckey/forbiddengun/deepseek"
 permission:
   bash: allow
   edit: allow
