@@ -379,7 +379,6 @@ require("lazy").setup({
                         "jsonls",
                         "stylelint_lsp",
                         "ts_ls",
-                        "tsgo",
                         "tailwindcss",
                         "vue_ls",
                         "vuels",
