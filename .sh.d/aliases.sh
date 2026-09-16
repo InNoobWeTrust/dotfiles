@@ -295,6 +295,12 @@ usable nvim && \
         alias nvim-remote='nvim --server localhost:6666'
     }
 
+# Connect to neovim server
+usable neovide && \
+    {
+        alias neovide-remote='neovide --server=localhost:6666'
+    }
+
 # Chrome debug
 alias chrome-debug='chrome_debug'
 
@@ -302,13 +308,6 @@ usable ssh && \
     {
         alias nvim-ssh-server='nvim_ssh_server '
     }
-
-# Connect to neovim server
-usable neovide && \
-    {
-        alias neovide-remote='neovide --server=localhost:6666'
-    }
-
 
 ############################### PATH management ###############################
 
