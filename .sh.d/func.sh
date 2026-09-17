@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+# shellcheck disable=SC3043
 
 #
 # # usable - Check if command exist before invoking
@@ -31,6 +32,8 @@ usable() {
 # # usage: usable_batch cmd1 cmd2 cmd3 ...
 # # Sets __USABLE_BATCH_RESULTS with space-separated "cmd:0" (found) or "cmd:1" (not found)
 usable_batch() {
+    local cmd 2>/dev/null || true
+
     # Reset cached results
     __USABLE_HIT_CMDS=""
     __USABLE_MISS_CMDS=""
@@ -49,6 +52,8 @@ usable_batch() {
 # # forgit_me_config - Configure git for many repos at once
 # # usage forgit_me_config [some_git_config]
 forgit_me_config() {
+    local d 2>/dev/null || true
+
     for d in $(ls -d */); do
         [ -d "$d/.git/" ] && \
             echo "Configuring git repo $d..." && \
@@ -60,6 +65,8 @@ forgit_me_config() {
 # # git_web_url - Get url in https for remote url
 # # usage git_web_url
 git_web_url() {
+    local remote url 2>/dev/null || true
+
     # Remote from input or default to 'origin'
     remote=$1
     if [ -z "$remote" ]; then
@@ -93,6 +100,8 @@ git_web_url() {
 # # gitlab_web_mr_create - Get url for creating PR on gitlab with information prefilled
 # # usage gitlab_web_mr_create [target_branch] [assignees] [reviewers] [remote]
 gitlab_web_mr_create() {
+    local remove_branch current_branch target_branch assignees reviewers remote repo title description 2>/dev/null || true
+
     remove_branch="merge_request[force_remove_source_branch]=true"
     current_branch="&merge_request[source_branch]=$(git branch --show-current)"
 
@@ -113,6 +122,8 @@ gitlab_web_mr_create() {
 # # gitlab_push_mr_create - Creating PR on gitlab by git push
 # # usage gitlab_push_mr_create [target_branch] [assignees] [reviewers] [remote]
 gitlab_push_mr_create() {
+    local remove_branch current_branch target_branch assignees reviewers remote title 2>/dev/null || true
+
     set -x
 
     remove_branch="merge_request.force_remove_source_branch=true"
@@ -142,6 +153,8 @@ gitlab_push_mr_create() {
 # # batch_open - open links in batches
 # # usage: batch_open [file_contain_links] [batch_size] [start]
 batch_open() {
+    local f size start browser links_all len s links 2>/dev/null || true
+
     f=${1:-links.txt}
     size=${2:-10}
     start=${3:-1}
@@ -165,6 +178,8 @@ batch_open() {
 # # lag - Dummy sleep with a spinner and customizable sleep time
 # # usage: lag [seconds]
 lag() {
+    local sleep_time job s 2>/dev/null || true
+
     sleep_time=${1:-5}
     sleep "$sleep_time" & job=$!
     while kill -0 "$job" 2>/dev/null; do
@@ -179,6 +194,8 @@ lag() {
 # # gacha - Animated number generator with optional range. Press ENTER to stop the animation and get a random number.
 # # usage: gacha [min] [max]
 gacha() {
+    local min max 2>/dev/null || true
+
     min=${1:-1}
     max=${2:-100}
     while ! read -t 0.25 -rsn 1; do
@@ -191,6 +208,8 @@ gacha() {
 # # mux - pickup terminal multiplexer or download and execute one
 # # usage: mux [zellij_args]
 mux() {
+    local tmp_script rc 2>/dev/null || true
+
     if usable zellij; then
         zellij "$@"
     else
@@ -210,6 +229,8 @@ mux() {
 # # vscode_cli_install - Install VSCode CLI per OS and architecture
 # # usage: vscode_cli_install
 vscode_cli_install() {
+    local OS ARCH URL TMP_DIR DEST_DIR 2>/dev/null || true
+
     if usable code; then
         echo "VSCode CLI is already installed."
         return 0
@@ -265,6 +286,8 @@ vscode_cli_install() {
 # # cron_routine - cron at random time over a day
 # # usage: cron_routine [shell_script_file] [number_of_runs]
 cron_routine() {
+    local SCRIPT RUNS MIN_STEP MIN HOURS CONF 2>/dev/null || true
+
     SCRIPT=${1:-cron.sh}
     RUNS=${2:-5}
     MIN_STEP=${3:-3}
@@ -296,11 +319,94 @@ ngrokhttp() {
 
 #
 # # nvim_ssh_server - Start and connect to neovim on remote server
-# # usage nvim_ssh_server [remote-machine] [shell]
+# # usage: nvim_ssh_server [--server remote-machine] [--shell shell]
+# #        nvim_ssh_server [remote-machine] [shell]
 nvim_ssh_server() {
+    local remote_server shell positional_args server_named shell_named end_of_opts 2>/dev/null || true
+
+    remote_server=''
     shell='bash'
-    [ -n "$2" ] && shell="$2"
-    ssh -L 6666:localhost:6666 "$1" -t "${shell} -l -c 'nvim --headless --listen localhost:6666'"
+    positional_args=0
+    server_named=0
+    shell_named=0
+    end_of_opts=0
+
+    while [ "$#" -gt 0 ]; do
+        if [ "$end_of_opts" -eq 0 ]; then
+            case "$1" in
+                -h|--help)
+                    printf 'usage: nvim_ssh_server [--server remote-machine] [--shell shell]\n'
+                    printf '       nvim_ssh_server [remote-machine] [shell]\n'
+                    return 0
+                    ;;
+                --server|--server-name|--remote-server|--name|-r)
+                    [ "$#" -gt 1 ] || {
+                        printf 'nvim_ssh_server: %s requires a value\n' "$1" >&2
+
+                        return 2
+                    }
+                    remote_server="$2"
+                    server_named=1
+                    shift 2
+                    continue
+                    ;;
+                --server=*|--server-name=*|--remote-server=*|--name=*)
+                    remote_server=${1#*=}
+                    server_named=1
+                    shift
+                    continue
+                    ;;
+                --shell|-s)
+                    [ "$#" -gt 1 ] || {
+                        printf 'nvim_ssh_server: %s requires a value\n' "$1" >&2
+
+                        return 2
+                    }
+                    shell="$2"
+                    shell_named=1
+                    shift 2
+                    continue
+                    ;;
+                --shell=*)
+                    shell=${1#*=}
+                    shell_named=1
+                    shift
+                    continue
+                    ;;
+                --)
+                    end_of_opts=1
+                    shift
+                    continue
+                    ;;
+                -*)
+                    printf 'nvim_ssh_server: unknown option: %s\n' "$1" >&2
+
+                    return 2
+                    ;;
+            esac
+        fi
+
+        # Keep supporting the original positional arguments (and arguments after --).
+        if [ "$server_named" -eq 0 ] && [ "$positional_args" -eq 0 ]; then
+            remote_server="$1"
+            positional_args=1
+        elif [ "$shell_named" -eq 0 ] && [ "$positional_args" -le 1 ]; then
+            shell="$1"
+            positional_args=2
+        else
+            printf 'nvim_ssh_server: unexpected argument: %s\n' "$1" >&2
+            return 2
+        fi
+        shift
+    done
+
+    [ -n "$remote_server" ] && [ -n "$shell" ] || {
+        printf 'usage: nvim_ssh_server [--server remote-machine] [--shell shell]\n' >&2
+
+        return 2
+    }
+
+    ssh -L 6666:localhost:6666 -- "$remote_server" -t "${shell} -l -c 'nvim --headless --listen localhost:6666'"
 }
 
 #
@@ -314,7 +420,7 @@ editor() {
 # # colors - Print colors on terminal
 # # usage: colors
 colors() {
-    usable local && local fgc bgc vals seq0
+    local fgc bgc vals seq0 2>/dev/null || true
 
     printf "Color escapes are %s\n" '\e[${value};...;${value}m'
     printf "Values 30..37 are \e[33mforeground colors\e[m\n"
@@ -376,6 +482,8 @@ tiktok_id() {
 # # setup_remote_user - Provision a remote user without remembering script path
 # # usage: setup_remote_user [script_args]
 setup_remote_user() {
+    local script_path 2>/dev/null || true
+
     script_path="$CONF_SH_DIR/utils/setup_user.sh"
 
     [ ! -r "$script_path" ] && {
@@ -390,6 +498,8 @@ setup_remote_user() {
 # # chrome_debug - Start Chrome with a debug port
 # # usage: chrome_debug [port]
 chrome_debug() {
+    local port chrome_bin cmd 2>/dev/null || true
+
     port=${1:-9222}
     case "$(uname -s)" in
         Darwin)
@@ -419,7 +529,7 @@ chrome_debug() {
 # # socat_bind - Bind and forward a port to external LAN using socat
 # # usage: socat_bind --port <port> [--host <host>]
 socat_bind() {
-    usable local && local bind_host bind_port target_host target_port lan_ip listen_opts
+    local bind_host bind_port target_host target_port lan_ip listen_opts 2>/dev/null || true
 
     if ! usable socat; then
         echo "Error: socat is not installed or not in PATH" >&2
@@ -560,12 +670,14 @@ EOF
 # # vpn_connect - Start openfortivpn directly with SAML SSO browser automation
 # # usage: vpn_connect [extra_openfortivpn_flags]
 vpn_connect() {
+    local conf host port saml_port saml_url 2>/dev/null || true
+
     if ! usable openfortivpn; then
         echo "Error: openfortivpn binary not found in PATH." >&2
         return 1
     fi
 
-    local conf="$HOME/.config/openfortivpn/config"
+    conf="$HOME/.config/openfortivpn/config"
     if [ ! -f "$conf" ]; then
         echo "Error: Config file not found at $conf" >&2
         return 1
@@ -577,13 +689,12 @@ vpn_connect() {
         return 0
     fi
 
-    local host port saml_port
     host=$(awk -F'=[[:space:]]*' '/^[[:space:]]*host[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
     port=$(awk -F'=[[:space:]]*' '/^[[:space:]]*port[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
     saml_port=$(awk -F'=[[:space:]]*' '/^[[:space:]]*saml-login[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
 
     if [ -n "$host" ] && [ -n "$saml_port" ]; then
-        local saml_url="https://${host}:${port:-443}/remote/saml/start?redirect=1"
+        saml_url="https://${host}:${port:-443}/remote/saml/start?redirect=1"
         if command -v open >/dev/null 2>&1; then
             ( sleep 1.5 && open "$saml_url" ) &
         elif command -v xdg-open >/dev/null 2>&1; then
@@ -620,12 +731,12 @@ vpn_disconnect() {
 # # vpn_status - Check openfortivpn connection status and network interface
 # # usage: vpn_status
 vpn_status() {
-    local pids
+    local pids ppp_info 2>/dev/null || true
+
     pids=$(pgrep openfortivpn 2>/dev/null || true)
     if [ -n "$pids" ]; then
         echo "Status: Connected (openfortivpn PID: $(echo "$pids" | tr '\n' ' '))"
         if command -v ifconfig >/dev/null 2>&1; then
-            local ppp_info
             ppp_info=$(ifconfig 2>/dev/null | awk '/^ppp[0-9]:/{iface=$1} /inet /{if (iface) {print iface, $2; iface=""}}')
             [ -n "$ppp_info" ] && echo "Interface: $ppp_info"
         fi
