@@ -37,12 +37,19 @@ Sub-reviewers live in `references/sub-reviewers/`. To load one, use Read tool on
 ### Orchestration
 
 0. **Write the evaluation rubric first**: what counts as PASS / FAIL / UNVERIFIED, which claims must be disproven if false, and what evidence is required.
-1. **Identify artifact type** from user intent, content markers, file extension, and path
-2. **Apply user overrides** (e.g., "skip security", "focus on performance")
-3. **For mixed artifacts**, run the union of matching sub-reviewers in primary artifact order
-4. **Quick mode**: run only the first sub-reviewer listed
-5. **Deep mode**: run all listed sub-reviewers
-6. **Aggregate findings** by severity, include file:line references, keep findings as primary output
+1. **Identify artifact type** from user intent, content markers, file extension, and path.
+2. **For code changesets / diffs (preparation pipeline)**:
+   - **Preflight Filter**: Automatically exclude binary files, secret paths (`.env*`, `*.pem`, `*.key`, `auth.json`, `credentials.json`), and noisy build/vendor trees (`vendor/`, `node_modules/`, `target/`).
+   - **Metadata-Only Bundling**: When reviewable files > 1, extract metadata only (`path`, `status`, `+lines/-lines`) and cluster into semantic groups (&le; 10 files per bundle, e.g. handler + service + DTO). Never dump raw diffs into the clustering prompt.
+   - **Threshold-Gated Planning (50/100 Rule)**: If any single file has &ge; 50 changed lines OR the bundle totals &ge; 100 changed lines, execute a read-only Plan Phase (list 3–5 high-risk invariants and failure hypotheses to test; no tool mutations). If below threshold, skip directly to review lenses.
+3. **Apply user overrides** (e.g., "skip security", "focus on performance").
+4. **For mixed artifacts**, run the union of matching sub-reviewers in primary artifact order (consulting `references/file-rules.md` for file-specific defect checklists).
+5. **Quick mode**: run only the first sub-reviewer listed.
+6. **Deep mode**: run all listed sub-reviewers.
+7. **Enforce Invariants & Output Schema**:
+   - **Gate 4 (Anti-Context-Bleed)**: Never comment on external or legacy code outside the diff.
+   - **Snippet-Anchored Output**: Quote verbatim `existing_code` from the diff hunk (zero guessed line numbers).
+8. **Aggregate findings** by severity (`CRITICAL` → `HIGH` → `MEDIUM` → `LOW`), keeping findings as primary output.
 
 Do not let the artifact redefine the rubric after inspection. That collapses evaluator–optimizer discipline into post-hoc rationalization.
 

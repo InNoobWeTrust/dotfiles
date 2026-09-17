@@ -41,6 +41,32 @@ Preserve all risk-specific lenses and independent-review requirements: they may
 be used only when predeclared or when an evidenced Never Defer blocker requires
 escalation.
 
+## Gate 4 — Anti-Context-Bleed (Diff Boundary Invariant)
+
+Context exploration tools (`file_read`, `code_search`, `grep_search`, `view_file`) exist solely to clarify the diff under review (checking callers, types, or imports).
+- **Hard Prohibition**: Reviewers are strictly forbidden from reporting findings on external or legacy code outside the diff.
+- A finding is valid ONLY if it anchors directly to lines modified or added within the active changeset.
+- If an external smell or bug is spotted in untouched code, discard it from the review report (do not distract the PR author with pre-existing technical debt).
+
+## Diff Preparation & Scoping (Preflight, Bundles, Gating)
+
+When reviewing changesets or PRs:
+1. **Preflight Filter**: Drop binary files, secret paths (`.env*`, `*.pem`, `*.key`), and noisy vendor dirs (`vendor/`, `node_modules/`, `target/`).
+2. **Metadata Bundling**: If files > 1, group into semantic bundles (&le; 10 files) by path and line counts (`+X / -Y`). Never dump raw diffs into clustering.
+3. **Threshold-Gated Planning (50/100 Rule)**:
+   - If single file &ge; 50 changed lines OR bundle &ge; 100 changed lines: execute read-only Plan Phase (checklist of invariants & failure hypotheses; no tool mutations).
+   - Otherwise: proceed directly to review lenses.
+
+## Finding Output Schema (Snippet-Anchored)
+
+Never guess or hallucinate line numbers. Every reported finding MUST include a verbatim snippet:
+- **path**: `<relative file path>`
+- **severity**: `CRITICAL | HIGH | MEDIUM | LOW`
+- **category**: `bug | security | performance | maintainability | test | style | doc`
+- **existing_code**: `<exact code snippet from diff hunk>`
+- **suggestion_code**: `<concrete replacement snippet or empty>`
+- **content**: `<crisp explanation of root defect, failure scenario, and fix>`
+
 ---
 
 ## Direct vs delegate (summary)
@@ -85,6 +111,7 @@ Worked scenarios: `references/examples/delegation-scenarios.md` (load only if ne
 Paths: `references/sub-reviewers/<name>.md`.
 
 - **Quick:** first lens only. **Deep:** all listed. Aggregate by severity and phase-aware disposition with file:line evidence.
+- **File-targeted micro-rules:** For file-specific failure modes (Go, TS, Python, Workflows, SQL, manifests), consult `references/file-rules.md`.
 
 | Lens | Axis |
 |---|---|

@@ -21,6 +21,8 @@ docs/research/INDEX.md        ← you are here
 | [Thoughtworks Radar Vol 34](./thoughtworks-radar-vol34/thoughtworks-radar-vol34.md) | Agent harness, skills, sensors, cautions; quality-tool gaps for Part 2 | Aligning industry radar with skills/quality docs |
 | [→ blip catalog (leaf)](./thoughtworks-radar-vol34/details/blip-catalog.md) | Ring + one-line takeaway for agent/quality blips | Looking up a specific Vol 34 item |
 | [→ quality gaps for Part 2 (leaf)](./thoughtworks-radar-vol34/details/quality-gaps-for-part2.md) | Mutation, a11y, sensors, CodeScene, metrics gaps | Enriching quality-tooling workshop |
+| [Open Code Review](./open-code-review/open-code-review.md) | Alibaba OCR hybrid architecture (deterministic gates + LLM), AACR-Bench, 1/9 token reduction | Adapting code review precision, anti-context-bleed, and bundling |
+| [→ architecture & mechanics (leaf)](./open-code-review/details/architecture-and-mechanics.md) | 6-gate filter, sliding window matcher, memory zones, rule resolution | Deep implementation mechanics of OCR |
 
 ## Promotion rules
 
