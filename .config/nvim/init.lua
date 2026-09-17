@@ -1134,9 +1134,11 @@ require("lazy").setup({
                     },
                 },
                 max_width = 210,
-                max_height = 210,
+                max_height = 32,
                 max_width_window_percentage = math.huge,
-                max_height_window_percentage = 50,
+                max_height_window_percentage = math.huge,
+                -- Render images 25% larger in terminal-cell units.
+                scale_factor = 1.25,
                 window_overlap_clear_enabled = false,
             },
         },
@@ -1154,7 +1156,8 @@ require("lazy").setup({
                     mermaid = {
                         background = "transparent",
                         theme = "dark",
-                        scale = 1,
+                        -- Keep labels readable in moderately complex LR/TD diagrams.
+                        scale = 5,
                     },
                     plantuml = {
                         charset = "utf-8",
@@ -1165,6 +1168,10 @@ require("lazy").setup({
                 },
             },
             config = function(_, opts)
+                -- diagram.nvim's cache key only contains the diagram source, not Mermaid
+                -- renderer options. Remove stale renders so changes to `scale` take effect.
+                vim.fn.delete(vim.fn.stdpath("cache") .. "/diagram-cache/mermaid", "rf")
+                vim.fn.mkdir(vim.fn.stdpath("cache") .. "/diagram-cache/mermaid", "p")
                 require("diagram").setup(opts)
                 local supported_fts = { markdown = true, norg = true }
                 local function schedule_render(buf)
