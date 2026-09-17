@@ -35,11 +35,10 @@ if g.neovide then
     g.neovide_cursor_animation_length = 0
     -- Helper function for transparency formatting
     -- g:neovide_transparency should be 0 if you want to unify transparency of content and title bar.
-    g.neovide_transparency = 0.0
+    g.neovide_opacity = 0.8
     g.transparency = 0.8
     g.neovide_floating_blur_amount_x = 2.0
     g.neovide_floating_blur_amount_y = 2.0
-    g.neovide_transparency = 0.8
 end
 o.linespace = 4
 o.ignorecase = true
@@ -1137,8 +1136,8 @@ require("lazy").setup({
                 max_height = 32,
                 max_width_window_percentage = math.huge,
                 max_height_window_percentage = math.huge,
-                -- Render images 25% larger in terminal-cell units.
-                scale_factor = 1.25,
+                -- Render images in terminal-cell units.
+                scale_factor = 1,
                 window_overlap_clear_enabled = false,
             },
         },
@@ -1157,7 +1156,7 @@ require("lazy").setup({
                         background = "transparent",
                         theme = "dark",
                         -- Keep labels readable in moderately complex LR/TD diagrams.
-                        scale = 5,
+                        scale = 2,
                     },
                     plantuml = {
                         charset = "utf-8",

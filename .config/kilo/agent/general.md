@@ -1,5 +1,5 @@
 ---
-description: "USE SPARINGLY: general fallback when no specialized subagent match."
+description: "USE SPARINGLY: general fallback when no specialized subagent match. Fallback to `codex-gpt-terra` if `general` is not available."
 mode: subagent
 hidden: true
 model: "kilo/z-ai/glm-5.2:free"

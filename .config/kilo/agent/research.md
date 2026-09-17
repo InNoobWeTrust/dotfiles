@@ -1,5 +1,5 @@
 ---
-description: "Web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs."
+description: "Web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs. Fallback to `codex-gpt-luna` if `research` is unavailable."
 mode: subagent
 model: "github-copilot/gemini-3.5-flash"
 permission:

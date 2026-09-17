@@ -1,5 +1,5 @@
 ---
-description: "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs."
+description: "Systematic troubleshooting and root cause analysis. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs. Fallback to `github-copilot-claude` if `debug` is not available."
 mode: subagent
 model: "proxy/gpt-5.6-terra"
 variant: low
