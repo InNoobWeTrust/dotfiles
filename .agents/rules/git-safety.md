@@ -26,6 +26,8 @@ Applies to all git operations: staging, committing, pushing, and any destructive
 ## Committing
 
 - Staging, committing, and pushing require **separate, explicit** user approvals.
+- **Inspect actual staged changes first (`git diff --staged`)**: Never invent or infer a commit message from conversational chat history, prompt text, or bare file lists. Always run `git diff --staged` to read the exact semantic code deltas before drafting a message—especially for changes made outside the agent's knowledge or manual edits by the user.
+- **Inspect commit history first (`git log -n 5 --oneline`)**: Before drafting, check recent commit history to identify and match the repository's established commit style, prefixes, casing, and body formatting. Never invent an ad-hoc or generic external format.
 - Write a meaningful commit message that summarises the change, not just "update".
 
 ## Destructive operations
