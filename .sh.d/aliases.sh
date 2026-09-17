@@ -220,7 +220,7 @@ usable npx && \
         # http api client for opencollection format
         ! usable bru && alias bru='npx --yes @usebruno/cli'
         # Serve live rendered markdown files
-        ! usable markserv && alias markserv='npx --yes markserv'
+        ! usable mdts && alias mdts='npx --yes mdts'
         # Render markdown to html
         ! usable marked && alias marked='npx --yes marked'
         ## Marp
