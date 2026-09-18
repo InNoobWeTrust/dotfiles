@@ -1,7 +1,7 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses Kilo model glm-5.2:free at high and 256k context, does not delegate nested tasks."
+description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses Kilo model deepseek-v4-flash-0731:free with 1M context, does not delegate nested tasks."
 mode: subagent
-model: "kilo/z-ai/glm-5.2:free"
+model: "kilo/deepseek/deepseek-v4-flash-0731:free"
 variant: high
 permission:
   bash: allow

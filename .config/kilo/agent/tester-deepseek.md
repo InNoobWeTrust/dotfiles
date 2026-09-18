@@ -1,7 +1,8 @@
 ---
 description: "Alternative test authoring subagent powered by DeepSeek with 1M context. Use for deep edge-case discovery, complex fixture setup, or fallback testing when proxy quota is constrained. Targets test files only."
 mode: subagent
-model: "ckey/forbiddengun/deepseek"
+model: "kilo/deepseek/deepseek-v4-flash-0731:free"
+variant: high
 permission:
   bash: allow
   edit: allow

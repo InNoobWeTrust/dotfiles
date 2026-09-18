@@ -1,8 +1,8 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses OpenCode model mimo-v2.5-free at high and 200k context, does not delegate nested tasks."
+description: "Coding and implementation fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses Kilo model qwen3.8-27b:free at xhigh and 256k context, does not delegate nested tasks."
 mode: subagent
-model: "opencode/mimo-v2.5-free"
-variant: high
+model: "kilo/qwen/qwen3.8-27b:free"
+variant: xhigh
 permission:
   bash: allow
   edit: allow
