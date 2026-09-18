@@ -1,8 +1,8 @@
 ---
-description: "Writes and fixes tests. Fast, high-accuracy test authoring for unit/integration/e2e tests, flaky test diagnostics, and coverage expansion. Targets test files only. For test authoring fallback, use tester-deepseek."
+description: "Writes and fixes tests. Fast, high-accuracy test authoring for unit/integration/e2e tests, flaky test diagnostics, and coverage expansion. Targets test files only. For test authoring fallback, use `codex-gpt-terra`."
 mode: subagent
-model: "proxy/gpt-5.6-terra"
-variant: medium
+model: "kilo/deepseek/deepseek-v4-flash-0731:free"
+variant: high
 permission:
   bash: allow
   edit: allow
