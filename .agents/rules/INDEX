@@ -29,6 +29,7 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 | `skills-discovery.md` | Need to choose a skill (index-first) | small |
 | `command-routing.md` | User request maps to a slash/command workflow | tiny |
 | `requirements-driven-dev.md` | Adapter → load `requirements-driven-dev` skill | tiny |
+| `research-ideation.md` | Scientific research, paper reproduction, hypothesis tournaments (Adapter → load `research-ideation` skill) | tiny |
 
 ## Layering
 

@@ -56,6 +56,13 @@ phased-delivery escalation rules require formalization. When delegating,
 2. `data-storytelling` — shape the architecture findings into an audience-aware narrative when the audience is non-technical or decision-oriented
 3. `illustration-craft` — produce the final bespoke explainer only if Mermaid/C4 alone cannot carry the message
 
+### Scientific Research & Ideation
+
+1. `research-ideation` — Phase 1–2: First-principles modality audit + Idea Tournament (3 competing hypothesis angles)
+2. `research-ideation` — Phase 3: Adversarial critique matrix & literature grounding (replaces software TDD/slicing)
+3. `research-ideation` — Phase 4: Falsifiable proposal & experimental notebook blueprint (Colab/Marimo)
+4. `reviewer` (scientific lens) — verify negative controls, statistical tests, and falsifiability before laboratory commitment
+
 ### Documentation Craftsmanship
 
 1. `doc-craft` — structure, information layering (Index → Entry → Leaf), visual rhythm (tables over prose, callouts, diagram anchors, anti-wall-of-text)

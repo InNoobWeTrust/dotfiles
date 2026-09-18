@@ -6,8 +6,9 @@
 
 Personal dotfiles and AI-agent infrastructure (rules, skills, workflows, memory) for cross-harness agent development.
 
-**Operating principle:** Software delivery is phased and MVP-first; load the
-Phased Delivery rule only when its delivery trigger applies.
+**Operating trajectories:** Distinguish between:
+1. **Software Engineering Delivery** (phased, MVP-first, TDD, slicing, `code-craft` for production codebases).
+2. **Scientific Research & Exploratory Ideation** (first-principles, hypothesis tournaments, literature-grounded synthesis, unconstrained proposal ideation via `research-ideation`). Never apply production coding bureaucracy, TDD, or premature verification freezes to scientific research ideation.
 
 ## Source of Truth Hierarchy
 
@@ -23,7 +24,7 @@ AGENTS.md (this file — product constraints, operating rules, harness wiring)
 
 - Treat the triggered rules in `rules/INDEX` as binding; load the applicable body before acting.
 - Verify tool outcomes, protect secrets, and use the repository's quality and verification gates.
-- Delivery is phased and MVP-first; load Phased Delivery only when its trigger applies.
+- Choose the correct operational trajectory: use Phased Delivery / Slicing for software engineering, but switch to first-principles scientific inquiry for research.
 
 ## Informed Alignment (universal invariant)
 
@@ -45,13 +46,16 @@ A decision is material when it changes user-visible behavior, data semantics, se
 
 Match user **intent** against skill descriptions in `skills/INDEX.md` to select one primary skill; optionally add one review/safety lens.
 
+**Scientific research, literature synthesis, hypothesis generation, or paper proposals:** load `research-ideation`. In this trajectory, bypass software-engineering roadmaps, TDD, slicing, and administrative terminology freezes. Encourage bold, first-principles "what-if" thinking, cross-modality analogies, adversarial hypothesis tournaments, and falsifiable experiment designs.
+
 **Rewrite / overhaul / delete-and-rebuild work:** load Grooming, then `code-craft`. Before implementation, identify each old semantic/interface as **delete** or **preserve**; when a public API or consumer app is affected, require an approved consumer-facing contract/stub and sign-off.
 
-**Default for implementation tasks: load `code-craft`.** It is the baseline for ANY non-trivial code write, feature, refactor, or restructuring. Do not skip it because the task seems simple — if it touches logic, load it.
+**Default for software implementation tasks: load `code-craft`.** It is the baseline for ANY non-trivial code write, feature, refactor, or restructuring in software projects. Do not skip it because the task seems simple — if it touches logic, load it.
 
 **Modifying `.agents/`, skills, or rules: load `skill-author`.** Whenever creating, modifying, editing, or auditing skills, rules, or governance files under `.agents/`, you MUST load `skill-author` as your primary skill and follow official specs at https://agentskills.io and https://agents.md.
 
 **High-frequency skills** (load on matching intent):
+- `research-ideation` — scientific research, paper reproduction, hypothesis tournaments, research proposals
 - `systematic-investigation` — debugging, root cause, "why is this broken"
 - `codebase-exploration` — unfamiliar repo, "where is X," trace call chains
 - `reviewer` — explicit review/audit/check requests, security lens, edge-case analysis
