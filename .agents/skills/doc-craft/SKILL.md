@@ -89,6 +89,7 @@ Before drafting sentences, build the visual skeleton:
 | Stack bullet points 4 levels deep | Creates visual chaos; destroys scannability | Flatten to max 2 levels; convert deep sub-lists into tables or leaf files |
 | Dump extensive reference tables in the main guide | Bloats the guide; obscures the critical path | Move full schemas to `details/<leaf>.md`; leave a router link in the guide |
 | Rely on italicized text for emphasis | Poor visual contrast on screens | Use bold lead-in words or a dedicated `> [!NOTE]` callout |
+| Put a blank line inside a raw HTML block (tables, callouts) | CommonMark ends the HTML block at the blank line; the rest renders as literal text — a very common, hard-to-spot LLM mistake | Blank lines only BETWEEN the HTML block and surrounding Markdown (see reference: raw HTML rule) |
 | Skip verification of commands in examples | Breaks user trust when copy-pasted | Ground all examples in actual codebase scripts, configs, and CLI tools |
 
 ---

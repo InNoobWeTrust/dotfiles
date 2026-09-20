@@ -64,8 +64,32 @@ Use GitHub-style alert callouts sparingly to create visual contrast for non-obvi
 - **Why**: A diagram provides an immediate mental map. The text then only needs to explain nuances rather than reconstruct geometry in prose.
 
 ### 6. Code Fences with Explicit Language & Filenames
-- **Rule**: Never use generic code fences (```). Always specify the language (` ```typescript `, ` ```bash `).
+- **Rule**: Never use generic code fences (```). Always specify the language (```typescript`, ```bash`).
 - When referencing file contents, include the target file path in an introductory label or comment.
+
+### 7. Raw HTML Blocks: No Blank Lines Inside (CommonMark)
+Most models miss this one. When embedding raw HTML (e.g. `<table>` with `rowspan` for merged cells) inside Markdown:
+- **Rule**: Never place a blank line *inside* the HTML block (`<table>…</table>`). A blank line in the middle terminates the HTML block early per CommonMark — everything after it is rendered as literal text (`</tbody>` and `</table>` show up verbatim).
+- Place blank lines **only between** blocks and surrounding Markdown elements (one blank line before the opening tag and one after the closing tag).
+- The opening tag must start in **column 1** to be recognized as an HTML block.
+- Indentation *within* the block is fine and keeps the source readable; verify after writing that the rendered page shows one table, not a table + trailing text.
+
+*Bad (blank line between rows — blocks split mid-table)*:
+```html
+<table>
+  <tr><td>row 1</td></tr>
+
+  <tr><td>row 2</td></tr>
+</table>
+```
+
+*Good (blank lines only between blocks)*:
+```html
+<table>
+  <tr><td>row 1</td></tr>
+  <tr><td>row 2</td></tr>
+</table>
+```
 
 ---
 
