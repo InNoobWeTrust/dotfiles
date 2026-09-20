@@ -13,12 +13,10 @@ and report the unmet prerequisite.
    product management, or finance.
 3. Clarify the final deliverable shape.
 4. Confirm that the read-only node constraint is acceptable.
-5. Verify `swarminator` with `$SHELL -l -c 'command -v swarminator'`.
-6. Inspect its CLI with `$SHELL -l -c 'swarminator --help'`.
-7. List its agents with `$SHELL -l -c 'swarminator --list-agents'`.
-8. Review `.agents/skills/swarm-intelligence/references/models/free.json` and
-   `.agents/skills/swarm-intelligence/references/models/premium.json`; select
-   the agent-and-model pairs.
+5. Verify `swarminator` with `command -v swarminator`.
+6. Inspect its CLI with `swarminator --help`.
+7. List its agents and providers with `swarminator --list-agents` and `swarminator --list-providers`.
+8. Discover models dynamically (`swarminator --list-models`), present options to the user categorized by capability tier, and let the user choose the agent-and-model pairs (do not assume or hardcode any default agent, provider, or model); select the confirmed pairs.
 9. Confirm that `.agents/skills/swarm-intelligence/references/discover-personas.sh`
    is executable.
 10. Confirm that all required personas are retrievable; the senior reviewer is

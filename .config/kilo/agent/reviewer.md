@@ -1,7 +1,7 @@
 ---
 description: "Moderate-complexity independent code and artifact reviewer. Use for standard multi-file functional changes, non-atomic logic flow, and contextual verification against acceptance criteria, invariants, and quality gates. For fast atomic/trivial reviews use reviewer-fast; for high-complexity/macro-architectural reviews use reviewer-deep."
 mode: subagent
-model: "kilo/deepseek/deepseek-v4-flash-0731:free"
+model: "ckey/forbiddengun/deepseek"
 variant: high
 permission:
   bash: allow

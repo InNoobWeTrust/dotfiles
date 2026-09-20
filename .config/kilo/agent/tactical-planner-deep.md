@@ -1,7 +1,7 @@
 ---
 description: "Deep, high-intelligence tactical planner. Superior at thorough multi-step task decomposition, nuanced architectural dependency mapping, subtle invariant preservation, and rigorous functional unit specification for complex refactors and non-trivial features. For rapid, routine single-pass plans, use tactical-planner-fast."
 mode: subagent
-model: "kilo/deepseek/deepseek-v4-flash-0731:free"
+model: "ckey/forbiddengun/deepseek"
 variant: max
 permission:
   bash: allow

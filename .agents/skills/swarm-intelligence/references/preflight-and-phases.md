@@ -6,10 +6,13 @@
 2. Identify primary domain (code, skill-review, writing, slides, design, pm, finance).
 3. Clarify final deliverable shape.
 4. Confirm read-only node constraint is acceptable.
-5. Verify swarminator: `$SHELL -l -c 'command -v swarminator'`.
-6. Inspect CLI: `$SHELL -l -c 'swarminator --help'`.
-7. List agents: `$SHELL -l -c 'swarminator --list-agents'`.
-8. Review model catalogs (`references/models/{free,premium}.json`) and select agent+model pairs, defaulting to `command-code` + `deepseek-v4-pro` while the explicit `$40` quota remains.
+5. Verify swarminator: `command -v swarminator`.
+6. Inspect CLI: `swarminator --help`.
+7. List agents and providers: `swarminator --list-agents` and `swarminator --list-providers`.
+8. Discover models dynamically and let the user choose:
+   - Query available models at runtime: `swarminator --list-models` (or `swarminator --list-models --agent NAME`).
+   - Present available options to the user, categorized by capability tier (e.g., frontier/deep reasoning for synthesis/review vs. fast/cost-effective for ingest/exploration).
+   - Let the user choose and confirm the agent, provider, and model pairs before invocation. Do not hardcode or assume any default agent, provider, or model.
 9. Ensure persona discovery script exists and is executable: `references/discover-personas.sh`.
 10. Confirm required personas have retrievable prompts via discover-personas.sh (senior-reviewer is always inline — define it manually).
 
@@ -17,7 +20,7 @@
 
 ```bash
 PROMPT=$(references/discover-personas.sh prompt "PersonaName")
-$SHELL -l -c 'printf "%s" "$TASK" | swarminator --agent=AGENT -m MODEL -p "$(printf "%s" "$PROMPT")" -t TIMEOUT'
+printf "%s" "$TASK" | swarminator --agent=AGENT -m MODEL -p "$(printf "%s" "$PROMPT")" -t TIMEOUT
 ```
 
 One call per persona+model pair. Orchestrator collects stdout and merges outputs externally.

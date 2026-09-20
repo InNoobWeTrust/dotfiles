@@ -38,17 +38,18 @@ Is the deliverable one bounded artifact from one model context?
 Discover CLI at runtime — do not hard-code stale flags:
 
 ```bash
-$SHELL -l -c 'command -v swarminator'
-$SHELL -l -c 'swarminator --help'
-$SHELL -l -c 'swarminator --list-agents'
-$SHELL -l -c 'swarminator --list-models --agent NAME'
+command -v swarminator
+swarminator --help
+swarminator --list-agents
+swarminator --list-providers
+swarminator --list-models
+swarminator --list-models --agent NAME
 ```
 
-**Shared assets** (both modes):
+**Shared assets & discovery** (both modes):
 
 - Personas: `references/personas/` via `references/discover-personas.sh`
-- Models: `references/models/{free,premium}.json`
-- Default node preference: `command-code` + `deepseek-v4-pro` while budget allows
+- Dynamic Discovery & User Choice: No hardcoded default agent, model, or provider. Query available agents (`swarminator --list-agents`), providers (`swarminator --list-providers`), and models (`swarminator --list-models`) dynamically at runtime. Present options to the user categorized by capability tier, and let the user choose before invocation.
 
 **Shared hard rules** (both modes):
 
@@ -76,9 +77,9 @@ Artifact modes: `analysis` | `review` | `patch` | `transform`.
 
 **Goal:** multi-persona, multi-model, three-phase orchestration with synthesis between phases.
 
-**Preflight:** all 10 steps required (user confirm, domain, deliverable, read-only OK, swarminator checks, catalogs, personas).  
+**Preflight:** all 10 steps required (user confirm, domain, deliverable, read-only OK, swarminator checks, dynamic model discovery & user alignment, personas).  
 **Detail:** `references/preflight-and-phases.md`  
-**Models:** **2–3 models per persona** each phase — single-model shortcuts forbidden.
+**Models:** **2–3 models per persona** each phase — discover dynamically, confirm categorization with the user, and enforce quorum. Single-model shortcuts forbidden.
 
 | Phase | Purpose | Required sections (summary) |
 |---|---|---|
@@ -98,7 +99,7 @@ Artifact modes: `analysis` | `review` | `patch` | `transform`.
 | `bounded-iteration` | Full Swarm (or design) first → locked `TASK.md` → iteration loop (`bounded-iteration/references/swarm-integration.md`) |
 | `reviewer` | Single-Node `review` artifact mode, or Full Swarm review personas |
 | `investment-assessment` | Author multi-asset memo first; escalate here for multi-model finance personas when stakes are high |
-| `model-benchmarking` | Choose catalogs/tiers → then this skill for execution |
+| `model-benchmarking` | Benchmark models or evaluate pricing/performance → then this skill for execution |
 | `references/branch-graft-synthesis.md` | Use when multiple viable branches disagree and the host must preserve them before converging |
 | Environment-native task workers | Prefer native workers when available; use this skill when you need swarminator isolation or multi-model quorum |
 

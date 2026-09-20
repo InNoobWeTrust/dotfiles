@@ -5,12 +5,14 @@ Bounded one-node `swarminator` delegation. Host keeps workspace control. Nodes n
 ## Runtime references
 
 ```bash
-$SHELL -l -c 'command -v swarminator'
-$SHELL -l -c 'swarminator --help'
-$SHELL -l -c 'swarminator --tutorial'
-$SHELL -l -c 'swarminator --protocol'
-$SHELL -l -c 'swarminator --list-agents'
-$SHELL -l -c 'swarminator --list-models --agent NAME'
+command -v swarminator
+swarminator --help
+swarminator --tutorial
+swarminator --protocol
+swarminator --list-agents
+swarminator --list-providers
+swarminator --list-models
+swarminator --list-models --agent NAME
 ```
 
 Use runtime self-documentation for current CLI mechanics. Do not hard-code flags, agent IDs, or model IDs from stale notes.
@@ -20,9 +22,9 @@ Use runtime self-documentation for current CLI mechanics. Do not hard-code flags
 All paths below are relative to this skill directory.
 
 - `references/discover-personas.sh`
-- `references/models/free.json`
-- `references/models/premium.json`
 - `references/personas/`
+
+Model and provider discovery is dynamic via runtime CLI (`swarminator --list-agents`, `--list-providers`, `--list-models`); static model catalogs are not maintained.
 
 `discover-personas.sh` resolves personas by YAML `name:` values, not filenames. Valid examples include:
 
@@ -85,12 +87,13 @@ Return a structured rewrite artifact, outline, or replacement text without mutat
 
 ## Node Profile Selection
 
-1. Inspect runtime availability with `swarminator --list-agents` and the current model-list command from runtime help.
-2. Start with `command-code` and its built-in `deepseek-v4-pro` path. Treat it as the default external node while the documented `$40` quota remains.
-3. For `command-code`, assume `deepseek-v4-pro` can be user-pinned implicitly before the `swarminator` call. Do not treat incomplete `--list-models` output as proof that the pinned model is unusable.
-4. Use the shared model catalogs to understand provider families and runtime identifiers. Some entries expose `agent`, some expose `engine`; use the runtime family documented on the entry you selected.
-5. Fall back to Gemini-backed or other catalog entries only after `command-code` quota exhaustion, runtime unavailability, or a concrete task mismatch.
-6. Keep routing policy lightweight after these defaults. Do not encode additional brittle fixed mappings into the task prompt.
+1. Inspect runtime availability dynamically:
+   - `swarminator --list-agents`
+   - `swarminator --list-providers`
+   - `swarminator --list-models` (or `swarminator --list-models --agent NAME`)
+2. Present available agents, providers, and models to the user, categorized by capability tier (e.g., fast/lightweight for simple transforms vs. deep reasoning for complex analysis/patching).
+3. Let the user choose the desired agent, provider, and model for the node invocation.
+4. Do not hardcode or assume any default agent, provider, or model. Keep routing dynamic and user-driven.
 
 ## Prompt Contract
 
@@ -98,7 +101,7 @@ Every delegated prompt should explicitly state:
 
 - objective
 - artifact mode
-- selected runtime family and model, including when `command-code` with built-in `deepseek-v4-pro` is being used
+- selected agent, provider, and model as chosen by the user
 - allowed files or `no file access required`
 - forbidden actions
 - required output format

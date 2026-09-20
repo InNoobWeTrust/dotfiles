@@ -34,7 +34,7 @@ prompt, but still has a machine-verifiable end state.
 If you are building a custom orchestrator, verify `swarminator` exists first:
 
 ```bash
-$SHELL -l -c 'command -v swarminator >/dev/null 2>&1 || { echo "ERROR: swarminator not found in PATH" >&2; exit 1; }'
+command -v swarminator >/dev/null 2>&1 || { echo "ERROR: swarminator not found in PATH" >&2; exit 1; }
 ```
 
 Do not replace the swarm with one raw `swarminator` command. A single invocation

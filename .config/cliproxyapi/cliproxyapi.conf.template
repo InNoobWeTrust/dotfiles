@@ -32,7 +32,6 @@ claude-api-key:
       - name: "openai/gpt-5.6-luna"
       - name: "openai/gpt-5.6-terra"
       - name: "openai/gpt-5.6-sol"
-      - name: "deepseek/deepseek-v4-flash-0731:free"
       - name: "qwen/qwen3.8-27b:free"
   - api-key: "${LLM_BROKER_API_KEY}"
     base-url: "${LLM_BROKER_BASE_URL}"
