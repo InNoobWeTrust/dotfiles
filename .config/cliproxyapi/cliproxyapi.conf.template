@@ -32,7 +32,6 @@ claude-api-key:
       - name: "openai/gpt-5.6-luna"
       - name: "openai/gpt-5.6-terra"
       - name: "openai/gpt-5.6-sol"
-      - name: "qwen/qwen3.8-27b:free"
   - api-key: "${LLM_BROKER_API_KEY}"
     base-url: "${LLM_BROKER_BASE_URL}"
     models:
@@ -41,8 +40,6 @@ claude-api-key:
       - name: "forbiddengun/glm"
       - name: "forbiddengun/deepseek"
       - name: "forbiddengun/qwen"
-
-
 debug: true
 logging-to-file: true
 commercial-mode: true
