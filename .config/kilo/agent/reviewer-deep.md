@@ -1,7 +1,7 @@
 ---
 description: "Frontier deep-reasoning independent reviewer. Reserved exclusively for the most complex reviews: macro-architectural changes, cross-subsystem contracts, public API shifts, critical data integrity/migrations, and security-sensitive logic. For routine or moderate reviews use reviewer-fast or reviewer."
 mode: subagent
-model: "proxy/gpt-5.6-sol"
+model: "github-copilot/claude-sonnet-4.6"
 variant: high
 permission:
   bash: allow

@@ -1,8 +1,7 @@
 ---
 description: "High-throughput tactical planner. Fast-path option for routine multi-step tasks, straightforward feature breakdowns, and rapid bug fix sequencing where quick turnaround is prioritized over deep dependency analysis. Produces executable functional units via single-pass or multi-turn decomposition. For deeper, high-intelligence planning, use `tactical-planner-deep`."
 mode: subagent
-model: "proxy/gpt-5.6-sol"
-variant: none
+model: "ckey/forbiddengun/glm"
 permission:
   bash: allow
   edit: allow
