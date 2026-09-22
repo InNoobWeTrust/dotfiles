@@ -1,0 +1,533 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "small_model": "opencode/mimo-v2.6-flash-free",
+  "default_agent": "autonomous",
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "tail_turns": 1,
+  },
+  "agent": {
+    "title": {
+      "model": "opencode/mimo-v2.6-flash-free",
+    },
+    "summary": {
+      "model": "opencode/mimo-v2.6-flash-free",
+    },
+    "compaction": {
+      "model": "opencode/mimo-v2.6-flash-free",
+    },
+  },
+  "mcp": {
+    "chrome-devtools": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--no-usage-statistics",
+        "--browser-url=http://localhost:19222"
+      ],
+      "enabled": true
+    },
+    "serena": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "-p",
+        "3.13",
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--project-from-cwd"
+      ],
+      "enabled": true
+    },
+  },
+  "provider": {
+    "proxy": {
+      "name": "Local proxy",
+      "npm": "@ai-sdk/anthropic",
+      "options": {
+        "baseURL": "http://localhost:8317/v1",
+      },
+      "models": {
+        "gpt-5.6-luna": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+          "reasoning": true,
+          "variants": {
+            "none": {
+              "reasoning": {
+                "enabled": false,
+                "effort": "none",
+              },
+            },
+            "low": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "low",
+              },
+            },
+            "medium": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "medium",
+              },
+            },
+            "high": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "high",
+              },
+            },
+            "xhigh": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "xhigh",
+              },
+            },
+            "max": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "max",
+              },
+            },
+          },
+        },
+        "gpt-5.6-terra": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+          "reasoning": true,
+          "variants": {
+            "none": {
+              "reasoning": {
+                "enabled": false,
+                "effort": "none",
+              },
+            },
+            "low": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "low",
+              },
+            },
+            "medium": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "medium",
+              },
+            },
+            "high": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "high",
+              },
+            },
+            "xhigh": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "xhigh",
+              },
+            },
+            "max": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "max",
+              },
+            },
+          },
+        },
+        "gpt-5.6-sol": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+          "reasoning": true,
+          "variants": {
+            "none": {
+              "reasoning": {
+                "enabled": false,
+                "effort": "none",
+              },
+            },
+            "low": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "low",
+              },
+            },
+            "medium": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "medium",
+              },
+            },
+            "high": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "high",
+              },
+            },
+            "xhigh": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "xhigh",
+              },
+            },
+            "max": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "max",
+              },
+            },
+          },
+        },
+        "gpt-6-astra": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "pdf",
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 1050000,
+            "output": 128000,
+          },
+          "reasoning": true,
+          "variants": {
+            "none": {
+              "reasoning": {
+                "enabled": false,
+                "effort": "none",
+              },
+            },
+            "low": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "low",
+              },
+            },
+            "medium": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "medium",
+              },
+            },
+            "high": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "high",
+              },
+            },
+            "xhigh": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "xhigh",
+              },
+            },
+            "max": {
+              "reasoning": {
+                "enabled": true,
+                "effort": "max",
+              },
+            },
+          },
+        },
+      },
+    },
+    "ckey": {
+      "name": "CKey",
+      "npm": "@ai-sdk/anthropic",
+      "options": {
+        "baseURL": "https://api.xah.io/v1/",
+      },
+      "env": [
+        "CKEY_API_KEY",
+      ],
+      "models": {
+        "forbiddengun/architect": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 384000,
+          },
+        },
+        "forbiddengun/gemini": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+              "audio",
+              "pdf",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1048576,
+            "output": 65536,
+          },
+        },
+        "forbiddengun/glm": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 131072,
+          },
+        },
+        "forbiddengun/deepseek": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 384000,
+          },
+        },
+        "forbiddengun/qwen": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 64000,
+          },
+        },
+      },
+    },
+  },
+  "permission": {
+    "bash": {
+      "git status *": "allow",
+      "git log *": "allow",
+      "git fetch *": "allow",
+      "git ls-files *": "allow",
+      "git show *": "allow",
+      "git diff *": "allow",
+      "git remote -v *": "allow",
+      "git init *": "allow",
+      "git check-ignore *": "allow",
+      "git checkout *": "allow",
+      "git pull *": "allow",
+      "git stash list *": "allow",
+      "git grep *": "allow",
+      "git ls-tree *": "allow",
+      "git rev-parse *": "allow",
+      "gh repo list *": "allow",
+      "gh auth status *": "allow",
+      "gh release list *": "allow",
+      "gh run list *": "allow",
+      "gh run watch *": "allow",
+      "gh run view *": "allow",
+      "gh pr view *": "allow",
+      "gh pr list *": "allow",
+      "brew list *": "allow",
+      "brew search *": "allow",
+      "brew tap-info *": "allow",
+      "brew info *": "allow",
+      "brew update *": "allow",
+      "brew outdated *": "allow",
+      "brew upgrade *": "allow",
+      "cargo check *": "allow",
+      "cargo test *": "allow",
+      "cargo info *": "allow",
+      "cargo doc *": "allow",
+      "cargo fmt *": "allow",
+      "cargo clippy *": "allow",
+      "rustfmt *": "allow",
+      "rustc *": "allow",
+      "go mod *": "allow",
+      "go get *": "allow",
+      "go doc *": "allow",
+      "go list *": "allow",
+      "go build *": "allow",
+      "go run *": "allow",
+      "go test *": "allow",
+      "go generate *": "allow",
+      "go vet *": "allow",
+      "gofmt *": "allow",
+      "npm list *": "allow",
+      "helm version *": "allow",
+      "helm lint *": "allow",
+      "pwd *": "allow",
+      "awk *": "allow",
+      "env *": "allow",
+      "nl *": "allow",
+      "true *": "allow",
+      "echo *": "allow",
+      "ls *": "allow",
+      "find *": "allow",
+      "sort *": "allow",
+      "wc *": "allow",
+      "wait *": "allow",
+      "which *": "allow",
+      "head *": "allow",
+      "cat *": "allow",
+      "jq *": "allow",
+      "sleep *": "allow",
+      "timeout *": "allow",
+      "grep *": "allow",
+      "basename *": "allow",
+      "uuidgen *": "allow",
+      "tr *": "allow",
+      "tail *": "allow",
+      "rg *": "allow",
+      "printf *": "allow",
+      "command *": "allow",
+      "curl *": "allow",
+      "test *": "allow",
+      "readlink *": "allow",
+      "gtimeout *": "allow",
+      "stat *": "allow",
+      "chmod *": "allow",
+      "time *": "allow",
+      "read *": "allow",
+      "mkdir *": "allow",
+      "rmdir *": "allow",
+      "ps *": "allow",
+      "cmp *": "allow",
+      "mktemp *": "allow",
+      "lsof *": "allow",
+      "pgrep *": "allow",
+      "ss *": "allow",
+      "fuser *": "allow",
+      "uv *": "allow",
+      "uvx *": "allow",
+      "npm *": "allow",
+      "npx *": "allow",
+      "bun *": "allow",
+      "bunx *": "allow",
+      "bun x *": "allow",
+    },
+    "recall": {
+      "search": "allow"
+    },
+    "read": {
+      "*": "allow"
+    },
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "todowrite": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "lsp": "allow",
+    "skill": "allow",
+    "todoread": "allow",
+    "codesearch": "allow",
+    "external_directory": {
+      "/tmp/*": "allow",
+      "~/.agents/*": "allow",
+      "~/.config/kilo/*": "allow",
+    },
+    "kilo_memory_recall": {
+      "*": "allow",
+    },
+    "serena_initial_instructions": {
+      "*": "allow"
+    },
+    "serena_activate_project": {
+      "*": "allow"
+    },
+    "serena_list_dir": {
+      "*": "allow"
+    },
+    "serena_find_file": {
+      "*": "allow"
+    },
+    "serena_read_file": {
+      "*": "allow"
+    },
+    "serena_get_diagnostics_for_file": {
+      "*": "allow"
+    },
+    "serena_search_for_pattern": {
+      "*": "allow"
+    },
+    "serena_get_symbols_overview": {
+      "*": "allow"
+    },
+    "serena_create_text_file": {
+      "*": "allow"
+    },
+    "serena_list_memories": {
+      "*": "allow"
+    },
+    "serena_find_symbol": {
+      "*": "allow"
+    },
+    "serena_execute_shell_command": {
+      "*": "allow"
+    },
+  },
+  "experimental": {
+    "batch_tool": true,
+    "openTelemetry": false,
+  },
+}
