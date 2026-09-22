@@ -16,7 +16,7 @@ Rules for editing agent prompts, system instructions, documentation, and configu
 ## 2. Decouple Instructions from Model Identity
 
 - **Never hardcode model names in prompt prose**: Do not write "powered by GPT-5.6 Terra", "powered by DeepSeek", or "using OpenCode Muse" in instruction bodies.
-- **Orchestrator references agent IDs only**: In `autonomous.md` and routing guides, dispatch to agent names (`code`, `code-fast`, `tester`, `reviewer`), never model names in parentheses (e.g. avoid `code (OpenCode Muse Spark)` or `tester (GPT-5.6 Terra)`).
+- **Orchestrator references agent IDs only**: In `build.md` and routing guides, dispatch to agent names (`code`, `code-fast`, `tester`, `reviewer`), never model names in parentheses (e.g. avoid `code (OpenCode Muse Spark)` or `tester (GPT-5.6 Terra)`).
 - Model assignment belongs exclusively in YAML frontmatter (`model:`). Embedding model names in prompt text causes prompt-model drift whenever models are swapped and wastes context.
 
 ## 3. Code & Config Editing: Grounding & Invariants

@@ -2,7 +2,7 @@
 description: "USE SPARINGLY: general fallback when no specialized subagent match. Fallback to `codex-gpt-terra` if `general` is not available."
 mode: subagent
 hidden: true
-model: "github-copilot/mai-code-1.1-flash"
+model: "github-copilot/gpt-5.4"
 variant: medium
 permission:
   bash: allow

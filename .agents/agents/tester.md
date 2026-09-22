@@ -1,5 +1,5 @@
 ---
-description: "Writes and fixes tests. Fast, high-accuracy test authoring for unit/integration/e2e tests, flaky test diagnostics, and coverage expansion. Targets test files only. For test authoring fallback, use `codex-gpt-terra`."
+description: "Writes and fixes tests. Fast, high-accuracy test authoring for unit/integration/e2e tests, flaky test diagnostics, and coverage expansion. Targets test files only. For test authoring fallback, use `codex-gpt-sol`."
 mode: subagent
 model: "ckey/forbiddengun/deepseek"
 variant: high

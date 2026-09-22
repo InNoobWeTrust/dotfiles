@@ -1,8 +1,8 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses Codex model gpt-5.6-terra with 1M context, does not delegate nested tasks."
+description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses GPT Sol model with 1M context, does not delegate nested tasks."
 mode: subagent
-model: "proxy/gpt-5.6-terra"
-variant: xhigh
+model: "proxy/gpt-6-sol"
+variant: high
 permission:
   bash: allow
   edit: allow

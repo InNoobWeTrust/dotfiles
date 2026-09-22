@@ -1,8 +1,8 @@
 ---
-description: "Coding and implementation fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses Kilo model qwen3.8-27b:free at xhigh and 256k context, does not delegate nested tasks."
+description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses GPT Luna model with 1M context, does not delegate nested tasks."
 mode: subagent
-model: "kilo/qwen/qwen3.8-27b:free"
-variant: xhigh
+model: "proxy/gpt-6-luna"
+variant: medium
 permission:
   bash: allow
   edit: allow

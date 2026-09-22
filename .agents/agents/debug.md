@@ -1,8 +1,8 @@
 ---
-description: "Systematic troubleshooting and root cause analysis. Dedicated execution corridor for frontier reasoning on precise error logs, exact stack traces, and isolated file patches. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs. Fallback to `github-copilot-claude` or `codex-gpt-terra` if `debug` is not available."
+description: "Systematic troubleshooting and root cause analysis. Dedicated execution corridor for frontier reasoning on precise error logs, exact stack traces, and isolated file patches. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs. Fallback to `github-copilot-claude` or `ckey-glm` if not available."
 mode: subagent
-model: "proxy/gpt-5.6-sol"
-variant: medium
+model: "proxy/gpt-6-sol"
+variant: high
 permission:
   bash: allow
   edit: deny

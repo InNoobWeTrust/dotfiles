@@ -2,10 +2,12 @@
 /*
 
 # Explicit tracking
+!/agents/
 !/commands/
 !/docs/
 !/instructions/
 !/memory/
+!/memories/
 !/prompts/
 !/rules/
 !/scripts/

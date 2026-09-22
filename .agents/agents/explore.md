@@ -1,7 +1,7 @@
 ---
 description: "Can only use tools with no side-effect"
 mode: subagent
-model: "kilo/openai/gpt-5.6-luna"
+model: "kilo/openai/gpt-6-luna"
 variant: medium
 permission:
   edit: deny

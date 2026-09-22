@@ -1,7 +1,7 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "small_model": "opencode/mimo-v2.6-flash-free",
-  "default_agent": "autonomous",
+  "default_agent": "build",
   "compaction": {
     "auto": true,
     "prune": true,
@@ -17,6 +17,12 @@
     "compaction": {
       "model": "opencode/mimo-v2.6-flash-free",
     },
+  },
+  "server": {
+    "port": 4096,
+    "hostname": "0.0.0.0",
+    "mdns": true,
+    //"cors": ["https://example.com"],
   },
   "mcp": {
     "chrome-devtools": {
@@ -53,7 +59,7 @@
         "baseURL": "http://localhost:8317/v1",
       },
       "models": {
-        "gpt-5.6-luna": {
+        "gpt-6-luna": {
           "modalities": {
             "input": [
               "text",
@@ -108,62 +114,7 @@
             },
           },
         },
-        "gpt-5.6-terra": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-          "reasoning": true,
-          "variants": {
-            "none": {
-              "reasoning": {
-                "enabled": false,
-                "effort": "none",
-              },
-            },
-            "low": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "low",
-              },
-            },
-            "medium": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "medium",
-              },
-            },
-            "high": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "high",
-              },
-            },
-            "xhigh": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "xhigh",
-              },
-            },
-            "max": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "max",
-              },
-            },
-          },
-        },
-        "gpt-5.6-sol": {
+        "gpt-6-sol": {
           "modalities": {
             "input": [
               "text",
@@ -530,4 +481,9 @@
     "batch_tool": true,
     "openTelemetry": false,
   },
+  "plugin": [
+    "@tarquinen/opencode-dcp@latest",
+    "opencode-devcontainers@latest",
+    //"@daytona/opencode",
+  ],
 }

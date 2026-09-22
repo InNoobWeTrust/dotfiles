@@ -18,7 +18,7 @@ Canonical project governance policies, delivery contracts, and planning protocol
   - **L1 (Section Decomposition)**: Expand a targeted section into sub-headings flagged `[ATOMIC]` or `[NEEDS L2]`.
   - **L2 (Atomic Unit Specification)**: Fully specified dispatchable units with contracts, exact writable surface, and acceptance criteria.
 - **Shared Plan File State**: The plan file acts as shared persistent state across architect-orchestrator loops. Context is strictly scoped to the targeted section per L1/L2 call.
-- **SSOT**: Detailed planning dispatch mechanics live in `subagent-dispatch` SKILL.md while `autonomous.md` routes to it with concise pointers.
+- **SSOT**: Detailed planning dispatch mechanics live in `subagent-dispatch` SKILL.md while `build.md` routes to it with concise pointers.
 
 ## 4. Rapid-Demo Profile Boundaries
 - When using the rapid-demo profile in `project-foundation`, strictly enforce local-first, synthetic-only data, no production credentials or PII, explicit opt-in hosting, and mandatory "DEMO ONLY — NOT PRODUCTION READY" labelling.
