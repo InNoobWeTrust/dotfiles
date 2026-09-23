@@ -18,16 +18,17 @@ usable brew && eval "$(${BREW_HOME}/bin/brew shellenv)"
 # cliproxyapi hook
 if usable cliproxyapi; then
     TEMPLATE_CONF="$HOME/.config/cliproxyapi/cliproxyapi.conf.template"
-    OUTPUT_CONF="$HOME/.config/cliproxyapi/cliproxyapi.conf"
+    OUTPUT_CONF="$HOME/.local/share/cli-proxy-api/cliproxyapi.conf"
     
     if [ -f "$TEMPLATE_CONF" ]; then
         # Regenerate if output is missing or older than the template
         if [ ! -f "$OUTPUT_CONF" ] || [ "$TEMPLATE_CONF" -nt "$OUTPUT_CONF" ]; then
             # Create directory if it doesn't exist
             mkdir -p "$(dirname "$OUTPUT_CONF")"
-            # Safe replacement: only expand the specified environment variables
+            # Atomic replacement: write to temp file then rename to avoid fsnotify partial reads
+            TMP_CONF="${OUTPUT_CONF}.tmp.$$"
             envsubst '$HOME $KILO_API_KEY $KILO_BASE_URL $LLM_BROKER_API_KEY $LLM_BROKER_BASE_URL $OPENCODE_API_KEY $ORCAROUTER_API_KEY $ORCAROUTER_BASE_URL $FEATHERLESS_API_KEY $FEATHERLESS_BASE_URL $INK_GATEWAY_API_KEY $INK_GATEWAY_BASE_URL' \
-                < "$TEMPLATE_CONF" > "$OUTPUT_CONF"
+                < "$TEMPLATE_CONF" > "$TMP_CONF" && mv -f "$TMP_CONF" "$OUTPUT_CONF"
         fi
     fi
 fi
