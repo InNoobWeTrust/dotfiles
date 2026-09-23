@@ -1,6 +1,6 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
-  "small_model": "kilo/openai/gpt-6-luna",
+  "small_model": "kilo/~openai/gpt-luna-latest",
   "default_agent": "build",
   "compaction": {
     "auto": true,
@@ -9,13 +9,13 @@
   },
   "agent": {
     "title": {
-      "model": "kilo/openai/gpt-6-luna",
+      "model": "kilo/~openai/gpt-luna-latest",
     },
     "summary": {
-      "model": "kilo/openai/gpt-6-luna",
+      "model": "kilo/~openai/gpt-luna-latest",
     },
     "compaction": {
-      "model": "kilo/openai/gpt-6-luna",
+      "model": "kilo/~openai/gpt-luna-latest",
     },
   },
   "mcp": {
