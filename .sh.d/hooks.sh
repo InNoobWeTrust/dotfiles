@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+# shellcheck disable=SC3043
 
 # pyenv
 usable pyenv && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
@@ -12,14 +13,12 @@ usable direnv && eval "$(direnv hook "${SHELL##*/}")"
 # Linux brew
 usable brew && eval "$(${BREW_HOME}/bin/brew shellenv)"
 
-# If not running in CodeSpace, use git protocol instead of https
-#[ -z "$CODESPACES" ] && git config --global url."git@github.com".insteadOf "https://github.com"
-
 # cliproxyapi hook
 if usable cliproxyapi; then
+    local TEMPLATE_CONF OUTPUT_CONF TMP_CONF
     TEMPLATE_CONF="$HOME/.config/cliproxyapi/cliproxyapi.conf.template"
     OUTPUT_CONF="$HOME/.local/share/cli-proxy-api/cliproxyapi.conf"
-    
+
     if [ -f "$TEMPLATE_CONF" ]; then
         # Regenerate if output is missing or older than the template
         if [ ! -f "$OUTPUT_CONF" ] || [ "$TEMPLATE_CONF" -nt "$OUTPUT_CONF" ]; then
@@ -35,9 +34,10 @@ fi
 
 # openfortivpn hook
 if usable openfortivpn; then
+    local TEMPLATE_CONF OUTPUT_CONF TMP_CONF
     TEMPLATE_CONF="$HOME/.config/openfortivpn/config.template"
     OUTPUT_CONF="$HOME/.config/openfortivpn/config"
-    
+
     if [ -f "$TEMPLATE_CONF" ]; then
         # Regenerate if output is missing or older than the template
         if [ ! -f "$OUTPUT_CONF" ] || [ "$TEMPLATE_CONF" -nt "$OUTPUT_CONF" ]; then
@@ -46,9 +46,10 @@ if usable openfortivpn; then
             # Default fallbacks if not explicitly exported
             export OPENFORTIVPN_PORT="${OPENFORTIVPN_PORT:-443}"
             export OPENFORTIVPN_SAML_PORT="${OPENFORTIVPN_SAML_PORT:-8020}"
-            # Safe replacement: only expand the specified environment variables
+            # Atomic replacement: write to temp file then rename to avoid fsnotify partial reads
+            TMP_CONF="${OUTPUT_CONF}.tmp.$$"
             envsubst '$HOME $OPENFORTIVPN_HOST $OPENFORTIVPN_PORT $OPENFORTIVPN_SAML_PORT $OPENFORTIVPN_USERNAME $OPENFORTIVPN_PASSWORD $OPENFORTIVPN_TRUSTED_CERT' \
-                < "$TEMPLATE_CONF" > "$OUTPUT_CONF"
+                < "$TEMPLATE_CONF" > "$TMP_CONF" && mv -f "$TMP_CONF" "$OUTPUT_CONF"
             chmod 600 "$OUTPUT_CONF"
         fi
     fi
