@@ -66,3 +66,7 @@ if [ -z "$PUPPETEER_EXECUTABLE_PATH" ]; then
     fi
 fi
 
+# Enable MPS for PyTorch if available
+if [ "$(uname -s)" = "Darwin" ]; then
+    export PYTORCH_ENABLE_MPS_FALLBACK=1
+fi
