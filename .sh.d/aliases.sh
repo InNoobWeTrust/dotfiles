@@ -480,6 +480,8 @@ usable socat && {
 usable openfortivpn && {
     alias vpn-connect='vpn connect'
     alias vpn-up='vpn connect'
+    alias vpn-daemon='vpn daemon'
+    alias vpn-log='vpn log'
     alias vpn-disconnect='vpn disconnect'
     alias vpn-down='vpn disconnect'
     alias vpn-status='vpn status'

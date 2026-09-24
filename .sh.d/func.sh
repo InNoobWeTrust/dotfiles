@@ -667,10 +667,57 @@ EOF
 }
 
 #
+#
+# # _vpn_open_browser - Open SAML authentication URL in configured or default browser
+# # usage: _vpn_open_browser <url> [browser_name]
+_vpn_open_browser() {
+    local url="$1"
+    local browser="${2:-${VPN_BROWSER:-${OPENFORTIVPN_BROWSER:-}}}"
+
+    if [ -n "$browser" ]; then
+        if [ "$(uname -s)" = "Darwin" ]; then
+            case "$(echo "$browser" | tr '[:upper:]' '[:lower:]')" in
+                chrome|google-chrome|"google chrome")
+                    browser="Google Chrome"
+                    ;;
+                safari)
+                    browser="Safari"
+                    ;;
+                firefox)
+                    browser="Firefox"
+                    ;;
+                brave|"brave browser")
+                    browser="Brave Browser"
+                    ;;
+                edge|"microsoft edge")
+                    browser="Microsoft Edge"
+                    ;;
+                arc)
+                    browser="Arc"
+                    ;;
+            esac
+            if open -a "$browser" "$url" 2>/dev/null; then
+                return 0
+            fi
+        elif command -v "$browser" >/dev/null 2>&1; then
+            "$browser" "$url" 2>/dev/null &
+            return 0
+        fi
+    fi
+
+    # Fallback to system default browser
+    if command -v open >/dev/null 2>&1; then
+        open "$url" 2>/dev/null || true
+    elif command -v xdg-open >/dev/null 2>&1; then
+        xdg-open "$url" 2>/dev/null || true
+    fi
+}
+
+#
 # # vpn_connect - Start openfortivpn directly with SAML SSO browser automation
-# # usage: vpn_connect [extra_openfortivpn_flags]
+# # usage: vpn_connect [-b browser] [extra_openfortivpn_flags]
 vpn_connect() {
-    local conf host port saml_port saml_url 2>/dev/null || true
+    local conf host port saml_port saml_url target_browser new_args 2>/dev/null || true
 
     if ! usable openfortivpn; then
         echo "Error: openfortivpn binary not found in PATH." >&2
@@ -689,21 +736,181 @@ vpn_connect() {
         return 0
     fi
 
+    target_browser=""
+    new_args=""
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -b|--browser)
+                target_browser="$2"
+                shift 2 2>/dev/null || shift
+                ;;
+            -b=*|--browser=*)
+                target_browser="${1#*=}"
+                shift
+                ;;
+            *)
+                new_args="${new_args:+$new_args }\"$1\""
+                shift
+                ;;
+        esac
+    done
+    if [ -n "$new_args" ]; then
+        eval "set -- $new_args"
+    else
+        set --
+    fi
+
     host=$(awk -F'=[[:space:]]*' '/^[[:space:]]*host[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
     port=$(awk -F'=[[:space:]]*' '/^[[:space:]]*port[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
     saml_port=$(awk -F'=[[:space:]]*' '/^[[:space:]]*saml-login[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
 
     if [ -n "$host" ] && [ -n "$saml_port" ]; then
         saml_url="https://${host}:${port:-443}/remote/saml/start?redirect=1"
-        if command -v open >/dev/null 2>&1; then
-            ( sleep 1.5 && open "$saml_url" ) &
-        elif command -v xdg-open >/dev/null 2>&1; then
-            ( sleep 1.5 && xdg-open "$saml_url" ) &
-        fi
+        ( sleep 1.5 && _vpn_open_browser "$saml_url" "$target_browser" ) &
     fi
 
     echo "Starting openfortivpn (press Ctrl+C to disconnect)..."
     sudo openfortivpn -c "$conf" "$@"
+}
+
+#
+# # vpn_daemon - Start openfortivpn in the background with log tracking
+# # usage: vpn_daemon [-b browser] [extra_openfortivpn_flags]
+vpn_daemon() {
+    local conf log_file host port saml_port saml_url target_browser new_args 2>/dev/null || true
+
+    if ! usable openfortivpn; then
+        echo "Error: openfortivpn binary not found in PATH." >&2
+        return 1
+    fi
+
+    conf="$HOME/.config/openfortivpn/config"
+    if [ ! -f "$conf" ]; then
+        echo "Error: Config file not found at $conf" >&2
+        return 1
+    fi
+
+    if pgrep openfortivpn >/dev/null 2>&1; then
+        echo "openfortivpn is already running (PID: $(pgrep openfortivpn | tr '\n' ' '))."
+        echo "Run 'vpn status', 'vpn log', or 'vpn disconnect' first."
+        return 0
+    fi
+
+    target_browser=""
+    new_args=""
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -b|--browser)
+                target_browser="$2"
+                shift 2 2>/dev/null || shift
+                ;;
+            -b=*|--browser=*)
+                target_browser="${1#*=}"
+                shift
+                ;;
+            *)
+                new_args="${new_args:+$new_args }\"$1\""
+                shift
+                ;;
+        esac
+    done
+    if [ -n "$new_args" ]; then
+        eval "set -- $new_args"
+    else
+        set --
+    fi
+
+    log_file="/tmp/openfortivpn.log"
+    # Create the log file as current user first
+    touch "$log_file" 2>/dev/null || true
+
+    # Authenticate sudo credentials upfront
+    if ! sudo -v; then
+        echo "Error: sudo authentication required to run openfortivpn." >&2
+        return 1
+    fi
+
+    # If an existing file was left behind by root, reclaim ownership
+    if [ ! -w "$log_file" ]; then
+        sudo chown "$(id -u):$(id -g)" "$log_file" 2>/dev/null || sudo rm -f "$log_file"
+        touch "$log_file"
+    fi
+
+    echo "Starting openfortivpn in background..."
+
+    # --persistent=30: after SAML times out (hardcoded 50 s in binary), openfortivpn
+    # automatically retries. The browser stays on the SSO page so the user can
+    # complete login on the next attempt — no fixed deadline.
+    # nohup sets SIGHUP to SIG_IGN before exec, so the process survives tab close.
+    nohup sudo openfortivpn -c "$conf" --persistent=30 "$@" >> "$log_file" 2>&1 &
+    disown $! 2>/dev/null || true
+
+    # Wait for openfortivpn to initialize and print the SAML URL to the log
+    local waited=0
+    while [ $waited -lt 5 ]; do
+        sleep 1
+        waited=$((waited + 1))
+        pgrep openfortivpn >/dev/null 2>&1 && break
+    done
+
+    # Check if process is still running or failed immediately
+    if ! pgrep openfortivpn >/dev/null 2>&1; then
+        echo "Error: openfortivpn failed to start. Last log lines:" >&2
+        tail -n 10 "$log_file" >&2
+        return 1
+    fi
+
+    host=$(awk -F'=[[:space:]]*' '/^[[:space:]]*host[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
+    port=$(awk -F'=[[:space:]]*' '/^[[:space:]]*port[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
+    saml_port=$(awk -F'=[[:space:]]*' '/^[[:space:]]*saml-login[[:space:]]*=/ {print $2}' "$conf" | tr -d '[:space:]')
+
+    if [ -n "$host" ] && [ -n "$saml_port" ]; then
+        saml_url="https://${host}:${port:-443}/remote/saml/start?redirect=1"
+        local logged_url
+        logged_url=$(grep -o "https://[^ '\"]*" "$log_file" 2>/dev/null | grep 'saml/start' | tail -n 1 | tr -d "'\"")
+        [ -n "$logged_url" ] && saml_url="$logged_url"
+
+        echo ""
+        echo "=================================================="
+        echo "SAML SSO Authentication URL:"
+        echo "  $saml_url"
+        echo "=================================================="
+        echo ""
+        echo "The VPN will keep retrying automatically every 30 s until you complete SSO."
+        echo ""
+        _vpn_open_browser "$saml_url" "$target_browser"
+    fi
+
+    echo "openfortivpn running in background (PID: $(pgrep openfortivpn | tr '\n' ' '))"
+    echo "Logs are available at: $log_file"
+    echo "  - Run 'vpn log' to follow logs"
+    echo "  - Run 'vpn status' to check tunnel status"
+    echo "  - Run 'vpn disconnect' to stop"
+}
+
+#
+# # vpn_log - View or follow openfortivpn daemon logs
+# # usage: vpn_log [tail_flags]
+vpn_log() {
+    local log_file="/tmp/openfortivpn.log"
+
+    if [ ! -f "$log_file" ]; then
+        if command -v brew >/dev/null 2>&1 && [ -f "$(brew --prefix 2>/dev/null)/var/log/openfortivpn.log" ]; then
+            log_file="$(brew --prefix)/var/log/openfortivpn.log"
+        fi
+    fi
+
+    if [ ! -f "$log_file" ]; then
+        echo "No log file found at $log_file" >&2
+        echo "Run 'vpn daemon' or 'vpn connect' first." >&2
+        return 1
+    fi
+
+    if [ $# -gt 0 ]; then
+        tail "$@" "$log_file"
+    else
+        tail -f "$log_file"
+    fi
 }
 
 #
@@ -735,10 +942,15 @@ vpn_status() {
 
     pids=$(pgrep openfortivpn 2>/dev/null || true)
     if [ -n "$pids" ]; then
-        echo "Status: Connected (openfortivpn PID: $(echo "$pids" | tr '\n' ' '))"
         if command -v ifconfig >/dev/null 2>&1; then
             ppp_info=$(ifconfig 2>/dev/null | awk '/^ppp[0-9]:/{iface=$1} /inet /{if (iface) {print iface, $2; iface=""}}')
-            [ -n "$ppp_info" ] && echo "Interface: $ppp_info"
+        fi
+        if [ -n "$ppp_info" ]; then
+            echo "Status: Connected (openfortivpn PID: $(echo "$pids" | tr '\n' ' '))"
+            echo "Interface: $ppp_info"
+        else
+            echo "Status: Connecting / Awaiting authentication (openfortivpn PID: $(echo "$pids" | tr '\n' ' '))"
+            echo "Hint: Run 'vpn log' to view the login link or connection output."
         fi
     else
         echo "Status: Disconnected"
@@ -747,9 +959,17 @@ vpn_status() {
 
 #
 # # vpn - Unified openfortivpn control dispatcher
-# # usage: vpn [connect|disconnect|status|config]
+# # usage: vpn [connect|daemon|disconnect|log|status|config]
 vpn() {
     case "${1:-connect}" in
+        daemon|bg)
+            shift 2>/dev/null || true
+            vpn_daemon "$@"
+            ;;
+        log|logs)
+            shift 2>/dev/null || true
+            vpn_log "$@"
+            ;;
         start|up|connect)
             shift 2>/dev/null || true
             vpn_connect "$@"
@@ -764,7 +984,7 @@ vpn() {
             "${EDITOR:-vi}" "$HOME/.config/openfortivpn/config"
             ;;
         *)
-            echo "Usage: vpn [connect|disconnect|status|config]"
+            echo "Usage: vpn [connect|daemon|disconnect|log|status|config]"
             return 1
             ;;
     esac
