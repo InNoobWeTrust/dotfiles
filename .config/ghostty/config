@@ -1,0 +1,72 @@
+# ==============================================================================
+# Ghostty Configuration
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Typography
+# ------------------------------------------------------------------------------
+font-family = "Iosevka Nerd Font Mono"
+font-size = 14
+# Adjust line height / cell dimensions if desired (default: 1.0)
+adjust-cell-width = 0
+adjust-cell-height = 0
+
+# ------------------------------------------------------------------------------
+# Color Scheme & Theme
+# ------------------------------------------------------------------------------
+# Built-in Ghostty themes: "Gruvbox Dark", "Gruvbox Dark Hard", "Gruvbox Material Dark"
+theme = "Gruvbox Dark Hard"
+
+# ------------------------------------------------------------------------------
+# Window Styling & Transparency
+# ------------------------------------------------------------------------------
+background-opacity = 0.92
+background-blur = true
+
+# macOS window chrome
+macos-titlebar-style = transparent
+window-padding-x = 10
+window-padding-y = 10
+window-padding-balance = true
+window-padding-color = background
+
+# Initial window dimensions (Columns x Rows)
+window-width = 110
+window-height = 25
+
+# ------------------------------------------------------------------------------
+# macOS Ergonomics (Option key as Alt / Meta)
+# ------------------------------------------------------------------------------
+# Treat Option key as Alt (for Zellij, Neovim, and shell shortcuts)
+macos-option-as-alt = true
+
+# Unbind Ghostty's default Alt+Arrow -> esc:b / esc:f overrides
+# This prevents Alt+Right from triggering Zellij's Alt+f (ToggleFloatingPanes)
+# and allows Zellij to receive proper Alt+Arrow navigation keys
+keybind = alt+arrow_left=unbind
+keybind = alt+arrow_right=unbind
+
+# Clean window behavior
+confirm-close-surface = false
+quit-after-last-window-closed = false
+
+# ------------------------------------------------------------------------------
+# Cursor
+# ------------------------------------------------------------------------------
+cursor-style = block
+cursor-style-blink = true
+
+# ------------------------------------------------------------------------------
+# Mouse & Scrollback
+# ------------------------------------------------------------------------------
+mouse-hide-while-typing = true
+copy-on-select = clipboard
+scrollback-limit = 100000000
+
+# ------------------------------------------------------------------------------
+# Dropdown / Quick Terminal (Quake Hotkey Window)
+# ------------------------------------------------------------------------------
+# Uncomment and customize the global shortcut below if you used hotkey window:
+keybind = global:cmd+grave_accent=toggle_quick_terminal
+quick-terminal-position = top
+quick-terminal-screen = mouse
