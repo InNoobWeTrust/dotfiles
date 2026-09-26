@@ -30,9 +30,8 @@ window-padding-y = 10
 window-padding-balance = true
 window-padding-color = background
 
-# Initial window dimensions (Columns x Rows)
-window-width = 110
-window-height = 25
+# Window state
+maximize = true
 
 # ------------------------------------------------------------------------------
 # macOS Ergonomics (Option key as Alt / Meta)
@@ -46,9 +45,11 @@ macos-option-as-alt = true
 keybind = alt+arrow_left=unbind
 keybind = alt+arrow_right=unbind
 
-# Clean window behavior
+# Clean window behavior (Background Quake daemon mode)
 confirm-close-surface = false
 quit-after-last-window-closed = false
+initial-window = false
+macos-hidden = never
 
 # ------------------------------------------------------------------------------
 # Cursor
@@ -64,9 +65,19 @@ copy-on-select = clipboard
 scrollback-limit = 100000000
 
 # ------------------------------------------------------------------------------
+# Link Handling (iTerm-style URL clicking)
+# ------------------------------------------------------------------------------
+# Automatically match URLs on hover with Command (macOS) / Ctrl (Linux)
+link-url = true
+# Show preview tooltip when hovering over detected URLs
+link-previews = true
+
+# ------------------------------------------------------------------------------
 # Dropdown / Quick Terminal (Quake Hotkey Window)
 # ------------------------------------------------------------------------------
-# Uncomment and customize the global shortcut below if you used hotkey window:
-keybind = global:cmd+grave_accent=toggle_quick_terminal
+# Global shortcut for Quake-style dropdown terminal.
+# Uses `super+alt+t` (Opt+Cmd+T on macOS / Super+Alt+T on Linux)
+# to avoid conflicting with macOS native Cmd+` (switch windows of the same app).
+keybind = global:super+alt+t=toggle_quick_terminal
 quick-terminal-position = top
 quick-terminal-screen = mouse
