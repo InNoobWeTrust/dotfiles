@@ -1,9 +1,18 @@
-# Ignore by default
-*
+# Ignore everything by default
+/*
+/.*
 
-# Explicit tracking
-!/rules/
-!/skills/
-!/workflows/
+# Whitelist .gitignore and documentation
+!.gitignore
 !/GEMINI.md
-!/antigravity/mcp_config.json
+
+# Whitelist shared .agents links
+!/rules
+!/skills
+!/workflows
+!/commands
+
+# Whitelist Antigravity global MCP server configuration
+!/config/
+/config/*
+!/config/mcp_config.json

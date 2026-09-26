@@ -1,0 +1,20 @@
+# Ignore runtime databases, sessions, logs, caches, and credentials
+*.sqlite*
+.sandbox_migration
+.tmp/
+tmp/
+log/
+logs/
+cache/
+sessions/
+shell_snapshots/
+thread-writer-locks/
+rollouts/
+auth.json
+version.json
+installation_id
+app-server-daemon/
+app-server-control.sock
+
+# Ignore codex runtime system skills
+skills/.system/

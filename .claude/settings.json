@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "effortLevel": "high",
+  "editorMode": "normal",
+  "verbose": true,
+  "skipAutoPermissionPrompt": true,
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://127.0.0.1:8317",
+    "ANTHROPIC_API_KEY": "dummy",
+    "ANTHROPIC_MODEL": "gpt-6-sol"
+  }
+}

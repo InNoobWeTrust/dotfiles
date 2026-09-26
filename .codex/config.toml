@@ -1,0 +1,10 @@
+model = "gpt-6-sol"
+model_provider = "cliproxyapi"
+
+[model_providers.cliproxyapi]
+name = "CLIProxyAPI"
+base_url = "http://127.0.0.1:8317/v1"
+wire_api = "responses"
+requires_openai_auth = false
+supports_websockets = true
+model_catalog_url = "http://127.0.0.1:8317/v1/models"
