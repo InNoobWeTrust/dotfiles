@@ -1,10 +1,12 @@
 # Ignore Claude Code runtime, session, and cache data
-projects/
-cache/
-paste-cache/
-session-env/
-todos/
-statsig/
-shell-snapshots/
-history.jsonl
-*.log
+/backups/
+/projects/
+/plugins/
+/cache/
+/paste-cache/
+/session-env/
+/todos/
+/statsig/
+/shell-snapshots/
+/history.jsonl
+/*.log

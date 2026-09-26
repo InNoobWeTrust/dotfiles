@@ -80,6 +80,29 @@ claude-api-key:
       - name: "forbiddengun/glm"
       - name: "forbiddengun/deepseek"
       - name: "forbiddengun/qwen"
+
+oauth-model-alias:
+  codex:
+    # Claude Opus (Flagship / Heavy Reasoning) -> GPT-6 Astra
+    - name: "gpt-6-astra"
+      alias: "opus"
+      fork: true
+
+    # Claude Fable (Long-horizon reasoning) -> GPT-6 Astra
+    - name: "gpt-6-astra"
+      alias: "fable"
+      fork: true
+
+    # Claude Sonnet (Agentic / Production Coding) -> GPT-6 Sol
+    - name: "gpt-6-sol"
+      alias: "sonnet"
+      fork: true
+
+    # Claude Haiku (Lightweight / High throughput) -> GPT-6 Luna
+    - name: "gpt-6-luna"
+      alias: "haiku"
+      fork: true
+
 debug: true
 logging-to-file: true
 commercial-mode: true

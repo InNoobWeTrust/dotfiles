@@ -225,6 +225,40 @@ nvim_create_augroups(autocmds)
 --------------------------------------------------- End Misc
 
 ------------------------------------------- Custom functions
+local _cliproxy_cache = nil
+local _cliproxy_cache_time = 0
+
+local function get_cliproxy_models()
+    local now = os.time()
+    if _cliproxy_cache and (now - _cliproxy_cache_time < 600) then
+        return _cliproxy_cache
+    end
+
+    local ok, curl = pcall(require, "plenary.curl")
+    if ok then
+        local success, res = pcall(curl.get, "http://127.0.0.1:8317/v1/models", { timeout = 1000 })
+        if success and res and res.status == 200 then
+            local decoded_ok, data = pcall(vim.json.decode, res.body)
+            if decoded_ok and data and data.data then
+                local models = {}
+                for _, item in ipairs(data.data) do
+                    table.insert(models, item.id)
+                end
+                table.sort(models)
+                _cliproxy_cache = models
+                _cliproxy_cache_time = now
+                return _cliproxy_cache
+            end
+        end
+    end
+
+    return {
+        "sonnet",
+        "haiku",
+        "opus",
+        "fable",
+    }
+end
 --------------------------------------- End custom functions
 
 -------------------------------------------- External config
@@ -618,6 +652,13 @@ require("lazy").setup({
         ---- TODO: Self-hosted LLM backend
         {
             "olimorris/codecompanion.nvim",
+            keys = {
+                { "<leader>aa", "<cmd>CodeCompanionActions<cr>", mode = { "n", "v" }, desc = "AI Actions Palette" },
+                { "<leader>ac", "<cmd>CodeCompanionChat Toggle<cr>", mode = { "n", "v" }, desc = "AI Chat Toggle" },
+                { "<leader>ae", "<cmd>CodeCompanion<cr>", mode = { "n", "v" }, desc = "AI Inline Edit" },
+                { "<leader>af", "<cmd>CodeCompanion /fix<cr>", mode = { "v" }, desc = "AI Fix Selected Code" },
+                { "<leader>ap", "<cmd>CodeCompanionChat Add<cr>", mode = { "v" }, desc = "AI Add Selection to Chat" },
+            },
             opts = {
                 adapters = {
                     http = {
@@ -633,16 +674,10 @@ require("lazy").setup({
                                 },
                                 schema = {
                                     model = {
-                                        default = "gpt-5.6-luna",
-                                        choices = {
-                                            -- OAuth / Codex session models
-                                            "gpt-5.6-luna",
-                                            "gpt-5.6-terra",
-                                            "gpt-5.6-sol",
-                                            "gpt-5.5",
-                                            "gpt-5.3-codex-spark",
-                                            "gpt-6-astra",
-                                        },
+                                        default = "sonnet",
+                                        choices = function(self)
+                                            return get_cliproxy_models()
+                                        end,
                                     },
                                 },
                             })
@@ -732,14 +767,12 @@ require("lazy").setup({
                 },
                 strategies = {
                     chat = {
-                        --adapter = "copilot",
                         adapter = "cliproxyapi",
-                        model = "gpt-5.6-luna",
+                        model = "sonnet",
                     },
                     inline = {
-                        --adapter = "copilot",
                         adapter = "cliproxyapi",
-                        model = "gpt-5.6-luna",
+                        model = "haiku",
                     },
                 },
                 opts = {
