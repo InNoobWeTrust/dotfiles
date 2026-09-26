@@ -1,7 +1,7 @@
 ---
-description: "High-complexity system design, macro-architecture decisions, technical planning, and implementation roadmaps. Reserved for: greenfield design docs, system architecture, public API contracts, data modeling, tech stack decisions, or high-ambiguity system initiatives. For routine feature planning, localized refactoring, or multi-step execution plans, use tactical-planner instead. For software architect fallback, use `github-copilot-claude` or `codex-gpt-sol`."
+description: "High-complexity system design, macro-architecture decisions, technical planning, and implementation roadmaps. Reserved for: greenfield design docs, system architecture, public API contracts, data modeling, tech stack decisions, or high-ambiguity system initiatives. For routine feature planning, localized refactoring, or multi-step execution plans, use tactical-planner instead. For software architect fallback, use `codex-gpt-astra`; if quota is fully drained, use `ckey-architect`."
 mode: subagent
-model: "ckey/forbiddengun/architect"
+model: "github-copilot/claude-sonnet-4.6"
 variant: high
 permission:
   bash: allow

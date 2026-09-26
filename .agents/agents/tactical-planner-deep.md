@@ -1,8 +1,8 @@
 ---
-description: "Deep, high-intelligence tactical planner. Superior at thorough multi-step task decomposition, nuanced architectural dependency mapping, subtle invariant preservation, and rigorous functional unit specification for complex refactors and non-trivial features. For rapid, routine single-pass plans, use tactical-planner-fast."
+description: "Deep, high-intelligence tactical planner. Superior at thorough multi-step task decomposition, nuanced architectural dependency mapping, subtle invariant preservation, and rigorous functional unit specification for complex refactors and non-trivial features. For rapid, routine single-pass plans, use tactical-planner. If quota is fully drained, use `ckey-glm`."
 mode: subagent
-model: "ckey/forbiddengun/glm"
-variant: max
+model: "github-copilot/claude-sonnet-4.6"
+variant: high
 permission:
   bash: allow
   edit: allow

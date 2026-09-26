@@ -1,5 +1,5 @@
 ---
-description: "High-assurance security audit powered by GPT-6 Astra. Read-only. Use for pre-deployment audits, critical vulnerability analysis, cryptographic review, and sensitive authorization flow verification. Because security review is high-compute and thorough, run this after commits or when completing critical plans/docs. Don't call this when user is in a rush or there are still incomplete work."
+description: "High-assurance security audit. Read-only. Use for pre-deployment audits, critical vulnerability analysis, cryptographic review, and sensitive authorization flow verification. Because security review is high-compute and thorough, run this after commits or when completing critical plans/docs. Don't call this when user is in a rush or there are still incomplete work. If quota is fully drained, use `ckey-architect`."
 mode: subagent
 model: "proxy/gpt-6-sol"
 variant: xhigh
