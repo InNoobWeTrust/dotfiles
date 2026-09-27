@@ -31,13 +31,15 @@ if [ -n "$BASH_VERSION" ]; then
         # shellcheck source=/dev/null
         . "$HOME/bash_completion.d/python-argcomplete"
     fi
-    if [ -n "$BREW_HOME" ] && [ -d "$BREW_HOME/etc/bash_completion.d" ]; then
-        for s in "$BREW_HOME"/etc/bash_completion.d/*; do
+    _brew_prefix="${HOMEBREW_PREFIX:-$(usable brew && brew --prefix 2>/dev/null)}"
+    if [ -n "$_brew_prefix" ] && [ -d "$_brew_prefix/etc/bash_completion.d" ]; then
+        for s in "$_brew_prefix"/etc/bash_completion.d/*; do
             [ -f "$s" ] && [ -r "$s" ] || continue
             # shellcheck source=/dev/null
             . "$s"
         done
     fi
+    unset _brew_prefix
 
     # Custom completion
     if [ -d "$HOME/.bash_completion.d/" ]; then

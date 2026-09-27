@@ -23,13 +23,6 @@ export NVM_DIR="$HOME/.local/nvm"
 export VOLTA_HOME="$HOME/.local/volta"
 # Turnoff auto complete for nvm as the loading is slow
 export autocomplete_nvm=
-# Set prefix for byobu if installed by linuxbrew
-if [ -d /home/linuxbrew/.linuxbrew ]; then
-    export BREW_HOME=/home/linuxbrew/.linuxbrew
-elif [ -d "$HOME/.linuxbrew" ]; then
-    export BREW_HOME="$HOME/.linuxbrew"
-fi
-[ -n "$BREW_HOME" ] && export BYOBU_PREFIX="$BREW_HOME"
 export BAT_THEME="gruvbox-dark"
 # Default editor (nvim -> hx -> pkgx hx -> vim -> vi)
 if command -v nvim >/dev/null 2>&1; then

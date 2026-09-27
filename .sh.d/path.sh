@@ -25,8 +25,20 @@
 # Foundry
 [ -d "$HOME/.foundry/bin" ] && setPath "$HOME/.foundry/bin"
 
-# homebrew
-[ -n "$BREW_HOME" ] && eval "$("$BREW_HOME"/bin/brew shellenv)"
+# Homebrew (macOS Apple Silicon / Intel & Linuxbrew)
+if [ -z "$HOMEBREW_PREFIX" ]; then
+    if [ -x /opt/homebrew/bin/brew ]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    elif [ -x "$HOME/.linuxbrew/bin/brew" ]; then
+        eval "$("$HOME/.linuxbrew/bin/brew" shellenv)"
+    elif [ -x /usr/local/bin/brew ]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+    elif usable brew; then
+        eval "$(brew shellenv)"
+    fi
+fi
 
 # python-poetry
 # shellcheck source=/dev/null

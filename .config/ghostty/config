@@ -58,6 +58,13 @@ cursor-style = block
 cursor-style-blink = true
 
 # ------------------------------------------------------------------------------
+# Shell Integration & SSH
+# ------------------------------------------------------------------------------
+# Enable automatic terminfo installation and environment compatibility for SSH.
+# Automatically provisions xterm-ghostty on remote hosts (or falls back to xterm-256color).
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo,path
+
+# ------------------------------------------------------------------------------
 # Mouse & Scrollback
 # ------------------------------------------------------------------------------
 mouse-hide-while-typing = true

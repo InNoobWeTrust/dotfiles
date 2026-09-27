@@ -417,9 +417,9 @@ editor() {
 }
 
 #
-# # colors - Print colors on terminal
-# # usage: colors
-colors() {
+# # colortest - Print colors on terminal
+# # usage: colortest
+colortest() {
     local fgc bgc vals seq0 2>/dev/null || true
 
     printf "Color escapes are %s\n" '\e[${value};...;${value}m'
@@ -445,6 +445,8 @@ colors() {
         echo; echo
     done
 }
+# Only alias in non-zsh shells to avoid collision with zsh's native `autoload -U colors`
+[ -z "$ZSH_VERSION" ] && alias colors=colortest
 
 #
 # # ex - archive extractor
@@ -895,7 +897,7 @@ vpn_log() {
     local log_file="/tmp/openfortivpn.log"
 
     if [ ! -f "$log_file" ]; then
-        if command -v brew >/dev/null 2>&1 && [ -f "$(brew --prefix 2>/dev/null)/var/log/openfortivpn.log" ]; then
+        if usable brew && [ -f "$(brew --prefix)/var/log/openfortivpn.log" ]; then
             log_file="$(brew --prefix)/var/log/openfortivpn.log"
         fi
     fi
