@@ -375,6 +375,56 @@ require("lazy").setup({
                 end, { desc = "explorer open mini.files (cwd)" })
             end,
         },
+        -- Floating notifications manager
+        {
+            "echasnovski/mini.notify",
+            version = false,
+            config = function()
+                local notify = require("mini.notify")
+                notify.setup({
+                    window = {
+                        config = {
+                            border = "rounded",
+                        },
+                    },
+                })
+                vim.notify = notify.make_notify()
+            end,
+        },
+        -- Intercept unhandled errors and messages to floating notifications
+        {
+            "folke/noice.nvim",
+            event = "VeryLazy",
+            dependencies = {
+                "MunifTanjim/nui.nvim",
+            },
+            opts = {
+                -- Keep the classic bottom command-line
+                cmdline = {
+                    enabled = true,
+                    view = "cmdline",
+                },
+                -- Route all messages, warnings, and unhandled errors to mini.notify
+                messages = {
+                    enabled = true,
+                    view = "notify",
+                    view_error = "notify",
+                    view_warn = "notify",
+                },
+                popupmenu = { enabled = false },
+                notify = { enabled = false },
+                lsp = {
+                    progress = { enabled = false },
+                    signature = { enabled = false },
+                    hover = { enabled = false },
+                    override = {
+                        ["vim.lsp.util.convert_input_to_markdown_lines"] = false,
+                        ["vim.lsp.util.stylize_markdown"] = false,
+                        ["cmp.entry.get_documentation"] = false,
+                    },
+                },
+            },
+        },
         -- Editor toolings
         {
             "williamboman/mason.nvim",
