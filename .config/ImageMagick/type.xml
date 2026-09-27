@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE typemap [
+  <!ELEMENT typemap (type)+>
+  <!ELEMENT type EMPTY>
+  <!ATTLIST type
+    name CDATA #REQUIRED
+    family CDATA #IMPLIED
+    fullname CDATA #IMPLIED
+    weight CDATA #IMPLIED
+    style CDATA #IMPLIED
+    stretch CDATA #IMPLIED
+    glyphs CDATA #REQUIRED
+    format NMTOKEN #IMPLIED
+    metrics CDATA #IMPLIED>
+]>
+<!--
+  ImageMagick font configuration for macOS and cross-platform dotfiles.
+  Provides fallback mappings so ImageMagick's FreeType annotator can resolve
+  standard web, CSS, and system fonts without erroring out on SVGs or text.
+-->
+<typemap>
+  <!-- macOS System Fonts (Supplemental & System Library) -->
+  <type format="ttf" name="Arial" fullname="Arial" family="Arial" glyphs="/System/Library/Fonts/Supplemental/Arial.ttf"/>
+  <type format="ttf" name="Arial-Bold" fullname="Arial Bold" family="Arial" weight="700" glyphs="/System/Library/Fonts/Supplemental/Arial Bold.ttf"/>
+  <type format="ttf" name="Arial-Italic" fullname="Arial Italic" family="Arial" style="italic" glyphs="/System/Library/Fonts/Supplemental/Arial Italic.ttf"/>
+  <type format="ttf" name="Helvetica" fullname="Helvetica" family="Helvetica" glyphs="/System/Library/Fonts/Supplemental/Arial.ttf"/>
+  <type format="ttf" name="Times" fullname="Times" family="Times" glyphs="/System/Library/Fonts/Supplemental/Times New Roman.ttf"/>
+  <type format="ttf" name="Times New Roman" fullname="Times New Roman" family="Times New Roman" glyphs="/System/Library/Fonts/Supplemental/Times New Roman.ttf"/>
+  <type format="ttf" name="Courier" fullname="Courier" family="Courier" glyphs="/System/Library/Fonts/Supplemental/Courier New.ttf"/>
+  <type format="ttf" name="Courier New" fullname="Courier New" family="Courier New" glyphs="/System/Library/Fonts/Supplemental/Courier New.ttf"/>
+  <type format="ttf" name="Verdana" fullname="Verdana" family="Verdana" glyphs="/System/Library/Fonts/Supplemental/Verdana.ttf"/>
+  <type format="ttf" name="Georgia" fullname="Georgia" family="Georgia" glyphs="/System/Library/Fonts/Supplemental/Georgia.ttf"/>
+  <type format="ttf" name="Trebuchet MS" fullname="Trebuchet MS" family="Trebuchet MS" glyphs="/System/Library/Fonts/Supplemental/Trebuchet MS.ttf"/>
+  <type format="ttf" name="Monaco" fullname="Monaco" family="Monaco" glyphs="/System/Library/Fonts/Monaco.ttf"/>
+  <type format="ttf" name="Geneva" fullname="Geneva" family="Geneva" glyphs="/System/Library/Fonts/Geneva.ttf"/>
+
+  <!-- Generic CSS / Web Font Families -->
+  <type format="ttf" name="sans-serif" fullname="sans-serif" family="sans-serif" glyphs="/System/Library/Fonts/Supplemental/Arial.ttf"/>
+  <type format="ttf" name="serif" fullname="serif" family="serif" glyphs="/System/Library/Fonts/Supplemental/Times New Roman.ttf"/>
+  <type format="ttf" name="monospace" fullname="monospace" family="monospace" glyphs="/System/Library/Fonts/Supplemental/Courier New.ttf"/>
+  <type format="ttf" name="-apple-system" fullname="-apple-system" family="-apple-system" glyphs="/System/Library/Fonts/Supplemental/Arial.ttf"/>
+  <type format="ttf" name="BlinkMacSystemFont" fullname="BlinkMacSystemFont" family="BlinkMacSystemFont" glyphs="/System/Library/Fonts/Supplemental/Arial.ttf"/>
+  <type format="ttf" name="Segoe UI" fullname="Segoe UI" family="Segoe UI" glyphs="/System/Library/Fonts/Supplemental/Arial.ttf"/>
+  <type format="ttf" name="Roboto" fullname="Roboto" family="Roboto" glyphs="/System/Library/Fonts/Supplemental/Arial.ttf"/>
+
+  <!-- Linux Fallback Paths -->
+  <type format="ttf" name="DejaVuSans" fullname="DejaVu Sans" family="DejaVu Sans" glyphs="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"/>
+  <type format="ttf" name="LiberationSans" fullname="Liberation Sans" family="Liberation Sans" glyphs="/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"/>
+
+  <!-- Default Fallback Font -->
+  <type format="ttf" name="default" fullname="default" family="default" glyphs="/System/Library/Fonts/Supplemental/Arial.ttf"/>
+</typemap>
