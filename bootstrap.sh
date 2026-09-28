@@ -52,7 +52,25 @@ if ! command -v stow >/dev/null 2>&1; then
     fi
     pixi global install stow || {
         echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
-        exit 1
+        # Check if MacOS and try to install stow via Homebrew if pixi fails
+        if [ "$(uname -s)" = "Darwin" ]; then
+            if ! command -v brew >/dev/null 2>&1; then
+                # Install Homebrew and then stow
+                if command -v curl >/dev/null 2>&1; then
+                    (set -o pipefail; /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)") || {
+                        echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
+                        exit 1
+                    }
+                fi
+            fi
+            brew install stow || {
+                echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
+                exit 1
+            }
+        else
+            echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
+            exit 1
+        fi
     }
 fi
 

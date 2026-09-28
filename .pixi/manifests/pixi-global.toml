@@ -2,5 +2,5 @@ version = 1
 
 [envs.core-utils]
 channels = ["conda-forge"]
-dependencies = { stow = "*", ripgrep = "*", fd-find = "*", bat = "*", zoxide = "*", eza = "*", git = "*", neovim = "*", starship = "*" }
-exposed = { stow = "stow", rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", git = "git", nvim = "nvim", starship = "starship" }
+dependencies = { ripgrep = "*", fd-find = "*", bat = "*", zoxide = "*", eza = "*", git = "*", nvim = "*", starship = "*" }
+exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", git = "git", nvim = "nvim", starship = "starship" }
