@@ -3,10 +3,19 @@
 export use_color=true
 export friendly_builtin=true
 export XDG_CONFIG_HOME="$HOME/.config"
-# Set home for cargo of rust
-export RUSTUP_HOME="$HOME/.local/rustup"
-export CARGO_HOME="$HOME/.local/cargo"
-export CARGO_INSTALL_ROOT="$HOME/.local/cargo"
+# Keep Rust tools and build artifacts on the external volume when mounted.
+if [ -n "$CARGO_EXT_DIR" ]; then
+    export CARGO_HOME="$CARGO_EXT_DIR/.cargo"
+    export CARGO_INSTALL_ROOT="$CARGO_HOME"
+    export RUSTUP_HOME="$CARGO_EXT_DIR/.rustup"
+    export CARGO_TARGET_DIR="$CARGO_EXT_DIR/.cargo-target"
+else
+    # Fall back to local homes and project-local targets when the volume is unmounted.
+    export CARGO_HOME="$HOME/.local/cargo"
+    export CARGO_INSTALL_ROOT="$CARGO_HOME"
+    export RUSTUP_HOME="$HOME/.local/rustup"
+    export CARGO_TARGET_DIR="$HOME/.local/.cargo-target"
+fi
 # Set home for go lang
 export GOPATH="$HOME/.local/go"
 # Set pub cache dir for dart

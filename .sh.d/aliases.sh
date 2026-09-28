@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Batch check commonly used commands for efficiency
-usable_batch git docker curl npx uv pkgx rg exa nvim ssh neovide python3 corepack uvx brew rustup conda pyenv nvm yarn pnpm socat
+usable_batch git docker curl npx uv pkgx rg eza nvim ssh neovide python3 corepack uvx brew rustup conda pyenv nvm yarn pnpm socat
 
 
 ########################### Fancy prompt ######################################
@@ -135,7 +135,7 @@ usable pkgx && \
         ## SQLite
         ! usable sqlite3 && alias sqlite3='pkgx sqlite3'
         ## Listing files
-        ! usable exa && alias exa='pkgx exa'
+        ! usable eza && alias eza='pkgx eza'
         ## Trash
         ! usable trash && alias trash='pkgx trash'
         ## System monitor
@@ -247,14 +247,14 @@ usable rg && \
         alias rgfg='rg --files -g'
     }
 
-# Exa aliases
-usable exa && \
+# Eza aliases
+usable eza && \
     {
-        alias el='exa -l'
-        alias ea='exa -a'
-        alias ela='exa -la'
-        alias etree='exa -l -TL'
-        alias gtree='exa --git-ignore -l -T'
+        alias el='eza -l'
+        alias ea='eza -a'
+        alias ela='eza -la'
+        alias etree='eza -l -TL'
+        alias gtree='eza --git-ignore -l -T'
     }
 
 # Start neovim server locally
