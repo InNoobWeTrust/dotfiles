@@ -61,3 +61,6 @@ fi
 
 # Garden.io
 [ -d "$HOME/.garden/bin" ] && setPath "$HOME/.garden/bin"
+
+# Pixi global trampolines
+[ -d "$HOME/.pixi/bin" ] && setPath "$HOME/.pixi/bin"

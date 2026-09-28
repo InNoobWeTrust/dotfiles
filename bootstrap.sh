@@ -15,22 +15,8 @@ case ":$PATH:" in
     *) PATH="$HOME/.local/bin:$PATH" ;;
 esac
 
-# Install pkgx into ~/.local/bin if not already there (skip on Termux — no /usr access)
-if [ -z "$TERMUX_VERSION" ]; then
-    if ! command -v pkgx >/dev/null 2>&1; then
-        echo "Installing pkgx to $HOME/.local/bin..."
-        mkdir -p "$HOME/.local/bin"
-        PKG_URL="https://pkgx.sh/$(uname)/$(uname -m).tgz"
-        if command -v curl >/dev/null 2>&1; then
-            curl -fsSL "$PKG_URL" | tar -xz -C "$HOME/.local/bin"
-        elif command -v wget >/dev/null 2>&1; then
-            wget -qO- "$PKG_URL" | tar -xz -C "$HOME/.local/bin"
-        else
-            echo "Error: Neither curl nor wget found. Cannot download pkgx." >&2
-        fi
-        [ -x "$HOME/.local/bin/pkgx" ] || chmod +x "$HOME/.local/bin/pkgx" 2>/dev/null || true
-    fi
-fi
+# Find pre-seeded pixi and stow without relying on shell startup files
+export PATH="$HOME/.pixi/bin:$PATH"
 
 # Build --ignore flags from .stow-ignore (one regex pattern per line)
 STOW_IGNORE_ARGS=""
@@ -43,20 +29,67 @@ if [ -f "$SCRIPT_DIR/.stow-ignore" ]; then
         STOW_IGNORE_ARGS="$STOW_IGNORE_ARGS --ignore='$pattern'"
     done < "$SCRIPT_DIR/.stow-ignore"
 fi
+# Pixi owns its live manifest; never stow the repo's manifest over it.
+STOW_IGNORE_ARGS="$STOW_IGNORE_ARGS --ignore='\.pixi'"
 
-# Use pkgx to run stow, or fall back to plain stow (e.g. on Termux)
-if command -v pkgx >/dev/null 2>&1; then
-    STOW_CMD="pkgx stow"
-elif command -v stow >/dev/null 2>&1; then
-    STOW_CMD="stow"
-else
-    echo "Error: Neither pkgx nor stow is available. Cannot symlink dotfiles." >&2
-    exit 1
+# Use pixi global env for stow (same across machines, see .pixi/manifests/pixi-global.toml)
+if ! command -v stow >/dev/null 2>&1; then
+    if ! command -v pixi >/dev/null 2>&1; then
+        if command -v curl >/dev/null 2>&1; then
+            (set -o pipefail; curl -fsSL --connect-timeout 5 --max-time 30 "https://pixi.sh/install.sh" | sh) || {
+                echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
+                exit 1
+            }
+        elif command -v wget >/dev/null 2>&1; then
+            (set -o pipefail; wget -qO- --timeout=30 "https://pixi.sh/install.sh" | sh) || {
+                echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
+                exit 1
+            }
+        else
+            echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
+            exit 1
+        fi
+    fi
+    pixi global install stow || {
+        echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
+        exit 1
+    }
 fi
 
 # Symlink dotfiles by running stow
 echo "Symlinking dotfiles..."
-eval "$STOW_CMD -d '$SCRIPT_DIR' . -t ~ --dotfiles $STOW_IGNORE_ARGS"
+eval "stow -d '$SCRIPT_DIR' . -t ~ --dotfiles $STOW_IGNORE_ARGS" || {
+    echo "Error: stow failed; dotfiles were not fully linked." >&2
+    exit 1
+}
+
+# Pixi sync reads its live manifest (it has no --manifest flag).
+if command -v pixi >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.pixi/manifests/pixi-global.toml" ]; then
+    pixi_manifest="$HOME/.pixi/manifests/pixi-global.toml"
+    repo_manifest="$SCRIPT_DIR/.pixi/manifests/pixi-global.toml"
+    if [ -L "$pixi_manifest" ]; then
+        echo "Error: Pixi manifest is a symlink; replace it with a regular file before syncing: $pixi_manifest" >&2
+        exit 1
+    fi
+    if [ -e "$pixi_manifest" ] && ! cmp -s "$repo_manifest" "$pixi_manifest"; then
+        backup="$pixi_manifest.pre-dotfiles.$(date +%Y%m%d%H%M%S).$$"
+        if [ -e "$backup" ] || ! cp -pn "$pixi_manifest" "$backup"; then
+            echo "Error: could not back up Pixi manifest to $backup" >&2
+            exit 1
+        fi
+        echo "Backed up Pixi manifest to $backup"
+    fi
+    if ! cmp -s "$repo_manifest" "$pixi_manifest"; then
+        mkdir -p "$HOME/.pixi/manifests" && cp "$repo_manifest" "$pixi_manifest" || {
+            echo "Error: could not update Pixi manifest: $pixi_manifest" >&2
+            exit 1
+        }
+    fi
+    pixi global sync || {
+        echo "Error: Pixi global sync failed; check connectivity or rerun when online (manifest: $pixi_manifest)." >&2
+        exit 1
+    }
+fi
 
 # Load .shrc from shell config file by checking default shell
 echo "Set autoload of .shrc from shell config file..."

@@ -1,0 +1,11 @@
+version = 1
+
+[envs.stow]
+channels = ["conda-forge"]
+dependencies = { stow = "*" }
+exposed = { stow = "stow" }
+
+[envs.core-utils]
+channels = ["conda-forge"]
+dependencies = { ripgrep = "*", fd-find = "*", bat = "*", zoxide = "*" }
+exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide" }
