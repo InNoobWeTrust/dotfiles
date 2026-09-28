@@ -9,21 +9,26 @@ else
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 fi
 
-# Install pkgx if not already there (skip on Termux — no /usr access)
+# Ensure ~/.local/bin is in PATH for this session
+case ":$PATH:" in
+    *:"$HOME/.local/bin":*) ;;
+    *) PATH="$HOME/.local/bin:$PATH" ;;
+esac
+
+# Install pkgx into ~/.local/bin if not already there (skip on Termux — no /usr access)
 if [ -z "$TERMUX_VERSION" ]; then
     if ! command -v pkgx >/dev/null 2>&1; then
-        echo "Installing pkgx..."
-        curl -fsS "https://pkgx.sh" | sh
-    fi
-fi
-
-# Install pkgx if not already there (only when system bin dirs are writable)
-if ! command -v pkgx >/dev/null 2>&1; then
-    if [ "$(id -u)" -eq 0 ] || [ -w "/usr/local/bin" ] || [ -w "/usr/bin" ]; then
-        echo "Installing pkgx..."
-        curl -fsS "https://pkgx.sh" | sh
-    else
-        echo "Skipping pkgx install (no permission to write system bin directories)."
+        echo "Installing pkgx to $HOME/.local/bin..."
+        mkdir -p "$HOME/.local/bin"
+        PKG_URL="https://pkgx.sh/$(uname)/$(uname -m).tgz"
+        if command -v curl >/dev/null 2>&1; then
+            curl -fsSL "$PKG_URL" | tar -xz -C "$HOME/.local/bin"
+        elif command -v wget >/dev/null 2>&1; then
+            wget -qO- "$PKG_URL" | tar -xz -C "$HOME/.local/bin"
+        else
+            echo "Error: Neither curl nor wget found. Cannot download pkgx." >&2
+        fi
+        [ -x "$HOME/.local/bin/pkgx" ] || chmod +x "$HOME/.local/bin/pkgx" 2>/dev/null || true
     fi
 fi
 
@@ -42,8 +47,11 @@ fi
 # Use pkgx to run stow, or fall back to plain stow (e.g. on Termux)
 if command -v pkgx >/dev/null 2>&1; then
     STOW_CMD="pkgx stow"
-else
+elif command -v stow >/dev/null 2>&1; then
     STOW_CMD="stow"
+else
+    echo "Error: Neither pkgx nor stow is available. Cannot symlink dotfiles." >&2
+    exit 1
 fi
 
 # Symlink dotfiles by running stow
@@ -53,7 +61,7 @@ eval "$STOW_CMD -d '$SCRIPT_DIR' . -t ~ --dotfiles $STOW_IGNORE_ARGS"
 # Load .shrc from shell config file by checking default shell
 echo "Set autoload of .shrc from shell config file..."
 if [ -n "$ZSH_VERSION" ] && [ -z "$CONF_SH_DIR" ]; then
-    echo "[ -e ~/.shrc ] && . ~/.shrc" >> ~/.zshrc
+    grep -qxF '[ -e ~/.shrc ] && . ~/.shrc' ~/.zshrc 2>/dev/null || echo "[ -e ~/.shrc ] && . ~/.shrc" >> ~/.zshrc
 elif [ -n "$BASH_VERSION" ] && [ -z "$CONF_SH_DIR" ]; then
-    echo "[ -e ~/.shrc ] && . ~/.shrc" >> ~/.bashrc
+    grep -qxF '[ -e ~/.shrc ] && . ~/.shrc' ~/.bashrc 2>/dev/null || echo "[ -e ~/.shrc ] && . ~/.shrc" >> ~/.bashrc
 fi
