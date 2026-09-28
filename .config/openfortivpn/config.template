@@ -25,5 +25,5 @@ half-internet-routes = 0
 set-dns = 1
 pppd-use-peerdns = 1
 
-# Connection Persistence (seconds between reconnect attempts; 0 to disable)
-persistent = 0
+# Connection Persistence / Timeout (seconds between reconnect attempts; 0 to disable, default 600 = 10m)
+persistent = ${OPENFORTIVPN_PERSISTENT}

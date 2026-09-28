@@ -42,9 +42,6 @@ usable notify-send && \
 # List processes run by current user
 alias ps-me-not='ps -U `whoami` -u `whoami` u'
 
-# Kill parallel processes running in another session
-alias rampage='printf "what to kill? => "; victim=; read victim; ps -A | grep $victim | awk "{print $1}" | xargs -r kill'
-
 # Random string generators
 alias alnumer='cat /dev/random | base64 | tr -cd "[:alnum:]" | head -c'
 alias hexer='cat /dev/random | base64 | tr -cd "[0-9a-fA-F]" | head -c'
@@ -83,20 +80,6 @@ usable microk8s && \
         alias selenium-arm-mircrok8s='microk8s kubectl run selenium --image=seleniarm/standalone-chromium --port=4444 && mkctl expose pod selenium --type NodePort --port 4444 --target-port 4444'
     }
 
-# Colima (container runtime on Mac/Linux with minimal setup)
-usable colima && \
-    {
-        [ $(uname -s) = 'Darwin' ] && \
-            {
-            alias colima-start='colima start --cpu $(sysctl -n hw.ncpu) --memory $(system_profiler SPHardwareDataType | awk '"'"'/Memory/ {print $2}'"'"')'
-            }
-
-        [ $(uname -s) = 'Linux' ] && \
-            {
-                alias colima-start='colima start --cpu $(($(nproc) / 2)) --memory $(($(free -g | awk '"'"'/Mem/ {print $2}'"'"') / 2))'
-            }
-    }
-
 # Docker utilities
 usable docker && \
     {
@@ -130,16 +113,8 @@ usable docker && \
         alias gitleaks-docker='docker run -v "$(realpath .):/$(basename $(realpath .))" zricethezav/gitleaks:latest "dir" "/$(basename $(realpath .))" "-v"'
         # Docling-serve
         alias docling-docker='docker run --rm -it --name docling-serve -p 5001:5001 -e DOCLING_SERVE_ENABLE_UI=1 quay.io/docling-project/docling-serve'
-        # LLM compression proxy
-        alias headroom-docker='HEADROOM_CODE_AWARE_ENABLED=1 docker run -p 8787:8787 ghcr.io/chopratejas/headroom:code-slim-nonroot'
         # Cleanup docker data and cache
         alias docker-cleanup='yes | docker system prune -a --volumes && yes | docker builder prune -a'
-    }
-
-usable x && \
-    {
-        ## File manager
-        ! usable yazi && alias yazi='pkgx yazi'
     }
 
 usable pkgx && \
@@ -167,7 +142,6 @@ usable pkgx && \
         ! usable btm && alias btm='pkgx btm'
         ## Docker
         ! usable docker && alias docker='pkgx docker'
-        ! usable docker-compose && ! docker compose version >/dev/null 2>&1 && alias docker-compose='pkgx docker-compose'
         ## Docker management
         ! usable lazydocker && alias lazydocker='pkgx lazydocker'
         ## Git management
@@ -255,11 +229,6 @@ usable corepack && \
         ! usable pnpm && alias pnpm='corepack pnpm'
     }
 
-usable python3 && \
-    {
-        alias py-http-server='python3 -m http.server'
-    }
-
 usable uv && \
     {
         ! usable python && alias python='uv run python'
@@ -295,6 +264,12 @@ usable nvim && \
         alias nvim-remote='nvim --server localhost:6666'
     }
 
+# Start neovim server in remote ssh
+usable ssh && \
+    {
+        alias nvim-ssh-server='nvim_ssh_server '
+    }
+
 # Connect to neovim server
 usable neovide && \
     {
@@ -304,11 +279,6 @@ usable neovide && \
 # Chrome debug
 alias chrome-debug='chrome_debug'
 
-usable ssh && \
-    {
-        alias nvim-ssh-server='nvim_ssh_server '
-    }
-
 ############################### PATH management ###############################
 
 usable curl && alias install-pathman='curl -s https://webinstall.dev/pathman | bash'
@@ -317,25 +287,55 @@ alias install-pathman-npm='npm install -g pathman'
 
 ############################ Platform management ##############################
 
-# List orphan packages with pacman
-alias pac-orphan='pacman -Qdt'
+usable pacman && \
+    {
+        # List all installed packages with pacman
+        alias pac-list='pacman -Q'
+        # List explicitly installed packages with pacman
+        alias pac-explicit='pacman -Qe'
+        # List dependencies installed with pacman
+        alias pac-deps='pacman -Qd'
+        # List packages installed as dependencies with pacman
+        alias pac-deps-installed='pacman -Qdt'
+        # Remove orphan packages and dependencies with pacman
+        alias pac-orphan-rm='sudo pacman -Rs $(pacman -Qqdt)'
+        # Update all packages with pacman
+        alias pac-update='sudo pacman -Syu --noconfirm'
+    }
 
-# Remove orphan packages and dependencies with pacman
-alias pac-orphan-rm='sudo pacman -Rs $(pacman -Qqdt)'
+usable apt && \
+    {
+        # List all installed packages with apt
+        alias apt-list='apt list --installed'
+        # List explicitly installed packages with apt
+        alias apt-explicit='apt-mark showmanual'
+        # List dependencies installed with apt
+        alias apt-deps='apt-cache depends'
+        # List packages installed as dependencies with apt
+        alias apt-deps-installed='apt-mark showauto'
+        # Remove orphan packages and dependencies with apt
+        alias apt-orphan-rm='sudo apt-get autoremove -y'
+        # Update all packages with apt
+        alias apt-update='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
+    }
 
-# automate pacman update
-alias update-arch='sudo pacman -Syyu --noconfirm'
-
-# automate update debian-based distros
-alias update-debian='sudo apt update && sudo apt upgrade -y && sudo apt-get --purge autoremove -y && sudo apt autoclean -y'
-
-# automate termux android
-alias update-termux='pkg update && apt upgrade -y && apt-get autoremove -y && apt-get autoclean -y'
+usable pkg && \
+    {
+        # List all installed packages with pkg
+        alias pkg-list='pkg list-installed'
+        # List explicitly installed packages with pkg
+        alias pkg-explicit='pkg list-installed | grep -v "installed as a dependency"'
+        # List dependencies installed with pkg
+        alias pkg-deps='pkg depends'
+        # List packages installed as dependencies with pkg
+        alias pkg-deps-installed='pkg list-installed | grep "installed as a dependency"'
+        # Remove orphan packages and dependencies with pkg
+        alias pkg-orphan-rm='pkg autoremove'
+        # Update all packages with pkg
+        alias pkg-update='pkg update && pkg upgrade -y && pkg autoremove -y && pkg autoclean -y'
+    }
 
 ################################ Tooling ######################################
-
-# Update possible tools (normal mode)
-alias update-tooling='(update-rustup) || (update-pyenv) || (update-conda) || (update-brew)'
 
 #################### X ########################
 
@@ -349,7 +349,7 @@ usable curl && alias install-pkgx='curl -fsS https://pkgx.sh | sh'
 
 usable curl && alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
 
-usable brew && alias update-brew='yes | brew update && yes | brew upgrade'
+usable brew && alias brew-update='brew update && brew upgrade -y && brew cleanup -s && brew autoremove'
 
 ################# Cheat sheet ##################
 
@@ -357,29 +357,12 @@ usable curl && alias install-cheat-sh='mkdir -p $HOME/.local/$USER/bin/ && curl 
 
 ################### Python #####################
 
-# automate conda update
-alias update-conda='usable conda && conda update --all -y && conda clean --all -y'
-
-# automate pip update
-alias update-pip='usable pip && pip install -U $(pip list | tail -n +3 | cut -d " " -f 1 | tr "\n" " ")'
-alias update-user-pip='usable pip && pip install -U --user $(pip list | tail -n +3 | cut -d " " -f 1 | tr "\n" " ")'
-
-# install pyenv
-usable curl && alias install-pyenv='curl https://pyenv.run | bash'
-
-# update pyenv
-alias update-pyenv='usable pyenv && pyenv update'
-
-# install pipx
-alias install-pipx='python3 -m pip install -U pipx && python3 -m pipx ensurepath'
-
-# install poetry
-usable curl && alias install-poetry='curl -sSL https://install.python-poetry.org | python -'
-alias install-poetry-by-pipx='pipx install poetry'
-
-# install micromamba
-usable curl && alias install-micromamba='usable curl && "${SHELL}" <(curl -L micro.mamba.pm/install.sh)'
-alias update-micromamba='usable micromamba && micromamba self-update'
+# install pixi
+if usable curl; then
+    alias install-pixi='curl -fsSL https://pixi.sh/install.sh | sh'
+elif usable wget; then
+    alias install-pixi='wget -qO- https://pixi.sh/install.sh | sh'
+fi
 
 
 ################### NodeJs #####################
@@ -387,14 +370,19 @@ alias update-micromamba='usable micromamba && micromamba self-update'
 # install nvm
 usable curl && alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash -s -- --no-use'
 
-# automate nvm update node
-alias update-nvm='usable nvm && nvm install node --reinstall-packages-from=node -y && nvm use default'
+usable nvm &&  {
+    # install node
+    alias nvm-install-node='nvm install node'
+    # use default node
+    alias nvm-use-default='nvm use default'
+    # update node
+    alias nvm-update='nvm install node --reinstall-packages-from=node -y && nvm use default'
+    # cleanup unused version of node
+    alias nvm-cleanup='nvm ls --no-colors | grep -o "^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*" | tr -d "[[:blank:]]v" | xargs -I % $SHELL -c ". $NVM_DIR/nvm.sh && nvm uninstall %"'
+}
 
-# cleanup unused version of node
-alias cleanup-nvm='nvm ls --no-colors | grep -o "^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*" | tr -d "[[:blank:]]v" | xargs -I % $SHELL -c ". $NVM_DIR/nvm.sh && nvm uninstall %"'
-
-# install volta
-usable curl && alias install-volta='mkdir -p $VOLTA_HOME && curl https://get.volta.sh | bash -s -- --skip-setup'
+# install volta, create $VOLTA_HOME if $VOLTA_HOME is set and directory does not exist
+usable curl && alias install-volta='([ -n $VOLTA_HOME ] && mkdir -p $VOLTA_HOME || true) && curl https://get.volta.sh | bash -s -- --skip-setup'
 
 usable curl && alias install-bun='usable bash && usable curl && BUN_INSTALL="$HOME/.local/bun" bash <(curl -fsSL https://bun.sh/install)'
 
@@ -404,10 +392,7 @@ usable curl && alias install-convertio='mkdir -p ~/.local/$USER/bin && curl -LJo
 
 ################### Editor #####################
 
-# Update stable build of neovim
-usable curl && alias install-nvim-stable='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/nvim https://github.com/neovim/neovim/releases/download/stable/nvim.appimage && chmod +x ~/.local/$USER/bin/nvim'
-
-# Update code-server
+# Install code-server
 usable curl && alias install-code-server='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards "**/code-server" --strip-components 1'
 
 # Install vscode CLI
@@ -428,10 +413,10 @@ usable curl && alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https:
 alias install-rustup-noprompt='install-rustup -y'
 
 # automate rustup update
-usable rustup && alias update-rustup='rustup update'
+usable rustup && alias rustup-update='rustup update'
 
 # automate cargo update
-usable cargo && alias update-cargo='cargo install --list | grep -o "^\S*" | xargs cargo install --force'
+usable cargo && alias cargo-update='cargo install --list | grep -o "^\S*" | xargs cargo install --force'
 
 # use cargo binstall to install cargo binaries
 usable cargo && alias install-cargo-binstall='cargo install cargo-binstall'
@@ -453,9 +438,6 @@ alias install-zellij-cargo='cargo install --locked zellij'
 
 ################ AI Agent CLI ################
 
-# Nice interface for coding Agent
-usable uv && alias install-toad='uv tool install -U batrachian-toad --python 3.14'
-
 usable curl && usable bash && alias install-hermes='curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash'
 
 usable curl && usable bash && alias install-agy='curl -fsSL https://antigravity.google/cli/install.sh | bash'
@@ -474,17 +456,6 @@ alias setup-user='setup_remote_user'
 # Port forwarding via socat
 usable socat && {
     alias socat-bind='socat_bind'
-}
-
-# OpenFortiVPN shortcuts
-usable openfortivpn && {
-    alias vpn-connect='vpn connect'
-    alias vpn-up='vpn connect'
-    alias vpn-daemon='vpn daemon'
-    alias vpn-log='vpn log'
-    alias vpn-disconnect='vpn disconnect'
-    alias vpn-down='vpn disconnect'
-    alias vpn-status='vpn status'
 }
 
 # Import custom alias

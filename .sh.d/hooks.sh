@@ -36,7 +36,7 @@ fi
 # openfortivpn hook
 if usable openfortivpn; then
     _openfortivpn_hook() {
-        local TEMPLATE_CONF OUTPUT_CONF TMP_CONF
+        local TEMPLATE_CONF OUTPUT_CONF TMP_CONF BREW_CONF_DIR BREW_CONF
         TEMPLATE_CONF="$HOME/.config/openfortivpn/config.template"
         OUTPUT_CONF="$HOME/.config/openfortivpn/config"
 
@@ -48,11 +48,29 @@ if usable openfortivpn; then
                 # Default fallbacks if not explicitly exported
                 export OPENFORTIVPN_PORT="${OPENFORTIVPN_PORT:-443}"
                 export OPENFORTIVPN_SAML_PORT="${OPENFORTIVPN_SAML_PORT:-8020}"
+                export OPENFORTIVPN_PERSISTENT="${OPENFORTIVPN_PERSISTENT:-600}"
                 # Atomic replacement: write to temp file then rename to avoid fsnotify partial reads
                 TMP_CONF="${OUTPUT_CONF}.tmp.$$"
-                envsubst '$HOME $OPENFORTIVPN_HOST $OPENFORTIVPN_PORT $OPENFORTIVPN_SAML_PORT $OPENFORTIVPN_USERNAME $OPENFORTIVPN_PASSWORD $OPENFORTIVPN_TRUSTED_CERT' \
+                envsubst '$HOME $OPENFORTIVPN_HOST $OPENFORTIVPN_PORT $OPENFORTIVPN_SAML_PORT $OPENFORTIVPN_USERNAME $OPENFORTIVPN_PASSWORD $OPENFORTIVPN_TRUSTED_CERT $OPENFORTIVPN_PERSISTENT' \
                     < "$TEMPLATE_CONF" > "$TMP_CONF" && mv -f "$TMP_CONF" "$OUTPUT_CONF"
                 chmod 600 "$OUTPUT_CONF"
+            fi
+        fi
+
+        # Sync Homebrew openfortivpn service config if Homebrew is present
+        # Note: Must be a direct file copy rather than a symlink to an external volume,
+        # otherwise macOS TCC sandbox denies launchd root daemon read access (EPERM).
+        if usable brew; then
+            BREW_CONF_DIR="$(brew --prefix 2>/dev/null)/etc/openfortivpn/openfortivpn"
+            BREW_CONF="$BREW_CONF_DIR/config"
+            if [ -d "$BREW_CONF_DIR" ] || mkdir -p "$BREW_CONF_DIR" 2>/dev/null; then
+                if [ -f "$OUTPUT_CONF" ]; then
+                    if [ -L "$BREW_CONF" ] || [ ! -f "$BREW_CONF" ] || [ "$OUTPUT_CONF" -nt "$BREW_CONF" ]; then
+                        rm -f "$BREW_CONF" 2>/dev/null || true
+                        cp -f "$OUTPUT_CONF" "$BREW_CONF" 2>/dev/null || true
+                        chmod 600 "$BREW_CONF" 2>/dev/null || true
+                    fi
+                fi
             fi
         fi
     }
