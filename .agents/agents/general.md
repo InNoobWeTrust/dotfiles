@@ -5,25 +5,28 @@ hidden: true
 model: "github-copilot/gpt-5.4"
 variant: medium
 permission:
-  bash: allow
-  edit: allow
+  "*": ask
+  bash: ask
+  edit: ask
+  serena_execute_shell_command: ask
+  serena_create_text_file: ask
   read: allow
   glob: allow
   grep: allow
   list: allow
   task: deny
-  webfetch: allow
-  websearch: allow
-  semantic_search: allow
-  codesearch: allow
+  webfetch: ask
+  websearch: ask
+  semantic_search: ask
+  codesearch: ask
   skill: allow
   lsp: allow
-  external_directory: allow
-  todowrite: allow
+  external_directory: ask
+  todowrite: ask
   todoread: allow
   question: allow
-  doom_loop: allow
-  kilo_memory_save: allow
+  doom_loop: ask
+  kilo_memory_save: ask
   kilo_memory_recall: allow
   recall: allow
 ---

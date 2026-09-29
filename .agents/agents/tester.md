@@ -4,20 +4,24 @@ mode: subagent
 model: "proxy/gpt-6-sol"
 variant: high
 permission:
-  bash: allow
-  edit: allow
+  "*": ask
+  bash: ask
+  edit: ask
+  serena_execute_shell_command: ask
+  serena_create_text_file: ask
   read: allow
   glob: allow
   grep: allow
   list: allow
-  webfetch: allow
-  websearch: allow
+  task: deny
+  webfetch: ask
+  websearch: ask
   semantic_search: allow
-  codesearch: allow
+  codesearch: ask
   skill: allow
   lsp: allow
-  external_directory: allow
-  todowrite: allow
+  external_directory: ask
+  todowrite: ask
   todoread: allow
   doom_loop: allow
   kilo_memory_save: allow

@@ -4,26 +4,43 @@ mode: subagent
 model: "proxy/gpt-6-sol"
 variant: high
 permission:
-  bash: allow
+  "*": ask
+  bash: deny
   edit: deny
   read: allow
   glob: allow
   grep: allow
   list: allow
   task: deny
-  webfetch: allow
-  websearch: allow
-  semantic_search: allow
-  codesearch: allow
+  webfetch: deny
+  websearch: deny
+  semantic_search: deny
+  codesearch: deny
   skill: allow
   lsp: allow
-  external_directory: allow
-  todowrite: allow
+  external_directory: deny
+  todowrite: deny
   todoread: allow
+  question: allow
   doom_loop: allow
-  kilo_memory_save: allow
+  kilo_memory_save: deny
   kilo_memory_recall: allow
   recall: allow
+  serena_execute_shell_command: deny
+  serena_create_text_file: deny
+  serena_replace_content: deny
+  serena_replace_in_files: deny
+  serena_replace_symbol_body: deny
+  serena_insert_after_symbol: deny
+  serena_insert_before_symbol: deny
+  serena_rename_symbol: deny
+  serena_safe_delete_symbol: deny
+  serena_write_memory: deny
+  serena_rename_memory: deny
+  serena_edit_memory: deny
+  serena_delete_memory: deny
+  serena_activate_project: deny
+  chrome-devtools_*: deny
 ---
 
 You are a Balanced Peer Reviewer. You evaluate code, designs, and pull requests for correctness, craftsmanship, and pragmatic architecture.

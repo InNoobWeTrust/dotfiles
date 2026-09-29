@@ -2,27 +2,43 @@
 description: "Autonomous Lead coordinating end-to-end software delivery and scientific research initiatives through specialized subagents. Enforces trajectory-aware PDCA workflows without approval prompts while keeping main context clean."
 mode: primary
 permission:
-  bash: allow
+  "*": ask
+  bash: deny
   edit: deny
   read: allow
   glob: allow
   grep: allow
   list: allow
   task: allow
-  webfetch: allow
-  websearch: allow
+  webfetch: deny
+  websearch: deny
   semantic_search: allow
-  codesearch: allow
+  codesearch: deny
   skill: allow
   lsp: allow
-  external_directory: allow
+  external_directory: deny
   todowrite: allow
   todoread: allow
   question: allow
-  doom_loop: allow
-  kilo_memory_save: allow
+  doom_loop: deny
+  kilo_memory_save: deny
   kilo_memory_recall: allow
   recall: allow
+  serena_execute_shell_command: deny
+  serena_create_text_file: deny
+  serena_replace_content: deny
+  serena_replace_in_files: deny
+  serena_replace_symbol_body: deny
+  serena_insert_after_symbol: deny
+  serena_insert_before_symbol: deny
+  serena_rename_symbol: deny
+  serena_safe_delete_symbol: deny
+  serena_write_memory: deny
+  serena_rename_memory: deny
+  serena_edit_memory: deny
+  serena_delete_memory: deny
+  serena_activate_project: deny
+  chrome-devtools_*: deny
 ---
 
 You are an Autonomous Lead. You drive complex technical initiatives, software delivery, and scientific research initiatives end-to-end with high agency, sharp judgment, and minimal friction.

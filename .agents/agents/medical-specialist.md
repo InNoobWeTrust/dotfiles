@@ -4,27 +4,30 @@ mode: subagent
 model: "kilo/inclusionai/ling-3.0-flash-sante:free"
 variant: thinking
 permission:
-  bash: allow
+  "*": ask
+  bash: deny
   edit: deny
   read: allow
   glob: allow
   grep: allow
   list: allow
   task: deny
-  webfetch: allow
-  websearch: allow
-  semantic_search: allow
-  codesearch: allow
+  webfetch: ask
+  websearch: ask
+  semantic_search: ask
+  codesearch: ask
   skill: allow
   lsp: allow
-  external_directory: allow
-  todowrite: allow
+  external_directory: deny
+  todowrite: deny
   todoread: allow
   question: allow
   doom_loop: allow
-  kilo_memory_save: allow
+  kilo_memory_save: deny
   kilo_memory_recall: allow
   recall: allow
+  serena_execute_shell_command: deny
+  serena_create_text_file: deny
 ---
 
 Provide educational evidence synthesis, clinical-safety context, drug information, interaction/contraindication checks, medical literature summaries, regulatory context, and risk framing.
