@@ -51,6 +51,15 @@
       "npm": "@ai-sdk/anthropic",
       "options": {
         "baseURL": "http://localhost:8317/v1",
+        "modelsDiscovery": {
+          "enabled": true,
+          "modelInfoFormat": "models.dev",
+          "models": {
+            "excludeRegex": [
+              "^gpt-image"
+            ]
+          }
+        },
       },
       "models": {
         "haiku": {
@@ -225,6 +234,17 @@
       "npm": "@ai-sdk/anthropic",
       "options": {
         "baseURL": "https://api.xah.io/v1/",
+        "modelsDiscovery": {
+          "enabled": true,
+          "modelInfoFormat": "models.dev",
+          "models": {
+            "excludeRegex": [
+              "(?i)image",
+              "(?i)veo",
+              "(?i)seedance"
+            ]
+          }
+        },
       },
       "env": [
         "CKEY_API_KEY",
@@ -350,6 +370,7 @@
   },
   "remote_control": true,
   "plugin": [
+    "opencode-models-discovery@latest",
     "@tarquinen/opencode-dcp@latest",
     "opencode-devcontainers@latest",
     //"@daytona/opencode",
