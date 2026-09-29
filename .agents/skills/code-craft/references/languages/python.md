@@ -1,10 +1,10 @@
 # Python Default Stack
 
-Use for greenfield Python work. Retain a repository's existing compatible choices.
+**Greenfield defaults only.** `uv`, Ruff, Pyright/mypy apply when starting fresh with no prior tooling decisions. For an existing project, inspect `pixi.toml`, `Makefile`, `pyproject.toml`, and CI first — honor whatever is configured there. A Pixi project using `ty` as its type checker **must not** be migrated to `uv` or have `ty` replaced with Pyright or mypy.
 
 ## Baseline
 
-- Use `pyproject.toml`, `uv` for environments/dependencies, Ruff for linting and formatting, and the repository's configured strict type checker (prefer Pyright or mypy strict mode).
+- Use `pyproject.toml`, `uv` for environments/dependencies, Ruff for linting and formatting, and the repository's configured type checker — prefer Pyright (`typeCheckingMode = "strict"`) or mypy (`strict = true`) in strict mode for greenfield projects; repos already using `ty` run `ty check` with the project's established rule configuration.
 - Use pytest for tests; add `pytest-asyncio` only for async tests. Use `coverage.py` when coverage reporting is required.
 - Prefer the standard library for small utilities, `pathlib`, `logging`, `argparse`-scale scripts, JSON, and HTTP where its ergonomics meet the need.
 
@@ -43,6 +43,33 @@ Choose the execution and orchestration layer independently. A DAG library improv
 - Apache Beam runner portability is not universal interchangeability. Before committing to Beam, validate transforms, connectors, state/timer behavior, streaming support, and delivery semantics against the exact Python SDK and intended runner capability matrix.
 - Do not select a framework by a single dimension. Record data volume, batch versus streaming semantics, execution platform, scheduler/lineage needs, warehouse pushdown opportunity, state/retry requirements, and team operating capacity in the Design Intent.
 
+### HPC and edge execution
+
+Packaging is not execution. A Pixi lock (or `uv`-managed environment) defines reproducible dependencies; it does not determine how a workload lands on restricted HPC or edge hardware. Treat the two concerns separately.
+
+**Discover before coding — query the site:**
+
+| Concern | What to establish |
+| --- | --- |
+| Modules and runtime | Site-approved Python runtimes; whether user-installed environments are permitted on compute nodes (`module avail` on Lmod/Environment Modules systems) |
+| Scheduler | Whether the site runs Slurm, PBS/Torque, LSF, or has no batch system; use scheduler-specific submission tools only when confirmed for that site |
+| Allocations | Interactive allocation syntax versus batch submission; partition names, resource and memory flags, time limits, and job-array syntax are all site-specific — consult site documentation |
+| Container runtime | Which runtime is available — Singularity/Apptainer, Docker, Podman, or none; do not assume Docker is disallowed, and do not assume any container runtime is present |
+| GPU | Host driver version and CUDA/ROCm stack; image and library compatibility is governed by the host driver; do not assume a GPU is functional or accessible until verified |
+| I/O paths | Bind-path conventions; shared read-only dataset locations versus writable scratch/cache; home-directory quotas versus scratch retention policies |
+| Network access | Whether compute nodes have outbound internet; pip/conda installs may be blocked on compute nodes; offline environments require pre-bundled wheels or a local channel |
+| Quotas | Storage, CPU-hours, and GPU-hours; verify limits before designing large-scale experiments |
+
+**Smoke-test requirement:** Before making any performance or throughput claim, a test job or smoke test requires site permission, explicit user authorization, and an allocated compute node (not a login node); if any of these is unavailable, report "GPU/compute execution unverified" and do not run or submit. When all three are confirmed, run a minimal test job and verify environment activation, I/O bind paths, GPU access (if needed), and clean job completion. Never submit large compute jobs or pull heavy container images before this baseline passes.
+
+**Python workflow specifics (when Slurm is confirmed):**
+- **Array jobs:** map `$SLURM_ARRAY_TASK_ID` to per-sample input paths in the Python entry-point; use `--dependency=afterok:<job_id>` to gate downstream steps on clean completion.
+- **Resource accounting:** specify CPU, memory, and walltime in `#SBATCH` headers using site-supported options (e.g., `--cpus-per-task`, `--mem`, `--mem-per-cpu`, `--time`) or site defaults where appropriate; review actual usage with `sacct` when available and tighten limits across runs. Keep all data and results paths explicit in scripts — ensure `--output` / `--error` log destinations are site-approved and exist before submission.
+- **Container workflows:** only when site policy permits; use the site-approved format (commonly SIF/Apptainer) and add writable bind paths only for the least-privilege site-approved paths needed (e.g., scratch, cache, results) — avoid broad host mounts.
+- **Interactive sessions:** run Jupyter, RStudio, or VS Code only via the site-approved portal or an authenticated SSH tunnel to an allocated node; prefer binding notebook servers to loopback (`127.0.0.1`); bind to an alternate interface only when the site-approved portal or tunnel topology explicitly requires it, with authentication/access controls and explicit authorization in place.
+
+This guidance applies regardless of which orchestration framework (Hamilton, Kedro, Ray, Beam, bare scripts, or similar) the workflow uses.
+
 ## Sources
 
 - https://docs.astral.sh/uv/
@@ -65,3 +92,7 @@ Choose the execution and orchestration layer independently. A DAG library improv
 - https://docs.ray.io/
 - https://docs.bytewax.io/
 - https://pypi.org/project/pythonflow/
+- https://ngs101.com/setting-up-single-cell-rna-seq-analysis-environment-with-pixi-10x-faster-setup-zero-version-conflicts/
+- https://ngs101.com/build-once-run-anywhere-creating-portable-ngs-analysis-environments-with-docker/
+- https://ngs101.com/high-performance-computing-hpc-job-submission-systems-a-beginners-guide-to-slurm/
+- https://ngs101.com/no-more-command-line-only-run-jupyter-lab-rstudio-and-vs-code-interactively-in-your-browser-on-any-hpc-cluster-with-pixi/

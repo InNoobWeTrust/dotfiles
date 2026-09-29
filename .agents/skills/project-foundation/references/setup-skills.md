@@ -44,7 +44,7 @@ description: "Use this skill when setting up a new development environment for t
 |---|---|---|
 | **S1 — Detect** | Identify OS, package manager, and what is already installed. | `uname -s`, `command -v uv`, `command -v bun`, `command -v docker` |
 | **S2 — Install prerequisites** | Install only what is missing; prefer idempotent installers. | `curl -LsSf https://astral.sh/uv/install.sh \| sh`, `brew install ...` |
-| **S3 — Bootstrap project** | Run the project-specific setup script or command. | `uv sync`, `bun install`, `make bootstrap` |
+| **S3 — Bootstrap project** | Run the project-specific setup script or command. | `uv sync` (CPU-only Python) or `pixi install` (GPU/accelerator Python), `bun install`, `make bootstrap` |
 | **S4 — Verify** | Prove the environment works before declaring done. | `make lint`, `make test`, `make dev-up --dry-run` |
 
 ### Stop conditions
@@ -63,6 +63,18 @@ Before running any remote installer or global package install, get user approval
 
 ### Python projects
 
+> **GPU/Accelerator decision rule** — pick the branch that matches the project:
+>
+> | Project condition | Recommended orchestrator |
+> |---|---|
+> | GPU / CUDA / accelerator required (e.g., PyTorch+CUDA, JAX-GPU, RAPIDS) | **Pixi** — see GPU branch below |
+> | CPU-only, simple tooling, or pure data work | **uv** — see CPU branch below |
+> | Existing project already has `pixi.toml` | **Follow Pixi**; do not re-configure |
+> | Existing GPU project has `uv.lock` (no `pixi.toml`) | **Follow existing tool** unless user explicitly authorizes migration; recommend Pixi as the preferred future orchestrator but do not silently convert |
+> | Existing CPU-only project has `uv.lock` | **Follow uv**; no migration needed |
+
+#### CPU-only / simple Python (uv)
+
 ```bash
 # Ensure uv is present
 command -v uv >/dev/null 2>&1 || curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -73,6 +85,30 @@ uv sync
 # Verify
 uv run pytest tests/ -q
 ```
+
+#### GPU / CUDA / accelerator Python (Pixi)
+
+Pixi manages declared dependencies and lockfile in one `pixi.lock`. CUDA toolkit may be declared in `pixi.toml` (and thus locked by Pixi) or provided by the host system — verify host driver and runtime compatibility with whichever backend your project uses. Do **not** create a separate `conda`/`mamba` or bare `uv`-managed environment alongside it; Pixi may internally invoke `uv` as a build tool for PyPI packages, which is expected.
+
+```bash
+# Ensure pixi is present
+command -v pixi >/dev/null 2>&1 || curl -fsSL https://pixi.sh/install.sh | bash
+
+# Install all locked dependencies (reads pixi.toml + pixi.lock)
+pixi install
+
+# Inspect available tasks first, then run the actual name from pixi.toml [tasks]:
+pixi task list
+# The line below assumes the project declares a `test` task in pixi.toml [tasks].
+# Substitute the task name discovered above; do not run this verbatim.
+pixi run test
+```
+
+**Before claiming GPU works**, verify:
+
+- [ ] CUDA toolkit is either declared in `pixi.toml` (locked in `pixi.lock`) or confirmed present on the host; verify host driver/runtime compatibility with the chosen backend.
+- [ ] Target platform and accelerator deps/config are declared wherever the project specifies them (`[target]`, `[feature]`, dependency sections, or equivalent in `pixi.toml`).
+- [ ] Accelerator backend detects a device at runtime (e.g., `torch.cuda.is_available()` → `True`).
 
 ### Node/TypeScript projects
 
@@ -103,6 +139,57 @@ command -v devcontainer >/dev/null 2>&1 || npx @devcontainers/cli --version
 # Build and run
 make dev-up
 ```
+
+### HPC / restricted edge targets
+
+> **Discover before any action.** HPC and restricted-edge sites vary widely in scheduler, policy, network access, and available software. Do not install software, submit jobs, download images, or run workloads during environment discovery.
+
+#### D1 — Discover site context (read-only probes only)
+
+Collect answers for each dimension before acting; all subsequent steps are gated on confirmed site facts.
+
+| Dimension | Discovery approach | Why it matters |
+|---|---|---|
+| **Site policy / AUP** | Site docs, support portal | Confirm permitted uses and compliance requirements first |
+| **Access tier** | `hostname`; confirm login node vs. allocated compute node | Login nodes typically prohibit heavy compute and large network transfers |
+| **Scheduler** | `sbatch`/`qsub` presence is a clue only; confirm scheduler identity and version via site docs or support | Binary presence does not prove scheduler identity; features and resource syntax vary by version and site configuration |
+| **Modules / drivers / accelerators** | `module avail` if Environment Modules is active; site hardware docs | Reveals site-provided CUDA, MPI, and runtime versions; do not assume GPU presence |
+| **Network & install permissions** | Site docs and support portal | Outbound internet may be firewalled or proxied; install permissions are site-defined — do not run egress probes or infer install rights from local user identity |
+| **Writable scratch / cache** | Site docs; site-defined variables such as `$SCRATCH` or `$TMPDIR` (names vary) | Confirm purge policy before writing large caches or build artifacts |
+| **Bind-mounts & UID** | Site container docs | Which host paths appear inside containers; whether UID is remapped |
+| **Storage quotas** | Site quota tool or portal (commands vary by filesystem) | Confirm headroom before large downloads or installs |
+| **Permitted image provenance** | Site container registry / policy docs | Which registries or build paths are allowed; air-gapped sites may provide an internal registry or staged approved images — confirm with site support rather than assuming a tarball workflow |
+
+#### D2 — Scheduler: Slurm (only if present at this site)
+
+`--partition`, `--gres` / `--gpus`, `--time`, and `--array` values are **site-specific**. Names shown in external tutorials or documentation do not transfer to another site. Obtain each value from site documentation or inspect available resources using tools provided on the login node. Do not copy or fabricate resource flags; invalid resource requests may be rejected with an error at submission time, and valid but oversized requests can queue longer or waste allocation — inspect the submission result and monitor job status rather than assuming silent success. Job arrays (`--array` / `SLURM_ARRAY_TASK_ID`), success-dependencies (`afterok`), and monitoring with `squeue` / `sacct` are site-versioned scheduler concepts; confirm array limits, dependency keywords, accounting field names, and output log paths from site documentation before scripting around them.
+
+#### D3 — Container runtimes
+
+| Runtime | Availability | Notes |
+|---|---|---|
+| **Singularity / Apptainer** | Site-provided option — not universally available, not automatically installed | Supports unprivileged execution where the site deploys it; confirm permitted pull sources and local image cache location |
+| **Docker** | Only where site policy explicitly permits | Availability and privilege requirements are site-specific; do not assume Docker is universally prohibited or universally available on shared HPC |
+| Other (Podman, Charliecloud, etc.) | Site-dependent | Check with `which` before referencing |
+
+For Singularity/Apptainer: where site policy requires image provenance review, confirm and satisfy that requirement before building or transferring images; use a site-approved transfer channel and obtain explicit user authorization before initiating any local image build or SIF transfer — provenance review is not universally mandated at all sites, so confirm applicable requirements with site support.
+
+Verify bind-mount paths, UID mapping, and GPU device/driver library bindings on an **allocated compute node** only after confirming site permission and obtaining explicit user authorization for the compute use. GPU flags and options are site-specific and must not be assumed from external tutorials. If an allocated compute node, site permission, or explicit user authorization is unavailable, document container execution as **unverified**; policy and documentation discovery remains permitted without those prerequisites.
+
+#### D4 — Pixi lock verification on allocated compute
+
+Local `pixi.lock` files do not guarantee GPU driver availability, runtime version parity, or module compatibility with the HPC node environment. After transferring the project:
+
+- [ ] Confirm Pixi installation is permitted by site policy, is available or supportable at the site, and obtain explicit user consent before installing it; writable target paths are site-defined.
+- [ ] Discover `PIXI_CACHE_DIR` policy, retention schedule, and quota before writing large caches; preserve `pixi.lock` and `pixi.toml` outside any auto-purged scratch space. Offline package availability requires advance staging through site-approved channels — never assume login-node internet access or package installation is permitted.
+- [ ] If the project declares a CUDA constraint, cross-check it against the node's CUDA driver version; otherwise verify host/backend compatibility via site documentation or framework guidance.
+- [ ] On an **allocated compute node** (not the login node), run the smallest permitted smoke test to confirm the accelerator is reachable — only after confirming both site policy and explicit user authorization for the compute use. If allocation, site permission, or authorization is unavailable, report the accelerator check as unverified rather than skipping it silently.
+
+#### D5 — Credentials & session hygiene
+
+- Never commit tokens, SSH keys, or site credentials to the repository.
+- Prefer site portal–managed interactive sessions (Jupyter, RStudio, VS Code) where available or required. When direct tunneling is permitted, use site-approved tunnel topology and authenticated endpoints; bind servers to the authorized interface only — not `0.0.0.0` by default, and do not expose account databases through the session. Do not open ports without explicit authorization.
+- Store API tokens and job-submission credentials in environment variables or the site-approved secret store; confirm rotation and expiry policies with site support.
 
 ---
 
@@ -195,3 +282,10 @@ When `project-foundation` detects a complex stack, it should:
 - `.agents/rules/execution-safety.md` — script sandboxing and dependency isolation
 - `.agents/skills/devsecops/SKILL.md` — CI pipeline setup
 - Research: `.agents/docs/research/thoughtworks-radar-vol34/` — "Skills as executable onboarding" blip
+
+### Background examples (verify site policy — not authoritative)
+
+- <https://ngs101.com/high-performance-computing-hpc-job-submission-systems-a-beginners-guide-to-slurm/> — Slurm SBATCH directives, arrays, `afterok` dependencies, `squeue`/`sacct`
+- <https://ngs101.com/setting-up-single-cell-rna-seq-analysis-environment-with-pixi-10x-faster-setup-zero-version-conflicts/> — Pixi `PIXI_CACHE_DIR`, proxy/network constraints, offline staging patterns
+- <https://ngs101.com/build-once-run-anywhere-creating-portable-ngs-analysis-environments-with-docker/> — Docker-to-Singularity/Apptainer SIF workflow, bind-mount paths, UID notes
+- <https://ngs101.com/no-more-command-line-only-run-jupyter-lab-rstudio-and-vs-code-interactively-in-your-browser-on-any-hpc-cluster-with-pixi/> — Allocated-node interactive sessions, SSH tunnel topology, user-mapping considerations
