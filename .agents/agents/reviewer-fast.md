@@ -1,7 +1,7 @@
 ---
 description: "Fast, high-throughput independent reviewer. Optimized for atomic patches, shallow diffs, trivial single-unit verification, and rapid turnaround against declared acceptance criteria. For moderate non-atomic reviews use reviewer; for complex/architectural reviews use reviewer-deep. If quota is fully drained, use `ckey-deepseek`."
 mode: subagent
-model: "proxy/gpt-6-sol"
+model: "proxy/sonnet"
 variant: medium
 permission:
   "*": ask

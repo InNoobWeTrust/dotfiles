@@ -1,7 +1,7 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses GPT Luna model with 1M context, does not delegate nested tasks."
+description: "Haiku alias fallback subagent for direct, bounded end-to-end execution when the preferred agent's model is unavailable. Does not delegate nested tasks."
 mode: subagent
-model: "proxy/gpt-6-luna"
+model: "proxy/haiku"
 variant: medium
 permission:
   "*": ask

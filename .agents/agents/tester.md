@@ -1,7 +1,7 @@
 ---
 description: "Writes and fixes tests. Fast, high-accuracy test authoring for unit/integration/e2e tests, flaky test diagnostics, and coverage expansion. Targets test files only. For test authoring fallback, use `github-copilot-gpt`; if quota is fully drained, use `ckey-deepseek`."
 mode: subagent
-model: "proxy/gpt-6-sol"
+model: "proxy/sonnet"
 variant: high
 permission:
   "*": ask

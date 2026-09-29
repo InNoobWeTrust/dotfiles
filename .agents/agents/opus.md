@@ -1,7 +1,7 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution when preferred agent's model is unavailable. Uses GPT Sol model with 1M context, does not delegate nested tasks."
+description: "Opus alias fallback subagent for bounded high-stakes system design, security analysis, and complex adversarial evaluation when the preferred agent is unavailable. Does not delegate nested tasks."
 mode: subagent
-model: "proxy/gpt-6-sol"
+model: "proxy/opus"
 variant: high
 permission:
   "*": ask

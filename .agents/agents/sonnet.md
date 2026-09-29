@@ -1,7 +1,7 @@
 ---
-description: "Fallback subagent for direct, bounded end-to-end execution requiring frontier reasoning — system design, security analysis, macro-architectural decisions, and complex adversarial evaluation. Uses GPT-6 Astra (Intelligence Index 55, $10/$50 per 1M tokens) with 1M context. Does not delegate nested tasks. Reserve for high-stakes work where Copilot quota is drained."
+description: "Sonnet alias fallback subagent for direct, bounded end-to-end execution when the preferred agent's model is unavailable. Does not delegate nested tasks."
 mode: subagent
-model: "proxy/gpt-6-astra"
+model: "proxy/sonnet"
 variant: high
 permission:
   "*": ask

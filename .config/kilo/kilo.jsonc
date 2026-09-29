@@ -53,7 +53,7 @@
         "baseURL": "http://localhost:8317/v1",
       },
       "models": {
-        "gpt-6-luna": {
+        "haiku": {
           "modalities": {
             "input": [
               "text",
@@ -108,7 +108,7 @@
             },
           },
         },
-        "gpt-6-sol": {
+        "sonnet": {
           "modalities": {
             "input": [
               "text",
@@ -163,7 +163,7 @@
             },
           },
         },
-        "gpt-6-astra": {
+        "opus": {
           "modalities": {
             "input": [
               "text",
