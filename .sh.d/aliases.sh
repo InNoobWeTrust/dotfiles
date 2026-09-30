@@ -440,6 +440,12 @@ alias install-zellij-cargo='cargo install --locked zellij'
 
 usable curl && usable bash && alias install-hermes='curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash'
 
+if usable bun; then
+    alias install-opencode='bun i -g --trust @opencode/cli'
+elif usable npm; then
+    alias install-opencode='npm i -g --allow-scripts @opencode/cli'
+fi
+
 usable curl && usable bash && alias install-agy='curl -fsSL https://antigravity.google/cli/install.sh | bash'
 usable agy && alias agyolo='agy --dangerously-skip-permissions'
 

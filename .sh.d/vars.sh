@@ -33,19 +33,6 @@ export VOLTA_HOME="$HOME/.local/volta"
 # Turnoff auto complete for nvm as the loading is slow
 export autocomplete_nvm=
 export BAT_THEME="gruvbox-dark"
-# Default editor (nvim -> hx -> pkgx hx -> vim -> vi)
-if command -v nvim >/dev/null 2>&1; then
-    export EDITOR="nvim"
-elif command -v hx >/dev/null 2>&1; then
-    export EDITOR="hx"
-elif command -v pkgx >/dev/null 2>&1; then
-    export EDITOR="pkgx +helix-editor.com hx"
-elif command -v vim >/dev/null 2>&1; then
-    export EDITOR="vim"
-else
-    export EDITOR="vi"
-fi
-export VISUAL="$EDITOR"
 # Set huggingface token
 [ -e "$HOME/.cache/huggingface/token" ] && export HF_TOKEN="$(head -n 1 "$HOME/.cache/huggingface/token")"
 

@@ -1,5 +1,19 @@
 #!/usr/bin/env sh
 # shellcheck disable=SC3043
+#
+# Default editor (nvim -> hx -> pkgx hx -> vim -> vi)
+if usable nvim; then
+    export EDITOR="nvim"
+elif usable hx; then
+    export EDITOR="hx"
+elif usable pkgx; then
+    export EDITOR="pkgx +helix-editor.com hx"
+elif usable vim; then
+    export EDITOR="vim"
+else
+    export EDITOR="vi"
+fi
+export VISUAL="$EDITOR"
 
 # pyenv
 usable pyenv && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"

@@ -41,16 +41,15 @@ if [ -z "$HOMEBREW_PREFIX" ]; then
     fi
 fi
 
-# python-poetry
-# shellcheck source=/dev/null
-[ -d "$POETRY_HOME" ] && . "$POETRY_HOME/env"
-
 # nvm
 # shellcheck source=/dev/null
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # deno
 [ -d "$HOME/.deno/bin" ] && setPath "$HOME/.deno/bin"
+
+# bun
+[ -d "$HOME/.bun/bin" ] && setPath "$HOME/.bun/bin"
 
 # Nix
 # shellcheck source=/dev/null

@@ -621,14 +621,21 @@ require("lazy").setup({
                         "pyrefly",
                         "ty",
                     },
-                    --automatic_installation = true,
+                    automatic_enable = {
+                        exclude = { "basedpyright", "pyright", "deno", "denols" },
+                    },
                     handlers = {
                         -- The first entry (without a key) will be the default handler
                         -- and will be called for each installed server that doesn't have
                         -- a dedicated handler.
                         function(server_name) -- default handler (optional)
                             -- Prevent some LSP servers from autostart
-                            local no_autostart = { deno = true, denols = true }
+                            local no_autostart = {
+                                deno = true,
+                                denols = true,
+                                basedpyright = true,
+                                pyright = true,
+                            }
                             local no_single_file_support = { rust_analyzer = true }
                             vim.lsp.config(server_name, {
                                 autostart = not no_autostart[server_name],
@@ -696,37 +703,74 @@ require("lazy").setup({
                                 buffer = args.buf,
                             })
                         end
+
+                        local map = function(keys, func, desc)
+                            vim.keymap.set("n", keys, func, { buffer = args.buf, desc = "LSP: " .. desc })
+                        end
+
+                        -- Navigation via mini.extra pickers
+                        map("gd", function()
+                            require("mini.extra").pickers.lsp({ scope = "definition" })
+                        end, "Goto definition")
+                        map("gD", function()
+                            require("mini.extra").pickers.lsp({ scope = "declaration" })
+                        end, "Goto declaration")
+                        map("gr", function()
+                            require("mini.extra").pickers.lsp({ scope = "references" })
+                        end, "Goto references")
+                        map("gi", function()
+                            require("mini.extra").pickers.lsp({ scope = "implementation" })
+                        end, "Goto implementation")
+                        map("gy", function()
+                            require("mini.extra").pickers.lsp({ scope = "type_definition" })
+                        end, "Goto type definition")
+                        map("gs", function()
+                            require("mini.extra").pickers.lsp({ scope = "document_symbol" })
+                        end, "Document symbols")
+                        map("gS", function()
+                            require("mini.extra").pickers.lsp({ scope = "workspace_symbol" })
+                        end, "Workspace symbols")
+
+                        -- Actions & Hover
+                        map("K", vim.lsp.buf.hover, "Hover documentation")
+                        map("<leader>ca", vim.lsp.buf.code_action, "Code action")
+                        map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
+
+                        -- Diagnostics
+                        map("[d", function()
+                            vim.diagnostic.jump({ count = -1, float = true })
+                        end, "Previous diagnostic")
+                        map("]d", function()
+                            vim.diagnostic.jump({ count = 1, float = true })
+                        end, "Next diagnostic")
+                        map("<leader>d", function()
+                            vim.diagnostic.open_float({ border = "rounded" })
+                        end, "Show line diagnostics")
                     end,
                 })
             end,
         },
-        -- Language clients
-        --{'neoclide/coc.nvim', branch = 'release'}
+        -- Floating fuzzy picker & UI select
         {
-            "ray-x/navigator.lua",
+            "echasnovski/mini.pick",
+            version = false,
             dependencies = {
-                {
-                    "ray-x/guihua.lua",
-                    run = "cd lua/fzy && make",
-                },
-                { "neovim/nvim-lspconfig" },
-                { "nvim-treesitter/nvim-treesitter" },
+                { "echasnovski/mini.extra", version = false },
             },
             config = function()
-                require("navigator").setup({
-                    mason = true,
-                    lsp = {
-                        format_on_save = false,
-                        disable_format_cap = { "lua_ls" },
-                        diagnostic = {
-                            virtual_text = true,
-                            underline = true,
-                            signs = false,
+                local pick = require("mini.pick")
+                local extra = require("mini.extra")
+                pick.setup({
+                    window = {
+                        config = {
+                            border = "rounded",
                         },
                     },
                 })
+                extra.setup()
+                vim.ui.select = pick.ui_select
 
-                -- Setup LSP servers not included by default in navigator.lua
+                -- Setup LSP servers with custom options
                 vim.lsp.config("bacon_ls", {
                     init_options = {
                         updateOnSave = true,
@@ -779,7 +823,7 @@ require("lazy").setup({
                 if fn.executable("uvx") == 1 then
                     ft("python"):fmt({
                         cmd = "uvx",
-                        args = { "ruff", "format", fn.expand("%") },
+                        args = { "ruff", "check", "--fix", fn.expand("%") },
                     })
                 end
                 -- Lua

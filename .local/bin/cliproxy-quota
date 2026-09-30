@@ -1,0 +1,380 @@
+#!/usr/bin/env python
+"""
+cliproxy-quota — Live OAuth quota & remaining usage inspector for CLIProxyAPI
+
+Fetches and displays live subscription quotas (5h/7d windows, reset countdowns,
+and reset credits) for accounts managed by CLIProxyAPI without opening a browser.
+"""
+
+import argparse
+import json
+import os
+import re
+import sys
+import time
+import urllib.error
+import urllib.request
+from datetime import datetime
+
+# ANSI Styling
+BOLD = "\033[1m"
+DIM = "\033[2m"
+RESET = "\033[0m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+RED = "\033[31m"
+CYAN = "\033[36m"
+MAGENTA = "\033[35m"
+BLUE = "\033[34m"
+
+def color_bar(percent, width=12):
+    """Render a colored progress bar based on used percentage."""
+    p = max(0, min(100, int(round(percent))))
+    filled = int(round((p / 100.0) * width))
+    empty = width - filled
+    if p < 60:
+        c = GREEN
+    elif p < 85:
+        c = YELLOW
+    else:
+        c = RED
+    bar = f"{c}{'█' * filled}{DIM}{'░' * empty}{RESET}"
+    return f"{bar} {c}{p:3d}%{RESET}"
+
+def format_countdown(seconds):
+    """Format seconds into a compact human-readable duration (e.g. '1h 45m', '3d 4h')."""
+    if seconds is None or seconds <= 0:
+        return "now"
+    s = int(seconds)
+    days = s // 86400
+    hours = (s % 86400) // 3600
+    minutes = (s % 3600) // 60
+    parts = []
+    if days > 0:
+        parts.append(f"{days}d")
+    if hours > 0 or days > 0:
+        parts.append(f"{hours}h")
+    parts.append(f"{minutes}m")
+    return " ".join(parts[:2])
+
+def format_reset_time(epoch_ts):
+    """Convert timestamp to local clock time (HH:MM)."""
+    if not epoch_ts:
+        return ""
+    try:
+        if isinstance(epoch_ts, str):
+            # Parse ISO string if needed
+            dt = datetime.fromisoformat(epoch_ts.replace("Z", "+00:00")).astimezone()
+        else:
+            dt = datetime.fromtimestamp(epoch_ts).astimezone()
+        return dt.strftime("%H:%M")
+    except Exception:
+        return ""
+
+def format_window_name(seconds):
+    """Format window length (e.g. 18000s -> '5h Window', 604800s -> '7d Window')."""
+    if not seconds:
+        return "Window"
+    s = int(seconds)
+    if s % 86400 == 0:
+        return f"{s // 86400}d Window"
+    if s % 3600 == 0:
+        return f"{s // 3600}h Window"
+    return f"{s // 60}m Window"
+
+def load_defaults():
+    """Discover CLIProxyAPI base URL and management secret key from dotfiles / environment."""
+    base_url = os.environ.get("CLIPROXY_BASE_URL", "http://127.0.0.1:8317")
+    secret_key = os.environ.get("CLIPROXY_MANAGEMENT_KEY", "")
+
+    home = os.path.expanduser("~")
+    template_path = os.path.join(home, ".config/cliproxyapi/cliproxyapi.conf.template")
+
+    # If key is not provided in env, extract plaintext key from git-tracked template
+    if not secret_key and os.path.isfile(template_path):
+        try:
+            with open(template_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            m = re.search(r'secret-key:\s*["\']?([^"\'\n]+)["\']?', content)
+            if m:
+                val = m.group(1).strip()
+                if not val.startswith("$2"):  # Ignore if it's already a bcrypt hash
+                    secret_key = val
+        except Exception:
+            pass
+
+    return base_url, secret_key
+
+def api_call(base_url, secret_key, endpoint, payload=None):
+    """Execute an HTTP request to the CLIProxyAPI Management API."""
+    url = f"{base_url.rstrip('/')}{endpoint}"
+    headers = {
+        "X-Management-Key": secret_key,
+        "Accept": "application/json",
+    }
+    data = None
+    if payload is not None:
+        headers["Content-Type"] = "application/json"
+        data = json.dumps(payload).encode("utf-8")
+
+    req = urllib.request.Request(url, data=data, headers=headers, method="POST" if data else "GET")
+    try:
+        with urllib.request.urlopen(req, timeout=12) as resp:
+            return json.load(resp)
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", errors="ignore")
+        try:
+            return {"error": True, "status": e.code, "message": json.loads(body)}
+        except Exception:
+            return {"error": True, "status": e.code, "message": body or str(e)}
+    except Exception as e:
+        return {"error": True, "status": 0, "message": str(e)}
+
+def fetch_codex_quota(base_url, secret_key, auth_index):
+    """Fetch live ChatGPT / Codex usage via CLIProxyAPI token injector."""
+    payload = {
+        "auth_index": auth_index,
+        "method": "GET",
+        "url": "https://chatgpt.com/backend-api/wham/usage",
+        "header": {"Authorization": "Bearer $TOKEN$"}
+    }
+    res = api_call(base_url, secret_key, "/v8/management/requests/api-call", payload)
+    if res.get("error"):
+        return {"error": res.get("message", "API call failed")}
+    try:
+        return json.loads(res.get("body", "{}"))
+    except Exception as e:
+        return {"error": f"Failed to parse usage response: {e}"}
+
+def fetch_claude_quota(base_url, secret_key, auth_index):
+    """Fetch live Claude (Anthropic) usage via CLIProxyAPI token injector."""
+    payload = {
+        "auth_index": auth_index,
+        "method": "GET",
+        "url": "https://api.anthropic.com/api/oauth/usage",
+        "header": {
+            "Authorization": "Bearer $TOKEN$",
+            "anthropic-beta": "oauth-2025-04-20"
+        }
+    }
+    res = api_call(base_url, secret_key, "/v8/management/requests/api-call", payload)
+    if res.get("error"):
+        return {"error": res.get("message", "API call failed")}
+    try:
+        return json.loads(res.get("body", "{}"))
+    except Exception as e:
+        return {"error": f"Failed to parse usage response: {e}"}
+
+def fetch_kimi_quota(base_url, secret_key, auth_index):
+    """Fetch live Kimi usage."""
+    payload = {
+        "auth_index": auth_index,
+        "method": "GET",
+        "url": "https://api.kimi.com/coding/v1/usages",
+        "header": {"Authorization": "Bearer $TOKEN$"}
+    }
+    res = api_call(base_url, secret_key, "/v8/management/requests/api-call", payload)
+    if res.get("error"):
+        return {"error": res.get("message", "API call failed")}
+    try:
+        return json.loads(res.get("body", "{}"))
+    except Exception as e:
+        return {"error": f"Failed to parse usage response: {e}"}
+
+def fetch_xai_quota(base_url, secret_key, auth_index):
+    """Fetch live xAI billing credits."""
+    payload = {
+        "auth_index": auth_index,
+        "method": "GET",
+        "url": "https://cli-chat-proxy.grok.com/v1/billing?format=credits",
+        "header": {"Authorization": "Bearer $TOKEN$"}
+    }
+    res = api_call(base_url, secret_key, "/v8/management/requests/api-call", payload)
+    if res.get("error"):
+        return {"error": res.get("message", "API call failed")}
+    try:
+        return json.loads(res.get("body", "{}"))
+    except Exception as e:
+        return {"error": f"Failed to parse usage response: {e}"}
+
+def collect_all_quotas(base_url, secret_key):
+    """Query credentials list and retrieve quotas for each account."""
+    creds_res = api_call(base_url, secret_key, "/v8/management/credentials")
+    if creds_res.get("error"):
+        return False, creds_res.get("message")
+
+    files = creds_res.get("files", [])
+    results = []
+
+    for f in files:
+        auth_index = f.get("auth_index")
+        provider = f.get("provider", "unknown").lower()
+        email = f.get("email") or f.get("name")
+        status = f.get("status", "unknown")
+        cooldowns = f.get("cooldowns", [])
+
+        quota_data = {}
+        if provider == "codex":
+            quota_data = fetch_codex_quota(base_url, secret_key, auth_index)
+        elif provider == "claude":
+            quota_data = fetch_claude_quota(base_url, secret_key, auth_index)
+        elif provider == "kimi":
+            quota_data = fetch_kimi_quota(base_url, secret_key, auth_index)
+        elif provider == "xai":
+            quota_data = fetch_xai_quota(base_url, secret_key, auth_index)
+        else:
+            quota_data = {"unsupported": True}
+
+        results.append({
+            "name": f.get("name"),
+            "email": email,
+            "provider": provider,
+            "auth_index": auth_index,
+            "status": status,
+            "cooldowns": cooldowns,
+            "quota": quota_data
+        })
+
+    return True, results
+
+def print_dashboard(results, base_url):
+    """Render terminal dashboard with aligned bars, status badges, and countdowns."""
+    print(f"\n{BOLD}CLIProxyAPI OAuth Quota Dashboard{RESET} ({len(results)} accounts) — {CYAN}{base_url}{RESET}\n")
+
+    for item in results:
+        email = item["email"]
+        provider = item["provider"].upper()
+        status = item["status"]
+        cooldowns = item["cooldowns"]
+        q = item["quota"]
+
+        if status == "active":
+            status_badge = f"{GREEN}● active{RESET}"
+        elif status == "cooling_down" or cooldowns:
+            status_badge = f"{YELLOW}● cooling down{RESET}"
+        else:
+            status_badge = f"{RED}● {status}{RESET}"
+
+        if "error" in q:
+            print(f"{BOLD}{email}{RESET} [{MAGENTA}{provider}{RESET}] {status_badge}")
+            print(f"  {RED}Error fetching quota:{RESET} {q['error']}\n")
+            continue
+
+        if provider == "CODEX":
+            plan = q.get("plan_type", "unknown").upper()
+            rate_limit = q.get("rate_limit") or {}
+            pw = rate_limit.get("primary_window")
+            sw = rate_limit.get("secondary_window")
+            credits_info = q.get("rate_limit_reset_credits") or {}
+            avail_credits = credits_info.get("available_count", 0)
+
+            credit_badge = ""
+            if avail_credits and avail_credits > 0:
+                credit_badge = f" | {CYAN}{avail_credits} Reset Credit{'s' if avail_credits > 1 else ''}{RESET}"
+
+            print(f"{BOLD}{email}{RESET} [{BLUE}{plan}{RESET}] {status_badge}{credit_badge}")
+
+            if pw:
+                p_used = pw.get("used_percent", 0)
+                p_secs = pw.get("reset_after_seconds", 0)
+                p_reset_at = format_reset_time(pw.get("reset_at"))
+                p_time_str = f"resets in {format_countdown(p_secs)}"
+                if p_reset_at:
+                    p_time_str += f" ({p_reset_at})"
+                win_name = format_window_name(pw.get("limit_window_seconds", 18000))
+                print(f"  {win_name:<11}: {color_bar(p_used)}  {DIM}{p_time_str}{RESET}")
+
+            if sw:
+                s_used = sw.get("used_percent", 0)
+                s_secs = sw.get("reset_after_seconds", 0)
+                s_reset_at = format_reset_time(sw.get("reset_at"))
+                s_time_str = f"resets in {format_countdown(s_secs)}"
+                if s_reset_at:
+                    s_time_str += f" ({s_reset_at})"
+                win_name = format_window_name(sw.get("limit_window_seconds", 604800))
+                print(f"  {win_name:<11}: {color_bar(s_used)}  {DIM}{s_time_str}{RESET}")
+
+            print()
+
+        elif provider == "CLAUDE":
+            plan = q.get("plan_type", "Claude").upper()
+            print(f"{BOLD}{email}{RESET} [{MAGENTA}{plan}{RESET}] {status_badge}")
+            windows = q.get("windows") or []
+            if isinstance(q, dict) and "five_hour" in q:
+                # Direct format
+                fh = q.get("five_hour", {})
+                sd = q.get("seven_day", {})
+                if fh:
+                    print(f"  {'5h Window':<11}: {color_bar(fh.get('utilization', 0))}  {DIM}resets at {format_reset_time(fh.get('resets_at'))}{RESET}")
+                if sd:
+                    print(f"  {'7d Window':<11}: {color_bar(sd.get('utilization', 0))}  {DIM}resets at {format_reset_time(sd.get('resets_at'))}{RESET}")
+            else:
+                for w in windows:
+                    w_name = w.get("label", "Window")
+                    w_used = w.get("used_percent", 0)
+                    print(f"  {w_name:<11}: {color_bar(w_used)}")
+            print()
+
+        elif provider == "KIMI":
+            print(f"{BOLD}{email}{RESET} [{CYAN}KIMI{RESET}] {status_badge}")
+            usages = q.get("usages", [])
+            for u in usages:
+                name = u.get("name", "Quota")
+                used = u.get("used", 0)
+                limit = u.get("limit", 1)
+                pct = (used / limit * 100) if limit else 0
+                print(f"  {name:<11}: {color_bar(pct)}  {DIM}{used}/{limit}{RESET}")
+            print()
+
+        elif provider == "XAI":
+            print(f"{BOLD}{email}{RESET} [{YELLOW}xAI{RESET}] {status_badge}")
+            credits = q.get("credits", {})
+            print(f"  Credits: {credits.get('available', 0)} / {credits.get('total', 0)}\n")
+
+        else:
+            print(f"{BOLD}{email}{RESET} [{provider}] {status_badge}\n")
+
+def main():
+    default_url, default_key = load_defaults()
+
+    parser = argparse.ArgumentParser(
+        prog="cliproxy-quota",
+        description="Fetch and display live OAuth subscription usage & quotas managed by CLIProxyAPI."
+    )
+    parser.add_argument("--url", default=default_url, help=f"CLIProxyAPI Base URL (default: {default_url})")
+    parser.add_argument("--key", default=default_key, help="Management secret key (auto-detected from template)")
+    parser.add_argument("--json", action="store_true", help="Output machine-readable JSON data")
+    parser.add_argument("-w", "--watch", type=int, nargs="?", const=5, metavar="SEC",
+                        help="Watch mode: continuously update every SEC seconds (default: 5)")
+
+    args = parser.parse_args()
+
+    if not args.key:
+        print(f"{RED}Error: Management secret key not found.{RESET}", file=sys.stderr)
+        print("Provide via --key, CLIPROXY_MANAGEMENT_KEY, or in .config/cliproxyapi/cliproxyapi.conf.template", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        while True:
+            success, data = collect_all_quotas(args.url, args.key)
+            if not success:
+                print(f"{RED}Failed to connect to CLIProxyAPI:{RESET} {data}", file=sys.stderr)
+                if not args.watch:
+                    sys.exit(1)
+            else:
+                if args.json:
+                    print(json.dumps(data, indent=2))
+                else:
+                    if args.watch:
+                        os.system("clear" if os.name != "nt" else "cls")
+                    print_dashboard(data, args.url)
+
+            if not args.watch:
+                break
+            time.sleep(max(1, args.watch))
+    except KeyboardInterrupt:
+        print("\nExited.")
+        sys.exit(0)
+
+if __name__ == "__main__":
+    main()

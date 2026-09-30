@@ -37,6 +37,9 @@
     "copy": "select"
   },
   "debug": {
-    "devtools": false
+    "devtools": true
+  },
+  "prompt": {
+    "image_preview": true
   }
 }
