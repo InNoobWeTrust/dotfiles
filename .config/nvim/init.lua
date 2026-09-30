@@ -338,7 +338,6 @@ local function get_llm_models(base_url, opts)
 end
 
 -- LLM provider endpoints. get_llm_models appends "/v1/models" to these.
-local CLIPROXY_BASE_URL = "http://127.0.0.1:8317"
 local CKEY_BASE_URL = "https://api.xah.io"
 local KILO_BASE_URL = "https://api.kilo.ai/api/gateway"
 
@@ -908,28 +907,6 @@ require("lazy").setup({
             opts = {
                 adapters = {
                     http = {
-                        cliproxyapi = function()
-                            return require("codecompanion.adapters").extend("anthropic", {
-                                name = "cliproxyapi",
-                                formatted_name = "CLIProxyAPI",
-                                url = CLIPROXY_BASE_URL .. "/v1/messages",
-                                env = {
-                                    api_key = env_key("CLIPROXYAPI_API_KEY", "cliproxyapi"),
-                                },
-                                schema = {
-                                    model = {
-                                        default = "sonnet",
-                                        choices = function()
-                                            return get_llm_models(CLIPROXY_BASE_URL, {
-                                                api_key = env_key("CLIPROXYAPI_API_KEY", "cliproxyapi"),
-                                                timeout = 1000, -- loopback: fail fast when the proxy is down
-                                                fallback = { "sonnet" },
-                                            })
-                                        end,
-                                    },
-                                },
-                            })
-                        end,
                         ckey = function()
                             return require("codecompanion.adapters").extend("anthropic", {
                                 name = "ckey",
@@ -979,12 +956,16 @@ require("lazy").setup({
                 },
                 strategies = {
                     chat = {
-                        adapter = "cliproxyapi",
-                        model = "sonnet",
+                        adapter = {
+                            name = "opencode",
+                            model = "openai/gpt-6.1-sol",
+                        },
                     },
                     inline = {
-                        adapter = "cliproxyapi",
-                        model = "haiku",
+                        adapter = {
+                            name = "kilo",
+                            model = "~openai/gpt-luna-latest",
+                        },
                     },
                 },
                 opts = {

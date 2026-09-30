@@ -1,10 +1,15 @@
-model = "gpt-6-sol"
-model_provider = "cliproxyapi"
+model = "forbiddengun/qwen"
+model_provider = "ckey"
 
-[model_providers.cliproxyapi]
-name = "CLIProxyAPI"
-base_url = "http://127.0.0.1:8317/v1"
+[model_providers.ckey]
+name = "CKey"
+base_url = "https://api.xah.io/v1"
 wire_api = "responses"
+env_key = "CKEY_API_KEY"
 requires_openai_auth = false
 supports_websockets = true
-model_catalog_url = "http://127.0.0.1:8317/v1/models"
+model_catalog_url = "https://api.xah.io/v1/models"
+
+[tui]
+screen_reader_detection_done = true
+theme = "gruvbox-dark"

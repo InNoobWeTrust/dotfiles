@@ -14,7 +14,11 @@ auth.json
 version.json
 installation_id
 app-server-daemon/
+/app-server-control/
 app-server-control.sock
+/history.jsonl
+/session_index.jsonl
+/tui-thread-reference-capabilities/
 
 # Ignore codex runtime system skills
 skills/.system/

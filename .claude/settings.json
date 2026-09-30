@@ -7,9 +7,6 @@
   "verbose": true,
   "skipAutoPermissionPrompt": true,
   "env": {
-    "ANTHROPIC_BASE_URL": "http://127.0.0.1:8317",
-    "ANTHROPIC_API_KEY": "dummy",
-    "ANTHROPIC_AUTH_TOKEN": "sk-1234",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1
   }
 }
