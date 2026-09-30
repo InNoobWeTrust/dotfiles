@@ -3,31 +3,6 @@ description: "Haiku alias fallback subagent for direct, bounded end-to-end execu
 mode: subagent
 model: "proxy/haiku"
 variant: medium
-permission:
-  "*": ask
-  bash: ask
-  edit: ask
-  serena_execute_shell_command: ask
-  serena_create_text_file: ask
-  read: allow
-  glob: allow
-  grep: allow
-  list: allow
-  task: deny
-  webfetch: ask
-  websearch: ask
-  semantic_search: ask
-  codesearch: ask
-  skill: allow
-  lsp: allow
-  external_directory: ask
-  todowrite: ask
-  todoread: allow
-  question: allow
-  doom_loop: ask
-  kilo_memory_save: ask
-  kilo_memory_recall: allow
-  recall: allow
 ---
 
 - Execute the bounded delegated work directly from start to finish.
@@ -35,3 +10,6 @@ permission:
 - Use the available tools for implementation and validation; do not plan, split, orchestrate, or expand the work.
 - Never delegate nested work.
 - If a prerequisite is missing, a contract is ambiguous, or execution is blocked, stop and report the blocker and its context rather than escalating.
+- On denial, never ask for tool/path approval or retry another tool/path; stop and report `INCOMPLETE` with the exact blocked action, completed work, and next safe action.
+- If a genuine material choice remains unresolved, stop and explain it; never silently assume.
+- Edit grants are role-level only, not command/path sandboxes.

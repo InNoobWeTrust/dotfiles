@@ -2,16 +2,16 @@
 
 ---------------------------------------------------- Aliases
 local execute = vim.api.nvim_command
-local opt = vim.opt -- global
+--local opt = vim.opt -- global
 local api = vim.api -- access vim api
 local o = vim.o -- global
 local g = vim.g -- global for let options
-local wo = vim.wo -- window local
-local bo = vim.bo -- buffer local
+--local wo = vim.wo -- window local
+--local bo = vim.bo -- buffer local
 local fn = vim.fn -- access vim functions
 local cmd = vim.cmd -- vim commands
-local diagnostic = vim.diagnostic -- vim diagnostic
-local lsp = vim.lsp -- vim lsp
+--local diagnostic = vim.diagnostic -- vim diagnostic
+--local lsp = vim.lsp -- vim lsp
 local win = fn.has("win16") or fn.has("win32") or fn.has("win64")
 local linux = fn.has("unix") and not (fn.system("uname -s"):gsub("\n", "") == "Darwin")
 local mac = fn.has("unix") and fn.system("uname -s"):gsub("\n", "") == "Darwin"
@@ -157,8 +157,7 @@ local function nvim_create_augroups(definitions)
         execute("augroup " .. group_name)
         execute("autocmd!")
         for _, def in ipairs(definition) do
-            local parts = vim.iter and vim.iter({ "autocmd", def }):flatten():totable()
-                or vim.tbl_flatten({ "autocmd", def })
+            local parts = vim.iter({ "autocmd", def }):flatten():totable()
             local command = table.concat(parts, " ")
             execute(command)
         end
@@ -225,39 +224,130 @@ nvim_create_augroups(autocmds)
 --------------------------------------------------- End Misc
 
 ------------------------------------------- Custom functions
-local _cliproxy_cache = nil
-local _cliproxy_cache_time = 0
+-- How long a discovered model list stays fresh, in seconds.
+local LLM_MODELS_TTL = 600
+-- Model lists discovered from OpenAI/Anthropic-compatible endpoints, keyed by
+-- base URL: llm_models_cache[base_url] = { models = {...}, fetched_at = <epoch>, auth = <sha256> }
+local llm_models_cache = {}
 
-local function get_cliproxy_models()
-    local now = os.time()
-    if _cliproxy_cache and (now - _cliproxy_cache_time < 600) then
-        return _cliproxy_cache
+-- Accept a plain value or a thunk returning it, without ever raising.
+local function resolve_value(value)
+    if type(value) == "function" then
+        local ok, resolved = pcall(value)
+        return ok and resolved or nil
+    end
+    return value
+end
+
+--- List the models exposed by an OpenAI/Anthropic-compatible endpoint.
+--- Never errors; an unreachable or unauthorized endpoint degrades to `opts.fallback`.
+--- The request uses `opts.timeout` milliseconds, with a short wait allowance.
+---@param base_url string Endpoint root, e.g. "http://127.0.0.1:8317". "/v1/models"
+---   is appended internally and trailing slashes are ignored.
+---@param opts table|nil Optional fields:
+---   api_key  string|fun():string  Sent as "Authorization: Bearer" and "x-api-key"
+---                                  so OpenAI- and Anthropic-style gateways both accept it.
+---   headers  table|fun():table    Extra request headers, applied first.
+---   timeout  number               Milliseconds, default 3000.
+---   fallback string[]             Model list used when the endpoint cannot be read.
+---@return string[] # Sorted and deduplicated model IDs.
+local function get_llm_models(base_url, opts)
+    opts = opts or {}
+    local root = (resolve_value(base_url) or ""):gsub("/+$", "")
+    local fallback = opts.fallback or {}
+    if root == "" then
+        return fallback
     end
 
-    local ok, curl = pcall(require, "plenary.curl")
-    if ok then
-        local success, res = pcall(curl.get, "http://127.0.0.1:8317/v1/models", { timeout = 1000 })
-        if success and res and res.status == 200 then
-            local decoded_ok, data = pcall(vim.json.decode, res.body)
-            if decoded_ok and data and data.data then
-                local models = {}
-                for _, item in ipairs(data.data) do
-                    table.insert(models, item.id)
-                end
-                table.sort(models)
-                _cliproxy_cache = models
-                _cliproxy_cache_time = now
-                return _cliproxy_cache
-            end
+    -- Model lists are per-account, so a rotated API key must invalidate the cache.
+    local api_key = resolve_value(opts.api_key)
+    local auth = api_key and vim.fn.sha256(api_key) or ""
+    local cached = llm_models_cache[root]
+    if cached and cached.auth == auth and (os.time() - cached.fetched_at) < LLM_MODELS_TTL then
+        return cached.models
+    end
+
+    if fn.executable("curl") ~= 1 then
+        return fallback
+    end
+
+    local headers = {}
+    local extra = resolve_value(opts.headers)
+    if type(extra) == "table" then
+        headers = vim.tbl_extend("force", headers, extra)
+    end
+    if api_key and api_key ~= "" then
+        -- Both auth conventions are in the wild, and unknown headers are ignored.
+        headers["Authorization"] = "Bearer " .. api_key
+        headers["x-api-key"] = api_key
+    end
+
+    local timeout_ms = opts.timeout or 3000
+    -- Delimit the status so a body-ending newline cannot be mistaken for the separator.
+    local argv = {
+        "curl",
+        "--silent",
+        "--max-time",
+        tostring(math.ceil(timeout_ms / 1000)),
+        "--write-out",
+        "\\n<<HTTP:%{http_code}>>",
+    }
+    for key, value in pairs(headers) do
+        argv[#argv + 1] = "--header"
+        argv[#argv + 1] = key .. ": " .. value
+    end
+    argv[#argv + 1] = root .. "/v1/models"
+
+    local requested, res = pcall(function()
+        return vim.system(argv, { text = true, timeout = timeout_ms }):wait(timeout_ms + 500)
+    end)
+    if not (requested and type(res) == "table" and res.code == 0 and type(res.stdout) == "string") then
+        return fallback
+    end
+    local body, status = res.stdout:match("^(.*)\n<<HTTP:(%d+)>>%s*$")
+    if not (type(body) == "string" and type(status) == "string" and tonumber(status) == 200) then
+        return fallback
+    end
+
+    local decoded_ok, data = pcall(vim.json.decode, body)
+    if not (decoded_ok and type(data) == "table") then
+        return fallback
+    end
+
+    -- OpenAI-style gateways nest the list under "data"; some proxies use "models".
+    local entries = type(data.data) == "table" and data.data or data
+    if type(data.models) == "table" then
+        entries = data.models
+    end
+
+    local seen, models = {}, {}
+    for _, item in ipairs(entries) do
+        local id = type(item) == "table" and (item.id or item.name) or item
+        if type(id) == "string" and id ~= "" and not seen[id] then
+            seen[id] = true
+            models[#models + 1] = id
         end
     end
+    if #models == 0 then
+        return fallback
+    end
+    table.sort(models)
 
-    return {
-        "sonnet",
-        "haiku",
-        "opus",
-        "fable",
-    }
+    llm_models_cache[root] = { models = models, fetched_at = os.time(), auth = auth }
+    return models
+end
+
+-- LLM provider endpoints. get_llm_models appends "/v1/models" to these.
+local CLIPROXY_BASE_URL = "http://127.0.0.1:8317"
+local CKEY_BASE_URL = "https://api.xah.io"
+local KILO_BASE_URL = "https://api.kilo.ai/api/gateway"
+
+-- Looked up lazily so a key exported after startup is picked up, and shared by the
+-- adapter and its model discovery so the two can never disagree on credentials.
+local function env_key(name, placeholder)
+    return function()
+        return os.getenv(name) or placeholder
+    end
 end
 --------------------------------------- End custom functions
 
@@ -321,6 +411,68 @@ require("lazy").setup({
                 -- you need to call load_extension, somewhere after setup function:
                 require("telescope").load_extension("file_browser")
                 require("telescope").load_extension("project")
+
+                local original_select = vim.ui.select
+                -- These untagged prompts are CodeCompanion call sites at the pinned version;
+                -- keep this version-coupled list explicit, not based on item count or stack inspection.
+                local codecompanion_untagged_prompts = {
+                    ["Select a rule"] = true,
+                    ["Approval mode for this chat"] = true,
+                    ["Select an image source"] = true,
+                }
+                rawset(vim.ui, "select", function(items, select_opts, on_choice)
+                    if
+                        not select_opts
+                        or (
+                            select_opts.kind ~= "codecompanion.nvim"
+                            and not (select_opts.kind == nil and codecompanion_untagged_prompts[select_opts.prompt])
+                        )
+                    then
+                        return original_select(items, select_opts, on_choice)
+                    end
+
+                    local pickers = require("telescope.pickers")
+                    local finders = require("telescope.finders")
+                    local actions = require("telescope.actions")
+                    local action_state = require("telescope.actions.state")
+                    local selected_item, selected_index, done
+                    local picker = pickers.new({}, {
+                        prompt_title = select_opts.prompt,
+                        finder = finders.new_table({
+                            results = items,
+                            entry_maker = function(item)
+                                local display = select_opts.format_item and select_opts.format_item(item)
+                                    or tostring(item)
+                                return { value = item, display = display, ordinal = display }
+                            end,
+                        }),
+                        sorter = require("telescope.config").values.generic_sorter({}),
+                        attach_mappings = function(prompt_bufnr)
+                            vim.api.nvim_create_autocmd("BufWipeout", {
+                                buffer = prompt_bufnr,
+                                once = true,
+                                callback = function()
+                                    vim.schedule(function()
+                                        if not done then
+                                            done = true
+                                            on_choice(selected_item, selected_index)
+                                        end
+                                    end)
+                                end,
+                            })
+                            actions.select_default:replace(function()
+                                local entry = action_state.get_selected_entry()
+                                if entry then
+                                    selected_item, selected_index = entry.value, entry.index
+                                end
+                                actions.close(prompt_bufnr)
+                            end)
+                            return true
+                        end,
+                    })
+                    picker:find()
+                end)
+
                 map("n", "<leader><leader>", "<cmd>Telescope<cr>")
                 map(
                     "n",
@@ -716,17 +868,19 @@ require("lazy").setup({
                             return require("codecompanion.adapters").extend("anthropic", {
                                 name = "cliproxyapi",
                                 formatted_name = "CLIProxyAPI",
-                                url = "http://127.0.0.1:8317/v1/messages",
+                                url = CLIPROXY_BASE_URL .. "/v1/messages",
                                 env = {
-                                    api_key = function()
-                                        return os.getenv("CLIPROXYAPI_API_KEY") or "cliproxyapi"
-                                    end,
+                                    api_key = env_key("CLIPROXYAPI_API_KEY", "cliproxyapi"),
                                 },
                                 schema = {
                                     model = {
                                         default = "sonnet",
-                                        choices = function(self)
-                                            return get_cliproxy_models()
+                                        choices = function()
+                                            return get_llm_models(CLIPROXY_BASE_URL, {
+                                                api_key = env_key("CLIPROXYAPI_API_KEY", "cliproxyapi"),
+                                                timeout = 1000, -- loopback: fail fast when the proxy is down
+                                                fallback = { "sonnet" },
+                                            })
                                         end,
                                     },
                                 },
@@ -736,79 +890,43 @@ require("lazy").setup({
                             return require("codecompanion.adapters").extend("anthropic", {
                                 name = "ckey",
                                 formatted_name = "CKey",
-                                url = "https://api.xah.io/v1/messages",
+                                url = CKEY_BASE_URL .. "/v1/messages",
                                 env = {
-                                    api_key = function()
-                                        return os.getenv("CKEY_API_KEY") or "CKEY_API_KEY"
-                                    end,
+                                    api_key = env_key("CKEY_API_KEY", "CKEY_API_KEY"),
                                 },
                                 schema = {
                                     model = {
                                         default = "forbiddengun/deepseek",
-                                        choices = {
-                                            "forbiddengun/architect",
-                                            "forbiddengun/gemini",
-                                            "forbiddengun/glm",
-                                            "forbiddengun/deepseek",
-                                            "forbiddengun/qwen",
-                                        },
+                                        choices = function()
+                                            return get_llm_models(CKEY_BASE_URL, {
+                                                api_key = env_key("CKEY_API_KEY", "CKEY_API_KEY"),
+                                                fallback = { "forbiddengun/deepseek" },
+                                            })
+                                        end,
                                     },
                                 },
                             })
                         end,
                         kilo = function()
-                            return require("codecompanion.adapters").extend("openai_compatible", {
+                            return require("codecompanion.adapters").extend("anthropic", {
                                 name = "kilo",
                                 formatted_name = "Kilo",
+                                url = KILO_BASE_URL .. "/v1/messages",
                                 env = {
-                                    url = function()
-                                        return os.getenv("KILO_BASE_URL") or "https://api.kilo.ai/api/gateway"
-                                    end,
-                                    chat_url = "/v1/chat/completions",
-                                    api_key = function()
-                                        return os.getenv("KILO_API_KEY") or "KILO_API_KEY"
-                                    end,
+                                    api_key = env_key("KILO_API_KEY", "KILO_API_KEY"),
+                                },
+                                headers = {
+                                    Authorization = "Bearer ${api_key}",
                                 },
                                 schema = {
                                     model = {
                                         default = "kilo-auto/free",
-                                        choices = {
-                                            -- OpenAI Models (BYOK)
-                                            "openai/gpt-5.6-luna",
-                                            "openai/gpt-5.6-terra",
-                                            "openai/gpt-5.6-sol",
-                                            "openai/gpt-5.5",
-                                            "openai/gpt-5.4",
-                                            "openai/gpt-5.4-mini",
-                                            "openai/gpt-6-astra",
-                                            "openai/o3",
-                                            "openai/o4-mini",
-                                            "openai/gpt-4.1",
-                                            "openai/gpt-4o",
-                                            "openai/gpt-4o-mini",
-
-                                            -- Kilo Free Models
-                                            "kilo-auto/free",
-                                            "openrouter/free",
-                                            "stepfun/step-3.7-flash:free",
-                                            "poolside/laguna-s-2.1:free",
-                                            "poolside/laguna-xs-2.1:free",
-                                            "nvidia/nemotron-3.5-lightning:free",
-                                            "nvidia/nemotron-3-ultra-550b-a55b:free",
-                                            "nvidia/nemotron-3.5-content-safety:free",
-                                            "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-                                            "nvidia/nemotron-3-super-120b-a12b:free",
-                                            "dots-studio/dots-3-note-preview:free",
-                                            "nex-agi/nex-n2.5-pro:free",
-                                            "nex-agi/nex-n2.5-mini:free",
-                                            "inclusionai/ling-3.0-flash-vl:free",
-                                            "inclusionai/ling-3.0-flash-sante:free",
-                                            "inclusionai/ling-3.0-flash-fin:free",
-                                            "liquid/lfm-2.5-2.6b:free",
-                                            "thinkingmachines/inkling-small:free",
-                                            "cohere/north-mini-code:free",
-                                            "z-ai/glm-5.2:free",
-                                        },
+                                        choices = function()
+                                            return get_llm_models(KILO_BASE_URL, {
+                                                api_key = env_key("KILO_API_KEY", "KILO_API_KEY"),
+                                                fallback = { "kilo-auto/free" },
+                                            })
+                                        end,
                                     },
                                 },
                             })
@@ -860,6 +978,8 @@ require("lazy").setup({
                         return false
                     end
                     local inline_comp = cap.all and cap.all["inline_completion"]
+                    -- The private inline-completion state exposes methods absent from Neovim's public types.
+                    ---@type {current: any, count_items: fun(self: any): integer}|nil
                     local completor = inline_comp
                         and inline_comp.active
                         and inline_comp.active[api.nvim_get_current_buf()]
@@ -870,9 +990,10 @@ require("lazy").setup({
                     if completor:count_items() > 1 then
                         vim.lsp.inline_completion.select({ count = delta })
                     else
-                        pcall(function()
-                            completor:request(vim.lsp.protocol.InlineCompletionTriggerKind.Invoked)
-                        end)
+                        local request = rawget(completor, "request")
+                        if type(request) == "function" then
+                            pcall(request, completor, vim.lsp.protocol.InlineCompletionTriggerKind.Invoked)
+                        end
                         vim.lsp.inline_completion.select({ count = delta })
                     end
                     return true
@@ -1264,9 +1385,9 @@ require("lazy").setup({
                         if not supported_fts[vim.bo[buf].filetype] then
                             return
                         end
-                        for _, win in ipairs(vim.fn.win_findbuf(buf)) do
-                            if vim.api.nvim_win_is_valid(win) then
-                                vim.api.nvim_win_call(win, function()
+                        for _, window in ipairs(vim.fn.win_findbuf(buf)) do
+                            if vim.api.nvim_win_is_valid(window) then
+                                vim.api.nvim_win_call(window, function()
                                     require("diagram").render()
                                 end)
                                 return
