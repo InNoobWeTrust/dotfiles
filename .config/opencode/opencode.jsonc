@@ -350,6 +350,7 @@
     { "action": "semantic_search", "resource": "*", "effect": "allow" },
     { "action": "subagent", "resource": "*", "effect": "deny" },
     { "action": "question", "resource": "*", "effect": "deny" },
+    { "action": "compress", "resource": "*", "effect": "allow" },
     { "action": "serena_open_dashboard", "resource": "*", "effect": "deny" },
     { "action": "serena_initial_instructions", "resource": "*", "effect": "allow" },
     { "action": "serena_activate_project", "resource": "*", "effect": "allow" },
