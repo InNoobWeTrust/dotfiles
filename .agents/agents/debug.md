@@ -1,7 +1,7 @@
 ---
 description: "Systematic troubleshooting and root cause analysis. Dedicated execution corridor for frontier reasoning on precise error logs, exact stack traces, and isolated file patches. Use for: diagnosing test failures, CI/CD failures, runtime errors, performance issues, and hard-to-reproduce bugs. Fallback to `github-copilot-claude` or `ckey-glm` if not available."
 mode: subagent
-model: "proxy/sonnet"
+model: "openai/gpt-6.1-sol"
 variant: high
 permission:
   edit: deny

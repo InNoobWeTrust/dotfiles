@@ -1,7 +1,7 @@
 ---
 description: "High-assurance security audit. Read-only. Use for pre-deployment audits, critical vulnerability analysis, cryptographic review, and sensitive authorization flow verification. Because security review is high-compute and thorough, run this after commits or when completing critical plans/docs. Don't call this when user is in a rush or there are still incomplete work. If quota is fully drained, use `ckey-architect`."
 mode: subagent
-model: "proxy/sonnet"
+model: "openai/gpt-6.1-sol"
 variant: xhigh
 permission:
   edit: deny

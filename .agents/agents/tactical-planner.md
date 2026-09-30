@@ -1,7 +1,7 @@
 ---
 description: "High-throughput tactical planner. Fast-path option for routine multi-step tasks, straightforward feature breakdowns, and rapid bug fix sequencing where quick turnaround is prioritized over deep dependency analysis. Produces executable functional units via single-pass or multi-turn decomposition. For deeper, high-intelligence planning, use `tactical-planner-deep`. If quota is fully drained, use `ckey-glm`."
 mode: subagent
-model: "proxy/sonnet"
+model: "openai/gpt-6.1-sol"
 variant: medium
 permission:
   bash: deny

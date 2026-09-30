@@ -1,7 +1,7 @@
 ---
 description: "Sonnet alias fallback subagent for direct, bounded end-to-end execution when the preferred agent's model is unavailable. Does not delegate nested tasks."
 mode: subagent
-model: "proxy/sonnet"
+model: "openai/gpt-6.1-sol"
 variant: high
 ---
 
