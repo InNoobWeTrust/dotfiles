@@ -4,6 +4,7 @@ mode: primary
 hidden: true
 permission:
   bash: deny
+  shell: deny
   edit: deny
   todowrite: deny
   question: allow

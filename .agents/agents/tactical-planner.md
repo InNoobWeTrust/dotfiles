@@ -5,6 +5,7 @@ model: "proxy/sonnet"
 variant: medium
 permission:
   bash: deny
+  shell: deny
   edit: allow
 ---
 

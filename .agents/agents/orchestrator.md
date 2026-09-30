@@ -4,7 +4,9 @@ mode: primary
 hidden: true
 permission:
   bash: deny
+  shell: deny
   edit: deny
   task: allow
+  subagent: allow
   question: allow
 ---

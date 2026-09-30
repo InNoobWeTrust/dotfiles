@@ -5,6 +5,7 @@ model: "github-copilot/claude-sonnet-4.6"
 variant: high
 permission:
   bash: deny
+  shell: deny
   edit: allow
 ---
 
