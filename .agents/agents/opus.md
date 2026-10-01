@@ -1,7 +1,7 @@
 ---
 description: "Opus alias fallback subagent for bounded high-stakes system design, security analysis, and complex adversarial evaluation when the preferred agent is unavailable. Does not delegate nested tasks."
 mode: subagent
-model: "openai/gpt-6-astra"
+model: "proxy/opus"
 variant: high
 ---
 

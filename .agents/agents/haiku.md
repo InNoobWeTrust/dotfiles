@@ -1,7 +1,7 @@
 ---
 description: "Haiku alias fallback subagent for direct, bounded end-to-end execution when the preferred agent's model is unavailable. Does not delegate nested tasks."
 mode: subagent
-model: "openai/gpt-6-luna"
+model: "proxy/haiku"
 variant: medium
 ---
 

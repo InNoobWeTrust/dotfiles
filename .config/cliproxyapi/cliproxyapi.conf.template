@@ -103,6 +103,27 @@ oauth-model-alias:
       alias: "haiku"
       fork: true
 
+  claude:
+    # Claude Opus (Flagship / Heavy Reasoning) -> CKey GLM
+    - name: "forbiddengun/glm"
+      alias: "opus"
+      fork: true
+
+    # Claude Fable (Long-horizon reasoning) -> CKey GLM
+    - name: "forbiddengun/glm"
+      alias: "fable"
+      fork: true
+
+    # Claude Sonnet (Agentic / Production Coding) -> CKey Qwen
+    - name: "forbiddengun/qwen"
+      alias: "sonnet"
+      fork: true
+
+    # Claude Haiku (Lightweight / High throughput) -> CKey DeepSeek
+    - name: "forbiddengun/deepseek"
+      alias: "haiku"
+      fork: true
+
 debug: true
 logging-to-file: true
 commercial-mode: true
