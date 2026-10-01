@@ -9,14 +9,16 @@ if [ -n "${TERMUX_VERSION:-}" ] && [ -f "${PREFIX:-}/etc/tls/cert.pem" ]; then
     export SSL_CERT_FILE="$PREFIX/etc/tls/cert.pem"
 fi
 
-# Keep Rust tools and build artifacts on the external volume when mounted.
-if [ -n "$CARGO_EXT_DIR" ]; then
-    export CARGO_HOME="$CARGO_EXT_DIR/.cargo"
+# Keep user cache and Rust build artifacts on the external volume when mounted.
+if [ -n "$CACHE_EXT_DIR" ]; then
+    export XDG_CACHE_HOME="$CACHE_EXT_DIR/.cache"
+    export CARGO_HOME="$CACHE_EXT_DIR/.cargo"
     export CARGO_INSTALL_ROOT="$CARGO_HOME"
-    export RUSTUP_HOME="$CARGO_EXT_DIR/.rustup"
-    export CARGO_TARGET_DIR="$CARGO_EXT_DIR/.cargo-target"
+    export RUSTUP_HOME="$CACHE_EXT_DIR/.rustup"
+    export CARGO_TARGET_DIR="$CACHE_EXT_DIR/.cargo-target"
 else
-    # Fall back to local homes and project-local targets when the volume is unmounted.
+    # Fall back to local cache and homes when the volume is unmounted.
+    export XDG_CACHE_HOME="$HOME/.cache"
     export CARGO_HOME="$HOME/.local/cargo"
     export CARGO_INSTALL_ROOT="$CARGO_HOME"
     export RUSTUP_HOME="$HOME/.local/rustup"
@@ -40,7 +42,7 @@ export VOLTA_HOME="$HOME/.local/volta"
 export autocomplete_nvm=
 export BAT_THEME="gruvbox-dark"
 # Set huggingface token
-[ -e "$HOME/.cache/huggingface/token" ] && export HF_TOKEN="$(head -n 1 "$HOME/.cache/huggingface/token")"
+[ -e "$XDG_CACHE_HOME/huggingface/token" ] && export HF_TOKEN="$(head -n 1 "$XDG_CACHE_HOME/huggingface/token")"
 
 # Puppeteer / mermaid-cli browser path
 if [ -z "$PUPPETEER_EXECUTABLE_PATH" ]; then
