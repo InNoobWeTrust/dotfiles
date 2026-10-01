@@ -377,7 +377,6 @@
     "opencode-models-discovery@latest",
     "@tarquinen/opencode-dcp@latest",
     "@bybrawe/opencode-loop@latest",
-    "@thelioo/opencode-balancer@latest",
     //"@daytona/opencode",
   ],
 }

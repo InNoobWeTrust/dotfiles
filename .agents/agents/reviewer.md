@@ -1,7 +1,7 @@
 ---
 description: "Moderate-complexity independent code and artifact reviewer. Use for standard multi-file functional changes, non-atomic logic flow, and contextual verification against acceptance criteria, invariants, and quality gates. For high-complexity/macro-architectural reviews use reviewer-deep. If quota is fully drained, use `ckey-deepseek`."
 mode: subagent
-model: "openai/gpt-6.1-sol"
+model: "proxy/sonnet"
 variant: high
 permission:
   bash: deny
