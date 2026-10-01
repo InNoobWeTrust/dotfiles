@@ -72,14 +72,23 @@ claude-api-key:
       - name: "openai/gpt-4.1-mini"
       - name: "openai/gpt-4o"
       - name: "openai/gpt-4o-mini"
-  - api-key: "${LLM_BROKER_API_KEY}"
-    base-url: "${LLM_BROKER_BASE_URL}"
+  - api-key: "${CKEY_API_KEY}"
+    base-url: "${CKEY_BASE_URL}"
+    priority: 0
     models:
       - name: "forbiddengun/architect"
       - name: "forbiddengun/gemini"
       - name: "forbiddengun/glm"
+      - name: "forbiddengun/glm"
+        alias: "opus"
+      - name: "forbiddengun/glm"
+        alias: "fable"
       - name: "forbiddengun/deepseek"
+      - name: "forbiddengun/deepseek"
+        alias: "haiku"
       - name: "forbiddengun/qwen"
+      - name: "forbiddengun/qwen"
+        alias: "sonnet"
 
 oauth-model-alias:
   codex:
@@ -100,27 +109,6 @@ oauth-model-alias:
 
     # Claude Haiku (Lightweight / High throughput) -> GPT-6 Luna
     - name: "gpt-6-luna"
-      alias: "haiku"
-      fork: true
-
-  claude:
-    # Claude Opus (Flagship / Heavy Reasoning) -> CKey GLM
-    - name: "forbiddengun/glm"
-      alias: "opus"
-      fork: true
-
-    # Claude Fable (Long-horizon reasoning) -> CKey GLM
-    - name: "forbiddengun/glm"
-      alias: "fable"
-      fork: true
-
-    # Claude Sonnet (Agentic / Production Coding) -> CKey Qwen
-    - name: "forbiddengun/qwen"
-      alias: "sonnet"
-      fork: true
-
-    # Claude Haiku (Lightweight / High throughput) -> CKey DeepSeek
-    - name: "forbiddengun/deepseek"
       alias: "haiku"
       fork: true
 

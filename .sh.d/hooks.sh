@@ -36,9 +36,14 @@ if usable cliproxyapi; then
             if [ ! -f "$OUTPUT_CONF" ] || [ "$TEMPLATE_CONF" -nt "$OUTPUT_CONF" ]; then
                 # Create directory if it doesn't exist
                 mkdir -p "$(dirname "$OUTPUT_CONF")"
+                # Normalize CKEY and LLM_BROKER variables if one is set
+                export CKEY_API_KEY="${CKEY_API_KEY:-$LLM_BROKER_API_KEY}"
+                export CKEY_BASE_URL="${CKEY_BASE_URL:-$LLM_BROKER_BASE_URL}"
+                export LLM_BROKER_API_KEY="${LLM_BROKER_API_KEY:-$CKEY_API_KEY}"
+                export LLM_BROKER_BASE_URL="${LLM_BROKER_BASE_URL:-$CKEY_BASE_URL}"
                 # Atomic replacement: write to temp file then rename to avoid fsnotify partial reads
                 TMP_CONF="${OUTPUT_CONF}.tmp.$$"
-                envsubst '$HOME $KILO_API_KEY $KILO_BASE_URL $LLM_BROKER_API_KEY $LLM_BROKER_BASE_URL $OPENCODE_API_KEY $ORCAROUTER_API_KEY $ORCAROUTER_BASE_URL $FEATHERLESS_API_KEY $FEATHERLESS_BASE_URL $INK_GATEWAY_API_KEY $INK_GATEWAY_BASE_URL' \
+                envsubst '$HOME $KILO_API_KEY $KILO_BASE_URL $CKEY_API_KEY $CKEY_BASE_URL $LLM_BROKER_API_KEY $LLM_BROKER_BASE_URL $OPENCODE_API_KEY $ORCAROUTER_API_KEY $ORCAROUTER_BASE_URL $FEATHERLESS_API_KEY $FEATHERLESS_BASE_URL $INK_GATEWAY_API_KEY $INK_GATEWAY_BASE_URL' \
                     < "$TEMPLATE_CONF" > "$TMP_CONF" && mv -f "$TMP_CONF" "$OUTPUT_CONF"
             fi
         fi
