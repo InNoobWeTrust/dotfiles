@@ -205,6 +205,112 @@ gacha() {
 }
 
 #
+# # dotfiles_clean - Clean caches for common tools, temporary artifacts, and platform junk
+# # usage: dotfiles_clean [--dry-run] [--mac-cleanup]
+dotfiles_clean() {
+    local dry_run=0 run_mac_cleanup=0 2>/dev/null || true
+    local cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}"
+
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --dry-run|-n)
+                dry_run=1
+                shift
+                ;;
+            --mac-cleanup|-m)
+                run_mac_cleanup=1
+                shift
+                ;;
+            --help|-h)
+                printf 'usage: dotfiles_clean [--dry-run] [--mac-cleanup]\n'
+                printf 'Clean known tool caches (uv, bun, npm, pnpm, go, gh), temporary files, and platform junk.\n'
+                return 0
+                ;;
+            *)
+                shift
+                ;;
+        esac
+    done
+
+    printf "==> Cleaning known tool caches...\n"
+
+    # 1. uv cache
+    if usable uv; then
+        printf "Pruning uv package cache...\n"
+        if [ "$dry_run" -eq 0 ]; then
+            uv cache prune >/dev/null 2>&1 || true
+        fi
+    fi
+
+    # 2. bun cache
+    if usable bun; then
+        printf "Pruning bun cache...\n"
+        if [ "$dry_run" -eq 0 ]; then
+            bun pm cache rm >/dev/null 2>&1 || true
+        fi
+    fi
+
+    # 3. npm cache
+    if usable npm; then
+        printf "Verifying and cleaning npm cache...\n"
+        if [ "$dry_run" -eq 0 ]; then
+            npm cache verify >/dev/null 2>&1 || true
+        fi
+    fi
+
+    # 4. pnpm store
+    if usable pnpm; then
+        printf "Pruning pnpm store...\n"
+        if [ "$dry_run" -eq 0 ]; then
+            pnpm store prune >/dev/null 2>&1 || true
+        fi
+    fi
+
+    # 5. go build cache
+    if usable go; then
+        printf "Cleaning go build cache...\n"
+        if [ "$dry_run" -eq 0 ]; then
+            go clean -cache 2>/dev/null || true
+        fi
+    fi
+
+    # 6. GitHub CLI temporary logs
+    if [ -d "$cache_dir/gh" ]; then
+        printf "Removing gh run-log archives...\n"
+        if [ "$dry_run" -eq 0 ]; then
+            rm -f "$cache_dir"/gh/run-log-*.zip 2>/dev/null || true
+        fi
+    fi
+
+    # 7. Chrome DevTools MCP cache
+    if [ -d "$cache_dir/chrome-devtools-mcp" ]; then
+        printf "Removing chrome-devtools-mcp cache...\n"
+        if [ "$dry_run" -eq 0 ]; then
+            rm -rf "$cache_dir/chrome-devtools-mcp" 2>/dev/null || true
+        fi
+    fi
+
+    # 8. OpenCode npm cache
+    if [ -d "$cache_dir/opencode/npm" ]; then
+        printf "Removing opencode npm cache...\n"
+        if [ "$dry_run" -eq 0 ]; then
+            rm -rf "$cache_dir/opencode/npm" 2>/dev/null || true
+        fi
+    fi
+
+    # 9. Platform-specific cleanup
+    case "$(uname -s)" in
+        Darwin)
+            if usable macos_cleanup; then
+                macos_cleanup "$dry_run" "$run_mac_cleanup"
+            fi
+            ;;
+    esac
+
+    printf "==> Cleanup finished.\n"
+}
+
+#
 # # mux - pickup terminal multiplexer or download and execute one
 # # usage: mux [zellij_args]
 mux() {

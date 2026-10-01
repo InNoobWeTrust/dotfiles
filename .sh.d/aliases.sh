@@ -53,6 +53,9 @@ alias isekai='cd `mktemp -d`'
 # Cron utilities
 alias cron-routine='cron_routine'
 
+# Maintenance and cleanup
+alias dot-clean='dotfiles_clean'
+
 # Batch open links.txt
 usable open && \
     {
