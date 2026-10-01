@@ -372,6 +372,7 @@
   "plugin": [
     "opencode-models-discovery@latest",
     "@tarquinen/opencode-dcp@latest",
+    "@bybrawe/opencode-loop@latest",
     //"@daytona/opencode",
   ],
 }

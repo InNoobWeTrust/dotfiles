@@ -3,6 +3,12 @@
 export use_color=true
 export friendly_builtin=true
 export XDG_CONFIG_HOME="$HOME/.config"
+
+# Fix TLS certificate lookup in Termux
+if [ -n "${TERMUX_VERSION:-}" ] && [ -f "${PREFIX:-}/etc/tls/cert.pem" ]; then
+    export SSL_CERT_FILE="$PREFIX/etc/tls/cert.pem"
+fi
+
 # Keep Rust tools and build artifacts on the external volume when mounted.
 if [ -n "$CARGO_EXT_DIR" ]; then
     export CARGO_HOME="$CARGO_EXT_DIR/.cargo"
