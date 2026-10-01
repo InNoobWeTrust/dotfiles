@@ -3,6 +3,10 @@
 if [ "$(uname -s)" = "Darwin" ]; then
     # Clean macOS-specific cache, temporary automation profiles, and junk
     macos_cleanup() {
+        # Keep unmatched globs harmless without changing the caller's shell options.
+        if [ -n "${ZSH_VERSION:-}" ]; then
+            setopt local_options nonomatch
+        fi
         local dry_run="${1:-0}" use_mac_cleanup="${2:-0}" tmp_dir="${TMPDIR:-/tmp}" found=0 2>/dev/null || true
         tmp_dir="${tmp_dir%/}"
         printf "==> Cleaning macOS platform artifacts...\n"
