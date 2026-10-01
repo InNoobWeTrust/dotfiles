@@ -44,10 +44,10 @@ Legend: **Strong** = first-class rule/skill · **Partial** = present but unlabel
 |---|---|---|---|---|
 | **Anti-Context-Bleed Invariant** | Prevents agents from complaining about legacy/untouched code read during context inspection | `reviewer` lenses inspect context freely; no explicit boundary constraint | **Gap** | Add hard stop to `reviewer/SKILL.md` forbidding comments on unchanged files. |
 | **Snippet-Anchored Line Resolution** | Eliminates LLM line-number hallucinations and offset drift across diffs | Reviewers output estimated line numbers or full files | **Gap** | Mandate verbatim `existing_code` snippet quotes + deterministic context matching. |
-| **Threshold-Gated Review Planning** | Skips redundant planning for small diffs; enforces read-only checklist for large changes | `grooming.md` handles planning, but lacks change-size line thresholds for reviews | **Partial** | Introduce 50-line file / 100-line group heuristic in `/review` orchestrator. |
+| **Threshold-Gated Review Planning** | Skips redundant planning for small diffs; enforces read-only checklist for large changes | `grooming.md` handles planning, but lacks change-size line thresholds for reviews | **Partial** | Introduce 50-line file / 100-line group heuristic in `reviewer` skill / built-in review. |
 | **Semantic Bundle Grouping** | Prevents PR-wide context dilution without losing cross-file contract awareness | Reviews run either monolithically on git diff or per-file ad-hoc | **Gap** | Pre-cluster changed files using metadata (paths + status + +/- stats) before review. |
 | **Glob-Targeted Micro-Rulesets** | Replaces generic "find bugs" prompts with file-specific defect checklists | `reviewer` has cross-cutting sub-lenses (`security`, `design-rigor`), but lacks file-glob routing | **Partial** | Create file-pattern rule matrix (Go, Java, XML, CI workflows, package files). |
-| **Deterministic Pre-Filtering** | Drops secrets, binaries, generated code, and test noise before spending tokens | `git-safety.md` forbids staging secrets; no dedicated diff pre-filter for reviews | **Partial** | Wire secret-pattern and vendor exclusion into the `/review` command preflight. |
+| **Deterministic Pre-Filtering** | Drops secrets, binaries, generated code, and test noise before spending tokens | `git-safety.md` forbids staging secrets; no dedicated diff pre-filter for reviews | **Partial** | Wire secret-pattern and vendor exclusion into `reviewer` preflight. |
 | **Evaluator Separation** | Reviewer acts as independent judge rather than patch generator | `rules/self-grounded-verification.md` & `reviewer` Gate 1 author bias | **Strong** | Maintain existing two-step verification and author-bias delegation gates. |
 
 ---
@@ -94,7 +94,7 @@ Tasks to implement in `.agents/` without external CLI dependencies:
 1. **Backlog Item 1 — Invariant & Contract Patch** ([`skills/reviewer/SKILL.md`](../../skills/reviewer/SKILL.md)):
    - Add **Gate 4 (Anti-Context-Bleed)**: Prohibit reporting findings outside the diff.
    - Update the findings schema to require verbatim `existing_code` anchors.
-2. **Backlog Item 2 — Review Command Orchestration** ([`commands/review.prompt.md`](../../commands/review.prompt.md)):
+2. **Backlog Item 2 — Review Orchestration** (Harness built-in review / [`skills/reviewer/SKILL.md`](../../skills/reviewer/SKILL.md)):
    - Implement metadata-only file grouping before dispatching lenses.
    - Apply the 50/100 changed-line threshold before running deep multi-perspective passes.
 3. **Backlog Item 3 — Glob-Targeted Review Rules** ([`skills/reviewer/references/`](../../skills/reviewer/references/)):

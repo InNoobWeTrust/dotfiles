@@ -96,3 +96,26 @@ if usable openfortivpn; then
     _openfortivpn_hook
     unset -f _openfortivpn_hook
 fi
+
+# opencode hook
+if usable opencode; then
+    _opencode_hook() {
+        local SVC_CONF PWD_VAL
+        SVC_CONF="$HOME/.config/opencode/service.json"
+
+        if [ -n "$OPENCODE_PORT" ]; then
+            if [ ! -f "$SVC_CONF" ] || ! grep -q "\"port\": *$OPENCODE_PORT" "$SVC_CONF" 2>/dev/null; then
+                opencode service set port "$OPENCODE_PORT" >/dev/null 2>&1
+            fi
+        fi
+
+        PWD_VAL="${OPENCODE_PASSWORD:-$OPENCODE_SERVER_PASSWORD}"
+        if [ -n "$PWD_VAL" ]; then
+            if [ ! -f "$SVC_CONF" ] || ! grep -q "\"password\": *\"$PWD_VAL\"" "$SVC_CONF" 2>/dev/null; then
+                opencode service set password "$PWD_VAL" >/dev/null 2>&1
+            fi
+        fi
+    }
+    _opencode_hook
+    unset -f _opencode_hook
+fi

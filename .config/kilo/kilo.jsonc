@@ -48,7 +48,7 @@
   "provider": {
     "proxy": {
       "name": "Local proxy",
-      "npm": "@ai-sdk/anthropic",
+      "npm": "@ai-sdk/openai",
       "options": {
         "baseURL": "http://localhost:8317/v1",
         "modelsDiscovery": {
@@ -62,178 +62,16 @@
         },
       },
       "models": {
-        "haiku": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-          "reasoning": true,
-          "variants": {
-            "none": {
-              "reasoning": {
-                "enabled": false,
-                "effort": "none",
-              },
-            },
-            "low": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "low",
-              },
-            },
-            "medium": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "medium",
-              },
-            },
-            "high": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "high",
-              },
-            },
-            "xhigh": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "xhigh",
-              },
-            },
-            "max": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "max",
-              },
-            },
-          },
-        },
-        "sonnet": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-          "reasoning": true,
-          "variants": {
-            "none": {
-              "reasoning": {
-                "enabled": false,
-                "effort": "none",
-              },
-            },
-            "low": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "low",
-              },
-            },
-            "medium": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "medium",
-              },
-            },
-            "high": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "high",
-              },
-            },
-            "xhigh": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "xhigh",
-              },
-            },
-            "max": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "max",
-              },
-            },
-          },
-        },
-        "opus": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "pdf",
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "limit": {
-            "context": 1050000,
-            "output": 128000,
-          },
-          "reasoning": true,
-          "variants": {
-            "none": {
-              "reasoning": {
-                "enabled": false,
-                "effort": "none",
-              },
-            },
-            "low": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "low",
-              },
-            },
-            "medium": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "medium",
-              },
-            },
-            "high": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "high",
-              },
-            },
-            "xhigh": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "xhigh",
-              },
-            },
-            "max": {
-              "reasoning": {
-                "enabled": true,
-                "effort": "max",
-              },
-            },
-          },
-        },
+        "haiku": {},
+        "sonnet": {},
+        "opus": {},
       },
     },
     "ckey": {
       "name": "CKey",
       "npm": "@ai-sdk/anthropic",
       "options": {
-        "baseURL": "https://api.xah.io/v1/",
+        "baseURL": "https://api.xah.io",
         "modelsDiscovery": {
           "enabled": true,
           "modelInfoFormat": "models.dev",
@@ -250,80 +88,11 @@
         "CKEY_API_KEY",
       ],
       "models": {
-        "forbiddengun/architect": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 384000,
-          },
-        },
-        "forbiddengun/gemini": {
-          "modalities": {
-            "input": [
-              "text",
-              "image",
-              "video",
-              "audio",
-              "pdf",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1048576,
-            "output": 65536,
-          },
-        },
-        "forbiddengun/glm": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 131072,
-          },
-        },
-        "forbiddengun/deepseek": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 384000,
-          },
-        },
-        "forbiddengun/qwen": {
-          "modalities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 64000,
-          },
-        },
+        "forbiddengun/architect": {},
+        "forbiddengun/gemini": {},
+        "forbiddengun/glm": {},
+        "forbiddengun/deepseek": {},
+        "forbiddengun/qwen": {},
       },
     },
   },

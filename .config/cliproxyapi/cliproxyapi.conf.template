@@ -1,123 +1,186 @@
-host: "127.0.0.1"
-port: 8317
+config-version: 8
 
-api-keys: []
+server:
+    host: "127.0.0.1"
+    port: 8317
+    discovery:
+        service-type: _ai-gateway._tcp
+        subtypes:
+            - _chat-completions
+            - _responses
+            - _messages
+            - _generate-content
+            - _interactions
+    commercial-mode: true
 
-auth-dir: "${HOME}/.local/share/cli-proxy-api"
+management:
+    # Switch to enable remote management. If you deploy it on a server,
+    # you need to set it to true to use EasyCLI or WebUI to connect to CLIProxyAPI
+    # for management.
+    # If you only use the API for local management, you can keep it as false.
+    allow-remote: true
+    # If you want to use EasyCLI or WebUI to manage CLIProxyAPI through the API,
+    # you must set a Key.
+    # If it is not set, it is considered that the API management function is
+    # disabled, and you cannot use EasyCLI or WebUI to connect.
+    # If you do not need to use EasyCLI or WebUI for management, you can leave it
+    # blank.
+    secret-key: "lorem"
 
-# Remote management configuration, used with EasyCLI or WebUI
-remote-management:
-  # Switch to enable remote management. If you deploy it on a server,
-  # you need to set it to true to use EasyCLI or WebUI to connect to CLIProxyAPI
-  # for management.
-  # If you only use the API for local management, you can keep it as false.
-  allow-remote: true
+access:
+    api-keys: []
+api-keys:
+    # Claude API Keys
+    claude:
+        - name: kilo
+          base-url: "${KILO_BASE_URL}"
+          keys:
+            - api-key: "${KILO_API_KEY}"
+          models:
+            # GPT-6 Frontier
+            - name: "openai/gpt-6-astra"
+            - name: "openai/gpt-6-astra-pro"
+            - name: "openai/gpt-6.1-sol"
+            - name: "openai/gpt-6-sol-pro"
+            - name: "openai/gpt-6-luna"
+            - name: "openai/gpt-6-luna-pro"
 
-  # If you want to use EasyCLI or WebUI to manage CLIProxyAPI through the API,
-  # you must set a Key.
-  # If it is not set, it is considered that the API management function is
-  # disabled, and you cannot use EasyCLI or WebUI to connect.
-  # If you do not need to use EasyCLI or WebUI for management, you can leave it
-  # blank.
-  secret-key: "lorem"
+            # Router & Latest Aliases
+            - name: "~openai/gpt-astra-latest"
+            - name: "~openai/gpt-sol-latest"
+            - name: "~openai/gpt-terra-latest"
+            - name: "~openai/gpt-luna-latest"
+            - name: "openai/gpt-chat-latest"
+            - name: "~openai/gpt-mini-latest"
 
-# Claude API Keys
-claude-api-key:
-  - api-key: "${KILO_API_KEY}"
-    base-url: "${KILO_BASE_URL}"
-    models:
-      # GPT-6 Frontier
-      - name: "openai/gpt-6-astra"
-      - name: "openai/gpt-6-astra-pro"
-      - name: "openai/gpt-6.1-sol"
-      - name: "openai/gpt-6-sol-pro"
-      - name: "openai/gpt-6-luna"
-      - name: "openai/gpt-6-luna-pro"
+            # GPT-5.6 & 5.5
+            - name: "openai/gpt-5.6-sol"
+            - name: "openai/gpt-5.6-sol-pro"
+            - name: "openai/gpt-5.6-terra"
+            - name: "openai/gpt-5.6-terra-pro"
+            - name: "openai/gpt-5.6-luna"
+            - name: "openai/gpt-5.6-luna-pro"
+            - name: "openai/gpt-5.5"
+            - name: "openai/gpt-5.5-pro"
 
-      # Router & Latest Aliases
-      - name: "~openai/gpt-astra-latest"
-      - name: "~openai/gpt-sol-latest"
-      - name: "~openai/gpt-terra-latest"
-      - name: "~openai/gpt-luna-latest"
-      - name: "openai/gpt-chat-latest"
-      - name: "~openai/gpt-mini-latest"
+            # GPT-5.4
+            - name: "openai/gpt-5.4"
+            - name: "openai/gpt-5.4-pro"
+            - name: "openai/gpt-5.4-mini"
 
-      # GPT-5.6 & 5.5
-      - name: "openai/gpt-5.6-sol"
-      - name: "openai/gpt-5.6-sol-pro"
-      - name: "openai/gpt-5.6-terra"
-      - name: "openai/gpt-5.6-terra-pro"
-      - name: "openai/gpt-5.6-luna"
-      - name: "openai/gpt-5.6-luna-pro"
-      - name: "openai/gpt-5.5"
-      - name: "openai/gpt-5.5-pro"
+            # Reasoning Models (o-series)
+            - name: "openai/o4-mini"
+            - name: "openai/o4-mini-high"
+            - name: "openai/o3"
+            - name: "openai/o3-pro"
+            - name: "openai/o3-mini"
+            - name: "openai/o3-mini-high"
+            - name: "openai/o1"
+            - name: "openai/o1-pro"
 
-      # GPT-5.4
-      - name: "openai/gpt-5.4"
-      - name: "openai/gpt-5.4-pro"
-      - name: "openai/gpt-5.4-mini"
+            # Active GPT-4.1 & GPT-4o
+            - name: "openai/gpt-4.1"
+            - name: "openai/gpt-4.1-mini"
+            - name: "openai/gpt-4o"
+            - name: "openai/gpt-4o-mini"
+        - name: ckey
+          base-url: "${CKEY_BASE_URL}"
+          keys:
+            - api-key: "${CKEY_API_KEY}"
+          priority: 0
+          models:
+            - name: "forbiddengun/architect"
+            - name: "forbiddengun/gemini"
+            - name: "forbiddengun/glm"
+            - name: "forbiddengun/glm"
+              alias: "opus"
+            - name: "forbiddengun/glm"
+              alias: "fable"
+            - name: "forbiddengun/deepseek"
+            - name: "forbiddengun/deepseek"
+              alias: "haiku"
+            - name: "forbiddengun/qwen"
+            - name: "forbiddengun/qwen"
+              alias: "sonnet"
 
-      # Reasoning Models (o-series)
-      - name: "openai/o4-mini"
-      - name: "openai/o4-mini-high"
-      - name: "openai/o3"
-      - name: "openai/o3-pro"
-      - name: "openai/o3-mini"
-      - name: "openai/o3-mini-high"
-      - name: "openai/o1"
-      - name: "openai/o1-pro"
+oauth:
+    auth-dir: "${HOME}/.local/share/cli-proxy-api"
+    providers:
+        aistudio:
+            ws-auth: true
+        codex:
+            stream-bootstrap-buffering: true
+            optimize-multi-agent-v2: true
+            orphan-delegation-compatibility: true
+        claude:
+            header-defaults:
+                stabilize-device-profile: true
+    model-alias:
+        codex:
+            # Claude Opus (Flagship / Heavy Reasoning) -> GPT-6 Astra
+            - name: "gpt-6-astra"
+              alias: "opus"
+              fork: true
 
-      # Active GPT-4.1 & GPT-4o
-      - name: "openai/gpt-4.1"
-      - name: "openai/gpt-4.1-mini"
-      - name: "openai/gpt-4o"
-      - name: "openai/gpt-4o-mini"
-  - api-key: "${CKEY_API_KEY}"
-    base-url: "${CKEY_BASE_URL}"
-    priority: 0
-    models:
-      - name: "forbiddengun/architect"
-      - name: "forbiddengun/gemini"
-      - name: "forbiddengun/glm"
-      - name: "forbiddengun/glm"
-        alias: "opus"
-      - name: "forbiddengun/glm"
-        alias: "fable"
-      - name: "forbiddengun/deepseek"
-      - name: "forbiddengun/deepseek"
-        alias: "haiku"
-      - name: "forbiddengun/qwen"
-      - name: "forbiddengun/qwen"
-        alias: "sonnet"
+            # Claude Fable (Long-horizon reasoning) -> GPT-6 Astra
+            - name: "gpt-6-astra"
+              alias: "fable"
+              fork: true
 
-oauth-model-alias:
-  codex:
-    # Claude Opus (Flagship / Heavy Reasoning) -> GPT-6 Astra
-    - name: "gpt-6-astra"
-      alias: "opus"
-      fork: true
+            # Claude Sonnet (Agentic / Production Coding) -> GPT-6.1 Sol
+            - name: "gpt-6.1-sol"
+              alias: "sonnet"
+              fork: true
 
-    # Claude Fable (Long-horizon reasoning) -> GPT-6 Astra
-    - name: "gpt-6-astra"
-      alias: "fable"
-      fork: true
+            # Claude Haiku (Lightweight / High throughput) -> GPT-6 Luna
+            - name: "gpt-6-luna"
+              alias: "haiku"
+              fork: true
 
-    # Claude Sonnet (Agentic / Production Coding) -> GPT-6.1 Sol
-    - name: "gpt-6.1-sol"
-      alias: "sonnet"
-      fork: true
-
-    # Claude Haiku (Lightweight / High throughput) -> GPT-6 Luna
-    - name: "gpt-6-luna"
-      alias: "haiku"
-      fork: true
-
-debug: true
-logging-to-file: true
-commercial-mode: true
-usage-statistics-enabled: true
-logs-max-total-size-mb: 64
 routing:
-  strategy: weighted-round-robin
-claude-header-defaults:
-  stabilize-device-profile: true
+    strategy: weighted-round-robin
+    session-affinity: true
+    session-affinity-subagents: true
+    session-affinity-ttl: "3600"
+    cooldown:
+        disable-cooling: false
+    retry:
+        request-retry: 0
+
+requests:
+    passthrough-headers: true
+
+credentials:
+    concurrency:
+        cpa-heartbeat-timeout: 3s
+        cpa-cancel-bound: 5s
+        reclaim-grace: 5s
+        cleanup-interval: 5s
+        release-flush-interval: 250ms
+        release-max-backoff: 2s
+        busy-retry-min: 250ms
+        busy-retry-max: 1s
+        max-limit: 1000000
+    in-flight:
+        snapshot-interval: 2s
+        stale-after: 10s
+        max-part-bytes: 262144
+        max-part-count: 64
+        max-revision-bytes: 16777216
+        max-aggregate-groups: 100000
+        max-details: 10000
+        max-string-bytes: 256
+        staging-retention: 1m
+
+"quota-exceeded":
+    "switch-project": true
+    "switch-preview-model": true
+
+observability:
+    logs:
+        debug: true
+        logging-to-file: true
+        logs-max-total-size-mb: 64
+    usage:
+        usage-statistics-enabled: true
+        redis-usage-queue-retention-seconds: 60

@@ -54,7 +54,7 @@ Remote skill sources are defined in `../skills/remote-skills-manifest.json`:
 ## Related Commands
 
 - [Sync Skill DNA](./sync-skill-dna.prompt.md) — local source→consumer protocol sync
-- [Skill Review](./review.prompt.md) — post-sync review checklist
+- [Reviewer Skill](../skills/reviewer/SKILL.md) — post-sync review checklist
 
 ---
 

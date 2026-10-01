@@ -19,7 +19,6 @@ Use the table first. Do not scan command bodies unless no route matches and the 
 
 | User says | Command prompt |
 | --- | --- |
-| "review this", "check this" | `../commands/review.prompt.md` |
 | "requirements", "PRD", "TRD", "BDD", "spec this" | `../commands/requirements-lifecycle.prompt.md` |
 | "swarm", "multi-agent", "parallel agents" | `../commands/swarm.prompt.md` |
 | "ralph", "loop", "run until done", "bounded iteration" | `../commands/bounded-iteration.prompt.md` |

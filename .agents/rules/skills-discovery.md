@@ -22,7 +22,7 @@ The active agent config root keeps skills in `skills/`, normally `../skills/`. U
 - **`skill-author` is MANDATORY whenever creating, modifying, editing, or auditing skills, rules, or `.agents/` governance files.** You must consult https://agentskills.io and https://agents.md to verify compliance with latest format specifications.
 - Prefer the most specific skill over broad methodology for non-implementation tasks.
 - Prefer no skill for purely mechanical changes: formatting, config values, renaming with no logic changes.
-- For review tasks, use `../commands/review.prompt.md` or the active config root's `commands/review.prompt.md`.
+- For review tasks, load the `reviewer` skill or use the harness's built-in review command.
 
 ## Common Routing Mistakes
 

@@ -47,7 +47,7 @@ Use this index before loading any skill body. Select one primary skill by defaul
 - Prefer the narrowest skill that matches the user intent.
 - Use `swarm-intelligence` for all swarminator work: Mode Single-Node (one node) or Mode Full Swarm (multi-phase). Prefer explicit mode selection (`/external-subagent` or `/swarm` in environments that expose those commands) to pin the mode.
 - Quick/narrow explicit reviews use one primary matching reviewer skill.
-- Broad, mixed, or deep explicit reviews use `/review` command (loads the `reviewer` skill).
+- Broad, mixed, or deep explicit reviews load the `reviewer` skill (or use the harness's built-in `/review` command).
 - Load deep references only after the selected skill requests them.
 - For skill composition patterns and handoff points, see `WIRING.md`.
 - For project setup from scratch: `project-foundation` → `devsecops` (bootstrap foundation first, then harden the pipeline with security).
