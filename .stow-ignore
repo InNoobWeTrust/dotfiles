@@ -7,6 +7,7 @@ bootstrap\.sh
 
 # Non-dotfile project dirs
 \.innoobwetrust
+\.opencode
 
 # Hermes secrets — never stow the live .env (use .env.example)
 \.hermes/\.env$

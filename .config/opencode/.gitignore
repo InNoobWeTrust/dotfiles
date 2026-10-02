@@ -18,3 +18,4 @@ ipc/
 paste-cache/
 service.json
 installation_id
+dcp.jsonc

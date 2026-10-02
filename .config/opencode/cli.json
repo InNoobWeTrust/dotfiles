@@ -37,9 +37,12 @@
     "copy": "select"
   },
   "debug": {
-    "devtools": true
+    "devtools": true,
+    "turn_tokens": true,
+    "timing": false
   },
   "prompt": {
-    "image_preview": true
+    "image_preview": true,
+    "paste": "full"
   }
 }
