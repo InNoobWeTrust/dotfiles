@@ -101,7 +101,10 @@ fi
 if usable opencode; then
     _opencode_hook() {
         local SVC_CONF PWD_VAL
-        SVC_CONF="$HOME/.config/opencode/service.json"
+        SVC_CONF="$XDG_CONFIG_HOME/opencode/service.json"
+
+        # Set host to 0.0.0.0 explicitly
+        opencode service set hostname "0.0.0.0" >/dev/null 2>&1
 
         if [ -n "$OPENCODE_PORT" ]; then
             if [ ! -f "$SVC_CONF" ] || ! grep -q "\"port\": *$OPENCODE_PORT" "$SVC_CONF" 2>/dev/null; then
