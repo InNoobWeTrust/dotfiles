@@ -169,10 +169,6 @@ usable pkgx && \
         ! usable jupyter && alias jupyter='pkgx jupyter'
         ## yt-dlp
         ! usable yt-dlp && alias yt-dlp='pkgx yt-dlp'
-        ## curl
-        ! usable curl && alias curl='pkgx curl'
-        ## wget
-        ! usable wget && alias wget='pkgx wget'
         ## cloudflared
         ! usable cloudflared && alias cloudflared='pkgx cloudflared'
     }
