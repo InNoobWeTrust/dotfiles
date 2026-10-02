@@ -188,6 +188,8 @@ usable curl && \
 # Node utilities
 usable npx && \
     {
+        # DevContainer
+        ! usable devcontainer && alias devcontainer='npx --yes @devcontainers/cli'
         # http server
         ! usable http-server && alias http-server='npx --yes http-server'
         # Smart contract development
@@ -353,6 +355,14 @@ usable curl && alias install-pkgx='curl -fsS https://pkgx.sh | sh'
 usable curl && alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
 
 usable brew && alias brew-update='brew update && brew upgrade -y && brew cleanup -s && brew autoremove'
+
+#################### devcontainer ######################
+
+if usable bun; then
+    alias install-devcontainer='bun i -g --trust @devcontainers/cli'
+elif usable npm; then
+    alias install-devcontainer='npm i -g --allow-scripts @devcontainers/cli'
+fi
 
 ################# Cheat sheet ##################
 
