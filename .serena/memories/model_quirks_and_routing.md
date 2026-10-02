@@ -18,7 +18,7 @@ Empirical behaviors, cognitive failure modes, billing constraints, and routing i
 
 - **Behavioral Strength**: Gold standard for HITL transparency. Proactively shows trade-offs, exposes doubts, and adheres strictly to frozen contracts and acceptance criteria.
 - **Billing Mismatch (GitHub Copilot)**: Account operates on legacy credit-per-request billing (not token usage) with unpredictable weekly rate limits.
-- **Routing Invariant**: Never use Copilot models for chatty multi-turn orchestrators (`build`). Reserve strictly for single-turn, heavy-payload subagents (`tactical-planner`, `reviewer-deep`, `docs-editor`) where a single request credit extracts maximum analytical value.
+- **Routing Invariant**: Never use Copilot models for chatty multi-turn orchestrators (`build`) or high-volume output roles (`docs-editor`, `research`). Reserve strictly for critical, factual reasoning and contract verification (`software-architect`, `reviewer-deep`) where Claude's anti-hallucination discipline extracts maximum value.
 
 ## 4. DeepSeek v4.1 (DeepSeek-v4.1-flash) & Cheap Flash Marketplace Models
 
