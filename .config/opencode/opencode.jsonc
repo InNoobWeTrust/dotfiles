@@ -15,7 +15,7 @@
       "model": "opencode/mimo-v2.6-flash-free",
     },
     "compaction": {
-      "model": "opencode/mimo-v2.6-flash-free",
+      "model": "kilo/~openai/gpt-luna-latest",
     },
   },
   "server": {
@@ -201,6 +201,82 @@
       "env": [
         "CKEY_API_KEY",
       ],
+      "models": {
+        "forbiddengun/architect": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 384000,
+          },
+        },
+        "forbiddengun/gemini": {
+          "modalities": {
+            "input": [
+              "text",
+              "image",
+              "video",
+              "audio",
+              "pdf",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1048576,
+            "output": 65536,
+          },
+        },
+        "forbiddengun/glm": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 131072,
+          },
+        },
+        "forbiddengun/deepseek": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 384000,
+          },
+        },
+        "forbiddengun/qwen": {
+          "modalities": {
+            "input": [
+              "text",
+            ],
+            "output": [
+              "text",
+            ]
+          },
+          "limit": {
+            "context": 1000000,
+            "output": 64000,
+          },
+        },
+      },
     },
   },
   "permissions": [
@@ -379,12 +455,6 @@
     "batch_tool": true,
     "openTelemetry": false,
   },
-  "plugin": [
-    "opencode-models-discovery@latest",
-    "@tarquinen/opencode-dcp@latest",
-    "@bybrawe/opencode-loop@latest",
-    //"@daytona/opencode",
-  ],
   "plugins": [
     "opencode-models-discovery@latest",
     "@tarquinen/opencode-dcp@latest",
