@@ -12,7 +12,8 @@
     "image_preview": true,
     "tps": true,
     "new_location": "launch",
-    "permissions": "autoaccept"
+    "permissions": "autoaccept",
+    "sidebar": "hide"
   },
   "tabs": {
     "mode": "auto",
@@ -38,8 +39,8 @@
   },
   "debug": {
     "devtools": true,
-    "turn_tokens": true,
-    "timing": false
+    "turn_tokens": "verbose",
+    "timing": true
   },
   "prompt": {
     "image_preview": true,
