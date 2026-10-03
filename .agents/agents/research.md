@@ -1,7 +1,7 @@
 ---
 description: "Web research and source synthesis. Use for multi-source investigations, long-context document/image/PDF reading, claim verification, and cited research briefs. Fallback to `haiku` or `github-copilot-gemini` if `research` is unavailable."
 mode: subagent
-model: "ckey/forbiddengun/gemini"
+model: "opencode/muse-spark-1.3-contributor-free"
 permission:
   edit: allow
 ---
