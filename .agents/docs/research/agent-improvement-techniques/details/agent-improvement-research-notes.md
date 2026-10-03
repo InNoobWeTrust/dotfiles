@@ -40,7 +40,7 @@ Core thesis: **context is a finite attention budget** (context rot). Curate the 
 | Just-in-time retrieval | Pointers + tools load data | codebase-exploration; memory paths |
 | Progressive disclosure | Layered discovery | skills/INDEX → SKILL → references |
 | Compaction | Summarize + new window; clear old tool results | Session handoff; dream cycle adjacency |
-| Structured note-taking | External NOTES re-injected | `.agents/memory/` |
+| Structured note-taking | External NOTES re-injected | `.agents/memories/` |
 | Sub-agents | Isolate deep work; return short summaries | subagent-dispatch output contract |
 
 ---

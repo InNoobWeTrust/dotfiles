@@ -171,7 +171,7 @@ When the user explicitly requests a pre-commit checkpoint:
 3. If subagent delegation is unavailable, run the same analytical pass in the main agent. This may take a minute; tell the user.
 4. Run the report-only form of Phases 1–4 and return the report for user approval before any writes. Approval-gated apply work may happen immediately after approval or in a follow-up apply pass.
 5. Show the eviction proposal from Phase 4 but do **not** block the commit on eviction. Eviction can defer to the next dream cycle.
-6. If any long-term files were changed during an approved apply pass, include them in the commit **only if the user asked to include memory changes**. Do not silently stage `.agents/memory/**`.
+6. If any long-term files were changed during an approved apply pass, include them in the commit **only if the user asked to include memory changes**. Do not silently stage `.agents/memories/**`.
 
 ---
 

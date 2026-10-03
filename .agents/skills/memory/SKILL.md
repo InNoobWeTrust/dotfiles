@@ -75,10 +75,11 @@ Resolve `MEMORY_BACKEND` and `MEMORY_DIR` before any read or write:
 1. **Existing Repo-Local Memory (Highest Priority)**:
    - If `<git-root>/.serena/memories/` exists (or Serena MCP is available), select `MEMORY_BACKEND=serena` and `MEMORY_DIR=<git-root>/.serena/memories/`. Memories are stored as Markdown documents in the repository, with `mem:core` (`core.md`) as the root entry point.
    - If another documented repo-local, file-based memory directory exists (e.g. `.docs/memory/`), select `MEMORY_BACKEND=custom`.
-2. **Default `.agents/memory/` (Fallback)**:
-   - If in a git repository and no existing memory system is present: `MEMORY_BACKEND=default` and `MEMORY_DIR=<git-root>/.agents/memory/`. Created lazily on first Capture.
+2. **Default `.agents/memories/` (Fallback)**:
+   - If in a git repository and no existing memory system is present: `MEMORY_BACKEND=default` and `MEMORY_DIR=<git-root>/.agents/memories/`. Created lazily on first Capture.
 3. **Global Fallback**:
-   - If outside a git repository and no repo-local system exists: `MEMORY_BACKEND=default` and `MEMORY_DIR=~/.agents/memory/`.
+   - If outside a git repository and no repo-local system exists: `MEMORY_BACKEND=default` and `MEMORY_DIR=~/.agents/memories/`.
+
 
 ### Layout by Backend
 
@@ -159,7 +160,8 @@ Apply it to code: `references/pattern-code.md`.
 
 - **Attempting to write atomic plans or consensus boards into `docs/`**: Stop immediately. Route to `MEMORY_DIR/plans/` or `MEMORY_DIR/consensus/`.
 - **Storing agent-focused documents in non-text or opaque formats**: Stop. All artifacts must be file-based plain Markdown with YAML frontmatter.
-- **No `MEMORY_DIR` resolvable and repo not git**: fall back to `~/.agents/memory/`. If the directory does not exist, **create it** (this is the bootstrap case, not an error). If the path exists but is unwritable, stop and report.
+- **No `MEMORY_DIR` resolvable and repo not git**: fall back to `~/.agents/memories/`. If the directory does not exist, **create it** (this is the bootstrap case, not an error). If the path exists but is unwritable, stop and report.
+
 - **Eviction proposal has no scored ranking**: do not evict. Return to `references/eviction-scoring.md` and score first.
 - **Consolidation would rewrite `corrections.md` without an explicit correction request**: stop. Corrections are user-owned; only add, never silently rewrite.
 - **Long-term hard limit hit**: do not delete or archive automatically. Report the overrun to the user; consolidation and eviction require explicit user request regardless of context or availability.

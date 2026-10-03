@@ -33,7 +33,7 @@ If management asks "what is the AI actually doing?" — have data:
 
 | Metric | How to Track |
 |---|---|
-| Tasks completed with AI assistance | Count of short-term memory entries in `.agents/memory/short-term/` |
+| Tasks completed with AI assistance | Count of short-term memory entries in `.agents/memories/short-term/` |
 | AI-generated vs human-written code | Git author analysis |
 | Quality of AI output | Review findings per AI-assisted change |
 | AI cost | Token usage across providers, cost per task or sprint |

@@ -18,17 +18,17 @@ if git rev-parse --show-toplevel succeeds:
         MEMORY_DIR = <custom-path>
     else:
         MEMORY_BACKEND = default
-        MEMORY_DIR = <git-root>/.agents/memory
+        MEMORY_DIR = <git-root>/.agents/memories
 else:
     MEMORY_BACKEND = default
-    MEMORY_DIR = ~/.agents/memory
+    MEMORY_DIR = ~/.agents/memories
 ```
 
 ### Backend Selection & Behavior
 
 #### 1. Serena Backend (`MEMORY_BACKEND = serena`)
 When the repository already maintains a Serena file-based memory system under `<git-root>/.serena/memories/`:
-- **Single Source of Truth**: Do not create or scaffold duplicate `.agents/memory/`. Use `.serena/memories/` exclusively.
+- **Single Source of Truth**: Do not create or scaffold duplicate `.agents/memories/`. Use `.serena/memories/` exclusively.
 - **Discovery Root**: `core.md` (`mem:core`) serves as the graph root, pointing to domain memories via `` `mem:<name>` `` references.
 - **Storage Layout**: Flat markdown files inside `<git-root>/.serena/memories/<topic>.md`.
   - Feature plans: `plan_<feature-slug>.md`
@@ -69,7 +69,7 @@ Never scan a `MEMORY_DIR` outside the repo when working in a repo unless the use
 Storing agent-focused documents in memory does **not** permit opaque, binary, or ephemeral storage:
 1. **Plain Text-Based**: All short-term notes, plans, phases, consensus boards, and long-term bucket files must be stored as plain Markdown (`.md`) files with clean YAML frontmatter.
 2. **Human-Traceable**: Files must use human-readable markdown tables and clear headings so developers can inspect, audit, or edit them directly at any time.
-3. **Git-Committable**: Content must generate clean text diffs. Repositories may commit `plans/`, `consensus/`, and `long-term/` to Git when team tracking of feature progression or agent consensus is desired. Transient scratch files remain in `.agents/memory/short-term/` or Conversation Scratch space.
+3. **Git-Committable**: Content must generate clean text diffs. Repositories may commit `plans/`, `consensus/`, and `long-term/` to Git when team tracking of feature progression or agent consensus is desired. Transient scratch files remain in `.agents/memories/short-term/` or Conversation Scratch space.
 
 
 ---
@@ -375,7 +375,7 @@ Use when the user asks to restore, resume, load context, or lists prior notes.
    - If multiple active short-term entries match, present summaries and ask which to load. Do not silently pick one.
    - Parse the selected file. Print Goal, Current Status, Key Decisions, Next Steps, Blockers. Long-term reads print the matching rows plus their bucket entries.
 
-4. **Authority**: When using a file-based repo-local system (like Serena) or default `.agents/memory/`, the repo-local files are the source of truth. Do not delegate recall to external ungrounded environment stores.
+4. **Authority**: When using a file-based repo-local system (like Serena) or default `.agents/memories/`, the repo-local files are the source of truth. Do not delegate recall to external ungrounded environment stores.
 
 ---
 

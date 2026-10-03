@@ -124,7 +124,7 @@ When a coding session ends and the task will continue later, a **short-term memo
 
 **Long-term is size-limited.** Growth happens only through consolidation, and eviction is always a scored proposal the human approves — never a silent delete. Corrections are append-only and user-owned.
 
-**Memory location:** Inside a git repo, memory lives under `<project-root>/.agents/memory/` with `short-term/` and `long-term/` subdirectories plus an `archive/` for evicted long-term entries. Outside a repo, it falls back to `~/.agents/memory/`. Full layout, frontmatter templates, dream-cycle phases, scoring function, and eviction protocol live in the `memory` skill (`.agents/skills/memory/`).
+**Memory location:** Inside a git repo, memory lives under `<project-root>/.agents/memories/` with `short-term/` and `long-term/` subdirectories plus an `archive/` for evicted long-term entries. Outside a repo, it falls back to `~/.agents/memories/`. Full layout, frontmatter templates, dream-cycle phases, scoring function, and eviction protocol live in the `memory` skill (`.agents/skills/memory/`).
 
 **Progressive-disclosure meta-pattern.** The same short-term-leaf ↔ long-term-index shape applies to docs (`docs/README.md` + section indexes → `docs/**/detail-*.md`) and code (module `index.ts` / `__init__.py` / `mod.rs` → individual files). The `memory` skill's Structure mode applies it to any docs directory or source module on request.
 
