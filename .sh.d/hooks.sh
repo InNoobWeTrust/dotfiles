@@ -22,7 +22,7 @@ usable pyenv && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
 usable nodenv && eval "$(nodenv init -)"
 
 # direnv
-usable direnv && eval "$(direnv hook "${SHELL##*/}")"
+usable direnv && eval "$(direnv hook "$(basename "$SHELL")")"
 
 # cliproxyapi hook
 if usable cliproxyapi; then
