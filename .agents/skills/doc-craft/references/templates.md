@@ -166,3 +166,65 @@ This directory documents the `<Section Name>` subsystem. Load entries based on t
 | `retry_interval_ms` | `number` | `100 <= x <= 10000` | Exponential backoff seed |
 | `dead_letter_arn` | `string` | Valid AWS ARN | Target queue for failed executions |
 ```
+
+---
+
+## Template 5: Code Module README (`<module-path>/README.md`)
+
+Use this template for packages, libraries, subsystems, and code modules. Targets the human engineer mental model: explaining purpose, usage, and boundaries without low-level execution minutiae or commit chatter.
+
+```markdown
+# Module: <Module Name>
+
+| Property | Value |
+|---|---|
+| **Role / Purpose** | 1–2 sentences explaining what capability this module provides and why it exists |
+| **Owner / Boundary** | e.g., Domain Core / Infrastructure Adapter / Shared Utility |
+| **Primary Entrypoint** | e.g., `index.ts`, `mod.rs`, or `client.py` |
+
+---
+
+## 1. Purpose & Mental Model
+> [!NOTE]
+> High-level conceptual explanation of what problem this module solves. Keep jargon minimal.
+
+```mermaid
+flowchart LR
+    Caller[Caller Component] --> Interface[Module Public API]
+    Interface --> CoreLogic[Domain Logic]
+    CoreLogic --> Downstream[Storage / Adapter]
+```
+
+---
+
+## 2. Quick Start / Consumer Usage
+
+```<lang>
+// Concise, working example of how a consumer imports and uses the primary API
+import { createModuleClient } from './index';
+
+const client = createModuleClient({ timeoutMs: 5000 });
+const result = await client.process(payload);
+```
+
+---
+
+## 3. Public Surface & Key Abstractions
+
+| Exported Symbol | Type | Responsibility |
+|---|---|---|
+| `<ClientService>` | Class / Interface | Primary orchestration facade |
+| `<InputDTO>` | Data Contract | Strongly-typed boundary payload |
+| `<ModuleError>` | Error Variant | Typed domain error for caller handling |
+
+> [!IMPORTANT]
+> Internal helpers, sub-functions, and private adapters are hidden details and must not be documented in the public surface table.
+
+---
+
+## 4. Architectural Invariants & Guardrails
+- **Dependency Direction**: This module depends only on `<Dependencies>`. It must never import from `<Caller Layer>`.
+- **Side Effect Boundaries**: Pure functions isolate domain business rules; all I/O is routed through injected ports.
+- **Error Handling**: Throws only typed `<ModuleError>` exceptions; never leaks raw database or HTTP network errors to callers.
+```
+

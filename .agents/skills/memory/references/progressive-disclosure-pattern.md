@@ -16,11 +16,30 @@ Three layers, three loading rules:
 
 | Layer | Loading rule | Example |
 |---|---|---|
-| **Index** | Always available in context | `.agents/skills/INDEX.md`, `long-term/INDEX.md`, `docs/README.md`, module `index.ts` |
+| **Index** | Always available in context | `.agents/skills/INDEX.md`, `long-term/INDEX.md`, `docs/README.md`, `plans/<feature>/plan.md`, module `index.ts` |
 | **Entry** | Loaded when a user or router picks a topic | `SKILL.md`, `long-term/topics/<topic>.md`, doc section, exported symbol |
-| **Leaf** | Loaded when the entry defers to it | `references/*.md`, `short-term/*.md`, internal helper file, private function |
+| **Leaf** | Loaded when the entry defers to it | `references/*.md`, `short-term/*.md`, `plans/<feature>/phases/*.md`, helper file, private function |
 
 An agent traverses index → entry → leaf. It stops as soon as the current layer answers the question.
+
+---
+
+## Document Routing & Audience Invariant (Docs vs Memory)
+
+While both human documentation and agent memory follow progressive disclosure, their **destinations and abstraction levels must never be conflated**:
+
+1. **Human-Facing Documentation (`docs/`, `<module>/README.md`)**:
+   - Written for human engineers, stakeholders, and users.
+   - Must be concise, jargon-free, and pitched at the appropriate feature or architecture abstraction level.
+   - Uses high-level architecture, mental models, and illustrative pseudocode.
+   - Code module `README.md` documents module purpose, usage, key abstractions, and invariants.
+   - Never contains atomic agent task tracking or inter-agent consensus boards.
+
+2. **Agent Execution & Consensus Memory (`MEMORY_DIR`)**:
+   - Written for agents executing tasks, tracking progress, or maintaining consensus.
+   - Holds atomic implementation plans (`plans/<feature>/plan.md`), sequential vertical slice phase specs (`phases/01-*.md`), and consensus boards (`consensus/<topic>.md`).
+   - **File-Based & Git-Committable**: Must remain file-based, human-traceable, plain text Markdown files with YAML frontmatter. Developers must be able to inspect and trace them when they want, and commit them to Git when version control tracking is desired.
+
 
 ---
 
@@ -96,6 +115,9 @@ Short-term recall does not require INDEX traversal — query `short-term/` direc
 | Deep hierarchy (5+ layers) for a small domain | Overhead dominates the payload | Flatten. Merge trivial intermediate layers. |
 | Reference names the target but says nothing about its content | Reader must open the leaf to decide whether it is relevant; defeats routing | Describe which content or decision is covered in the surrounding text of the pointer |
 | Loading guidance ("load this when X") placed inside the leaf | Creates a hidden dependency; the leaf must be loaded to discover when to load itself | Put load triggers in the index row or the entry's routing section |
+| Dump atomic execution plans, phase specs, or consensus boards into `docs/` | Pollutes human documentation with low-level execution trivia | Store atomic plans and consensus in `MEMORY_DIR` (`plans/`, `consensus/`) |
+| Store agent memory in opaque, binary, or untracked stores | Prevents human developers from auditing, reading, or committing to git | Store in file-based plain Markdown with clean YAML frontmatter |
+
 
 ---
 

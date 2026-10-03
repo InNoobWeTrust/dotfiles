@@ -60,5 +60,6 @@ For rewrite, overhaul, or delete-and-rebuild work, load `rules/grooming.md` firs
 | Phase 3 writing or Phase 4 readability/module-README details | `references/write-standards.md` |
 | Greenfield stack or substantial platform capability | `references/languages/README.md` and the smallest matching language reference |
 | Long tool chain, confidence drop, re-reading, or thrash in Phase 3/4 | `references/trajectory-checkpoint.md` |
+| Locking, mutual exclusion, atomic file updates, Git lockfile pattern (`lockfile.h`), decision tree | `references/lock-patterns.md` |
 | Tempted by a design shortcut | `references/anti-patterns.md` |
 | Phased delivery or material cross-slice debt | `../../rules/phased-delivery.md` |

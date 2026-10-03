@@ -103,3 +103,25 @@ flowchart LR
 | **Tradeoffs** | ✅ Fast read latency & reduced query compute · ❌ Stale data window & storage cost |
 | **Key decision** | View refresh trigger mechanism (on-write, scheduled, or streaming CDC) |
 | **Composes with** | CQRS, Event Sourcing, Data Lake/Lakehouse |
+
+---
+
+### State Locking & Mutual Exclusion Hierarchy
+<!-- tags: locking, mutual-exclusion, lockfile, concurrency, advisory-lock, distributed-lock -->
+
+```mermaid
+flowchart TD
+    Start["Resource Mutual Exclusion Needed"] --> Scope{"Shared Resource Scope?"}
+    Scope -->|"Single-Host / CLI / Local State"| Local["Git Atomic Lockfile Pattern\n(O_CREAT|O_EXCL + rename swap + atexit/signal trap)\n-> Zero external dependencies, non-blocking readers"]
+    Scope -->|"Relational DB (App instances)"| DB["Database Advisory Lock / Row Lock\n(pg_advisory_lock / SELECT FOR UPDATE)\n-> Reuses existing DB connection, auto-releases on disconnect"]
+    Scope -->|"Multi-Node Cluster (No shared DB/disk)"| Dist["Distributed Lease with TTL + Fencing Token\n(Redis SET NX PX / etcd / Consul)\n-> High complexity: requires TTL renewal & fencing tokens"]
+```
+
+| Aspect | Detail |
+|---|---|
+| **Use when** | Coordinating state mutations, singleton background jobs, index/config updates, or critical sections across processes. |
+| **Skip when** | Read-only access, immutable append-only event streams, or when atomic DB transactions (`UPDATE ... WHERE version = x`) suffice. |
+| **Tradeoffs** | ✅ Prevents data corruption & race conditions · ❌ Premature distributed locks (e.g. Redis Redlock) add massive operational and network failure complexity. |
+| **Key decision** | Choose the lowest sufficient tier: Git Lockfile (filesystem) → DB Advisory Lock (RDBMS) → Distributed Lease (multi-node with no shared DB/disk). |
+| **Composes with** | Outbox Pattern, Saga Orchestrator, Optimistic/Pessimistic DB Locking (`db-design`), [Code Craft Lock Patterns](../../../code-craft/references/lock-patterns.md). |
+

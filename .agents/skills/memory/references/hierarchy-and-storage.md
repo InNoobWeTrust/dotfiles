@@ -28,22 +28,33 @@ else:
 
 #### 1. Serena Backend (`MEMORY_BACKEND = serena`)
 When the repository already maintains a Serena file-based memory system under `<git-root>/.serena/memories/`:
-- **Single Source of Truth**: Do not create or scaffold `.agents/memory/`. Use `.serena/memories/` exclusively.
+- **Single Source of Truth**: Do not create or scaffold duplicate `.agents/memory/`. Use `.serena/memories/` exclusively.
 - **Discovery Root**: `core.md` (`mem:core`) serves as the graph root, pointing to domain memories via `` `mem:<name>` `` references.
 - **Storage Layout**: Flat markdown files inside `<git-root>/.serena/memories/<topic>.md`.
+  - Feature plans: `plan_<feature-slug>.md`
+  - Slice phase specs: `phase_<feature-slug>_<##>.md`
+  - Consensus boards: `consensus_<topic-slug>.md`
 - **Capture**: Write or update topic-specific Markdown files directly in `<git-root>/.serena/memories/<topic>.md` (or call Serena MCP `write_memory`). When adding a new domain memory, register its reference in `core.md`.
 - **Recall**: Inspect `core.md` to discover domain pointers, then load the relevant `<topic>.md` files (or call Serena MCP `read_memory`).
 - **Conventions**: Follow `memory_maintenance.md` style — dense invariant bullets, durable non-obvious conventions, zero conversational filler.
 
 #### 2. Default Backend (`MEMORY_BACKEND = default`)
 Used as fallback when no established repo-local memory system exists.
-Maintains the two-tier layout:
+Maintains the structured file-based layout:
 ```
 <MEMORY_DIR>/
-├── README.md
-├── short-term/
+├── README.md                    # directory protocol
+├── short-term/                  # session checkpoints + working notes
 │   └── archive/                # done / merged session entries
-├── long-term/
+├── plans/                       # atomic feature plans and execution phase specs
+│   └── <feature-slug>/
+│       ├── plan.md              # atomic plan index (scoped boundaries, locked contracts)
+│       └── phases/              # sequential vertical slice phase files
+│           ├── 01-<slice>.md
+│           └── 02-<slice>.md
+├── consensus/                   # inter-agent consensus boards & deliberation records
+│   └── <topic-slug>.md
+├── long-term/                   # size-limited, INDEX-gated curated memory
 │   ├── INDEX.md
 │   ├── project.md
 │   ├── environment.md
@@ -53,7 +64,13 @@ Maintains the two-tier layout:
 ```
 
 Never scan a `MEMORY_DIR` outside the repo when working in a repo unless the user asks for global memory explicitly.
-Repo-local `.agents/memory/` is runtime state first: keep it gitignored by default unless the repository explicitly decides to version selected scaffolding or long-term memory files.
+
+### File-Based, Human-Traceable, Git-Committable Invariant
+Storing agent-focused documents in memory does **not** permit opaque, binary, or ephemeral storage:
+1. **Plain Text-Based**: All short-term notes, plans, phases, consensus boards, and long-term bucket files must be stored as plain Markdown (`.md`) files with clean YAML frontmatter.
+2. **Human-Traceable**: Files must use human-readable markdown tables and clear headings so developers can inspect, audit, or edit them directly at any time.
+3. **Git-Committable**: Content must generate clean text diffs. Repositories may commit `plans/`, `consensus/`, and `long-term/` to Git when team tracking of feature progression or agent consensus is desired. Transient scratch files remain in `.agents/memory/short-term/` or Conversation Scratch space.
+
 
 ---
 
@@ -254,22 +271,92 @@ When in doubt, leave it in short-term. Consolidate promotes only what clears thi
 
 ---
 
+## Agent Coordination & Execution Storage (Plans, Phases, Consensus Boards)
+
+This storage area holds artifacts shared between agents and used internally to follow tasks, keeping `docs/` clean and dedicated to human-facing mental models.
+
+### 1. Atomic Feature Plans (`MEMORY_DIR/plans/<feature-slug>/plan.md`)
+The orchestrator plan that coordinates vertical slices for a feature:
+
+```yaml
+---
+kind: plan
+feature: user-authentication
+status: in-progress            # in-progress | completed | abandoned
+created: 2026-10-03T20:00:00+07:00
+updated: 2026-10-03T20:15:00+07:00
+---
+```
+**Required Content**:
+- **Executive Summary & Scope Boundary**: In-scope vs out-of-scope files.
+- **Scoped Target File Tree**: Annotated with `[CREATE]`, `[MODIFY]`, `[DELETE]`, `[CLEANUP]`.
+- **Locked Interface Contracts**: Exact code signatures and DTO schemas.
+- **Phase Execution Index**: Links to sequential phase files (`phases/01-<slice>.md`).
+
+### 2. Vertical Slice Phase Specs (`MEMORY_DIR/plans/<feature-slug>/phases/<##>-<slice-name>.md`)
+Self-contained, executable specifications for individual tracer-bullet slices:
+
+```yaml
+---
+kind: phase
+feature: user-authentication
+phase: 1
+slice: session-token-validation
+status: in-progress            # in-progress | completed
+updated: 2026-10-03T20:15:00+07:00
+---
+```
+**Required Content**:
+- **Slice Objective & File Delta**: Target files touched in this slice.
+- **Locked Phase Contracts**: Concrete interfaces implemented.
+- **Step-by-Step TDD Steps**: RED (test) → GREEN (code) → REFACTOR (polish).
+- **Verification Command & Exit Criteria**: Exact command to prove slice completion.
+
+### 3. Inter-Agent Consensus Boards (`MEMORY_DIR/consensus/<topic-slug>.md`)
+Shared boards for multi-agent deliberation, swarm coordination, and design consensus:
+
+```yaml
+---
+kind: consensus
+topic: caching-strategy
+status: resolved               # active | deliberating | resolved
+updated: 2026-10-03T20:15:00+07:00
+---
+```
+**Required Content**:
+- **Deliberation Topic & Context**: The architectural or implementation question.
+- **Positions & Critique**: Stances taken by different agents/personas.
+- **Consensus / Locked Decisions**: Agreed invariants and trade-offs.
+- **Action Items**: Next steps mapped to specific agent tasks or plans.
+
+---
+
 ## Capture mode
 
-Use when the user explicitly asks to save a checkpoint, note, or working state.
+Use when the user explicitly asks to save a checkpoint, note, plan, or working state.
 
 1. Resolve `MEMORY_BACKEND` and `MEMORY_DIR`.
 2. **When using Serena (`MEMORY_BACKEND = serena`)**:
+   - For feature plans: write or update `<MEMORY_DIR>/plan_<feature-slug>.md`.
+   - For slice phase specs: write `<MEMORY_DIR>/phase_<feature-slug>_<##>.md`.
+   - For consensus boards: write `<MEMORY_DIR>/consensus_<topic-slug>.md`.
    - For durable knowledge, decisions, or conventions: write or update `<MEMORY_DIR>/<topic>.md` (or call Serena MCP `write_memory`). Ensure `core.md` has a reference to the topic.
    - For temporary scratchpad/in-progress notes: write to `<appDataDir>/brain/<conversation-id>/scratch/` or maintain in conversation context.
    - Print: backend (`serena`), file path, memory name, whether `core.md` was updated.
 3. **When using Default (`MEMORY_BACKEND = default`)**:
-   - **If `MEMORY_DIR` or `short-term/` does not exist, create the full directory structure** (`short-term/`, `short-term/archive/`, `long-term/`, `long-term/topics/`, `archive/`) now.
-   - Decide bucket: session state → `short-term/<created-stamp>--<branch>--<topic>.md`; durable fact → write to `short-term/` first (scored and promoted on Consolidate).
-   - Look up existing entry by glob `short-term/*--<branch-slug>--<topic-slug>.md` and update or create with timestamp.
+   - **If `MEMORY_DIR` does not exist, create the required directory structure** (`short-term/`, `plans/`, `consensus/`, `long-term/`, `archive/`) now.
+   - **Decide destination by content type**:
+     - **Session state / Working notes** → `short-term/<created-stamp>--<branch>--<topic>.md`.
+     - **Atomic feature plan** → `plans/<feature-slug>/plan.md`.
+     - **Vertical slice phase spec** → `plans/<feature-slug>/phases/<##>-<slice-name>.md`.
+     - **Inter-agent consensus board** → `consensus/<topic-slug>.md`.
+     - **Durable fact / decision** → write to `short-term/` first (scored and promoted on Consolidate).
+   - Look up existing entry by glob and update or create with timestamp.
    - Print: backend (`default`), file path, sections touched, whether Consolidate is pending.
 
 Never treat Capture as a Consolidate trigger. Consolidate has its own rules in `references/dream-cycle.md`.
+Never dump atomic feature plans, slice phase files, or consensus boards into `docs/` — they must always land in `MEMORY_DIR`.
+
 
 ---
 
@@ -303,6 +390,8 @@ Use when the user asks to restore, resume, load context, or lists prior notes.
 ## Stop conditions
 
 - `MEMORY_DIR` cannot be created or is unwritable → stop and report.
+- Attempting to write atomic plans, vertical slice phase files, or consensus boards into `docs/` → stop and redirect to `MEMORY_DIR`.
+- Attempting to store agent coordination in non-text or binary formats → stop; only plain Markdown with YAML frontmatter is allowed.
 - Multiple active short-term files match a Recall query and the user did not disambiguate → stop and list them.
 - Capture would overwrite a `status: done` file → stop; require the user to reopen or start a new topic.
 
@@ -311,6 +400,9 @@ Use when the user asks to restore, resume, load context, or lists prior notes.
 ## Deliverable
 
 - [ ] `MEMORY_DIR` resolved and printed.
-- [ ] Bucket chosen and justified.
+- [ ] Bucket chosen and justified (short-term, plans, consensus, or long-term).
+- [ ] Agent-internal artifacts placed in `MEMORY_DIR`, leaving `docs/` strictly for human mental models.
+- [ ] Stored in file-based, human-traceable, git-committable plain Markdown.
 - [ ] File path + affected sections printed.
 - [ ] Frontmatter valid; `updated` bumped; `consolidated: false` on writes to short-term.
+

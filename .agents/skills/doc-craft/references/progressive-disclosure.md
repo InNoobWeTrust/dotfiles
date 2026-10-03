@@ -4,19 +4,23 @@ Documentation becomes unreadable when too much information is loaded at once. Th
 
 ---
 
-## The Three-Layer Shape
+## The Three-Layer Shape (Human-Facing)
+
+> [!IMPORTANT]
+> The layers below govern **human-facing documentation** (`docs/`, `<module>/README.md`). Internal agent coordination artifacts (atomic plans, sequential vertical slice phase files, inter-agent consensus boards) do NOT belong in `docs/` — they route to `MEMORY_DIR` per [`document-routing-and-audience.md`](document-routing-and-audience.md).
 
 ```
 INDEX (Always loaded / Top-level overview)
  └─ ENTRY (Loaded on topic selection / Router & core flow)
-     └─ LEAF (Loaded on demand / Deep implementation details)
+     └─ LEAF (Loaded on demand / Deep technical details)
 ```
 
 | Layer | Responsibility | Typical Size | Example |
 |---|---|---|---|
 | **Index** | Maps the domain; routes reader to topics based on intent | < 40 rows | `docs/README.md`, `docs/<section>/INDEX.md` |
-| **Entry** | Core workflow, high-level architecture, decision router | < 8 KB | `docs/<section>/<topic>.md` |
-| **Leaf** | Deep dive, edge cases, extensive schema tables, raw logs | < 16 KB | `docs/<section>/details/<leaf>.md` |
+| **Entry** | Core workflow, high-level architecture, decision router | < 8 KB | `docs/<section>/<topic>.md`, `<module>/README.md` |
+| **Leaf** | Deep dive, edge cases, schema tables, parameter reference | < 16 KB | `docs/<section>/details/<leaf>.md` |
+
 
 ---
 
@@ -59,6 +63,7 @@ In the parent entry, replace the extracted prose with:
 
 ## Directory Layout Standards
 
+### Human-Facing Repository Documentation (`docs/`)
 ```
 docs/
 ├── README.md                     # Top-level index: catalog of sections & reader journeys
@@ -67,7 +72,14 @@ docs/
 │   ├── <topic-1>.md              # Topic entry
 │   ├── <topic-2>.md
 │   └── details/
-│       ├── <leaf-a>.md           # Deep leaf details
+│       ├── <leaf-a>.md           # Deep leaf details (parameters, schemas, edge cases)
 │       └── <leaf-b>.md
 └── glossary.md                   # Shared terminology (optional)
 ```
+
+### Human-Facing Code Module Documentation (`<module>/README.md`)
+Placed directly inside each code package or subsystem directory (e.g. `src/auth/README.md`, `packages/parser/README.md`) to document module role, mental model, primary usage, exported abstractions, and invariants at the appropriate abstraction level.
+
+### Agent Coordination Memory (`MEMORY_DIR` — Not `docs/`)
+Atomic execution plans, vertical slice phase files (`phases/01-*.md`), consensus boards, and session checkpoints live under `MEMORY_DIR` (`.agents/memory/`, `.serena/memories/`), preserving clean human documentation while keeping internal agent tracking file-based and git-committable.
+

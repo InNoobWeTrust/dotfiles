@@ -65,9 +65,10 @@ phased-delivery escalation rules require formalization. When delegating,
 
 ### Documentation Craftsmanship
 
-1. `doc-craft` — structure, information layering (Index → Entry → Leaf), visual rhythm (tables over prose, callouts, diagram anchors, anti-wall-of-text)
+1. `doc-craft` — audience routing (human docs in `docs/` and module `README.md` vs agent execution in `memory/`), information layering (Index → Entry → Leaf), appropriate abstraction levels, visual rhythm (tables over prose, callouts, diagram anchors, anti-wall-of-text)
 2. `mermaid-validation` — validate any embedded Mermaid diagrams before publishing
 3. `reviewer` (editorial lens) — grammar, tone, clarity, and scannability review
+
 
 ### Browser Automation
 
@@ -239,7 +240,9 @@ Natural transitions between skills:
 | `investment-assessment` | `swarm-intelligence` (finance domain) | "High-stakes allocation; multi-model finance personas" |
 | `reviewer` (investment-memo lens) | `investment-assessment` | "Review failed gates; revise size/allocation" |
 | Any skill | `memory` (Capture) | "Handoff requested, serializing context and saving progress" |
+| `doc-craft` | `memory` (Capture) | "Content is an atomic feature plan, phase spec, or consensus board — route to memory" |
 | `memory` (Recall) | Any skill | "Session restored, resuming active work" |
+
 | Any skill | `memory` (Consolidate via Subagent) | "Explicit consolidation request — user says 'consolidate memory', 'dream cycle', 'run consolidation', or 'review my notes'" |
 | `memory` (Consolidate via Subagent) | `memory` (Consolidate) | "Approval received or delegation unavailable; applying approved memory writes" |
 | `memory` (Consolidate) | `memory` (Evict) | "Long-term size limits passed, running eviction pass" |

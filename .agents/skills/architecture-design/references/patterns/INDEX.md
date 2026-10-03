@@ -9,7 +9,7 @@ Search this index with `rg` or `grep` to find relevant patterns by keyword.
 | Structural | `structural.md` | microservices, monolith, modular-monolith, hexagonal, clean, onion, layered, plugin |
 | Communication | `communication.md` | event-driven, cqrs, saga, event-sourcing, message-bus, pub-sub, request-reply |
 | Deployment | `deployment.md` | serverless, edge, sidecar, service-mesh |
-| Data | `data.md` | data-mesh, data-lake, polyglot-persistence, sharding, materialized-views |
+| Data | `data.md` | data-mesh, data-lake, polyglot-persistence, sharding, materialized-views, state-locking |
 | Integration | `integration.md` | api-gateway, bff, strangler-fig, anti-corruption-layer |
 | Resilience | `resilience.md` | circuit-breaker, bulkhead, retry-backoff, health-check, chaos-engineering |
 
@@ -22,7 +22,8 @@ Search by concern keyword to find patterns that address it:
 | scaling | microservices, serverless, sharding, edge, cqrs |
 | decoupling | hexagonal, event-driven, message-bus, pub-sub, anti-corruption-layer |
 | migration | strangler-fig, anti-corruption-layer, modular-monolith |
-| consistency | saga, event-sourcing, cqrs, materialized-views |
+| consistency | saga, event-sourcing, cqrs, materialized-views, state-locking |
+| concurrency | state-locking, saga, circuit-breaker, retry-backoff |
 | resilience | circuit-breaker, bulkhead, retry-backoff, health-check, chaos-engineering |
 | security | service-mesh, sidecar, api-gateway |
 | simplicity | monolith, modular-monolith, layered, request-reply |

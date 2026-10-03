@@ -73,6 +73,7 @@ If command execution is restricted, reference the canonical IDs below:
 ### In-Process Concurrency & Resilience
 - `concur-worker-pool`: **Bounded Worker Pool** — Fixed worker goroutines/threads reading from a bounded queue with graceful drain.
 - `concur-task-group`: **Structured Concurrency (TaskGroup)** — Lexical scoping for concurrent child tasks; cancels siblings on failure.
+- `concur-git-lockfile`: **Git Atomic Lockfile** — Mutual exclusion and atomic file updates via `O_CREAT|O_EXCL`, temporary `.lock` write, atomic `rename(2)` swap, and signal/`atexit` crash cleanup. Non-blocking readers, zero external dependencies (see `references/lock-patterns.md`).
 - `concur-exponential-backoff`: **Backoff + Full Jitter** — Prevent thundering herds: `sleep = min(max_delay, base * 2^attempt) * rand()`.
 - `concur-circuit-breaker`: **In-Process Circuit Breaker** — 3-state machine failing fast during downstream degradation.
 - `concur-deadline-propagation`: **Context Cancellation** — Propagate deadlines through all RPC/DB calls; check `ctx.Done()`.
@@ -81,4 +82,4 @@ If command execution is restricted, reference the canonical IDs below:
 - **Claude:** Stop over-abstracting simple functions into generic ABCs/monads. Don't catch broad exceptions and return `None` silently.
 - **GPT:** Stop generating Java-style class hierarchies with getters/setters in TypeScript. Use interfaces and functions. Avoid mutable defaults in Python.
 - **Gemini:** Always validate data at boundaries (Zod/Pydantic). Wrap Go errors with `%w` context instead of returning naked errors.
-- **General:** Don't overuse Go channels for basic mutex needs. Don't call `.clone()` in Rust just to escape borrow checker without understanding ownership.
+- **General:** Don't overuse Go channels for basic mutex needs. Don't call `.clone()` in Rust just to escape borrow checker without understanding ownership. Don't invent distributed locks (Redis/ZooKeeper) or in-place writes for local CLI/state files—use Git lockfile (`references/lock-patterns.md`).
