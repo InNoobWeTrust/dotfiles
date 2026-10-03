@@ -7,8 +7,12 @@
 Personal dotfiles and AI-agent infrastructure (rules, skills, workflows, memory) for cross-harness agent development.
 
 **Operating trajectories:** Distinguish between:
-1. **Software Engineering Delivery** (phased, MVP-first, TDD, slicing, `code-craft` for production codebases).
+1. **Software Engineering Delivery** (phased, MVP-first, TDD, slicing, `code-craft` for production codebases and multi-component systems).
 2. **Scientific Research & Exploratory Ideation** (first-principles, hypothesis tournaments, literature-grounded synthesis, unconstrained proposal ideation via `research-ideation`). Never apply production coding bureaucracy, TDD, or premature verification freezes to scientific research ideation.
+3. **Fast-Path / Utility Scripting & Automation** (dotfiles, CLI utilities, single-file scripts, glue code, local automation, bounded bugfixes).
+   - **Principle: Proportionality.** The ceremony must never exceed the deliverable. A 30-line script must not trigger multi-phase plan files, clean-room TDD subagent isolation, or formal DTO class hierarchies.
+   - **Bypasses:** Bypasses sharded phase files, Clean-Room TDD subagent delegation, formal DTO schemas, and multi-file plans.
+   - **Verification:** Direct execution with observable output (`run_command` with sample inputs) replaces formal test suites.
 
 ## Source of Truth Hierarchy
 
@@ -24,7 +28,7 @@ AGENTS.md (this file — product constraints, operating rules, harness wiring)
 
 - Treat the triggered rules in `rules/INDEX` as binding; load the applicable body before acting.
 - Verify tool outcomes, protect secrets, and use the repository's quality and verification gates.
-- Choose the correct operational trajectory: use Phased Delivery / Slicing for software engineering, but switch to first-principles scientific inquiry for research.
+- Choose the correct operational trajectory: use Phased Delivery / Slicing for production software engineering, first-principles scientific inquiry for research, or Fast-Path / Proportionality for scripts, tooling, and quick fixes.
 
 ## Informed Alignment (universal invariant)
 
@@ -50,7 +54,9 @@ Match user **intent** against skill descriptions in `skills/INDEX.md` to select 
 
 **Rewrite / overhaul / delete-and-rebuild work:** load Grooming, then `code-craft`. Before implementation, identify each old semantic/interface as **delete** or **preserve**; when a public API or consumer app is affected, require an approved consumer-facing contract/stub and sign-off.
 
-**Default for software implementation tasks: load `code-craft`.** It is the baseline for ANY non-trivial code write, feature, refactor, or restructuring in software projects. Do not skip it because the task seems simple — if it touches logic, load it.
+**Software implementation routing:**
+- **Production codebases, multi-file features, architectural refactors:** load `code-craft` as the baseline.
+- **Fast-path utility scripts (<100 lines), shell tools, dotfiles configurations, or bounded local fixes:** execute directly under Trajectory 3 (Fast-Path). Do not load heavyweight `code-craft` tracks or force multi-phase ceremony on self-contained scripts. Write clean, idiomatic code, run it to verify output, and deliver.
 
 **Modifying `.agents/`, skills, or rules: load `skill-author`.** Whenever creating, modifying, editing, or auditing skills, rules, or governance files under `.agents/`, you MUST load `skill-author` as your primary skill and follow official specs at https://agentskills.io and https://agents.md.
 

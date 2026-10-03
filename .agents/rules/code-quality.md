@@ -11,6 +11,8 @@ Applies to every file written or modified. Use this rule for the core design gat
 
 ## Pre-Implementation Principles
 
+> **Proportionality Note:** These principles govern production codebases, multi-component systems, and public interfaces. For Trajectory 3 (Fast-Path utility scripts, shell tools, dotfiles configurations, or self-contained scripts <100 lines), idiomatic native constructs (such as Python dicts/tuples or straightforward linear functions) are completely acceptable. Do not invent unnecessary classes, DTOs, or abstract layers for simple scripts.
+
 Before adding or changing a function, class, or module, confirm all of the following. If any answer is unknown, stop and clarify or redesign.
 
 1. **Single responsibility:** the unit has one job; an "and" in its responsibility signals a split.
@@ -31,6 +33,13 @@ Before implementing a changed public API or consumer application behavior, defin
 
 Before a rewrite, overhaul, or delete-and-rebuild task, identify each old semantic or interface as **preserve** or **delete**. If deletion is intended, remove and recreate the boundary; do not patch new behavior over code intended for deletion. Stop when the preservation decision is unclear.
 
+## Pragmatism Over Pedantry (Anti-Perfectionism Circuit Breaker)
+
+Do not burn reasoning tokens, turns, or iterations endlessly polishing "engineering artistry" or debating micro-refactoring on working code.
+- If a script or utility achieves the user's operational goal and runs without error, it is **DONE**.
+- Never refactor working, self-contained code into multi-class or multi-file hierarchies solely to satisfy abstract purism.
+- Minor stylistic linter suggestions or cosmetic metrics that do not affect correctness, security, or maintainability must never block task completion.
+
 ## Hard Prohibited Behaviors
 
 Do not:
@@ -42,7 +51,8 @@ Do not:
 - Expose undocumented public units or leak internal library implementation details to consumers.
 - Invent new interfaces, altered method signatures, or ad-hoc contract adaptations during implementation that were not approved in the plan (if a contract defect is discovered, stop immediately and report `CONTRACT_DEFECT`).
 - Create unexpected files, unapproved helpers, breach declared in-scope/out-of-scope boundaries, or leave temporary/scratch files in the workspace; all file additions, modifications, and deletions must strictly conform to the approved locked scoped file tree within the in-scope boundary, with complete cleanup.
-- Use magic literals for meaningful values, shallow 1–3 line helper extractions, positional tuple returns across boundaries, or untyped dynamic maps for domain concepts.
+- Use magic literals for meaningful values, shallow 1–3 line helper extractions, positional tuple returns across boundaries, or untyped dynamic maps for domain concepts (in production libraries).
+
 
 ## Just-in-Time References
 

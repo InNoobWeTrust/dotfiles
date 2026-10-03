@@ -21,8 +21,8 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 
 | Rule | Trigger | Size |
 |---|---|---|
-| `tdd.md` | Logic modules / algorithms / services | medium |
-| `grooming.md` | Plans, ambiguous requirements, complex tasks | small |
+| `tdd.md` | Production logic modules / algorithms (waived for Fast-Path) | medium |
+| `grooming.md` | Plans, ambiguous requirements, multi-file systems (waived for Fast-Path) | small |
 | `ubiquitous-language.md` | Logic that introduces or renames domain terms | small |
 | `slicing.md` | Feature plans / `task.md` checklists | small |
 | `phased-delivery.md` | Multi-step product/feature delivery, roadmap/milestone planning, or phased execution | medium |

@@ -11,6 +11,19 @@ This rule applies to **all non-trivial logic implementations, service additions,
 
 ---
 
+## ⚖️ Exemptions & Proportionality (Fast-Path)
+
+Clean-Room TDD and formal Red-Green subagent loops are designed for multi-component production codebases, reusable domain modules, and critical services.
+
+**This rule is explicitly WAIVED for:**
+- **Trajectory 3 (Fast-Path / Utility Scripting & Automation)**: single-file tools, shell/bash scripts, dotfiles configurations, CLI glue code, or self-contained scripts (<100 lines).
+- **Prototyping & exploratory spikes**: when validating technical feasibility before committing to architecture.
+- **Bounded bugfixes ($\le 2$ files)**: where direct execution verification with sample inputs or existing tests is immediate.
+
+For these exempt tasks, write the code directly, verify it by running it (`run_command` with sample inputs or test flags), and deliver immediately. Do NOT spawn blind implementer subagents or create artificial test suites for simple scripts.
+
+---
+
 ## 🧪 Why Test-Driven Development & Context Isolation?
 
 *   **Eliminates Implementation Bias**: When the same agent writes both the test and the code, it naturally tends to write code that satisfies only the test cases it imagined, often missing edge cases or hardcoding shortcuts (cheating the tests).

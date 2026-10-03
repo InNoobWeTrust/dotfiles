@@ -56,6 +56,7 @@ For material decisions at commitment gates, use the canonical `Material decision
 
 *   **Standard / Deep Tasks**: Perform the full explain → questions → synthesis sequence when ambiguity is genuine, reversibility is expensive, or the work needs standard/deep design scrutiny. Wait for the user's answers and explicit decision confirmation (only when a material unresolved decision exists) before drafting the corresponding plan or spec.
 *   **Quick / MVP Slice**: Proceed when the user intent, current task scope boundary, acceptance check, and non-deferrable safety constraints are clear. Do not impose a full interview gate. If a small ambiguity remains, ask *one* focused question or record a reversible assumption; escalate to the full interview if it materially affects outcome, cost of reversal, safety, data, or a public contract.
+*   **Fast-Path / Utility Scripting & Automation (Trajectory 3)**: For single-file tools, shell scripts, CLI utilities, dotfiles configurations, or bounded fixes ($\le 2$ files, under ~100 lines), skip the grooming interview and the Locked Core Implementation Plan Gate entirely. A 2–3 line checklist or direct explanation of the intended change in the conversation turn is sufficient. Proceed directly to implementation and verify with observable output.
 *   **Rewrite-Scoped Tasks**: When the user says "rewrite," "overhaul," "delete and rebuild," or "complete redesign," ask one additional probe: "Which prior interfaces or behaviors must be deleted rather than preserved?" If the answer is vague or affects a public contract, escalate to the full interview.
 *   **Non-Interactive / Automated / AFK Mode** (e.g., scheduled cron, background bounded iteration): Do not block execution waiting for a prompt. Instead, perform a **Self-Grooming Audit** by analyzing the codebase, documenting your design concept and assumptions clearly in the task log or scratch space, and proceeding with execution. The Self-Grooming block MUST use this structure:
     ```markdown
@@ -67,6 +68,8 @@ For material decisions at commitment gates, use the canonical `Material decision
     ```
 
 ## 🔒 Locked Core Implementation Plan Gate (before plan approval)
+
+> **Scope & Exemption Gate:** This gate applies to multi-file software engineering features, substantial system overhauls, and architectural changes. It is **explicitly waived** for Trajectory 3 (Fast-Path / Utility Scripting, single-file tools, and bounded fixes $\le 2$ files). Never create multi-file plans or separate phase files for small scripts.
 
 An implementation plan (`implementation_plan.md`, `plan.md`, `task.md`, or atomic slice specification) is **incomplete and non-executable** if it lacks any of the three locked core parts:
 

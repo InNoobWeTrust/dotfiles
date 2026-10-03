@@ -6,18 +6,19 @@
   },
   "session": {
     "scrollbar": true,
-    "thinking": "hide",
+    "thinking": "show",
     "markdown": "rendered",
     "grouping": "auto",
     "image_preview": true,
     "tps": true,
     "new_location": "launch",
     "permissions": "autoaccept",
-    "sidebar": "hide"
+    "sidebar": "hide",
+    "verbosity": "medium"
   },
   "tabs": {
-    "mode": "auto",
-    "scope": "cwd",
+    "mode": "on",
+    "scope": "global",
     "layout": "horizontal",
     "indicators": "status"
   },
@@ -45,5 +46,6 @@
   "prompt": {
     "image_preview": true,
     "paste": "full"
-  }
+  },
+  "animations": true
 }
