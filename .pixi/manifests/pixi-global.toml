@@ -8,4 +8,4 @@ exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", y
 [envs.dev]
 channels = ["conda-forge"]
 dependencies = { gh = "*", lazydocker = "*", bun = "*", uv = "*", helix = "*", go = "*", nodejs = "*" }
-exposed = { gh = "gh", lazydocker = "lazydocker", bun = "bun", bunx = "bunx", uv = "uv", hx = "hx", go = "go", node = "node", npm = "npm", npx = "npx" }
+exposed = { gh = "gh", lazydocker = "lazydocker", bun = "bun", bunx = "bunx", uv = "uv", uvx = "uvx", hx = "hx", go = "go", node = "node", npm = "npm", npx = "npx" }
