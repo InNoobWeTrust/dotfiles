@@ -774,6 +774,20 @@ EOF
     socat "$listen_opts" "TCP:${target_host}:${target_port}"
 }
 
+# Run development workspace commands; return the wrapper status without exiting this shell.
+dev_workspace() {
+    local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_workspace.ts"
+    if [ ! -r "$helper" ]; then
+        printf '%s\n' 'dev_workspace: helper missing or unreadable; check your shell configuration path.' >&2
+        return 1
+    fi
+    if ! command -v bun >/dev/null 2>&1 || [ ! -x "$(command -v bun)" ]; then
+        printf '%s\n' 'dev_workspace: an executable bun is required on PATH.' >&2
+        return 1
+    fi
+    "$helper" "$@"
+}
+
 # Custom functions
 # shellcheck source=/dev/null
 [ -r "$CONF_SH_DIR/func.user.sh" ] && . "$CONF_SH_DIR/func.user.sh"

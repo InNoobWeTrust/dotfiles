@@ -6,7 +6,7 @@
   },
   "session": {
     "scrollbar": true,
-    "thinking": "show",
+    "thinking": "hide",
     "markdown": "rendered",
     "grouping": "auto",
     "image_preview": true,

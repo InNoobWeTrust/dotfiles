@@ -1,4 +1,5 @@
-#!/usr/bin/env -S ${SHELL} -l
+#!/usr/bin/env -S $(basename $SHELL) -l
+# shellcheck shell=sh
 
 if [ -n "${BASH_SOURCE[0]:-}" ]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

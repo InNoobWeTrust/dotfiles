@@ -1,8 +1,8 @@
 ---
 description: "Pragmatic implementation craftsman. Implements approved functional units, writes scripts, fixes bugs, and performs surgical refactoring. Handles single units or cohesive multi-file changes without unnecessary ceremony. For coding fallback, use `github-copilot-gpt` or `ckey-qwen`."
 mode: subagent
-model: "openai/gpt-6.1-sol"
-variant: low
+model: "opencode/muse-spark-1.3-contributor-free"
+variant: medium
 permission:
   edit: allow
 ---
