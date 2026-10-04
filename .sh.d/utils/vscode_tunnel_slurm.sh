@@ -13,7 +13,6 @@
 
 set -euo pipefail
 
-VSCODE_CLI="/home/vscode/.local/bin/code"
 VSCODE_FILE_KEYCHAIN="VSCODE_CLI_USE_FILE_KEYCHAIN=1"
 
 cmd="${1:-}"
@@ -41,7 +40,7 @@ case "$cmd" in
       --time=0 \
       --output="$PWD/vscode-tunnel-%j.out" \
       --error="$PWD/vscode-tunnel-%j.err" \
-      --wrap="env $VSCODE_FILE_KEYCHAIN $VSCODE_CLI tunnel --accept-server-license-terms --name $name"
+      --wrap="bash -lc 'code=\$(command -v code) || { echo \"code CLI not found in PATH\" >&2; exit 1; }; env $VSCODE_FILE_KEYCHAIN \"\$code\" tunnel --accept-server-license-terms --name $name'"
     echo ""
     echo "Job submitted. Check status with: squeue -u $USER"
     echo "Logs: $PWD/vscode-tunnel-<jobID>.out and $PWD/vscode-tunnel-<jobID>.err (%j is the job ID)"
