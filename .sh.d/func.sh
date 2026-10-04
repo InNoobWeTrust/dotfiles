@@ -788,6 +788,20 @@ dev_workspace() {
     "$helper" "$@"
 }
 
+# Run VS Code tunnel on a Slurm node; return the wrapper status without exiting this shell.
+vscode_tunnel_slurm() {
+    local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/vscode_tunnel_slurm.sh"
+    if [ ! -r "$helper" ]; then
+        printf '%s\n' 'vscode_tunnel_slurm: helper missing or unreadable; check your shell configuration path.' >&2
+        return 1
+    fi
+    if ! command -v srun >/dev/null 2>&1 || [ ! -x "$(command -v srun)" ]; then
+        printf '%s\n' 'vscode_tunnel_slurm: an executable srun is required on PATH.' >&2
+        return 1
+    fi
+    "$helper" "$@"
+}
+
 # Custom functions
 # shellcheck source=/dev/null
 [ -r "$CONF_SH_DIR/func.user.sh" ] && . "$CONF_SH_DIR/func.user.sh"
