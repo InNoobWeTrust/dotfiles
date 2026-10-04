@@ -34,7 +34,7 @@
         "--no-usage-statistics",
         "--browser-url=http://localhost:19222"
       ],
-      "enabled": true
+      "enabled": false,
     },
     "serena": {
       "type": "local",
@@ -48,7 +48,7 @@
         "start-mcp-server",
         "--project-from-cwd"
       ],
-      "enabled": true
+      "enabled": true,
     },
   },
   "provider": {

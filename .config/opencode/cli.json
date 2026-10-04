@@ -12,7 +12,7 @@
     "image_preview": true,
     "tps": true,
     "new_location": "launch",
-    "permissions": "autoaccept",
+    "permissions": "prompt",
     "sidebar": "hide",
     "verbosity": "medium"
   },
@@ -33,7 +33,7 @@
   },
   "attention": {
     "notifications": true,
-    "sound": true
+    "sound": false
   },
   "terminal": {
     "copy": "select"
