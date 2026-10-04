@@ -152,12 +152,19 @@ impl Subprocess {
             }
             None => (Stdio::inherit(), Stdio::inherit()),
         };
+        let app_data = std::env::temp_dir().join("social-pressing-firefox");
+        let app_cache = std::env::temp_dir().join("social-pressing-firefox-cache");
+        let _ = std::fs::create_dir_all(&app_data);
+        let _ = std::fs::create_dir_all(&app_cache);
+
         let mut cmd_builder = Command::new(cmd);
         cmd_builder
             .args(args)
             .stdin(Stdio::null())
             .stdout(pipe_out)
-            .stderr(pipe_err);
+            .stderr(pipe_err)
+            .env("MOZ_APP_DATA", &app_data)
+            .env("MOZ_LOCAL_APP_DATA", &app_cache);
 
         // On Unix create a new session (process group) so driver and any browsers
         // it spawns belong to a distinct group. This makes it possible to signal
@@ -269,30 +276,22 @@ impl WebDriver for GeckoDriver {
 
     #[instrument]
     async fn create_client(&self, headful: bool) -> Result<Client, Box<dyn Error + Sync + Send>> {
-        let browser_args = [
-            "--enable-automation".into(),
-            "False".into(),
-            "--disable-blink-features".into(),
-            "AutomationControlled".into(),
-            if headful {
-                "".into()
-            } else {
-                "--headless".into()
-            },
-        ]
-        .into_iter()
-        .filter(|s: &String| !s.is_empty())
-        .collect::<Vec<String>>();
+        let browser_args = if headful {
+            vec![]
+        } else {
+            vec!["--headless".to_string()]
+        };
 
         let capabilities = serde_json::json!({
             "browserName": "firefox",
             "setWindowRect": true,
             "moz:firefoxOptions": {
-            "prefs": {
-            "intl.accept_languages": "en-GB"
-        },
-            "args": browser_args,
-        },
+                "prefs": {
+                    "intl.accept_languages": "en-GB",
+                    "dom.webdriver.enabled": false
+                },
+                "args": browser_args,
+            },
             "timeouts": {
             "pageLoad": 10_000,
             "implicit": 5_000,
