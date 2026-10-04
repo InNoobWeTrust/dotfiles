@@ -39,9 +39,12 @@ case "$cmd" in
     sbatch \
       --job-name=vscode-tunnel \
       --time=0 \
+      --output="$PWD/vscode-tunnel-%j.out" \
+      --error="$PWD/vscode-tunnel-%j.err" \
       --wrap="env $VSCODE_FILE_KEYCHAIN $VSCODE_CLI tunnel --accept-server-license-terms --name $name"
     echo ""
     echo "Job submitted. Check status with: squeue -u $USER"
+    echo "Logs: $PWD/vscode-tunnel-<jobID>.out and $PWD/vscode-tunnel-<jobID>.err (%j is the job ID)"
     echo "Stop with: $0 stop"
     ;;
   stop)
