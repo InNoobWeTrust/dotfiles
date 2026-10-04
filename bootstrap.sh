@@ -1,4 +1,4 @@
-#!/usr/bin/env -S $(basename $SHELL) -l
+#!/usr/bin/env -S ${SHELL} -l
 # shellcheck shell=sh
 
 if [ -n "${BASH_SOURCE[0]:-}" ]; then

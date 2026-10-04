@@ -34,7 +34,7 @@ case "$cmd" in
       echo "Usage: $0 run <repo>" >&2
       exit 1
     fi
-    name="dw-$(printf '%s' "$repo" | shasum -a 256 | cut -c1-16)"
+    name="dw-$(printf '%s' "$repo" | sha256sum | cut -c1-16)"
     echo "=== Submitting tunnel job (unlimited time) ==="
     sbatch \
       --job-name=vscode-tunnel \

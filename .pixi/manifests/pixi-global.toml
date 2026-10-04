@@ -2,5 +2,10 @@ version = 1
 
 [envs.core-utils]
 channels = ["conda-forge"]
-dependencies = { ripgrep = "*", fd-find = "*", bat = "*", zoxide = "*", eza = "*", git = "*", lazygit = "*", nvim = "*", starship = "*" }
-exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", git = "git", lazygit = "lazygit", nvim = "nvim", starship = "starship" }
+dependencies = { ripgrep = "*", fd-find = "*", bat = "*", zoxide = "*", eza = "*", yazi = "*", git = "*", lazygit = "*", nvim = "*", starship = "*", coreutils = "*", zellij = "*", socat = "*" }
+exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", yazi = "yazi", git = "git", lazygit = "lazygit", nvim = "nvim", starship = "starship", sha256sum = "sha256sum", zellij = "zellij", socat = "socat" }
+
+[envs.dev]
+channels = ["conda-forge"]
+dependencies = { gh = "*", lazydocker = "*", bun = "*", uv = "*", helix = "*", go = "*", nodejs = "*" }
+exposed = { gh = "gh", lazydocker = "lazydocker", bun = "bun", bunx = "bunx", uv = "uv", hx = "hx", go = "go", node = "node", npm = "npm" }
