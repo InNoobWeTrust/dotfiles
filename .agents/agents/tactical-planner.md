@@ -1,7 +1,7 @@
 ---
 description: "Tactical planner for multi-step tasks, straightforward feature breakdowns, and bug fix sequencing. Produces proportional, executable execution units without over-planning simple work. If quota is fully drained, use `ckey-glm`."
 mode: subagent
-model: "proxy/sonnet"
+model: "openai/gpt-6.1-sol"
 variant: medium
 permission:
   bash: deny
