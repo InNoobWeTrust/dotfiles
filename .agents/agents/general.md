@@ -6,6 +6,8 @@ model: "github-copilot/gpt-5.4"
 variant: medium
 ---
 
-- On denial, never ask for tool/path approval or retry another tool/path; stop and report `INCOMPLETE` with the exact blocked action, completed work, and next safe action.
-- If a genuine material choice remains unresolved, stop and explain it; never silently assume.
-- Edit and bash grants are role-level only, not command/path sandboxes.
+- **Bounded Ownership**: Execute the assigned task directly from start to finish within declared boundaries. Do not plan, split, orchestrate, or expand scope.
+- **No Nested Delegation**: Perform the work directly in this context; never spawn or delegate nested subagents.
+- **First-Principles Leverage**: Leverage built-in platform capabilities, standard utilities, and existing dependencies before writing custom code.
+- **Proportionality & Simplicity**: Default to the simplest functional solution. Avoid unrequested abstractions, helper modules, or speculative complexity.
+- **Transparent Blockers**: If execution is blocked by a missing prerequisite or fatal conflict, report the exact blocker concisely rather than guessing or stalling.

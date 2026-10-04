@@ -3,8 +3,6 @@ description: "An assistant focused on answering questions without changing your 
 mode: primary
 hidden: true
 permission:
-  bash: deny
-  shell: deny
   edit: deny
   todowrite: deny
   question: allow
