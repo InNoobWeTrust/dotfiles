@@ -39,8 +39,8 @@ Build the full structure (`rules/` + `skills/` with index and wiring) even if yo
 
 1. Start with instructions-file-only (embedded rules, routing table, composition pathways)
 2. When the harness supports loading separate rule files, extract embedded rules into `rules/*.md` and replace the instructions file content with a short reference (`Follow all rules in rules/*.md`)
-3. When the harness supports a skill index, extract the routing table into `.agents/skills/INDEX.md`
-4. When the harness supports composition wiring, extract pathways into `.agents/skills/WIRING.md`
+3. When the harness supports a skill index, extract the routing table into `.agents/skills/INDEX`
+4. When the harness supports composition wiring, extract pathways into `.agents/skills/WIRING`
 
 ### What Goes in AGENTS.md
 

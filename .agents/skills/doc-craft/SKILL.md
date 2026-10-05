@@ -40,8 +40,7 @@ Do **not** load for:
    - **Index**: Router/catalog for a directory (`README.md`, `INDEX.md`). Must stay under 40 rows.
    - **Entry**: Primary guide, topic overview (`<topic>.md`), or module README (`<module>/README.md`). Focuses on core flow and common paths (< 8 KB).
    - **Leaf**: Deep technical details, edge case catalogs, full parameter schemas (`details/<leaf>.md`).
-3. **Apply Size Limits**: If an existing document exceeds **12 KB**, prepare to shard deep sections into `details/`.
-4. Reference: [`references/progressive-disclosure.md`](references/progressive-disclosure.md).
+3. **Apply Size Limits & Progressive Splitting**: If an existing document exceeds **12 KB**, shard it into leaves (Pattern A) or ordered sequential files (Pattern B). For directory indexing ("index docs") or document sharding ("shard doc"), follow [`references/progressive-disclosure.md`](references/progressive-disclosure.md).
 
 ### Phase 2 — Abstraction Calibration & Visual Scaffolding
 Before drafting sentences, calibrate abstraction and build the visual skeleton:

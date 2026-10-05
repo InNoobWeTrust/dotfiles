@@ -532,7 +532,7 @@ Predictive quality suggestions, cross-project knowledge sharing, skill effective
 1. Create `AGENTS.md` with source-of-truth hierarchy
 2. Create `GLOSSARY.md` with domain terminology
 3. Set up `.agents/rules/` with the 7 essential rules
-4. Set up `.agents/skills/INDEX.md` and `WIRING.md`
+4. Set up `.agents/skills/INDEX` and `WIRING`
 5. Define quality gates with thresholds
 6. Set up automated build & deploy pipeline with environment separation
 7. Create a `Makefile` as single entry point

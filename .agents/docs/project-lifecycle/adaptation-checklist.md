@@ -7,8 +7,8 @@ Use this checklist when bootstrapping a new project or auditing an existing one 
 - [ ] `AGENTS.md` at repo root with source-of-truth hierarchy, project rules, tooling rules
 - [ ] `GLOSSARY.md` with domain terms, code references, and prohibited aliases
 - [ ] `.agents/rules/` with code quality baseline, TDD enforcement, grooming protocol, glossary sync, vertical slicing, skill compliance
-- [ ] `.agents/skills/INDEX.md` routing table (which skill fits which task)
-- [ ] `.agents/skills/WIRING.md` composition pathways (how skills chain together)
+- [ ] `.agents/skills/INDEX` routing table (which skill fits which task)
+- [ ] `.agents/skills/WIRING` composition pathways (how skills chain together)
 - [ ] `docs/architecture.md` with responsibility split and data ownership model
 - [ ] `docs/engineering/quality-gates.md` with command matrix and thresholds
 - [ ] `Makefile` with fix, lint, quality, test targets

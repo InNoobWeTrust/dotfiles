@@ -150,7 +150,7 @@ Working memory (leaf) ↔ long-term memory (index) is one instance of the same s
 | Rules | `rules/<name>.md` | `rules/INDEX` |
 | Skills | `skills/<name>/references/*.md` | `SKILL.md` |
 
-**Rule**: the index carries only the smallest key facts + pointers. The leaf carries detail and is loaded on demand. This is exactly the routing pattern the project already uses for skills (`skills/INDEX.md` → `SKILL.md` → `references/*`).
+**Rule**: the index carries only the smallest key facts + pointers. The leaf carries detail and is loaded on demand. This is exactly the routing pattern the project already uses for skills (`skills/INDEX` → `SKILL.md` → `references/*`).
 
 Apply it to code: `references/pattern-code.md`.
 

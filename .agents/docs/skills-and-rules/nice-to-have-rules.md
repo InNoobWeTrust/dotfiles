@@ -4,7 +4,7 @@ These rules add value but aren't essential on day one. Add them when the failure
 
 ### Memory (Short-Term + Long-Term)
 
-**Skill:** `skills/memory/SKILL.md` | **Command:** `commands/memory.prompt.md`
+**Skill:** `skills/memory/SKILL.md`
 
 **When to add:** When you've lost context between sessions and had to re-explain the task, need to persist facts/decisions/corrections across sessions, or want a curated long-term memory that stays bounded. Also the vehicle for applying the same progressive-disclosure pattern to docs and code.
 

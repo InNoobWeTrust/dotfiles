@@ -60,4 +60,4 @@ When sharing or adopting skills across projects or teams:
    Copy or sync `.agents/rules/` (and `.agents/AGENTS.md`) into your repository root alongside `.agents/skills/`.
 
 3. **Wire via `AGENTS.md`**:
-   Ensure your harness entry point (`AGENTS.md` or `.agents/AGENTS.md`) references `rules/INDEX` and `skills/INDEX.md` so agents know when to load rules and skills.
+   Ensure your harness entry point (`AGENTS.md` or `.agents/AGENTS.md`) references `rules/INDEX` and `skills/INDEX` so agents know when to load rules and skills.

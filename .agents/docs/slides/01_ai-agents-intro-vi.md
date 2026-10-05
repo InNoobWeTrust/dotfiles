@@ -515,7 +515,7 @@ Gợi ý cải thiện cấu trúc tự động, chia sẻ kiến thức xuyên 
 1. Tạo `AGENTS.md` với source-of-truth hierarchy
 2. Tạo `GLOSSARY.md` với thuật ngữ domain
 3. Thiết lập `.agents/rules/` với 6 rules thiết yếu
-4. Thiết lập `.agents/skills/INDEX.md` và `WIRING.md`
+4. Thiết lập `.agents/skills/INDEX` và `WIRING`
 5. Định nghĩa quality gates với ngưỡng
 6. Thiết lập pipeline build & deploy tự động với phân tách môi trường
 7. Tạo `Makefile` làm entry point duy nhất

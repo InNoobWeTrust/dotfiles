@@ -32,14 +32,14 @@ use crate::driver::{ClientActionExt, GeckoDriver, WebDriver};
 use crate::utils::delay;
 
 #[instrument]
-fn read_lines(filepath: &std::path::PathBuf) -> Vec<String> {
+fn read_lines(filepath: &std::path::Path) -> Result<Vec<String>, std::io::Error> {
     // Read the file line by line, and return an iterator of the lines of the file.
-    fs::read_to_string(filepath)
-        .unwrap()
+    let content = fs::read_to_string(filepath)?;
+    Ok(content
         .lines()
         .map(|l| l.to_owned())
         .filter(|l| !l.trim().is_empty())
-        .collect::<Vec<_>>()
+        .collect::<Vec<_>>())
 }
 
 async fn report_step<F>(
@@ -444,14 +444,16 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         .flatten();
 
     let mut links = read_lines(&link_file)
+        .map_err(|e| format!("failed to read link file '{}': {}", link_file.display(), e))?
         .into_iter()
         .filter(|l| Url::parse(l).is_ok())
         .collect::<Vec<_>>();
     links.shuffle(&mut rand::rng());
 
-    let cookies_raw_json = fs::read_to_string(cookie_file.to_owned())
-        .expect(&format!("failed to read {}", cookie_file.to_str().unwrap()));
-    let cookies: Vec<CookieJson> = serde_json::from_str(&cookies_raw_json)?;
+    let cookies_raw_json = fs::read_to_string(&cookie_file)
+        .map_err(|e| format!("failed to read cookie file '{}': {}", cookie_file.display(), e))?;
+    let cookies: Vec<CookieJson> = serde_json::from_str(&cookies_raw_json)
+        .map_err(|e| format!("failed to parse cookie file '{}': {}", cookie_file.display(), e))?;
     // WHY: Cookie exports often contain duplicate names (re-export / multi-profile);
     // keep the freshest by expirationDate so stale xs/c_user do not overwrite.
     let cookies = dedupe_cookies_prefer_freshest(cookies);
@@ -464,12 +466,12 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
     let is_tty = std::io::stdin().is_terminal();
 
-    if let Some(logfile) = args.logfile {
+    if let Some(ref logfile_path) = args.logfile {
         let logfile = std::fs::OpenOptions::new()
             .append(true)
             .create(true)
-            .open(logfile)
-            .unwrap();
+            .open(logfile_path)
+            .map_err(|e| format!("failed to open logfile '{}': {}", logfile_path.display(), e))?;
 
         // stdout layer, to view everything in the console
         let stdout_layer = fmt::layer()

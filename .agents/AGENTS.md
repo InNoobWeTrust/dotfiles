@@ -19,7 +19,7 @@ Personal dotfiles and AI-agent infrastructure (rules, skills, workflows, memory)
 ```
 AGENTS.md (this file — product constraints, operating rules, harness wiring)
   └─ rules/INDEX              → rule bodies (load on trigger, not upfront)
-      └─ skills/INDEX.md      → SKILL.md → references/*
+      └─ skills/INDEX         → SKILL.md → references/*
 ```
 
 **Do not bulk-load rules or skills.** Use `rules/INDEX` as the map, load a rule body only when its trigger fires, and load a skill reference only when its workflow requires it.
@@ -48,7 +48,7 @@ A decision is material when it changes user-visible behavior, data semantics, se
 
 ## Skill Routing
 
-Match user **intent** against skill descriptions in `skills/INDEX.md` to select one primary skill; optionally add one review/safety lens.
+Match user **intent** against skill descriptions in `skills/INDEX` to select one primary skill; optionally add one review/safety lens.
 
 **Scientific research, literature synthesis, hypothesis generation, or paper proposals:** load `research-ideation`. In this trajectory, bypass software-engineering roadmaps, TDD, slicing, and administrative terminology freezes. Encourage bold, first-principles "what-if" thinking, cross-modality analogies, adversarial hypothesis tournaments, and falsifiable experiment designs.
 

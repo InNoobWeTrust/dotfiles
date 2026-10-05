@@ -75,7 +75,7 @@ Consolidate into an actionable report:
 2. **Rule changes proposed**: From Phase B1 with recommended actions.
 3. **Skill changes proposed**: From Phase B2 with lifecycle transitions.
 4. **New rules/skills proposed**: From Phase B3 failure review.
-5. **Deprecation candidates**: Rules and skills to mark `[DEPRECATED]` or remove. Mark deprecated in INDEX.md for one quarter before deletion.
+5. **Deprecation candidates**: Rules and skills to mark `[DEPRECATED]` or remove. Mark deprecated in INDEX for one quarter before deletion.
 6. **Glossary drift** (if applicable): New terms found that aren't in GLOSSARY.md.
 7. **Data gaps**: What tracking data was unavailable and should be collected for the next audit.
 8. **Next review date**: Schedule the next audit.

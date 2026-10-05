@@ -1,5 +1,5 @@
 ---
-description: "Applies when discovering and selecting skills. Enforces index-first routing using skills/INDEX.md to prevent bulk-loading and context bloat."
+description: "Applies when discovering and selecting skills. Enforces index-first routing using skills/INDEX to prevent bulk-loading and context bloat."
 globs: "*"
 alwaysApply: false
 trigger: model_decision
@@ -11,7 +11,7 @@ The active agent config root keeps skills in `skills/`, normally `../skills/`. U
 
 ## When to Check
 
-1. Read `../skills/INDEX.md`, or `skills/INDEX.md` relative to the active agent config root, when skill routing is needed.
+1. Read `../skills/INDEX`, or `skills/INDEX` relative to the active agent config root, when skill routing is needed.
 2. Match the user's **intent** (not just keywords) against skill descriptions. Descriptions use imperative phrasing ("Use this skill when...") — treat them as activation conditions.
 3. Load the selected skill's `SKILL.md` only after the index route matches.
 4. Compose skills only when the second skill is a clear safety or review lens.

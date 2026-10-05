@@ -51,7 +51,7 @@ What caught the problem first — a sensor, a rule, a human, or nothing?
 
 | Gap type | Fix location | Example |
 |---|---|---|
-| **Skill routing** — wrong skill loaded, or no skill existed | `skills/INDEX.md` or new skill | Task needs architecture review but only `code-craft` was loaded. |
+| **Skill routing** — wrong skill loaded, or no skill existed | `skills/INDEX` or new skill | Task needs architecture review but only `code-craft` was loaded. |
 | **Skill workflow** — right skill, but a phase is missing or unclear | Skill `references/` | `code-craft` skipped verification step. |
 | **Rule missing** — no rule covered the failure | `.agents/rules/` or `AGENTS.md` | Agent staged secrets because no secret-scan rule was active. |
 | **Rule ignored** — rule exists but agent did not follow it | Rule wording or stop condition | Rule was too long and buried in context. |

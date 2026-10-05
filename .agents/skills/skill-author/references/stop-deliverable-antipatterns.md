@@ -13,8 +13,8 @@
 - [ ] Skill scope defined (A2)
 - [ ] Workflow outline designed (A3)
 - [ ] SKILL.md written with all 7 sections (A4)
-- [ ] INDEX.md updated (A5)
-- [ ] WIRING.md updated if composition exists (A5)
+- [ ] INDEX updated (A5)
+- [ ] WIRING updated if composition exists (A5)
 - [ ] Queued for prototype audit (A6)
 
 **For Workflow B (Maintain)**:
@@ -44,5 +44,5 @@
 
 ## References
 
-- `INDEX.md` — Current skill catalog (Phase A5/B2 target)
-- `WIRING.md` — Composition registry (Phase A5 target)
+- `INDEX` — Current skill catalog (Phase A5/B2 target)
+- `WIRING` — Composition registry (Phase A5 target)

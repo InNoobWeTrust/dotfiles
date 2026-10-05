@@ -4,7 +4,7 @@
 
 ### Phase A1 — Validate Need for a New Skill
 
-1. **Does an existing skill already cover this?** Check `skills/INDEX.md` — could this be handled by extending an existing skill with a new `references/` file?
+1. **Does an existing skill already cover this?** Check `skills/INDEX` — could this be handled by extending an existing skill with a new `references/` file?
 
 2. **Does this task type repeat frequently?** A skill is warranted when:
    - The task type repeats 3+ times per sprint
@@ -90,13 +90,13 @@ Write the file following the documented template:
 
 ### Phase A5 — Register the Skill
 
-1. **Add to INDEX.md**: New row in the routing table:
+1. **Add to INDEX**: New row in the routing table:
    ```
    | `skill-name` | cost | Use When: [from trigger phrases] | Do Not Use When: [exclusion criteria] |
    ```
    Cost: low (simple), medium (multi-phase with tooling), high (multi-agent/external).
 
-2. **Add to WIRING.md**: If the skill composes with others, add composition patterns and handoff points.
+2. **Add to WIRING**: If the skill composes with others, add composition patterns and handoff points.
 
 3. **Create directory**: `skills/<skill-name>/` with `SKILL.md`, optionally `references/` and `assets/`.
 

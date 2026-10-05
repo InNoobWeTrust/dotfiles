@@ -11,8 +11,8 @@ Run these checks without rewriting healthy files. Produce a **gap report**, then
 - [ ] Every **required** skill tree from `core-pack.md` is present with `SKILL.md`
 - [ ] `reviewer/references/sub-reviewers/` has at least: code-quality, security, adversarial, design-rigor, edge-case-hunter, editorial
 - [ ] `requirements-driven-dev/references/` exists if that skill is listed required
-- [ ] `skills/INDEX.md` lists all required skills with Use When / Do Not Use When
-- [ ] `skills/WIRING.md` exists
+- [ ] `skills/INDEX` lists all required skills with Use When / Do Not Use When
+- [ ] `skills/WIRING` exists
 - [ ] `Makefile` has help/fix/lint/quality/test/dev/build (or documented equivalents)
 - [ ] `docs/architecture.md` and `docs/engineering/quality-gates.md` exist
 - [ ] `DESIGN.md` exists for UI/frontend projects (verified via `ui-ux` skill)
@@ -71,7 +71,7 @@ Source: <path>
 Trigger **Audit/Evolve** (not full Bootstrap) when any of:
 
 - User says: audit foundation, evolve agents setup, sync .agents, foundation drift, missing skills
-- `INDEX.md` routes to a skill path that does not exist
+- `skills/INDEX` routes to a skill path that does not exist
 - New major subsystem landed and `docs/architecture.md` / `GLOSSARY.md` were not updated in the same change set
 - Global pack revision in `FOUNDATION.md` is older than 90 days (copy mode) and user is doing foundation-related work
 - First session in a repo that has `AGENTS.md` but no `.agents/FOUNDATION.md`

@@ -44,4 +44,4 @@ AGENTS.md / instructions (always) → rule pointer → rule body (on fire)
 - Modifying `.agents/`, skills, or rules without loading `skill-author` and checking https://agentskills.io + https://agents.md
 - Duplicating rule text into every skill (link instead)
 - Project forks of global rules without a documented overlay reason
-- Loading skills without checking `skills/INDEX.md` first
+- Loading skills without checking `skills/INDEX` first

@@ -3,11 +3,9 @@
 
 # Explicit tracking
 !/agents/
-!/commands/
 !/docs/
 !/instructions/
 !/memories/
-!/prompts/
 !/rules/
 !/scripts/
 !/skills/

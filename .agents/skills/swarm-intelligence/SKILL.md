@@ -5,7 +5,7 @@ description: "Use this skill for multi-agent orchestration — Mode Single-Node 
 
 # Swarm Intelligence (Swarminator)
 
-One skill, two modes. **Choose the mode first** — compliance and preflight differ. Commands pin the mode: `/external-subagent` → Single-Node, `/swarm` → Full Swarm.
+One skill, two modes. **Choose the mode first** — compliance and preflight differ. Mode triggers: `/external-subagent` or single-task delegation → Single-Node, `/swarm` or multi-agent cross-validation → Full Swarm.
 
 > Loading this skill binds you to the **chosen mode’s full procedure**. Do not run a “lite swarm” that is neither a locked single node nor a full three-phase swarm. Real `swarminator` invocations only — no prose simulations. See `rules/skill-compliance.md` for Full Swarm hard gates.
 
@@ -17,9 +17,9 @@ Compose with `subagent-dispatch` for prompt contracts before any node launch.
 
 | Signal | Mode | Cost |
 |---|---|---|
-| `/external-subagent` command, or one concrete deliverable / one node / research / second opinion / review / patch suggestion | **Single-Node** | low |
+| `/external-subagent` trigger, or one concrete deliverable / one node / research / second opinion / review / patch suggestion | **Single-Node** | low |
 | User asks for one isolated delegated node / worker to offload a small task | **Single-Node** | low |
-| `/swarm` command, or multi-phase / ambiguous / high-stakes / quorum / challenge cycles | **Full Swarm** | high |
+| `/swarm` trigger, or multi-phase / ambiguous / high-stakes / quorum / challenge cycles | **Full Swarm** | high |
 | User says swarm, multi-agent, diverse perspectives, cross-validate | **Full Swarm** | high |
 | Unsure | Prefer **Single-Node**; escalate to Full Swarm only if the artifact is still insufficient after one tight retry | — |
 
@@ -38,7 +38,7 @@ Is the deliverable one bounded artifact from one model context?
 Discover CLI at runtime — do not hard-code stale flags:
 
 ```bash
-command -v swarminator
+command -v swarminator || { brew tap InNoobWeTrust/tap && brew install swarminator; }
 swarminator --help
 swarminator --list-agents
 swarminator --list-providers

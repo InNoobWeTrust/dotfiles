@@ -18,7 +18,7 @@
 | Evaluator in a loop | `reviewer` + `bounded-iteration` pairing | Pattern present; easy to misuse without HITL |
 | Feedback sensors | rules + quality tooling (Part 2) + agent loop | Stronger where repos already have real gates |
 
-Composition sketch lives in `.agents/skills/WIRING.md` under "Web QA Audit" — treat as **wiring for this toolkit**, not curriculum.
+Composition sketch lives in `.agents/skills/WIRING` under "Web QA Audit" — treat as **wiring for this toolkit**, not curriculum.
 
 ---
 

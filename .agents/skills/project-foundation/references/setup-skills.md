@@ -261,7 +261,7 @@ When `project-foundation` detects a complex stack, it should:
 
 1. Ask whether to create a project-local `setup` skill.
 2. If yes, generate the skill from this reference pattern.
-3. Add `setup` to the project `skills/INDEX.md`.
+3. Add `setup` to the project `skills/INDEX`.
 
 ---
 

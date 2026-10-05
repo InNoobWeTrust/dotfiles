@@ -39,14 +39,14 @@ Do **not** invent project-only rule bodies that duplicate global content. Materi
 
 Also materialize:
 
-- `skills/INDEX.md` — project routing table (may slim specialized skills)
-- `skills/WIRING.md` — composition (can symlink to global)
+- `skills/INDEX` — project routing table (may slim specialized skills)
+- `skills/WIRING` — composition (can symlink to global)
 
 ## Skills (do **not** force-copy unless the project uses them)
 
 `swarm-intelligence` (Single-Node + Full Swarm via mode router; pin with `/external-subagent` or `/swarm`), `data-storytelling`, `cdp-browser-automation`, `ui-ux` (materialize when project contains UI/frontend components or maintains a `DESIGN.md` visual system), `video-production`, `talent-screening`, `model-benchmarking`, featherless personas, large asset CSVs — **link or copy only on demand**. Putting them in every repo wastes disk and INDEX attention.
 
-**INDEX slim rule:** project `skills/INDEX.md` lists core pack + used domain skills only. Unused global rows are noise for attention routing.
+**INDEX slim rule:** project `skills/INDEX` lists core pack + used domain skills only. Unused global rows are noise for attention routing.
 
 ## Materialization methods
 
@@ -70,7 +70,7 @@ If none found and copy is required, stop and ask where the source pack lives.
 ## Project overlays (allowed local drift)
 
 - Extra skills under `.agents/skills/<project-specific>/`
-- Extra rows in `INDEX.md` for those skills
+- Extra rows in `INDEX` for those skills
 - Product rules in `AGENTS.md` (not duplicated into global rule files)
 - Optional thin adapters that only point at global skills (keep adapters <30 lines)
 

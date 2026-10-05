@@ -1,6 +1,6 @@
 ---
 name: project-foundation
-description: "Use this skill to bootstrap, audit, or evolve a project's AI-augmented foundation — AGENTS.md, GLOSSARY.md, rules, skills core pack, Makefile, architecture docs, and quality gates. Activate for new project setup, foundation drift detection, syncing .agents from global, or when INDEX.md points at missing skills. Skip when editing a single existing rule or skill body with no pack-level change."
+description: "Use this skill to bootstrap, audit, or evolve a project's AI-augmented foundation — AGENTS.md, GLOSSARY.md, rules, skills core pack, Makefile, architecture docs, quality gates, and canonical MCP synchronization (.agents/mcp.json). Activate for new project setup, foundation drift detection, syncing .agents from global, syncing MCP configurations, or when INDEX.md points at missing skills. Skip when editing a single existing rule or skill body with no pack-level change."
 ---
 
 # Project Foundation
@@ -11,6 +11,7 @@ Progressive disclosure: this file is the workflow. Pack membership and checklist
 
 - `references/core-pack.md` — what must be on disk
 - `references/drift-checks.md` — audit checklist + auto-trigger signals
+- `references/mcp-sync.md` — synchronize canonical `.agents/mcp.json` to agent harness configs
 - `references/FOUNDATION.template.md` — stamp written to `.agents/FOUNDATION.md`
 
 ---
@@ -22,6 +23,7 @@ Progressive disclosure: this file is the workflow. Pack membership and checklist
 | No `AGENTS.md` / no `.agents/` / "set up new project" | **A — Bootstrap** |
 | "audit foundation", "evolve", "sync .agents", missing skill at runtime, stale architecture/glossary | **B — Audit/Evolve** |
 | Core skills only as INDEX stubs; teammate can't load skills | **C — Materialize core pack** (often inside A or B) |
+| "sync mcp", "update mcp config" | **MCP Sync** (load `references/mcp-sync.md`) |
 
 State the chosen mode in one line before acting.
 
@@ -71,12 +73,12 @@ Materialize **required rules** from `references/core-pack.md` into `.agents/rule
 
 Materialize **required skill trees** from `references/core-pack.md` — full directories including `references/` for `reviewer` and `requirements-driven-dev`.
 
-**Forbidden:** creating only `INDEX.md` / `WIRING.md` that *mention* global skills without a project-resolvable path.
+**Forbidden:** creating only `INDEX` / `WIRING` that *mention* global skills without a project-resolvable path.
 
 Also write:
 
-- `skills/INDEX.md` — core rows + any project-specific skills only
-- `skills/WIRING.md` — symlink to global or minimal local composition
+- `skills/INDEX` — core rows + any project-specific skills only
+- `skills/WIRING` — symlink to global or minimal local composition
 - `.agents/FOUNDATION.md` — from `references/FOUNDATION.template.md` (source, mode, revision, date)
 
 #### A5.1 — Optional: setup skill overlay
@@ -129,9 +131,19 @@ Standalone fix for "bootstrap left stubs / missing companion skills":
 1. Resolve global source (`references/core-pack.md` → Detect global source).
 2. Choose symlink vs copy (ask if shared-repo impact is unclear).
 3. Materialize every **required** rule and skill tree.
-4. Rewrite `INDEX.md` so every row resolves on disk.
+4. Rewrite `INDEX` so every row resolves on disk.
 5. Write/update `FOUNDATION.md`.
 6. Run drift-checks section A–B only.
+
+---
+
+## MCP Synchronization
+
+Synchronize canonical `.agents/mcp.json` to the current agent harness configuration file:
+
+1. Follow [`references/mcp-sync.md`](references/mcp-sync.md) for target paths and schema conversions (e.g. Kilo Code).
+2. Merge into the active agent's config preserving other options.
+3. Remind user to restart the agent harness or reload the window for new servers to register.
 
 ---
 

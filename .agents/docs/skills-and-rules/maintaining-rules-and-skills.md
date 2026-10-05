@@ -32,7 +32,7 @@ This review is the primary driver of rule and skill evolution.
 Every 6 months, have someone unfamiliar with the project attempt an AI-assisted task using only:
 - `AGENTS.md` for context
 - `.agents/rules/` for constraints
-- `.agents/skills/INDEX.md` for task routing
+- `.agents/skills/INDEX` for task routing
 
 Observe where they struggle. Those are the gaps in your agent infrastructure.
 

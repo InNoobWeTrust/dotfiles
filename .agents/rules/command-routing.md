@@ -1,33 +1,27 @@
 ---
-description: "Applies when user requests or slash commands map to prompt templates in commands/*.prompt.md. Governs argument substitution, thin wrappers, and command execution flow."
+description: "Applies when user requests or slash commands map to workflows. Directly routes slash commands and command triggers to skills instead of intermediate prompt files."
 globs: "*"
 alwaysApply: false
 trigger: model_decision
 ---
 
-# Command Routing
+# Command & Slash Shortcut Routing
 
-Canonical command prompts live in `../commands/*.prompt.md`, or `commands/*.prompt.md` relative to the active agent config root. CLI-specific command discovery paths may symlink to that directory, but must not duplicate command content.
+Harnesses increasingly deprecate standalone command prompts in favor of tagging skills directly. When a user invokes a slash shortcut or command-like trigger phrase, map it directly to the primary skill and workflow reference below:
 
-When invoked through Kilo/OpenCode custom commands, prompt bodies may use `$ARGUMENTS` and positional placeholders like `$1`, `$2`, and `$3`. `$ARGUMENTS` may be multi-line and should be treated as raw text.
-
-Commands are entrypoints. Commands that wrap skills must stay thin and defer to the named skill for methodology, references, and detailed workflow. Standalone commands may keep their own procedure when no skill owns that domain.
-
-## Routing Rule
-
-Use the table first. Do not scan command bodies unless no route matches and the user explicitly asks for a command-like workflow; in that case, list command names only before choosing a route.
-
-| User says | Command prompt |
-| --- | --- |
-| "requirements", "PRD", "TRD", "BDD", "spec this" | `../commands/requirements-lifecycle.prompt.md` |
-| "swarm", "multi-agent", "parallel agents" | `../commands/swarm.prompt.md` |
-| "ralph", "loop", "run until done", "bounded iteration" | `../commands/bounded-iteration.prompt.md` |
-| "save handoff", "checkpoint", "save context", "note this", "remember this", "save memory", "resume", "restore", "load context", "what was I working on", "consolidate memory", "dream cycle", "prune memory", "forget", "structure docs", "split module" | `../commands/memory.prompt.md` |
-| "benchmark", "optimize agents", "model comparison" | `../commands/benchmark-agents.prompt.md` |
-| "sync mcp", "update mcp config" | `../commands/sync-mcp.prompt.md` |
-| "brainstorm", "ideate" | `../commands/brainstorming.prompt.md` |
-| "sync remote skills", "pull remote skills" | `../commands/sync-remote-skills.prompt.md` |
-| "screen CVs", "review candidates" | `../commands/cv-screening.prompt.md` |
-| "shard doc", "split document", "chunk document" | `../commands/shard-doc.prompt.md` |
-| "index docs", "build doc index", "documentation index" | `../commands/index-docs.prompt.md` |
-| "party mode", "coordinate agents" | `../commands/party-mode.prompt.md` |
+| User / Slash Command | Target Skill & Workflow | Notes |
+| --- | --- | --- |
+| `/requirements`, "requirements", "PRD", "TRD", "BDD", "spec this" | `requirements-driven-dev` | Load `references/core/lifecycle.md` for full lifecycle |
+| `/swarm`, "swarm", "multi-agent", "parallel agents" | `swarm-intelligence` | Select Mode Full Swarm |
+| `/external-subagent`, "single-node", "subagent worker" | `swarm-intelligence` | Select Mode Single-Node |
+| `/bounded-iteration`, `/ralph`, "loop", "run until done", "bounded iteration" | `bounded-iteration` | Machine-verifiable iteration loop |
+| `/memory`, "save handoff", "checkpoint", "save context", "remember this", "resume", "consolidate memory", "dream cycle", "prune memory" | `memory` | Two-tier session memory and consolidation |
+| `/benchmark-agents`, `/benchmark`, "optimize agents", "model comparison" | `model-benchmarking` | Model benchmarking, ELO, pricing comparison |
+| `/sync-mcp`, "sync mcp", "update mcp config" | `project-foundation` | Load `references/mcp-sync.md` to sync `.agents/mcp.json` |
+| `/brainstorming`, `/brainstorm`, "ideate" | `brainstorming` | Structured multi-phase ideation |
+| `/sync-remote-skills`, "sync remote skills", "pull remote skills" | `skill-author` | Load `references/remote-skills-sync.md` (`sync-remotes.sh`) |
+| `/cv-screening`, "screen CVs", "review candidates" | `talent-screening` | Structured CV + OSINT candidate evaluation |
+| `/shard-doc`, "shard doc", "split document", "chunk document" | `doc-craft` | Load `references/progressive-disclosure.md` §Pattern B |
+| `/index-docs`, "index docs", "build doc index", "documentation index" | `doc-craft` | Load `references/progressive-disclosure.md` §Directory Indexing |
+| `/party-mode`, "party mode", "coordinate agents" | `multi-perspective-deliberation` | Multi-persona adversarial stress testing |
+| `/grill-me`, "grill me", "informed alignment" | `rules/grooming.md` + `code-craft` | Explain-first informed alignment interview |

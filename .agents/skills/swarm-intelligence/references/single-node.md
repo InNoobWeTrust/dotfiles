@@ -5,7 +5,7 @@ Bounded one-node `swarminator` delegation. Host keeps workspace control. Nodes n
 ## Runtime references
 
 ```bash
-command -v swarminator
+command -v swarminator || { brew tap InNoobWeTrust/tap && brew install swarminator; }
 swarminator --help
 swarminator --tutorial
 swarminator --protocol

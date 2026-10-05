@@ -146,8 +146,8 @@ impl Subprocess {
     ) -> Result<Self, std::io::Error> {
         let (pipe_out, pipe_err) = match logfile {
             Some(p) => {
-                let out = File::create(p.clone()).unwrap();
-                let err = File::create(p).unwrap();
+                let out = File::create(p.clone())?;
+                let err = File::create(p)?;
                 (Stdio::from(out), Stdio::from(err))
             }
             None => (Stdio::inherit(), Stdio::inherit()),
@@ -248,6 +248,7 @@ impl GeckoDriver {
         Ok(Self { proc, port })
     }
 
+    #[allow(dead_code)]
     pub fn new(port: usize, logfile: &Path) -> Result<Self, std::io::Error> {
         let proc = Subprocess::new(
             "geckodriver",

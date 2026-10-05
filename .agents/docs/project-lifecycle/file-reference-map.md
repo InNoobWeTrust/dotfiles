@@ -11,8 +11,8 @@
 | `.agents/rules/slicing.md` | Vertical slicing protocol for feature decomposition | Engineering lead |
 | `.agents/rules/skill-compliance.md` | Binding workflow enforcement, hard-stop gates | Engineering lead |
 | `.agents/rules/self-grounded-verification.md` | Two-step anti-agreement-bias verification protocol | Engineering lead |
-| `.agents/skills/INDEX.md` | Skill routing table with cost and applicability columns | Engineering lead |
-| `.agents/skills/WIRING.md` | Skill composition pathways and skill-to-skill transitions | Engineering lead |
+| `.agents/skills/INDEX` | Skill routing table with cost and applicability columns | Engineering lead |
+| `.agents/skills/WIRING` | Skill composition pathways and skill-to-skill transitions | Engineering lead |
 | `.agents/skills/memory/` | Two-tier memory skill: short-term entries, long-term consolidation, dream cycle, eviction protocol, progressive-disclosure structuring | Engineering lead |
 | `docs/architecture.md` | System design, responsibility split, data ownership model | Engineering lead |
 | `docs/engineering/quality-gates.md` | Quality thresholds, command matrix, escalation rules | Engineering lead |

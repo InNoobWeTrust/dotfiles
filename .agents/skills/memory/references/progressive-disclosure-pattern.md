@@ -16,7 +16,7 @@ Three layers, three loading rules:
 
 | Layer | Loading rule | Example |
 |---|---|---|
-| **Index** | Always available in context | `.agents/skills/INDEX.md`, `long-term/INDEX.md`, `docs/README.md`, `plans/<feature>/plan.md`, module `index.ts` |
+| **Index** | Always available in context | `.agents/skills/INDEX`, `long-term/INDEX.md`, `docs/README.md`, `plans/<feature>/plan.md`, module `index.ts` |
 | **Entry** | Loaded when a user or router picks a topic | `SKILL.md`, `long-term/topics/<topic>.md`, doc section, exported symbol |
 | **Leaf** | Loaded when the entry defers to it | `references/*.md`, `short-term/*.md`, `plans/<feature>/phases/*.md`, helper file, private function |
 

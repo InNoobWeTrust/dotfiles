@@ -6,7 +6,7 @@
 2. Identify primary domain (code, skill-review, writing, slides, design, pm, finance).
 3. Clarify final deliverable shape.
 4. Confirm read-only node constraint is acceptable.
-5. Verify swarminator: `command -v swarminator`.
+5. Verify swarminator: `command -v swarminator || { brew tap InNoobWeTrust/tap && brew install swarminator; }`.
 6. Inspect CLI: `swarminator --help`.
 7. List agents and providers: `swarminator --list-agents` and `swarminator --list-providers`.
 8. Discover models dynamically and let the user choose:
