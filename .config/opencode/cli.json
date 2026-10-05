@@ -12,7 +12,7 @@
     "image_preview": true,
     "tps": true,
     "new_location": "launch",
-    "permissions": "prompt",
+    "permissions": "autoaccept",
     "sidebar": "hide",
     "verbosity": "medium"
   },

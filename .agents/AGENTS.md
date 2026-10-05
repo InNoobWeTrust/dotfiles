@@ -52,7 +52,7 @@ Match user **intent** against skill descriptions in `skills/INDEX` to select one
 
 **Scientific research, literature synthesis, hypothesis generation, or paper proposals:** load `research-ideation`. In this trajectory, bypass software-engineering roadmaps, TDD, slicing, and administrative terminology freezes. Encourage bold, first-principles "what-if" thinking, cross-modality analogies, adversarial hypothesis tournaments, and falsifiable experiment designs.
 
-**Rewrite / overhaul / delete-and-rebuild work:** load Grooming, then `code-craft`. Before implementation, identify each old semantic/interface as **delete** or **preserve**; when a public API or consumer app is affected, require an approved consumer-facing contract/stub and sign-off.
+**Rewrite / overhaul / delete-and-rebuild work:** load Grooming, then `code-craft`. Before implementation, identify each old semantic/interface as **delete** or **preserve**; when a public API or consumer app is affected, require an approved consumer-facing contract/stub and sign-off. **Backward compatibility is never assumed:** always ask the user before acting whether backward compatibility is required for the specific task and repository instead of auto-deciding to create or retain shims/forwarders.
 
 **Software implementation routing:**
 - **Production codebases, multi-file features, architectural refactors:** load `code-craft` as the baseline.

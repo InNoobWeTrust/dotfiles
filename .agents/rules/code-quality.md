@@ -33,6 +33,12 @@ Before implementing a changed public API or consumer application behavior, defin
 
 Before a rewrite, overhaul, or delete-and-rebuild task, identify each old semantic or interface as **preserve** or **delete**. If deletion is intended, remove and recreate the boundary; do not patch new behavior over code intended for deletion. Stop when the preservation decision is unclear.
 
+## Backward Compatibility & Deprecation Gate (Ask Before Action)
+
+Never unilaterally auto-decide to preserve backward compatibility, generate forwarding shims, keep legacy scripts, or retain deprecated aliases without explicit user instruction.
+- **Context sensitivity:** Different repositories and workflows have fundamentally different needs: established enterprise codebases may require careful compatibility bridges, whereas personal dotfiles, utilities, and daily fast-path coding favor clean removal over legacy baggage.
+- **Mandatory ask-before-action gate:** Whenever an existing interface, file, command, or script is replaced, renamed, or overhauled, **ask the user before acting** whether they want to preserve backward compatibility (via shims/forwarders) or cleanly remove the old artifact. Never silently default to keeping compatibility bridges.
+
 ## Pragmatism Over Pedantry (Anti-Perfectionism Circuit Breaker)
 
 Do not burn reasoning tokens, turns, or iterations endlessly polishing "engineering artistry" or debating micro-refactoring on working code.
@@ -51,6 +57,7 @@ Do not:
 - Expose undocumented public units or leak internal library implementation details to consumers.
 - Invent new interfaces, altered method signatures, or ad-hoc contract adaptations during implementation that were not approved in the plan (if a contract defect is discovered, stop immediately and report `CONTRACT_DEFECT`).
 - Create unexpected files, unapproved helpers, breach declared in-scope/out-of-scope boundaries, or leave temporary/scratch files in the workspace; all file additions, modifications, and deletions must strictly conform to the approved locked scoped file tree within the in-scope boundary, with complete cleanup.
+- Silently auto-decide backward compatibility, create unrequested forwarding shims or aliases, or retain deprecated legacy files without asking the user first.
 - Use magic literals for meaningful values, shallow 1–3 line helper extractions, positional tuple returns across boundaries, or untyped dynamic maps for domain concepts (in production libraries).
 
 

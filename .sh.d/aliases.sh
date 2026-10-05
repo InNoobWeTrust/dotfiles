@@ -373,6 +373,13 @@ elif usable wget; then
     alias install-pixi='wget -qO- https://pixi.sh/install.sh | sh'
 fi
 
+# install devtunnel (Microsoft Dev Tunnels CLI)
+if usable curl; then
+    alias install-devtunnel='curl -fsSL https://aka.ms/DevTunnelCliInstall | bash'
+elif usable wget; then
+    alias install-devtunnel='wget -qO- https://aka.ms/DevTunnelCliInstall | bash'
+fi
+
 
 ################### NodeJs #####################
 

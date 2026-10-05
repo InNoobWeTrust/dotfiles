@@ -5,15 +5,20 @@
 - Run with `bun --no-env-file`; Commander 15.0.0 is the only external runtime import, which Bun may fetch/cache.
 - Devcontainer commands use `bunx --bun --package @devcontainers/cli@0.89.0 devcontainer`.
 
-| Command                          | What it does                                      |
-| -------------------------------- | ------------------------------------------------- |
-| `dev_workspace prepare [REPO]`    | Print unchanged adjacent config; no writes/Docker. |
-| `dev_workspace up [REPO] [--config /path/to/devcontainer.json]` | Create/resume; optionally use an explicit config. |
-| `dev_workspace status [REPO]`     | Print Docker's state string or `absent`.           |
-| `dev_workspace stop [REPO]`       | Stop without removing the container.              |
-| `dev_workspace login [REPO]`      | Authenticate interactively inside the container.  |
-| `dev_workspace tunnel [REPO]`     | Run the remote tunnel in the foreground.          |
-| `dev_workspace help [COMMAND]`    | Show help.                                        |
+| Command                                       | What it does                                      |
+| --------------------------------------------- | ------------------------------------------------- |
+| `dev_workspace prepare [REPO]`                 | Print unchanged adjacent config; no writes/Docker. |
+| `dev_workspace up [REPO] [--config PATH]`      | Create/resume; optionally use an explicit config. |
+| `dev_workspace status [REPO]`                  | Print Docker's state string or `absent`.           |
+| `dev_workspace stop [REPO]`                    | Stop without removing the container.              |
+| `dev_workspace tunnel [host] [REPO]`           | Run VS Code tunnel in foreground (default: `host`). |
+| `dev_workspace tunnel login [REPO]`            | Authenticate VS Code tunnel inside container.      |
+| `dev_workspace devtunnel [host] [REPO]`        | Host SSH port 22 via Dev Tunnel (mimics `devtunnel host`). |
+| `dev_workspace devtunnel login [REPO]`         | Authenticate Dev Tunnel inside container (mimics `devtunnel user login`). |
+| `dev_workspace devtunnel connect [REPO]`       | Connect to Dev Tunnel from host (mimics `devtunnel connect`). |
+| `dev_workspace devtunnel ssh [REPO] [-p PORT]` | Connect via SSH to container port (default: 2222). |
+| `dev_workspace completion [SHELL]`            | Generate shell autocompletion script (bash or zsh). |
+| `dev_workspace help [COMMAND]`                 | Show help.                                        |
 
 ## Repository resolution
 - Explicit REPO must be an existing directory; it is canonicalized with realpath.
@@ -21,57 +26,70 @@
 - Paths must suit Docker bind-mount syntax; mount delimiters are not validated.
 
 ## Configuration
-- Default: adjacent static `dev_workspace.json`; nothing is generated or cached.
-- Edit the fixed `name` (`dev-workspace`) and other settings directly, or copy the file and pass `--config`.
-- `.devcontainer/devcontainer.json` and `.devcontainer.json` in REPO are ignored unless named by `--config`.
-- Explicit configs pass unchanged, without parsing or compatibility validation.
-- Custom configs need not supply template limits, user, mount, or VS Code setup; none are guaranteed.
-- `prepare` prints unchanged adjacent JSON bytes; the official CLI resolves literal `${localWorkspaceFolder}`.
+- Default: built-in embedded configuration. When `--config` is omitted, `up` writes a temporary configuration to `/tmp` and automatically cleans it up on exit.
+- Optional custom config: pass `--config /path/to/devcontainer.json` to use an explicit configuration.
+- `prepare`: prints the embedded JSON configuration directly to stdout (useful for piping: `dev_workspace prepare > my-config.json`).
+- If an adjacent `dev_workspace.json` is present, it will be used as a local override when `--config` is omitted.
 
 ## Container template
 - Image: `mcr.microsoft.com/devcontainers/base:ubuntu`; writable REPO bind at `/workspace`.
 - Requests 2 CPUs, 4 GiB memory, 4 GiB total memory+swap, and 512 PIDs.
 - Requests a 256 MiB `/tmp` tmpfs with `noexec,nosuid,nodev`.
-- No privilege, added capabilities, extra mounts, or forwarded ports; Docker default networking.
+- Forwards port 2222 for local SSH access.
+- No privilege, added capabilities, or extra mounts; Docker default networking.
 - Effective container controls are not inspected or verified; these requests are not sandbox certification.
 
 ## Setup inside the container
 - Static config selects the `vscode` user and disables environment probing.
-- JSON post-create installs the official standalone VS Code CLI for Linux x64/arm64 at `~/.local/bin/code`.
-- The hook reuses an existing executable; network access is required and post-create is not skipped.
+- JSON post-create installs both:
+  1. Official standalone **VS Code CLI** (`code`) at `~/.local/bin/code`.
+  2. Official **Microsoft Dev Tunnels CLI** (`devtunnel`) at `~/.local/bin/devtunnel`.
+  3. Preconfigures **OpenSSH server** (`sshd`) on port 22 with `vscode` password/key authentication.
 - `--dotfiles-repository` is `https://github.com/InNoobWeTrust/dotfiles`.
 - `--dotfiles-install-command` is the executable repository file `bootstrap.sh`.
-- Dotfiles are not a custom JSON field or clone lifecycle hook; bootstrap and installed binaries are not verified live.
 
-## Lifecycle
-- `stop`/`status`/`login`/`tunnel` match the exact `dev-workspace.repo` canonical-path label.
-- No match prints `absent`; multiple matches refuse; `stop` stops without removing.
-- `up` delegates creation/resume to the official CLI without parsing output or verifying retained IDs.
-- Failed setup never auto-removes the container.
+## Modes: Full VS Code vs Lightweight Devtunnel SSH
 
-## Remote access
-- `login`/`tunnel` run inside the matched container via the official CLI with inherited stdio; stopped containers may fail.
-- Both run `/home/vscode/.local/bin/code tunnel` with `VSCODE_CLI_USE_FILE_KEYCHAIN=1`.
-- `login` adds `user login`; `tunnel` adds `--accept-server-license-terms` and a deterministic `dw-` name.
-- Authenticate interactively, then keep the tunnel foreground; custom configs must supply that user/path.
-- Install and authenticate OpenCode manually in the remote terminal if wanted; the wrapper never installs it or copies credentials.
+- **Full VS Code mode** (`dev_workspace tunnel`):
+  Runs `code tunnel` inside the container. Ideal for connecting via desktop VS Code or `vscode.dev` when you want extensions, remote debugging, and GUI.
+- **Lightweight Devtunnel mode** (`dev_workspace devtunnel`):
+  Hosts SSH port 22 through Microsoft Dev Tunnels. Ideal for terminal apps (iTerm2, Alacritty, Kitty, WezTerm) without extension overhead or heavy Electron memory usage.
+  - On client machine: `dev_workspace devtunnel connect` (or `devtunnel connect dt-<hash>`)
+  - SSH in any terminal: `dev_workspace devtunnel ssh` (or `ssh -p <port> vscode@127.0.0.1`)
 
-## Output and exit codes
-- Official output and errors are inherited unchanged; `status` prints Docker's state string.
-- Exit codes: 0 for success/help/absent; Commander-native for argument errors; 1 for wrapper errors; child status for delegation.
-- Queries have a five-second timeout; foreground commands have no wrapper timeout.
+## Slurm Cluster Tunnels (`dev_slurm.sh`)
 
-## Shell function
-- `func.sh` exposes `dev_workspace` and forwards every argument to the standalone script.
-- Returns the child's status without exiting the shell; fails loudly for an unreadable script or missing `bun` in `PATH`.
+For HPC / Slurm clusters where node storage and memory are constrained:
+
+| Command | What it does |
+| ------- | ------------ |
+| `dev_slurm tunnel [host] [REPO]` | Submit full VS Code tunnel batch job (runs `code tunnel`). |
+| `dev_slurm tunnel auth` | Interactive PTY shell for authenticating VS Code credentials. |
+| `dev_slurm tunnel stop` | Cancel running VS Code tunnel batch job. |
+| `dev_slurm devtunnel [host] [REPO] [PORT]` | Submit lightweight Devtunnel batch job for SSH (port 22). |
+| `dev_slurm devtunnel auth` | Interactive PTY shell for authenticating Devtunnel credentials. |
+| `dev_slurm devtunnel connect [REPO]` | Connect to Dev Tunnel from client machine. |
+| `dev_slurm devtunnel stop` | Cancel running Devtunnel batch job. |
+| `dev_slurm status`                         | Check running tunnel batch jobs.                             |
+| `dev_slurm stop`                           | Cancel all active tunnel batch jobs.                         |
+| `dev_slurm completion [SHELL]`             | Generate shell autocompletion script (bash or zsh).          |
+
+## Autocompletion
+Both utilities provide built-in autocompletion for themselves:
+- **`dev_workspace completion [bash|zsh]`**: Emits full Zsh/Bash completion scripts matching all commands, subcommands, and flags.
+- **`dev_slurm completion [bash|zsh]`**: Emits completion scripts for Slurm tunnel commands.
+- **Automated caching**: `.sh.d/completion.sh` automatically caches the generated completions into `$XDG_CACHE_HOME` and only re-executes if the underlying script file is updated (`-nt`).
+
+## Shell functions
+- `func.sh` exposes `dev_workspace()` and `dev_slurm()`. (Functions use `_`; aliases use `-`).
 
 ## File locations
 
 | Path                             | Purpose                                                          |
 | -------------------------------- | ---------------------------------------------------------------- |
-| `.sh.d/utils/dev_workspace.ts`    | Standalone executable containing the entire utility.             |
-| `.sh.d/utils/dev_workspace.json`  | Static devcontainer config `up` passes to the official CLI.       |
-| `.sh.d/func.sh`                   | Shell wrapper `dev_workspace()` autoloaded via `.shrc`.           |
+| `.sh.d/utils/dev_workspace.ts`   | Standalone executable containing the unified tunnel workspace CLI. |
+| `.sh.d/utils/dev_slurm.sh`       | Slurm batch job runner for VS Code tunnel and Devtunnel.          |
+| `.sh.d/func.sh`                  | Shell functions autoloaded via `.shrc`.                           |
 
 ## Tests
 - No test file is present; earlier focused tests used the real script with external executable fixtures and were removed.
