@@ -78,6 +78,7 @@ Activating a skill by reading its `SKILL.md` is a binding commitment to execute 
 
 ## Process Management
 
-- Do not kill or restart processes in zellij, tmux, or screen sessions.
-- Do not start background processes with `&` or `nohup`.
-- For server issues, identify and report — do not restart.
+- **Long-running commands & background tasks:** Prioritize terminal multiplexers (`tmux`, fallback to GNU `screen` if absent) over harness background tasks or ad-hoc backgrounding (`&`, `nohup`). See `rules/execution-safety.md`.
+- **Namespacing:** Always prefix agent-spawned sessions with `agent-` (e.g., `agent-devserver`) and redirect stdout/stderr to `/tmp/agent-<name>.log`.
+- **User session protection:** Never kill, hijack, or alter user processes or existing sessions in zellij, tmux, or screen. Only manage agent-created `agent-*` sessions.
+- **Server issues:** Identify and report — do not restart unexpectedly.

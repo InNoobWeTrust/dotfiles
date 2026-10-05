@@ -1,5 +1,5 @@
 ---
-description: "Applies whenever running shell commands, executing scripts, or accessing configuration. Enforces secret isolation, ephemeral runners, and script execution hygiene."
+description: "Applies whenever running shell commands, executing scripts, accessing configuration, or managing long-running processes. Enforces secret isolation, ephemeral runners, script hygiene, and terminal multiplexer priority."
 globs: "*"
 alwaysApply: true
 trigger: always_on
@@ -7,7 +7,7 @@ trigger: always_on
 
 # Execution Safety
 
-This rule applies whenever you execute shell commands, run scripts, or access configuration. It covers two mandatory concerns: **secret isolation** and **script execution hygiene**.
+This rule applies whenever you execute shell commands, run scripts, or access configuration. It covers three mandatory concerns: **secret isolation**, **script execution hygiene**, and **long-running process management (multiplexer priority)**.
 
 ---
 
@@ -142,6 +142,45 @@ Stop and ask the user before installing system-wide tools. If the project has a 
 
 ---
 
+## Long-Running Processes: Multiplexer Priority
+
+Harness-level background process management (async task tools, background flags, subshell daemons) and ad-hoc backgrounding (`&`, `nohup`) are error-prone and brittle across agent harnesses: stdout/stderr buffers are easily lost, processes can become orphaned zombies, and the user has no direct visibility into running jobs.
+
+For any long-running command, dev server, watcher, test runner, or daemon:
+**Prioritize a terminal multiplexer** to ensure OS-level session persistence, inspectable logs, and clean lifecycle management:
+
+1. **`tmux` (Primary)**: Standard modern multiplexer with robust pane/buffer capture and session scripting.
+2. **GNU `screen` (Fallback)**: Universal Unix fallback when `tmux` is absent.
+3. **Neither available**: Run bounded tasks synchronously with an explicit timeout, or ask the user to install `tmux` / start the service manually. **Never silently spawn unmonitored background tasks via `&` or `nohup`.**
+
+### Mandatory Multiplexer Constraints
+
+- **Prefix session names with `agent-`** (e.g. `agent-devserver`, `agent-tests`).
+- **Never touch user sessions**: Do not attach to, kill, or send keys to any session lacking the `agent-` prefix, nor any existing user sessions in `zellij`, `tmux`, or `screen`.
+- **Piped logging**: Always redirect stdout/stderr to `/tmp/agent-<name>.log` (using `2>&1 | tee /tmp/agent-<name>.log`) for inspectability without attaching.
+- **Graceful termination**: Send `SIGINT` (Ctrl+C) first, wait 2–3 seconds for graceful shutdown, and only then terminate the session. Clean up temporary log files upon exit.
+
+### Multiplexer Operational Matrix
+
+| Action | `tmux` (preferred) | GNU `screen` (fallback) |
+|---|---|---|
+| **Check tool** | `command -v tmux` | `command -v screen` |
+| **Spawn detached** | `tmux new-session -d -s agent-<name> -c "<cwd>" "<cmd> 2>&1 \| tee /tmp/agent-<name>.log"` | `screen -dmS agent-<name> bash -c "cd '<cwd>' && <cmd> 2>&1 \| tee /tmp/agent-<name>.log"` |
+| **Check status** | `tmux has-session -t agent-<name> 2>/dev/null && echo RUNNING` | `screen -ls \| grep -q "agent-<name>" && echo RUNNING` |
+| **Inspect logs** | `tail -n 50 /tmp/agent-<name>.log` or `tmux capture-pane -pt agent-<name> -S -100` | `tail -n 50 /tmp/agent-<name>.log` |
+| **Send input / signal** | `tmux send-keys -t agent-<name> "<input>" C-m` (interrupt: `C-c`) | `screen -S agent-<name> -X stuff "<input>^M"` (interrupt: `^C`) |
+| **Graceful stop** | `tmux send-keys -t agent-<name> C-c` → wait → `tmux kill-session -t agent-<name>` | `screen -S agent-<name> -X stuff "^C"` → wait → `screen -S agent-<name> -X quit` |
+
+---
+
+## Just-in-Time References
+
+| Read when | Reference |
+| --- | --- |
+| Deep multiplexer command patterns, terminal escape sequences, buffer captures, or troubleshooting | [Multiplexer Process Management](references/multiplexer-management.md) |
+
+---
+
 ## Self-Check
 
 - [ ] No env var values were read or output during this session
@@ -152,3 +191,5 @@ Stop and ask the user before installing system-wide tools. If the project has a 
 - [ ] `python script.py` / `python3 script.py` was not used for scripts that import external packages
 - [ ] `npx`/`bunx` used only for published CLI tools, not custom scripts
 - [ ] Dependency fallback was not silently replaced by a global install
+- [ ] Long-running processes prioritized `tmux` (or `screen` fallback) over harness background tasks or `&`/`nohup`
+- [ ] Multiplexer sessions used `agent-` namespace and did not touch user sessions
