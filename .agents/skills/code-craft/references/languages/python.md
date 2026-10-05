@@ -23,22 +23,37 @@
 - Use SQLAlchemy 2-style typed mappings with Alembic migrations for relational persistence unless direct database drivers or an existing data layer are a better fit.
 - Use OpenTelemetry for portable tracing/metrics. Use the standard logging module or structlog when structured logging is required; do not add an observability vendor SDK as the sole abstraction.
 
-## Data workflows
+## Data workflows: The Composable Data Stack (Ibis + DuckDB)
 
 Choose the execution and orchestration layer independently. A DAG library improves organization; it does not automatically provide a scheduler, distributed runtime, lineage, or streaming engine. Keep transformations as typed, testable functions regardless of the selected tool.
 
+### Modern standard: Ibis + DuckDB
+
+The modern Python data stack favors the **Composable Data Stack** (`ibis-framework[duckdb]`) over the historically fragmented ecosystem of legacy Pandas, isolated Polars scripts, and 20+ incompatible backend dialects:
+
+- **The problem with legacy fragmented stacks**:
+  - *Pandas*: Single-threaded, eager execution, 5–10× memory bloat over raw data, index overhead (`loc`/`iloc`/`reset_index` ergonomics), and frequent OOM failures on datasets larger than RAM.
+  - *Polars*: Exceptional local performance, but introduces yet another distinct proprietary DataFrame API tightly coupled to its local engine, unable to push queries down to remote warehouses, lakehouses, or databases.
+  - *20+ backend silos*: Rewriting Python DataFrame logic to dialect-specific SQL (Snowflake, BigQuery, ClickHouse, Postgres) or rewriting local scripts for PySpark introduces severe migration friction and vendor lock-in.
+- **Why Ibis + DuckDB is the default standard**:
+  - **Ibis (`ibis-framework`)**: Serves as the universal, portable Python DataFrame interface that decouples *analytical intent* from the *execution engine*. You write clean, Pythonic, chainable expressions once; Ibis compiles them lazily into optimized relational plans / SQL pushed down directly to the backend. Switching from local development to production cloud warehouses (BigQuery, Snowflake, ClickHouse, Postgres, Trino, Databricks) requires changing only the connection configuration—zero transformation code rewrites.
+  - **DuckDB**: Serves as the default in-process, columnar OLAP execution engine ("SQLite for Analytics"). Multi-threaded vectorized C++ execution with out-of-core streaming enables querying datasets substantially larger than RAM (tens to hundreds of gigabytes on a laptop) with zero memory crashes. Features native, direct querying of Parquet, CSV, JSON, Apache Arrow, Iceberg, Delta Lake, and remote object storage (S3, GCS, HTTP) with zero ingestion ETL.
+  - **Apache Arrow (`pyarrow`)**: Standardized in-memory columnar representation enabling zero-copy data interchange between DuckDB, Ibis, Polars, and downstream machine learning libraries (scikit-learn, PyTorch, XGBoost).
+
+For in-depth architecture, code patterns, memory tuning, and migration recipes, see [Composable Data Stack (Ibis + DuckDB)](python-data-stack.md).
+
 | Use case | Suggestion | Why |
 | --- | --- | --- |
-| Small script or one-off local transformation | Standard Python plus Polars/Pandas as needed | Lowest operational overhead; do not introduce a workflow framework without dependency or reuse needs. |
-| Local, single-process function DAG | Hamilton | Organizes typed Python transformation dependencies without introducing a distributed runner. |
-| Reproducible data project with dataset catalog and pipeline conventions | Kedro | Provides project structure, data cataloging, and pipeline composition. |
-| Asset-centric pipelines, lineage, and materialization policy | Dagster | Its asset model is a better fit than task DAGs when the durable tables/files are the primary product. |
-| Scheduled coordination across services, jobs, and infrastructure | Prefect for Python-first dynamic flows; Airflow for established enterprise scheduling/integration estates | These are control planes: pair either with the selected execution engine (for example dbt, Spark, Beam, or a warehouse job) rather than treating them as dataframe engines. |
-| Warehouse-native SQL transformations | dbt Core; SQLMesh when its planning/versioning workflow fits | Execute large transformations in the warehouse instead of extracting data into Python. |
-| Portable distributed batch or streaming pipeline across Beam runners | Apache Beam | A unified batch/streaming model that runs through an appropriate runner such as Dataflow, Flink, or Spark. Choose it for runner portability, not merely because a task is parallel; verify the required Python SDK + runner capability matrix first. |
-| Spark-centric data lakehouse or existing Spark platform | PySpark | Uses the platform's native distributed DataFrame and SQL ecosystem. |
-| Python-native distributed tasks or ML/data workloads | Ray | General distributed tasks/actors; select it when its execution model matches the wider workload. |
-| Stateful event streaming, especially Kafka/Redpanda | Apache Beam with a streaming runner; Bytewax for a Python-oriented streaming application | Select based on runner portability and operating platform, plus event-time/window semantics, checkpoint/state recovery, delivery/duplication guarantees, and idempotent sinks. |
+| Local data transformation, ETL, exploratory analysis, analytical scripts | **Ibis + DuckDB (default)** | Decoupled portable DataFrame API with out-of-core vectorized execution; queries Parquet/CSV/Arrow directly without OOM. |
+| Cloud warehouse / lakehouse transformations | **Ibis (warehouse backends)** | Same Ibis expressions execute natively inside Snowflake, BigQuery, ClickHouse, or Postgres without rewriting code. |
+| In-memory columnar interchange & ML feature passing | **Apache Arrow (`pyarrow`)** | Zero-copy memory handoff from Ibis/DuckDB to downstream estimators (`.to_pyarrow()`). |
+| Local, single-process function DAG | **Hamilton** | Organizes typed Python transformation dependencies without introducing a distributed runner. |
+| Reproducible data project with dataset catalog and pipeline conventions | **Kedro** | Provides project structure, data cataloging, and pipeline composition. |
+| Asset-centric pipelines, lineage, and materialization policy | **Dagster** | Its asset model is a better fit than task DAGs when durable tables/files are the primary product. |
+| Scheduled coordination across services, jobs, and infrastructure | **Prefect** (Python-first dynamic flows) / **Airflow** (enterprise estates) | Control planes: pair either with the selected execution engine (Ibis, DuckDB, dbt, warehouse job) rather than treating them as DataFrame engines. |
+| Warehouse-native SQL transformations & modeling | **dbt Core** / **SQLMesh** | Execute large SQL transformations in the warehouse with automated lineage and testing. |
+| Massive distributed batch (>5–10TB, true cluster scale) | **PySpark** / **Ray** | Use distributed runtimes only when single-node out-of-core DuckDB or cloud warehouse pushdown is insufficient. |
+| Stateful event streaming (Kafka, Redpanda) | **Bytewax** / **Apache Beam** with streaming runner | Python-native dataflow streaming with explicit state/timer and window semantics. |
 
 - `pythonflow` is an obsolete lazy DAG library. Its documentation also describes optional distributed preprocessing, so it is not a meaningful local-versus-parallel decision point; its stale releases make it unsuitable for new production work.
 - Apache Beam runner portability is not universal interchangeability. Before committing to Beam, validate transforms, connectors, state/timer behavior, streaming support, and delivery semantics against the exact Python SDK and intended runner capability matrix.
@@ -73,6 +88,9 @@ This guidance applies regardless of which orchestration framework (Hamilton, Ked
 
 ## Sources
 
+- https://ibis-project.org/
+- https://duckdb.org/docs/
+- https://arrow.apache.org/docs/python/
 - https://docs.astral.sh/uv/
 - https://docs.astral.sh/ruff/
 - https://docs.pydantic.dev/latest/concepts/models/

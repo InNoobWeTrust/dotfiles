@@ -154,6 +154,15 @@ When data-access boundaries or capabilities must be decided at an architectural 
 3. `code-craft` — disciplined adapter implementation
 4. `reviewer` (design-rigor lens) — verify boundary discipline
 
+### Analytical Data Processing & Pipelines (Composable Data Stack)
+
+When designing or implementing data pipelines, analytical querying, feature engineering, or ETL/ELT:
+
+1. `architecture-design` (data-architecture workflow) — design data topology, evaluate embedded in-process OLAP (DuckDB) vs cloud warehouses, decouple query layer via Ibis
+2. `code-craft` — implement pipelines and transformations using the Ibis + DuckDB standard (`python-data-stack.md`)
+3. `data-storytelling` — profile raw files and mine signals using out-of-core Ibis + DuckDB scans
+4. `reviewer` (Python performance / resource lens) — audit data code to eliminate memory-ballooning Pandas loops and isolated Polars lock-in in favor of lazy streaming Ibis expressions
+
 ### Skill Authoring & Maintenance
 
 When creating or maintaining the .agents/ governance layer:
@@ -278,6 +287,9 @@ Natural transitions between skills:
 | `database-access` | `code-craft` | Non-trivial adapter implementation needs SOLID/modularity discipline |
 | `database-access` | `reviewer` | Access layer complete — security lens (injection, entity exposure) or design-rigor lens (boundary discipline) |
 | `db-design` | `mermaid-validation` | "ER diagram generated, validating syntax before embedding" |
+| `architecture-design` | `code-craft` | Analytical architecture decided — implement pipeline with Ibis + DuckDB |
+| `data-storytelling` | `code-craft` | Data profiling/signal mining requires programmatic extraction via Ibis + DuckDB |
+| `code-craft` | `reviewer` | Analytical pipeline complete — verify out-of-core memory safety and query pushdown |
 
 ---
 

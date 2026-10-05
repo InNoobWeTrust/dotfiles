@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Batch check commonly used commands for efficiency
-usable_batch git docker curl npx uv pkgx rg eza nvim ssh neovide python3 corepack uvx brew rustup conda pyenv nvm yarn pnpm socat
+usable_batch git docker curl npx uv pkgx rg eza nvim ssh neovide python3 corepack uvx brew rustup conda pyenv nvm yarn pnpm socat bwrap
 
 
 ########################### Fancy prompt ######################################
@@ -470,6 +470,43 @@ usable agy && alias agyolo='agy --dangerously-skip-permissions'
 ! usable pkgx && usable curl && alias install-k3s='curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.24.10+k3s1" sh -s - server --cluster-init'
 usable pkgx && alias install-k3s='pkgx k3sup install --local --k3s-version v1.24.10+k3s1'
 usable curl && alias install-garden='curl -sL https://get.garden.io/install.sh | bash'
+
+################ Sandboxing (Bubblewrap / bwrap) ################
+# Common isolation flags:
+#   --ro-bind / /      : Mounts entire host filesystem as read-only.
+#   --dev / --proc     : Mounts standard virtual devices and procfs.
+#   --tmpfs /tmp       : Ephemeral in-memory tmpfs so temp files do not touch host.
+#   --unshare-all      : Unshares IPC, PID, network, UTS, cgroup namespaces.
+#   --share-net        : Retains network access (omitted in 'pure' for air-gapped isolation).
+#   --die-with-parent  : Kills the sandbox immediately if the parent shell/command terminates.
+#   --chdir "$PWD"     : Preserves the current working directory inside the sandbox.
+#
+# Flavor distinctions:
+#   - bwrap-ro   (Read-Only): Both system and $PWD are read-only. Network is enabled.
+#                Use for: Safe inspection (git status/diff, rg, cat, dry-runs, log reading).
+#                Alias: bwrap-run
+#   - bwrap-rw   (Read-Write $PWD): System is read-only, but $PWD is writable (--bind "$PWD" "$PWD").
+#                Use for: Builds, test runners, linters with --fix that should only modify $PWD.
+#   - bwrap-pure (Air-Gapped Offline): Both system and $PWD are read-only; network is completely cut.
+#                Use for: Untrusted scripts, air-gapped tests, zero exfiltration risk.
+#   - bwrap-sh   (Interactive Shell): Opens an interactive $SHELL session inside the read-only sandbox.
+#                Use for: Manually exploring/debugging commands inside the sandbox environment.
+
+usable bwrap && \
+    {
+        # Strict Read-Only (System + $PWD read-only, network enabled)
+        alias bwrap-ro='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --share-net --die-with-parent --chdir "$PWD" --'
+        alias bwrap-run='bwrap-ro'
+
+        # Workspace Writable (System read-only, $PWD writable, network enabled)
+        alias bwrap-rw='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --bind "$PWD" "$PWD" --unshare-all --share-net --die-with-parent --chdir "$PWD" --'
+
+        # Air-Gapped Offline (System + $PWD read-only, network disabled)
+        alias bwrap-pure='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --die-with-parent --chdir "$PWD" --'
+
+        # Interactive Shell inside Read-Only Sandbox
+        alias bwrap-sh='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --share-net --die-with-parent --chdir "$PWD" -- "$SHELL"'
+    }
 
 ############################# Custom ##########################################
 # Remote user provisioning utility

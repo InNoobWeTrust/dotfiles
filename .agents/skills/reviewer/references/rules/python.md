@@ -55,6 +55,9 @@ Confirm data scale and that the code is on a hot path before flagging:
 - Building a full list when a generator would avoid holding everything in memory
 - Recomputing inside a loop a value that is invariant across iterations (e.g., compiling a regex, attribute lookups in hot paths)
 - Passing an eagerly formatted f-string to `logging` (e.g., `logging.info(f"...")`) instead of `logging.info("%s", value)`, which defeats lazy formatting when the level is disabled
+- Eagerly loading large or unbounded files into memory via `pd.read_csv()` / `pd.read_parquet()`, risking OOM crashes; prefer out-of-core streaming with `ibis` / `duckdb`
+- Iterating over DataFrame rows using `.iterrows()`, `.itertuples()`, or row `.apply()` instead of vectorized column expressions
+- Calling `.execute()` prematurely on large intermediate Ibis tables instead of keeping expressions lazy and streaming to disk or Arrow sinks
 
 #### Concurrency and Async
 Only flag concurrency issues when there is evidence of multi-threaded, multi-process, or async invocation (confirm the call context before reporting):

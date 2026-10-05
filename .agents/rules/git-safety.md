@@ -22,6 +22,7 @@ Applies to all git operations: staging, committing, pushing, and any destructive
 - Run `git status` and `git diff` to inspect changes.
 - Stage explicit files only. Never use `git add .`, `git add -A`, or `git add --all`.
 - Do not stage secret-bearing files: `.env`, `*.pem`, `*.key`, `auth.json`, `credentials.json`, or files matching patterns in `.gitignore`.
+- **No machine-specific or absolute paths:** Files tracked in git must be fully portable. Never commit files containing host-specific absolute paths (e.g. `/Users/...`, `/home/...`, or `file:///` URLs) or local user home directories. All internal documentation links, markdown cross-references, and configuration paths must be portable relative paths (`./`, `../`) or repository-root-relative paths. Note: interactive chat links for clickable IDE navigation are strictly distinct from git-tracked file content.
 
 ## Committing
 

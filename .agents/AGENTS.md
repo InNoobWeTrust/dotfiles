@@ -73,6 +73,7 @@ Activating a skill by reading its `SKILL.md` is a binding commitment to execute 
 
 - Never stage, commit, push, or use destructive Git actions without the required explicit approval; inspect status and diffs first.
 - Stage explicit non-secret files only; never use `git add .` or `git add -A`.
+- Never commit host-specific absolute paths (`/Users/...`, `/home/...`, `file:///...`); all internal links and references in committed files must be portable and relative.
 - Inspect `git diff --staged` directly to ground commit messages in actual code deltas, never chat assumptions.
 - Inspect `git log` history before drafting commit messages to match repository style.
 
@@ -81,4 +82,5 @@ Activating a skill by reading its `SKILL.md` is a binding commitment to execute 
 - **Long-running commands & background tasks:** Prioritize terminal multiplexers (`tmux`, fallback to GNU `screen` if absent) over harness background tasks or ad-hoc backgrounding (`&`, `nohup`). See `rules/execution-safety.md`.
 - **Namespacing:** Always prefix agent-spawned sessions with `agent-` (e.g., `agent-devserver`) and redirect stdout/stderr to `/tmp/agent-<name>.log`.
 - **User session protection:** Never kill, hijack, or alter user processes or existing sessions in zellij, tmux, or screen. Only manage agent-created `agent-*` sessions.
+- **Read-Only Sandboxing (`bwrap`):** Default to wrapping shell commands with read-only intentions in `bwrap` whenever available (Linux/WSL/Devcontainer). Sandbox write violations (`Read-only file system`) are positive proof of unexpected side-effects—halt and debug the command rather than bypassing the sandbox. See `rules/execution-safety.md`.
 - **Server issues:** Identify and report — do not restart unexpectedly.

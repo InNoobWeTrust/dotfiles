@@ -29,6 +29,7 @@ Fallback: if no upstream investigation was run, or if any required field is miss
 - **Insight Scorer**: rank signals by magnitude, novelty, confidence, and goal alignment.
 - **Narrative Planner**: convert ranked signals into answer-first story structure.
 - **Skeptic/QA Layer**: downgrade or block unsupported claims and missing baselines.
+- **Execution Standard**: Use the Composable Data Stack (**Ibis + DuckDB**) for computational profiling, signal extraction, and aggregations on tabular data, ensuring out-of-core memory safety without loading raw files into RAM.
 
 ### Output Engine
 

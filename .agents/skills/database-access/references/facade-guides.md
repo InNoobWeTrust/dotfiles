@@ -130,3 +130,27 @@ If the task requires any of these, **stop and require an explicit capability con
 - Mongoose document `.save()`: https://mongoosejs.com/docs/api/document.html#Document.prototype.save()
 - Beanie ODM: https://beanie-odm.dev/
 - DynamoDB transactions: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/transaction-apis.html
+
+---
+
+## Analytical / Columnar Querying (OLAP) — Boundary & Delegation
+
+*Examples: Large-scale aggregations, time-series rollups, Parquet/data lake querying, embedded BI marts*
+
+Transactional facades (SQLAlchemy ORM, Django ORM, Prisma, Mongoose) are built for row-level transactional consistency (OLTP). Forcing analytical workloads through transactional facades is a major architectural anti-pattern:
+
+### Key risks of using transactional facades for OLAP
+
+| Risk | Detail | Mitigation |
+|---|---|---|
+| **Memory explosion (Object Hydration)** | Loading 100k+ rows via an ORM instantiates heavy Python/Node objects with identity map tracking, using 10–50× the raw memory of the data. | Never fetch large analytical tables into ORM models. Delegate to vectorized columnar engines. |
+| **Row-oriented bottleneck** | Row-by-row cursors and deserialization block event loops and worker threads. | Use columnar chunked streaming (Apache Arrow / DuckDB). |
+| **Brittle SQL string assembly** | Writing raw SQL strings in ORMs for complex analytical queries forfeits type checking and creates dialect lock-in. | Use **Ibis** as the analytical query builder for type-safe, composable query definitions. |
+
+### Correct Path: Composable Data Stack (Ibis + DuckDB)
+
+For analytical queries, metric marts, and file-based data transformations:
+1. **Engine**: Use **DuckDB** for in-process vectorized columnar execution with out-of-core streaming.
+2. **Query Abstraction**: Use **Ibis** (`ibis-framework`) to write portable, chainable DataFrame expressions that push computation into DuckDB or remote warehouses (Snowflake, BigQuery, ClickHouse).
+3. **Reference**: Delegate implementation to [Composable Data Stack (Ibis + DuckDB)](../../code-craft/references/languages/python-data-stack.md) under `code-craft` and architecture planning to `architecture-design` (`data-architecture.md`).
+

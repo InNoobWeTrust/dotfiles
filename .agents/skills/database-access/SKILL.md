@@ -139,6 +139,7 @@ If an existing local convention conflicts with the confirmed decisions in this s
 | Silently replace aggregate on sync | Destroys untracked concurrent edits | Default is reconcile-by-stable-key; replacement needs declared domain semantics |
 | Add tenancy/soft-delete/replica logic without contract | Out-of-scope; creates implicit coupling; violates optional-extension boundary | Declare in Data Access Contract first; implement only when declared |
 | Use lazy-loaded relations across request boundary | N+1 queries; relation access after session close raises error | Eager-load required relations within the session; design queries to fetch what's needed |
+| Stretch transactional ORMs/cursors for heavy analytical aggregations | Severe memory bloat (hydrating thousands of ORM entities), slow row-by-row fetching, thread blocking | Route analytical workloads to the Composable Data Stack (**Ibis + DuckDB**) via `code-craft` / `architecture-design` |
 
 ---
 
@@ -147,8 +148,8 @@ If an existing local convention conflicts with the confirmed decisions in this s
 | Skill | Relationship |
 |---|---|
 | `db-design` | Schema and migration design — hands off to `database-access` for implementation |
-| `architecture-design` | Data-access boundary and capability decisions — hands off to `database-access` for implementation |
-| `code-craft` | Implementation discipline (SOLID, modularity) — load alongside for non-trivial adapter code |
+| `architecture-design` | Data-access boundary, capability decisions, and OLAP vs OLTP separation — hands off to `database-access` for OLTP implementation |
+| `code-craft` | Implementation discipline (SOLID, modularity) — load alongside for non-trivial adapter code; handles analytical pipelines via Ibis + DuckDB |
 | `reviewer` | Post-implementation review — load for security lens (injection, exposure) or design-rigor lens |
 
 ---

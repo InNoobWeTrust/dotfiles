@@ -4,10 +4,10 @@ This directory contains specialized database engineering references for `db-desi
 
 | Guide | Description |
 |---|---|
-| [`schema-modeling.md`](file:///home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/db-design/references/schema-modeling.md) | Normalization (1NF–3NF), entity relationships, PK/FK strategies (UUIDv7/ULID vs BigInt) |
-| [`indexing-performance.md`](file:///home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/db-design/references/indexing-performance.md) | Index types, composite column ordering, partial indexes, GIN/GiST, and query access patterns |
-| [`integrity-constraints.md`](file:///home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/db-design/references/integrity-constraints.md) | Database-level structural constraints (UNIQUE, NOT NULL, FK ON DELETE RESTRICT/CASCADE), selective invariant CHECK usage, and compatibility-safe enum storage guidance |
-| [`state-auditing-history.md`](file:///home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/db-design/references/state-auditing-history.md) | Soft deletes vs append-only audit tables vs temporal logging vs CDC outbox |
-| [`concurrency-locking.md`](file:///home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/db-design/references/concurrency-locking.md) | Optimistic locking (`version` field), pessimistic row locks, MVCC, and transaction isolation levels |
-| [`migrations-evolution.md`](file:///home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/db-design/references/migrations-evolution.md) | Zero-downtime schema evolution, Expand-Contract pattern, non-blocking DDL |
-| [`typed-mapping.md`](file:///home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/db-design/references/typed-mapping.md) | Mapping DB queries/repositories to strongly-typed DTOs (eliminating raw tuples & untyped dicts) |
+| [`schema-modeling.md`](schema-modeling.md) | Normalization (1NF–3NF), entity relationships, PK/FK strategies (UUIDv7/ULID vs BigInt) |
+| [`indexing-performance.md`](indexing-performance.md) | Index types, composite column ordering, partial indexes, GIN/GiST, and query access patterns |
+| [`integrity-constraints.md`](integrity-constraints.md) | Database-level structural constraints (UNIQUE, NOT NULL, FK ON DELETE RESTRICT/CASCADE), selective invariant CHECK usage, and compatibility-safe enum storage guidance |
+| [`state-auditing-history.md`](state-auditing-history.md) | Soft deletes vs append-only audit tables vs temporal logging vs CDC outbox |
+| [`concurrency-locking.md`](concurrency-locking.md) | Optimistic locking (`version` field), pessimistic row locks, MVCC, and transaction isolation levels |
+| [`migrations-evolution.md`](migrations-evolution.md) | Zero-downtime schema evolution, Expand-Contract pattern, non-blocking DDL |
+| [`typed-mapping.md`](typed-mapping.md) | Mapping DB queries/repositories to strongly-typed DTOs (eliminating raw tuples & untyped dicts) |

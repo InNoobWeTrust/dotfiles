@@ -142,6 +142,34 @@ Stop and ask the user before installing system-wide tools. If the project has a 
 
 ---
 
+## Read-Only Shell Sandboxing (Bubblewrap / bwrap)
+
+When executing shell commands with **read-only intentions** (e.g., file inspection, git read-only queries such as `git status`/`git log`/`git diff`, static analysis, log viewing, data profiling, dry-runs, reading system state, code search via `rg`/`grep`), agents must wrap execution in a read-only **Bubblewrap (`bwrap`)** sandbox whenever `bwrap` is available.
+
+### Fault Detection Signal
+
+The primary purpose of sandboxing read-only commands is **fault detection and containment**:
+- If a command intended to be read-only triggers a sandbox write violation (e.g., `bwrap: ... Read-only file system` or permission denied on write), **do not bypass or disable the sandbox**.
+- A sandbox violation is positive proof that the command has hidden state-mutation side-effects (e.g., creating cache directories in the working tree, mutating user configuration, creating lockfiles, or polluting temporary paths outside designated scratch space).
+- **Halt and debug**: Investigate why the command attempted to write, configure appropriate read-only flags (e.g., `--dry-run`, redirecting cache/config to `/tmp`), and re-verify.
+
+### Standard Read-Only Invocation Matrix
+
+On platforms where `bwrap` is available (`command -v bwrap >/dev/null 2>&1`), invoke read-only commands through the standard `bwrap` sandbox:
+
+| Intent | Standard `bwrap` command pattern |
+|---|---|
+| **Standard Read-Only** (Network allowed, filesystem read-only, ephemeral `/tmp`) | `bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --share-net --die-with-parent --chdir "$PWD" -- <command>` |
+| **Pure Isolated Read-Only** (Network isolated, offline, completely immutable) | `bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --die-with-parent --chdir "$PWD" -- <command>` |
+
+### Platform Availability & Graceful Fallback
+
+- **Platform dependency**: `bwrap` requires unprivileged Linux user namespaces (Linux distributions, Dev Containers, WSL2, Docker with user namespaces).
+- **Probing requirement**: Agents must probe for availability (`command -v bwrap >/dev/null 2>&1`) before prefixing commands with `bwrap`.
+- **macOS / non-Linux fallback**: On systems where `bwrap` is unavailable (e.g., native macOS/Darwin hosts without containerized runtime), proceed with direct command execution while maintaining strict read-only intent. Do not fail silently or attempt to install system packages without user consent.
+
+---
+
 ## Long-Running Processes: Multiplexer Priority
 
 Harness-level background process management (async task tools, background flags, subshell daemons) and ad-hoc backgrounding (`&`, `nohup`) are error-prone and brittle across agent harnesses: stdout/stderr buffers are easily lost, processes can become orphaned zombies, and the user has no direct visibility into running jobs.
@@ -193,3 +221,4 @@ For any long-running command, dev server, watcher, test runner, or daemon:
 - [ ] Dependency fallback was not silently replaced by a global install
 - [ ] Long-running processes prioritized `tmux` (or `screen` fallback) over harness background tasks or `&`/`nohup`
 - [ ] Multiplexer sessions used `agent-` namespace and did not touch user sessions
+- [ ] Read-only shell commands were wrapped in bwrap sandbox when bwrap was available; sandbox write violations were treated as defects to debug, not bypassed

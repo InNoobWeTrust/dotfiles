@@ -106,6 +106,27 @@ flowchart LR
 
 ---
 
+### Composable In-Process OLAP (Ibis + DuckDB)
+<!-- tags: composable-olap, duckdb, ibis, embedded-analytics, columnar, lakehouse, arrow -->
+
+```mermaid
+flowchart LR
+    Storage[Raw Storage: Parquet / Iceberg / S3] --> Engine["Execution Engine: DuckDB (In-Process)"]
+    Engine --> QueryLayer["Portable Query Layer: Ibis"]
+    QueryLayer --> Out[API / BI / Analytics / ML]
+    QueryLayer -.->|Pushdown to Cloud DW| CloudDW[Snowflake / BigQuery / ClickHouse]
+```
+
+| Aspect | Detail |
+|---|---|
+| **Use when** | High-performance analytical querying, feature engineering, local-to-cloud data pipelines, and embedded analytics on datasets from MBs to 5–10TBs without cluster overhead. |
+| **Skip when** | Real-time distributed multi-region OLTP transactions, or petabyte-scale streaming requiring a distributed engine. |
+| **Tradeoffs** | ✅ Instant zero-infrastructure setup, extreme single-node vectorized speed, out-of-core streaming without OOM, portable write-once logic · ❌ Single-node compute bounds. |
+| **Key decision** | Storage format (Parquet vs Iceberg vs Delta), out-of-core memory threshold, and whether compute executes on local DuckDB or pushes down to cloud DW via Ibis. |
+| **Composes with** | Data Lake/Lakehouse, Polyglot Persistence, Materialized Views, Modular Monolith. |
+
+---
+
 ### State Locking & Mutual Exclusion Hierarchy
 <!-- tags: locking, mutual-exclusion, lockfile, concurrency, advisory-lock, distributed-lock -->
 

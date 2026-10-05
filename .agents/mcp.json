@@ -1,5 +1,10 @@
 {
   "mcpServers": {
+    "sandbox": {
+      "enabled": true,
+      "command": "mcp-sandbox",
+      "args": []
+    },
     "chrome-devtools": {
       "enabled": false,
       "command": "npx",

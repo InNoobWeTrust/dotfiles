@@ -211,5 +211,3 @@ For every invocation:
 - `references/progressive-disclosure-pattern.md` — the leaf/index abstraction and the four properties an index must have
 - `references/pattern-code.md` — applying the pattern to a code module (public surface vs internals)
 
-Base directory: `file:///home/innoobwetrust/Developer/InNoobWeTrust/dotfiles/.agents/skills/memory`
-

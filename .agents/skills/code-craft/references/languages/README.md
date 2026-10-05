@@ -5,6 +5,7 @@ Load the smallest matching reference only when choosing a greenfield stack or ad
 | Target | Reference |
 | --- | --- |
 | Python | `python.md` |
+| Python Composable Data Stack (Ibis + DuckDB) | `python-data-stack.md` |
 | JavaScript / TypeScript | `javascript-typescript.md` |
 | React | `react.md` |
 | Vue | `vue.md` |
