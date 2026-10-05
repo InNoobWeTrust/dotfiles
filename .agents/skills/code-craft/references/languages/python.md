@@ -5,6 +5,7 @@
 ## Baseline
 
 - Use `pyproject.toml`, `uv` for environments/dependencies, Ruff for linting and formatting, and the repository's configured type checker — prefer Pyright (`typeCheckingMode = "strict"`) or mypy (`strict = true`) in strict mode for greenfield projects; repos already using `ty` run `ty check` with the project's established rule configuration.
+- **Single manifest pattern for uv and Pixi**: When projects bridge standard Python workflows with Conda/CUDA/binary dependencies, use `pyproject.toml` as the single unified manifest (configured with `[tool.pixi.*]` tables) rather than maintaining separate `pixi.toml` and `pyproject.toml` files. Pixi natively maps standard `[project.dependencies]`, `[project.optional-dependencies]`, and `[dependency-groups]` to PyPI dependencies/features, while Conda packages and tasks live under `[tool.pixi.dependencies]` and `[tool.pixi.tasks]`.
 - Use pytest for tests; add `pytest-asyncio` only for async tests. Use `coverage.py` when coverage reporting is required.
 - Prefer the standard library for small utilities, `pathlib`, `logging`, `argparse`-scale scripts, JSON, and HTTP where its ergonomics meet the need.
 
@@ -92,6 +93,7 @@ This guidance applies regardless of which orchestration framework (Hamilton, Ked
 - https://docs.ray.io/
 - https://docs.bytewax.io/
 - https://pypi.org/project/pythonflow/
+- https://pixi.prefix.dev/latest/python/pyproject_toml/
 - https://ngs101.com/setting-up-single-cell-rna-seq-analysis-environment-with-pixi-10x-faster-setup-zero-version-conflicts/
 - https://ngs101.com/build-once-run-anywhere-creating-portable-ngs-analysis-environments-with-docker/
 - https://ngs101.com/high-performance-computing-hpc-job-submission-systems-a-beginners-guide-to-slurm/

@@ -69,9 +69,24 @@ Before running any remote installer or global package install, get user approval
 > |---|---|
 > | GPU / CUDA / accelerator required (e.g., PyTorch+CUDA, JAX-GPU, RAPIDS) | **Pixi** — see GPU branch below |
 > | CPU-only, simple tooling, or pure data work | **uv** — see CPU branch below |
+> | Existing project has `pyproject.toml` with `[tool.pixi]` | **Single manifest** — use `pixi` for Conda/GPU/binary deps, `uv` for pure Python/CPU |
 > | Existing project already has `pixi.toml` | **Follow Pixi**; do not re-configure |
-> | Existing GPU project has `uv.lock` (no `pixi.toml`) | **Follow existing tool** unless user explicitly authorizes migration; recommend Pixi as the preferred future orchestrator but do not silently convert |
+> | Existing GPU project has `uv.lock` (no `pixi.toml` / `[tool.pixi]`) | **Follow existing tool** unless user explicitly authorizes migration; recommend Pixi as the preferred future orchestrator but do not silently convert |
 > | Existing CPU-only project has `uv.lock` | **Follow uv**; no migration needed |
+
+#### Single manifest for both uv and pixi (`pyproject.toml`)
+
+Pixi supports using [`pyproject.toml` as a single unified manifest](https://pixi.prefix.dev/latest/python/pyproject_toml/) alongside standard Python tools like `uv`:
+
+- **Shared Dependencies**: Standard PEP 621 `[project.dependencies]` are automatically understood by Pixi as `[pypi-dependencies]`.
+- **Optional Dependencies & Groups**: `[project.optional-dependencies]` and PEP 735 `[dependency-groups]` are automatically interpreted by Pixi as named features with corresponding `pypi-dependencies`, which can be mapped into `[tool.pixi.environments]`.
+- **Conda & Accelerator Packages**: Binary packages, CUDA toolkits, and non-Python dependencies live under `[tool.pixi.dependencies]`. If a package appears in both `[project.dependencies]` and `[tool.pixi.dependencies]`, Pixi prefers the Conda package.
+- **Pixi Workspace Configuration**: Settings like channels, platforms, and tasks live under `[tool.pixi.workspace]`, `[tool.pixi.tasks]`, and `[tool.pixi.environments]`.
+- **Source Dependencies in Monorepos**: Because Pixi uses `uv` under the hood to build PyPI dependencies, `[tool.uv.sources]` in referenced sub-packages specifies git or local path sources.
+- **Workflow Coexistence**:
+  - Developers working on CPU/pure-Python tasks or standard CI use `uv sync` and `uv run`.
+  - Developers or HPC environments requiring GPU/CUDA or C++ binaries use `pixi install` and `pixi run`.
+  - Eliminates dual-manifest drift between `pixi.toml` and `pyproject.toml`.
 
 #### CPU-only / simple Python (uv)
 
@@ -88,26 +103,26 @@ uv run pytest tests/ -q
 
 #### GPU / CUDA / accelerator Python (Pixi)
 
-Pixi manages declared dependencies and lockfile in one `pixi.lock`. CUDA toolkit may be declared in `pixi.toml` (and thus locked by Pixi) or provided by the host system — verify host driver and runtime compatibility with whichever backend your project uses. Do **not** create a separate `conda`/`mamba` or bare `uv`-managed environment alongside it; Pixi may internally invoke `uv` as a build tool for PyPI packages, which is expected.
+Pixi manages declared dependencies and lockfile in one `pixi.lock`. CUDA toolkit may be declared in `pixi.toml` or `pyproject.toml` under `[tool.pixi.dependencies]` (and thus locked by Pixi) or provided by the host system — verify host driver and runtime compatibility with whichever backend your project uses. Do **not** create a separate `conda`/`mamba` or bare `uv`-managed environment alongside it; Pixi may internally invoke `uv` as a build tool for PyPI packages, which is expected.
 
 ```bash
 # Ensure pixi is present
 command -v pixi >/dev/null 2>&1 || curl -fsSL https://pixi.sh/install.sh | bash
 
-# Install all locked dependencies (reads pixi.toml + pixi.lock)
+# Install all locked dependencies (reads pixi.toml or pyproject.toml + pixi.lock)
 pixi install
 
-# Inspect available tasks first, then run the actual name from pixi.toml [tasks]:
+# Inspect available tasks first, then run the actual name from manifest [tasks] / [tool.pixi.tasks]:
 pixi task list
-# The line below assumes the project declares a `test` task in pixi.toml [tasks].
+# The line below assumes the project declares a `test` task in the manifest.
 # Substitute the task name discovered above; do not run this verbatim.
 pixi run test
 ```
 
 **Before claiming GPU works**, verify:
 
-- [ ] CUDA toolkit is either declared in `pixi.toml` (locked in `pixi.lock`) or confirmed present on the host; verify host driver/runtime compatibility with the chosen backend.
-- [ ] Target platform and accelerator deps/config are declared wherever the project specifies them (`[target]`, `[feature]`, dependency sections, or equivalent in `pixi.toml`).
+- [ ] CUDA toolkit is either declared in `pixi.toml` / `pyproject.toml` (locked in `pixi.lock`) or confirmed present on the host; verify host driver/runtime compatibility with the chosen backend.
+- [ ] Target platform and accelerator deps/config are declared wherever the project specifies them (`[target]`, `[feature]`, dependency sections in `pixi.toml` or `[tool.pixi.*]` in `pyproject.toml`).
 - [ ] Accelerator backend detects a device at runtime (e.g., `torch.cuda.is_available()` → `True`).
 
 ### Node/TypeScript projects
@@ -285,6 +300,7 @@ When `project-foundation` detects a complex stack, it should:
 
 ### Background examples (verify site policy — not authoritative)
 
+- <https://pixi.prefix.dev/latest/python/pyproject_toml/> — Pixi single manifest with `pyproject.toml` (PyPI and Conda dependencies, dependency groups, `[tool.uv.sources]`)
 - <https://ngs101.com/high-performance-computing-hpc-job-submission-systems-a-beginners-guide-to-slurm/> — Slurm SBATCH directives, arrays, `afterok` dependencies, `squeue`/`sacct`
 - <https://ngs101.com/setting-up-single-cell-rna-seq-analysis-environment-with-pixi-10x-faster-setup-zero-version-conflicts/> — Pixi `PIXI_CACHE_DIR`, proxy/network constraints, offline staging patterns
 - <https://ngs101.com/build-once-run-anywhere-creating-portable-ngs-analysis-environments-with-docker/> — Docker-to-Singularity/Apptainer SIF workflow, bind-mount paths, UID notes
