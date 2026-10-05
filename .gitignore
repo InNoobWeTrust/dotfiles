@@ -4,3 +4,6 @@
 
 # IDE and editor specific files
 .vscode/
+
+# Tmux plugins managed by TPM
+.tmux/plugins/
