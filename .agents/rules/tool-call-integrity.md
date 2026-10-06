@@ -58,7 +58,7 @@ Tools resolve paths differently than you assume. Some resolve `relative_path` ag
 | Edit existing file | Yes |
 | API call with side effects | Yes |
 | Shell command with output | Yes |
-| Read-only shell operations (ls, grep, rg, read, inspect) | No (wrap with `bwrap` read-only sandbox when available per `execution-safety.md`) |
+| Read-only shell operations (ls, grep, rg, read, inspect) | No side-effect protocol; prefer an available sandbox tool or supported platform command per `execution-safety.md` (native read/search tools need no wrapper) |
 
 ---
 

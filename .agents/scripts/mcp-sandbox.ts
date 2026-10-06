@@ -13,14 +13,21 @@ import path from "path"
 import { mkdtemp, realpath, rm } from "node:fs/promises"
 import { tmpdir } from "node:os"
 
-const server = new McpServer({
-  name: "sandbox",
-  version: "1.0.0",
-})
+const server = new McpServer(
+  { name: "sandbox", version: "1.0.0" },
+  {
+    instructions:
+      "Use the sandbox tool instead of an unrestricted shell for read-only command execution: git status/log/diff, file inspection, searches, and non-mutating checks. " +
+      "Use mode='ro' by default, or 'pure' for offline checks; use 'rw' only for intentional, authorized writes within an explicitly selected workdir. " +
+      "Set an absolute workdir for the target project and login=false unless login-shell configuration is needed. Use $TMPDIR for scratch/cache writes. " +
+      "On a restriction or unavailable backend, inspect and report the failure; do not retry unsandboxed or escalate to rw just to make a read-only command pass. " +
+      "Host files and inherited environment remain readable: never dump secrets or treat this as hostile-code isolation. Native read/edit tools do not need wrapping.",
+  }
+)
 
 server.tool(
   "sandbox",
-  "Execute shell commands with Bubblewrap on Linux or deprecated sandbox-exec on macOS. Supports ro (read-only), rw (workspace writable), and pure (offline read-only), with writable scratch space. Host files and inherited environment remain readable; not a clean environment for hostile code.",
+  "Use instead of an unrestricted shell for read-only commands (git status/log/diff, inspection, search, non-mutating checks). Defaults to ro; pure denies network; rw is only for intentional authorized workspace writes. On denial, investigate rather than retrying unsandboxed or escalating to rw. Uses Bubblewrap on Linux or deprecated sandbox-exec on macOS, with writable scratch space. Host files and inherited environment remain readable; not hostile-code isolation.",
   {
     command: z
       .string()

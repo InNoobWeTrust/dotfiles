@@ -142,31 +142,39 @@ Stop and ask the user before installing system-wide tools. If the project has a 
 
 ---
 
-## Read-Only Shell Sandboxing (Bubblewrap / bwrap)
+## Shell Sandbox Routing (Linux and macOS)
 
-When executing shell commands with **read-only intentions** (e.g., file inspection, git read-only queries such as `git status`/`git log`/`git diff`, static analysis, log viewing, data profiling, dry-runs, reading system state, code search via `rg`/`grep`), agents must wrap execution in a read-only **Bubblewrap (`bwrap`)** sandbox whenever `bwrap` is available.
+For shell commands with **read-only intentions** (file inspection, `git status`/`git log`/`git diff`, non-mutating analysis, log viewing, data profiling, dry-runs, system queries, `rg`/`grep`), prefer sandboxed execution over an unrestricted shell. Native read/search/edit tools need no shell wrapper. A test or dry-run label does not guarantee a command is non-mutating; choose permissions based on actual writes.
 
-### Fault Detection Signal
+### Defaults and Fallback Order
 
-The primary purpose of sandboxing read-only commands is **fault detection and containment**:
-- If a command intended to be read-only triggers a sandbox write violation (e.g., `bwrap: ... Read-only file system` or permission denied on write), **do not bypass or disable the sandbox**.
-- A sandbox violation is positive proof that the command has hidden state-mutation side-effects (e.g., creating cache directories in the working tree, mutating user configuration, creating lockfiles, or polluting temporary paths outside designated scratch space).
-- **Halt and debug**: Investigate why the command attempted to write, configure appropriate read-only flags (e.g., `--dry-run`, redirecting cache/config to `/tmp`), and re-verify.
+1. **Available sandbox tool:** Use a native agent tool or MCP tool that provides the required isolation. Inspect its documented capabilities and arguments; do not assume a particular tool name, schema, or permission model.
+2. **Platform command:** If no suitable sandbox tool is exposed, check for `bwrap` on Linux or `sandbox-exec` on macOS. Use documented flags or a verified policy that enforces the intended restrictions; binary presence alone does not prove the sandbox works. `bwrap` depends on usable Linux namespaces; `sandbox-exec` is deprecated and policy-based, not Linux-style namespace isolation. Do not assume shell aliases are loaded.
+3. **No usable sandbox:** Report the limitation and use native read/search tools where possible. Ask for approval before an unrestricted shell fallback. No platform is an automatic exemption; do not install packages or restart services without consent.
 
-### Standard Read-Only Invocation Matrix
+Select the least-permissive policy matching the authorized intent:
 
-On platforms where `bwrap` is available (`command -v bwrap >/dev/null 2>&1`), invoke read-only commands through the standard `bwrap` sandbox:
-
-| Intent | Standard `bwrap` command pattern |
+| Intent | Desired boundary |
 |---|---|
-| **Standard Read-Only** (Network allowed, filesystem read-only, ephemeral `/tmp`) | `bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --share-net --die-with-parent --chdir "$PWD" -- <command>` |
-| **Pure Isolated Read-Only** (Network isolated, offline, completely immutable) | `bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --die-with-parent --chdir "$PWD" -- <command>` |
+| Read-only commands (default) | Deny host/workspace writes; allow only designated scratch writes; permit network only when needed |
+| Offline read-only checks | Same write restrictions, with network denied |
+| Intentional, authorized writes, including tests that create artifacts | Allow writes only in the required workspace/scratch scope; retain restrictions elsewhere |
 
-### Platform Availability & Graceful Fallback
+Map these policies to the available tool or command's documented controls, not fixed mode names. For example, run `git status --short` in the target repository with workspace writes denied and network disabled if supported.
 
-- **Platform dependency**: `bwrap` requires unprivileged Linux user namespaces (Linux distributions, Dev Containers, WSL2, Docker with user namespaces).
-- **Probing requirement**: Agents must probe for availability (`command -v bwrap >/dev/null 2>&1`) before prefixing commands with `bwrap`.
-- **macOS / non-Linux fallback**: On systems where `bwrap` is unavailable (e.g., native macOS/Darwin hosts without containerized runtime), proceed with direct command execution while maintaining strict read-only intent. Do not fail silently or attempt to install system packages without user consent.
+Set the target working directory explicitly. Avoid login-shell startup unless needed; do not assume skipping profiles strips the inherited environment. Use the sandbox's designated scratch/cache path (such as `$TMPDIR` when provided), not hard-coded `/tmp`. Verify actual boundaries: private scratch directories, isolated mounts, host-file readability, and environment filtering vary by implementation. Sandboxing does not by itself protect readable secrets or establish hostile-code isolation.
+
+### Denials
+
+- A denial is a signal to investigate, **not proof of a filesystem write**: `Operation not permitted` can also mean another restricted operation, including network access or nested sandbox setup.
+- Inspect the specific error. Fix unintended writes using genuine read-only flags or designated scratch/cache paths, then re-run sandboxed.
+- Do not disable the sandbox, retry unsandboxed, or grant workspace writes merely to make a read-only check pass. Use a fallback only after establishing that the current mechanism is unusable for the intended operation; preserve the same restrictions or obtain approval for reduced isolation.
+
+### ACI Pass
+
+- Result: PASS
+- Main risks: fixed-tool assumptions, unrestricted-shell bypass, unjustified permission escalation, overstating isolation.
+- Interface upgrades applied: capability-based routing, platform fallbacks, intent-based permissions, denial investigation, approved fallback only.
 
 ---
 
@@ -221,4 +229,4 @@ For any long-running command, dev server, watcher, test runner, or daemon:
 - [ ] Dependency fallback was not silently replaced by a global install
 - [ ] Long-running processes prioritized `tmux` (or `screen` fallback) over harness background tasks or `&`/`nohup`
 - [ ] Multiplexer sessions used `agent-` namespace and did not touch user sessions
-- [ ] Read-only shell commands were wrapped in bwrap sandbox when bwrap was available; sandbox write violations were treated as defects to debug, not bypassed
+- [ ] Read-only shell commands used an available sandbox tool or supported platform command; denials were investigated without silent bypass or unjustified permission escalation; any unrestricted fallback had explicit approval

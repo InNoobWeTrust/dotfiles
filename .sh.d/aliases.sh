@@ -205,8 +205,6 @@ usable npx && \
         ! usable runme && alias runme='npx --yes runme'
         # Copilot CLI
         ! usable copilot && alias copilot='npx --yes @github/copilot'
-        # Claude code
-        ! usable claude && alias claude='npx --yes @anthropic-ai/claude-code'
         # OpenAI Codex
         ! usable codex && alias codex='npx --yes @openai/codex'
         # Kilo code
@@ -222,6 +220,38 @@ usable npx && \
         # Tree-sitter CLI
         ! usable tree-sitter && alias tree-sitter='npx --yes tree-sitter-cli'
     }
+
+# Claude Code: project MCPs still merge; the symlink is not auto-discovered.
+# Project the canonical config at launch so disabled entries cannot leak through.
+# A subshell keeps configuration/launcher variables out of the calling shell.
+_claude_with_mcp() (
+    claude_launcher=$1
+    shift
+    claude_mcp_config=$(jq -ce '
+        if (.mcpServers | type) != "object" then
+            error("mcpServers must be an object")
+        else
+            {mcpServers: (.mcpServers | with_entries(
+                select(.value.enabled != false and .value.disabled != true)
+                | .value |= del(.enabled, .disabled)
+            ))}
+        end
+    ' "$HOME/.claude/mcp.json") || exit 1
+
+    if [ "$claude_launcher" = native ]; then
+        command claude --mcp-config "$claude_mcp_config" "$@"
+    else
+        # Defined after the npx fallback so its pkgx alias can expand here too.
+        npx --yes @anthropic-ai/claude-code --mcp-config "$claude_mcp_config" "$@"
+    fi
+)
+
+# Ignore our own alias when re-sourced by x-cmd; bypass usable's cached misses.
+if (unalias claude 2>/dev/null; command -v claude >/dev/null 2>&1); then
+    alias claude='_claude_with_mcp native'
+elif command -v npx >/dev/null 2>&1; then
+    alias claude='_claude_with_mcp npx'
+fi
 
 ## Node-builtin package management for javascript
 usable corepack && \
