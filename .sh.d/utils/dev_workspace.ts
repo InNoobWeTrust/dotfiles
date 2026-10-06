@@ -1,5 +1,5 @@
 #!/usr/bin/env -S bun --no-env-file
-import { Command, CommanderError } from "commander@15.0.0";
+import { Command, CommanderError, Option } from "commander@15.0.0";
 import { createHash } from "node:crypto";
 import { execFile, spawn } from "node:child_process";
 import { mkdtemp, readFile, realpath, rm, stat, writeFile } from "node:fs/promises";
@@ -221,10 +221,34 @@ async function hostVscode(input?: string): Promise<number> {
   ]);
 }
 
-async function loginDevtunnel(input?: string): Promise<number> {
+async function loginDevtunnel(
+  input: string | undefined,
+  options: { github?: boolean; microsoft?: boolean }
+): Promise<number> {
   const repo = await repository(input);
   const id = await containerId(repo);
   if (!id) { console.log("absent"); return 0; }
+
+  let provider = options.github ? "github" : options.microsoft ? "microsoft" : undefined;
+  if (!provider) {
+    if (!process.stdin.isTTY || !process.stdout.isTTY) {
+      throw new Error("Choose --github or --microsoft for non-interactive login");
+    }
+    const { default: select } = await import("@inquirer/select@5.2.6");
+    try {
+      provider = await select({
+        message: "Choose an account provider",
+        choices: [
+          { name: "GitHub", value: "github" },
+          { name: "Microsoft", value: "microsoft" },
+        ],
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name === "ExitPromptError") return 130;
+      throw error;
+    }
+  }
+
   return run("bunx", [
     ...CLI,
     "exec",
@@ -235,6 +259,8 @@ async function loginDevtunnel(input?: string): Promise<number> {
     DEVTUNNEL_CLI,
     "user",
     "login",
+    "-d",
+    ...(provider === "github" ? ["-g"] : []),
   ]);
 }
 
@@ -346,6 +372,12 @@ _dev_workspace() {
                             ;;
                         dt_args)
                             case $words[1] in
+                                login)
+                                    _arguments \\
+                                        '(-g --github -m --microsoft)'{-g,--github}'[Log in with GitHub without prompting]' \\
+                                        '(-g --github -m --microsoft)'{-m,--microsoft}'[Log in with Microsoft without prompting]' \\
+                                        '*:repository directory:_files -/'
+                                    ;;
                                 ssh)
                                     _arguments \\
                                         '(-p --port)'{-p,--port}'[Local SSH port]:port number:' \\
@@ -415,6 +447,15 @@ function generateBashCompletion(): string {
         devtunnel)
             if [ "$cword" -eq 2 ]; then
                 COMPREPLY=( $(compgen -W "$devtunnel_commands" -- "$cur") )
+            elif [ "\${words[2]}" = "login" ] && [[ "$cur" == -* ]]; then
+                local login_options="-g --github -m --microsoft"
+                local word
+                for word in "\${words[@]:3:cword-3}"; do
+                    case "$word" in
+                        -g|--github|-m|--microsoft) login_options="" ;;
+                    esac
+                done
+                COMPREPLY=( $(compgen -W "$login_options" -- "$cur") )
             elif [ "\${words[2]}" = "ssh" ] && [ "$prev" = "-p" ]; then
                 COMPREPLY=()
             else
@@ -513,9 +554,11 @@ export async function main(args: readonly string[]): Promise<number> {
 
   devtunnelGroup
     .command("login [REPO]")
-    .description("Log in to Dev Tunnel inside container (mimics devtunnel user login)")
-    .action(async (input?: string) => {
-      exitCode = await loginDevtunnel(input);
+    .description("Log in to Dev Tunnel inside container using device code (prompts for provider)")
+    .addOption(new Option("-g, --github", "Log in with GitHub without prompting").conflicts("microsoft"))
+    .addOption(new Option("-m, --microsoft", "Log in with Microsoft without prompting").conflicts("github"))
+    .action(async (input: string | undefined, options: { github?: boolean; microsoft?: boolean }) => {
+      exitCode = await loginDevtunnel(input, options);
     });
 
   devtunnelGroup

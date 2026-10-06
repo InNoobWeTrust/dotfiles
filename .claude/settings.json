@@ -1,11 +1,18 @@
 {
   "permissions": {
-    "defaultMode": "auto"
+    "defaultMode": "default",
+    "ask": ["Bash"]
   },
-  "effortLevel": "high",
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "allowUnsandboxedCommands": true,
+    "failIfUnavailable": true,
+    "excludedCommands": []
+  },
   "editorMode": "normal",
   "verbose": true,
-  "skipAutoPermissionPrompt": true,
+  "skipAutoPermissionPrompt": false,
   "env": {
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1
   }

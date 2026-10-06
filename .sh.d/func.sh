@@ -388,6 +388,50 @@ vscode_cli_install() {
     esac
 }
 
+# Install the official Dev Tunnels binary in ~/.local/bin without root access.
+# Usage: devtunnel_cli_install
+# System runtime dependencies (such as Linux libsecret) are not installed.
+# Stage downloads in user home so failures leave an existing binary untouched.
+devtunnel_cli_install() (
+    case "$(uname -s)" in
+        Linux) dt_os=linux ;;
+        Darwin) dt_os=osx ;;
+        *) printf '%s\n' 'Unsupported OS for Dev Tunnels CLI' >&2; exit 1 ;;
+    esac
+    case "$(uname -m)" in
+        x86_64|amd64) dt_arch=x64 ;;
+        aarch64|arm64) dt_arch=arm64 ;;
+        *) printf '%s\n' 'Unsupported architecture for Dev Tunnels CLI' >&2; exit 1 ;;
+    esac
+
+    dt_dest="$HOME/.local/bin"
+    dt_url="https://tunnelsassetsprod.blob.core.windows.net/cli/$dt_os-$dt_arch-devtunnel"
+    mkdir -p "$dt_dest" || exit 1
+    dt_tmp=$(mktemp -d "$dt_dest/.devtunnel.XXXXXXXX") || exit 1
+    trap 'rm -rf -- "$dt_tmp"' 0
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
+
+    if command -v curl >/dev/null 2>&1; then
+        curl -fL --connect-timeout 15 --max-time 300 -o "$dt_tmp/devtunnel" "$dt_url" || exit 1
+    elif command -v wget >/dev/null 2>&1; then
+        wget --timeout=30 --tries=2 -O "$dt_tmp/devtunnel" "$dt_url" || exit 1
+    else
+        printf '%s\n' 'Installing Dev Tunnels CLI requires curl or wget' >&2
+        exit 1
+    fi
+    if [ ! -s "$dt_tmp/devtunnel" ]; then
+        printf '%s\n' 'Dev Tunnels CLI download was empty' >&2
+        exit 1
+    fi
+    chmod 755 "$dt_tmp/devtunnel" || exit 1
+    mv -f "$dt_tmp/devtunnel" "$dt_dest/devtunnel" || exit 1
+    printf 'Dev Tunnels CLI installed at %s/devtunnel\n' "$dt_dest"
+    if [ "$dt_os" = linux ]; then
+        printf '%s\n' 'Linux runtime dependencies (e.g. libsecret) must already be available; no system packages were installed.'
+    fi
+)
+
 #
 # # cron_routine - cron at random time over a day
 # # usage: cron_routine [shell_script_file] [number_of_runs]

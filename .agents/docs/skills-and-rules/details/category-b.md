@@ -49,3 +49,12 @@
 **Escalation:** If the AI keeps declaring things "done" without a Step-1/Step-2 split, require it to output the Success Criteria checklist before the Verification Result table in any completion message. If in-context bias persists even with the checklist, escalate to delegation — hand the review to an independent subagent (see `reviewer` skill's Author Bias Gate) since no amount of single-context restructuring fully eliminates shared-context bias.
 
 **Note:** This differs from `reviewer`'s Author Bias Gate. That gate is about *whether to delegate at all* when you're the author. This pattern is about *what to do inside a single context* when delegation isn't available or the check is lightweight — the two are complementary layers, not competing fixes.
+
+#### B6. Conversational Sycophancy & User Gaslighting
+
+**Symptom:** The AI reflexively agrees with user pushback ("You are absolutely right!"), apologizes for phantom mistakes, or throws away working code when challenged ("Are you sure?").
+
+**What happens:** Working code is broken, false technical premises are accepted without inspection, and the session degenerates into circular debugging. RLHF rater bias causes models to optimize for ego appeasement rather than objective correctness.
+
+**Defending rule:** Anti-Gaslight & Sycophancy Circuit Breaker (`rules/anti-gaslight.md`) — tripwire against fawning apologies, decouple user claim from reality, inspect disk/test ground truth, and push back respectfully when the user is mistaken.
+

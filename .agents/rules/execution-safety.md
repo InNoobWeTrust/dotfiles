@@ -1,5 +1,5 @@
 ---
-description: "Applies whenever running shell commands, executing scripts, accessing configuration, or managing long-running processes. Enforces secret isolation, ephemeral runners, script hygiene, and terminal multiplexer priority."
+description: "Load before the first shell command in every session. Requires sandbox routing for every command, including read-only checks and fast-path scripts; enforces secret isolation, ephemeral runners, script hygiene, and terminal multiplexer priority."
 globs: "*"
 alwaysApply: true
 trigger: always_on
@@ -7,7 +7,19 @@ trigger: always_on
 
 # Execution Safety
 
-This rule applies whenever you execute shell commands, run scripts, or access configuration. It covers three mandatory concerns: **secret isolation**, **script execution hygiene**, and **long-running process management (multiplexer priority)**.
+This rule applies whenever you execute shell commands, run scripts, or access configuration. It covers **OS sandbox routing**, **secret isolation**, **script execution hygiene**, and **long-running process management**.
+
+## Pre-Execution Gate (every session, every command)
+
+Load this rule before the first shell command, not only after a denial or when editing `.agents/`. Before each command:
+
+1. Prefer native read/search/edit tools when they can perform the operation without shell execution.
+2. For shell execution, select an available sandbox tool or a verified platform sandbox using [Shell Sandbox Routing](#shell-sandbox-routing-linux-and-macos). Classify actual writes and network needs; use the least permissions required, an explicit workdir, and non-login execution unless startup configuration is needed.
+3. If no usable sandbox exists, report the limitation and obtain explicit approval **before** unrestricted execution. A task request, fast-path exemption, prior successful command, or tool availability is not approval to bypass isolation.
+
+This gate applies to `pwd`, `ls`, `rg`, Git inspection, syntax checks, package metadata queries, tests, temporary verification scripts, and cleanup as well as mutating commands. Apply it to shell execution through wrappers, code-mode tools, and delegated agents too. Do not escalate permissions or retry unrestricted after a denial without investigating it.
+
+`uv`, `bun`, `npx`, virtual environments, and mocked commands do **not** provide OS isolation. Dependency resolution and OS sandboxing are separate controls; use the appropriate runner **inside** the selected sandbox.
 
 ---
 
@@ -44,14 +56,14 @@ Stop and ask the user. Do not attempt to discover it yourself. If a script needs
 
 ## Script Execution Hygiene
 
-System-wide package installs pollute the user's environment. Inline scripts are fragile and hard to audit. Prefer file-based scripts with sandboxed dependency resolution.
+System-wide package installs pollute the user's environment. Inline scripts are fragile and hard to audit. Prefer file-based scripts with ephemeral dependency resolution.
 
 ### Default runner hierarchy
 
 For every script or command, choose the **first** option that is feasible:
 
-1. **File-based script with sandboxed dependency resolution** — required when file-write tools are available.
-2. **Inline sandboxed one-liner** — only when file-write tools are **not** available.
+1. **File-based script with ephemeral dependency resolution** — required when file-write tools are available.
+2. **Inline one-liner inside the selected OS sandbox** — only when file-write tools are **not** available.
 3. **Published CLI tool** — use `uvx`, `npx`, or `bunx` only for packages installed from a registry.
 
 **The system `python`, `python3`, `node`, `npm`, `pip`, or direct package-manager installs are not the default path.** They may only be used when the project already has a managed environment (e.g., a `pyproject.toml` or `package.json` workspace) and the user explicitly asked you to run inside that environment.
@@ -88,7 +100,7 @@ Host execution of recursive/process-tree/botnet-like tests is prohibited. Use an
 When you have write tools available:
 
 1. Write the script to a **temp directory** — either `/tmp/` (global) or the repo's dedicated scratch/temp directory.
-2. Execute with the appropriate sandboxed runner (`uv run --with <dep> python` for Python, `bun run` for JS/TS).
+2. Execute inside the selected OS sandbox with the appropriate dependency runner (`uv run --with <dep> python` for Python, `bun run` for JS/TS).
 3. Dependencies resolve automatically on demand without modifying global packages or creating local lockfiles.
 
 ```bash
@@ -113,7 +125,7 @@ python /tmp/fetcher.py
 
 ### Exception: inline execution without write tools
 
-If the agent environment does **not** provide file-write tools, inline execution is permitted **only** through sandboxed runners:
+If the agent environment does **not** provide file-write tools, inline execution is permitted **only** through dependency runners inside the selected OS sandbox:
 
 ```bash
 # Python — uv resolves deps, runs inline via python -c
@@ -144,7 +156,7 @@ Stop and ask the user before installing system-wide tools. If the project has a 
 
 ## Shell Sandbox Routing (Linux and macOS)
 
-For shell commands with **read-only intentions** (file inspection, `git status`/`git log`/`git diff`, non-mutating analysis, log viewing, data profiling, dry-runs, system queries, `rg`/`grep`), prefer sandboxed execution over an unrestricted shell. Native read/search/edit tools need no shell wrapper. A test or dry-run label does not guarantee a command is non-mutating; choose permissions based on actual writes.
+For **every shell command**, require sandboxed execution unless an unrestricted fallback has explicit approval under the gate above. Read-only intentions (file inspection, `git status`/`git log`/`git diff`, analysis, log viewing, dry-runs, system queries, `rg`/`grep`) are not exemptions. Native read/search/edit tools need no shell wrapper. A test or dry-run label does not guarantee a command is non-mutating; choose permissions based on actual writes.
 
 ### Defaults and Fallback Order
 
@@ -229,4 +241,6 @@ For any long-running command, dev server, watcher, test runner, or daemon:
 - [ ] Dependency fallback was not silently replaced by a global install
 - [ ] Long-running processes prioritized `tmux` (or `screen` fallback) over harness background tasks or `&`/`nohup`
 - [ ] Multiplexer sessions used `agent-` namespace and did not touch user sessions
-- [ ] Read-only shell commands used an available sandbox tool or supported platform command; denials were investigated without silent bypass or unjustified permission escalation; any unrestricted fallback had explicit approval
+- [ ] This rule was loaded before the first shell command; fast-path tasks did not waive it
+- [ ] Every shell command used an available sandbox tool or verified platform sandbox, including inspection, tests, scratch scripts, and cleanup; dependency runners were not mistaken for OS isolation
+- [ ] Denials were investigated without silent bypass or unjustified permission escalation; any unrestricted fallback had explicit approval before execution

@@ -386,6 +386,7 @@
       "resource": "*",
       "effect": "allow"
     },
+    { "action": "sandbox_sandbox", "resource": "*", "effect": "allow" },
     {
       "action": "sandbox",
       "resource": "*",

@@ -14,8 +14,9 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 | `self-grounded-verification.md` | Verification, self-review, "done" claims | medium |
 | `tool-call-integrity.md` | Every tool call that produces a side effect (file write, move, API call, shell command) | medium |
 | `autonomy-safety.md` | Always-on autonomy gate; especially before delegation or self-execution that may spawn, recurse, fan out, parallelize, or stress processes | medium |
-| `execution-safety.md` | Running commands/scripts, sandbox defaults and fallbacks (available tools/platform commands), denials or unavailable backends, long-running processes (multiplexers), reading env/config; process safety preflight | medium |
+| `execution-safety.md` | Before the first shell command in every session; every command thereafter, including read-only/fast-path checks, sandbox denials/fallbacks, long-running processes, reading env/config | medium |
 | `git-safety.md` | Git staging, committing, pushing | small |
+| `anti-gaslight.md` | User pushback, skepticism ("are you sure?"), contradiction of working code, or urge to agree/apologize | small |
 
 ## On-Demand (load when trigger fires)
 

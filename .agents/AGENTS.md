@@ -1,10 +1,12 @@
 # AGENTS.md — Universal Agent Instructions
 
-> Universal entry point for all AI agent harnesses (Kilo, Claude, Codex, Gemini/Antigravity, Hermes, etc.) working in this repository.
+> Shared user-level instructions for every project, including repositories with no agent configuration.
 
-## Project
+## Scope and Paths
 
-Personal dotfiles and AI-agent infrastructure (rules, skills, workflows, memory) for cross-harness agent development.
+This file is installed at `~/.agents/AGENTS.md` and linked into supported harnesses' native global instruction locations. Resolve `rules/`, `skills/`, and other shared paths below against `~/.agents/`, **not the current repository or the symlink's directory**. Repository instructions supply project-specific context; do not assume the current project is this dotfiles repository.
+
+Before acting, read `~/.agents/rules/INDEX`. Load only triggered rule bodies. Harness-specific runtime controls and verification are documented in `~/.agents/docs/skills-and-rules/harness-safety.md`.
 
 **Operating trajectories:** Distinguish between:
 1. **Software Engineering Delivery** (phased, MVP-first, TDD, slicing, `code-craft` for production codebases and multi-component systems).
@@ -26,6 +28,7 @@ AGENTS.md (this file — product constraints, operating rules, harness wiring)
 
 ## Core Principles
 
+- **Before the first shell command in every session**, load `rules/execution-safety.md`. **Every shell command must use an available sandbox**, including read-only inspection and fast-path verification; native read/search/edit tools need no wrapper. If no usable sandbox exists, stop and obtain explicit approval before unrestricted execution. Task simplicity never waives this gate.
 - Treat the triggered rules in `rules/INDEX` as binding; load the applicable body before acting.
 - Verify tool outcomes, protect secrets, and use the repository's quality and verification gates.
 - Choose the correct operational trajectory: use Phased Delivery / Slicing for production software engineering, first-principles scientific inquiry for research, or Fast-Path / Proportionality for scripts, tooling, and quick fixes.
@@ -44,6 +47,7 @@ A decision is material when it changes user-visible behavior, data semantics, se
 - **After answers**: restate the resulting model and remaining uncertainty. Request explicit decision confirmation only when a material unresolved decision exists; quick clear tasks with no material unresolved decision proceed without ritual confirmation.
 - **Revalidation**: an answer given without adequate context is non-binding. If that happens, explicitly say the earlier answer lacked context, present the missing context, and ask the user to confirm or change that decision; never silently upgrade the old answer.
 - **Evidence discipline**: never expose chain-of-thought, raw subagent transcripts, or orchestration noise; report only a concise evidence summary leading to the decision.
+- **Anti-gaslighting & sycophancy circuit breaker**: never adopt reflexive agreement ("you are absolutely right"), apologize prematurely, or discard working code under user skepticism without re-grounding facts. Load `rules/anti-gaslight.md` on user pushback, contradiction, or urge to appease.
 - Full sequence lives in `rules/grooming.md`. Keep quick tasks proportional; do not gate when intent, scope, verification, and safety are already clear.
 
 ## Skill Routing
@@ -82,5 +86,5 @@ Activating a skill by reading its `SKILL.md` is a binding commitment to execute 
 - **Long-running commands & background tasks:** Prioritize terminal multiplexers (`tmux`, fallback to GNU `screen` if absent) over harness background tasks or ad-hoc backgrounding (`&`, `nohup`). See `rules/execution-safety.md`.
 - **Namespacing:** Always prefix agent-spawned sessions with `agent-` (e.g., `agent-devserver`) and redirect stdout/stderr to `/tmp/agent-<name>.log`.
 - **User session protection:** Never kill, hijack, or alter user processes or existing sessions in zellij, tmux, or screen. Only manage agent-created `agent-*` sessions.
-- **Shell sandbox routing:** For read-only shell commands, prefer an available sandbox tool (native agent tool or MCP tool), then a supported platform command (`bwrap` on Linux, `sandbox-exec` on macOS). Choose the least permissions needed; investigate denials without silently bypassing isolation or granting workspace writes. Native read/edit tools need no wrapper. See `rules/execution-safety.md` for defaults and fallbacks.
+- **Shell sandbox routing:** Enforce the Core Principles pre-execution gate using `rules/execution-safety.md`; investigate denials without silent bypass or permission escalation.
 - **Server issues:** Identify and report — do not restart unexpectedly.

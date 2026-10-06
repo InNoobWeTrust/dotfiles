@@ -13,6 +13,7 @@ Materialize this pack into `<project>/.agents/` so agents work **even when globa
 | `slicing.md` | Yes | Feature planning |
 | `skill-compliance.md` | Yes | Binding skill execution |
 | `self-grounded-verification.md` | Yes | Anti agreement-bias |
+| `anti-gaslight.md` | Yes | Anti-sycophancy / circuit breaker against false user premises |
 | `autonomy-safety.md` | Yes | Elevated autonomy / AFK |
 | `INDEX` | Yes (project) | Rule map and routing foundation |
 | `skills-discovery.md` | Yes (project) | Index-first routing |

@@ -12,3 +12,4 @@ These essential rules form the minimum viable rule set. A project lacking them w
 - [Rule 6: Skill Compliance](./details/rule-skill-compliance.md)
 - [Rule 7: Self-Grounded Verification](./details/rule-self-grounded-verification.md)
 - [Rule 8: Autonomy Safety (Consequence-First Agency)](./details/rule-autonomy-safety-consequence-first-agency.md)
+- [Rule 9: Anti-Gaslight & Sycophancy Circuit Breaker](./details/rule-anti-gaslight.md)

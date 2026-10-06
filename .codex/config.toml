@@ -1,6 +1,14 @@
 model = "forbiddengun/qwen"
 model_provider = "ckey"
 
+# Native command isolation; escalation requires an explicit user decision.
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+allow_login_shell = true
+
+[sandbox_workspace_write]
+network_access = true
+
 [model_providers.ckey]
 name = "CKey"
 base_url = "https://api.xah.io/v1"
