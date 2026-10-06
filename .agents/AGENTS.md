@@ -78,6 +78,7 @@ Activating a skill by reading its `SKILL.md` is a binding commitment to execute 
 - Never stage, commit, push, or use destructive Git actions without the required explicit approval; inspect status and diffs first.
 - Stage explicit non-secret files only; never use `git add .` or `git add -A`.
 - Never commit host-specific absolute paths (`/Users/...`, `/home/...`, `file:///...`); all internal links and references in committed files must be portable and relative.
+- Exception: explicitly approved verbatim archived correspondence may retain historical host paths as evidence, never as operational references; secret/data exclusions still apply (see `rules/git-safety.md`).
 - Inspect `git diff --staged` directly to ground commit messages in actual code deltas, never chat assumptions.
 - Inspect `git log` history before drafting commit messages to match repository style.
 
