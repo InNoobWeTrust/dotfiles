@@ -185,9 +185,8 @@ async function runSession(input: string | undefined, service: "tunnel" | "tailsc
     "bash", "-c", await shellScript(`../dev_${service}/session.sh`), `dev-${service}`, name,
   ];
   if (service === "tunnel") {
-    return run("bunx", [
-      ...CLI, "exec", "--container-id", id, "--workspace-folder", repo, ...session,
-    ]);
+    // The generated up config is temporary; exec must not rediscover a project config.
+    return run("docker", ["exec", "-i", "--user", "vscode", id, ...session]);
   }
   // stdin EOF is the Tailscale supervisor's lifeline when docker exec disconnects.
   return run("docker", [
