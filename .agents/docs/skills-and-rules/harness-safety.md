@@ -39,6 +39,30 @@ Use the repository's existing [bootstrap](../../../bootstrap.sh) to install the 
 
 **Execution behavior:** Keep instruction discovery separate from permissions. Sandboxed commands should run automatically, including bounded side effects in writable sandboxes; a failed sandbox must not silently trigger unrestricted retries. Necessary host operations require a scoped approval and should then be executed by the agent, not handed back to the user.
 
+## Shared Sandbox Tools
+
+The existing sandbox MCP exposes three tools with a required `command` and optional absolute `workdir`. All use non-login shells and inherit the environment; set command-local variables with `env NAME=value command` or explicitly invoke another shell when needed.
+
+| Tool | Workspace writes | Network |
+|---|---|---|
+| `sandbox_ro` | Denied | Allowed |
+| `sandbox_pure` | Denied | Denied |
+| `sandbox_rw` | Allowed in the resolved workdir only | Allowed |
+
+**Directory discovery:** An explicit workdir wins. Otherwise each call requests client MCP roots: one existing local directory is used, multiple or unusable roots require an explicit workdir, and unsupported/empty roots fall back to the server's launch directory. A failed roots request stops execution rather than guessing; results report the directory and whether it was explicit, client-declared, or inferred.
+
+**Inference boundary:** The launch directory is inherited process context, not proof of the active agent workspace. Specify `workdir` when uncertain, particularly before writable execution; no parent-process inspection or workspace caching is used.
+
+**Example:** `sandbox_pure({command: "git status --short"})` uses directory discovery. Add `workdir: "/absolute/project/path"` to select the target explicitly; macOS scratch writes must use `$TMPDIR`, not hard-coded `/tmp`.
+
+**Migration:** The old generic `sandbox` tool and its mode/login/shell/env arguments are removed. OpenCode grants the exact actions `sandbox_sandbox_ro`, `sandbox_sandbox_pure`, and `sandbox_sandbox_rw`; reconnect the MCP server through the harness to refresh its tool catalog without restarting unrelated services.
+
+### ACI Pass
+
+- **Result:** PASS.
+- **Main risks:** Ambiguous workspace discovery, inferred directories widening the wrong writable scope, and stale tool permissions/catalogs.
+- **Interface upgrades:** Two inputs, fixed isolation modes and non-login execution, explicit ambiguity errors, per-call roots discovery, disclosed defaults, and exact permission names.
+
 ## Official References
 
 - **Standards:** [AGENTS.md](https://agents.md/) and [Agent Skills](https://agentskills.io/) describe shared formats, not one universal global-instruction discovery mechanism.

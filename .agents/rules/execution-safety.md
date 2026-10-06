@@ -14,7 +14,7 @@ This rule applies whenever you execute shell commands, run scripts, or access co
 Load this rule before the first shell command, not only after a denial or when editing `.agents/`. Before each command:
 
 1. Prefer native read/search/edit tools when they can perform the operation without shell execution.
-2. For shell execution, select an available sandbox tool or a verified platform sandbox using [Shell Sandbox Routing](#shell-sandbox-routing-linux-and-macos). Classify actual writes and network needs; use the least permissions required, an explicit workdir, and non-login execution unless startup configuration is needed.
+2. For shell execution, select an available sandbox tool or a verified platform sandbox using [Shell Sandbox Routing](#shell-sandbox-routing-linux-and-macos). Classify actual writes and network needs; use the least permissions required, a known target workdir (explicit or verified tool default), and non-login execution unless startup configuration is needed.
 3. If no usable sandbox exists, report the limitation and obtain explicit approval **before** unrestricted execution. A task request, fast-path exemption, prior successful command, or tool availability is not approval to bypass isolation.
 
 This gate applies to `pwd`, `ls`, `rg`, Git inspection, syntax checks, package metadata queries, tests, temporary verification scripts, and cleanup as well as mutating commands. Apply it to shell execution through wrappers, code-mode tools, and delegated agents too. Do not escalate permissions or retry unrestricted after a denial without investigating it.
@@ -174,7 +174,7 @@ Select the least-permissive policy matching the authorized intent:
 
 Map these policies to the available tool or command's documented controls, not fixed mode names. For example, run `git status --short` in the target repository with workspace writes denied and network disabled if supported.
 
-Set the target working directory explicitly. Avoid login-shell startup unless needed; do not assume skipping profiles strips the inherited environment. Use the sandbox's designated scratch/cache path (such as `$TMPDIR` when provided), not hard-coded `/tmp`. Verify actual boundaries: private scratch directories, isolated mounts, host-file readability, and environment filtering vary by implementation. Sandboxing does not by itself protect readable secrets or establish hostile-code isolation.
+Use an explicit target directory when the tool's default is uncertain; a client-declared workspace or disclosed launch-directory default is acceptable only when it matches the intended target. Check the reported directory and supply an explicit override on mismatch; before writable execution, establish which directory becomes writable. Avoid login-shell startup unless needed; do not assume skipping profiles strips the inherited environment. Use the sandbox's designated scratch/cache path (such as `$TMPDIR` when provided), not hard-coded `/tmp`. Verify actual boundaries: private scratch directories, isolated mounts, host-file readability, and environment filtering vary by implementation. Sandboxing does not by itself protect readable secrets or establish hostile-code isolation.
 
 ### Denials
 
