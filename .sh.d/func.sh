@@ -813,6 +813,34 @@ dev_tunnel() {
     bash "$helper" "$@"
 }
 
+# Publish a local HTTP port through a foreground Cloudflare Quick Tunnel.
+# Usage: cf_tunnel PORT [CLOUDFLARED_OPTIONS...]
+cf_tunnel() (
+    case "${1:-}" in
+        -h|--help)
+            printf '%s\n' 'Usage: cf_tunnel PORT [CLOUDFLARED_OPTIONS...]' \
+                'Temporary public HTTPS URL; Ctrl-C stops it. Quick Tunnels do not support SSE.'
+            return 0 ;;
+        ''|*[!0-9]*) echo 'cf_tunnel: PORT must be an integer from 1 to 65535.' >&2; return 1 ;;
+    esac
+    port=$1
+    if [ "${#port}" -gt 5 ] || [ "$port" -lt 1 ] || [ "$port" -gt 65535 ]; then
+        echo 'cf_tunnel: PORT must be an integer from 1 to 65535.' >&2
+        return 1
+    fi
+    shift
+    # Ignore interactive aliases when checking for the actual executable.
+    unalias cloudflared 2>/dev/null || :
+    if command -v cloudflared >/dev/null 2>&1; then
+        command cloudflared tunnel --url "http://127.0.0.1:$port" "$@"
+    elif command -v pkgx >/dev/null 2>&1; then
+        command pkgx cloudflared tunnel --url "http://127.0.0.1:$port" "$@"
+    else
+        echo 'cf_tunnel: install cloudflared or pkgx first.' >&2
+        return 1
+    fi
+)
+
 # Custom functions
 # shellcheck source=/dev/null
 if [ -n "${CONF_SH_DIR:-}" ] && [ -r "$CONF_SH_DIR/func.user.sh" ]; then
