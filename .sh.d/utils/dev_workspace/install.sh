@@ -16,6 +16,10 @@ if ! command -v stow >/dev/null 2>&1; then
     "${apt[@]}" update
     "${apt[@]}" install -y --no-install-recommends stow
 fi
+# Bootstrap otherwise skips Pixi provisioning when system Stow is already present.
+if ! command -v pixi >/dev/null 2>&1; then
+    curl -fsSL --connect-timeout 5 --max-time 30 https://pixi.sh/install.sh | sh
+fi
 # Lifecycle execution may not export SHELL; bypass bootstrap's login-shell shebang.
 bash "$repo/bootstrap.sh"
 # Use the same implementation as install-vscode-cli, without its interactive reload.

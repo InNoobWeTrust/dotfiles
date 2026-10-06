@@ -548,7 +548,9 @@ colortest() {
     done
 }
 # Only alias in non-zsh shells to avoid collision with zsh's native `autoload -U colors`
-[ -z "$ZSH_VERSION" ] && alias colors=colortest
+if [ -z "${ZSH_VERSION:-}" ]; then
+    alias colors=colortest
+fi
 
 #
 # # ex - archive extractor
@@ -812,4 +814,6 @@ dev_tunnel() {
 
 # Custom functions
 # shellcheck source=/dev/null
-[ -r "$CONF_SH_DIR/func.user.sh" ] && . "$CONF_SH_DIR/func.user.sh"
+if [ -n "${CONF_SH_DIR:-}" ] && [ -r "$CONF_SH_DIR/func.user.sh" ]; then
+    . "$CONF_SH_DIR/func.user.sh"
+fi
