@@ -65,7 +65,7 @@ if [ "${2:-}" = --stdin-lifeline ]; then
   watcher_pid=$!
   exec 3<&-
 fi
-"$tsd" --tun=userspace-networking --port=0 --socket=s --state="$state/state" < /dev/null &
+"$tsd" --tun=userspace-networking --port=0 --socket=s --statedir="$state" --state="$state/state" < /dev/null &
 daemon_pid=$!
 for attempt in {1..30}; do
   kill -0 "$daemon_pid" 2>/dev/null || exit 1
