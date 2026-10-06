@@ -1,0 +1,13 @@
+;; Local command safety, not a clean environment: host files remain readable.
+;; sandbox-exec is deprecated and does not provide Linux mount isolation.
+(version 1)
+(allow default)
+(deny file-write*)
+(allow file-write*
+    (subpath (param "TEMP_DIR"))
+    (literal "/dev/null")
+    (literal "/dev/tty"))
+(if (string=? (param "MODE") "rw")
+    (allow file-write* (subpath (param "WORKSPACE"))))
+(if (string=? (param "MODE") "pure")
+    (deny network*))

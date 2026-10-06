@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Batch check commonly used commands for efficiency
-usable_batch git docker curl npx uv pkgx rg eza nvim ssh neovide python3 corepack uvx brew rustup conda pyenv nvm yarn pnpm socat bwrap
+usable_batch git docker curl npx uv pkgx rg eza nvim ssh neovide python3 corepack uvx brew rustup conda pyenv nvm yarn pnpm socat bwrap sandbox-exec
 
 
 ########################### Fancy prompt ######################################
@@ -488,7 +488,7 @@ usable curl && alias install-garden='curl -sL https://get.garden.io/install.sh |
 #   - bwrap-rw   (Read-Write $PWD): System is read-only, but $PWD is writable (--bind "$PWD" "$PWD").
 #                Use for: Builds, test runners, linters with --fix that should only modify $PWD.
 #   - bwrap-pure (Air-Gapped Offline): Both system and $PWD are read-only; network is completely cut.
-#                Use for: Untrusted scripts, air-gapped tests, zero exfiltration risk.
+#                Use for: Offline tests. Host files remain readable; not a clean hostile-code environment.
 #   - bwrap-sh   (Interactive Shell): Opens an interactive $SHELL session inside the read-only sandbox.
 #                Use for: Manually exploring/debugging commands inside the sandbox environment.
 
@@ -506,6 +506,37 @@ usable bwrap && \
 
         # Interactive Shell inside Read-Only Sandbox
         alias bwrap-sh='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --share-net --die-with-parent --chdir "$PWD" -- "$SHELL"'
+    }
+
+################ Sandboxing (macOS Seatbelt / sandbox-exec) ################
+# Same mode intent as bwrap, but no private mounts or PID isolation.
+# Host files remain readable. sandbox-exec is deprecated by Apple.
+# Use $TMPDIR for scratch writes; hard-coded /tmp writes are denied.
+usable sandbox-exec && \
+    {
+        # A subshell keeps scratch variables/traps out of the calling shell.
+        _sandbox_exec() (
+            sandbox_mode=$1
+            shift
+            sandbox_workspace=$(pwd -P) || exit 1
+            sandbox_temp=$(mktemp -d "${TMPDIR:-/tmp}/sandbox.XXXXXXXX") || exit 1
+            trap 'rm -rf -- "$sandbox_temp"' EXIT
+            trap 'exit 130' INT
+            trap 'exit 143' TERM
+            sandbox_temp=$(cd "$sandbox_temp" && pwd -P) || exit 1
+            TMPDIR="$sandbox_temp" TMP="$sandbox_temp" TEMP="$sandbox_temp" \
+                sandbox-exec \
+                -D "MODE=$sandbox_mode" \
+                -D "WORKSPACE=$sandbox_workspace" \
+                -D "TEMP_DIR=$sandbox_temp" \
+                -f "$HOME/.config/sandbox/command.sb" "$@"
+        )
+
+        alias sandbox-ro='_sandbox_exec ro'
+        alias sandbox-run='sandbox-ro'
+        alias sandbox-rw='_sandbox_exec rw'
+        alias sandbox-pure='_sandbox_exec pure'
+        alias sandbox-sh='_sandbox_exec ro "$SHELL"'
     }
 
 ############################# Custom ##########################################
