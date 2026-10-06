@@ -347,7 +347,8 @@ mux() {
 # # usage: vscode_cli_install
 vscode_cli_install() (
     # Subshell isolates installer variables and cleanup traps from interactive callers.
-    if usable code; then
+    # Devcontainer images include a code launcher even when the actual CLI is absent.
+    if command -v code >/dev/null 2>&1 && code tunnel --help >/dev/null 2>&1; then
         echo "VSCode CLI is already installed."
         exit 0
     fi
