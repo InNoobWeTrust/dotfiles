@@ -11,7 +11,7 @@ _dev_workspace() {
     fi
 
     local top_commands="prepare up stop status tunnel tailscale completion"
-    local tunnel_commands="host login"
+    local tunnel_commands="host"
 
     if [ "$cword" -eq 1 ]; then
         COMPREPLY=( $(compgen -W "$top_commands" -- "$cur") )
@@ -28,7 +28,7 @@ _dev_workspace() {
             ;;
         tailscale)
             if [ "$cword" -eq 2 ]; then
-                COMPREPLY=( $(compgen -W "host login ssh" -- "$cur") )
+                COMPREPLY=( $(compgen -W "host ssh" -- "$cur") )
             else
                 COMPREPLY=( $(compgen -d -- "$cur") )
             fi

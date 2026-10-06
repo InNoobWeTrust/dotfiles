@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
-# stdin is a lifeline: EOF stops only this invocation’s children.
+# Transportable foreground worker: NAME [--stdin-lifeline].
+# Only container execution uses stdin as a lifeline; local/Slurm sessions use signals.
 set -euo pipefail
-name="$1"; mode="$2"
+name="${1:?Expected identity name}"
+[[ "$name" =~ ^ts-[a-f0-9]{16}$ ]] || { echo "Invalid Tailscale identity name" >&2; exit 1; }
+case "${2:-}" in ''|--stdin-lifeline) ;; *) echo "Invalid session option" >&2; exit 1 ;; esac
 export PATH="${PIXI_HOME:-$HOME/.pixi}/bin:$HOME/.local/bin:$PATH"
 ts=$(command -v tailscale) && tsd=$(command -v tailscaled) || {
-  echo "tailscale and tailscaled not found; run pixi global sync inside the container." >&2; exit 1;
+  echo "tailscale and tailscaled not found; run pixi global sync in this environment." >&2; exit 1;
 }
 umask 077
-cache="${XDG_CACHE_HOME:-$HOME/.cache}/dev-workspace"
+cache="${XDG_CACHE_HOME:-$HOME/.cache}/dev-tailscale"
 runtime=""; lock_dir=""; owns_lock=false
 daemon_pid=""; client_pid=""; watcher_pid=""
 cleanup() {
@@ -39,27 +42,29 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 trap 'exit 129' HUP
-state="${XDG_STATE_HOME:-$HOME/.local/state}/dev-workspace/tailscale/$name"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/dev-tailscale/tailscale/$name"
 mkdir -p -- "$state"
 state=$(cd -- "$state" && pwd -P)
 chmod 700 "$state"
 lock_dir="$state/active.lock"
 if ! mkdir -- "$lock_dir" 2>/dev/null; then
-  echo "Tailscale identity is locked: $lock_dir. Stop its session before login/host." >&2
+  echo "Tailscale identity is locked: $lock_dir. Stop its session before starting another session." >&2
   echo "After a crash, verify no daemon uses this identity before removing the lock." >&2
   exit 1
 fi
 owns_lock=true
-printf 'host=%s pid=%s\n' "$(hostname)" "$$" > "$lock_dir/owner"
+printf 'host=%s pid=%s job=%s\n' "$(hostname)" "$$" "${SLURM_JOB_ID:-none}" > "$lock_dir/owner"
 mkdir -p -- "$cache"
 runtime=$(mktemp -d "$cache/ts.XXXXXXXX")
 # Relative socket paths avoid Unix-domain socket length limits in long XDG paths.
 cd -- "$runtime"
-supervisor=$$
-exec 3<&0
-(while IFS= read -r line; do :; done; kill -TERM "$supervisor") <&3 &
-watcher_pid=$!
-exec 3<&-
+if [ "${2:-}" = --stdin-lifeline ]; then
+  supervisor=$$
+  exec 3<&0
+  (while IFS= read -r line; do :; done; kill -TERM "$supervisor") <&3 &
+  watcher_pid=$!
+  exec 3<&-
+fi
 "$tsd" --tun=userspace-networking --port=0 --socket=s --state="$state/state" < /dev/null &
 daemon_pid=$!
 for attempt in {1..30}; do
@@ -68,21 +73,17 @@ for attempt in {1..30}; do
   sleep 1
 done
 [ -S s ] || { echo "Timed out waiting for tailscaled socket" >&2; exit 1; }
-if [ "$mode" = login ]; then
-  echo "Authenticate using the login URL below (five-minute timeout)."
-  "$ts" --socket=s up --ssh --hostname="$name" --timeout=5m < /dev/null &
-  client_pid=$!
-  while kill -0 "$client_pid" 2>/dev/null; do
-    kill -0 "$daemon_pid" 2>/dev/null || exit 1
-    sleep 1
-  done
-  rc=0; wait "$client_pid" || rc=$?; client_pid=""
-  [ "$rc" -eq 0 ] || exit "$rc"
+# Native up reuses saved state and prints its login URL when needed.
+"$ts" --socket=s up --ssh --hostname="$name" --timeout=5m < /dev/null &
+client_pid=$!
+while kill -0 "$client_pid" 2>/dev/null; do
   kill -0 "$daemon_pid" 2>/dev/null || exit 1
-  echo "Login saved in $state. You can now run tailscale host."
-  exit 0
-fi
-# Startup reconnects using saved preferences; host never initiates interactive login.
+  sleep 1
+done
+rc=0; wait "$client_pid" || rc=$?; client_pid=""
+[ "$rc" -eq 0 ] || exit "$rc"
+kill -0 "$daemon_pid" 2>/dev/null || exit 1
+# Wait for the configured daemon to become ready.
 for attempt in {1..30}; do
   kill -0 "$daemon_pid" 2>/dev/null || exit 1
   status_json=$("$ts" --socket=s status --json 2>/dev/null || true)
@@ -91,11 +92,12 @@ for attempt in {1..30}; do
   sleep 1
 done
 printf '%s' "$status_json" | grep -Eq '"BackendState"[[:space:]]*:[[:space:]]*"Running"' || {
-  echo "Tailscale is not authenticated/ready. Run dev_workspace tailscale login for this repository; check device approval and network access." >&2
+  echo "Tailscale is not authenticated/ready. Check native Tailscale output, device approval, and network access." >&2
   exit 1
 }
-echo "SSH from a Tailscale device: ssh vscode@$name"
-echo "Tailnet policy must allow network port 22 and Tailscale SSH as vscode."
+account="$(id -un)"
+echo "SSH from a Tailscale device: ssh $account@$name"
+echo "Tailnet policy must allow network port 22 and Tailscale SSH as $account."
 # Integrated SSH is served by tailscaled itself; no separate server or Serve process.
 rc=0; wait "$daemon_pid" || rc=$?; daemon_pid=""
 [ "$rc" -ne 0 ] || rc=1

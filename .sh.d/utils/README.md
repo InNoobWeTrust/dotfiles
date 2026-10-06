@@ -1,128 +1,103 @@
-# `dev_workspace` development workspace commands
+# Development sessions and environment adapters
+
+Run Tailscale SSH or a VS Code tunnel **in the environment you are already using**, or let an adapter launch it in a container or Slurm job.
+
+| Goal | Tool | Requirements |
+| --- | --- | --- |
+| Foreground Tailscale SSH here | `dev_tailscale` | Bash, `tailscale`, `tailscaled` |
+| Foreground VS Code tunnel here | `dev_tunnel` | Bash, standalone `code` CLI |
+| Container lifecycle and remote sessions | `dev_workspace` | Bun, Docker; Git for implicit REPO |
+| Allocate/submit/manage cluster sessions | `dev_slurm` | Bash, Slurm; service binaries on compute nodes |
+
+## Already inside an allocation? Start here
+
+From the repository directory on the compute node, without ending or replacing your allocation:
+
+```bash
+dev_tailscale host        # native Tailscale up prints a login URL if needed
+
+# Or, for desktop VS Code / vscode.dev:
+dev_tunnel host           # stays in foreground
+```
+
+**Ctrl-C** stops the session and returns to your shell; it does not cancel your Slurm allocation. Use your own terminal multiplexer if you want to keep it running—these tools deliberately have no background manager, status command, or stop command.
+
+**Explicit repository:** Use `dev_tailscale host /path/to/repo` or `dev_tunnel host /path/to/repo`. REPO must be an existing directory; commands accepting REPO use the current Git root when it is omitted and fail outside Git.
+
+## Layering
+
+```text
+Standalone CLI ───────────────► shared foreground worker ──► installed service
+Slurm adapter ──► sbatch ─────► same worker on compute node
+Workspace adapter ──► exec ────► same worker inside container
+```
+
+The wrapper owns foreground execution and cleanup; the native service owns authentication. Adapters only select an environment and transport the worker. Workers are embedded in command payloads, so their source paths do not need to exist on compute nodes or inside containers.
 
 ## Commands
-- Requires Bun, Git for implicit repository discovery, and Docker for workspace commands.
-- Run with `bun --no-env-file`; Commander 15.0.0 is the only external runtime import, which Bun may fetch/cache.
-- Devcontainer commands use `bunx --bun --package @devcontainers/cli@0.89.0 devcontainer`.
 
-| Command                                       | What it does                                      |
-| --------------------------------------------- | ------------------------------------------------- |
-| `dev_workspace prepare [REPO]`                 | Print unchanged adjacent config; no writes/Docker. |
-| `dev_workspace up [REPO] [--config PATH]`      | Create/resume; optionally use an explicit config. |
-| `dev_workspace status [REPO]`                  | Print Docker's state string or `absent`.           |
-| `dev_workspace stop [REPO]`                    | Stop without removing the container.              |
-| `dev_workspace tunnel [host] [REPO]`           | Run VS Code tunnel in foreground (default: `host`). |
-| `dev_workspace tunnel login [REPO]`            | Authenticate VS Code tunnel inside container.      |
-| `dev_workspace tailscale login [REPO]` | Authenticate interactively and save the repository's identity. |
-| `dev_workspace tailscale [host] [REPO]` | Run integrated Tailscale SSH in foreground using saved login. |
-| `dev_workspace tailscale ssh [REPO]` | SSH directly from a Tailscale device; no local tunnel proxy. |
-| `dev_workspace completion [SHELL]`            | Generate shell autocompletion script (bash or zsh). |
-| `dev_workspace help [COMMAND]`                 | Show help.                                        |
+| Command | Behavior |
+| --- | --- |
+| `dev_tunnel host [REPO]` | Foreground VS Code tunnel with stable repository name. |
+| `dev_slurm {tailscale\|tunnel} [host] [REPO]` | Submit a persistent `sbatch` job; defaults to host. Native authentication URLs/prompts appear in job logs. |
+| `dev_slurm {tailscale\|tunnel} stop` | Cancel that service's jobs with full-job signaling. |
+| `dev_slurm status` / `stop` | Inspect / cancel both services' jobs. |
+| `dev_workspace {tailscale\|tunnel} [host] [REPO]` | Foreground worker in the selected container; defaults to host. |
+| `dev_workspace tailscale ssh [REPO]` | Connect from a Tailscale device to `vscode@ts-<repo-hash>`. |
 
-## Repository resolution
-- Explicit REPO must be an existing directory; it is canonicalized with realpath.
-- Omitted REPO uses `git rev-parse --show-toplevel` and fails loudly outside Git.
-- Paths must suit Docker bind-mount syntax; mount delimiters are not validated.
+**Slurm requirements:** Install dotfiles and service binaries on storage visible to compute nodes; hosting must see persistent state to reuse authentication. Batch jobs have no interactive terminal: if VS Code requests an account/provider selection, run native `code tunnel user login` first in the same user environment with the same home/credential storage. Obtain site permission for outbound traffic and remote access; `dev_slurm` is for scheduling, while the standalone tools are for an allocation you already hold.
 
-## Configuration
-- Default: built-in embedded configuration. When `--config` is omitted, `up` writes a temporary configuration to `/tmp` and automatically cleans it up on exit.
-- Optional custom config: pass `--config /path/to/devcontainer.json` to use an explicit configuration.
-- `prepare`: prints the embedded JSON configuration directly to stdout (useful for piping: `dev_workspace prepare > my-config.json`).
-- If `.sh.d/utils/dev_workspace/dev_workspace.json` is present beside the entrypoint, it will be used as a local override when `--config` is omitted.
+**Command lookup:** Workers prepend `${PIXI_HOME:-$HOME/.pixi}/bin` and `~/.local/bin` to PATH. Run `pixi global sync` against an updated live manifest for Tailscale, and `install-vscode-cli` for the official standalone VS Code CLI; jobs never install tools themselves.
 
-## Container template
-- Image: `mcr.microsoft.com/devcontainers/base:ubuntu`; writable REPO bind at `/workspace`.
-- Requests 2 CPUs, 4 GiB memory, 4 GiB total memory+swap, and 512 PIDs.
-- Requests a 256 MiB `/tmp` tmpfs with `noexec,nosuid,nodev`.
-- No local SSH port forwarding; integrated Tailscale SSH uses tailnet port 22.
-- No privilege, added capabilities, or extra mounts; Docker default networking.
-- Effective container controls are not inspected or verified; these requests are not sandbox certification.
+## Authentication, identity, and cleanup
 
-## Setup inside the container
-- Static config selects the `vscode` user and disables environment probing.
-- **VS Code CLI:** The one-time dotfiles installer calls the shared `vscode_cli_install()` function used by `install-vscode-cli`, without the alias's interactive shell reload. It installs the official standalone `code` at `~/.local/bin/code` only if absent from PATH; staging uses XDG cache and is cleaned on exit. No suitable Conda package has been verified.
-- **Tailscale:** The dotfiles bootstrap syncs `.pixi/manifests/pixi-global.toml`, which declares and exposes both `tailscale` and `tailscaled` from Conda-forge. There is no separate static download or system service installation.
-- **Lifecycle:** Devcontainer CLI runs the dotfiles installer during initial setup, after post-create. There are no VS Code install hooks in post-create or post-start, and restarting a container does not reinstall tools. Pixi must be available: bootstrap installs it when provisioning Stow, but skips that installation if Stow already exists; pre-seeded/custom environments must supply Pixi themselves.
-- **Command lookup:** Login/host runners prepend `${PIXI_HOME:-$HOME/.pixi}/bin` and `~/.local/bin` to PATH. Pixi exposures take precedence over older standalone binaries; a custom PATH remains available after these directories.
-- No OpenSSH server, SSH password setup, or privileged Tailscale service is installed.
-- `--dotfiles-repository` is `https://github.com/InNoobWeTrust/dotfiles`.
-- `--dotfiles-install-command` is `.sh.d/utils/dev_workspace/install.sh`: run `bootstrap.sh`, load shared functions, and invoke `vscode_cli_install`. Installer logic lives only in `.sh.d/func.sh`.
+`${XDG_STATE_HOME:-$HOME/.local/state}` is the state root, in the environment where the service runs. Private Tailscale state directories use mode 700; new files inherit a restrictive umask.
 
-## Connection modes
+| Service | Persistent state | Identity |
+| --- | --- | --- |
+| Tailscale | `dev-tailscale/tailscale/ts-<repo-hash>/state` | One device per canonical repository path. |
+| VS Code tunnel | Native VS Code CLI credential storage (unchanged by wrappers). | `dw-<repo-hash>`. |
 
-- **VS Code:** `dev_workspace tunnel` runs `code tunnel` for desktop VS Code or `vscode.dev`, extensions, and debugging.
-- **Terminal SSH:** `dev_workspace tailscale` runs Tailscale’s integrated SSH server for a normal SSH client on another Tailscale device. No separate OpenSSH server or local tunnel proxy is needed.
+The repository hash is the first 16 hex characters of SHA-256 of the canonical repository path, without a trailing newline. Adapters resolve it before remote execution, avoiding identities based on a container's `/workspace` mount.
 
-## Tailscale inside the devcontainer
-
-**Login, then host:** Run `dev_workspace tailscale login [REPO]` and open the URL shown in your terminal. Login exits after saving authentication; then run `dev_workspace tailscale [REPO]` and leave it running. From another device on the same tailnet, use `dev_workspace tailscale ssh [REPO]`; policy must allow network port 22 and Tailscale SSH as `vscode`.
-
-**Isolation and cleanup:** Both binaries run as `vscode` using userspace networking, without a TUN device or added capabilities. Ctrl-C, termination, or loss of the command's stdin connection stops its children, removes disposable files under `${XDG_CACHE_HOME:-$HOME/.cache}/dev-workspace`, and releases its identity lock. Authentication remains in XDG state, so restart does not require another login unless credentials expire or are revoked.
-
-**Identity:** Each repository has one persistent identity named `ts-<repo-hash>`. Login and host take the same atomic directory lock, preventing concurrent daemons from using that identity. `tailscale up --ssh` enables the daemon's integrated SSH server on fixed tailnet port 22.
-
-**Existing/custom containers:** Update the container's live Pixi manifest from the dotfiles manifest and run `pixi global sync`, or rerun the updated dotfiles `bootstrap.sh` to perform both steps. Sync alone uses the existing live manifest, not this repository's copy. Custom configs must supply both binaries and the `vscode` account. The rootless daemon only serves its own account; do not authorize switching to root or other users.
+- **Native authentication:** VS Code runs `code tunnel` without overriding credential storage; you can pre-authenticate with `code tunnel user login` in the same environment. Tailscale starts its private daemon, then runs native `tailscale --socket=… up --ssh --hostname=… --timeout=5m`; saved state is reused or Tailscale prints a login URL.
+- **State reuse:** Tailscale reuses credentials when the worker user, repository identity, and state root match. Containers have their own homes; host credentials are not mounted automatically.
+- **Clean replacement:** Old wrapper credentials are neither migrated nor deleted. Wrapper-level login subcommands and the Slurm auth alias are removed; authenticate through the native flows instead.
+- **Tailscale SSH:** Rootless userspace networking needs no TUN device, separate OpenSSH server, or privileged service. It serves the current worker account (your cluster user locally, `vscode` in the default container); tailnet policy must permit network port 22 and SSH as that account.
+- **Cleanup:** Ctrl-C, SIGTERM, and SIGHUP stop Tailscale children, remove disposable files under `${XDG_CACHE_HOME:-$HOME/.cache}/dev-tailscale`, and release the identity lock. Container execution also stops on stdin disconnect; ordinary local/Slurm execution does not treat stdin EOF as termination.
+- **Lock recovery:** Tailscale sessions acquire `active.lock`; `owner` records hostname, PID, and job ID when available. After SIGKILL or node failure, verify the session and daemon are gone before removing that lock; it is never automatically stolen.
+- **Persistence:** Stopping/canceling preserves credentials. Recreating a container loses its state unless you supply persistent storage; no host credential mount is added automatically.
 
 > [!WARNING]
-> Existing containers retain previous packages and SSH settings until you change or rebuild them. Rootless integrated SSH was checked against Tailscale 1.102.5 source, but the Pixi manifest now resolves the package version. Real authenticated sessions on your container/cluster have not been verified; version or site restrictions may still prevent use.
+> Authenticated container/cluster access must be verified in your target environment. Rootless integrated SSH was previously checked against Tailscale 1.102.5 source; the Pixi manifest determines the installed version, and site/network policy may still prevent access.
 
-## Slurm Cluster Tunnels (`dev_slurm.sh`)
+## Workspace lifecycle and setup
 
-For HPC / Slurm clusters where node storage and memory are constrained:
+| Command | Behavior |
+| --- | --- |
+| `dev_workspace prepare [REPO]` | Print embedded/adjacent config unchanged, without Docker or writes. |
+| `dev_workspace up [REPO] [--config PATH]` | Create/resume using embedded config or an explicit file. |
+| `dev_workspace status [REPO]` | Print Docker state or `absent`. |
+| `dev_workspace stop [REPO]` | Stop without removing the container. |
 
-| Command | What it does |
-| ------- | ------------ |
-| `dev_slurm tunnel [host] [REPO]` | Submit full VS Code tunnel batch job (runs `code tunnel`). |
-| `dev_slurm tunnel login` (or `auth`) | Interactive VS Code account login in a Slurm allocation. |
-| `dev_slurm tunnel stop` | Cancel running VS Code tunnel batch job. |
-| `dev_slurm tailscale login [REPO]` | Interactive allocation; display login URL directly and save identity. |
-| `dev_slurm tailscale [host] [REPO]` | Submit rootless integrated SSH using saved login; no batch-log login flow. |
-| `dev_slurm tailscale stop` | Cancel Tailscale jobs with full-job signalling and cleanup. |
-| `dev_slurm status`                         | Check running tunnel batch jobs.                             |
-| `dev_slurm stop`                           | Cancel all active tunnel batch jobs.                         |
-| `dev_slurm completion [SHELL]`             | Generate shell autocompletion script (bash or zsh).          |
+**Runtime:** The shell entrypoint uses `bun --no-env-file`; Commander 15.0.0 is the sole external runtime import and may be fetched/cached. Devcontainer commands use `bunx --bun --package @devcontainers/cli@0.89.0 devcontainer`.
 
-**Cluster requirements:** Bootstrap the dotfiles/Pixi manifest on shared cluster storage to install and expose both `tailscale` and `tailscaled`; after updating the live manifest, `pixi global sync` refreshes them. VS Code still requires the official CLI (`install-vscode-cli`); no installer runs inside a Slurm job. Obtain site permission for outbound tailnet traffic and remote access. Login and host allocations must see the same persistent XDG state directory, usually on shared home storage. The SSH account is your current cluster user, not `root`; policy must allow it.
+**Configuration:** Without `--config`, an adjacent `dev_workspace/dev_workspace.json` overrides the embedded template; `up` writes a temporary config and cleans it on exit. Docker bind-mount delimiters in repository paths are not validated.
 
-**Stable identity:** Run `dev_slurm tailscale login [REPO]` before submitting `dev_slurm tailscale host [REPO]`. SSH uses the stable name `ts-<repo-hash>` regardless of job ID; one allocation at a time may use that repository's identity. Host fails with a login/readiness hint if saved authentication is missing, expired, or awaiting approval.
+**Default container:** `mcr.microsoft.com/devcontainers/base:ubuntu`, `vscode` user, writable REPO at `/workspace`, 2 CPUs, 4 GiB memory/total swap, 512 PIDs, and a 256 MiB `noexec,nosuid,nodev` `/tmp` tmpfs. No privileged mode, added capabilities, local SSH forwarding, or extra mounts; effective runtime controls are not certified by this tool.
 
-## Authentication and state locations
+**Bootstrap:** Devcontainer CLI installs these dotfiles using `dev_workspace/install.sh` once after initial creation; it runs `bootstrap.sh` and the shared VS Code installer. Restart does not reinstall tools; pre-seeded/custom environments must provide Pixi, both Tailscale binaries, and the `vscode` account.
 
-All paths below are inside the container for `dev_workspace`, and on shared cluster storage for `dev_slurm`. `${XDG_STATE_HOME:-$HOME/.local/state}` is the state root; private directories use mode 700 and newly created files inherit a restrictive umask.
+## Shell integration and source map
 
-| Utility | Tailscale identity | VS Code CLI state |
-| ------- | ------------------ | ----------------- |
-| `dev_workspace` | `dev-workspace/tailscale/ts-<repo-hash>/state` | `dev-workspace/vscode-cli/` |
-| `dev_slurm` | `dev-slurm/tailscale/ts-<repo-hash>/state` | `dev-slurm/vscode-cli/` |
+`func.sh` exposes all four commands as shell functions. `.sh.d/completion.sh` loads their Bash/Zsh assets directly, or use `<command> completion [bash|zsh]` to emit them manually.
 
-- **VS Code credentials:** Both login and host pass `--cli-data-dir` and enable the CLI's file keychain; `token.json` lives in that directory. The account is shared across repositories within each utility's environment. Old default-location credentials are not moved or deleted; sign in once using the utility's login command.
-- **Tailscale credentials:** Login configures SSH and saves the device identity; host reconnects without initiating login. Stop/cancellation preserves state; deleting it while stopped means the next login creates a new identity, and the old device may need removal from your tailnet.
-- **Lock recovery:** `active.lock/owner` records the host, PID, and (for Slurm) job ID. Normal exits release the lock; after SIGKILL or node failure, verify the owning session and daemon are gone before removing `active.lock`. Locks are never automatically stolen based on a PID from another node.
-- **Persistence boundary:** Stopping a container preserves its state, but deleting/recreating it does not unless your custom configuration mounts persistent storage. No host bind mount is added automatically.
-
-## Autocompletion
-Both utilities provide built-in autocompletion for themselves:
-- **`dev_workspace completion [bash|zsh]`**: Emits full Zsh/Bash completion scripts matching all commands, subcommands, and flags.
-- **`dev_slurm completion [bash|zsh]`**: Emits completion scripts for Slurm tunnel commands.
-- **Direct loading**: `.sh.d/completion.sh` sources each available utility's Bash or Zsh completion asset directly, without starting the CLI or writing a completion cache.
-
-## Shell functions
-- `func.sh` exposes `dev_workspace()` and `dev_slurm()`. (Functions use `_`; aliases use `-`).
-
-## File locations
-
-| Path                             | Purpose                                                          |
-| -------------------------------- | ---------------------------------------------------------------- |
-| `.sh.d/utils/dev_workspace/dev_workspace.sh` | Shell entrypoint; checks Bun and delegates arguments/status using `exec`. |
-| `.sh.d/utils/dev_workspace/dev_workspace.ts` | Bun implementation: command parsing, container lifecycle, and remote sessions. |
-| `.sh.d/utils/dev_slurm/dev_slurm.sh` | Slurm shell entrypoint; wires backend commands, job helpers, help, and completions. |
-| `.sh.d/utils/dev_slurm/{vscode,tailscale}.sh` | Backend workers and their Slurm submission, login, and cancellation commands. |
-| `.sh.d/utils/dev_slurm/jobs.sh` | Shared repository hashing, cross-backend status, and cancellation. |
-| `.sh.d/utils/dev_slurm/completion.{bash,zsh}` | Slurm shell-specific completion assets. |
-| `.sh.d/utils/dev_workspace/install.sh` | One-time workspace dotfiles setup; reuses bootstrap and the shared VS Code installer. |
-| `.sh.d/utils/dev_workspace/{vscode,tailscale}.sh` | Container session scripts loaded by the CLI and passed to `bash -c`. |
-| `.sh.d/utils/dev_workspace/completion.{bash,zsh}` | Shell-specific completion assets sourced directly during shell setup. |
-| `.sh.d/func.sh`                  | Shell functions autoloaded via `.shrc`.                           |
-
-## Tests
-- No test file is present; earlier focused tests used the real script with external executable fixtures and were removed.
+| Path under `.sh.d/utils/` | Responsibility |
+| --- | --- |
+| `dev_tailscale/{dev_tailscale,session}.sh` | Local Tailscale CLI / transportable worker. |
+| `dev_tunnel/{dev_tunnel,session}.sh` | Local VS Code CLI / transportable worker. |
+| `shared/repository.sh` | Shell repository resolution and hashing. |
+| `dev_slurm/{dev_slurm,sessions,jobs}.sh` | Slurm dispatch, transport, job management. |
+| `dev_workspace/dev_workspace.{sh,ts}` | Bun entrypoint, container lifecycle, transport. |
+| `dev_workspace/install.sh` | One-time bootstrap using shared installers. |
+| `dev_*/completion.{bash,zsh}` | Shell completion assets. |

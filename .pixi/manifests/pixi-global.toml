@@ -2,8 +2,8 @@ version = 1
 
 [envs.core-utils]
 channels = ["conda-forge"]
-dependencies = { ripgrep = "*", fd-find = "*", bat = "*", zoxide = "*", eza = "*", 7zip = "*", yazi = "*", git = "*", lazygit = "*", nvim = "*", starship = "*", coreutils = "*", tmux = "*", tuios = "*", socat = "*" }
-exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", 7z = "7z", 7za = "7za", 7zr = "7zr", 7zz = "7zz", yazi = "yazi", git = "git", lazygit = "lazygit", nvim = "nvim", starship = "starship", sha256sum = "sha256sum", tmux = "tmux", tuios = "tuios", socat = "socat" }
+dependencies = { ripgrep = "*", fd-find = "*", bat = "*", zoxide = "*", eza = "*", 7zip = "*", yazi = "*", git = "*", lazygit = "*", nvim = "*", starship = "*", coreutils = "*", tmux = "*", socat = "*" }
+exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", 7z = "7z", 7za = "7za", 7zr = "7zr", 7zz = "7zz", yazi = "yazi", git = "git", lazygit = "lazygit", nvim = "nvim", starship = "starship", sha256sum = "sha256sum", tmux = "tmux", socat = "socat" }
 
 [envs.dev]
 channels = ["conda-forge"]

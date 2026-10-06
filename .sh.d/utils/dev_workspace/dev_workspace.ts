@@ -171,54 +171,27 @@ async function status(input?: string): Promise<number> {
   return run("docker", ["inspect", "--format", "{{.State.Status}}", id]);
 }
 
-async function loginVscode(input?: string): Promise<number> {
+/**
+ * Transport a shared foreground worker into the repository's container.
+ * Repository identity is resolved on the host, not from its /workspace mount.
+ * @returns The transport/session exit status; throws on missing containers or query failures.
+ */
+async function runSession(input: string | undefined, service: "tunnel" | "tailscale"): Promise<number> {
   const repo = await repository(input);
   const id = await containerId(repo);
-  if (!id) { console.log("absent"); return 0; }
-  return run("bunx", [
-    ...CLI,
-    "exec",
-    "--container-id",
-    id,
-    "--workspace-folder",
-    repo,
-    "bash", "-c", await shellScript("vscode.sh"), "dev-workspace-vscode",
-    "tunnel",
-    "user",
-    "login",
-  ]);
-}
-
-async function hostVscode(input?: string): Promise<number> {
-  const repo = await repository(input);
-  const id = await containerId(repo);
-  if (!id) { console.log("absent"); return 0; }
-  const name = `dw-${repoHash(repo)}`;
-  return run("bunx", [
-    ...CLI,
-    "exec",
-    "--container-id",
-    id,
-    "--workspace-folder",
-    repo,
-    "bash", "-c", await shellScript("vscode.sh"), "dev-workspace-vscode",
-    "tunnel",
-    "--accept-server-license-terms",
-    "--name",
-    name,
-  ]);
-}
-
-async function runTailscale(input: string | undefined, mode: "login" | "host"): Promise<number> {
-  const repo = await repository(input);
-  const id = await containerId(repo);
-  if (!id) { console.log("absent"); return 0; }
-  console.log(mode === "login"
-    ? "Logging in to Tailscale inside the container; authentication will be saved."
-    : "Starting integrated Tailscale SSH using saved login; Ctrl-C stops the session.");
+  if (!id) throw new Error("Container is absent; run dev_workspace up first");
+  const name = `${service === "tailscale" ? "ts" : "dw"}-${repoHash(repo)}`;
+  const session = [
+    "bash", "-c", await shellScript(`../dev_${service}/session.sh`), `dev-${service}`, name,
+  ];
+  if (service === "tunnel") {
+    return run("bunx", [
+      ...CLI, "exec", "--container-id", id, "--workspace-folder", repo, ...session,
+    ]);
+  }
+  // stdin EOF is the Tailscale supervisor's lifeline when docker exec disconnects.
   return run("docker", [
-    "exec", "-i", "--user", "vscode", id,
-    "bash", "-c", await shellScript("tailscale.sh"), "dev-workspace-tailscale", `ts-${repoHash(repo)}`, mode,
+    "exec", "-i", "--user", "vscode", id, ...session, "--stdin-lifeline",
   ], true);
 }
 
@@ -273,14 +246,7 @@ export async function main(args: readonly string[]): Promise<number> {
     .command("host [REPO]", { isDefault: true })
     .description("Start VS Code tunnel in foreground")
     .action(async (input?: string) => {
-      exitCode = await hostVscode(input);
-    });
-
-  tunnelGroup
-    .command("login [REPO]")
-    .description("Log in to VS Code tunnel inside container")
-    .action(async (input?: string) => {
-      exitCode = await loginVscode(input);
+      exitCode = await runSession(input, "tunnel");
     });
 
   const tailscaleGroup = program
@@ -289,16 +255,9 @@ export async function main(args: readonly string[]): Promise<number> {
 
   tailscaleGroup
     .command("host [REPO]", { isDefault: true })
-    .description("Run integrated Tailscale SSH in foreground using saved login")
+    .description("Run integrated Tailscale SSH in foreground with native authentication")
     .action(async (input?: string) => {
-      exitCode = await runTailscale(input, "host");
-    });
-
-  tailscaleGroup
-    .command("login [REPO]")
-    .description("Log in interactively and save this repository's Tailscale identity")
-    .action(async (input?: string) => {
-      exitCode = await runTailscale(input, "login");
+      exitCode = await runSession(input, "tailscale");
     });
 
   tailscaleGroup

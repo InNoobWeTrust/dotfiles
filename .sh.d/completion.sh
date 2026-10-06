@@ -66,7 +66,7 @@ else
 fi
 
 if [ -n "$_dev_completion_shell" ]; then
-    for _dev_util in dev_workspace dev_slurm; do
+    for _dev_util in dev_workspace dev_slurm dev_tailscale dev_tunnel; do
         if usable "$_dev_util"; then
             _dev_completion_file="${CONF_SH_DIR:-$HOME/.sh.d}/utils/$_dev_util/completion.$_dev_completion_shell"
             if [ -r "$_dev_completion_file" ]; then

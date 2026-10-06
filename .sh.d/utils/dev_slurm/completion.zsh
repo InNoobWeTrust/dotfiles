@@ -16,8 +16,6 @@ _dev_slurm() {
     local -a tunnel_cmds
     tunnel_cmds=(
         'host:Submit full VS Code tunnel job (defaults to host)'
-        'auth:Interactive VS Code account login'
-        'login:Interactive VS Code account login'
         'stop:Cancel active VS Code tunnel job'
     )
 
@@ -43,7 +41,7 @@ _dev_slurm() {
                     ;;
                 tailscale)
                     _arguments -C \
-                        '1:subcommand:(host login stop)' \
+                        '1:subcommand:(host stop)' \
                         '*:repository directory:_files -/'
                     ;;
                 completion)

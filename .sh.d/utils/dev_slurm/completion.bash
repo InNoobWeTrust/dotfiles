@@ -11,7 +11,7 @@ _dev_slurm() {
     fi
 
     local top_commands="tunnel tailscale status stop completion"
-    local tunnel_commands="host auth login stop"
+    local tunnel_commands="host stop"
 
     if [ "$cword" -eq 1 ]; then
         COMPREPLY=( $(compgen -W "$top_commands" -- "$cur") )
@@ -28,7 +28,7 @@ _dev_slurm() {
             ;;
         tailscale)
             if [ "$cword" -eq 2 ]; then
-                COMPREPLY=( $(compgen -W "host login stop" -- "$cur") )
+                COMPREPLY=( $(compgen -W "host stop" -- "$cur") )
             else
                 COMPREPLY=( $(compgen -d -- "$cur") )
             fi

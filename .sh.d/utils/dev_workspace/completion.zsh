@@ -18,7 +18,6 @@ _dev_workspace() {
     local -a tunnel_cmds
     tunnel_cmds=(
         'host:Start VS Code tunnel in foreground'
-        'login:Log in to VS Code tunnel inside container'
     )
 
     _arguments -C \
@@ -43,7 +42,7 @@ _dev_workspace() {
                     ;;
                 tailscale)
                     _arguments -C \
-                        '1:subcommand:(host login ssh)' \
+                        '1:subcommand:(host ssh)' \
                         '*::args:->ts_args'
                     if [[ $state == ts_args ]]; then
                         _arguments \

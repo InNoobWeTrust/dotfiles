@@ -784,13 +784,30 @@ dev_workspace() {
 dev_slurm() {
     local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_slurm/dev_slurm.sh"
     if [ ! -r "$helper" ]; then
-        helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_slurm"
-    fi
-    if [ ! -r "$helper" ]; then
         printf '%s\n' 'dev_slurm: helper missing or unreadable; check your shell configuration path.' >&2
         return 1
     fi
     "$helper" "$@"
+}
+
+# Start Tailscale in this environment; the child owns traps, not the calling shell.
+dev_tailscale() {
+    local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_tailscale/dev_tailscale.sh"
+    if [ ! -r "$helper" ]; then
+        printf '%s\n' 'dev_tailscale: helper missing or unreadable; check your shell configuration path.' >&2
+        return 1
+    fi
+    bash "$helper" "$@"
+}
+
+# Start a foreground VS Code tunnel without a scheduler or container.
+dev_tunnel() {
+    local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_tunnel/dev_tunnel.sh"
+    if [ ! -r "$helper" ]; then
+        printf '%s\n' 'dev_tunnel: helper missing or unreadable; check your shell configuration path.' >&2
+        return 1
+    fi
+    bash "$helper" "$@"
 }
 
 # Custom functions

@@ -1,9 +1,4 @@
-# Shared repository identity and cross-backend job management.
-repo_hash() {
-  local target="${1:-.}"
-  printf '%s' "$(realpath "$target" 2>/dev/null || echo "$target")" | sha256sum | cut -c1-16
-}
-
+# Cross-service Slurm job status and cancellation; no session/authentication logic.
 show_jobs() {
   squeue -u "$USER" -n vscode-tunnel,tailscale
 }
