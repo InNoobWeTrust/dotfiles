@@ -314,11 +314,14 @@ dotfiles_clean() {
 # # mux - pickup terminal multiplexer or download and execute one
 # # usage: mux [zellij_args]
 mux() {
-    local tmp_script rc 2>/dev/null || true
-
     if usable zellij; then
         zellij "$@"
+    elif [ -n "$BASH_VERSION" ] || [ -n "$ZSH_VERSION" ]; then
+        # If shell supports process substitution, use it to avoid creating a temporary file
+        # shellcheck disable=SC3001
+        bash <(curl -fsSL zellij.dev/launch) "$@"
     else
+        local tmp_script rc 2>/dev/null || true
         tmp_script=$(mktemp)
         curl -fsSL zellij.dev/launch > "$tmp_script" || {
             rm -f "$tmp_script"
@@ -334,102 +337,43 @@ mux() {
 #
 # # vscode_cli_install - Install VSCode CLI per OS and architecture
 # # usage: vscode_cli_install
-vscode_cli_install() {
-    local OS ARCH URL TMP_DIR DEST_DIR 2>/dev/null || true
-
-    if usable code; then
+vscode_cli_install() (
+    # Subshell isolates installer variables and cleanup traps from interactive callers.
+    if command -v code >/dev/null 2>&1; then
         echo "VSCode CLI is already installed."
-        return 0
+        exit 0
     fi
-    # Determine OS and architecture
-    OS=$(uname -s)
-    ARCH=$(uname -m)
-    # Determine download URL based on OS and architecture (Mac/Linux)
-    case "$OS" in
-        Darwin)
-            if [ "$ARCH" = "arm64" ]; then
-                URL="https://code.visualstudio.com/sha/download?build=stable&os=cli-darwin-arm64"
-            else
-                echo "Unsupported architecture: $ARCH"
-                return 1
-            fi
-            ;;
-        Linux)
-            if [ "$ARCH" = "x86_64" ]; then
-                URL="https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64"
-            elif [ "$ARCH" = "aarch64" ]; then
-                URL="https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-arm64"
-            else
-                echo "Unsupported architecture: $ARCH"
-                return 1
-            fi
-            ;;
-        *)
-            echo "Unsupported OS: $OS"
-            return 1
-            ;;
+    OS=$(uname -s) || exit $?
+    ARCH=$(uname -m) || exit $?
+    case "$OS:$ARCH" in
+        Darwin:arm64) platform=cli-darwin-arm64 ;;
+        Linux:x86_64) platform=cli-alpine-x64 ;;
+        Linux:aarch64|Linux:arm64) platform=cli-alpine-arm64 ;;
+        *) echo "Unsupported OS/architecture: $OS/$ARCH" >&2; exit 1 ;;
     esac
-    # Download and install VSCode CLI
-    TMP_DIR=$(mktemp -d)
-    DEST_DIR="$HOME/.local/$USER/bin/"
-    # Ensure destination directory exists
-    mkdir -p "$DEST_DIR"
-    case "$OS" in
-        Darwin)
-            curl -Lko "$TMP_DIR/code.zip"  "$URL"
-            unzip "$TMP_DIR/code.zip" -d "$TMP_DIR"
-            mv "$TMP_DIR/code" "$DEST_DIR"
-            ;;
-        Linux)
-            curl -Lko "$TMP_DIR/code.tar.gz" "$URL"
-            tar -xzf "$TMP_DIR/code.tar.gz" -C "$TMP_DIR"
-            mv "$TMP_DIR/code" "$DEST_DIR"
-            ;;
-    esac
-}
-
-# Install the official Dev Tunnels binary in ~/.local/bin without root access.
-# Usage: devtunnel_cli_install
-# System runtime dependencies (such as Linux libsecret) are not installed.
-# Stage downloads in user home so failures leave an existing binary untouched.
-devtunnel_cli_install() (
-    case "$(uname -s)" in
-        Linux) dt_os=linux ;;
-        Darwin) dt_os=osx ;;
-        *) printf '%s\n' 'Unsupported OS for Dev Tunnels CLI' >&2; exit 1 ;;
-    esac
-    case "$(uname -m)" in
-        x86_64|amd64) dt_arch=x64 ;;
-        aarch64|arm64) dt_arch=arm64 ;;
-        *) printf '%s\n' 'Unsupported architecture for Dev Tunnels CLI' >&2; exit 1 ;;
-    esac
-
-    dt_dest="$HOME/.local/bin"
-    dt_url="https://tunnelsassetsprod.blob.core.windows.net/cli/$dt_os-$dt_arch-devtunnel"
-    mkdir -p "$dt_dest" || exit 1
-    dt_tmp=$(mktemp -d "$dt_dest/.devtunnel.XXXXXXXX") || exit 1
-    trap 'rm -rf -- "$dt_tmp"' 0
+    URL="https://code.visualstudio.com/sha/download?build=stable&os=$platform"
+    umask 077
+    CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/vscode-cli"
+    DEST_DIR="$HOME/.local/bin"
+    mkdir -p "$CACHE_DIR" "$DEST_DIR" || exit $?
+    TMP_DIR=$(mktemp -d "$CACHE_DIR/install.XXXXXXXX") || exit $?
+    trap 'rm -rf -- "$TMP_DIR"' 0
     trap 'exit 130' INT
     trap 'exit 143' TERM
-
-    if command -v curl >/dev/null 2>&1; then
-        curl -fL --connect-timeout 15 --max-time 300 -o "$dt_tmp/devtunnel" "$dt_url" || exit 1
-    elif command -v wget >/dev/null 2>&1; then
-        wget --timeout=30 --tries=2 -O "$dt_tmp/devtunnel" "$dt_url" || exit 1
-    else
-        printf '%s\n' 'Installing Dev Tunnels CLI requires curl or wget' >&2
-        exit 1
-    fi
-    if [ ! -s "$dt_tmp/devtunnel" ]; then
-        printf '%s\n' 'Dev Tunnels CLI download was empty' >&2
-        exit 1
-    fi
-    chmod 755 "$dt_tmp/devtunnel" || exit 1
-    mv -f "$dt_tmp/devtunnel" "$dt_dest/devtunnel" || exit 1
-    printf 'Dev Tunnels CLI installed at %s/devtunnel\n' "$dt_dest"
-    if [ "$dt_os" = linux ]; then
-        printf '%s\n' 'Linux runtime dependencies (e.g. libsecret) must already be available; no system packages were installed.'
-    fi
+    trap 'exit 129' HUP
+    case "$OS" in
+        Darwin)
+            curl -fL --connect-timeout 15 --max-time 300 -o "$TMP_DIR/code.zip" "$URL" || exit $?
+            unzip -q "$TMP_DIR/code.zip" -d "$TMP_DIR" || exit $?
+            ;;
+        Linux)
+            curl -fL --connect-timeout 15 --max-time 300 -o "$TMP_DIR/code.tar.gz" "$URL" || exit $?
+            tar -xzf "$TMP_DIR/code.tar.gz" -C "$TMP_DIR" || exit $?
+            ;;
+    esac
+    [ -s "$TMP_DIR/code" ] || { echo "Downloaded archive has no code binary" >&2; exit 1; }
+    chmod 755 "$TMP_DIR/code" || exit $?
+    mv -f "$TMP_DIR/code" "$DEST_DIR/code" || exit $?
 )
 
 #
@@ -820,21 +764,17 @@ EOF
 
 # Run development workspace commands; return the wrapper status without exiting this shell.
 dev_workspace() {
-    local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_workspace.ts"
+    local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_workspace/dev_workspace.sh"
     if [ ! -r "$helper" ]; then
         printf '%s\n' 'dev_workspace: helper missing or unreadable; check your shell configuration path.' >&2
-        return 1
-    fi
-    if ! command -v bun >/dev/null 2>&1 || [ ! -x "$(command -v bun)" ]; then
-        printf '%s\n' 'dev_workspace: an executable bun is required on PATH.' >&2
         return 1
     fi
     "$helper" "$@"
 }
 
-# Run remote tunnel (VS Code tunnel or Devtunnel SSH) on a Slurm node; return the wrapper status without exiting this shell.
+# Run a VS Code tunnel or integrated Tailscale SSH on a Slurm node; return the wrapper status without exiting this shell.
 dev_slurm() {
-    local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_slurm.sh"
+    local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_slurm/dev_slurm.sh"
     if [ ! -r "$helper" ]; then
         helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_slurm"
     fi
@@ -848,4 +788,3 @@ dev_slurm() {
 # Custom functions
 # shellcheck source=/dev/null
 [ -r "$CONF_SH_DIR/func.user.sh" ] && . "$CONF_SH_DIR/func.user.sh"
-

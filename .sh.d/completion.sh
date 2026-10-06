@@ -56,49 +56,25 @@ if usable daytona; then
     . <(daytona completion "$(basename "$SHELL")")
 fi
 
-# dev_workspace completion
-if usable dev_workspace; then
-    _dw_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}"
-    if [ -n "$ZSH_VERSION" ]; then
-        _dw_shell="zsh"
-    elif [ -n "$BASH_VERSION" ]; then
-        _dw_shell="bash"
-    else
-        _dw_shell="$(basename "${SHELL:-bash}")"
-    fi
-    _dw_cache="$_dw_cache_dir/dev_workspace-completion.$_dw_shell"
-    [ -d "$_dw_cache_dir" ] || mkdir -p "$_dw_cache_dir"
-
-    _dw_src="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_workspace.ts"
-    if [ ! -s "$_dw_cache" ] || [ "$_dw_src" -nt "$_dw_cache" ]; then
-        dev_workspace completion "$_dw_shell" > "$_dw_cache" 2>/dev/null || true
-    fi
-
-    # shellcheck source=/dev/null
-    [ -s "$_dw_cache" ] && . "$_dw_cache"
-    unset _dw_cache_dir _dw_shell _dw_cache _dw_src
+# Development utilities ship completion assets; no CLI invocation or cache needed.
+if [ -n "${ZSH_VERSION:-}" ]; then
+    _dev_completion_shell="zsh"
+elif [ -n "${BASH_VERSION:-}" ]; then
+    _dev_completion_shell="bash"
+else
+    _dev_completion_shell=""
 fi
 
-# dev_slurm completion
-if usable dev_slurm; then
-    _ds_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}"
-    if [ -n "$ZSH_VERSION" ]; then
-        _ds_shell="zsh"
-    elif [ -n "$BASH_VERSION" ]; then
-        _ds_shell="bash"
-    else
-        _ds_shell="$(basename "${SHELL:-bash}")"
-    fi
-    _ds_cache="$_ds_cache_dir/dev_slurm-completion.$_ds_shell"
-    [ -d "$_ds_cache_dir" ] || mkdir -p "$_ds_cache_dir"
-
-    _ds_src="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_slurm.sh"
-    if [ ! -s "$_ds_cache" ] || [ "$_ds_src" -nt "$_ds_cache" ]; then
-        dev_slurm completion "$_ds_shell" > "$_ds_cache" 2>/dev/null || true
-    fi
-
-    # shellcheck source=/dev/null
-    [ -s "$_ds_cache" ] && . "$_ds_cache"
-    unset _ds_cache_dir _ds_shell _ds_cache _ds_src
+if [ -n "$_dev_completion_shell" ]; then
+    for _dev_util in dev_workspace dev_slurm; do
+        if usable "$_dev_util"; then
+            _dev_completion_file="${CONF_SH_DIR:-$HOME/.sh.d}/utils/$_dev_util/completion.$_dev_completion_shell"
+            if [ -r "$_dev_completion_file" ]; then
+                # shellcheck source=/dev/null
+                . "$_dev_completion_file"
+            fi
+        fi
+    done
 fi
+unset _dev_completion_shell _dev_util _dev_completion_file
 

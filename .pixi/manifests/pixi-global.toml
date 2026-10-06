@@ -7,5 +7,5 @@ exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", 7
 
 [envs.dev]
 channels = ["conda-forge"]
-dependencies = { gh = "*", act = "*", lazydocker = "*", bun = "*", uv = "*", helix = "*", go = "*", nodejs = "*" }
-exposed = { gh = "gh", act = "act", lazydocker = "lazydocker", bun = "bun", bunx = "bunx", uv = "uv", uvx = "uvx", hx = "hx", go = "go", node = "node", npm = "npm", npx = "npx" }
+dependencies = { gh = "*", act = "*", lazydocker = "*", bun = "*", uv = "*", helix = "*", go = "*", nodejs = "*", tailscale = "*", tailscaled = "*" }
+exposed = { gh = "gh", act = "act", lazydocker = "lazydocker", bun = "bun", bunx = "bunx", uv = "uv", uvx = "uvx", hx = "hx", go = "go", node = "node", npm = "npm", npx = "npx", tailscale = "tailscale", tailscaled = "tailscaled" }

@@ -175,8 +175,6 @@ usable pkgx && \
 
 usable curl && \
     {
-        # Quick terminal multiplexer
-        alias netmux='bash <(curl -L zellij.dev/launch)'
         # Get random proxy
         alias http-proxy='curl --location "https://api.proxyscrape.com/v4/free-proxy-list/get?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=all&skip=0&limit=1"'
     }
@@ -403,11 +401,6 @@ elif usable wget; then
     alias install-pixi='wget -qO- https://pixi.sh/install.sh | sh'
 fi
 
-# Install Dev Tunnels CLI in user home only (no sudo or system packages).
-if usable curl || usable wget; then
-    alias install-devtunnel='devtunnel_cli_install && setPath "$HOME/.local/bin"'
-fi
-
 
 ################### NodeJs #####################
 
@@ -499,73 +492,66 @@ usable agy && alias agyolo='agy --dangerously-skip-permissions'
 usable pkgx && alias install-k3s='pkgx k3sup install --local --k3s-version v1.24.10+k3s1'
 usable curl && alias install-garden='curl -sL https://get.garden.io/install.sh | bash'
 
-################ Sandboxing (Bubblewrap / bwrap) ################
-# Common isolation flags:
-#   --ro-bind / /      : Mounts entire host filesystem as read-only.
-#   --dev / --proc     : Mounts standard virtual devices and procfs.
-#   --tmpfs /tmp       : Ephemeral in-memory tmpfs so temp files do not touch host.
-#   --unshare-all      : Unshares IPC, PID, network, UTS, cgroup namespaces.
-#   --share-net        : Retains network access (omitted in 'pure' for air-gapped isolation).
-#   --die-with-parent  : Kills the sandbox immediately if the parent shell/command terminates.
-#   --chdir "$PWD"     : Preserves the current working directory inside the sandbox.
+################ Sandboxing (sandbox-* aliases) ################
+# One interface: Bubblewrap when available, otherwise macOS sandbox-exec.
+# If neither backend is available, no sandbox aliases are defined.
 #
-# Flavor distinctions:
-#   - bwrap-ro   (Read-Only): Both system and $PWD are read-only. Network is enabled.
-#                Use for: Safe inspection (git status/diff, rg, cat, dry-runs, log reading).
-#                Alias: bwrap-run
-#   - bwrap-rw   (Read-Write $PWD): System is read-only, but $PWD is writable (--bind "$PWD" "$PWD").
-#                Use for: Builds, test runners, linters with --fix that should only modify $PWD.
-#   - bwrap-pure (Air-Gapped Offline): Both system and $PWD are read-only; network is completely cut.
-#                Use for: Offline tests. Host files remain readable; not a clean hostile-code environment.
-#   - bwrap-sh   (Interactive Shell): Opens an interactive $SHELL session inside the read-only sandbox.
-#                Use for: Manually exploring/debugging commands inside the sandbox environment.
+# Commands (append a command and its arguments, except for sandbox-sh):
+#   sandbox-ro   : Host and workspace read-only; network enabled.
+#                  Use for inspection: git status/diff, rg, cat, log reading.
+#   sandbox-run  : Synonym for sandbox-ro.
+#   sandbox-rw   : Host read-only, current workspace writable; network enabled.
+#                  Use for builds, tests, and linters that write to the workspace.
+#   sandbox-pure : Host and workspace read-only; network disabled.
+#                  Use for offline checks.
+#   sandbox-sh   : Open an interactive $SHELL with sandbox-ro restrictions.
+#
+# Backend differences:
+#   Bubblewrap   : Read-only root mount; rw binds $PWD writable. Private /dev
+#                  and /proc, tmpfs scratch at /tmp and /var/tmp, unshared
+#                  namespaces, and termination when the parent exits. Network
+#                  is shared in ro/rw; all commands start in $PWD.
+#   sandbox-exec: Policy at ~/.config/sandbox/command.sb; rw permits writes
+#                  in the physical current directory. No private mounts or PID
+#                  isolation. Each invocation creates and cleans up a private
+#                  scratch directory exposed as $TMPDIR, $TMP, and $TEMP.
+#                  Use $TMPDIR for scratch writes; hard-coded /tmp is denied.
+#                  Apple has deprecated sandbox-exec.
+#
+# Safety: scratch remains writable in all modes. Host files and inherited
+# environment remain readable; these are not clean hostile-code environments.
 
-usable bwrap && \
-    {
-        # Strict Read-Only (System + $PWD read-only, network enabled)
-        alias bwrap-ro='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --share-net --die-with-parent --chdir "$PWD" --'
-        alias bwrap-run='bwrap-ro'
+if usable bwrap; then
+    alias sandbox-ro='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --share-net --die-with-parent --chdir "$PWD" --'
+    alias sandbox-run='sandbox-ro'
+    alias sandbox-rw='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --bind "$PWD" "$PWD" --unshare-all --share-net --die-with-parent --chdir "$PWD" --'
+    alias sandbox-pure='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --die-with-parent --chdir "$PWD" --'
+    alias sandbox-sh='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --share-net --die-with-parent --chdir "$PWD" -- "$SHELL"'
+elif usable sandbox-exec; then
+    # A subshell keeps scratch variables/traps out of the calling shell.
+    _sandbox_exec() (
+        sandbox_mode=$1
+        shift
+        sandbox_workspace=$(pwd -P) || exit 1
+        sandbox_temp=$(mktemp -d "${TMPDIR:-/tmp}/sandbox.XXXXXXXX") || exit 1
+        trap 'rm -rf -- "$sandbox_temp"' EXIT
+        trap 'exit 130' INT
+        trap 'exit 143' TERM
+        sandbox_temp=$(cd "$sandbox_temp" && pwd -P) || exit 1
+        TMPDIR="$sandbox_temp" TMP="$sandbox_temp" TEMP="$sandbox_temp" \
+            sandbox-exec \
+            -D "MODE=$sandbox_mode" \
+            -D "WORKSPACE=$sandbox_workspace" \
+            -D "TEMP_DIR=$sandbox_temp" \
+            -f "$HOME/.config/sandbox/command.sb" "$@"
+    )
 
-        # Workspace Writable (System read-only, $PWD writable, network enabled)
-        alias bwrap-rw='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --bind "$PWD" "$PWD" --unshare-all --share-net --die-with-parent --chdir "$PWD" --'
-
-        # Air-Gapped Offline (System + $PWD read-only, network disabled)
-        alias bwrap-pure='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --die-with-parent --chdir "$PWD" --'
-
-        # Interactive Shell inside Read-Only Sandbox
-        alias bwrap-sh='bwrap --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp --tmpfs /var/tmp --unshare-all --share-net --die-with-parent --chdir "$PWD" -- "$SHELL"'
-    }
-
-################ Sandboxing (macOS Seatbelt / sandbox-exec) ################
-# Same mode intent as bwrap, but no private mounts or PID isolation.
-# Host files remain readable. sandbox-exec is deprecated by Apple.
-# Use $TMPDIR for scratch writes; hard-coded /tmp writes are denied.
-usable sandbox-exec && \
-    {
-        # A subshell keeps scratch variables/traps out of the calling shell.
-        _sandbox_exec() (
-            sandbox_mode=$1
-            shift
-            sandbox_workspace=$(pwd -P) || exit 1
-            sandbox_temp=$(mktemp -d "${TMPDIR:-/tmp}/sandbox.XXXXXXXX") || exit 1
-            trap 'rm -rf -- "$sandbox_temp"' EXIT
-            trap 'exit 130' INT
-            trap 'exit 143' TERM
-            sandbox_temp=$(cd "$sandbox_temp" && pwd -P) || exit 1
-            TMPDIR="$sandbox_temp" TMP="$sandbox_temp" TEMP="$sandbox_temp" \
-                sandbox-exec \
-                -D "MODE=$sandbox_mode" \
-                -D "WORKSPACE=$sandbox_workspace" \
-                -D "TEMP_DIR=$sandbox_temp" \
-                -f "$HOME/.config/sandbox/command.sb" "$@"
-        )
-
-        alias sandbox-ro='_sandbox_exec ro'
-        alias sandbox-run='sandbox-ro'
-        alias sandbox-rw='_sandbox_exec rw'
-        alias sandbox-pure='_sandbox_exec pure'
-        alias sandbox-sh='_sandbox_exec ro "$SHELL"'
-    }
+    alias sandbox-ro='_sandbox_exec ro'
+    alias sandbox-run='sandbox-ro'
+    alias sandbox-rw='_sandbox_exec rw'
+    alias sandbox-pure='_sandbox_exec pure'
+    alias sandbox-sh='_sandbox_exec ro "$SHELL"'
+fi
 
 ############################# Custom ##########################################
 # Remote user provisioning utility
