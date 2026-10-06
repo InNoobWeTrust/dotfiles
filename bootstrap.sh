@@ -108,6 +108,17 @@ if command -v pixi >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.pixi/manifests/pixi-glo
         echo "Error: Pixi global sync failed; check connectivity or rerun when online (manifest: $pixi_manifest)." >&2
         exit 1
     }
+    # Keep the five newest backups by filename timestamp, not preserved mtime.
+    (
+        cd "$(dirname "$pixi_manifest")" || exit 1
+        find . ! -name . -prune -type f -name 'pixi-global.toml.pre-dotfiles.*' -print |
+            LC_ALL=C sort -r | tail -n +6 | while IFS= read -r backup; do
+            rm -- "$backup" || exit 1
+        done
+    ) || {
+        echo "Error: could not prune old Pixi manifest backups." >&2
+        exit 1
+    }
 fi
 
 # Load .shrc from shell config file by checking default shell
