@@ -5,7 +5,10 @@
 # # usable - Check if command exist before invoking
 # # usage: usable [some_command] && [some_command]
 usable() {
-    [ -n "$1" ] || return 1
+    [ -n "${1-}" ] || return 1
+
+    # Aliases can be defined after a command's absence was cached.
+    alias "$1" >/dev/null 2>&1 && return 0
 
     case " ${__USABLE_HIT_CMDS-} " in
         *" $1 "*) return 0 ;;
@@ -315,7 +318,12 @@ dotfiles_clean() {
 # # usage: mux [zellij_args]
 mux() {
     if usable zellij; then
-        zellij "$@"
+        if alias zellij >/dev/null 2>&1; then
+            # Expand aliases at invocation time, not when this function is sourced.
+            eval 'zellij "$@"'
+        else
+            zellij "$@"
+        fi
     elif [ -n "$BASH_VERSION" ] || [ -n "$ZSH_VERSION" ]; then
         # If shell supports process substitution, use it to avoid creating a temporary file
         # shellcheck disable=SC3001
@@ -339,7 +347,7 @@ mux() {
 # # usage: vscode_cli_install
 vscode_cli_install() (
     # Subshell isolates installer variables and cleanup traps from interactive callers.
-    if command -v code >/dev/null 2>&1; then
+    if usable code; then
         echo "VSCode CLI is already installed."
         exit 0
     fi
@@ -603,7 +611,7 @@ chrome_debug() {
             ;;
         Linux)
             for cmd in google-chrome google-chrome-stable chromium-browser chromium; do
-                if command -v "$cmd" >/dev/null 2>&1; then
+                if usable "$cmd"; then
                     chrome_bin=$(command -v "$cmd")
                     break
                 fi

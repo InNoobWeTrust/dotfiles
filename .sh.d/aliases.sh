@@ -124,21 +124,10 @@ usable pkgx && \
     {
         ## Advance devcontainer
         ! usable devpod && alias devpod='pkgx devpod'
-        ## Terminal multiplexer
-        ! usable zellij && alias zellij='pkgx zellij'
-        ## File manager
-        ! usable yazi && alias yazi='pkgx yazi'
-        ## Code editors
-        ! usable nvim && alias nvim='pkgx +gnu.org/libiconv +neovim.io nvim'
-        ! usable hx && alias hx='pkgx +helix-editor.com hx'
-        ## Text document viewer
-        ! usable bat && alias bat='pkgx bat'
         ## Datafile transform
         ! usable dasel && alias dasel='pkgx dasel'
         ## SQLite
         ! usable sqlite3 && alias sqlite3='pkgx sqlite3'
-        ## Listing files
-        ! usable eza && alias eza='pkgx eza'
         ## Trash
         ! usable trash && alias trash='pkgx trash'
         ## System monitor
@@ -147,10 +136,6 @@ usable pkgx && \
         ! usable docker && alias docker='pkgx docker'
         ## Docker management
         ! usable lazydocker && alias lazydocker='pkgx lazydocker'
-        ## Git management
-        ! usable lazygit && alias lazygit='pkgx lazygit'
-        ## GNU Make
-        ! usable make && alias make='pkgx make'
         ## Terraform
         ! usable terraform && alias terraform='pkgx terraform'
         ## Helm
@@ -161,10 +146,6 @@ usable pkgx && \
         ! usable k9s && alias k9s='pkgx k9s'
         ## Lightweight kubernetes
         ! usable kind && alias kind='pkgx kind'
-        ## Modern python package manager
-        ! usable uv && alias uv='pkgx uv' && alias uvx='pkgx uvx'
-        ## Nodejs package manager
-        ! usable npm && alias npm='pkgx npm' &&  alias npx='pkgx npx'
         ## Jupyter notebook
         ! usable jupyter && alias jupyter='pkgx jupyter'
         ## yt-dlp
@@ -245,9 +226,9 @@ _claude_with_mcp() (
 )
 
 # Ignore our own alias when re-sourced by x-cmd; bypass usable's cached misses.
-if (unalias claude 2>/dev/null; command -v claude >/dev/null 2>&1); then
+if (unalias claude 2>/dev/null; usable claude); then
     alias claude='_claude_with_mcp native'
-elif command -v npx >/dev/null 2>&1; then
+elif usable npx; then
     alias claude='_claude_with_mcp npx'
 fi
 
@@ -459,7 +440,7 @@ usable cargo && alias cargo-update='cargo install --list | grep -o "^\S*" | xarg
 usable cargo && alias install-cargo-binstall='cargo install cargo-binstall'
 
 # Jupyer kernel for Rust language
-usable cargo && alias install-evcxr='(command -v cargo-binstall && cargo binstall evcxr_jupyter || cargo install --locked evcxr_jupyter) && evcxr_jupyter --install'
+usable cargo && alias install-evcxr='(usable cargo-binstall && cargo binstall evcxr_jupyter || cargo install --locked evcxr_jupyter) && evcxr_jupyter --install'
 
 ################ Shell toolings ################
 
