@@ -105,8 +105,9 @@ Do **not** run branch steps B1–B2 for eng-only spot checks or eng-only audits.
 
 Any time a background worker, delegated agent, or external node is launched:
 
-1. `subagent-dispatch` — construct the structured delegation prompt (scope, output contract, allowed actions, stop conditions)
-2. **Environment-native delegated worker** when available, else **`swarm-intelligence`**:
+1. `subagent-dispatch` — for named, fallback, and dynamically defined workers, load `subagent-dispatch/references/worker-contract.md`; provide scope, output contract, allowed actions, stop conditions, and usable guidance discovery. Style references or short hints are optional; do not assume parent skills or routing-profile bodies are inherited.
+2. `working-principles` — the worker interprets its assignment, reads the catalog where useful, and loads relevant reference sections itself. Main agents can use the same router without delegation; mechanical tasks may stay with the baseline.
+3. **Environment-native delegated worker** when available, else **`swarm-intelligence`**:
    - Mode Single-Node — one bounded swarminator node (`swarm-intelligence/references/single-node.md`); pin via `/external-subagent` when that command exists
    - Mode Full Swarm — multi-phase multi-model orchestration; pin via `/swarm` when that command exists
 

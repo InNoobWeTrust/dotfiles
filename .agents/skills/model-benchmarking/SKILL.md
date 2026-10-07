@@ -5,7 +5,7 @@ description: "Use this skill to analyze and optimize agent model configurations 
 
 # Agent Model Benchmarking & Optimization
 
-A structured methodology to systematically evaluate large language models (LLMs) across quality, speed, context window limits, and cost dimensions to build optimal, cost-efficient, and highly stable agent configurations.
+Compare model routes across quality, speed, context, cost, and access evidence within the user's permitted scope. Separate execution capability from working-principle identity; a model is not a fixed specialist persona.
 
 ---
 
@@ -14,7 +14,7 @@ A structured methodology to systematically evaluate large language models (LLMs)
 Before analyzing models, establish the boundary constraints of the environment.
 
 1. **Stated User Constraints**:
-   - **Primary Agent Focus**: Identify which agent runs the most (usually the orchestrator). Optimize its stability and intelligence first.
+   - **Primary Agent Focus**: Identify which agent runs the most (usually the orchestrator) and the permitted changes. Prioritize its stability when optimization includes it; do not change built-in modes or primary model selection when the task excludes them.
    - **Quality Floors**: Identify any agent with a hard quality boundary (e.g., code-craft must use a frontier coding model).
    - **Accessible Plans**: Direct vendor subscriptions, bundled packages (e.g., Kilo bundle), free tiers, or local offline models (Ollama).
    - **Target Mode**: Quality-first, balanced cost/quality, or cost-minimization.
@@ -35,17 +35,18 @@ Gather live pricing, features, and reliability metrics.
 - **Price/Token Comparisons**: OpenRouter model catalog, Together AI, Groq, deepinfra, fireworks.ai.
 
 ### 2. Free Tier Vetting
-- **OpenRouter Free Tier** (`openrouter.ai/models?max_price=0`): High release speed but highly variable uptime (often <80%).
-- **Curated Free Tiers**: Gateway-filtered APIs (e.g. Kilo gateway `api.kilo.ai/api/gateway/models`) which vet and stabilize free models. Use curated/stable lists for unattended or long-running tasks.
+- **Free tiers**: Check current price, lifecycle, data-use policy, limits, and observed reliability. Free access does not establish uptime, privacy, or suitability for unattended work; report unmeasured reliability as unknown.
+- **Curated gateways**: Catalog inclusion is evidence of listing, not a measured service guarantee. Separate vendor claims from account-specific invocation evidence; do not perform stress tests or paid probes without authorization.
 
 ### 3. Model ID Verification
-- Authoritatively validate model identifiers against the `models.dev` schema at `https://models.dev/model-schema.json#/$defs/Model` to ensure correct provider prefixes, syntax, and labels (e.g., `:free`, `:preview`).
+- Verify exact provider/model IDs and supported variants against the configured provider registry and current provider catalog. Registration does not prove authentication, quota, reachability, or current account access.
+- A JSON schema, such as `https://models.dev/model-schema.json#/$defs/Model`, validates metadata shape, not membership in a provider's available model list. Keep these checks separate; do not invent versions or substitute a newer model silently.
 
 ---
 
 ## Phase 3: Deep Per-Model Benchmark Research
 
-Analyze individual candidate profiles to map their cognitive specialization:
+Analyze candidates' task-relevant capabilities, not fixed personalities. Record the exact model/checkpoint, benchmark version, effort, harness, source date, and whether evidence is vendor-reported, independent, family-level, or locally measured. Do not rank unlike benchmark versions as comparable; mark missing metrics unknown rather than inventing scores, uptime, or zero cost.
 
 | Metric | Focus | Description |
 | :--- | :--- | :--- |
@@ -72,7 +73,7 @@ Evaluate complete agent portfolios rather than isolated individual model swaps.
 2. **Portfolio Scenarios**:
    - **Bundle Only**: Confines all active profiles to a single subscription bundle.
    - **Hybrid (Bundle + Pay-per-token)**: Keeps primary orchestrator on bundle/subscription, delegates sub-tasks or background loops to cheap external endpoints.
-   - **Ultra-scale Swarms**: Maximizes usage of stability-vetted free models for minor nodes, keeping high-criticality nodes on paid endpoints.
+   - **Large delegated workloads**: Consider free routes only within authorized resource limits and supported quality/reliability evidence. Free and paid labels do not establish fitness; do not expand concurrency merely to exploit a tier.
 
 ---
 

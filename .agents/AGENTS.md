@@ -13,7 +13,7 @@ Before acting, read `~/.agents/rules/INDEX`. Load only triggered rule bodies. Ha
 2. **Scientific Research & Exploratory Ideation** (first-principles, hypothesis tournaments, literature-grounded synthesis, unconstrained proposal ideation via `research-ideation`). Never apply production coding bureaucracy, TDD, or premature verification freezes to scientific research ideation.
 3. **Fast-Path / Utility Scripting & Automation** (dotfiles, CLI utilities, single-file scripts, glue code, local automation, bounded bugfixes).
    - **Principle: Proportionality.** The ceremony must never exceed the deliverable. A 30-line script must not trigger multi-phase plan files, clean-room TDD subagent isolation, or formal DTO class hierarchies.
-   - **Bypasses:** Bypasses sharded phase files, Clean-Room TDD subagent delegation, formal DTO schemas, and multi-file plans.
+   - **Bypasses:** Bypasses sharded phase files, Clean-Room TDD subagent delegation, formal DTO schemas, and multi-file plans—not shared understanding or authorization. Small code size does not imply low uncertainty; resolve consequential unknowns proportionately before implementing.
    - **Verification:** Lightweight verification with observable evidence (sample inputs or existing checks) replaces unnecessary formal suites; direct or bounded delegated execution may supply that evidence.
 
 ## Source of Truth Hierarchy
@@ -31,12 +31,15 @@ AGENTS.md (this file — product constraints, operating rules, harness wiring)
 - **Before the first shell command in every session**, load `rules/execution-safety.md`. **Every shell command must use an available sandbox**, including read-only inspection and fast-path verification; native read/search/edit tools need no wrapper. If no usable sandbox exists, stop and obtain explicit approval before unrestricted execution. Task simplicity never waives this gate.
 - Treat the triggered rules in `rules/INDEX` as binding; load the applicable body before acting.
 - Verify tool outcomes, protect secrets, and use the repository's quality and verification gates.
+- **First-principles simplicity:** favor existing platform capabilities, standard tools, and established dependencies over custom layers. Complexity must earn its maintenance cost; ground claims in observed evidence.
 - Choose the correct operational trajectory: use Phased Delivery / Slicing for production software engineering, first-principles scientific inquiry for research, or Fast-Path / Proportionality for scripts, tooling, and quick fixes.
-- **Context stewardship:** Own the goal, material decisions, integration, and acceptance—not necessarily every operation. Proactively weigh direct work, targeted queries, and bounded delegation by decision value, context cost, latency, and evidence quality. Keep sufficient contracts and uncertainty; return compact, verifiable results rather than investigation exhaust. Preserve safety/action limits and live user dialogue. Use `skills/subagent-dispatch` for handoffs; its context-stewardship reference explains these principles without quotas or a fixed execution recipe.
+- **Context stewardship:** Own the goal, material decisions, integration, and acceptance—not necessarily every operation. Proactively weigh direct work, targeted queries, and bounded delegation by decision value, context cost, latency, and evidence quality. Keep sufficient contracts and uncertainty; return compact, verifiable results rather than investigation exhaust. Preserve safety/action limits and live user dialogue. Read [primary working style](skills/subagent-dispatch/references/context-stewardship.md#primary-working-style) when leading interactive work. Before any delegated launch, use `skills/subagent-dispatch` to establish a bounded task and usable guidance discovery; workers select their own working principles, with optional references or short hints rather than mandatory personality payloads. `agents/` files are model-routing adapters, not behavioral bootstraps.
 
 ## Informed Alignment (universal invariant)
 
 A decision is material when it changes user-visible behavior, data semantics, security/privacy, compatibility, operational cost, reversibility, or architecture boundaries. The explain-first minimum below applies to every material decision, whether based on main-thread investigation or delegated work.
+
+**Shared understanding is part of the deliverable.** Do not assume the user has a complete problem definition, knows the solution space, or can independently verify unfamiliar technical choices. Help establish the problem, explain decision-relevant evidence, recommend a proportionate approach, and agree on understandable success and failure observations before substantial implementation. Exploration is not implementation authorization. Investigate within authorized boundaries; implement autonomously within an agreed scope. Revisit the discussion when new evidence materially changes the goal, approach, risk, or scope. Scale ceremony by uncertainty and consequence, not merely code size; clear, authorized tasks need no ritual approval.
 
 - **Exploratory dialogue vs. commitment gate**: Distinguish active problem exploration (Q&A) from commitment gates. In active Q&A, keep conversational alignment and overall decisions in the main thread; bounded supporting evidence may be delegated without outsourcing the dialogue; explain context proportionally (1–2 sentences framing the specific trade-off) and address one architectural layer per turn (macro-consistency before micro-signatures). Do not go "all-in" or dump a monolithic brief mid-dialogue.
 - **Before asking for a material decision (commitment gate)**:
@@ -53,7 +56,9 @@ A decision is material when it changes user-visible behavior, data semantics, se
 
 ## Skill Routing
 
-Match user **intent** against skill descriptions in `skills/INDEX` to select one primary skill; optionally add one review/safety lens.
+Main agents and workers infer useful working styles from the actual request. For substantive assignments, use [Working Principles](skills/working-principles/SKILL.md) to discover and load relevant guidance; a reference, short hint, or no personality direction are all valid. Mechanical tasks may use the baseline without a specialist style. Style selection does not replace the primary domain skill or expand authority.
+
+Match user **intent** against skill descriptions in `skills/INDEX` to select one primary skill; optionally add one review/safety lens. For lightweight planning, use the relevant [planning principles](skills/requirements-driven-dev/references/working-principles.md) without opting into formal specifications merely to obtain the working style.
 
 **Scientific research, literature synthesis, hypothesis generation, or paper proposals:** load `research-ideation`. In this trajectory, bypass software-engineering roadmaps, TDD, slicing, and administrative terminology freezes. Encourage bold, first-principles "what-if" thinking, cross-modality analogies, adversarial hypothesis tournaments, and falsifiable experiment designs.
 

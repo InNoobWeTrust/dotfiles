@@ -5,7 +5,7 @@ description: "Use this skill when the user asks you to review, check, audit, cha
 
 # Reviewer
 
-Hybrid review: **direct** technical lenses or **delegated** multi-perspective / audit. Lazy-load sub-reviewers — never load all at once.
+Hybrid review: **direct** technical lenses or **delegated** multi-perspective / audit. Before reviewing, read only the warranted standard, deep, or security section of [Review working principles](references/working-principles.md). Lazy-load sub-reviewers — never load all at once.
 
 ---
 

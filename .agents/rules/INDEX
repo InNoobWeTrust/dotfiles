@@ -23,7 +23,7 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 | Rule | Trigger | Size |
 |---|---|---|
 | `tdd.md` | Production logic modules / algorithms (waived for Fast-Path) | medium |
-| `grooming.md` | Plans, ambiguous requirements, multi-file systems (waived for Fast-Path) | small |
+| `grooming.md` | Problem/solution discovery, plans, ambiguous requirements, multi-file systems (formal planning gates waived for Fast-Path, not alignment) | medium |
 | `ubiquitous-language.md` | Logic that introduces or renames domain terms | small |
 | `slicing.md` | Feature plans / `task.md` checklists | small |
 | `phased-delivery.md` | Multi-step product/feature delivery, roadmap/milestone planning, or phased execution | medium |

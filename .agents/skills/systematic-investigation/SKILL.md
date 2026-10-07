@@ -5,7 +5,7 @@ description: "Use this skill when debugging, troubleshooting, or investigating w
 
 # Systematic Investigation
 
-Structured problem-solving — not guess-and-check.
+Structured problem-solving — not guess-and-check. Before diagnosing, read [Diagnostic working principles](references/working-principles.md#diagnosis); proposed fixes and actually verified remediation must remain distinct.
 
 ```
 DEFINE → ANALYZE → SOLVE & ACT → CHALLENGE

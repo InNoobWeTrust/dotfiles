@@ -57,8 +57,8 @@ Do not evaluate yet — just extract.
 ```markdown
 | # | Finding | Claimed Severity | Source |
 |---|---------|-----------------|--------|
-| 1 | ...     | CRITICAL        | security-auditor |
-| 2 | ...     | HIGH            | reviewer-deep |
+| 1 | ...     | CRITICAL        | security-audit working principles; record the actual model route |
+| 2 | ...     | HIGH            | deep-review working principles; record the actual model route |
 ```
 
 ### Step 2: Evidence Check (Per Finding)
@@ -193,8 +193,8 @@ These patterns frequently produce hallucinated or inflated findings:
 | Source | Intensity | Reason |
 |---|---|---|
 | **Automated scanner** | High | Scanners are noisy by design |
-| **Delegated security-auditor agent** | High | Models hallucinate findings frequently |
-| **Delegated code-reviewer agent** | Medium | Code reviews are more grounded but still inflate severity |
+| **Worker applying security-audit principles** | High | Security claims need concrete exploit and impact evidence regardless of model route |
+| **Worker applying standard-review or deep-review principles** | Medium | Verify findings against source evidence; a working style does not establish correctness |
 | **Human reviewer** | Low | Verify only findings that feel disproportionate |
 | **Full Swarm consensus** | Low | Multi-model agreement reduces hallucination risk |
 

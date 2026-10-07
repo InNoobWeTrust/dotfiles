@@ -7,6 +7,8 @@ description: "Use this skill when the user needs formal specifications before im
 
 Requirements-driven development is an opt-in workflow for turning product intent into verifiable delivery. Do not use it for small, well-scoped code/config/docs edits unless the user asks for specs or the task becomes ambiguous. For multi-step delivery, the lightweight default is an Active Milestone Packet; add a roadmap only for multi-milestone work. Use the cross-skill contract at `../../rules/phased-delivery.md` as the lifecycle source of truth rather than reproducing it here.
 
+Before planning, read the relevant section of [Planning working principles](references/working-principles.md). The reference is also usable alone for lightweight tactical planning; it does not require activating this formal-specification workflow.
+
 ## Route First
 
 | Signal | Action |

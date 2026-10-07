@@ -1,5 +1,5 @@
 ---
-description: "Applies to all planning, requirements definition, and high-ambiguity execution tasks. Enforces explain-first informed alignment, Design Concept discovery, and the Locked Core Implementation Plan Gate."
+description: "Applies to problem/solution discovery, planning, requirements definition, and high-ambiguity tasks. Establishes shared understanding and outcome-linked evidence before implementation; formal plan gates apply only where required."
 globs: "*"
 alwaysApply: false
 trigger: model_decision
@@ -7,7 +7,7 @@ trigger: model_decision
 
 # Rule: Grooming & Design Concept Alignment
 
-This rule applies to **all planning, requirements definition, and high-ambiguity execution tasks**. It establishes explain-first informed alignment to construct a shared mental model (the "Design Concept") between you and the user before any implementation begins.
+This rule applies to **problem/solution discovery, planning, requirements definition, and high-ambiguity tasks**. It establishes explain-first informed alignment to construct a shared mental model (the "Design Concept") between you and the user before implementation. Discussion and investigation do not require a formal implementation plan.
 
 ---
 
@@ -15,7 +15,28 @@ This rule applies to **all planning, requirements definition, and high-ambiguity
 
 The **Design Concept** is the ephemeral mental model of what is being built. Misalignment between human and AI occurs when this concept remains unexpressed.
 *   **Do not** assume the initial prompt contains all requirements or constraints.
-*   **Do not** begin implementation until the Design Concept is aligned and the Locked Core Implementation Plan Gate is satisfied in the plan.
+*   **Do not** begin implementation until the Design Concept is aligned and, where applicable, the Locked Core Implementation Plan Gate is satisfied in the plan.
+
+## Shared problem-solving, not specification extraction
+
+Apply the shared-understanding contract in [AGENTS.md](../AGENTS.md#informed-alignment-universal-invariant). The user may be discovering both the problem and the solution; helping them understand is part of the work, not a prerequisite they must supply.
+
+- **Locate the uncertainty**: distinguish an unclear problem (what is wrong or which outcome matters), an unclear solution (which approach fits), and implementation details of an agreed approach. Do not silently turn a symptom into a diagnosis or a suggested tool into the chosen design.
+- **Advance understanding**: investigate what can be learned within authorized boundaries. Bring back decision-relevant facts, their practical meaning, a justified recommendation or evidence gap, and what could change the recommendation. Ask for goals, constraints, or preferences only the user can supply; do not outsource researchable technical questions to them.
+- **Explain before choosing**: use a concrete example and define unfamiliar terms at the point of need. An option list or unexplained approval question is not informed alignment. Keep each exchange focused; no lecture, comprehension quiz, or requirement that the user audit unfamiliar internals.
+- **Separate inquiry from implementation**: research, comparison, or design requests do not authorize behavior changes. Propose the next evidence-gathering action when understanding is insufficient; experiments that write files, install tools, or affect services still require the relevant action authority. Once implementation is authorized within an understood scope, proceed without repeatedly asking about ordinary details.
+- **Reopen when evidence changes**: discovery, design, implementation, and checking form a revisitable loop, not compulsory sequential phases. If evidence materially changes the goal, approach, assumptions, risk, or scope, pause affected implementation, explain the change, and realign before proceeding. Do not keep patching to defend an earlier design.
+
+### Understandable evidence before substantial implementation
+
+Establish success and failure observations from the user's outcome, not from the proposed implementation. Use the existing conversation or plan; no separate artifact is required just for this guidance.
+
+- Explain what observation would support the approach and what would disconfirm it. Choose proportionate examples, reference results, failure cases, or independent observations; follow [self-grounded verification](self-grounded-verification.md) for evaluation.
+- Code and tests can share a mistaken assumption. A green suite is not evidence that the right problem was solved unless the checks connect to the agreed outcome. When evidence is unavailable, state the gap rather than inventing certainty.
+- Perform authorized checks the assistant can execute. Return expected versus observed behavior, how the evidence can be inspected or reproduced, and what remains unverified. Ask the user only for checks needing their access or judgment, explaining the steps and expected result; do not dump the verification burden on them.
+- Keep scientific exploration open-ended: these observations guide experiments and learning, not premature implementation contracts or formal verification freezes.
+
+**Example:** “The scan is slow” does not yet justify concurrency. Inspect a representative timing breakdown first. If reads dominate, compare a bounded read strategy while checking identical results and resource use; if transformations dominate, revisit the approach. The evidence—not the size of a proposed patch—determines the next step.
 
 ---
 
@@ -56,9 +77,9 @@ For material decisions at commitment gates, use the canonical `Material decision
 
 *   **Standard / Deep Tasks**: Perform the full explain → questions → synthesis sequence when ambiguity is genuine, reversibility is expensive, or the work needs standard/deep design scrutiny. Wait for the user's answers and explicit decision confirmation (only when a material unresolved decision exists) before drafting the corresponding plan or spec.
 *   **Quick / MVP Slice**: Proceed when the user intent, current task scope boundary, acceptance check, and non-deferrable safety constraints are clear. Do not impose a full interview gate. If a small ambiguity remains, ask *one* focused question or record a reversible assumption; escalate to the full interview if it materially affects outcome, cost of reversal, safety, data, or a public contract.
-*   **Fast-Path / Utility Scripting & Automation (Trajectory 3)**: For single-file tools, shell scripts, CLI utilities, dotfiles configurations, or bounded fixes ($\le 2$ files, under ~100 lines), skip the grooming interview and the Locked Core Implementation Plan Gate entirely. A 2–3 line checklist or direct explanation of the intended change in the conversation turn is sufficient. Proceed directly to implementation and verify with observable output.
+*   **Fast-Path / Utility Scripting & Automation (Trajectory 3)**: For single-file tools, shell scripts, CLI utilities, dotfiles configurations, or bounded fixes ($\le 2$ files, under ~100 lines), waive formal plan artifacts and the Locked Core Implementation Plan Gate—not shared understanding or authorization. When intent, behavior, an acceptance observation, and safety are clear, a 2–3 line explanation is sufficient; implement and verify directly. Resolve consequential uncertainty through focused discovery or dialogue even if the eventual patch is tiny; do not introduce heavy planning merely to do so.
 *   **Rewrite & Refactor Tasks (Backward Compatibility Probe)**: When the user asks to rewrite, overhaul, rename, or delete-and-rebuild a tool, command, or interface, ask: "Do you want to maintain backward compatibility (e.g. forwarders/shims) or cleanly delete/replace the old interface?" Never silently default to keeping compatibility bridges without asking.
-*   **Non-Interactive / Automated / AFK Mode** (e.g., scheduled cron, background bounded iteration): Do not block execution waiting for a prompt. Instead, perform a **Self-Grooming Audit** by analyzing the codebase, documenting your design concept and assumptions clearly in the task log or scratch space, and proceeding with execution. The Self-Grooming block MUST use this structure:
+*   **Non-Interactive / Automated / AFK Mode** (e.g., scheduled cron, background bounded iteration): Within a previously authorized task boundary, perform a **Self-Grooming Audit** by analyzing the codebase and documenting the design concept and reversible assumptions in the task log or scratch space. Lack of an interactive user does not authorize implementation, scope expansion, or a new material decision. If an unresolved consequential choice requires user judgment, stop the affected work and report the blocker for their return rather than silently deciding. The Self-Grooming block MUST use this structure:
     ```markdown
     ### 🤖 Self-Grooming Audit (AFK Mode)
     - **Inferred Goal**: [what the task aims to achieve]

@@ -1,6 +1,6 @@
 # Review Delegation Scenarios
 
-Worked examples showing when to delegate vs when to handle directly, with complete delegation prompts and synthesis patterns.
+Worked examples showing when to delegate vs when to handle directly, with delegation prompts and synthesis patterns. Choose an exposed model route independently of the review perspective. Working-principle identities describe an approach, not agent names or credentials; references and short hints are optional when the task already makes the perspective clear. Establish guidance discovery and bounded actions through Subagent Dispatch before using these examples.
 
 ---
 
@@ -21,14 +21,14 @@ Query available delegated reviewers/workers:
 List available delegated reviewers/workers with intelligence/capability indicators
 ```
 
-**Found**: `general` agent with "powered by claude-sonnet-4.5, advanced reasoning" → Suitable for audit
+**Selection**: choose a capable listed model route using current capability/access evidence; pair the assignment with the `security-audit` working-principle identity and the `reviewer` skill's security lens. A model-family label does not establish audit competence or availability; retain independence, task-specific no-write limits, and any required native isolation.
 
 ### Delegation Prompt
 
 ```markdown
 Perform an independent security audit of this authentication system.
 
-You are a senior security auditor with no prior context. Your role is to:
+Use an independent, evidence-first security-review approach; `security-audit` is an optional working-style hint, not a credential. The assignment is to:
 1. Verify security posture is production-ready
 2. Identify vulnerabilities with exploitability ratings
 3. Challenge assumptions without defending them
@@ -301,12 +301,11 @@ After fixes, meets acceptance criteria and operational/security standards.
 
 ### Analysis
 - **Specialized domain needs**: Performance (renders 1000+ rows), Accessibility (WCAG compliance)
-- **Check environment**: Does it provide specialized delegated reviewers/workers?
-  - Performance agent: Not available
-  - Accessibility agent: Not available
-  - General agent: Available (use with domain expert personas) → Use with domain expert personas
+- **Check environment**: Which listed model routes and applicable review guidance can workers actually access? Dedicated performance/accessibility agent names are not required.
+  - Select compatible model capability and effort for each bounded assignment.
+  - Workers can infer `standard-review` principles and load performance/accessibility domain guidance; a short perspective hint is optional.
 
-- **Decision**: Delegate 2 general-purpose reviewers with specialized personas
+- **Decision**: Delegate two independent review assignments when their complementary questions justify the coordination cost, not because a persona quota requires two workers.
 
 ### Delegation Prompts
 

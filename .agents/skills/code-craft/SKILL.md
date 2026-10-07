@@ -7,6 +7,8 @@ description: "Use this skill for any non-trivial code write, feature implementat
 
 Core delivery router for non-trivial implementation. Obey always-on `rules/code-quality.md` and `rules/tdd.md`; they own hard constraints, naming, prohibited patterns, and debt markers. Skip only for typos, formatting, config values, and logic-neutral renames.
 
+Before implementation, read [Implementation principles](references/working-principles.md#implementation). For test authoring or execution-only assignments, read [Verification principles](references/working-principles.md#verification); that reference alone does not activate production delivery phases.
+
 ## Track selection
 
 Choose the smallest track that preserves acceptance criteria, hard invariants, and safety. When phased delivery applies, use the roadmap or active milestone packet and canonical compromise register in `../../rules/phased-delivery.md`.

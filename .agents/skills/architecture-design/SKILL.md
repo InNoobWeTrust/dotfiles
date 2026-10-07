@@ -8,6 +8,8 @@ description: "Use this skill for software architecture work — system design, a
 Software architecture design across the full lifecycle: design, document, audit, evolve.
 Modular-first & illustration-first — prefer clear component boundaries and mermaid diagrams over prose.
 
+Before designing, read [Architecture working principles](references/working-principles.md#architecture). Ground proposals in existing flows and constraints, and distinguish proposed choices from authorized implementation.
+
 Progressive disclosure: this file is the workflow router.
 Deep detail lives in `references/`.
 

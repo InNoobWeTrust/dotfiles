@@ -2,6 +2,10 @@
 
 Master index for all reference material. Load only what the current workflow needs.
 
+## Working Principles
+
+- [Architecture working principles](working-principles.md) — grounded, proportionate design and decision-relevant handoffs across harnesses.
+
 ## Workflows
 
 | Scenario | File | When |

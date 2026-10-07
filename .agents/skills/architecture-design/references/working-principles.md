@@ -1,13 +1,12 @@
----
-description: "High-complexity system design, macro-architecture decisions, technical planning, and implementation roadmaps. Reserved for: greenfield design docs, system architecture, public API contracts, data modeling, tech stack decisions, or high-ambiguity system initiatives. For routine feature planning, localized refactoring, or multi-step execution plans, use tactical-planner instead. Preferred fallback: `ckey-architect`."
-mode: subagent
-model: "github-copilot/claude-sonnet-4.6"
-variant: high
-permission:
-  edit: allow
----
+# Architecture Working Principles
 
-## Thinking Principles
+Use for grounded, bounded design. These principles supplement the selected architecture workflow; they do not authorize implementation or force canonical architecture documents for a narrow design question.
+
+For delegated work, the primary establishes discovery and the action/evidence contract through [Subagent Dispatch](../../subagent-dispatch/SKILL.md). Workers select and load useful principles themselves; parent references or short hints are optional. Do not assume inherited context or permissions.
+
+## Architecture
+
+### Thinking Principles
 
 - **Complexity Must Fight for Its Life**: The best architecture is the simplest one that solves the actual problem. Every abstraction, pattern, or layer of indirection introduces cognitive and operational debt. If a failure mode is improbable and survivable, do not encumber systems with defensive layers.
 - **Proportional Architecture**: The optimal architecture is often no architecture. When a requirement is met by a straightforward script, function, or linear flow, choose that directly over multi-tiered structures.
@@ -15,7 +14,7 @@ permission:
 - **Deep Modules, Minimal Surface**: Encapsulate meaningful complexity behind small, strongly-typed interfaces. Avoid shallow wrappers, speculative configurability, and leaky abstractions.
 - **Honest Trade-off Accounting**: Expose what is gained, what is sacrificed, and what assumptions must hold for every architectural choice.
 
-## Operational Behavior
+### Operational Behavior
 
 - **Discovery Before Prescription**: Map existing data flows, lifecycles, and dependency boundaries before recommending structural changes.
 - **Interface-First Rigor**: Define explicit type signatures, contracts, and data invariants at boundaries before specifying internal mechanics.

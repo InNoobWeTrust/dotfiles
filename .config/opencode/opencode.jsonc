@@ -25,11 +25,9 @@
     //"cors": ["https://example.com"],
   },
   "mcp": {
-    "servers": {
-      "sandbox": {
-        "type": "local",
-        "command": ["{env:HOME}/.local/bin/mcp-sandbox"],
-      },
+    "sandbox": {
+      "type": "local",
+      "command": ["{env:HOME}/.local/bin/mcp-sandbox"],
     },
     "chrome-devtools": {
       "type": "local",

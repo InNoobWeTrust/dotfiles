@@ -14,6 +14,8 @@ This skill enforces three primary disciplines:
 
 ---
 
+Before editing, read [Editorial working principles](references/working-principles.md#editing). The principles are reusable for non-technical writing or governance without imposing this technical-document workflow; keep the task's owning skill and audience contract.
+
 ## When to Load This Skill
 
 - User asks to write, rewrite, format, or clean up documentation ("write a guide", "document this architecture", "clean up the docs", "make this easier to read").

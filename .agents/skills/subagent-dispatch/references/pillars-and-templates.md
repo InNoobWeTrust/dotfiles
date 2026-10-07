@@ -1,6 +1,6 @@
-## The Four Pillars (Input-Side Only)
+## The Four Pillars (Prompt Contract)
 
-Because you own the **input prompt**, not the delegated worker's config, every pillar is implemented inside the prompt you write.
+You own the **handoff**, whether the harness exposes a worker-definition field or only a task input. Implement every task pillar in the actual prompt and establish discovery through [Portable Worker Contract](worker-contract.md). Workers select and load useful working principles themselves; personality references and short hints are optional. Named, fallback, and dynamic workers must not depend on inherited parent context.
 
 ### Pillar 1 — Precise Scope Instruction
 
@@ -11,8 +11,13 @@ Rules:
 - State what is out of scope explicitly.
 - Never say "investigate the code" — say "read `src/auth/jwt.ts` lines 40–90 and identify any token expiry edge cases."
 - **Context budget**: supply the smallest sufficient context that lets a competent worker begin: relevant decisions, contracts, sources, and boundaries. Use references or targeted excerpts instead of the whole conversation; do not omit essential constraints merely to shrink the prompt. Choose a budget suited to the task and model.
+- **Understanding and authority**: state whether the assignment is investigation, design, implementation, or verification; what the user has agreed; what remains uncertain; and what observation the result should help evaluate. Do not present unsettled assumptions as requirements or turn an investigation into a repair mandate. Workers report evidence that changes the approach or exceeds their authority and stop affected implementation; the primary handles user realignment.
 - **Code Implementer Contract Locking**: For code implementation tasks, include the exact locked interface signatures, DTO types, and error variants as code. Explicitly instruct the worker:
   > *"The provided interface signatures and DTO schemas are FROZEN. Do not rename methods, alter parameter orders, change types, or reinvent public shapes. Implement internal logic to satisfy this exact contract. If the contract is deficient or cannot be satisfied, STOP and report `INCOMPLETE: CONTRACT_DEFECT`."*
+
+**Example of an exploratory scope** (pair with the Allowed Actions block below):
+
+> Investigate the slow scan; concurrency is a hypothesis, not an approved solution. Inspect the supplied timing evidence and scanner entry point; do not modify code or run new workloads. Return the likely bottleneck, supporting and conflicting evidence, remaining uncertainty, and the next useful check. Report a missing source as a blocker rather than inventing a diagnosis.
 
 ### Pillar 2 — Structured Output Contract
 
@@ -145,7 +150,8 @@ Include a `## Allowed Actions` block in every delegation prompt:
 
 ```
 ## Allowed Actions
-- READ files: <list specific files or glob patterns, e.g. src/auth/*.ts>
+- READ files: <list specific task files or glob patterns, e.g. src/auth/*.ts>
+- READ guidance: <resolved applicable instruction/rule files, working-principles router/catalog, and selected style/domain references only>
 - RUN commands: <list specific read-only commands, e.g. git diff HEAD~1 -- src/>
 - NO file writes
 - NO destructive commands (rm, mv, git reset, etc.)
@@ -157,6 +163,7 @@ For **standard implementation agents** that must write:
 ```
 ## Allowed Actions
 - READ: all files under src/
+- READ guidance: <resolved applicable instruction/rule files, working-principles router/catalog, and selected style/domain references only>
 - WRITE: <specific files only, e.g. src/auth/jwt.ts, src/auth/jwt.test.ts>
 - RUN: npm test, npm run lint
 - NO modifying locked interface/DTO contracts or public signatures
@@ -169,6 +176,7 @@ For **Clean-Room TDD implementation agents**:
 ```
 ## Allowed Actions
 - READ: all files under src/ (EXCLUDING the unit test files and test helper files, e.g. *.test.ts, test_*.py)
+- READ guidance: <resolved applicable instruction/rule files, working-principles router/catalog, and selected style/domain references only>; the test-file exclusion remains binding
 - WRITE: <specific implementation files only, e.g. src/auth/jwt.ts>
 - RUN: <specific test runner command, e.g. npm test -- src/auth/jwt.test.ts>
 - NO reading or viewing of the unit test files
@@ -202,3 +210,9 @@ Rules:
 - Never ask a question that depends on unseen files or results — explain first.
 - If evidence cannot support the brief, verify or report the gap; do not manufacture certainty.
 - After the user answers, restate the agreed model and remaining uncertainties. An answer given without adequate context is non-binding: explicitly say the earlier answer lacked context, present the missing context, and ask the user to confirm or change that decision; never silently upgrade the old answer.
+
+## ACI Pass — shared-understanding handoffs
+
+- Result: PASS (instruction contract; not a hard permission boundary).
+- Main risks: treating uncertainty as an approved requirement, turning investigation into repair, and hiding evidence that invalidates the chosen approach.
+- Interface upgrades applied: assignment intent, settled versus open decisions, outcome-linked observations, exploratory example, and stop/report behavior. Existing exact scope, output contract, and Allowed Actions declarations remain required.

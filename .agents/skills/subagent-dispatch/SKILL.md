@@ -5,7 +5,7 @@ description: "Use this skill before launching any delegated agent, background wo
 
 # Subagent Dispatch
 
-Use this router immediately before a delegated launch. The worker's system prompt is usually fixed, so put the required guardrails in the delegation input.
+Use this router before **every** delegated launch: named workers, model-route fallbacks, and workers defined on the fly. Routing profiles do not supply working principles. Read [Portable Worker Contract](references/worker-contract.md) to bound the assignment and establish usable guidance discovery. Workers select and load their own principles through [Working Principles](../working-principles/SKILL.md); a reference or short hint is optional, and no personality direction is valid. Do not assume inherited skills, conversation, or system prompts.
 
 ## Allocation principle
 
@@ -39,7 +39,7 @@ When `../../rules/phased-delivery.md` applies, implementation, exploration, and 
 
 Delegated results are internal evidence, not shared context. Before synthesizing:
 
-1. **Challenge gate (mandatory for plan/architecture/audit output).** Route delegated output through a **separate** challenger agent before synthesis. Plan/architecture/threat model → `reviewer` with `pragmatic-triage` lens. Review/audit/scanner output → `reviewer` with `findings-skeptic` lens. Skip for factual research. Full routing table and procedure in `references/prompt-template-and-anti-patterns.md` step 4.
+1. **Challenge gate (mandatory for plan/architecture/audit output).** Route delegated output through a **separate** challenger agent before synthesis. Select a capable listed model route for an independent worker; `standard-review` is the working-principle identity, not an agent name. Plan/architecture/threat model → `reviewer` skill with `pragmatic-triage` lens. Review/audit/scanner output → `reviewer` skill with `findings-skeptic` lens. Skip for factual research. Full routing table and procedure in `references/prompt-template-and-anti-patterns.md` step 4.
 
 2. **Synthesize.** Before requesting a user decision/approval grounded in delegated work, follow `../../rules/grooming.md` and synthesize the canonical `Material decision brief` in `references/pillars-and-templates.md` (reserved for commitment gates; do not use for active exploratory Q&A). Include challenge gate results: what complexity was flagged as unjustified, what findings were downgraded or marked FALSE. This skill adds only delegated-specific constraints: do not forward worker prose or transcripts verbatim, do not expose chain-of-thought or orchestration mechanics, and do not ask questions whose meaning depends on unseen files/results. If worker evidence cannot support the brief, verify or report the gap; never manufacture certainty. After the user answers, restate the agreed model and remaining uncertainties. Low-risk factual work with no decision requested needs only a proportional summary. Receiving procedure in `references/prompt-template-and-anti-patterns.md` is mandatory.
 
@@ -66,6 +66,7 @@ TASK_COMPLETE | INCOMPLETE + continuation/resumption state
 
 | Reference | Read when |
 |---|---|
+| `references/worker-contract.md` | Before every named, fallback, or dynamic launch: establish task authority and guidance discovery; style direction is optional. |
 | `references/planning-payload-and-preflight.md` | Preparing or validating an L0/L1/L2 planning dispatch. |
 | `references/implementation-payload-and-preflight.md` | Preparing or validating an implementation dispatch, including rewrites. |
 | `references/prompt-template-and-anti-patterns.md` | Assembling a full prompt, preflighting it, receiving results, or checking delegation anti-patterns. |

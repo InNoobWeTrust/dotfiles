@@ -9,3 +9,4 @@ Top-level entry point for dotfiles agent memory graph.
 - Project delivery governance, phased delivery contracts, review scope, and layered planning protocols: `mem:project_governance`
 - Architecture guidelines for discovery, style, and memory maintenance: `mem:memory_maintenance`
 - Model behavioral quirks, hallucination patterns, billing limits, and orchestrator/subagent routing: `mem:model_quirks_and_routing`
+- When persisting shared guidance or evaluating account-specific model access, consult the context-leakage correction and deferred follow-up: `mem:context_leakage`

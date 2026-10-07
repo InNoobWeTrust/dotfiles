@@ -5,7 +5,7 @@ description: "Use this skill to navigate and map unfamiliar codebases — find w
 
 # Codebase Exploration
 
-Navigate large unfamiliar codebases without reading everything. Always **quick recon first**, then decide direct vs deep.
+Navigate large unfamiliar codebases without reading everything. Before scouting, read [Exploration working principles](references/working-principles.md#exploration). Always **quick recon first**, then decide direct vs deep.
 
 ---
 

@@ -1,9 +1,15 @@
 # Delegation Prompt Template
 
-Use this as a default contract shape, not a mandatory execution strategy. Fit the detail and reporting format to the task while retaining scope, action boundaries, evidence, obstacles, uncertainty, and completion state. See [Context Stewardship](context-stewardship.md) for allocation principles and compact execution receipts.
+Use this as a default contract shape, not a mandatory execution strategy. Fit the detail and reporting format to the task while retaining scope, action boundaries, evidence, obstacles, uncertainty, and completion state. Establish [discovery access](worker-contract.md#discovery-access) once per worker context. Workers infer and load useful working principles; references and short hints are optional, not required personality payloads. See [Context Stewardship](context-stewardship.md) for allocation principles and compact execution receipts.
 
 ```
-You are acting as a [ROLE, e.g. "code reviewer", "research analyst", "debugging agent"].
+## Optional Working-Style Direction
+[Omit this section when unnecessary. Otherwise give an accessible reference or a short
+hint, not a complete personality. The worker selects and loads useful guidance itself.]
+
+## Understanding and Authority
+[Assignment type; what the user agreed; what remains uncertain; outcome observation.
+Investigation/design is not implementation authority. No scope expansion or nested delegation.]
 
 ## Task
 [ONE CLEAR SENTENCE describing the deliverable]
@@ -85,7 +91,7 @@ Write exactly one: `TASK_COMPLETE` if the assigned work is complete, or `INCOMPL
 
 ### Execution / verification variant
 
-For an execution-only assignment, provide the exact script/check and authoritative path or content, relevant input/revision, expected evidence, approved environment/actions, and failure/stop boundary. The worker runs it unchanged; a failure is not permission to edit assertions or repair the application. Use a compact receipt identifying actual command/location, exit status, passed/failed/skipped checks, relevant failure excerpts, obstacles, uncertainty, and `TASK_COMPLETE` or `INCOMPLETE` with continuation state. Retain access to approved supporting evidence when necessary; do not forward whole successful logs by default. This is execution evidence, not an independent assessment of the check's adequacy.
+For an execution-only assignment, provide the exact script/check and authoritative path or content, relevant input/revision, expected evidence, approved environment/actions, and failure/stop boundary. The worker discovers useful verification guidance itself; a reference or short hint is optional. The worker runs it unchanged; a failure is not permission to edit assertions or repair the application. Use a compact receipt identifying actual command/location, exit status, passed/failed/skipped checks, relevant failure excerpts, obstacles, uncertainty, and `TASK_COMPLETE` or `INCOMPLETE` with continuation state. Retain access to approved supporting evidence when necessary; do not forward whole successful logs by default. This is execution evidence, not an independent assessment of the check's adequacy.
 
 ### Investment research variant
 
@@ -93,6 +99,11 @@ When delegating research for skill `investment-assessment`:
 
 ```
 You are acting as an investment research analyst (read-only).
+
+## Understanding and Authority
+[State agreed investor rails and unresolved assumptions. Cite inspected sources only;
+label facts/inferences/unknowns; no nested delegation. The worker discovers useful
+research/domain guidance itself; an accessible reference or short hint is optional.]
 
 ## Task
 Collect [facts for ASSET/PRODUCT or macro series] from [sources]. Decision type: [single name | sleeve | portfolio].
@@ -133,6 +144,7 @@ Stop immediately and report partial findings with `INCOMPLETE` and continuation/
 
 Run through this before every delegated worker launch:
 
+- [ ] **Discovery and authority**: Do named, fallback, and dynamic workers have a usable guidance entry point and explicit task authority? Are required task/rule sources accessible, and permitted guidance reads available, without assumed inheritance or relaxed native deny permissions? A reference, short hint, or no personality direction are all valid; copied principle paragraphs are not required.
 - [ ] **Scope**: Does the prompt name the exact files, URLs, or data — not a vague domain?
 - [ ] **Code target — exactly one unit**: If dispatching implementation to code implementer, does the prompt carry exactly one selected functional unit (plan pasted as context only), with the dispatch basis declared (approved plan / Active Milestone Packet, or explicit `Atomic patch exception`)?
 - [ ] **Code target — unit payload complete**: Are all eight fields bounded — plan basis/exception rationale, unit ID + one-sentence outcome, exact writable surface, contracts/invariants, satisfied prerequisites, explicit out-of-scope list, acceptance criteria/evidence, stop conditions?
@@ -190,7 +202,10 @@ When the delegated worker returns:
 | Forcing a retry just to obtain `TASK_COMPLETE` | Wastes work when partial evidence already supports the decision | Accept `INCOMPLETE` with a continuation state; retry only for decision-blocking evidence |
 | Delegating phased work without a bounded contract | Worker optimizes for a future state or expands scope | When the phased-delivery trigger applies, include the canonical Delivery Contract and delegation-only behavior |
 | Sending a whole multi-unit plan to code implementer | Worker absorbs adjacent units, expands scope, and returns partial work that cannot be verified against any single acceptance criterion | Dispatch exactly ONE functional unit per code implementer call (approved-plan basis or explicit atomic-patch exception); paste the plan as context only |
-| "You are a Python expert" persona | underlying LLM model already has that knowledge; label adds nothing | Drop the persona; use a role that changes *context*, not just claimed expertise |
+| Treating "You are a Python expert" as proof of expertise | A short hint cannot establish credentials, evidence, or authority | Allow hints, but have the worker discover useful guidance and obey the bounded task |
+| Assuming parent skills or old profile bodies reach the worker | Dynamic/fallback worker may lack a usable discovery entry point | Establish accessible guidance discovery once per worker context; do not require copied personalities |
+| Requiring a full personality for every request | Adds prompt bulk and mixes working style with task content | Reference, short hint, or no style direction; workers infer and load useful principles |
+| Changing models changes task authority | Fallback loses the original task's safety and evidence obligations | Retain the assignment and constraints; reassess route limits and discovery access |
 | Handoff of inseparable cross-task reasoning | Essential interpretations or unresolved contracts get lost | Keep integrated judgment in the primary; a bounded worker result may still supply prerequisites |
 | Test runner returning only “tests failed” | Hides evidence needed for acceptance or diagnosis | Supply the check and failure boundary; return an execution receipt with relevant diagnostics, and request more only when needed |
 | Biased TDD Implementation | Writing tests and implementing them in the same context, leading to tests being "cheated" with hardcoded values. | Delegate implementation to a separate worker or new session, explicitly forbidding it from reading test file contents (Clean-Room TDD). |
@@ -216,7 +231,9 @@ CANDIDATES:
 AVOID:
   quotas · whole-conversation dumps · conflicting shared writes · unsupported pass/fail labels · outsourced user alignment
 
-DELEGATION PROMPT = Role + Task + Context (surgical) + [Implementation Dispatch Gate for code implementer targets: ONE selected unit, 8 bounded fields, plan as context only] + [canonical Delivery Contract when its trigger applies] + delegation-only action boundaries + Output Template + Stop Conditions
+WORKER SETUP = usable guidance discovery; worker selects useful principles; no assumed parent/profile inheritance
+
+DELEGATION PROMPT = [optional style reference or short hint] + Understanding/authority + Task + Context (surgical) + [Implementation Dispatch Gate for code implementer targets: ONE selected unit, 8 bounded fields, plan as context only] + [canonical Delivery Contract when its trigger applies] + delegation-only action boundaries + Output Template + Stop Conditions
 
 CODE TARGET = one unit per dispatch · basis = approved plan / Active Milestone Packet OR explicit atomic-patch exception · zero/multiple units or missing evidence → no dispatch, report `INCOMPLETE` + continuation state
 
