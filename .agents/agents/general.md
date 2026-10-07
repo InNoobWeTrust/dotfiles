@@ -1,5 +1,5 @@
 ---
-description: "USE SPARINGLY: general fallback when no specialized subagent match. Fallback to `sonnet` if `general` is not available."
+description: "USE SPARINGLY: general fallback when no specialized subagent match. For fallback, choose a task-appropriate non-proxy agent."
 mode: subagent
 hidden: true
 model: "github-copilot/gpt-5.4"

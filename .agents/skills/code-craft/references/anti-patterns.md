@@ -6,13 +6,13 @@ These are the most common agent lazy-path shortcuts. Recognize and refuse them:
 
 | Temptation | Why It's Wrong | Correct Path |
 |---|---|---|
-| "I'll add this method to the existing class — it's already there" | Violates Single Responsibility; grows the class beyond its domain | Create a separate module/service |
-| "I'll add another parameter to handle the new case" | Grows function surface; callers must know about new parameter | Use composition or a strategy pattern |
-| "I'll copy this logic here — it's only used twice" | Creates divergence; the copies will drift | Extract to a named shared function now |
-| "I'll use a dict/map here — it's flexible" | Hides structure; readers cannot see what fields exist | Use a typed struct, dataclass, or interface |
-| "The function is getting long but it all belongs together" | No function "belongs together" at 80 lines | Extract named sub-functions at logical boundaries |
-| "I'll extract this 2-line calculation/lookup into a helper function to keep the caller extremely short" | Creates shallow, single-use methods that increase indirection and cognitive load, scattering cohesive logic | Keep simple calculations and registry mappings inline and self-documenting |
-| "I'll put the business rule in the controller/handler" | Mixes layers; makes business logic untestable in isolation | Extract to a domain service |
+| "I'll add this method to the existing class — it's already there" | Existing placement does not establish responsibility | Keep it there if it belongs to the cohesive domain; otherwise use a meaningful boundary, not an automatic service class |
+| "I'll add another parameter to handle the new case" | Mode flags can hide different responsibilities and complicate callers; a parameter is not inherently wrong | Keep straightforward domain parameters; use composition or a strategy only when distinct behavior warrants it |
+| "I'll copy this logic here — it's only used twice" | Repeating the same domain invariant risks drift; similar-looking code is not necessarily the same rule | Share a cohesive rule when its identity is clear; do not merge unrelated responsibilities merely to reduce lines |
+| "I'll use a dict/map here — it's flexible" | Hides structure; readers cannot see what fields exist | Use a typed struct, dataclass, or interface at production domain boundaries; native maps remain valid for simple scripts and local lookups |
+| "The function is getting long but it all belongs together" | Length can signal mixed responsibilities, but an arbitrary cutoff does not establish them | Inspect responsibilities, nesting and reader effort; extract meaningful stages when that clarifies flow, and keep cohesive linear logic together |
+| "I'll extract this 2-line calculation/lookup into a helper function to keep the caller extremely short" | Trivial wrappers add navigation without hiding meaningful complexity | Keep trivial calculations and lookups inline; a short helper is justified only by a meaningful domain contract or effect boundary |
+| "I'll put the business rule in the controller/handler" | Entangling decisions with framework or I/O behavior makes both harder to inspect and test | Separate decision logic from effects using existing functions/modules; add a service class only when it earns its complexity |
 | "I'll return `[]` / `null` / `false` here so callers don't break" | Hides contract ambiguity and turns real failure into fake success | Surface a typed/domain error or ask the user to define the expected behavior |
 | "I'll tweak this interface signature or invent a new DTO during coding" | Violates locked contract gate; introduces unapproved drift and breaks callers | Adhere strictly to locked contracts; report `INCOMPLETE: CONTRACT_DEFECT` if flawed |
 | "I'll dump the whole repo tree in the plan, touch files outside scope, or create an extra helper file/scratch script" | Full repo trees cause noise; touching out-of-scope files breaks boundaries; extra files cause bloat | Lock scoped tree within affected boundary, explicitly state in-scope vs out-of-scope boundaries, create only declared files, and clean up all scratch artifacts |

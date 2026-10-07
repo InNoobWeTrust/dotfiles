@@ -1,6 +1,6 @@
- Delegation Prompt Template
+# Delegation Prompt Template
 
-Copy this template and fill in the `[BRACKETS]` before launching a delegated worker/agent.
+Use this as a default contract shape, not a mandatory execution strategy. Fit the detail and reporting format to the task while retaining scope, action boundaries, evidence, obstacles, uncertainty, and completion state. See [Context Stewardship](context-stewardship.md) for allocation principles and compact execution receipts.
 
 ```
 You are acting as a [ROLE, e.g. "code reviewer", "research analyst", "debugging agent"].
@@ -62,7 +62,7 @@ when that rule's trigger does not apply.
 - NO network requests beyond: [list or NONE]
 
 ## Output Format
-Return your findings in exactly this format:
+Default return shape (a compact receipt may substitute when it preserves the same material information):
 
 ### 1. Objective Recap
 One sentence restating what you were asked to do.
@@ -82,6 +82,10 @@ Rate your confidence (High / Medium / Low) and list any assumptions made.
 ### 5. Done Signal
 Write exactly one: `TASK_COMPLETE` if the assigned work is complete, or `INCOMPLETE` if it is not. If `INCOMPLETE`, include the continuation / resumption state above and identify whether the cause is a true blocker, remaining Must Ship work, or only deferred/out-of-scope work.
 ```
+
+### Execution / verification variant
+
+For an execution-only assignment, provide the exact script/check and authoritative path or content, relevant input/revision, expected evidence, approved environment/actions, and failure/stop boundary. The worker runs it unchanged; a failure is not permission to edit assertions or repair the application. Use a compact receipt identifying actual command/location, exit status, passed/failed/skipped checks, relevant failure excerpts, obstacles, uncertainty, and `TASK_COMPLETE` or `INCOMPLETE` with continuation state. Retain access to approved supporting evidence when necessary; do not forward whole successful logs by default. This is execution evidence, not an independent assessment of the check's adequacy.
 
 ### Investment research variant
 
@@ -120,7 +124,7 @@ Stop immediately and report partial findings with `INCOMPLETE` and continuation/
 - You cannot access a required file or resource.
 - The task scope is larger than described here.
 - You encounter an action not listed in Allowed Actions.
-- You are approaching the context limit and have not yet filled all five output sections — report what you have so far.
+- You are approaching the task/context limit — preserve useful evidence and uncertainty with `INCOMPLETE` and continuation state rather than losing the ability to report accurately.
 - For a code implementer target: any Selected Unit stop condition holds, or the work would require touching anything outside the declared writable surface or absorbing another unit.
 
 ---
@@ -134,9 +138,9 @@ Run through this before every delegated worker launch:
 - [ ] **Code target — unit payload complete**: Are all eight fields bounded — plan basis/exception rationale, unit ID + one-sentence outcome, exact writable surface, contracts/invariants, satisfied prerequisites, explicit out-of-scope list, acceptance criteria/evidence, stop conditions?
 - [ ] **Code target — no stop-before-dispatch condition**: Confirm none of these holds: zero or multiple units · missing acceptance criteria/evidence · an unresolved design or contract decision · a scope-expansion request. If one holds, do NOT dispatch; report `INCOMPLETE` + continuation state to the main orchestrator instead.
 - [ ] **Delivery Contract**: When the phased-delivery trigger applies, does every implementation, exploration, or review prompt include the canonical populated contract plus scope-expansion, adjacent-work, and continuation/resumption instructions?
-- [ ] **Output template**: Is the five-section format included verbatim?
-- [ ] **Domain template**: Is the correct Findings sub-template slotted into section 2?
-- [ ] **Obstacles section**: Is section 3 present and non-optional?
+- [ ] **Return contract**: Does the chosen report or receipt preserve observed evidence, obstacles, uncertainty, and completion state without unnecessary output?
+- [ ] **Domain evidence**: Are the required findings or execution evidence defined for this assignment?
+- [ ] **Obstacles**: Are workarounds and missing capabilities reported, with NONE where applicable?
 - [ ] **Allowed Actions**: Is the block present and does it match what the task actually requires?
 - [ ] **Stop Conditions**: Is there at least one condition that triggers early termination?
 - [ ] **Context is surgical**: Did you include only what the delegated worker needs — not the entire conversation?
@@ -147,9 +151,9 @@ Run through this before every delegated worker launch:
 
 When the delegated worker returns:
 
-1. **Scan for `TASK_COMPLETE` or `INCOMPLETE`** in section 5. `INCOMPLETE` is an explicit partial result, not an automatic retry: continue only if the evidence is insufficient for the next decision.
-2. **Read section 3 (Obstacles Encountered)**. Surface any workarounds or quirks to the main context so they are not rediscovered.
-3. **Read section 4 (Confidence & Caveats)**. Low-confidence findings must be verified before acting on them.
+1. **Check completion state** in the report or receipt. `INCOMPLETE` is an explicit partial result, not an automatic retry: continue only if the evidence is insufficient for the next decision.
+2. **Check obstacles and scope**. Retain relevant workarounds, input/environment mismatches, skipped checks, or boundary violations so they are not rediscovered; do not treat a completion marker as proof of contract compliance.
+3. **Check evidence and uncertainty**. Judge the return against acceptance criteria; inspect relevant underlying evidence when risk, contradictions, or missing diagnostics require it. Do not automatically reread every transcript or rerun every check. Low-confidence claims must be verified before acting on them.
 4. **Challenge gate — route through independent reviewer before synthesis.**
    The host produced nothing, so agreement bias is the primary risk: you are primed to accept what the delegated worker returned. Before synthesizing for the user, route the output through a **separate** challenger agent using the `reviewer` skill with the appropriate lens. Do not self-review — delegate the challenge.
 
@@ -162,7 +166,7 @@ When the delegated worker returns:
 
    The challenger receives the delegated output as its artifact and the original task context. Its findings feed into step 6 synthesis. If the challenger identifies CRITICAL issues (false findings presented as blockers, or HIGH×HIGH complexity that is actually LOW×LOW), reject and re-scope the delegated work before synthesizing.
 
-5. **Reject and re-delegate** if:
+5. **Reject unsupported claims or out-of-bounds work** if the following holds; repeat a handoff only when corrected work or missing evidence is needed for the next decision:
     - The delegated worker broadened scope beyond what was described. _Detect this by checking whether findings reference files, URLs, or data sources not listed in the delegation prompt's context or Allowed Actions block._
     - The delegated worker performed a forbidden action (e.g., wrote a file it was not allowed to touch).
     - For a code implementer target: the worker executed more than the single selected unit, silently rescoped, touched anything outside the declared writable surface, or returned without a continuation state after hitting a stop condition. Treat these as `INCOMPLETE`; re-delegate with corrected unit boundaries only.
@@ -178,8 +182,8 @@ When the delegated worker returns:
 | Anti-pattern | Why it fails | Fix |
 |---|---|---|
 | "Investigate the auth module" | No scope → delegated worker wanders | Name the exact files and question |
-| No output format in prompt | Delegated worker invents its own → unreadable | Always include the five-section template |
-| Omitting Obstacles section | Workarounds get lost → main agent rediscovers | Section 3 is mandatory |
+| No decision-relevant return contract | Worker returns either a dump or unsupported verdict | Specify needed evidence and completion state; use the default report or a proportionate receipt |
+| Omitting obstacle information | Workarounds get lost → main agent rediscovers | Preserve obstacles and missing capabilities regardless of report headings |
 | "Use any tools you need" | Accidental writes or destructive commands | Always include Allowed Actions block |
 | Delegating the entire conversation context | Expensive, distracting, often wrong | Paste only the surgical slice |
 | Treating a missing TASK_COMPLETE as success | Silent partial results slip through | Always scan for the Done Signal |
@@ -187,11 +191,11 @@ When the delegated worker returns:
 | Delegating phased work without a bounded contract | Worker optimizes for a future state or expands scope | When the phased-delivery trigger applies, include the canonical Delivery Contract and delegation-only behavior |
 | Sending a whole multi-unit plan to code implementer | Worker absorbs adjacent units, expands scope, and returns partial work that cannot be verified against any single acceptance criterion | Dispatch exactly ONE functional unit per code implementer call (approved-plan basis or explicit atomic-patch exception); paste the plan as context only |
 | "You are a Python expert" persona | underlying LLM model already has that knowledge; label adds nothing | Drop the persona; use a role that changes *context*, not just claimed expertise |
-| Sequential pipeline where step B needs step A's discoveries | Information degrades at every handoff; bugs compound | Keep sequential dependent work in the main thread |
-| Test-runner delegated worker | Returns "tests failed" — hides the output needed to diagnose | Run tests directly in main thread; delegate only post-analysis summaries (except blind test loops in Clean-Room TDD) |
+| Handoff of inseparable cross-task reasoning | Essential interpretations or unresolved contracts get lost | Keep integrated judgment in the primary; a bounded worker result may still supply prerequisites |
+| Test runner returning only “tests failed” | Hides evidence needed for acceptance or diagnosis | Supply the check and failure boundary; return an execution receipt with relevant diagnostics, and request more only when needed |
 | Biased TDD Implementation | Writing tests and implementing them in the same context, leading to tests being "cheated" with hardcoded values. | Delegate implementation to a separate worker or new session, explicitly forbidding it from reading test file contents (Clean-Room TDD). |
 | Asking "Should we go with the worker's recommended approach in `src/auth/jwt.ts`?" with no prior explanation | Question depends on hidden context — user never saw the findings, files, or terms | Present the canonical `Material decision brief` first (facts, model, definitions, project-specific example, options with consequences), then ask |
-| Delegating interactive brainstorming or interface co-design | Worker produces speculative all-in RFCs in isolation, causing wall-of-text synthesis, breaking conversational cadence, and missing overall consistency | Keep interactive design and Q&A in the main thread; iterate outside-in in small steps (topology → abstraction → shape) |
+| Outsourcing interactive brainstorming or interface co-design | Worker replaces live alignment with an isolated all-in proposal | Keep dialogue and overall decisions in the primary; bounded supporting evidence does not replace that dialogue |
 | Dispatching implementer with prose-only contracts | Worker invents DTO fields and method shapes, breaking consistency across units and causing compiler/runtime hallucination loops | Lock concrete DTO schemas, method signatures, and error variants as code in the plan/payload before dispatch |
 | Implementer silently altering declared interfaces | Subtle contract drift breaks callers across the repository; cascading compiler errors | Enforce frozen contract rule; worker must report INCOMPLETE: CONTRACT_DEFECT instead of modifying signatures |
 | Dispatching with a full-repo tree dump or without locked scope boundaries | Dumps excessive context bloat, causes confusion, or allows worker to touch out-of-scope files and invent ad-hoc helpers | Lock in-scope vs out-of-scope boundaries (irrelevant repo parts implicitly unchanged) and provide a scoped target file tree with [CREATE], [MODIFY], [DELETE], [CLEANUP] before dispatch |
@@ -202,21 +206,21 @@ When the delegated worker returns:
 ## Quick Reference Card
 
 ```
-DECISION GATE: does the intermediate work matter?
-  YES → keep in main thread
-  NO  → delegate
+ALLOCATION: what does the next decision need, and is the handoff worth its cost?
+  Retain live dialogue, overall judgment, and inseparable cross-task reasoning.
+  Consider bounded results for context preservation, latency, or independent evidence.
 
-GOOD DELEGATE TARGETS:
-  research/exploration · code review (fresh context) · custom system prompt tasks · Clean-Room TDD implementation (blind to tests)
+CANDIDATES:
+  exploration/research · approved implementation units · execution/verification · independent review
 
-BAD DELEGATE TARGETS:
-  expert persona labels · sequential dependent pipelines · test runners (except blind test loops in Clean-Room TDD)
+AVOID:
+  quotas · whole-conversation dumps · conflicting shared writes · unsupported pass/fail labels · outsourced user alignment
 
 DELEGATION PROMPT = Role + Task + Context (surgical) + [Implementation Dispatch Gate for code implementer targets: ONE selected unit, 8 bounded fields, plan as context only] + [canonical Delivery Contract when its trigger applies] + delegation-only action boundaries + Output Template + Stop Conditions
 
 CODE TARGET = one unit per dispatch · basis = approved plan / Active Milestone Packet OR explicit atomic-patch exception · zero/multiple units or missing evidence → no dispatch, report `INCOMPLETE` + continuation state
 
-OUTPUT TEMPLATE =
+DEFAULT REPORT (or a compact receipt with the same material information) =
   1. Objective Recap
   2. Findings (domain template)
   3. Obstacles Encountered

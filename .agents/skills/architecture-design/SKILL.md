@@ -17,6 +17,7 @@ Deep detail lives in `references/`.
 | Selecting an architecture pattern | `references/patterns/INDEX.md` → specific category |
 | Modular Monolith & Bounded Context design | `references/patterns/modular-architecture.md` |
 | Operational Database Schema Design | Route to `db-design` skill |
+| Analytical/scientific pipeline stack selection; inspectable DAGs or dataflow lineage | `references/dataflow-stack-selection.md` |
 | Drawing C4 diagrams | `references/visualization/c4-mermaid-templates.md` |
 | Writing an ADR | `references/adr-templates.md` |
 | Analyzing tradeoffs or fitness | `references/analysis/fitness-functions.md` |

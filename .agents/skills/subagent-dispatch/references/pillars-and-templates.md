@@ -10,15 +10,15 @@ Rules:
 - State the exact deliverable (file paths, function names, URLs, data set, etc.).
 - State what is out of scope explicitly.
 - Never say "investigate the code" — say "read `src/auth/jwt.ts` lines 40–90 and identify any token expiry edge cases."
-- **Context budget**: limit pasted context to the minimum that would let a competent engineer start immediately — typically under 500 lines or one logical unit. A delegated worker receiving a 50k-token blob will still wander regardless of how precise the task statement is.
+- **Context budget**: supply the smallest sufficient context that lets a competent worker begin: relevant decisions, contracts, sources, and boundaries. Use references or targeted excerpts instead of the whole conversation; do not omit essential constraints merely to shrink the prompt. Choose a budget suited to the task and model.
 - **Code Implementer Contract Locking**: For code implementation tasks, include the exact locked interface signatures, DTO types, and error variants as code. Explicitly instruct the worker:
   > *"The provided interface signatures and DTO schemas are FROZEN. Do not rename methods, alter parameter orders, change types, or reinvent public shapes. Implement internal logic to satisfy this exact contract. If the contract is deficient or cannot be satisfied, STOP and report `INCOMPLETE: CONTRACT_DEFECT`."*
 
 ### Pillar 2 — Structured Output Contract
 
-Include a numbered output template in the prompt. The delegated worker fills in each section and stops when all sections are complete. This is the primary mechanism to prevent runaway execution.
+Specify what the parent needs to decide next, including evidence, obstacles, uncertainty, and completion state. Choose a proportionate return shape and reporting budget; concise output is not permission to conceal diagnostics. Workers stop at declared task/action limits, not merely when they can fill a report.
 
-**Required sections for any delegation:**
+**Default report for substantial work:**
 
 ```
 Return your findings in exactly this format:
@@ -38,10 +38,10 @@ Write NONE if the task was clean.
 Rate your confidence (High / Medium / Low) and list any assumptions made.
 
 ## 5. Done Signal
-Write exactly: TASK_COMPLETE
+TASK_COMPLETE, or INCOMPLETE with completed work, remaining steps, blocker, and next safe action.
 ```
 
-The `DONE Signal` section forces an unambiguous completion marker the orchestrating agent can scan for.
+The completion marker states whether the assigned work is complete, not whether the whole project is correct. Short execution-only tasks may use an [execution receipt](context-stewardship.md) instead of these headings; preserve the same material information.
 
 **Domain-specific Findings templates** — slot one into section 2 based on task type:
 
@@ -94,7 +94,7 @@ What you could not confirm and why.
 File-by-file list of what was changed and why.
 
 ### Verification Result
-Output of the test/lint/typecheck command run after changes.
+Actual command/location, exit status, passed/failed/skipped checks, relevant failure excerpts, and unverified criteria; use approved artifact references if more output is needed.
 
 ### Rollback Notes
 What to undo and how if the change needs reverting.
@@ -122,7 +122,7 @@ Concrete code or config change. State UNKNOWN if not found.
 
 ---
 
-Section 3 of the output template ("Obstacles Encountered") is non-optional. It captures:
+Obstacle information is non-optional, whether in section 3 or a compact receipt. It captures:
 
 - Commands that needed special flags or env vars
 - Dependencies or imports that failed and how they were resolved

@@ -21,3 +21,4 @@ permission:
 - **Contract Preservation**: Maintain existing public interfaces, caller invariants, and data schemas unless explicitly authorized to alter them.
 - **Anti-Overengineering**: Default to minimal, direct implementations. For scripts and bounded utilities, favor straightforward procedural flow and native primitives over class hierarchies and multi-layered indirection.
 - **Execution Over Architecture**: Focus strictly on concrete implementation rather than introducing architectural abstractions, helper wrappers, or design patterns unless explicitly requested.
+- **Compact, Verifiable Handoff**: Keep the assigned contract and local decisions recoverable while excluding unrelated context. Return changed files, material assumptions, observed verification, and unresolved limitations; preserve relevant failure diagnostics rather than forwarding all intermediate output or claiming project-wide completion.

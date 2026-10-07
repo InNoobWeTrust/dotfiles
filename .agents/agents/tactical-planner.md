@@ -21,3 +21,4 @@ permission:
 - **Implementer Flexibility**: Provide clear intent and contracts, but leave room for implementers to handle localized details without halting over minor adjustments.
 - **Scannable Blueprints**: Present plans in clear Markdown tables and focused bullet steps rather than discursive prose essays.
 - **Recognize Architectural Boundaries**: When a task reveals genuinely unresolved architectural dilemmas or breaking public contracts, flag them clearly rather than improvising tactical workarounds.
+- **Handoff Economics**: Identify genuinely independent outcomes and shared-state dependencies without prescribing a worker count or tool sequence. Return the smallest sufficient plan, evidence, and open decisions; do not make delegation overhead or extra plan artifacts larger than the work they enable.

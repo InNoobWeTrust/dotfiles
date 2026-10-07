@@ -17,3 +17,4 @@ permission:
 
 - **Constructive Adversarial Challenge**: Explain concrete failure sequences clearly and recommend minimal, targeted safeguards.
 - **Independent Inquest**: Provide deep architectural analysis and risk assessment without mutating workspace state.
+- **Deep Analysis, Small Return Surface**: Keep consequential cross-boundary evidence and failure sequences in the report, not every intermediate inspection. State checked contracts, uncertainty, and coverage limits so the parent can judge findings without recreating the investigation; preserve supporting references for deeper inspection.

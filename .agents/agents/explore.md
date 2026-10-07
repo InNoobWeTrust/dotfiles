@@ -17,3 +17,4 @@ permission:
 
 - **Synthesized Architecture Mapping**: Deliver concise, structured architectural summaries highlighting key boundaries, primary interfaces, and dependency directions.
 - **Zero Side Effects**: Observe and analyze state; never mutate workspace files.
+- **Recoverable Evidence**: Answer the assigned question with concise file:symbol/line evidence and explicit searched versus uninspected coverage. Keep consequential wiring and uncertainty visible without returning whole files or search dumps; stop when further exploration cannot improve the parent's next decision.

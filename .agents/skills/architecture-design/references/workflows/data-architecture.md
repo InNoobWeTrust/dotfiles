@@ -3,6 +3,8 @@
 ## When
 Triggered when building enterprise data warehouse/lakehouse platforms, implementing real-time streaming systems, or migrating to a domain-driven data mesh. Use this workflow to design scalable data architectures.
 
+For a bounded analytical/scientific pipeline stack choice or inspectable DAG request, use `../dataflow-stack-selection.md` instead of applying this whole enterprise workflow. For platform work here, consult that guide when choosing transformation/lineage tools.
+
 ---
 
 ## Phase 1 — Data Domain Modeling
@@ -34,10 +36,10 @@ graph TD
 **Do:**
 - Select storage engines (OLTP relational, embedded in-process OLAP, cloud columnar OLAP, document, graph, time-series) based on access patterns.
 - Evaluate embedded in-process OLAP (**DuckDB**) for local data pipelines, micro-services, CLI tools, and single-node analytical workloads (<5–10TB) before provisioning costly cloud warehouses or distributed clusters.
-- Decouple analytical transformation logic from physical execution engines using a portable query abstraction layer (**Ibis**), ensuring code runs identically locally on DuckDB or in production cloud warehouses.
+- Consider **Ibis** when Python expression composition or multi-engine portability is needed; use readable SQL/dbt models when SQL-first contracts are the better fit. Validate backend operation support, types, null behavior, and performance rather than promising identical execution across engines.
 - Benchmark write throughput, query latency, and indexing capabilities for candidate engines.
 **Ask:**
-- Is the analytical query logic decoupled from underlying engines using a portable layer (Ibis) to avoid vendor lock-in?
+- Does the selected SQL/Ibis transformation layer match repository conventions and actual portability needs, with backend differences verified?
 - Is analytical workload isolated from transactional OLTP engine instances?
 
 ---
@@ -97,7 +99,7 @@ flowchart LR
 |---|---|
 | Analytics on OLTP | Route analytical queries to dedicated read replicas or OLAP columnar stores |
 | Premature distributed clusters | Evaluate single-node out-of-core columnar processing (DuckDB) first; 95% of workloads finish faster with zero cluster ops |
-| Engine dialect lock-in | Use a portable query abstraction layer (Ibis) so analytical logic runs unchanged locally or in cloud warehouses |
+| Engine dialect lock-in | Consider Ibis for portable expressions or isolate backend-specific SQL; verify supported operations and semantics on each target engine |
 | Ungoverned data swamp | Enforce schema registries, data contracts, and automated quality gates |
 | Uncontrolled schema drift | Gate schema evolution through schema registry compatibility checks |
 

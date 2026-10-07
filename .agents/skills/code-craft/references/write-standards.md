@@ -14,8 +14,8 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 - **Sanitize Boundaries:** Validate external API payloads immediately upon receiving them before passing them to internal functions.
 
 #### B. Immutability & State Hygiene
-- **Immutability by Default:** Prefer pure functions that receive parameters and return new copies of data instead of mutating inputs or deep state objects.
-- **Centralized Mutation:** If state mutation is required, isolate it to a single dedicated manager class or event loop to avoid race conditions.
+- **Immutability by Default:** Prefer pure functions that receive inputs and return values without mutating caller-owned data. Understandable, locally owned algorithmic mutation is acceptable.
+- **Explicit State Ownership:** For shared or concurrent state, identify its owner and synchronization mechanism. Use an existing cohesive module, object, or event loop when appropriate; do not invent a manager class merely to hold local mutation.
 
 #### C. Runtime Invariant Assertions
 - **Design by Contract:** Place lightweight assertions at the beginning and end of complex algorithmic boundaries to check preconditions (e.g. valid arguments) and invariants.
@@ -78,9 +78,9 @@ All new or modified public modules, classes, functions, and interfaces MUST incl
 - **Content**: The docstring must state *what* the unit does, its invariants, its input preconditions, output postconditions, and all potential side effects or errors.
 
 #### I. Abstraction & Boundary Rules (Avoiding Shallow Helpers)
-- **The Abstraction Ratio**: Only extract a function if `Interface Complexity < Implementation Complexity`. Do not extract 1-to-3-line helpers that simply wrap standard operations or lookups.
+- **The Abstraction Ratio**: Extract a function when its contract hides meaningful complexity or clarifies a responsibility, invariant, or effect boundary. Do not create trivial wrappers merely to shorten the caller; line count alone neither requires nor prohibits extraction.
 - **Inline Registry/Mapping Calculations**: Keep lookups, mapping matrices, and registry computations inline using clean, declarative structures (like mapping tables or inline dictionaries) rather than scattering them across single-line helper functions.
-- **Single-Use Helpers**: Avoid creating private helpers that are only called once unless they reduce deep nesting or isolate a heavy, self-contained algorithm. Keep linear code linear.
+- **Single-Use Helpers**: Avoid private single-use helpers unless they clarify a meaningful stage, isolate consequential effects or a self-contained algorithm, or reduce deep nesting. Keep linear code linear.
 
 ---
 
@@ -89,18 +89,20 @@ All new or modified public modules, classes, functions, and interfaces MUST incl
 After writing, read the code as a new engineer with zero context. Answer these:
 
 1. **Entry point** — Is it obvious where execution enters this unit?
-2. **Flow traceability** — Can you follow the control flow from function names alone, without reading bodies?
-3. **Side effects** — Are all state mutations obvious at the call site?
-4. **Error path** — Is the failure path as readable and explicit as the happy path?
+2. **Flow traceability** — Can a reader follow one representative input through orchestration and consequential decisions without reconstructing the flow from scattered helpers?
+3. **Side effects and state** — Are important reads/writes, mutations, dependencies, and resource/state owners inspectable at their boundaries?
+4. **Error path** — Are failure, cancellation, and partial-result paths as readable and explicit as the happy path where applicable?
 5. **Resilience** — What happens if the filesystem is full, a database connection drops, or a network request times out?
 6. **Ambiguity handling** — For every fallback or error mapping, can a reviewer tell why this behavior is correct and when execution escalates instead?
 7. **Metric smell** — Did any complexity, maintainability, or duplication check flag this unit, and if so, did you refactor or explicitly record the debt?
 8. **Docstring Check** — Do all public declarations have complete and accurate docstrings detailing inputs, outputs, errors, and side effects?
-9. **Abstraction Boundary** — Are all helper functions deep modules? Did we inline any shallow, single-use, or trivial logic to maintain flow readability?
+9. **Abstraction Boundary** — Do helper boundaries clarify meaningful responsibilities or hide complexity? Did we keep trivial cohesive logic inline and avoid splitting solely for a line-count target?
 10. **Locked Interface Check** — Did we implement only the locked contracts without inventing new interfaces or modifying method signatures?
 11. **Scoped File Tree & Boundary Check** — Does the repository state strictly match the locked scoped file tree? Were out-of-scope boundaries respected with no files touched outside scope? Have all temporary, scratch, and intermediate files been completely cleaned up?
 
-For any "no" or weak answer, refactor or add a `// CLARITY:` annotation explaining what the code does and why.
+For any "no" or weak answer, resolve the relevant clarity or robustness issue within scope. Comments explain non-obvious rationale; a `// CLARITY:` annotation does not substitute for fixing hidden control flow, surprising effects, or excessive indirection. Report material limitations rather than silently broadening the task.
+
+**Inspection evidence (proportional):** For non-trivial behavior changes, include a compact, repository-relative source-linked walkthrough in the existing change summary or module README: entry point -> important decisions/stages -> result; effect/state ownership; consequential failure exits; relevant tests or observed outputs and what remains unverified. A small script or linear patch needs only understandable code and a brief explanation. Add a flow/state view or targeted runtime evidence only for a concrete inspection gap—not a separate artifact or tracing system for every change. See [Inspectable code](inspectable-code.md) for the copyable shape and conditional tool selection.
 
 #### J. Module README & Architecture Design Audit
 For any module directory created or modified, you must ensure it has an up-to-date, high-quality `README.md` documenting its architecture, responsibility, public interface, and behavior:

@@ -13,12 +13,14 @@ Applies to every file written or modified. Use this rule for the core design gat
 
 > **Proportionality Note:** These principles govern production codebases, multi-component systems, and public interfaces. For Trajectory 3 (Fast-Path utility scripts, shell tools, dotfiles configurations, or self-contained scripts <100 lines), idiomatic native constructs (such as Python dicts/tuples or straightforward linear functions) are completely acceptable. Do not invent unnecessary classes, DTOs, or abstract layers for simple scripts.
 
+**Readability-first (all trajectories):** Within correctness, security, and required performance constraints, optimize for human understanding and a small review surface—not cleverness or minimum line count. Keep straightforward code straightforward; add helpers, classes, layers, or flow frameworks only when they reduce what a reader must understand.
+
 Before adding or changing a function, class, or module, confirm all of the following. If any answer is unknown, stop and clarify or redesign.
 
 1. **Single responsibility:** the unit has one job; an "and" in its responsibility signals a split.
 2. **Minimal interface:** expose only the smallest surface callers require.
 3. **Dependency direction:** depend toward abstractions, not concrete details.
-4. **Human traceability:** names and structure make the flow and decisions understandable without reading every body.
+4. **Human traceability:** names and structure expose entry points, consequential decisions, dependencies, state ownership, and effects without reading every body.
 5. **Deep modules:** hide meaningful complexity behind a simple, cohesive interface; do not create shallow indirection.
 6. **Interface-first specification:** define and agree type signatures, enums, or abstract contracts before implementation logic.
 7. **Explicit DTOs:** use named, typed DTOs or equivalent domain types at boundaries, not positional tuples or untyped dynamic maps.
@@ -50,7 +52,7 @@ Do not burn reasoning tokens, turns, or iterations endlessly polishing "engineer
 
 Do not:
 
-- Give a function, class, or module multiple responsibilities, or grow behavior through another parameter instead of composition.
+- Give a function, class, or module unrelated responsibilities, or hide divergent workflows behind mode flags instead of clear branches or meaningful composition.
 - Copy logic more than twice, mix business logic with framework or IO layers, or use mutable global state without an explicit `// WHY: global — [justification]`.
 - Swallow errors, return fake success, or silently use defaults, degraded results, cached data, partial success, or no-ops without an explicit approved contract.
 - Guess an ambiguous business rule; surface a typed/domain error or obtain clarification instead.

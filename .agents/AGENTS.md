@@ -14,7 +14,7 @@ Before acting, read `~/.agents/rules/INDEX`. Load only triggered rule bodies. Ha
 3. **Fast-Path / Utility Scripting & Automation** (dotfiles, CLI utilities, single-file scripts, glue code, local automation, bounded bugfixes).
    - **Principle: Proportionality.** The ceremony must never exceed the deliverable. A 30-line script must not trigger multi-phase plan files, clean-room TDD subagent isolation, or formal DTO class hierarchies.
    - **Bypasses:** Bypasses sharded phase files, Clean-Room TDD subagent delegation, formal DTO schemas, and multi-file plans.
-   - **Verification:** Direct execution with observable output (`run_command` with sample inputs) replaces formal test suites.
+   - **Verification:** Lightweight verification with observable evidence (sample inputs or existing checks) replaces unnecessary formal suites; direct or bounded delegated execution may supply that evidence.
 
 ## Source of Truth Hierarchy
 
@@ -32,12 +32,13 @@ AGENTS.md (this file — product constraints, operating rules, harness wiring)
 - Treat the triggered rules in `rules/INDEX` as binding; load the applicable body before acting.
 - Verify tool outcomes, protect secrets, and use the repository's quality and verification gates.
 - Choose the correct operational trajectory: use Phased Delivery / Slicing for production software engineering, first-principles scientific inquiry for research, or Fast-Path / Proportionality for scripts, tooling, and quick fixes.
+- **Context stewardship:** Own the goal, material decisions, integration, and acceptance—not necessarily every operation. Proactively weigh direct work, targeted queries, and bounded delegation by decision value, context cost, latency, and evidence quality. Keep sufficient contracts and uncertainty; return compact, verifiable results rather than investigation exhaust. Preserve safety/action limits and live user dialogue. Use `skills/subagent-dispatch` for handoffs; its context-stewardship reference explains these principles without quotas or a fixed execution recipe.
 
 ## Informed Alignment (universal invariant)
 
 A decision is material when it changes user-visible behavior, data semantics, security/privacy, compatibility, operational cost, reversibility, or architecture boundaries. The explain-first minimum below applies to every material decision, whether based on main-thread investigation or delegated work.
 
-- **Exploratory dialogue vs. commitment gate**: Distinguish active problem exploration (Q&A) from commitment gates. In active Q&A, keep turns conversational ("ping-pong") in the main thread (never delegate collaborative discovery); explain context proportionally (1–2 sentences framing the specific trade-off) and address one architectural layer per turn (macro-consistency before micro-signatures). Do not go "all-in" or dump a monolithic brief mid-dialogue.
+- **Exploratory dialogue vs. commitment gate**: Distinguish active problem exploration (Q&A) from commitment gates. In active Q&A, keep conversational alignment and overall decisions in the main thread; bounded supporting evidence may be delegated without outsourcing the dialogue; explain context proportionally (1–2 sentences framing the specific trade-off) and address one architectural layer per turn (macro-consistency before micro-signatures). Do not go "all-in" or dump a monolithic brief mid-dialogue.
 - **Before asking for a material decision (commitment gate)**:
   - Explain verified facts vs. inferences vs. unknowns in plain language.
   - Define decision-relevant technical terms before using them in questions.
@@ -60,7 +61,7 @@ Match user **intent** against skill descriptions in `skills/INDEX` to select one
 
 **Software implementation routing:**
 - **Production codebases, multi-file features, architectural refactors:** load `code-craft` as the baseline.
-- **Fast-path utility scripts (<100 lines), shell tools, dotfiles configurations, or bounded local fixes:** execute directly under Trajectory 3 (Fast-Path). Do not load heavyweight `code-craft` tracks or force multi-phase ceremony on self-contained scripts. Write clean, idiomatic code, run it to verify output, and deliver.
+- **Fast-path utility scripts (<100 lines), shell tools, dotfiles configurations, or bounded local fixes:** use Trajectory 3 (Fast-Path). Do not load heavyweight `code-craft` tracks or force multi-phase ceremony on self-contained scripts. Write clean, idiomatic code, obtain observable verification directly or through a bounded handoff, and deliver.
 
 **Modifying `.agents/`, skills, or rules: load `skill-author`.** Whenever creating, modifying, editing, or auditing skills, rules, or governance files under `.agents/`, you MUST load `skill-author` as your primary skill and follow official specs at https://agentskills.io and https://agents.md.
 

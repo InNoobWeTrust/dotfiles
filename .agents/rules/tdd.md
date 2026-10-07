@@ -20,7 +20,7 @@ Clean-Room TDD and formal Red-Green subagent loops are designed for multi-compon
 - **Prototyping & exploratory spikes**: when validating technical feasibility before committing to architecture.
 - **Bounded bugfixes ($\le 2$ files)**: where direct execution verification with sample inputs or existing tests is immediate.
 
-For these exempt tasks, write the code directly, verify it by running it (`run_command` with sample inputs or test flags), and deliver immediately. Do NOT spawn blind implementer subagents or create artificial test suites for simple scripts.
+For these exempt tasks, use lightweight implementation and verification with sample inputs or existing checks; direct work or bounded execution by a worker may be appropriate. Do NOT impose blind implementer isolation, formal Red-Green loops, or artificial test suites on simple scripts. Fast-path removes unnecessary ceremony, not the option of a sound handoff.
 
 ---
 

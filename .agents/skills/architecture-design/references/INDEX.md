@@ -17,6 +17,10 @@ Master index for all reference material. Load only what the current workflow nee
 | API design | `workflows/api-design.md` | Contract-first, versioning |
 | Data architecture | `workflows/data-architecture.md` | Modeling, pipelines, governance |
 
+## Focused Stack Selection
+
+- `dataflow-stack-selection.md` — inspectable analytical/scientific dataflows; plain Python/Ibis/marimo vs Hamilton vs dbt; graph and run-provenance contracts. Use without the full enterprise workflow for a narrow stack recommendation.
+
 ## Patterns
 
 Searchable catalog: `patterns/INDEX.md` → category files with mermaid diagrams.

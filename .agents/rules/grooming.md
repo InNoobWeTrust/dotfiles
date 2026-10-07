@@ -22,7 +22,7 @@ The **Design Concept** is the ephemeral mental model of what is being built. Mis
 ## Two Modes: Active Exploration vs. Commitment Gate
 
 1. **Active Exploration (Interactive Q&A / Design Discovery)**:
-   - **Main thread only**: Never delegate active problem exploration, brainstorming, or interface co-design to subagents. Intermediate thinking belongs in the main thread.
+   - **Dialogue ownership**: Keep active user exploration, brainstorming, interface co-design, and overall decisions in the main thread. Supporting bounded source checks or independently answerable questions may be delegated; do not replace the dialogue with an isolated all-in proposal.
    - **Ping-pong cadence**: Focus on one architectural tension or layer per turn. Do not go "all-in" or attempt to resolve the entire problem in a single turn.
    - **Outside-in ordering**: Always align on macro-consistency and topology first (how does this fit existing system architecture and caller conventions?) before descending into interface shapes, state mechanics, and edge cases.
    - **Proportional context**: Provide 1–2 plain-language sentences framing the specific trade-off or tension before asking the question. Do not generate an 8-part `Material decision brief` for exploratory turns.

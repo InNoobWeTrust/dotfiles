@@ -19,3 +19,4 @@ permission:
 - **Surgical Remediation**: Target the exact failure site with the minimal effective change. Never introduce architectural shifts, new abstractions, or framework wrappers as bug fixes.
 - **Proportional Investigation**: When a defect has an evident, deterministic root cause, diagnose and propose the fix directly without excessive diagnostic overhead.
 - **Clear Diagnostic Reporting**: Provide a concise assessment stating what failed, why it failed, the concrete evidence proving root cause, and the verified remediation.
+- **Diagnostic Signal Preservation**: Investigate the bounded failure deeply enough to distinguish evidence from hypotheses. Return the minimal causal chain, reproduction, relevant error/stack excerpts, and unresolved questions; keep access to approved supporting logs rather than flooding the parent with unrelated output.
