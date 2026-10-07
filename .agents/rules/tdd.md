@@ -1,5 +1,5 @@
 ---
-description: "Applies to non-trivial logic implementations, algorithms, service additions, and refactoring. Enforces strict Red-Green-Refactor cycles and Clean-Room context isolation."
+description: "Selects risk-proportionate verification and separates temporary checks from maintained tests. Applies TDD and context isolation where warranted, without requiring permanent tests for every logic component."
 globs: "*"
 alwaysApply: false
 trigger: model_decision
@@ -7,15 +7,26 @@ trigger: model_decision
 
 # Rule: Test-Driven Development (TDD) Enforcement & Context Isolation
 
-This rule applies to **all non-trivial logic implementations, service additions, validators, and refactoring tasks**. It enforces a strict Red-Green-Refactor loop paired with **Clean-Room Context Isolation** to ensure code correctness, modularity, and high design quality.
+This rule governs verification for logic implementations, service additions, validators, and refactoring. Select evidence by behavior, consequence of failure, and expected maintenance value—not the number of functions or a blanket coverage target. TDD is a verification technique, not permission to persist its scaffolding.
+
+## Test Selection and Persistence
+
+- **Default maintained tests:** End-to-end behavior tests protecting meaningful user-visible outcomes, and important unit tests protecting critical logic. Both must detect a concrete consequential regression and justify ongoing review and maintenance cost. A test framework or filename does not establish value.
+- **Critical units:** Examples include authorization decisions, financial calculations, data-integrity invariants, and consequential state transitions. State the failure being protected against; do not label every parser, validator, adapter, or helper critical merely because it contains logic.
+- **Other tests:** Leaf-unit tests, exploratory assertions, one-off harnesses, and agent-authored check scripts require explicit approval to become maintained repository artifacts. Retain fixtures/helpers only when necessary for a permitted maintained test, not as standalone scaffolding. Approval to implement, run verification, or commit is not blanket approval to retain extra tests. An explicitly requested maintained suite may authorize its agreed scope; approval under time pressure does not authorize future suites.
+- **Temporary verification:** Keep internal checks in an approved temporary directory outside the repository. Use existing checks, sample inputs, or direct execution when sufficient. Clean up agent-created scratch files and outputs before handoff; never make the user discover and remove them. Report useful execution evidence without retaining the harness.
+- **Durable behavior, not implementation mirroring:** Prefer a small set of meaningful regression checks over exhaustive tests for short-lived helpers. Do not freeze private structure, over-mock the implementation, or generate tests merely to raise coverage or assertion counts.
+- **Existing suites:** Run relevant established checks and honor agreed project gates. Do not delete or weaken existing tests, or bypass a gate, without authorization. If a gate requires additional maintained tests outside this boundary, surface the conflict and obtain approval rather than silently expanding the suite.
+
+Choose the test's persistence category before writing it. If maintenance value or criticality is unclear, keep the check temporary or ask before retaining it. This boundary takes precedence over test-writing templates below and skill-specific minimum-suite instructions.
 
 ---
 
 ## ⚖️ Exemptions & Proportionality (Fast-Path)
 
-Clean-Room TDD and formal Red-Green subagent loops are designed for multi-component production codebases, reusable domain modules, and critical services.
+For consequential behavior or critical logic, use Red-Green-Refactor when a failing check clarifies the contract. Clean-Room isolation is an available technique when independent implementation is warranted; it is not required for every new component. Its handoff must still follow delegation rules and the persistence boundary above.
 
-**This rule is explicitly WAIVED for:**
+**The formal TDD/isolation protocol is WAIVED for the following tasks; the persistence boundary still applies:**
 - **Trajectory 3 (Fast-Path / Utility Scripting & Automation)**: single-file tools, shell/bash scripts, dotfiles configurations, CLI glue code, or self-contained scripts (<100 lines).
 - **Prototyping & exploratory spikes**: when validating technical feasibility before committing to architecture.
 - **Bounded bugfixes ($\le 2$ files)**: where direct execution verification with sample inputs or existing tests is immediate.
@@ -34,13 +45,13 @@ For these exempt tasks, use lightweight implementation and verification with sam
 
 ## 🚪 The Clean-Room TDD Protocol (Separation of Roles)
 
-To eliminate bias, TDD must be executed by two distinct contexts:
+When Clean-Room isolation is selected, separate the test writer and implementer contexts:
 
 ### 1. The Test Writer (Main Agent)
 *   **Role**: Define the requirements, interface signatures, and write the test cases.
 *   **Actions**:
     1. Define interface specifications (signatures, type definitions, structs, API contracts).
-    2. Write the unit test file (e.g., `src/auth/jwt.test.ts` or `tests/test_auth.py`). Cover happy paths, boundary conditions, and failure states.
+    2. Write the selected behavior or critical-unit checks at their authorized location. Other internal checks belong outside the repository. Cover relevant outcomes, boundaries, and failure states rather than every internal branch.
     3. Run the test command and verify it fails (confirming the **RED** state).
     4. **DO NOT write any production implementation code.**
     5. Delegate the implementation to a fresh **implementation worker/agent** (using an isolated delegated context when available) or instruct the user to start a new session for implementation.
@@ -73,7 +84,7 @@ graph TD
 
 ### Phase 1: Define Interface & Write Test (RED) - *Main Agent*
 *   Create the interface definitions (signatures, enums, interfaces, type stubs).
-*   Write the unit test file. Specify multiple test cases covering happy path, boundary conditions, and error states.
+*   Write the selected checks at their authorized location. Protect meaningful outcomes and consequential boundary/failure cases; do not create permanent leaf-unit suites by default.
 *   Run the test command. **Confirm the tests fail** (or fail to run due to missing implementation).
 
 ### Phase 2: Write Minimum Implementation (GREEN) - *Delegated Worker*
@@ -144,11 +155,11 @@ Write exactly: TASK_COMPLETE
 
 ## ⚡ Execution Gates & Exceptions
 
-*   **Strict Gate**: Any new logical component (parsers, validators, mathematical algorithms, data processing units, state managers) **MUST** use this protocol.
+*   **Selection Gate**: Identify the behavior or critical invariant, proportionate verification, and whether its checks may persist. New logic alone does not mandate a permanent test file or a Clean-Room loop.
 *   **Verification Gate**:
     *   **Logic Review**: The Main Agent must review the delegated implementation to ensure no hardcoded test values (e.g. constant returns matching specific test assertions) are present, validating that the code implements general logic.
     *   **Transcript Audit**: To verify compliance with the context-isolation protocol, the Main Agent **MUST** inspect whatever conversation or execution logs the environment provides for the delegated worker. Scan the log to verify that the worker did not run file viewing, reading, or search commands targeting unit test files.
-*   **Exceptions**: You may bypass TDD and Context Isolation only for:
+*   **Additional lightweight cases**: Direct verification rather than a formal TDD or isolation loop is also appropriate for:
     *   Pure CSS / design changes.
     *   Static configuration or JSON file edits.
     *   Pure markdown documentation tasks.

@@ -32,11 +32,11 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 - **Language-specific defaults:** When selecting a language or framework stack, load the matching `languages/*.md` reference. These references are greenfield defaults; they never override established project constraints, compatibility, licensing, security, or performance requirements.
 
 #### F. Test-Driven Development (TDD Cycle)
-- **Write Test Cases First:** In accordance with `rules/tdd.md`, implement your test cases and interface stubs *before* writing the logic bodies.
+- **Select Before Writing:** Apply `rules/tdd.md` to select meaningful checks and their persistence category. When TDD is warranted, write those checks before the logic; temporary checks stay outside the repository, not in a newly generated leaf-unit suite.
 - **RED**: Execute the test command and confirm that the test fails as expected.
 - **GREEN**: Write the minimal code to satisfy the test cases. Confirm all tests pass.
 - **Refactor**: Refactor to meet all code quality criteria, maintaining passing test states.
-- **Deliverable requirement**: You must post the execution of your test command and its passing results in your turn summary.
+- **Deliverable requirement**: Post the relevant verification command and observed results, including failures or unverified criteria. Execution evidence does not require retaining the check code.
 
 #### G. Quality Tooling Pass
 

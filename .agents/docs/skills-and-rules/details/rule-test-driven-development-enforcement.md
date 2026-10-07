@@ -8,9 +8,9 @@
 
 ```
 1. Red-Green-Refactor protocol (test → implement → clean up)
-2. Strict gate for logic components (parsers, validators, algorithms, state managers)
+2. Risk-proportionate selection of behavior and critical-invariant checks
 3. Exceptions for non-logic changes (CSS, config, markdown, typos)
-4. AI must output test execution results as compliance evidence
+4. Observed execution evidence, with temporary verification separate from maintained tests
 ```
 
 **Without this rule:** The AI will write 300 lines of implementation, declare it done, and hand you code with silent logic bugs that would have been caught by even basic tests. Worse, the code will be untestable because it was designed without tests in mind.
@@ -22,4 +22,4 @@
 - The AI cleans up and re-runs tests (REFACTOR)
 - The AI posts the test output as proof
 
-If the AI skips any phase, the rule is violated.
+Use that loop where warranted, not as a requirement to persist a test for every helper. Without explicit approval, maintained additions are limited to meaningful end-to-end behavior tests and important unit tests for critical logic. Other internal checks belong outside the repository and are cleaned up by the agent. Existing suites and project gates remain in force; do not remove or weaken them without authorization. See `rules/tdd.md` for the selection and persistence boundary.

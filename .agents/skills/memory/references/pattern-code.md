@@ -114,7 +114,7 @@ Growth past these limits is the split signal.
 ## Stop conditions
 
 - Moving a symbol would break an external package consumer → stop and produce a deprecation plan (re-export from the old path for one release).
-- Test coverage drops after the split → stop; the move exposed missing tests. Add tests before finishing the refactor.
+- A split breaks an established check or leaves a consequential behavior unverified → investigate before finishing. A coverage-number drop alone does not justify new maintained tests; apply `../../../rules/tdd.md` and use temporary verification where appropriate.
 - The public surface still exceeds the soft limit after extraction → this module owns too many capabilities. Split at the module level, not the file level.
 
 ---

@@ -27,7 +27,7 @@ For delegated work, the primary establishes discovery and the action/evidence co
 ### Thinking Principles
 
 - **Test Behavior Over Implementation**: Assert observable outcomes, contract boundaries, and state transitions. Avoid brittle tests tightly coupled to private internal mechanics that break on innocent refactoring.
-- **Proportional Verification**: Calibrate verification strategy to the nature of the deliverable. Rigorous automated test suites belong around domain logic and critical paths; direct CLI execution with verified outputs is often the appropriate, lightweight verification for utilities and scripts.
+- **Proportional Verification**: Protect meaningful behavior and critical invariants rather than every helper. Direct execution and temporary checks can establish evidence without a maintained suite. Apply [test selection and persistence](../../../rules/tdd.md#test-selection-and-persistence) before retaining test code; verification authority does not automatically authorize new repository tests.
 - **Uncompromising Integrity**: Never weaken assertions, skip failing checks, or mask errors to manufacture passing runs. Real failures are valuable signals that demand honest reporting.
 - **Hermetic Determinism**: Keep tests isolated, reproducible, and independent of external state or timing artifacts.
 

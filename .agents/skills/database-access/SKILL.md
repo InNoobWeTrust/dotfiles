@@ -101,7 +101,7 @@ Load `references/testing-and-extensions.md` for test-double strategy and optiona
 - [ ] Aggregate sync mode is reconciliation-by-key or has declared replacement semantics
 - [ ] No automatic retries; retry paths have idempotency policy + fresh UoW
 - [ ] Document store: no assumed relational capabilities without explicit contract
-- [ ] Tests exist: at minimum repository/adapter unit tests; integration tests for multi-step write paths
+- [ ] Relevant write-path and data-integrity behavior is verified. Select maintained tests under `../../rules/tdd.md`; repository/adapter leaf-unit suites are not a mandatory deliverable. Other internal checks remain temporary unless explicitly approved.
 
 ---
 

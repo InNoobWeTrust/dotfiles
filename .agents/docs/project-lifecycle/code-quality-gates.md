@@ -7,7 +7,7 @@ Every code change in an AI-augmented project must pass through a defined set of 
 ```
 1. Pre-Implementation Design Checkpoint (7 questions)
    ↓
-2. TDD Cycle (test → implement → refactor) for logic components
+2. Proportionate Verification (TDD where warranted; select test persistence)
    ↓
 3. Code Quality Rules (naming, structure, documentation)
    ↓
@@ -30,9 +30,9 @@ Before writing ANY function, class, or module, the AI must answer these 7 questi
 6. **Interface-First specification** — Are type signatures, enums, and abstract contracts fully defined BEFORE writing any implementation logic?
 7. **Ambiguity policy** — If an edge case or failure path has multiple reasonable behaviors, what contract chooses the correct one? If no contract defines this, STOP and ask the user instead of inventing a fallback.
 
-### Gate 2: TDD for Logic Components
+### Gate 2: Verification and Test Persistence
 
-Test-Driven Development is mandatory for any component containing logic: parsers, validators, algorithms, data processors, state managers. The cycle is:
+Verify meaningful behavior and consequential invariants, using established checks or temporary execution evidence where sufficient. New logic does not automatically require a permanent unit test or an isolated implementation loop. When a failing check helps clarify the contract, use TDD:
 
 ```
 RED      → Write the test first. Run the test command. Confirm it FAILS.
@@ -40,7 +40,7 @@ GREEN    → Write the minimum code to make the test pass. Run tests. Confirm PA
 REFACTOR → Clean up naming, nesting, structure. Re-run tests. Confirm still PASS.
 ```
 
-The AI must output the test command and its results as proof of compliance. Skippable only for CSS changes, config edits, markdown documentation, and typo fixes — changes with no logic.
+Report the verification command and observed results, including failures and unverified criteria. Without explicit approval, maintained additions are limited to end-to-end behavior tests and important unit tests for critical logic. Keep other internal checks outside the repository and clean them up before handoff; do not chase coverage counts or mirror every helper. Existing tests and agreed project gates remain binding, and removing or weakening them requires authorization. See [test selection and persistence](../../rules/tdd.md#test-selection-and-persistence).
 
 ### Gate 3: Code Quality Rules
 
