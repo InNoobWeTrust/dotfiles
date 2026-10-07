@@ -36,6 +36,18 @@ const inputSchema = {
     .describe("Absolute working directory. Defaults to a single MCP directory root, otherwise the inferred server launch directory. Multiple roots require this argument."),
 }
 
+const outputSchema = {
+  exitCode: z.number().int().nullable().describe("Sandbox process exit code; null if execution could not complete."),
+  stdout: z.string().describe("Captured standard output, unchanged."),
+  stderr: z.string().describe("Captured standard error, unchanged."),
+  workdir: z.string().nullable().describe("Resolved working directory; null if directory discovery failed."),
+  workdirSource: z.string().nullable(),
+  error: z.string().optional().describe("Sandbox setup or execution error, not command stderr."),
+  restrictionHint: z.string().optional().describe("Possible restriction guidance; not a confirmed diagnosis."),
+}
+type SandboxOutput = z.infer<z.ZodObject<typeof outputSchema>>
+type ExecutionOutput = Omit<SandboxOutput, "workdir" | "workdirSource">
+
 async function resolveWorkdir(workdir?: string): Promise<{ cwd: string; source: string }> {
   let directory = workdir ?? launchDirectory
   let source = workdir ? "explicit workdir" : "inferred server launch directory; client roots unsupported"
@@ -59,14 +71,14 @@ async function resolveWorkdir(workdir?: string): Promise<{ cwd: string; source: 
   return { cwd, source }
 }
 
-async function executeSandbox(command: string, mode: SandboxMode, cwd: string): Promise<CallToolResult> {
+async function executeSandbox(command: string, mode: SandboxMode, cwd: string): Promise<ExecutionOutput> {
     const isMac = process.platform === "darwin"
     const backend = isMac ? "sandbox-exec" : "bwrap"
     const sandboxBin = Bun.which(backend)
     if (!sandboxBin || (!isMac && process.platform !== "linux")) {
       return {
-        content: [{ type: "text", text: `Sandbox backend unavailable: ${backend} on ${process.platform}. Refusing unsandboxed execution.` }],
-        isError: true,
+        exitCode: null, stdout: "", stderr: "",
+        error: `Sandbox backend unavailable: ${backend} on ${process.platform}. Refusing unsandboxed execution.`,
       }
     }
     let tempDir: string | undefined
@@ -137,45 +149,24 @@ async function executeSandbox(command: string, mode: SandboxMode, cwd: string): 
         Bun.readableStreamToText(proc.stderr),
         proc.exited,
       ])
-      const stdout = stdoutText.trim()
-      const stderr = stderrText.trim()
-
-      if (exitCode !== 0) {
-        let output = ""
-        if (stdout) output += `${stdout}\n`
-        if (stderr) output += `${stderr}\n`
-        output += `Command exited with status ${exitCode}`
-
-        if (
-          stderr.includes("Read-only file system") ||
-          stderr.includes("Operation not permitted")
-        ) {
-          output +=
-            "\n\n[POSSIBLE SANDBOX RESTRICTION]: A filesystem write or another restricted operation may have been denied. " +
-            "Inspect the error; use --dry-run or cache under $TMPDIR. " +
-            "Use sandbox_rw only for intentional workspace writes. sandbox_pure also denies network operations."
-        }
-
-        return {
-          content: [{ type: "text", text: output }],
-          isError: true,
-        }
-      }
-
-      const resultText =
-        stdout ||
-        (stderr
-          ? `[stderr]:\n${stderr}`
-          : "Command completed successfully (exit code 0, no output).")
-
       return {
-        content: [{ type: "text", text: resultText }],
+        exitCode,
+        stdout: stdoutText,
+        stderr: stderrText,
+        ...(exitCode !== 0 && (
+          stderrText.includes("Read-only file system") ||
+          stderrText.includes("Operation not permitted")
+        ) ? {
+          restrictionHint: "A filesystem write or another restricted operation may have been denied. " +
+            "Inspect stderr; use --dry-run or cache under $TMPDIR. " +
+            "Use sandbox_rw only for intentional workspace writes. sandbox_pure also denies network operations.",
+        } : {}),
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err)
       return {
-        content: [{ type: "text", text: `Failed to execute ${backend} sandbox: ${message}` }],
-        isError: true,
+        exitCode: null, stdout: "", stderr: "",
+        error: `Failed to execute ${backend} sandbox: ${message}`,
       }
     } finally {
       if (tempDir) await rm(tempDir, { recursive: true, force: true })
@@ -189,17 +180,33 @@ const tools: { name: string; mode: SandboxMode; description: string }[] = [
 ]
 
 for (const { name, mode, description } of tools) {
-  server.tool(name,
-    `${description} Non-login shell, writable scratch at $TMPDIR. Host files/environment remain readable; not hostile-code isolation. Investigate denials; never silently retry unrestricted.`,
+  server.registerTool(name, {
+    description: `${description} Non-login shell, writable scratch at $TMPDIR. Host files/environment remain readable; not hostile-code isolation. Investigate denials; never silently retry unrestricted.`,
     inputSchema,
+    outputSchema,
+  },
     async ({ command, workdir }): Promise<CallToolResult> => {
+      let output: SandboxOutput
+      let cwd: string | null = null
+      let source: string | null = null
       try {
-        const { cwd, source } = await resolveWorkdir(workdir)
+        const resolved = await resolveWorkdir(workdir)
+        cwd = resolved.cwd
+        source = resolved.source
         const result = await executeSandbox(command, mode, cwd)
-        return { ...result, content: [{ type: "text", text: `Workdir: ${cwd} (${source})` }, ...result.content] }
+        output = { ...result, workdir: cwd, workdirSource: source }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err)
-        return { content: [{ type: "text", text: `Sandbox failed: ${message}. Provide an absolute workdir if directory discovery failed.` }], isError: true }
+        output = {
+          exitCode: null, stdout: "", stderr: "", workdir: cwd, workdirSource: source,
+          error: `Sandbox failed: ${message}. Provide an absolute workdir if directory discovery failed.`,
+        }
+      }
+      return {
+        structuredContent: output,
+        // MCP recommends serialized JSON for clients without structured output support.
+        content: [{ type: "text", text: JSON.stringify(output) }],
+        isError: output.exitCode !== 0 || output.error !== undefined,
       }
     }
   )
