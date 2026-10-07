@@ -4,7 +4,7 @@ topic: context-leakage
 status: follow-up
 created: 2026-10-08
 updated: 2026-10-08
-tags: [context-boundaries, portability, account-access]
+tags: [context-boundaries, reader-context, portability, account-access]
 ---
 
 # Context Leakage — User Correction and Follow-up
@@ -16,6 +16,8 @@ Temporary conversation, harness, account, catalog, and research context was prom
 In this session, the user requested removal of the deployment-specific model-routing report from the reusable model-benchmarking skill. The report and its incoming links were removed. Do not recreate it inside skills as a workaround.
 
 ## Artifact boundaries
+
+The clarified diagnosis is an audience-and-context boundary failure: writing for a conversation participant rather than the artifact's intended reader. It includes both contamination (unneeded or wrongly scoped context included) and missing necessary context (definitions, rationale, or constraints assumed from the chat). Even the requester may not understand the first draft. The correction is not to include everything or make everything generic, but to supply exactly the context the reader needs for the artifact's purpose.
 
 - Agent profiles hold execution configuration and concise selection descriptions: purpose, model capabilities, meaningful effort trade-offs, and applicable constraints. A current harness observation or unfinished investigation is not a permanent model limitation.
 - Shared skills describe reusable methods and independently selected working principles, not this deployment's concrete agent-mode catalog or account entitlements.
@@ -29,10 +31,11 @@ The user reports having an older annual GitHub Pro subscription whose model enti
 
 This is a user-reported account correction, not a verified subscription-plan mapping or a successful model invocation observed by the assistant. Public lifecycle documentation and account-specific usability are separate evidence. No paid access probe is implied or authorized.
 
-## Follow-up, not implemented policy
+## Correction and remaining follow-up
 
-- Examine why task-local context is repeatedly promoted into reusable defaults, and improve the persistence boundary proportionately after discussion with the user.
-- Review descriptions for harness-origin prose, catalog snapshots, and research-status disclaimers that obscure model selection. Keep legitimate capability and data-policy cautions separate.
+- The user authorized a proportionate reader/context boundary in existing shared guidance, plus a human-facing lesson record. Establish audience, purpose, assumed knowledge, and accessible references before writing; check the draft without chat history. No new skill or mandatory specification is needed.
+- Description cleanup removed harness-origin prose, catalog snapshots, and research-status disclaimers while preserving legitimate capability, identity, and data-policy cautions. The changes were committed with the portable routing work.
 - Reconcile older routing memories with the approved separation of model routes and working-principle identities before relying on conflicting historical instructions. No bulk memory rewrite or new enforcement rule is authorized by this capture.
+- Model-training versus setup causation remains untested. Cross-harness repetition does not separate those causes when models and guidance are shared; a draft-only comparison is a proposed follow-up, not an executed benchmark.
 
-The current task checked agent descriptions without changing the user's manually edited profiles. This note records the correction and later work; it does not claim an independent audit or runtime validation.
+The initial capture followed a description-only check; later user authorization permitted cleanup and the reader-boundary correction. Human-facing lessons are in [Lessons from agent-guidance failures](../../.agents/docs/skills-and-rules/agent-guidance-lessons.md). This note does not claim an independent audit, runtime validation, or proven behavioral improvement.

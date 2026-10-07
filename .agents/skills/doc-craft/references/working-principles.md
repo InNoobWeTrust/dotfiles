@@ -12,6 +12,7 @@ For delegated work, the primary establishes discovery and the action/evidence co
 - **Progressive Disclosure**: Layer information logically from high-level overview to operational usage and deep reference.
 - **Proportionality**: Calibrate documentation depth strictly to the subject. Small utilities require concise, focused guides rather than multi-document sharding.
 - **Single Source of Truth**: Link to authoritative definitions and specifications rather than duplicating content across files where it can drift.
+- **Reader, Not Conversation Partner**: Establish who will use the artifact, what they need to do, and what knowledge or references they can reasonably have. Include necessary explanation; omit unrelated conversation history and preserve the scope of account-, deployment-, and investigation-specific claims. Read the draft as someone without the chat: neither unexplained shared assumptions nor a transcript dump is acceptable.
 
 ### Operational Behavior
 

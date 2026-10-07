@@ -13,6 +13,7 @@
 | [Nice-to-have rules](./nice-to-have-rules.md) | Memory, discovery, routing optional rules | Expanding beyond baseline |
 | [Failure → rule evolution](./failure-pattern-evolution.md) | How failures become durable rules | Improving rule quality |
 | [Failure patterns catalog](./failure-patterns-catalog.md) | Catalog A–E of AI failure modes | Debugging bad AI output |
+| [Lessons from agent-guidance failures](./agent-guidance-lessons.md) | Reader/context boundaries, alignment, portable roles, inspectable work, and verification limits | Sharing observed failures or designing the next improvement |
 | [Designing skills](./designing-skills.md) | Anatomy, YAML, phases, deliverables | Writing a new skill |
 | [Skill lifecycle](./skill-lifecycle.md) | Prototype → hardening → adoption | Promoting or retiring skills |
 | [Skill composition](./skill-composition.md) | WIRING.md and multi-skill pathways | Chaining skills safely |
