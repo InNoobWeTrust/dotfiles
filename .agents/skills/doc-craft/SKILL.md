@@ -38,6 +38,7 @@ Do **not** load for:
    - **Human-Facing**: General architecture, guides, API references → `docs/`. Module role, public surface, usage → `<module>/README.md`.
    - **Agent-Facing / Internal**: Atomic implementation plans (`plan.md`), sequential vertical slice phase files (`phases/01-*.md`), inter-agent consensus boards, or execution checkpoints → **STOP and route to `memory`** (`MEMORY_DIR`). Do NOT dump execution tracking into `docs/`.
    - Reference: [`references/document-routing-and-audience.md`](references/document-routing-and-audience.md).
+   - **Reader contract**: For ordinary Markdown documentation, default to concise YAML frontmatter with `audience` (who uses it), `purpose` (what it helps them understand or do), and `scope` (coverage and exclusions). Add it when creating or substantively revising a document; preserve existing metadata. For tool-consumed or format-controlled files, including `SKILL.md` and agent modes, verify supported fields first; use a short body statement if custom metadata is unsupported or uncertain. Do not bulk-retrofit unrelated files.
 2. **Determine the Document Layer**:
    - **Index**: Router/catalog for a directory (`README.md`, `INDEX.md`). Must stay under 40 rows.
    - **Entry**: Primary guide, topic overview (`<topic>.md`), or module README (`<module>/README.md`). Focuses on core flow and common paths (< 8 KB).
@@ -66,6 +67,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 ### Phase 4 — Scannability, Abstraction, & Link Audit
 1. **The 5-Second Scan Test**: Can a reader glance at the page and immediately identify the goal, components, and primary command/table?
 2. **Abstraction & Jargon Audit**: Confirm no low-level agent execution noise, raw task checklists, or unexplained jargon leaked into the document.
+   - Compare the prose against the declared audience, purpose, and scope: flag both unnecessary context and missing explanation. Check the declaration itself against the requested document; metadata is not proof that the content belongs.
 3. **Link Verification**: Verify all relative file links (`[text](../path.md)`) exist and resolve correctly.
 4. **No Orphan Leaves**: Ensure every leaf in `details/` is referenced from its parent entry.
 
@@ -84,6 +86,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 ## Deliverables Checklist
 
 - [ ] Audience verified as human; agent task/phase/consensus artifacts routed to `memory`.
+- [ ] Reader contract recorded in frontmatter where supported, otherwise in the body; content checked against it.
 - [ ] Appropriate abstraction level maintained (concise, jargon-free, high-level choices with pseudocode).
 - [ ] Clear layer established (Index, Entry, or Leaf; or module README).
 - [ ] Top metadata summary table present.
@@ -117,4 +120,3 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 - [`references/progressive-disclosure.md`](references/progressive-disclosure.md) — The Index → Entry → Leaf architecture, sizing thresholds, and sharding workflow.
 - [`references/visual-rhythm-and-scannability.md`](references/visual-rhythm-and-scannability.md) — Anti-wall-of-text guidelines, table transformations, and typography.
 - [`references/templates.md`](references/templates.md) — Canonical templates for guides, architecture docs, indices, deep leaves, and code module READMEs.
-

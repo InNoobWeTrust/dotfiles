@@ -18,7 +18,16 @@ Distinguish working style from domain method. A diagnostic perspective does not 
 
 ## 2. Discover relevant guidance
 
-Read [Baseline](references/baseline.md) once in the current context. For substantive specialist judgment, inspect [catalog.csv](catalog.csv): compare the assignment's meaning with `use_when`, `avoid_when`, and `perspective`. Use ordinary file reads or targeted searches; no database service, embedding index, custom ranking algorithm, or keyword-only classification is required.
+Read [Baseline](references/baseline.md) once in the current context. For substantive specialist judgment, run the catalog search below rather than reading the entire CSV into context. Paths shown are relative to this skill directory; resolve them against the accessible skill location, not an assumed current directory.
+
+```sh
+uv run --script scripts/search.py "diagnosis unexpected behavior causal explanation" --max-results 3
+uv run --script scripts/search.py --id verification
+```
+
+Search returns at most three candidates with applicability, exclusions, and reference paths. Use `--json` if structured output is needed. For a known ID, use `--id`; load an explicit reference directly. Mechanical tasks can use the baseline without searching.
+
+Candidates are suggestions, not a decision. Check their applicability and exclusions against the assignment before loading a reference. If none fits, refine the query or use the baseline and applicable domain guidance. If search is unavailable, use an accessible explicit reference or targeted lookup; do not dump the CSV into context as a fallback.
 
 Resolve catalog `reference` values relative to this skill directory. Shared guidance resolves against the actual shared `.agents` root; a project overlay must be explicit, not inferred from the working directory. Use exposed skill metadata or the shared/project skill index to discover domain guidance when the catalog has no suitable entry. Do not invent a reference or claim to have loaded unavailable guidance.
 
@@ -61,7 +70,7 @@ Adapt emphasis when evidence changes, without silently changing scope or authori
 | Ask the main agent to write a full personality before starting | Infer the needed judgment and discover guidance yourself. |
 | Treat a model name or expert title as expertise | Apply source-grounded principles; do not claim credentials or certainty. |
 | Match only keywords in the request | Compare purpose, context, useful perspective, and exclusions. |
-| Load the entire collection | Read the catalog and only useful references or sections. |
+| Load the entire collection | Retrieve bounded candidate rows, then read only selected references or sections. |
 | Let a selected role authorize edits or nested workers | Keep task authority and native restrictions independent of style. |
 | Invent a specialist for every tiny task | Use the baseline when further guidance adds no value. |
 | Assume a reference was read by the parent, so it is already available here | Establish access and read it in this context. |

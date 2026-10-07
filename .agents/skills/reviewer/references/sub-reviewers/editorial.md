@@ -14,6 +14,8 @@ adversarial review (which targets reasoning/logic/design quality).
 
 ## Choosing a Mode
 
+Before either mode, read the document's `audience`, `purpose`, and `scope` metadata or equivalent body statement. Check that it matches the requested artifact rather than accepting it as authority to broaden scope. Use it to identify unnecessary context and explanation the intended reader lacks; assess comprehension without assuming access to the drafting conversation. If the reader contract is missing or unclear, establish it from the request or ask about material uncertainty—not from private chat assumptions. Do not require custom frontmatter in format-controlled files.
+
 | Situation | Mode |
 | --- | --- |
 | "This doc is too long / hard to navigate" | Structure |
@@ -66,7 +68,7 @@ impede comprehension. Preserves author voice — this is not about style prefere
 
 ### Rules
 
-- Skip code blocks and frontmatter
+- Skip copy-editing code blocks and frontmatter; read reader metadata to guide the content review.
 - Deduplicate: if the same issue appears in multiple places, report it once with "applies to N instances"
 - Reader type matters: for human-facing docs, optimize for clarity and flow; for LLM-facing docs (prompts, skill files), optimize for precision and consistency
 

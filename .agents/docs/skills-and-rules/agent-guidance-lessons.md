@@ -1,11 +1,12 @@
+---
+audience: People building or maintaining AI-assisted workflows
+purpose: Recognize guidance failures, understand corrections, and choose improvements to test
+scope: "Reusable writing and coordination lessons; excludes deployment catalogs, subscription advice, and claims of proven effectiveness"
+---
+
 # Lessons from Agent-Guidance Failures
 
-| | Scope |
-|---|---|
-| **Reader** | People building or maintaining AI-assisted workflows |
-| **Purpose** | Recognize failure modes, understand the corrections, and choose what to test next |
-| **Evidence** | Local workflow observations and guidance changes; not a controlled model comparison |
-| **Boundary** | No deployment-specific model catalog, subscription advice, or promise that instructions alone prevent failures |
+**Evidence:** Local workflow observations and guidance changes, not a controlled model comparison. Instructions alone are not a demonstrated prevention mechanism.
 
 ## 1. Write for the artifact's reader
 
