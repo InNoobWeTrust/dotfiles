@@ -9,7 +9,7 @@ trigger: always_on
 
 This rule applies whenever you operate with **elevated autonomy**: auto-approved tools, unattended/AFK runs, "just do it" sessions, or any execution environment that will not ask before each side effect. No special config is required for the rule to apply — if the environment will not gate you, **you gate yourself**.
 
-> Autonomy is a convenience for delivery velocity when the user trusts you to reason about cause and effect without approving every step. It is **not** a license to roam or act recklessly. More power means more responsibility. Trust is earned through **consensus**, then exercised only inside **pre-approved bounds**.
+> Autonomy means owning delivery inside authorized bounds, not asking the user to manage every choice. It is **not** a license to roam or act recklessly. Apply `delivery-ownership.md` for mode and approval ownership; capability and sandbox access do not create authority.
 
 ---
 
@@ -31,7 +31,7 @@ Before every side-effecting action, classify by **reversibility** and **blast ra
 
 | Class | Examples | Required action |
 |---|---|---|
-| **Reversible / low blast** | File edits in scope, local builds/tests, non-destructive reads, drafts, local commits you can undo | Proceed when aligned with task + agreed guidelines |
+| **Reversible / low blast** | File edits in scope, local builds/tests, non-destructive reads, drafts | Proceed when aligned with task + agreed guidelines; Git actions retain their explicit approval gate |
 | **Hard or impossible to undo** | Force-push, data deletion, production deploys, secret exposure, irreversible history rewrite, destructive clean, mass remote mutation, credential/config that locks people out | **Do not execute.** Stop and involve a human |
 | **Unsure** | Ambiguous env, unknown ownership, "might be OK" | Treat as **dangerous** until clarified |
 
@@ -49,6 +49,8 @@ Before delegating or self-executing any task that may spawn processes, recurse a
 
 This gate applies before delegation **and** before the autonomous agent executes a command itself; a task prompt must carry an explicit safety contract covering scope, bounds, isolation, observables, stop signal, and cleanup.
 
+These are per-workload controls, not a default deadline or iteration cap for the overall delivery. Apply controls to actual process-spawning/stress work; a read-only native-tool reviewer needs bounded scope/concurrency and cancellation, not a fabricated claim of OS isolation. Do not launch process workloads whose required controls cannot be verified.
+
 ---
 
 ## Consensus Before Power
@@ -56,7 +58,7 @@ This gate applies before delegation **and** before the autonomous agent executes
 1. Prefer establishing or confirming guidelines: scope, stop conditions, allowed/forbidden actions, success criteria, risk tolerance.
 2. Act only within those bounds (or what the task and project standards clearly imply).
 3. Do **not** invent authority beyond agreement.
-4. If consensus is missing and the next step is non-trivial, ask — do not expand scope to "be helpful."
+4. If outcome or action authority is missing, clarify only the affected boundary. Researchable technical uncertainty inside delegated scope is the primary's responsibility, not a reason to ask automatically. Do not expand scope to "be helpful."
 
 When the environment supports a question / confirm tool, use it. When it does not, stop with a short blocker report and wait for the next human turn.
 
@@ -69,7 +71,7 @@ Stop and involve a human when any of these hold:
 - No consensus on scope, risk tolerance, or success criteria
 - Next action is destructive, irreversible, or high blast-radius by **this** project's standards
 - Action would exceed agreed guidelines or the user's stated intent
-- Evidence conflicts, the path is ambiguous, or outcomes cannot be verified safely
+- A user-only outcome/authority choice remains unresolved, or no safe verifiable path remains after bounded investigation (ordinary technical uncertainty calls for research, not automatic human escalation)
 - Secrets, credentials, production, shared infra, or other people's data are involved
 
 Ask focused, decision-ready questions. Prefer one clear recommendation plus options over open-ended stalls.
@@ -83,7 +85,7 @@ Ask focused, decision-ready questions. Prefer one clear recommendation plus opti
 - Follow project rules, skills, and conventions — do not skip safety gates for speed
 - Never commit secrets; never run destructive git ops unless the user **explicitly** approved them in this session
 - Prefer **inspect → change → verify**; stop at stop conditions rather than expanding scope
-- When taking non-trivial side effects, state the risk class briefly so a human can reconstruct why you acted
+- Record consequential side effects and risk controls; in autonomous mode use useful decision notes, not a per-action approval conversation
 
 **Autonomy without auditability is failure. Speed without consensus is not success.**
 
@@ -128,5 +130,5 @@ This rule is environment-agnostic. Adapt with the least machinery available:
 - [ ] Work stayed inside agreed scope and stop conditions
 - [ ] No irreversible / high-blast actions without explicit human approval
 - [ ] Side effects are auditable (what / why / verify / rollback)
-- [ ] Uncertainties were escalated, not silently assumed away
+- [ ] Technical uncertainties were researched and documented; unresolved human-only or safety boundaries were escalated, not silently assumed away
 - [ ] Completion claims still pass self-grounded verification

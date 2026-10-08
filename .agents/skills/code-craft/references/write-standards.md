@@ -9,7 +9,7 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 #### A. Defensive Boundaries (Robust Exception Handling)
 - **Zero Silent Failures:** Never catch exceptions without recording diagnostic information or recovering.
 - **Fail Explicitly:** Every network call, file IO, or database query must configure explicit timeouts and an explicit failure contract. Use mapped errors, retries, or contract-approved defaults only when the caller-visible semantics are already defined. Do not invent `[]`, `null`, `false`, or no-op fallbacks just to keep execution moving.
-- **Escalate Semantic Ambiguity:** If an edge case can plausibly mean more than one thing, stop and ask the user or surface a domain error. Defensive programming makes uncertainty visible; it does not hide it behind defaults.
+- **Resolve Semantic Ambiguity:** If an edge case has competing meanings, pause affected implementation and report the contract gap. Under `../../../rules/delivery-ownership.md`, the autonomous primary researches and approves in-scope behavior; ask the user only for reserved decisions. Surface a domain error rather than inventing a fallback while the contract is unresolved.
 - **Preserve Diagnostics:** Propagate source context (error code, field name, upstream status, correlation data) so a reviewer can see why the failure path happened.
 - **Sanitize Boundaries:** Validate external API payloads immediately upon receiving them before passing them to internal functions.
 

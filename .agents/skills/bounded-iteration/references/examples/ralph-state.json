@@ -1,15 +1,32 @@
 {
-  "mode": "afk",
-  "iteration": 3,
+  "schema_version": 2,
+  "example_only": true,
+  "task_id": "local-cli-feature",
+  "mode": "autonomous",
+  "execution_mode": "attended",
+  "iteration": 4,
+  "phase": "handoff",
+  "contract_revision": 2,
+  "artifact_identity": "example-revision-4",
+  "aggregate_limits": {"max_iter": null, "max_elapsed_sec": null, "max_cost": null},
+  "cost_usd": null,
+  "cost_observation": "not reported by provider",
+  "job_controls_receipt": "evidence/job-4-controls.json",
+  "active_owned_resources": [],
   "success_streak": 1,
   "failure_fingerprint": "",
   "repeat_failures": 0,
-  "cost_usd": 3.42,
-  "files_touched": [
-    "package.json",
-    "vitest.config.ts",
-    "tests/example.test.ts"
+  "attempted_remedies": ["correct startup error guidance; rerun first-use journey"],
+  "files_touched": ["src/cli.ts", "README.md"],
+  "last_good_checkpoint": "checkpoints/revision-4.json",
+  "last_verify_file": ".ralph-verify.json",
+  "evidence_run_id": "example-run-4",
+  "reviewers": [
+    {"perspective": "first-use-ux", "verdict": "PASS", "evidence": "evidence/first-use-4.md"},
+    {"perspective": "failure-recovery", "verdict": "PASS", "evidence": "evidence/recovery-4.md"}
   ],
-  "last_good_checkpoint": "snapshot://2026-04-24T09:18:00Z",
-  "last_verify_file": ".ralph-verify.json"
+  "release_status": "ready_for_user_acceptance",
+  "user_acceptance": "pending",
+  "stop_code": "STOP_SUCCESS",
+  "continuation": "Await actual user feedback; version a follow-up scope if changes are requested."
 }

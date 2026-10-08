@@ -93,6 +93,8 @@ For every script or command, choose the **first** option that is feasible:
 
 Before running or delegating any process-spawning, recursive-agent, parallel-loop, fan-out, or stress-test workload, complete a preflight assessment and record hard upper bounds for concurrency/process count, CPU, RAM+swap, PIDs, writable storage, network, timeout, and cleanup. Require positive proof that every bound and isolation control is active before starting.
 
+Timeouts/watchdogs here bound individual jobs and runaway services, not total product-delivery time. No overall deadline never means an unbounded command. Native read-only review does not by itself authorize or require a process-spawning workload.
+
 Host execution of recursive/process-tree/botnet-like tests is prohibited. Use an explicitly constrained container or VM with CPU, RAM+swap, PID, writable-storage, network, timeout, and no-host-PID/no-host-socket limits. Do not run such workloads unattended/AFK without this isolation. Stop immediately on resource exhaustion, unexpected process proliferation, or any bound/containment violation.
 
 ### Required: write scripts to temp directory

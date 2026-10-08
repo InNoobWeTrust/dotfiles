@@ -4,7 +4,7 @@ Use when deciding where work belongs or designing a handoff. These are reasoning
 
 **Inputs:** the user's goal, settled decisions, acceptance criteria, relevant sources, available workers/tools, action boundaries, and operational constraints.
 **Outputs:** a justified allocation of work and attention, plus enough retrievable evidence to accept the result or identify what remains unresolved.
-**Stop:** missing authority, an unsafe execution boundary, or an unresolved material decision is not solved by delegation. Narrow the task, report `INCOMPLETE`, or ask for the missing decision/capability. Existing sandbox, process-resource, implementation-contract, and review gates still apply.
+**Stop:** missing authority, an unsafe execution boundary, or an unresolved implementation contract is not solved by delegation. The primary researches and approves delegated choices under `../../../rules/delivery-ownership.md`; only user-owned decisions/capabilities require asking the user. Workers narrow/report `INCOMPLETE` to the primary. Existing sandbox, process-resource, implementation-contract, and review gates still apply.
 
 ## Own outcomes, distribute bounded work
 

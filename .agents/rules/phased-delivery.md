@@ -11,13 +11,17 @@ Use this rule only for multi-step product or feature delivery, roadmap or
 milestone planning, or explicitly phased execution. Do not load it for a
 simple patch, isolated fix, or routine single-step edit.
 
+Decision authority follows `delivery-ownership.md`. In autonomous delivery,
+the primary may approve/replan in-scope milestones and contracts; user-only
+safety/authority decisions and final user acceptance remain with the user.
+
 ## Principles
 
 - Detail the active milestone only; keep later milestones as outcomes and
   dependencies, not implementation plans.
-- Research shallowly: stop when the next decision, active-slice boundary, and
-  safety/public-contract implications are clear. Escalate only for material
-  uncertainty.
+- Research sufficiently to resolve the next decision, active-slice boundary,
+  and safety/public-contract implications; deepen for consequential uncertainty.
+  Avoid browsing that cannot change the decision or its confidence.
 - Deliver a thin, end-to-end vertical slice before breadth, polish, or
   infrastructure for later slices.
 - Do no speculative work: no future-slice scaffolding, abstractions, schema,
@@ -164,6 +168,12 @@ the existing **KEEP / ADJUST / ADVANCE / STOP / REDIRECT** protocol. Do not
 silently expand scope; changes that require another process area or files
 outside the authorized boundary become a deferred next-milestone item unless an
 evidenced Never Defer blocker requires escalation.
+
+These budgets bound a review/change **round**, not total delivery iterations.
+In autonomous mode the primary can record an evidence-backed ADJUST/replan
+inside existing authority and start a new targeted round without asking the
+user. Do not reset budgets merely to repeat unchanged failures or broaden
+scope; diagnose the cause, revise the approach, and preserve the release bar.
 
 `subagent-dispatch` carries this Delivery Contract only when phased delivery
 applies. Reviewers assess the declared contract and evidence, not imagined

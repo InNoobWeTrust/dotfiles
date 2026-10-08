@@ -9,6 +9,8 @@ trigger: always_on
 
 Applies to every file written or modified. Use this rule for the core design gates and hard stops; load a reference only when its trigger applies.
 
+Approval owner and mode come from [Delivery Ownership](delivery-ownership.md). The autonomous primary may define/reapprove researched contracts inside its authority before implementation; workers still stop on contract defects. Explicit human-only safety, compatibility, and Git gates remain human-owned.
+
 ## Pre-Implementation Principles
 
 > **Proportionality Note:** These principles govern production codebases, multi-component systems, and public interfaces. For Trajectory 3 (Fast-Path utility scripts, shell tools, dotfiles configurations, or self-contained scripts <100 lines), idiomatic native constructs (such as Python dicts/tuples or straightforward linear functions) are completely acceptable. Do not invent unnecessary classes, DTOs, or abstract layers for simple scripts.
@@ -24,7 +26,7 @@ Before adding or changing a function, class, or module, confirm all of the follo
 5. **Deep modules:** hide meaningful complexity behind a simple, cohesive interface; do not create shallow indirection.
 6. **Interface-first specification:** define and agree type signatures, enums, or abstract contracts before implementation logic.
 7. **Explicit DTOs:** use named, typed DTOs or equivalent domain types at boundaries, not positional tuples or untyped dynamic maps.
-8. **Ambiguity stop:** when caller-visible edge or failure behavior has multiple reasonable meanings, stop for a contract instead of inventing one.
+8. **Ambiguity stop:** when caller-visible edge or failure behavior has multiple reasonable meanings, resolve and approve the contract before coding. The primary researches delegated choices; involve the user only when outcome or authority requires them.
 9. **Technology fit:** use the established stack, suitable platform capability, or maintained production-proven dependency. Vendoring or deliberately reimplementing an adequately supplied capability requires explicit user opt-in or repository policy.
 
 ## Consumer-Facing Contract Gate
@@ -39,7 +41,7 @@ Before a rewrite, overhaul, or delete-and-rebuild task, identify each old semant
 
 Never unilaterally auto-decide to preserve backward compatibility, generate forwarding shims, keep legacy scripts, or retain deprecated aliases without explicit user instruction.
 - **Context sensitivity:** Different repositories and workflows have fundamentally different needs: established enterprise codebases may require careful compatibility bridges, whereas personal dotfiles, utilities, and daily fast-path coding favor clean removal over legacy baggage.
-- **Mandatory ask-before-action gate:** Whenever an existing interface, file, command, or script is replaced, renamed, or overhauled, **ask the user before acting** whether they want to preserve backward compatibility (via shims/forwarders) or cleanly remove the old artifact. Never silently default to keeping compatibility bridges.
+- **Compatibility decision before action:** Follow `delivery-ownership.md`: honor explicit replacement intent, document preserve/delete decisions, and obtain user authorization for breaking existing public promises or consequential unknown compatibility requirements. Delegated unpublished implementation choices do not require a new human approval. Never silently default to compatibility bridges.
 
 ## Pragmatism Over Pedantry (Anti-Perfectionism Circuit Breaker)
 
@@ -55,11 +57,11 @@ Do not:
 - Give a function, class, or module unrelated responsibilities, or hide divergent workflows behind mode flags instead of clear branches or meaningful composition.
 - Copy logic more than twice, mix business logic with framework or IO layers, or use mutable global state without an explicit `// WHY: global — [justification]`.
 - Swallow errors, return fake success, or silently use defaults, degraded results, cached data, partial success, or no-ops without an explicit approved contract.
-- Guess an ambiguous business rule; surface a typed/domain error or obtain clarification instead.
+- Guess an ambiguous business goal or implement an unresolved contract; research and obtain approval from the authorized owner first.
 - Expose undocumented public units or leak internal library implementation details to consumers.
 - Invent new interfaces, altered method signatures, or ad-hoc contract adaptations during implementation that were not approved in the plan (if a contract defect is discovered, stop immediately and report `CONTRACT_DEFECT`).
 - Create unexpected files, unapproved helpers, breach declared in-scope/out-of-scope boundaries, or leave temporary/scratch files in the workspace; all file additions, modifications, and deletions must strictly conform to the approved locked scoped file tree within the in-scope boundary, with complete cleanup.
-- Silently auto-decide backward compatibility, create unrequested forwarding shims or aliases, or retain deprecated legacy files without asking the user first.
+- Silently change a compatibility promise, create unrequested forwarding shims/aliases, or retain deprecated legacy files without an explicit authorized decision.
 - Use magic literals for meaningful values, shallow 1–3 line helper extractions, positional tuple returns across boundaries, or untyped dynamic maps for domain concepts (in production libraries).
 
 

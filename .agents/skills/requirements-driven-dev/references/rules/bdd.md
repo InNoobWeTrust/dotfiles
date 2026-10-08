@@ -63,13 +63,13 @@ The Traceability Matrix is defined in the behavior-spec template. Key rules:
 2. **Executor updates** — after implementing, set `Impl Status` → `✓`
 3. **Verifier updates** — after writing tests, set `Test Status` → `✓`
 4. **Commit gate** — run `gap-check.sh` before commit
-5. **Human approves `⊘`** — only human can mark a scenario as N/A
+5. **N/A requires justified authority** — human or explicitly delegated primary may mark a scenario `⊘` only when evidence shows it is outside unchanged requirements. Record reason and authority; never drop a failed required scenario to obtain PASS.
 
 **Status legend**: `⬚` pending · `◐` partial · `✓` complete · `⊘` N/A
 
 ## Authoring Rules
 
-1. **Human writes the spec** — AI may draft, but human must review and approve
+1. **Authorized owner approves the spec** — follow `../../../../rules/delivery-ownership.md`: the autonomous primary researches and approves observable in-scope behavior before implementation; user-only outcomes and reserved approvals remain human-owned.
 2. **Be specific** — "User sees a success message" is weak; "User sees toast: 'Project created successfully'" is strong
 3. **Cover error paths** — every happy path needs at least one sad path
 4. **No implementation details** — specs describe WHAT, not HOW

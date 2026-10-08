@@ -61,7 +61,7 @@ by the canonical threshold; omit inapplicable sections rather than inventing det
 
 ## Authoring Rules
 
-1. **Human writes the PRD** — AI may draft, but human must review and approve
+1. **Authorized owner approves the PRD** — follow `../../../../rules/delivery-ownership.md`: collaborative mode uses human approval; autonomous delivery allows primary-owned drafting/research/approval inside delegated outcome and scope. Final user acceptance and reserved approvals remain human-owned.
 2. **Focus on the "what" and "why"** — no implementation details, architecture, or technology choices
 3. **Success metrics must be measurable** — "improved user experience" is weak; "reduce onboarding time from 5 min to 2 min" is strong
 4. **Non-goals are as important as goals** — they prevent scope creep and align expectations

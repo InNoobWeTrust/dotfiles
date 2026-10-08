@@ -95,11 +95,12 @@ Do **not** run branch steps B1–B2 for eng-only spot checks or eng-only audits.
 
 ### Bounded Iteration
 
-1. `swarm-intelligence` (Full Swarm or design-first) — if the task needs design or decomposition first
-2. `codebase-exploration` — if the codebase is unfamiliar
-3. `bounded-iteration` — bounded iterative execution
-4. `systematic-investigation` — if the loop hits oscillation or verifier failures
-5. `reviewer` (security lens) — for auth, dependency, secrets, or network-facing work before AFK mode
+1. `bounded-iteration` + `rules/delivery-ownership.md` — establish autonomous ownership by default or honor requested collaborative/HITL mode; no default aggregate turn/time cap
+2. Matching domain skills — research/design consequential choices and inspect unfamiliar code before implementation; the primary approves in-scope contracts
+3. `subagent-dispatch` — bounded native workers for useful research, implementation, and checks; Full Swarm only when selected/warranted
+4. Machine/integration/E2E checks + `reviewer` — current positive proof and independent user-perspective release rubric; add warranted safety/operations lenses
+5. `systematic-investigation` — diagnose repetitions or broken verification, then resume only with a supported changed approach
+6. Deliver guides/evidence for final human user acceptance; feedback begins another scoped loop. AFK still requires verified isolation, state, job bounds, and cleanup.
 
 ### Delegated Execution / Swarminator
 

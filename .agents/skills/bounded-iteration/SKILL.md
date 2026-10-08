@@ -1,80 +1,81 @@
 ---
 name: bounded-iteration
-description: "Use this skill for repetitive implement-verify-retry loops with machine-verifiable completion criteria. Activate when the user says \"run until done,\" \"keep trying until tests pass,\" \"iterate until it works,\" or any task with a clear pass/fail gate that benefits from automated retries. Prefers human-in-the-loop; AFK mode requires isolation."
+description: "Own authorized work end to end through research, implementation, evidence-based evaluation, and correction until ready for user acceptance. Use for 'work until done', 'don't ask until complete', or repeated implement-verify loops. Defaults to autonomous delivery with no total turn/time cap; bounds scope, resources, individual jobs, and unsafe actions. Supports collaborative/HITL modes and unattended AFK execution only with verified isolation and resumable state."
 ---
 
 # Bounded Iteration
 
-Outer control loop around an AI CLI: locked brief → limited actions → state → **positive proof** verify → stop. Persistence only counts when bounded by proof.
+**Own the result, not the user's calendar.** Research → decide → build → evaluate → correct → deliver for human user acceptance. Bounds protect resources, scope, and safety; they are not an arbitrary number of turns before handing unfinished work back.
 
-This is a named **evaluator–optimizer** loop: the optimizer proposes the next change, the evaluator scores it against predeclared criteria, and the loop only continues when the evaluator returns retryable failure.
+This is an **evaluator–optimizer** loop. The optimizer proposes changes; evaluators score against declared outcome-linked criteria. A machine pass alone is not product readiness, and reviewer agreement alone is not proof.
 
-**Not:** design method, unsupervised shared-workspace edits, or a substitute for human judgment.
+## Mode and authority — before starting
 
-Elevated autonomy still obeys `rules/autonomy-safety.md`: reversible work inside locked scope may proceed; irreversible / high-blast-radius → stop and escalate.
+Load [Delivery Ownership](../../rules/delivery-ownership.md) and apply it as the authority source.
 
----
+- **Autonomous delivery (default):** the primary owns in-scope research, product/technical choices, contracts, implementation, verification, and release readiness. Communicate useful decisions through product docs; the user is the final acceptance gate.
+- **Collaborative:** discuss choices with the user where requested.
+- **Approval-gated / HITL:** pause at the agreed checkpoints, including one iteration at a time if requested.
+- **AFK execution:** an unattended variant, not a separate permission grant. Requires a known outcome, verified isolation/bounds, persistent state, cancellation, and cleanup.
 
-## When to use
+State the mode and boundaries briefly; ask upfront only about missing outcome/authority/safety constraints. Do not ask the user to decide researchable implementation details. Honor their explicit mode without reconfirmation.
 
-| Scenario | Use? |
+No default **total iteration or elapsed-time limit**. Optional `MAX_ITER`, `MAX_ELAPSED_SEC`, and `MAX_COST` apply only when specified/authorized; unset means no configured aggregate cap, not infinite resources. Individual jobs still need enforced watchdogs and resource limits. Never bypass harness limits or infer unlimited spending.
+
+## Appropriate uses
+
+| Request | Approach |
 |---|---|
-| Coverage / migrate tests / verifiable bulk edits | Yes |
-| Risky refactor / auth / security | HITL only |
-| Diagnosis / architecture design | No — design or investigate first |
+| Repeated edits with machine-verifiable outcomes | Use the loop with positive-proof checks. |
+| Feature/product ownership with open technical choices | Research/design through domain skills first, then bounded slices and user-perspective release evaluation. |
+| UX or subjective readiness | Add `reviewer` with a declared rubric; require relevant observable journeys, not taste-only votes. |
+| Auth, security, data, or compatibility-sensitive work | Add warranted specialist review and verified containment; human-only approvals remain human-only. |
+| Research-only or active design dialogue | Use the matching research/design skill; do not infer implementation authority. |
+| Unsafe actions, missing action authority, impossible containment | Stop affected work, preserve evidence/checkpoint, report the actual boundary. |
 
-Design-first handoff: `references/swarm-integration.md`.
+## Working package
 
-For subjective or policy-heavy scoring that cannot live in `verify.sh`, pair this skill with `reviewer` and let Reviewer act as the explicit evaluator before another optimizer pass. In that mode, the artifact under review, the review rubric, and the mapping from `PASS / FAIL / UNVERIFIED` to `retry / stop / escalate` must be written into `TASK.md` before iteration 1.
-
----
-
-## Contract (required files)
+Use a dedicated task/memory directory, not consumer `docs/`. Full automation uses:
 
 | File | Purpose |
 |---|---|
-| `TASK.md` | Scope, allow/forbid, acceptance, stop triggers |
-| `PROMPT.md` | Stable per-iteration instructions |
-| `verify.sh` | Machine gate (exit 0 pass / 2 retry / 3 verifier broken / 4 not verifiable) |
-| `progress.txt` | Human iteration log |
-| `.ralph-state.json` | Resume / oscillation (required AFK) |
-| `.ralph-verify.json` | Latest proof summary |
+| `TASK.md` | Outcome, ownership, scope, bounds, research/decision authority, evaluator criteria, release gate, stops |
+| `PROMPT.md` | Stable per-slice instructions and return contract |
+| `verify.sh` | Machine gate: 0 PASS / 2 retryable candidate failure / 3 broken verifier / 4 not machine-verifiable |
+| `progress.txt` | Compact iteration decisions/evidence; no raw transcripts |
+| `.ralph-state.json` | Required for autonomous repeated/AFK execution: resume, fingerprints, checkpoint, budget usage, review/release status |
+| `.ralph-verify.json` | Latest machine proof; never equivalent to final release approval |
 
-Templates: `references/templates/`. Deep procedure: `references/procedure.md`. Shell loops: `references/loop-patterns.md`.
+For a short manually driven loop, equivalent fields in existing task context are enough; do not scaffold six files for a small patch. Durable checkpoints are needed before context loss. Human usage/decisions belong in product docs/README, not these execution files.
 
----
+Templates: [TASK](references/templates/TASK.md), [PROMPT](references/templates/PROMPT.md), [machine verifier](references/templates/verify.sh). Load [Procedure](references/procedure.md) before building a verifier/controller/state or starting AFK. Controller guidance: [Loop patterns](references/loop-patterns.md). Delegated work: [Integration](references/swarm-integration.md).
 
-## Modes
+## Loop and release
 
-- **HITL (default):** one iteration → human inspect → continue.
-- **AFK:** only if task locked, `verify.sh` trustworthy, workspace isolated/disposable, stop/cleanup configured. Not open-ended autonomy.
+1. Capture the requested outcome and bounds; separate user requirements from agent-owned choices.
+2. Research consequential unknowns; record sources, alternatives, rationale, risks, and validation. Approve the in-scope contract before implementers start.
+3. Declare acceptance/evaluator criteria **before** the slice. Version necessary in-scope corrections; do not weaken requirements to pass.
+4. Implement one bounded slice; run genuine machine/integration/E2E checks in the authorized sandbox and independent user-perspective reviews where required.
+5. Classify evidence as PASS / FAIL / UNVERIFIED. Only retry grounded candidate failures. Diagnose broken verification or missing evidence before more optimizer changes.
+6. On repeated/alternating failures, interrupt unchanged retries, diagnose, and choose a supported different approach. Escalate only if no safe authorized path remains.
+7. Release only when required evidence and independent reviews pass on the current artifact, docs are usable, and resources/scratch are cleaned up. Return an inspectable product, usage guide, acceptance steps, and honest limitations.
+8. Mark **ready for user acceptance**, not user accepted. Feedback opens another scoped loop.
 
-Defaults: `MAX_ITER=10`, `ITERATION_TIMEOUT_SEC=900`, `REQUIRED_SUCCESS_STREAK=1` (use 2 if flaky).
+Default `REQUIRED_SUCCESS_STREAK=1`; use 2 or more for known flaky checks. Stable machine proof does not waive release checks. Multi-perspective reviewers assess first use, daily use, and failure/recovery plus relevant safety/operations; they do not approve by majority vote.
 
----
+## Stop behavior
 
-## Session flow (summary)
+Always record a stop reason and resumption state. `STOP_SUCCESS` means ready for user acceptance, never final human acceptance. Genuine blockers must be surfaced, not silently buried in docs.
 
-1. Reject ambiguous tasks (AFK → `STOP_INPUT_AMBIGUOUS`).
-2. Build handoff package from templates, including criteria the evaluator can score before the optimizer writes.
-3. One bounded optimizer iteration (narrow scope).
-4. Run the evaluator (`verify.sh` + acceptance criteria); classify; feed failures back.
-5. Detect oscillation (same fingerprint ×3 or alternating) → stop.
-6. Cleanup/handoff; no destructive restore in shared workspaces.
+`STOP_INPUT_AMBIGUOUS`, `STOP_UNSAFE_ACTION`, `STOP_VERIFY_BROKEN`, `STOP_NOT_VERIFIABLE`, `STOP_RESOURCE_BOUNDARY`, `STOP_MAX_ITER`, `STOP_MAX_COST`, `STOP_TIMEOUT`, `STOP_OSCILLATION`, `STOP_CONTEXT_LIMIT`, `STOP_MANUAL_INTERVENTION`.
 
-**Stop codes:** `STOP_SUCCESS`, `STOP_INPUT_AMBIGUOUS`, `STOP_UNSAFE_ACTION`, `STOP_VERIFY_BROKEN`, `STOP_MAX_ITER`, `STOP_MAX_COST`, `STOP_TIMEOUT`, `STOP_OSCILLATION`, `STOP_CONTEXT_LIMIT`, `STOP_MANUAL_INTERVENTION`.
+Aggregate-limit stops apply only to configured limits. A job timeout can lead to safe diagnosis/resumption, never automatic larger budgets. A repeated fingerprint is a diagnosis trigger, not a mandatory user interruption after three tries. Never restore/reset a shared workspace or kill user processes; clean only owned resources.
 
-**Positive proof:** success needs signals like `18 tests passed`, not empty output or "no errors seen."
+## Deliverable check
 
-Load `references/procedure.md` before first AFK run or when implementing `verify.sh` / state files.
-
----
-
-## Deliverable
-
-- [ ] Contract files present and filled
-- [ ] Mode chosen with guardrails
-- [ ] Stop on success or explicit stop code (never silent continue)
-- [ ] Evaluator criteria written before optimizer iteration begins
-- [ ] Verification proof recorded
-- [ ] Last good checkpoint known on failure
+- [ ] Mode, scope, authority, and per-job/resource controls established
+- [ ] Consequential choices researched and documented; user not made project manager
+- [ ] Outcome-linked evaluator criteria declared before changes
+- [ ] Current machine/E2E proof and independent user-perspective release evaluation recorded
+- [ ] Usage, limitations, and final user acceptance steps clearly presented
+- [ ] Checkpoint and cleanup known; success or explicit blocker reported

@@ -24,6 +24,8 @@ Read `references/pillars-and-templates.md` when wording a pillar or selecting a 
 
 ## Dispatch routing and gates
 
+Approval owner follows `../../rules/delivery-ownership.md`: the autonomous primary may approve and revise researched in-scope plans/contracts before dispatch; workers cannot assume approval or invent changes. Contract defects return to the primary, not automatically to the user. Human-reserved authority/safety gates remain with the user.
+
 | Target | Mandatory gate | Read before launch |
 |---|---|---|
 | Planning | Select exactly one L0, L1, or L2 depth; L1/L2 also select exactly one target. Plan must lock code interfaces/DTOs, scope boundaries, scoped target file tree, and separate phase files. | `references/planning-payload-and-preflight.md` |

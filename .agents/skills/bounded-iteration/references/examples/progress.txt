@@ -1,17 +1,23 @@
-# Bounded Iteration: migrate jest to vitest
-# Started: 2026-04-24T09:00:00Z
+# Illustrative ownership log — not verification evidence for a real product
+# Task: deliver a local CLI feature; autonomous, attended; aggregate caps unset
 
-## Iteration 1
-- Changed: renamed Jest config usage in test scripts and added Vitest config
-- Verification: typecheck passed, tests failed because two suites still import `jest`
-- Next focus: migrate the remaining suites before touching unrelated helpers
+## Iteration 1 — discover/decide
+- Researched existing CLI conventions and maintained dependency documentation.
+- Primary approved contract revision 1 inside requested scope; public promises preserved.
+- Declared startup/use/recovery journeys and independent UX/recovery rubric before implementation.
 
-## Iteration 2
-- Changed: replaced `jest.mock` and `jest.fn` in the remaining suites
-- Verification: tests passed, lint failed on one unused helper import
-- Next focus: remove the unused import and rerun verification
+## Iteration 2 — implement/evaluate
+- Machine evidence: 18 relevant tests passed; typecheck passed.
+- First-use reviewer: FAIL — startup error mentions an internal identifier, not a recovery action.
+- Release remains working; machine PASS did not imply delivery readiness.
 
-## Iteration 3
-- Changed: removed unused helper import
-- Verification: tests passed, typecheck passed, lint passed
-- Result: success candidate; waiting for required success streak to complete
+## Iteration 3 — correct/recheck
+- Corrected error wording and guide inside scope; reran affected startup/recovery checks.
+- Two alternating failures triggered diagnosis, not a user questionnaire or blind retries.
+- Primary recorded supported correction; unchanged requirements and rubric retained.
+
+## Iteration 4 — release
+- Current machine/integration proof and independent first-use/recovery reviews PASS.
+- Owned resources cleaned; guide usable without chat context; evidence paths recorded.
+- STOP_SUCCESS: ready for user acceptance, user_acceptance=pending.
+- Handoff includes startup, primary journey, failure/recovery example, limitations, and decision links.

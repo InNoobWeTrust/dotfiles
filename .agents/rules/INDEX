@@ -22,6 +22,7 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 
 | Rule | Trigger | Size |
 |---|---|---|
+| `delivery-ownership.md` | Authorized build/fix/deliver requests, operating-mode selection, autonomous or unattended iteration, approval ownership | medium |
 | `tdd.md` | Verification/test authoring: persistence boundary always applies; formal TDD is risk-proportionate and waived for Fast-Path | medium |
 | `grooming.md` | Problem/solution discovery, plans, ambiguous requirements, multi-file systems (formal planning gates waived for Fast-Path, not alignment) | medium |
 | `ubiquitous-language.md` | Logic that introduces or renames domain terms | small |

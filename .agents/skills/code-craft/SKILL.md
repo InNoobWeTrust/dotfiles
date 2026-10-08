@@ -7,6 +7,8 @@ description: "Use this skill for any non-trivial code write, feature implementat
 
 Core delivery router for non-trivial implementation. Obey always-on `rules/code-quality.md` and `rules/tdd.md`; they own hard constraints, naming, prohibited patterns, and debt markers. Skip only for typos, formatting, config values, and logic-neutral renames.
 
+Approval follows `../../rules/delivery-ownership.md`: the autonomous primary researches and signs off in-scope contracts or revisions before implementation resumes; workers cannot invent them. Human-reserved approvals remain human-owned, and AFK is never assumed approval.
+
 Before implementation, read [Implementation principles](references/working-principles.md#implementation). For test authoring or execution-only assignments, read [Verification principles](references/working-principles.md#verification); that reference alone does not activate production delivery phases.
 
 ## Track selection

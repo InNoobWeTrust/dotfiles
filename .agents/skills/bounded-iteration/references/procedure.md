@@ -1,283 +1,105 @@
-## Guardrails Before First Iteration
-
-Do not start the loop until these are true:
+# Procedure: autonomous ownership with bounded execution
 
-1. Scope is explicit
-   - Files in scope are listed in `TASK.md`
-   - Allowed and forbidden actions are listed in `TASK.md`
-2. Hard limits are set
-   - `MAX_ITER` default: `10`
-   - `ITERATION_TIMEOUT_SEC` default: `900`
-   - `REQUIRED_SUCCESS_STREAK` default: `1`
-   - For flaky checks, set `REQUIRED_SUCCESS_STREAK=2`
-   - `MAX_COST_USD` is optional but recommended for AFK runs
-3. Cleanup strategy exists
-   - Preferred: disposable worktree, container, or VM snapshot
-   - Shared workspace: use HITL only
-4. Unsafe actions are blocked
-   - No destructive filesystem or git commands
-   - No edits to secret-bearing files unless explicitly approved
-   - No network-mutating commands or dependency additions unless explicitly allowed in `TASK.md`
-   - No background services, daemons, or long-running processes
-5. Resume data exists
-   - `progress.txt` is created before iteration `1`
-   - `.ralph-state.json` exists before iteration `1` in AFK mode or whenever resume is required
-
-## Stop Conditions
-
-Stop immediately when any of these codes applies:
-
-| Code | Meaning |
-|------|---------|
-| `STOP_SUCCESS` | Verification reached success with positive proof |
-| `STOP_INPUT_AMBIGUOUS` | Task is still ambiguous or contradictory |
-| `STOP_UNSAFE_ACTION` | The next action would violate guardrails |
-| `STOP_VERIFY_BROKEN` | `verify.sh` is misconfigured or cannot provide trustworthy output |
-| `STOP_MAX_ITER` | Iteration cap reached |
-| `STOP_MAX_COST` | Budget cap reached |
-| `STOP_TIMEOUT` | The current iteration exceeded its wall-clock limit |
-| `STOP_OSCILLATION` | The loop is repeating the same failure or alternating between failures |
-| `STOP_CONTEXT_LIMIT` | Context cannot be safely summarized anymore |
-| `STOP_MANUAL_INTERVENTION` | A human decision is required before continuing |
-
-If a stop condition fires, do not run another iteration first. Report current
-state, last known good checkpoint, and the exact blocker.
-
-## Evaluator–Optimizer Contract
-
-Bounded Iteration is an evaluator–optimizer loop.
-
-- **Optimizer**: the AI iteration that proposes the next edit, patch, or command sequence.
-- **Evaluator**: the acceptance criteria in `TASK.md` plus `verify.sh` and `.ralph-verify.json`.
-
-Write evaluator criteria before the first optimizer run. Do not let the optimizer invent or relax its own scoring rubric mid-loop.
-
-Minimum evaluator inputs before iteration 1:
-
-1. Objective completion target (`done when ...`)
-2. Machine-verifiable checks with positive proof
-3. Retryable vs non-retryable failure boundary
-4. Any subjective checks that require HITL instead of AFK
-5. If Reviewer is acting as evaluator: review artifact, review rubric, and the mapping from `PASS / FAIL / UNVERIFIED` to next-loop behavior
-
-Reviewer mapping rules when used as evaluator:
-
-- `PASS` -> treat as success only if the machine gate also passes, or if `TASK.md` explicitly says Reviewer is the final evaluator for that criterion
-- `FAIL` -> retryable only when the findings describe a concrete fix inside scope
-- `UNVERIFIED` -> stop with `STOP_MANUAL_INTERVENTION` or gather missing evidence; do not guess
-- Record Reviewer verdict and 1-3 supporting findings in both `progress.txt` and `.ralph-verify.json`
-- Default precedence when `TASK.md` is silent: **both must pass** (machine gate + Reviewer for named subjective criteria)
-
-## Verification Contract
-
-`verify.sh` is the heart of Bounded Iteration. If verification is weak, Bounded Iteration is unsafe.
-
-### Required behavior
-
-`verify.sh` must:
-
-1. Exit `0` only when all acceptance checks pass
-2. Exit `2` when product checks fail and another implementation iteration may help
-3. Exit `3` when the verifier itself is broken or the environment is misconfigured
-4. Exit `4` when the task is not machine-verifiable and AFK should stop
-5. Write a machine-readable summary to `.ralph-verify.json`
-
-### Positive proof rule
-
-Success must be proven by positive signals, not by the absence of errors.
-
-Good proof:
-
-- `18 tests passed`
-- `typecheck completed with 0 errors`
-- `coverage 82.4% >= target 80%`
-- `expected 15 docs, found 15 docs`
+Read before implementing a controller, verifier, or state, and before AFK execution. Authority comes from [Delivery Ownership](../../../rules/delivery-ownership.md); process containment from [Autonomy Safety](../../../rules/autonomy-safety.md) and [Execution Safety](../../../rules/execution-safety.md).
 
-Not good enough:
+## 1. Frame the outcome, not every technical choice
 
-- Empty output
-- `0 tests found`
-- "No error text was present"
-- A tool exiting `0` while skipping the real check
+Choose autonomous, collaborative, or approval-gated ownership upfront. Record separately whether execution is attended or AFK. A clear implementation request authorizes in-scope reversible work; a research/design question does not. AFK may start only when workspace ownership/isolation, cancellation, cleanup, action permissions, and enforceable per-job/resource controls are verified.
 
-### Verification summary shape
+Populate `TASK.md` with outcome, must-ship behavior, non-goals, authority, compatibility, authorized costs/services, writable boundary, resource controls, evaluator criteria, release rubric, and stop conditions. Use a task/memory directory. Product docs contain user-facing decisions and guides, not agent plans/state.
 
-`.ralph-verify.json` should look like this:
+Unresolved technical choices are work to do, not automatically ambiguous input. Investigate them. Unknown goals, sensitive-data permissions, or unsafe external effects are different: stop only the affected boundary and request the minimum user-only fact/approval. Continue independent safe work where useful.
 
-```json
-{
-  "status": "pass",
-  "retryable": false,
-  "checks": [
-    {
-      "name": "tests",
-      "status": "pass",
-      "proof": "18 tests passed"
-    }
-  ],
-  "reviewer": {
-    "used": false,
-    "artifact": "",
-    "verdict": "",
-    "summary": []
-  },
-  "proof": {
-    "tests_ran": 18,
-    "typecheck_passed": true
-  },
-  "failure_fingerprint": "",
-  "notes": []
-}
-```
+## 2. Research and decide
 
-Use `REQUIRED_SUCCESS_STREAK=2` when verification is flaky or when the project
-has intermittent tests.
+Explore the repository and current authoritative documentation. Resolve consequential choices with evidence: suitable existing capabilities, options, costs, safety, user journeys, and operational failure modes. Run authorized bounded experiments when reading alone cannot establish behavior. Record sources/versions and uncertainty in decision notes proportionate to maintenance needs.
 
-## State And Context Management
+The primary approves researched contracts/plans within delegated authority before implementation. Domain skills supply design methods and implementation gates. Workers report contract defects; the primary may revise and reapprove them before redispatch. Public compatibility promises, reserved human approvals, scope, or spending cannot be silently changed.
 
-Bounded Iteration must manage state explicitly. Otherwise the loop either forgets too much
-or drags too much history forward.
+Freeze **user outcome and hard invariants**, not every mistaken implementation idea forever. Version evaluator/contract corrections before the next slice, explain evidence for the change, and invalidate affected old proof. Never loosen acceptance because the candidate failed it. If a verifier is defective, repair it as a distinct authorized task and test its positive, negative, and broken-input behavior before trusting it again.
 
-### Human-readable state
+## 3. Define separate machine and release gates
 
-`progress.txt` is the concise operator log. Append one section per iteration:
+The machine gate evaluates declared observable behavior. Predeclare commands, expected positive proof, failure classifications, environment requirements, and evidence freshness. Test counts must correspond to relevant assertions; an echo of “18 tests passed” is a **verifier test fixture**, not product proof.
 
-```text
-# Bounded Iteration: add jsdoc to exports
-# Started: 2026-04-24T09:00:00Z
+| `verify.sh` exit | Meaning | Next action |
+|---|---|---|
+| 0 | Machine criteria PASS with positive proof | Record streak; still evaluate release rubric |
+| 2 | Known retryable **candidate** failure | Optimize the implicated in-scope slice |
+| 3 | Verifier/configuration/tool execution broken | Pause optimizer; diagnose or repair verifier within authority |
+| 4 | Machine gate cannot establish the declared criterion | Route to the predeclared independent evidence/reviewer gate, or report UNVERIFIED |
 
-## Iteration 1
-- Changed: documented 12 of 15 exported functions in src/api.ts
-- Verification: tests pass, typecheck fails in src/utils.ts
-- Next focus: fix 3 remaining exports and type errors
-```
+Unknown exit codes, missing/malformed/stale summaries, contradictory proof, or a timeout without a trustworthy result are not retryable product failures and never pass. Generic command failure is not sufficient to distinguish a failing product from missing tools, network failure, or broken test infrastructure; project adapters must provide that distinction.
 
-### Machine-readable state
+The [template](templates/verify.sh) is intentionally **not ready** by default. Its default proof parser supports “N tests/specs passed”; adapt for your runner's actual structured evidence. Customize candidate-failure exit semantics; zero tests or missing positive proof returns UNVERIFIED, not “fix the product.” Optional extra checks are absent when unconfigured, not fake no-op successes. Invoke the verifier inside the selected sandbox with an external watchdog; it does not provide isolation or timeout enforcement itself.
 
-`.ralph-state.json` should track at least:
+For subjective criteria, declare artifact, rubric, reviewers, evidence expectations, and result mapping in `TASK.md` before evaluation. A criterion may be reviewer-scored only when the contract says so; a reviewer cannot override a required machine failure or excuse unexecuted E2E. Machine-only result files must not claim release readiness.
 
-- `mode`
-- `iteration`
-- `success_streak`
-- `failure_fingerprint`
-- `repeat_failures`
-- `cost_usd`
-- `files_touched`
-- `last_good_checkpoint`
+## 4. Bound jobs and preserve ownership
 
-An example lives at `references/examples/ralph-state.json`.
+No default total `MAX_ITER`, `MAX_ELAPSED_SEC`, or `MAX_COST`; serialize unset values as `null`. If configured, check them before a job and afterward. Observe actual quota/cost where tools expose it; unknown cost is unknown, not zero. Work stops at provider/permission/resource limits even without an aggregate cap.
 
-### Context policy
+For each job record sandbox, action scope, watchdog, maximum concurrency, relevant CPU/memory/PID/storage/network limits and evidence that controls are active, cancellation, and cleanup. Choose limits proportionately; do not raise defaults without authorization. If required hard isolation is unavailable, do not call unrestricted execution or pretend prompt limits are containment. Native read-only review can stay process-free with bounded scope, concurrency, and cancellation.
 
-Each iteration should read only:
+Prefer an isolated worktree/container for AFK. A worktree separates files, **not** host processes/secrets; combine it with the required sandbox. Record baseline changes and ownership. If a shared workspace cannot supply exclusive writable ownership, restrict it to attended scoped edits or read-only work. Never reset someone else's work.
 
-1. `TASK.md`
-2. `PROMPT.md`
-3. The latest `progress.txt` summary
-4. The latest `.ralph-verify.json` or verifier log
-5. The specific files currently in scope
+Use agent-owned names/labels for services and resources. Every start needs a cleanup route and an owner/lifecycle record; lost containment or unknown resource ownership is a stop, not permission to kill broadly. Follow harness process-management rules. Catch cancellation/termination, stop owned children/services, checkpoint, and release owned resources. Do not claim cleanup complete until observed.
 
-Do not replay the full transcript every time. Summarize older iterations into
-state files. If the task cannot be summarized safely, stop with
-`STOP_CONTEXT_LIMIT`.
+## 5. One useful iteration
 
-## Session Flow
+1. Validate authority, contract revision, resource availability, and state on resume.
+2. Select the next bounded research/implementation/repair/evaluation slice.
+3. Dispatch bounded tasks through `subagent-dispatch`; serialize dependent tasks and overlapping writes. Record returned evidence, not raw transcripts.
+4. Run the applicable evaluator against the **current artifact**; save proof atomically. Associate state with contract revision and an artifact digest/precise changed-file revision, check IDs, observed environment, and evidence receipts. The controller—not the generic template—binds these fields and validates freshness.
+5. Classify PASS/FAIL/UNVERIFIED and update state/progress/checkpoint. No evidence does not mean no errors.
+6. Use feedback to KEEP, ADJUST, ADVANCE, or STOP. Renew a targeted review round only for an evidence-backed revised approach; keep the outcome and hard invariants fixed.
 
-### 1. Clarify Or Reject The Task
+HITL pauses at agreed checkpoints. Autonomous delivery proceeds with safe in-scope choices without asking; AFK writes durable state. A job timeout ends that job, then permits safe diagnosis; it does not create a global deadline or authorize larger resource budgets.
 
-If the task is vague:
+## 6. Repetition and context loss
 
-- In HITL: ask the human and lock the answer into `TASK.md`
-- In AFK: do not start; return `STOP_INPUT_AMBIGUOUS`
+Track normalized failure fingerprints and attempted remedies. Three unchanged fingerprints or alternating failures are a diagnostic alarm: pause blind optimization and use `systematic-investigation`/independent challenge. Compare causes, revise the approach, and resume only if there is a supported new action. Do not endlessly reset the repeat counter or spawn fresh reviewers to dodge the same defect.
 
-Examples of well-defined tasks:
+When no safe useful alternative remains, emit `STOP_OSCILLATION` with evidence, known-good checkpoint (or explicitly `none`), and next necessary action. Resource exhaustion, missing human-only facts, or irreversible actions use their specific stop codes. Do not label ordinary open design choices unsafe.
 
-- "Increase coverage to 80%"
-- "Migrate Jest tests to Vitest"
-- "Add JSDoc to all exported functions in src/"
+Before context exhaustion, persist continuation: objective, authority, invariant/contract revision, current location, changes owned, remaining steps, evidence, active resources, exact next safe action. If continuation cannot preserve this safely, use `STOP_CONTEXT_LIMIT`. A resumed agent revalidates the checkpoint and permissions; a past proof never automatically applies to changed files.
 
-Examples that need design first:
+## 7. Release evaluation
 
-- "Make the code better"
-- "Add better error handling"
-- "Figure out the architecture"
+Write the rubric before reviewing. For substantial delivery use independent perspectives relevant to the actual users, with bounded read-only evaluation:
 
-### 2. Build The Handoff Package
+- **First use / everyday UX:** can a new user install/start/use the primary journey from the guide without chat context? Are defaults, terms, errors, and constraints understandable?
+- **Failure / recovery / operations:** do cancellation, restart, missing dependencies, degraded environments, cleanup, and ownership behave as promised?
+- **Applicable safety / compatibility / accessibility:** are hard boundaries preserved and important user groups considered?
 
-Create or materialize:
+Use actual integration/E2E journeys in the authorized environment where applicable. A source-only review cannot assert executed behavior. Give reviewers the contract and evidence, not a directive to approve. Resolve findings with evidence and independent challenge through `reviewer`/`subagent-dispatch`; no majority voting. After corrections recheck affected criteria and current evidence, not a fresh unbounded wishlist.
 
-- `TASK.md`
-- `PROMPT.md`
-- `verify.sh`
-- `progress.txt`
-- `.ralph-state.json` for AFK or resumable HITL runs
+Release requires all must-ship and non-deferrable criteria PASS, required current machine checks and independent reviews PASS, no required evidence UNVERIFIED, usable guides, and observed cleanup. Record safe deferrals only if they do not contradict the original requirement; a smaller MVP is an internal milestone, not the full requested product.
 
-Use the templates under `references/templates/`.
+Unavailable required evaluators/E2E environments produce an honest blocker or explicitly partial handoff, not `STOP_SUCCESS`. A fallback environment can suffice only if it actually establishes the same criterion. User-owned taste and access-dependent final acceptance remain user-owned; do all independently executable preparation first.
 
-### 3. Run One Bounded Iteration
+## 8. State and handoff
 
-One iteration means:
+Persist `.ralph-state.json` atomically with:
 
-1. Run the AI CLI once with the current prompt package
-2. Keep the change scope narrow
-3. Record what changed and why
-4. Enforce timeout, budget, and guardrails
+- schema version, task ID, mode, execution mode, iteration and current phase;
+- contract revision and current artifact identifier;
+- optional aggregate limits, observed resource/cost usage and unknowns;
+- per-job controls/receipts and owned active resources;
+- streak, failure fingerprints/remedies, checkpoint, evidence paths;
+- reviewer verdicts and evidence freshness;
+- `release_status`: working / blocked / ready_for_user_acceptance;
+- `user_acceptance`: pending / accepted / changes_requested, changed only from actual user feedback;
+- stop code and continuation on stop.
 
-### 4. Verify And Classify The Result
+Write `.ralph-verify.json` with machine status, retryable flag, executed check evidence, fingerprint, and notes. The controller associates it with the current contract/artifact/run; no stale-output reuse. Keep proof paths portable and logs redacted; do not store secrets. See [state example](examples/ralph-state.json).
 
-After each iteration:
+On delivery, emit `STOP_SUCCESS` only for ready-for-user-acceptance. Supply artifact location, startup/usage instructions, concrete acceptance journey, relevant proof, limitations, and links to useful deeper decisions. Do not commit/push/deploy merely because the release gate passed. User feedback creates a versioned follow-up loop within its new scope.
 
-1. Run `verify.sh`
-2. Read `.ralph-verify.json`
-3. If `TASK.md` declares a Reviewer Override, run Reviewer on the declared artifact using the declared rubric and record `PASS / FAIL / UNVERIFIED` in both `progress.txt` and `.ralph-verify.json`
-4. Classify the result using the precedence rule from `TASK.md` (default: both must pass)
-   - Success -> increment success streak
-   - Retryable failure -> feed the failure back into the next iteration
-   - Verifier failure -> stop and repair the verifier
-   - Unsafe or subjective path -> stop and escalate
-   - Reviewer `UNVERIFIED` -> stop and gather evidence rather than looping blindly
+## Interface/prototype checkpoint
 
-### 5. Detect Oscillation
+Lifecycle: **Prototype**, revised 2026-10-09. Source/verifier checks do not prove a harness can persist AFK execution across disconnects. Validate on the first 1–2 real deliveries: mode respected; technical choices resolved without unnecessary user stops; bounded jobs canceled/cleaned; current multi-perspective evidence obtained; handoff understandable; feedback resumes safely.
 
-Stop when any of these happens:
+ACI result: **PASS for the source interface; operational adoption UNVERIFIED**. Independent source reviews and controlled guidance-interpretation scenarios support the contract, not real-delivery or AFK lifecycle guarantees.
 
-- The same `failure_fingerprint` repeats 3 times
-- Two failure fingerprints alternate back and forth
-- The loop keeps changing unrelated files without improving verification
-
-Oscillation means the loop is no longer learning from feedback. Switch to HITL
-or route to systematic investigation.
-
-### 6. Cleanup And Handoff
-
-On success:
-
-- Write the final verification proof to `progress.txt`
-- Record the last good checkpoint in `.ralph-state.json`
-- Emit a clear completion summary
-
-On failure:
-
-- Stop with the relevant stop code
-- Record the last passing checkpoint or note that none exists yet
-- Restore from the disposable workspace, snapshot, or approved checkpoint plan
-
-Do not rely on destructive cleanup in a shared workspace.
-
-## Cleanup And Recovery
-
-Preferred recovery order:
-
-1. Throw away the disposable worktree or container and recreate it
-2. Restore a VM snapshot or workspace snapshot
-3. Apply a saved patch or approved checkpoint
-
-Do not use these as automatic cleanup steps in AFK mode unless the environment
-explicitly permits them and the workspace is disposable:
-
-- `git reset --hard`
-- `git clean -fdx`
-- `rm -rf`
-
-If the loop runs in a shared workspace, Bounded Iteration should stop and request human
-cleanup instead of attempting destructive restoration.
+Main risks: autonomy mistaken for permission, unbounded processes/spending, rubric weakening, reviewer groupthink, stale evidence, and unreadable documentation. Interface controls: explicit decision owner, separate unattended readiness, null aggregate caps, fail-closed verifier template, independent release gate, freshness binding, checkpoint/cleanup, and final human acceptance.

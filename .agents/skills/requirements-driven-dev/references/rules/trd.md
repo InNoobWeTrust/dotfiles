@@ -89,7 +89,7 @@ Do not dump multi-phase execution into a monolithic block.>
 
 ## Authoring Rules
 
-1. **Human owns the TRD** — AI may draft architecture proposals, but human must review and approve all decisions
+1. **Authorized owner approves the TRD** — follow `../../../../rules/delivery-ownership.md`: the autonomous primary researches and approves in-scope technical contracts; collaborative or explicitly reserved decisions require the user. Workers implement only approved contracts.
 2. **Trace to the selected need** — connect each section to the relevant outcome, contract, or PRD goal when a related PRD exists
 3. **Architecture decisions use ADR format only at the canonical ADR threshold** — consequential, hard-to-reverse choices with competing options need context, decision, rationale, alternatives, consequences, and revisit conditions
 4. **Non-functional requirements must be specific** — "fast" is meaningless; "p95 < 200ms at 1000 rps" is testable
