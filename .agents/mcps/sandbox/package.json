@@ -1,0 +1,16 @@
+{
+  "name": "@agents/sandbox",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun --no-env-file src/server.ts",
+    "lint": "bunx --bun --package @biomejs/biome@2.5.15 biome lint . --error-on-warnings",
+    "format": "bunx --bun --package @biomejs/biome@2.5.15 biome format --write .",
+    "format:check": "bunx --bun --package @biomejs/biome@2.5.15 biome format . --error-on-warnings",
+    "check": "bunx --bun --package @biomejs/biome@2.5.15 biome check . --error-on-warnings",
+    "check:fix": "bunx --bun --package @biomejs/biome@2.5.15 biome check --write . --error-on-warnings",
+    "test": "bun test tests/manager.test.ts",
+    "test:e2e": "CONTAINER_SANDBOX_E2E=1 bun run tests/e2e.ts"
+  }
+}

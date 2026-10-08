@@ -6,6 +6,9 @@
 !/docs/
 !/instructions/
 !/memories/
+!/mcps/
+/mcps/*
+!/mcps/sandbox/
 !/rules/
 !/scripts/
 !/skills/

@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-exec bun run "${HOME}/.agents/scripts/mcp-sandbox.ts" "$@"
+exec bun --no-env-file "${HOME}/.agents/mcps/sandbox/src/server.ts" "$@"

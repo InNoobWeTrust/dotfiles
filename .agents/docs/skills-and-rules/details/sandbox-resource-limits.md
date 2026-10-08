@@ -127,7 +127,7 @@ See Bun's [auto-install version specifiers](https://bun.sh/docs/runtime/auto-ins
 
 ## Maintainer references
 
-- **Implementation:** [`mcp-sandbox.ts`](../../../scripts/mcp-sandbox.ts) owns schemas, platform launchers, supervision, and diagnostics.
+- **Implementation:** [`host.ts`](../../../mcps/sandbox/src/host.ts) preserves host-tool schemas, platform launchers, supervision, and diagnostics in the unified [sandbox package](../../../mcps/sandbox/README.md).
 - **Access boundary:** [Harness safety](../harness-safety.md) explains modes and installation.
 - **Linux semantics:** [`getrlimit(2)`](https://man7.org/linux/man-pages/man2/getrlimit.2.html) describes per-process limits and user-wide `RLIMIT_NPROC`.
 - **Darwin semantics:** [Apple's archived `setrlimit(2)` reference](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/setrlimit.2.html); verify current platform behavior rather than assuming Linux parity.
