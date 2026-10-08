@@ -69,7 +69,7 @@ if usable openfortivpn; then
                 # Default fallbacks if not explicitly exported
                 export OPENFORTIVPN_PORT="${OPENFORTIVPN_PORT:-443}"
                 export OPENFORTIVPN_SAML_PORT="${OPENFORTIVPN_SAML_PORT:-8020}"
-                export OPENFORTIVPN_PERSISTENT="${OPENFORTIVPN_PERSISTENT:-600}"
+                export OPENFORTIVPN_PERSISTENT="${OPENFORTIVPN_PERSISTENT:-0}"
                 # Atomic replacement: write to temp file then rename to avoid fsnotify partial reads
                 TMP_CONF="${OUTPUT_CONF}.tmp.$$"
                 envsubst '$HOME $OPENFORTIVPN_HOST $OPENFORTIVPN_PORT $OPENFORTIVPN_SAML_PORT $OPENFORTIVPN_USERNAME $OPENFORTIVPN_PASSWORD $OPENFORTIVPN_TRUSTED_CERT $OPENFORTIVPN_PERSISTENT' \

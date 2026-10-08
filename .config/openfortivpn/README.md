@@ -6,8 +6,8 @@ This directory contains configuration templates and dotfiles integration for `op
 
 1. **Config Template**: `config.template` is tracked in git and uses environment variable placeholders (`${OPENFORTIVPN_HOST}`, `${OPENFORTIVPN_PORT}`, `${OPENFORTIVPN_SAML_PORT}`, `${OPENFORTIVPN_PERSISTENT}`, etc.).
 2. **Dynamic Generation**: When the shell starts (`.sh.d/hooks.sh`), `config` is dynamically generated from the template with strict permissions (`chmod 600`) at `$HOME/.config/openfortivpn/config`.
-3. **Homebrew Service Symlink**: `.sh.d/hooks.sh` automatically maintains a symlink from `$(brew --prefix)/etc/openfortivpn/openfortivpn/config` to `$HOME/.config/openfortivpn/config`.
-4. **Timeout / Persistence**: Defaults to 10 minutes (`persistent = 600`), allowing openfortivpn to retry automatically without rapid launchd restarts. Can be customized via `OPENFORTIVPN_PERSISTENT`.
+3. **Homebrew Service Config**: `.sh.d/hooks.sh` automatically copies `$HOME/.config/openfortivpn/config` to `$(brew --prefix)/etc/openfortivpn/openfortivpn/config` with strict permissions (`chmod 600`) to satisfy macOS root daemon access rules.
+4. **Retry Loop / Persistence**: Defaults to disabled (`persistent = 0`). Because SAML SSO requires an interactive browser authentication flow, `openfortivpn` cannot automatically re-authenticate headlessly upon disconnect; setting `persistent > 0` causes it to loop sending unauthenticated requests that spam the remote auth server. Setting `persistent = 0` allows it to terminate cleanly.
 
 ---
 
@@ -55,6 +55,16 @@ tail -f "$(brew --prefix)/var/log/openfortivpn.log"
 tail -n 100 "$(brew --prefix)/var/log/openfortivpn.log"
 ```
 
+### Tunnel Disconnect & SAML Re-authentication
+
+If the network drops (e.g., Wi-Fi reconnection, ISP reset, or router reboot) or the gateway session reaches its server-side timeout:
+1. The TCP stream terminates and `openfortivpn` closes `ppp0`.
+2. Because SAML SSO sessions cannot be renewed headlessly without interactive browser login, `openfortivpn` exits cleanly (`persistent = 0`) instead of spamming the remote gateway with unauthenticated retry requests.
+3. To reconnect, restart the background service and complete the SAML SSO prompt in your browser:
+   ```bash
+   sudo brew services restart openfortivpn
+   ```
+
 ---
 
 ## Direct CLI Execution (Manual / Debugging)
@@ -64,7 +74,8 @@ To run `openfortivpn` interactively in the foreground (e.g. for verbose debuggin
 ```bash
 sudo openfortivpn
 ```
-*(Because `$(brew --prefix)/etc/openfortivpn/openfortivpn/config` is symlinked to `~/.config/openfortivpn/config`, `-c` is optional).*
+*(Because `$(brew --prefix)/etc/openfortivpn/openfortivpn/config` is kept in sync with `~/.config/openfortivpn/config`, `-c` is optional).*
+
 
 ---
 

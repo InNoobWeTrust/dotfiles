@@ -25,5 +25,11 @@ half-internet-routes = 0
 set-dns = 1
 pppd-use-peerdns = 1
 
-# Connection Persistence / Timeout (seconds between reconnect attempts; 0 to disable, default 600 = 10m)
+# Reconnect Retry Interval (seconds between reconnect attempts; 0 to disable)
+# NOTE: When using SAML SSO, openfortivpn cannot automatically re-authenticate
+# headlessly upon disconnect because SAML requires interactive browser login.
+# Setting persistent > 0 causes openfortivpn to endlessly send unauthenticated requests
+# to the remote gateway, spamming the auth server with failed login attempts.
+# Set to 0 to disable the retry loop and exit cleanly on disconnect.
 persistent = ${OPENFORTIVPN_PERSISTENT}
+
