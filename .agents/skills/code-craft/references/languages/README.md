@@ -13,5 +13,6 @@ Load the smallest matching reference only when choosing a greenfield stack or ad
 | Vanilla JavaScript / Web Components | `web-components.md` |
 | Go | `go.md` |
 | Rust | `rust.md` |
+| CLI & TUI Stacks (Multi-Language) | `cli-tui-stacks.md` |
 
 Do not pin versions here. Use the repository lockfile and official compatibility matrices.

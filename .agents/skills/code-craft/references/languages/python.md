@@ -18,7 +18,7 @@
 
 ## Application capabilities
 
-- Use Typer for non-trivial CLIs, Rich for styled terminal output, and Textual for full interactive TUIs. Keep commands as adapters over typed application services.
+- Use Typer for non-trivial CLIs, Rich for styled terminal output (tables, markdown, progress, tracebacks), and Textual for full interactive TUIs. Use InquirerPy for inline prompts. Validate external CLI/configuration values with Pydantic or explicit parser/domain checks; use standard dataclasses to hold already-validated values, not to enforce annotated types or coerce input. For cross-language patterns, see [CLI & TUI Stacks](cli-tui-stacks.md). Keep commands as adapters over typed application services.
 - Use FastAPI plus Pydantic for async HTTP APIs unless an established framework is already in use.
 - Use SQLAlchemy 2-style typed mappings with Alembic migrations for relational persistence unless direct database drivers or an existing data layer are a better fit.
 - Use OpenTelemetry for portable tracing/metrics. Use the standard logging module or structlog when structured logging is required; do not add an observability vendor SDK as the sole abstraction.
