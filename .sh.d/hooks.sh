@@ -15,8 +15,10 @@ else
 fi
 export VISUAL="$EDITOR"
 
-# pyenv
-usable pyenv && eval "$(pyenv init -)" && eval "$(pyenv virtualenv-init -)"
+# starship
+if usable starship; then
+    eval "$(starship init "$(basename "$SHELL")")"
+fi
 
 # nodenv
 usable nodenv && eval "$(nodenv init -)"
