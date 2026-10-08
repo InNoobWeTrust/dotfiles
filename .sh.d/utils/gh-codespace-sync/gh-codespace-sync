@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+# Resolve sibling modules independently of the caller's working directory.
+helper_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+if ! command -v bun >/dev/null 2>&1; then
+    printf '%s\n' 'Bun is required for gh codespace-sync.' >&2
+    exit 1
+fi
+
+# Bun 1.3.11 can fail when auto-installing a different version of a cached package.
+# Isolate this utility, and rotate its cache automatically when import pins change.
+cache_id=$(sed -n 's/.*from "\([^"]*@[^"]*\)";.*/\1/p' "$helper_dir"/*.ts | LC_ALL=C sort | cksum)
+cache_id=${cache_id%% *}
+cache_root=${BUN_INSTALL_CACHE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}}
+export BUN_INSTALL_CACHE_DIR="$cache_root/gh-codespace-sync/bun-$cache_id"
+exec bun --no-env-file "$helper_dir/gh_codespace.ts" "$@"

@@ -2,6 +2,10 @@
 
 Run Tailscale SSH or a VS Code tunnel **in the environment you are already using**, or let an adapter launch it in a container or Slurm job.
 
+For interactive Codespaces configuration, run [`gh codespace-sync`](gh-codespace-sync/README.md)
+(Bun + GitHub CLI). Its inline wizard separates entries, owned repositories,
+and explicitly chosen external repositories, then shows review and progress.
+
 | Goal | Tool | Requirements |
 | --- | --- | --- |
 | Foreground Tailscale SSH here | `dev_tailscale` | Bash, `tailscale`, `tailscaled` |

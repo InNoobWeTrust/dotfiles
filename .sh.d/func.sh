@@ -1,28 +1,7 @@
 #!/usr/bin/env sh
 # shellcheck disable=SC3043
 
-# Sync Codespaces with the local machine.
-# Usage: gh_codespace_sync [owner/repo,owner/other-repo]
-gh_codespace_sync() {
-    local sync_command 2>/dev/null || true
-
-    if [ "$#" -gt 1 ]; then
-        printf '%s\n' 'Usage: gh_codespace_sync [owner/repo,owner/other-repo]' >&2
-        return 2
-    fi
-    if ! command -v gh >/dev/null 2>&1; then
-        printf '%s\n' 'GitHub CLI (gh) is required.' >&2
-        return 1
-    fi
-    if [ ! -r "$HOME/.vars.user" ]; then
-        printf '%s\n' 'Cannot read ~/.vars.user.' >&2
-        return 1
-    fi
-
-    # Reversible encoding for casual text searches, not a security boundary.
-    sync_command=$(printf '%s' 'aWYgWyAiJCMiIC1lcSAyIF07IHRoZW4KICAgIGV4ZWMgZ2ggc2VjcmV0IHNldCAtLXVzZXIgLS1hcHAgY29kZXNwYWNlcyAtLWVudi1maWxlICIkMSIgLS1yZXBvcyAiJDIiCmVsc2UKICAgIGV4ZWMgZ2ggc2VjcmV0IHNldCAtLXVzZXIgLS1hcHAgY29kZXNwYWNlcyAtLWVudi1maWxlICIkMSIKZmk=' | base64 -d) || return
-    command sh -c "$sync_command" gh_codespace_sync "$HOME/.vars.user" "$@"
-}
+# --- Shared shell helpers ---
 
 #
 # # usable - Check if command exist before invoking
@@ -73,6 +52,19 @@ usable_batch() {
         fi
     done
 }
+
+#
+# # setPath - Add to PATH if not there
+# # usage: setPath [some_path]
+setPath() {
+case :${PATH:=$1}: in
+    *:"$1":*) ;;
+    *)
+        [ -d "$1" ] && export PATH="$1:$PATH"
+esac;
+}
+
+# --- Git and hosting ---
 
 #
 # # forgit_me_config - Configure git for many repos at once
@@ -175,6 +167,18 @@ gitlab_push_mr_create() {
     set +x
 }
 
+# Run the inline Codespaces wizard without requiring extension installation.
+gh_codespace() {
+    local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/gh-codespace-sync/gh-codespace-sync"
+    if [ ! -r "$helper" ]; then
+        printf '%s\n' 'Cannot read the Codespaces utility.' >&2
+        return 1
+    fi
+    command sh "$helper" "$@"
+}
+
+# --- Browser and web utilities ---
+
 #
 # # batch_open - open links in batches
 # # usage: batch_open [file_contain_links] [batch_size] [start]
@@ -201,34 +205,44 @@ batch_open() {
 }
 
 #
-# # lag - Dummy sleep with a spinner and customizable sleep time
-# # usage: lag [seconds]
-lag() {
-    local sleep_time job s 2>/dev/null || true
+# # chrome_debug - Start Chrome with a debug port
+# # usage: chrome_debug [port]
+chrome_debug() {
+    local port chrome_bin cmd 2>/dev/null || true
 
-    sleep_time=${1:-5}
-    sleep "$sleep_time" & job=$!
-    while kill -0 "$job" 2>/dev/null; do
-        for s in / - \\ \|; do
-            printf "\r%s" "$s"
-            sleep .1
-        done
-    done
+    port=${1:-9222}
+    case "$(uname -s)" in
+        Darwin)
+            chrome_bin="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+            ;;
+        Linux)
+            for cmd in google-chrome google-chrome-stable chromium-browser chromium; do
+                if usable "$cmd"; then
+                    chrome_bin=$(command -v "$cmd")
+                    break
+                fi
+            done
+            ;;
+    esac
+
+    if [ -n "$chrome_bin" ] && [ -x "$chrome_bin" ]; then
+        # Shift the first argument (port) if it was provided
+        [ -n "$1" ] && shift
+        "$chrome_bin" --remote-debugging-port="$port" --user-data-dir="$HOME/.local/chrome/user_data" "$@"
+    else
+        echo "Chrome or Chromium not found"
+        return 1
+    fi
 }
 
 #
-# # gacha - Animated number generator with optional range. Press ENTER to stop the animation and get a random number.
-# # usage: gacha [min] [max]
-gacha() {
-    local min max 2>/dev/null || true
-
-    min=${1:-1}
-    max=${2:-100}
-    while ! read -t 0.25 -rsn 1; do
-        printf "\r%5d" $((RANDOM % (max - min + 1) + min))
-    done
-    echo
+# # tiktok_id - Get TikTok ID from username
+# # usage: tiktok_id [username]
+tiktok_id() {
+    curl -s "https://www.tiktok.com/@$1" | sed -n 's/.*"userInfo":{"user":{"id":"\([^"]*\)".*/\1/p'
 }
+
+# --- Files and maintenance ---
 
 #
 # # dotfiles_clean - Clean caches for common tools, temporary artifacts, and platform junk
@@ -337,6 +351,63 @@ dotfiles_clean() {
 }
 
 #
+# # ex - archive extractor
+# # usage: ex <file>
+ex ()
+{
+    if [ -f "$1" ] ; then
+        case "$1" in
+            *.tar.bz2)   tar xjf "$1"   ;;
+            *.tar.gz)    tar xzf "$1"   ;;
+            *.bz2)       bunzip2 "$1"   ;;
+            *.rar)       unrar x "$1"     ;;
+            *.gz)        gunzip "$1"    ;;
+            *.tar)       tar xf "$1"    ;;
+            *.tbz2)      tar xjf "$1"   ;;
+            *.tgz)       tar xzf "$1"   ;;
+            *.zip)       unzip "$1"     ;;
+            *.Z)         uncompress "$1";;
+            *.7z)        7z x "$1"      ;;
+            *)           echo "'$1' cannot be extracted via ex()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# --- Terminal and editor utilities ---
+
+#
+# # lag - Dummy sleep with a spinner and customizable sleep time
+# # usage: lag [seconds]
+lag() {
+    local sleep_time job s 2>/dev/null || true
+
+    sleep_time=${1:-5}
+    sleep "$sleep_time" & job=$!
+    while kill -0 "$job" 2>/dev/null; do
+        for s in / - \\ \|; do
+            printf "\r%s" "$s"
+            sleep .1
+        done
+    done
+}
+
+#
+# # gacha - Animated number generator with optional range. Press ENTER to stop the animation and get a random number.
+# # usage: gacha [min] [max]
+gacha() {
+    local min max 2>/dev/null || true
+
+    min=${1:-1}
+    max=${2:-100}
+    while ! read -t 0.25 -rsn 1; do
+        printf "\r%5d" $((RANDOM % (max - min + 1) + min))
+    done
+    echo
+}
+
+#
 # # mux - pickup terminal multiplexer or download and execute one
 # # usage: mux [zellij_args]
 mux() {
@@ -407,41 +478,6 @@ vscode_cli_install() (
     chmod 755 "$TMP_DIR/code" || exit $?
     mv -f "$TMP_DIR/code" "$DEST_DIR/code" || exit $?
 )
-
-#
-# # cron_routine - cron at random time over a day
-# # usage: cron_routine [shell_script_file] [number_of_runs]
-cron_routine() {
-    local SCRIPT RUNS MIN_STEP MIN HOURS CONF 2>/dev/null || true
-
-    SCRIPT=${1:-cron.sh}
-    RUNS=${2:-5}
-    MIN_STEP=${3:-3}
-    MIN=$(awk 'BEGIN{srand(); print int(rand()*60)}')
-    HOURS=$(seq 0 "$MIN_STEP" 23 | shuf | head -n "$RUNS" | sort -n | tr '\n' ' ' | sed -e 's/[[:space:]]$//' | tr ' ' ',')
-
-    CONF="$MIN\t$HOURS\t*\t*\t*\tcd $PWD && /usr/bin/env -S bash -l -c 'CRON=true LOGLEVEL=DEBUG ./$SCRIPT > ./out.log 2>> ./error.log'"
-
-    printf '%b\n' "$CONF"
-}
-
-#
-# # setPath - Add to PATH if not there
-# # usage: setPath [some_path]
-setPath() {
-case :${PATH:=$1}: in
-    *:"$1":*) ;;
-    *)
-        [ -d "$1" ] && export PATH="$1:$PATH"
-esac;
-}
-
-#
-# # ngrokhttp - Reverse tunneling to ngrok
-# # usage ngrokhttp [port]
-ngrokhttp() {
-    ssh -R 443:localhost:"$1" tunnel.ap.ngrok.com http
-}
 
 #
 # # nvim_ssh_server - Start and connect to neovim on remote server
@@ -576,83 +612,32 @@ if [ -z "${ZSH_VERSION:-}" ]; then
     alias colors=colortest
 fi
 
+# --- Scheduling ---
+
 #
-# # ex - archive extractor
-# # usage: ex <file>
-ex ()
-{
-    if [ -f "$1" ] ; then
-        case "$1" in
-            *.tar.bz2)   tar xjf "$1"   ;;
-            *.tar.gz)    tar xzf "$1"   ;;
-            *.bz2)       bunzip2 "$1"   ;;
-            *.rar)       unrar x "$1"     ;;
-            *.gz)        gunzip "$1"    ;;
-            *.tar)       tar xf "$1"    ;;
-            *.tbz2)      tar xjf "$1"   ;;
-            *.tgz)       tar xzf "$1"   ;;
-            *.zip)       unzip "$1"     ;;
-            *.Z)         uncompress "$1";;
-            *.7z)        7z x "$1"      ;;
-            *)           echo "'$1' cannot be extracted via ex()" ;;
-        esac
-    else
-        echo "'$1' is not a valid file"
-    fi
+# # cron_routine - cron at random time over a day
+# # usage: cron_routine [shell_script_file] [number_of_runs]
+cron_routine() {
+    local SCRIPT RUNS MIN_STEP MIN HOURS CONF 2>/dev/null || true
+
+    SCRIPT=${1:-cron.sh}
+    RUNS=${2:-5}
+    MIN_STEP=${3:-3}
+    MIN=$(awk 'BEGIN{srand(); print int(rand()*60)}')
+    HOURS=$(seq 0 "$MIN_STEP" 23 | shuf | head -n "$RUNS" | sort -n | tr '\n' ' ' | sed -e 's/[[:space:]]$//' | tr ' ' ',')
+
+    CONF="$MIN\t$HOURS\t*\t*\t*\tcd $PWD && /usr/bin/env -S bash -l -c 'CRON=true LOGLEVEL=DEBUG ./$SCRIPT > ./out.log 2>> ./error.log'"
+
+    printf '%b\n' "$CONF"
 }
 
-#
-# # tiktok_id - Get TikTok ID from username
-# # usage: tiktok_id [username]
-tiktok_id() {
-    curl -s "https://www.tiktok.com/@$1" | sed -n 's/.*"userInfo":{"user":{"id":"\([^"]*\)".*/\1/p'
-}
+# --- Networking and tunnels ---
 
 #
-# # setup_remote_user - Provision a remote user without remembering script path
-# # usage: setup_remote_user [script_args]
-setup_remote_user() {
-    local script_path 2>/dev/null || true
-
-    script_path="$CONF_SH_DIR/utils/setup_user.sh"
-
-    [ ! -r "$script_path" ] && {
-        echo "setup_remote_user script not found: $script_path" >&2
-        return 1
-    }
-
-    /usr/bin/env sh "$script_path" "$@"
-}
-
-#
-# # chrome_debug - Start Chrome with a debug port
-# # usage: chrome_debug [port]
-chrome_debug() {
-    local port chrome_bin cmd 2>/dev/null || true
-
-    port=${1:-9222}
-    case "$(uname -s)" in
-        Darwin)
-            chrome_bin="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-            ;;
-        Linux)
-            for cmd in google-chrome google-chrome-stable chromium-browser chromium; do
-                if usable "$cmd"; then
-                    chrome_bin=$(command -v "$cmd")
-                    break
-                fi
-            done
-            ;;
-    esac
-
-    if [ -n "$chrome_bin" ] && [ -x "$chrome_bin" ]; then
-        # Shift the first argument (port) if it was provided
-        [ -n "$1" ] && shift
-        "$chrome_bin" --remote-debugging-port="$port" --user-data-dir="$HOME/.local/chrome/user_data" "$@"
-    else
-        echo "Chrome or Chromium not found"
-        return 1
-    fi
+# # ngrokhttp - Reverse tunneling to ngrok
+# # usage ngrokhttp [port]
+ngrokhttp() {
+    ssh -R 443:localhost:"$1" tunnel.ap.ngrok.com http
 }
 
 #
@@ -796,6 +781,52 @@ EOF
     socat "$listen_opts" "TCP:${target_host}:${target_port}"
 }
 
+# Publish a local HTTP port through a foreground Cloudflare Quick Tunnel.
+# Usage: cf_tunnel PORT [CLOUDFLARED_OPTIONS...]
+cf_tunnel() (
+    case "${1:-}" in
+        -h|--help)
+            printf '%s\n' 'Usage: cf_tunnel PORT [CLOUDFLARED_OPTIONS...]' \
+                'Temporary public HTTPS URL; Ctrl-C stops it. Quick Tunnels do not support SSE.'
+            return 0 ;;
+        ''|*[!0-9]*) echo 'cf_tunnel: PORT must be an integer from 1 to 65535.' >&2; return 1 ;;
+    esac
+    port=$1
+    if [ "${#port}" -gt 5 ] || [ "$port" -lt 1 ] || [ "$port" -gt 65535 ]; then
+        echo 'cf_tunnel: PORT must be an integer from 1 to 65535.' >&2
+        return 1
+    fi
+    shift
+    # Ignore interactive aliases when checking for the actual executable.
+    unalias cloudflared 2>/dev/null || :
+    if command -v cloudflared >/dev/null 2>&1; then
+        command cloudflared tunnel --url "http://127.0.0.1:$port" "$@"
+    elif command -v pkgx >/dev/null 2>&1; then
+        command pkgx cloudflared tunnel --url "http://127.0.0.1:$port" "$@"
+    else
+        echo 'cf_tunnel: install cloudflared or pkgx first.' >&2
+        return 1
+    fi
+)
+
+# --- Remote provisioning and development workspaces ---
+
+#
+# # setup_remote_user - Provision a remote user without remembering script path
+# # usage: setup_remote_user [script_args]
+setup_remote_user() {
+    local script_path 2>/dev/null || true
+
+    script_path="$CONF_SH_DIR/utils/setup_user.sh"
+
+    [ ! -r "$script_path" ] && {
+        echo "setup_remote_user script not found: $script_path" >&2
+        return 1
+    }
+
+    /usr/bin/env sh "$script_path" "$@"
+}
+
 # Run development workspace commands; return the wrapper status without exiting this shell.
 dev_workspace() {
     local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/dev_workspace/dev_workspace.sh"
@@ -835,34 +866,6 @@ dev_tunnel() {
     fi
     bash "$helper" "$@"
 }
-
-# Publish a local HTTP port through a foreground Cloudflare Quick Tunnel.
-# Usage: cf_tunnel PORT [CLOUDFLARED_OPTIONS...]
-cf_tunnel() (
-    case "${1:-}" in
-        -h|--help)
-            printf '%s\n' 'Usage: cf_tunnel PORT [CLOUDFLARED_OPTIONS...]' \
-                'Temporary public HTTPS URL; Ctrl-C stops it. Quick Tunnels do not support SSE.'
-            return 0 ;;
-        ''|*[!0-9]*) echo 'cf_tunnel: PORT must be an integer from 1 to 65535.' >&2; return 1 ;;
-    esac
-    port=$1
-    if [ "${#port}" -gt 5 ] || [ "$port" -lt 1 ] || [ "$port" -gt 65535 ]; then
-        echo 'cf_tunnel: PORT must be an integer from 1 to 65535.' >&2
-        return 1
-    fi
-    shift
-    # Ignore interactive aliases when checking for the actual executable.
-    unalias cloudflared 2>/dev/null || :
-    if command -v cloudflared >/dev/null 2>&1; then
-        command cloudflared tunnel --url "http://127.0.0.1:$port" "$@"
-    elif command -v pkgx >/dev/null 2>&1; then
-        command pkgx cloudflared tunnel --url "http://127.0.0.1:$port" "$@"
-    else
-        echo 'cf_tunnel: install cloudflared or pkgx first.' >&2
-        return 1
-    fi
-)
 
 # Custom functions
 # shellcheck source=/dev/null

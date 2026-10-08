@@ -1,5 +1,16 @@
 #!/usr/bin/env sh
 # shellcheck disable=SC3043
+
+# Register the local Codespaces extension only in interactive shells.
+case $- in
+    *i*)
+        if command -v gh >/dev/null 2>&1 &&
+            [ -r "${CONF_SH_DIR:-$HOME/.sh.d}/utils/gh-codespace-sync/install.sh" ]; then
+            command sh "${CONF_SH_DIR:-$HOME/.sh.d}/utils/gh-codespace-sync/install.sh" ||
+                printf '%s\n' 'Could not register the local Codespaces extension; shell startup will continue.' >&2
+        fi
+        ;;
+esac
 #
 # Default editor (nvim -> hx -> pkgx hx -> vim -> vi)
 if usable nvim; then
