@@ -23,7 +23,7 @@ For vulnerabilities that don't apply to your usage pattern (e.g., a server-side 
 If you use Helm, Docker, Terraform, or any IaC tool:
 - Run an IaC scanner (Checkov, tfsec, Trivy) against all templates
 - Never hardcode credentials in IaC templates — reference secrets, don't embed them
-- Declare resource limits (CPU, memory) on every container to prevent resource exhaustion
+- Declare resource limits (CPU, memory) on every container to prevent resource exhaustion (see [sandbox resource limits](../skills-and-rules/details/sandbox-resource-limits.md) for local agent execution)
 
 ### Code-Level Security
 

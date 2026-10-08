@@ -5,7 +5,7 @@
 | Entry | Summary | Read when |
 |---|---|---|
 | [Agent orchestration design](./agent-orchestration-design.md) | Orchestrator selection, prompt engineering for model tiers, rate limit budgeting | Configuring multi-agent orchestration layers |
-| [Global harness instructions](./harness-safety.md) | One shared source with native user-level adapters and verification caveats | Installing instructions across harnesses and fresh repositories |
+| [Global harness instructions](./harness-safety.md) | One shared source with native user-level adapters, sandbox tools, and resource limits | Installing instructions across harnesses and configuring sandboxed execution |
 | [Installing skills via npx](./installing-skills.md) | Installing skills via `npx skills add` & pairing with rules | Installing skills in new or existing repos |
 | [Serena MCP setup](./serena-mcp-setup.md) | Setting up `serena-mcp` for semantic code context & LSP search | Boosting agents with symbol indexing & AST context |
 | [Why rules and skills exist](./why-rules-and-skills.md) | Mental model: rules constrain, skills direct | Starting the section |

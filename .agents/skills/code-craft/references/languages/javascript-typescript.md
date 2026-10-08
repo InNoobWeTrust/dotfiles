@@ -9,6 +9,11 @@ Use for greenfield JavaScript/TypeScript services, libraries, and shared tooling
 - Use Biome where its supported rule set is sufficient; otherwise use ESLint plus Prettier. Always keep `tsc --noEmit` (or the framework equivalent) as a type-check gate.
 - Use platform `fetch`, Web APIs, and Node built-ins when suitable. Use Zod for runtime schemas at external boundaries; do not use runtime validation for purely static internal values.
 
+## Standalone Bun Dependencies
+
+- **Resolve first:** Inspect dependencies from the actual script directory and retain their resolved majors. Use Bun's [versioned imports](https://bun.sh/docs/runtime/auto-install#version-specifiers), such as `"zod@4"` and `"@modelcontextprotocol/sdk@1/server/mcp.js"`; include every external runtime and type-only import, but do not version Node built-ins.
+- **Match APIs and evidence:** Write against those majors and verify the configured launcher without rewriting imports to another installation. Major selectors are not exact reproducibility; use the repository's manifest/lockfile when available, and do not downgrade to accommodate incorrect code without agreement.
+
 ## CLI and Terminal Tooling
 
 - Use **Commander** for structured command-line argument parsing and subcommands; use **citty** (Unjs) or **cac** when minimal overhead is preferred.

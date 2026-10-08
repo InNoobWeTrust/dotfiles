@@ -41,7 +41,7 @@ Use the repository's existing [bootstrap](../../../bootstrap.sh) to install the 
 
 ## Shared Sandbox Tools
 
-The existing sandbox MCP exposes three tools with a required `command` and optional absolute `workdir`. All use non-login shells and inherit the environment; set command-local variables with `env NAME=value command` or explicitly invoke another shell when needed.
+The existing sandbox MCP exposes three tools with a required `command`, optional absolute `workdir`, and optional invocation-scoped `limits`. All use non-login shells and inherit the environment; set command-local variables with `env NAME=value command` or explicitly invoke another shell when needed.
 
 | Tool | Workspace writes | Network |
 |---|---|---|
@@ -61,7 +61,17 @@ The existing sandbox MCP exposes three tools with a required `command` and optio
 
 - **Result:** PASS.
 - **Main risks:** Ambiguous workspace discovery, inferred directories widening the wrong writable scope, and stale tool permissions/catalogs.
-- **Interface upgrades:** Two inputs, fixed isolation modes and non-login execution, explicit ambiguity errors, per-call roots discovery, disclosed defaults, and exact permission names.
+- **Interface upgrades:** Command, optional workdir and invocation budgets; fixed isolation modes and non-login execution, explicit ambiguity errors, per-call roots discovery, disclosed defaults, and exact permission names.
+
+### Resource budgets (prlimit / ulimit)
+
+Filesystem/network restrictions do not limit resource consumption. Each tool also applies inherited CPU, per-file size, file-descriptor, and core-dump limits, plus supervisor-controlled elapsed-time and output budgets; these are not aggregate RAM, process-tree, or disk quotas.
+
+**Escalation:** Investigate a boundary failure, explain the proposed change, and obtain human permission before raising budgets through the optional `limits` object. Overrides apply only to that invocation; the MCP applies them without deciding human approval or silently retrying.
+
+**Execution contract:** Commands are synchronous; the supervisor attempts to stop remaining children in the command's process group on exit or budget breach and reports cleanup failures. Stopping does not roll back previous side effects, and deliberately detached descendants are not guaranteed to be contained.
+
+See [Sandbox Resource Budgets](./details/sandbox-resource-limits.md) for defaults, platform limitations, structured results, and failure interpretation.
 
 ## Official References
 
