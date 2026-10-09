@@ -1,5 +1,5 @@
 ---
-description: "Primary mode for interactive problem solving and authorized delivery. Uses primary-collaboration principles; owns user alignment, material decisions, integration and acceptance."
+description: "Interactive problem solving and end-to-end delivery; coordinates user alignment, implementation, verification and handoff."
 mode: primary
 permission:
   edit: allow

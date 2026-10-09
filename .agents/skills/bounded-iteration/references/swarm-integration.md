@@ -11,7 +11,7 @@ The primary owns the outcome, decision authority, bounded contracts, integration
 | Research | Bounded question, permitted sources/network, evidence and uncertainty; no edits | Compare evidence, decide in-scope choices, document consequential rationale |
 | Implementation | One approved slice, exact contracts/files, existing domain verification requirements | Integrate and verify; reapprove contract defects before redispatch |
 | Execution/E2E | Fixed checks/journeys, authorized isolated environment and resource controls | Validate receipts; do not let the executor silently alter assertions |
-| Independent review | One distinct perspective, declared rubric, current artifact/evidence; read-only | Challenge findings, resolve blockers, recheck changed surface |
+| Independent review | One distinct perspective (different agent/subagent instance than primary and implementers), declared rubric, current artifact/evidence; read-only. One instance = one perspective; simulated panels not independent. For substantial work, include goal-alignment reviewer with original request/feedback. If perspectives ambiguous, identify candidates and consult independent generalist reviewer by default - do not skip; only STOP_INPUT_AMBIGUOUS if specialized judgment materially required and no qualified reviewer identifiable. | Challenge findings, resolve blockers, recheck changed surface |
 
 Use concurrency only for independent work, with explicit limits. Serialize overlapping writes and dependent tasks. Bound every worker's actions; no nested delegation unless separately authorized and controlled. Commands still need the sandbox and per-job execution envelope.
 
@@ -27,9 +27,9 @@ Before iteration, declare artifact/contract revision, user journeys, machine pro
 
 - Machine PASS is necessary for machine-required criteria, not sufficient for release.
 - Reviewer PASS needs criterion-linked evidence. Agreement without evidence, unavailable E2E, and unexamined user journeys remain UNVERIFIED.
-- FAIL returns the specific requirement, observed failure, and bounded correction—not a new wishlist.
+- FAIL returns the specific requirement, observed failure, and bounded correction—not a new wishlist. Apply the authority-based retry/stop test in [Release evaluation](procedure.md#7-release-evaluation): concern labels alone do not forbid evidenced, authorized technical corrections; unresolved authority/safety boundaries require STOP_MANUAL_INTERVENTION.
 - UNVERIFIED requires missing evidence or an honest blocker. It cannot be relabeled PASS by a vote.
-- Independent challenge follows `subagent-dispatch`/`reviewer`. After fixes, recheck affected criteria/current artifact. No endless cosmetic panel cycles.
+- Independent challenge follows `subagent-dispatch`/`reviewer` using different agent/subagent instances than the primary and any implementers (same-agent self-review is not independent; one instance = one perspective; simulated panels not independent). After fixes, recheck affected criteria/current artifact. No endless cosmetic panel cycles.
 
 ## If Full Swarm is selected
 

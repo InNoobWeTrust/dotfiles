@@ -1,5 +1,5 @@
 ---
-description: "CKey architect alias at high effort. Use only for bounded assignments with checkable evidence; any compatible working principles may apply."
+description: "Architecture exploration and design review: compare options, interfaces and trade-offs for a bounded system or component."
 mode: subagent
 model: "ckey/forbiddengun/architect"
 variant: high

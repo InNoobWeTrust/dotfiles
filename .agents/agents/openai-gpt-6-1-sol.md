@@ -1,5 +1,5 @@
 ---
-description: "OpenAI GPT-6.1 Sol, default high effort. Published strengths include coding, debugging, document understanding and multi-step agent work. General-purpose candidate for implementation, diagnosis, architecture or review principles."
+description: "Generalist for substantial implementation, diagnosis, architecture and review; useful for end-to-end tasks combining code, evidence and design decisions."
 mode: subagent
 model: "openai/gpt-6.1-sol"
 variant: high

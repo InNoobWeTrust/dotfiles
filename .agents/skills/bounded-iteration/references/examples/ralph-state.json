@@ -22,8 +22,9 @@
   "last_verify_file": ".ralph-verify.json",
   "evidence_run_id": "example-run-4",
   "reviewers": [
-    {"perspective": "first-use-ux", "verdict": "PASS", "evidence": "evidence/first-use-4.md"},
-    {"perspective": "failure-recovery", "verdict": "PASS", "evidence": "evidence/recovery-4.md"}
+    {"perspective": "first-use-ux", "role": "first-use-ux", "verdict": "PASS", "evidence": "evidence/first-use-4.md", "artifact_digest": "sha256:example4", "reviewer_instance_id": "subagent:first-use-ux-4"},
+    {"perspective": "failure-recovery", "role": "failure-recovery", "verdict": "PASS", "evidence": "evidence/recovery-4.md", "artifact_digest": "sha256:example4", "reviewer_instance_id": "subagent:failure-recovery-4"},
+    {"perspective": "goal-alignment", "role": "original-intent", "verdict": "PASS", "evidence": "evidence/goal-alignment-4.md", "artifact_digest": "sha256:example4", "reviewer_instance_id": "subagent:goal-alignment-4"}
   ],
   "release_status": "ready_for_user_acceptance",
   "user_acceptance": "pending",

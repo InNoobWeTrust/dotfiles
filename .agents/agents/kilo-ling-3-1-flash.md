@@ -1,7 +1,7 @@
 ---
-description: "Drafting, source synthesis and bounded coding experiments on non-confidential material."
+description: "Bounded research, drafting and implementation with checks on non-confidential material."
 mode: subagent
-model: "opencode/longcat-2.5-preview-free"
+model: "kilo/inclusionai/ling-3.1-flash"
 permission:
   edit: allow
 ---

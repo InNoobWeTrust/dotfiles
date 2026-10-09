@@ -1,7 +1,7 @@
 ---
-description: "Drafting, source synthesis and bounded coding experiments on non-confidential material."
+description: "Bulk scouting, drafting and straightforward synthesis of non-confidential material; automatic model routing suits tasks that do not require a specific model."
 mode: subagent
-model: "opencode/longcat-2.5-preview-free"
+model: "kilo/kilo-auto/free"
 permission:
   edit: allow
 ---

@@ -1,7 +1,7 @@
 ---
-description: "Drafting, source synthesis and bounded coding experiments on non-confidential material."
+description: "Fast coding and agentic tool use for scoped implementation tasks on non-confidential material."
 mode: subagent
-model: "opencode/longcat-2.5-preview-free"
+model: "opencode/space-bunny-free"
 permission:
   edit: allow
 ---

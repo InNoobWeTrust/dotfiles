@@ -1,5 +1,5 @@
 ---
-description: "CKey Qwen-labelled alias at high effort. A provisional coding/tool-use candidate for bounded implementation or verification."
+description: "Coding and tool-driven verification for a scoped implementation unit with concrete inputs, outputs and checks."
 mode: subagent
 model: "ckey/forbiddengun/qwen"
 variant: high

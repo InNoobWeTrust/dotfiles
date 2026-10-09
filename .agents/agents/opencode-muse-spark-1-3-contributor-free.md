@@ -1,7 +1,7 @@
 ---
-description: "Drafting, source synthesis and bounded coding experiments on non-confidential material."
+description: "Implementation and bounded refactoring of non-confidential code, with verification of the approved behavior."
 mode: subagent
-model: "opencode/longcat-2.5-preview-free"
+model: "opencode/muse-spark-1.3-contributor-free"
 permission:
   edit: allow
 ---

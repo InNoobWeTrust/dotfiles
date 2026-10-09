@@ -32,11 +32,13 @@
 
 ## Evaluator contract — before the first slice
 - Contract revision and current artifact identity: <controller binds receipts>
+- Original request evidence: <immutable task context/file; exact wording with explicit redaction markers for secrets, credentials, and sensitive personal data; reviewer/provider disclosure authorized>
+- Rubric approval: <primary for agent-owned criteria in autonomous mode; user for unresolved outcome/authority/safety constraints or human-reserved/agreed checkpoints>
 - Machine checks: <commands + required observable proof + environment>
 - Candidate failure classification: <known product failures vs broken infrastructure>
 - E2E/integration journeys: <primary use + important failure/recovery cases>
-- Release rubric: <criterion → evidence → evaluator; include first-use/docs UX>
-- Independent perspectives: <distinct relevant reviewers; bounded actions>
+- Release rubric: <criterion → evidence → evaluator; include first-use/docs UX and goal-alignment/original-intent (compare against original request/feedback)>
+- Independent perspectives: <distinct relevant reviewers (different agent/subagent instances than primary and implementers; one instance=one perspective; no simulated panels). For substantial work, include goal-alignment reviewer with original request/feedback. Bounded actions; if ambiguous, list candidates and consult independent generalist reviewer by default via subagent-dispatch/reviewer; only STOP_INPUT_AMBIGUOUS if specialized judgment materially required and no qualified reviewer identifiable>
 - Freshness: <invalidate affected checks/reviews on artifact/contract change>
 - Success streak: 1 (increase for known flakiness; does not replace release gate)
 
@@ -47,7 +49,7 @@
 | Machine 3 / broken verifier | Pause optimizer; diagnose/repair verifier with negative checks |
 | Machine 4 / UNVERIFIED | Obtain predeclared independent evidence or report blocker |
 | Reviewer PASS | Accept only evidence-backed rubric items, never override required machine checks |
-| Reviewer FAIL | Fix evidenced must-ship/invariant blockers; recheck affected criteria |
+| Reviewer FAIL | Fix specific evidenced blockers within existing authority; apply the [authority-based stop test](../procedure.md#7-release-evaluation) for human-reserved approvals, unresolved authority/safety boundaries, or unavailable specialist judgment; recheck affected criteria |
 | Reviewer UNVERIFIED | Obtain missing evidence; never count as PASS |
 
 ## Release and stops

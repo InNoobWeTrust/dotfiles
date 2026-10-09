@@ -205,6 +205,30 @@ For **developer-facing interfaces** specifically:
 - Are the abstractions at the right level — not too high, not too low?
 - Is debugging easy when things go wrong?
 
+#### Attack Vector: End-User Outcome Regression
+
+For updates, challenge whether the same user can still accomplish the original
+goal with proportionate effort and without losing necessary protections. This
+prototype vector compares outcomes across versions; Usability checks the
+interface itself, while Goal Alignment checks connection to the original goal.
+
+- Compare the same authorized request against an explicit previous version and
+  the proposed version. Can the user get started, complete the task, and recover
+  from a relevant failure? What observable change supports improvement?
+- Has the update added avoidable approvals, configuration, reading, or
+  coordination, changed the user's goal, or weakened privacy or safety boundaries?
+- When agents or governance are affected, can the executor discover guidance,
+  distinguish caller-facing selection information from worker instructions,
+  determine decision ownership, delegate within authority, and stop or resume?
+- Choose a concrete scenario that could disprove improvement. Anchor any finding
+  to changed text and the before/after consequence; do not invent requirements
+  or report unrelated legacy problems. Missing comparison or runtime evidence
+  is UNVERIFIED, not proof of regression or a passed runtime test.
+
+Use only relevant journeys and perspectives; this vector adds no mandatory
+panel, execution permission, or approval gate. Follow Reviewer finding and
+independence requirements. See [examples and evidence guidance](../../../../docs/skills-and-rules/end-user-outcome-reviews.md).
+
 #### Attack Vector: Scope & Complexity
 
 - Is this solving the right problem at the right level of abstraction?

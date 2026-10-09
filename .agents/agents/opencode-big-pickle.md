@@ -1,7 +1,7 @@
 ---
-description: "Drafting, source synthesis and bounded coding experiments on non-confidential material."
+description: "General coding and agentic implementation of bounded tasks on non-confidential material."
 mode: subagent
-model: "opencode/longcat-2.5-preview-free"
+model: "opencode/big-pickle"
 permission:
   edit: allow
 ---

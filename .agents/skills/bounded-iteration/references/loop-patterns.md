@@ -25,6 +25,7 @@ while useful safe work remains:
 
     atomically persist state, proof references, decision and next safe action
     if release criteria all PASS and owned resources cleaned:
+        verify machine gate PASS from .ralph-verify.json AND all required reviewer verdicts PASS in .ralph-state.json reviewers[] with current evidence against artifact_identity
         mark ready_for_user_acceptance; user_acceptance = pending
         deliver usage + proof + acceptance journey; STOP_SUCCESS
     if approval-gated checkpoint: checkpoint and return for requested approval

@@ -1,7 +1,7 @@
 ---
-description: "Drafting, source synthesis and bounded coding experiments on non-confidential material."
+description: "Coding and tool-driven implementation for bounded changes on non-confidential material, with concrete verification checks."
 mode: subagent
-model: "opencode/longcat-2.5-preview-free"
+model: "kilo/poolside/laguna-s-2.1:free"
 permission:
   edit: allow
 ---

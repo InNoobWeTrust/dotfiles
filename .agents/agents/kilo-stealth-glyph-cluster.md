@@ -1,7 +1,8 @@
 ---
-description: "Drafting, source synthesis and bounded coding experiments on non-confidential material."
+description: "Design, deep review, difficult multi-step reasoning and long-context analysis on non-confidential material."
 mode: subagent
-model: "opencode/longcat-2.5-preview-free"
+model: "kilo/stealth/glyph-cluster"
+variant: high
 permission:
   edit: allow
 ---

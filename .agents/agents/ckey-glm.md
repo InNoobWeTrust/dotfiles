@@ -1,5 +1,5 @@
 ---
-description: "CKey GLM-labelled alias at high effort. Provisional language/tool-use candidate for bounded synthesis or investigation."
+description: "Source synthesis and tool-assisted investigation; useful for turning supplied evidence into structured explanations and findings."
 mode: subagent
 model: "ckey/forbiddengun/glm"
 variant: high

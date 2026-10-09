@@ -1,7 +1,7 @@
 ---
-description: "Drafting, source synthesis and bounded coding experiments on non-confidential material."
+description: "Planning, design analysis and review of non-confidential material; suited to deliberate reasoning rather than rapid edit-test loops."
 mode: subagent
-model: "opencode/longcat-2.5-preview-free"
+model: "kilo/nvidia/nemotron-3-ultra-550b-a55b:free"
 permission:
   edit: allow
 ---
