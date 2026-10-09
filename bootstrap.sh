@@ -33,7 +33,8 @@ fi
 # Pixi owns its live manifest; never stow the repo's manifest over it.
 STOW_IGNORE_ARGS="$STOW_IGNORE_ARGS --ignore='\.pixi'"
 
-# Use pixi global env for stow (same across machines, see .pixi/manifests/pixi-global.toml)
+# Prefer system Stow (including Termux); otherwise use Pixi's temporary environment.
+STOW_COMMAND="stow"
 if ! command -v stow >/dev/null 2>&1; then
     if ! command -v pixi >/dev/null 2>&1; then
         if command -v curl >/dev/null 2>&1; then
@@ -51,34 +52,13 @@ if ! command -v stow >/dev/null 2>&1; then
             exit 1
         fi
     fi
-    pixi global install stow || {
-        echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
-        # Check if MacOS and try to install stow via Homebrew if pixi fails
-        if [ "$(uname -s)" = "Darwin" ]; then
-            if ! command -v brew >/dev/null 2>&1; then
-                # Install Homebrew and then stow
-                if command -v curl >/dev/null 2>&1; then
-                    (set -o pipefail; /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)") || {
-                        echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
-                        exit 1
-                    }
-                fi
-            fi
-            brew install stow || {
-                echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
-                exit 1
-            }
-        else
-            echo "offline: install stow via system or pre-seeded ~/.pixi/bin" >&2
-            exit 1
-        fi
-    }
+    STOW_COMMAND="pixi exec stow"
 fi
 
 # Symlink dotfiles by running stow
-echo "Symlinking dotfiles..."
-eval "stow -d '$SCRIPT_DIR' . -t ~ --dotfiles $STOW_IGNORE_ARGS" || {
-    echo "Error: stow failed; dotfiles were not fully linked." >&2
+printf '\n%s\n' "Symlinking dotfiles..."
+eval "$STOW_COMMAND -d '$SCRIPT_DIR' . -t ~ --dotfiles $STOW_IGNORE_ARGS" || {
+    echo "Error: stow failed; dotfiles were not fully linked. If Pixi cannot run Stow, install it with your system package manager and rerun." >&2
     exit 1
 }
 
@@ -92,18 +72,20 @@ if command -v pixi >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.pixi/manifests/pixi-glo
     fi
     if [ -e "$pixi_manifest" ] && ! cmp -s "$repo_manifest" "$pixi_manifest"; then
         backup="$pixi_manifest.pre-dotfiles.$(date +%Y%m%d%H%M%S).$$"
-        if [ -e "$backup" ] || ! cp -pn "$pixi_manifest" "$backup"; then
+        if [ -e "$backup" ] || ! command cp -pn "$pixi_manifest" "$backup"; then
             echo "Error: could not back up Pixi manifest to $backup" >&2
             exit 1
         fi
         echo "Backed up Pixi manifest to $backup"
     fi
     if ! cmp -s "$repo_manifest" "$pixi_manifest"; then
-        mkdir -p "$HOME/.pixi/manifests" && cp "$repo_manifest" "$pixi_manifest" || {
+        # Login-shell aliases must not turn the backed-up replacement into a prompt.
+        mkdir -p "$HOME/.pixi/manifests" && command cp -f "$repo_manifest" "$pixi_manifest" || {
             echo "Error: could not update Pixi manifest: $pixi_manifest" >&2
             exit 1
         }
     fi
+    printf '\n%s\n' "Syncing Pixi global environments..."
     pixi global sync || {
         echo "Error: Pixi global sync failed; check connectivity or rerun when online (manifest: $pixi_manifest)." >&2
         exit 1
@@ -113,7 +95,7 @@ if command -v pixi >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.pixi/manifests/pixi-glo
         cd "$(dirname "$pixi_manifest")" || exit 1
         find . ! -name . -prune -type f -name 'pixi-global.toml.pre-dotfiles.*' -print |
             LC_ALL=C sort -r | tail -n +6 | while IFS= read -r backup; do
-            rm -- "$backup" || exit 1
+            command rm -f -- "$backup" || exit 1
         done
     ) || {
         echo "Error: could not prune old Pixi manifest backups." >&2
@@ -122,7 +104,7 @@ if command -v pixi >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.pixi/manifests/pixi-glo
 fi
 
 # Load .shrc from shell config file by checking default shell
-echo "Set autoload of .shrc from shell config file..."
+printf '\n%s\n' "Set autoload of .shrc from shell config file..."
 if [ -n "$ZSH_VERSION" ] && [ -z "$CONF_SH_DIR" ]; then
     grep -qxF '[ -e ~/.shrc ] && . ~/.shrc' ~/.zshrc 2>/dev/null || echo "[ -e ~/.shrc ] && . ~/.shrc" >> ~/.zshrc
 elif [ -n "$BASH_VERSION" ] && [ -z "$CONF_SH_DIR" ]; then
