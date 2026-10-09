@@ -248,17 +248,13 @@ tiktok_id() {
 # # dotfiles_clean - Clean caches for common tools, temporary artifacts, and platform junk
 # # usage: dotfiles_clean [--dry-run] [--mac-cleanup]
 dotfiles_clean() {
-    local dry_run=0 run_mac_cleanup=0 2>/dev/null || true
+    local dry_run=0 2>/dev/null || true
     local cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}"
 
     while [ $# -gt 0 ]; do
         case "$1" in
             --dry-run|-n)
                 dry_run=1
-                shift
-                ;;
-            --mac-cleanup|-m)
-                run_mac_cleanup=1
                 shift
                 ;;
             --help|-h)
@@ -342,7 +338,7 @@ dotfiles_clean() {
     case "$(uname -s)" in
         Darwin)
             if usable macos_cleanup; then
-                macos_cleanup "$dry_run" "$run_mac_cleanup"
+                macos_cleanup "$dry_run"
             fi
             ;;
     esac

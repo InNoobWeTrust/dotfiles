@@ -7,7 +7,7 @@ if [ "$(uname -s)" = "Darwin" ]; then
         if [ -n "${ZSH_VERSION:-}" ]; then
             setopt local_options nonomatch
         fi
-        local dry_run="${1:-0}" use_mac_cleanup="${2:-0}" tmp_dir="${TMPDIR:-/tmp}" found=0 2>/dev/null || true
+        local dry_run="${1:-0}" tmp_dir="${TMPDIR:-/tmp}" found=0 2>/dev/null || true
         tmp_dir="${tmp_dir%/}"
         printf "==> Cleaning macOS platform artifacts...\n"
 
@@ -75,7 +75,7 @@ if [ "$(uname -s)" = "Darwin" ]; then
         fi
 
         # 7. Optional deep system cleanup via mac-cleanup utility
-        if [ "$use_mac_cleanup" -eq 1 ] && usable mac-cleanup; then
+        if usable mac-cleanup; then
             printf "Running mac-cleanup utility...\n"
             if [ "$dry_run" -eq 0 ]; then
                 mac-cleanup
