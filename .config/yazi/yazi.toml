@@ -6,5 +6,5 @@ wrap = "yes"
 
 [opener]
 edit = [
-	{ run = '. ~/.sh.d/func.sh 2>/dev/null || true; eval "${EDITOR:-editor}" %s', desc = "$EDITOR", for = "unix", block = true },
+	{ run = '${EDITOR:-vi} %s', desc = "$EDITOR", for = "unix", block = true },
 ]
