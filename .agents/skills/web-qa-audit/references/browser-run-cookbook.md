@@ -158,7 +158,8 @@ qa/artifacts/browser-audits/2026-07-27/bbqa-checkout-smoke/
   traces/
   a11y/
   reports/                    # derived stakeholder pack only; git-ignore
-    stakeholder-summary.pdf   # or labeled interim .md
+    stakeholder-summary.typ   # derived stakeholder narrative; never replaces machine YAML/MD
+    stakeholder-summary.pdf   # final compiled/inspected output; otherwise explicit blocked build
     stakeholder-results.xlsx  # or labeled interim .csv
     html/                     # optional; auth or non-guessable URL + TTL if hosted
 ```

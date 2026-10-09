@@ -124,6 +124,7 @@ qa/artifacts/browser-audits/<date>/<run-id>/
   traces/
   a11y/
   reports/                 # derived only; git-ignore + access-control
+    stakeholder-summary.typ # editable stakeholder narrative, derived from approved evidence
     stakeholder-summary.pdf
     stakeholder-results.xlsx
     html/
@@ -196,11 +197,11 @@ Excel KPI counts, PDF verdict inputs, and HTML totals **must** match `findings.y
 1. **Structurally valid** `.xlsx` / `.pdf` / HTML directory matching the contracts below, **or**
 2. An **explicit interim** deliverable clearly labeled as such, e.g.:
    - `stakeholder-results.csv` (+ convert notes with sheet mapping), or
-   - Markdown exec summary named `stakeholder-summary.md` with note `PDF conversion pending`
+   - Uncompiled Typst source named `stakeholder-summary.typ`, explicitly marked `PDF build blocked` with the missing compiler/package and next build step
 
 **Forbidden:** renaming Markdown/CSV to `.xlsx`/`.pdf` and claiming the workbook/PDF contract is satisfied.
 
-If tooling cannot emit a real workbook/PDF in this environment, say so, ship the interim format, and list the conversion step as a follow-up — do not fake binary formats.
+If tooling cannot emit a real workbook/PDF in this environment, say so, ship the explicitly incomplete source/interim artifact, and list the missing build/export step — do not fake binary formats or silently fall back to Markdown for the PDF narrative.
 
 ---
 
@@ -223,7 +224,7 @@ Default handoff to developers (always):
 ## Stakeholder Pack
 - Audience: [business | mixed | release-owner]
 - Excel: [path | interim CSV path | skipped: reason]
-- PDF: [path | interim MD path | skipped: reason]
+- PDF: [verified PDF path | uncompiled .typ path + blocker | skipped: reason]
 - HTML: [URL/path | skipped: reason]
 - Projection gates: [pass | fail: reason]
 ```
@@ -365,6 +366,8 @@ When audience is decision-only and must not receive the full matrix:
 
 ## PDF Executive Summary Contract
 
+Author the stakeholder narrative directly in `.typ`, applying [Document format selection](../../../rules/document-formats.md) and [Typst workflow](../../doc-craft/references/typst-workflow.md). Derive facts/counts from the approved projection, keep the existing YAML/Markdown engineering record, and compile/inspect the final revision before claiming PDF delivery; no manually maintained Markdown mirror is needed.
+
 ### File name
 
 `QA-Executive-Summary-<project>-<run-id>.pdf`
@@ -475,7 +478,7 @@ run-card.yaml + findings + artifacts-manifest
    summary.md  (engineering)
         │
         ├──► stakeholder-results.xlsx  (or labeled interim CSV)
-        ├──► stakeholder-summary.pdf   (or labeled interim MD)
+        ├──► stakeholder-summary.typ ──► PDF (or explicit blocked build)
         └──► reports/html/             (optional)
 ```
 

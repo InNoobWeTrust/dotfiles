@@ -2,6 +2,8 @@
 
 The cure for AI-generated "walls of text" and dense discursive prose. This guide establishes visual and structural rules that make technical documentation effortless to scan, reason about, and navigate.
 
+These are information-design rules, not a Markdown default. Follow [Document format selection](../../../rules/document-formats.md); use native Typst constructs for `.typ` and the Markdown examples only for required Markdown output.
+
 ---
 
 ## The Core Problem
@@ -22,7 +24,7 @@ Readers do not read documentation sequentially; they **scan** for interfaces, co
 - **Why**: Paragraphs longer than 3 sentences create visual gray blocks that readers instinctively skip.
 
 ### 2. Tables Over Prose
-Whenever presenting any of the following, use a **Markdown table** instead of sentences or bullet lists:
+Whenever presenting any of the following, use a **native table** (`#table` in Typst, a Markdown table for Markdown output) instead of sentences or bullet lists:
 - Metadata / Properties (status, owner, version, inputs, outputs)
 - Comparisons (options, trade-offs, pros/cons)
 - Mappings / Catalogs (error codes, command options, routes, files)
@@ -51,7 +53,7 @@ Whenever presenting any of the following, use a **Markdown table** instead of se
 > - **Validate environment configuration**: Ensure `DATABASE_URL` and `JWT_SECRET` are set.
 
 ### 4. Strategic Alert Blocks
-Use GitHub-style alert callouts sparingly to create visual contrast for non-obvious details:
+Use format-native callouts sparingly to create visual contrast for non-obvious details. In Markdown, GitHub-style alerts include:
 - `> [!NOTE]` — Background context or non-obvious design rationale.
 - `> [!IMPORTANT]` — Invariants, mandatory prerequisites, or breaking boundaries.
 - `> [!WARNING]` — Sharp edges, common failure modes, or deprecation notices.
@@ -60,11 +62,11 @@ Use GitHub-style alert callouts sparingly to create visual contrast for non-obvi
 **Hard Rule**: Never stack alerts consecutively. An alert loses all visual pop if surrounded by other alerts.
 
 ### 5. Diagram Anchors for Topologies
-- **Rule**: For any document explaining a multi-component interaction, workflow, or architecture, anchor the explanation with a **Mermaid diagram** BEFORE diving into text.
+- **Rule**: For any document explaining a multi-component interaction, workflow, or architecture, anchor the explanation with a **diagram** BEFORE diving into text. Validate Mermaid sources, then render SVG/PNG for Typst with a caption and text alternative; do not copy the Mermaid fence as a rendered visual.
 - **Why**: A diagram provides an immediate mental map. The text then only needs to explain nuances rather than reconstruct geometry in prose.
 
-### 6. Code Fences with Explicit Language & Filenames
-- **Rule**: Never use generic code fences (```). Always specify the language (```typescript`, ```bash`).
+### 6. Code Blocks with Explicit Language & Filenames
+- **Rule**: Specify the code language and use native raw/code blocks. Markdown output uses language-tagged fences (for example, `typescript` or `bash`).
 - When referencing file contents, include the target file path in an introductory label or comment.
 
 ### 7. Raw HTML Blocks: No Blank Lines Inside (CommonMark)

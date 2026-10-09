@@ -1,6 +1,6 @@
 ---
 name: doc-craft
-description: "Use this skill when designing, writing, restructuring, or auditing human-facing technical documentation — READMEs, developer guides, architecture overviews, topic entries, and docs directories. Enforces document routing (human docs in docs/ or module READMEs vs internal agent execution/consensus in memory dirs), progressive disclosure (Index → Entry → Leaf), visual rhythm, and appropriate abstraction levels without jargon. Do not use for code implementation, formal PRD/TRD/BDD, UI wireframing, or internal agent execution/consensus tracking (use memory)."
+description: "Use this skill when designing, writing, restructuring, or auditing human-facing technical documentation — Typst-first guides and architecture overviews with PDF delivery, required Markdown READMEs and documentation sites, topic entries, and docs directories. Enforces audience/format routing, progressive disclosure (Index → Entry → Leaf), visual rhythm, and appropriate abstraction levels without jargon. Do not use for code implementation, formal PRD/TRD/BDD, UI wireframing, or internal agent execution/consensus tracking (use memory)."
 ---
 
 # Document Craftsmanship (`doc-craft`)
@@ -15,6 +15,8 @@ This skill enforces three primary disciplines:
 ---
 
 Before editing, read [Editorial working principles](references/working-principles.md#editing). The principles are reusable for non-technical writing or governance without imposing this technical-document workflow; keep the task's owning skill and audience contract.
+
+Apply [Document format selection](../../rules/document-formats.md) before choosing a filename or template. Use [Typst workflow](references/typst-workflow.md) for the default `.typ` → PDF path; retain Markdown only for an identified required consumer.
 
 ## When to Load This Skill
 
@@ -38,38 +40,39 @@ Do **not** load for:
    - **Human-Facing**: General architecture, guides, API references → `docs/`. Module role, public surface, usage → `<module>/README.md`.
    - **Agent-Facing / Internal**: Atomic implementation plans (`plan.md`), sequential vertical slice phase files (`phases/01-*.md`), inter-agent consensus boards, or execution checkpoints → **STOP and route to `memory`** (`MEMORY_DIR`). Do NOT dump execution tracking into `docs/`.
    - Reference: [`references/document-routing-and-audience.md`](references/document-routing-and-audience.md).
-   - **Reader contract**: For ordinary Markdown documentation, default to concise YAML frontmatter with `audience` (who uses it), `purpose` (what it helps them understand or do), and `scope` (coverage and exclusions). Add it when creating or substantively revising a document; preserve existing metadata. For tool-consumed or format-controlled files, including `SKILL.md` and agent modes, verify supported fields first; use a short body statement if custom metadata is unsupported or uncertain. Do not bulk-retrofit unrelated files.
+    - **Reader contract**: Record `audience` (who uses it), `purpose` (what it enables), and `scope` (coverage/exclusions). In Typst, use a short visible summary plus supported document metadata, not YAML frontmatter. In Markdown, use concise YAML frontmatter where supported; preserve existing metadata and verify permitted fields for tool-consumed files such as `SKILL.md`. Do not bulk-retrofit unrelated files.
 2. **Determine the Document Layer**:
-   - **Index**: Router/catalog for a directory (`README.md`, `INDEX.md`). Must stay under 40 rows.
-   - **Entry**: Primary guide, topic overview (`<topic>.md`), or module README (`<module>/README.md`). Focuses on core flow and common paths (< 8 KB).
-   - **Leaf**: Deep technical details, edge case catalogs, full parameter schemas (`details/<leaf>.md`).
+    - **Index**: Router/catalog or document outline; use `.typ` by default, `README.md`/`INDEX.md` where repository navigation requires Markdown. Must stay under 40 rows.
+    - **Entry**: Primary guide/topic overview (`<topic>.typ`, `.md` for a required consumer) or module `README.md`. Focuses on core flow and common paths (< 8 KB of source).
+    - **Leaf**: Deep details, edge cases, full parameter schemas (`details/<leaf>.typ`, or required `.md`); include relevant Typst leaves in a self-contained PDF.
 3. **Apply Size Limits & Progressive Splitting**: If an existing document exceeds **12 KB**, shard it into leaves (Pattern A) or ordered sequential files (Pattern B). For directory indexing ("index docs") or document sharding ("shard doc"), follow [`references/progressive-disclosure.md`](references/progressive-disclosure.md).
 
 ### Phase 2 — Abstraction Calibration & Visual Scaffolding
 Before drafting sentences, calibrate abstraction and build the visual skeleton:
 1. **Calibrate Abstraction Level**: Ensure content targets human comprehension (what it is, why it matters, how to use it). Replace low-level implementation details with high-level architecture and concise pseudocode at appropriate abstraction levels. Eliminate jargon.
 2. **Top Metadata Block**: Anchor the document with a concise summary table (Objective/Goal, Prerequisites, Boundaries).
-3. **Diagram Anchor**: If explaining multi-component interaction or state flow, draft a Mermaid diagram first.
-4. **Table Allocation**: Convert any parameter list, configuration matrix, status listing, or trade-off comparison into a Markdown table.
+3. **Diagram Anchor**: If explaining multi-component interaction or state flow, draft a diagram first. Validate Mermaid sources and render them to SVG/PNG for Typst; include a caption and text alternative.
+4. **Table Allocation**: Convert parameter lists, configuration matrices, status listings, and trade-off comparisons into native tables (`#table` in Typst; Markdown tables only for Markdown output).
 5. Reference: [`references/visual-rhythm-and-scannability.md`](references/visual-rhythm-and-scannability.md).
 
 ### Phase 3 — Drafting with Canonical Templates
 1. Select the matching template from [`references/templates.md`](references/templates.md):
-   - Technical Guide / How-To (`docs/guides/<topic>.md`)
-   - System Architecture Overview (`docs/architecture/<system>.md`)
-   - Section Index (`docs/<section>/INDEX.md`)
-   - Deep Leaf Detail (`docs/<section>/details/<leaf>.md`)
+    - Technical Guide / How-To (`docs/guides/<topic>.typ`)
+    - System Architecture Overview (`docs/architecture/<system>.typ`)
+    - Section Index (`docs/<section>/index.typ`; required `INDEX.md` for Markdown navigation)
+    - Deep Leaf Detail (`docs/<section>/details/<leaf>.typ`)
    - Code Module README (`<module>/README.md`)
 2. **Enforce the 3-Sentence Rule**: Keep all prose paragraphs to a maximum of 3 sentences.
 3. **Bold Lead-Ins**: Ensure every list item begins with a bold action or concept keyword.
-4. **Alert Hygiene**: Use `> [!NOTE]` or `> [!WARNING]` only for critical callouts; never stack consecutively.
+4. **Alert Hygiene**: Use native callouts only for critical details; never stack them. GitHub alerts such as `> [!WARNING]` are Markdown-specific, not Typst syntax.
 
 ### Phase 4 — Scannability, Abstraction, & Link Audit
 1. **The 5-Second Scan Test**: Can a reader glance at the page and immediately identify the goal, components, and primary command/table?
 2. **Abstraction & Jargon Audit**: Confirm no low-level agent execution noise, raw task checklists, or unexplained jargon leaked into the document.
    - Compare the prose against the declared audience, purpose, and scope: flag both unnecessary context and missing explanation. Check the declaration itself against the requested document; metadata is not proof that the content belongs.
-3. **Link Verification**: Verify all relative file links (`[text](../path.md)`) exist and resolve correctly.
+3. **Link Verification**: Verify source references and distributed links. A detached PDF must not depend on the author's checkout; use internal labels/references, accessible URLs, or an explicitly tested distribution bundle.
 4. **No Orphan Leaves**: Ensure every leaf in `details/` is referenced from its parent entry.
+5. **Typst Delivery Check**: Compile and inspect the final PDF per [Typst workflow](references/typst-workflow.md); report blockers and invalidate the check after later source/asset edits.
 
 ---
 
@@ -80,21 +83,24 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 - **Unclear Audience or Goal**: If the target reader (beginner vs maintainer) or primary objective is ambiguous, stop and clarify.
 - **Monolithic File Creep**: If an entry exceeds 16 KB and has not been sharded into `details/`, halt writing and extract leaves first.
 - **Invented / Unverified Commands**: Never document commands, flags, or configuration keys without verifying they exist in the repository.
+- **Unbuilt or Stale PDF**: If compilation or delivery checks fail, report the blocker and incomplete artifact; do not silently install, upload, substitute Markdown, or ship an older PDF as current.
 
 ---
 
 ## Deliverables Checklist
 
 - [ ] Audience verified as human; agent task/phase/consensus artifacts routed to `memory`.
+- [ ] Typst selected by default; any other format tied to a concrete consumer requirement or explicit request.
 - [ ] Reader contract recorded in frontmatter where supported, otherwise in the body; content checked against it.
 - [ ] Appropriate abstraction level maintained (concise, jargon-free, high-level choices with pseudocode).
 - [ ] Clear layer established (Index, Entry, or Leaf; or module README).
 - [ ] Top metadata summary table present.
 - [ ] Visual diagram anchor included for multi-component flows.
 - [ ] No prose paragraph exceeds 3 sentences.
-- [ ] Parameter lists, comparisons, and status sets formatted as Markdown tables.
+- [ ] Parameter lists, comparisons, and status sets formatted as native tables.
 - [ ] All list items feature bold lead-in keywords.
 - [ ] All relative links tested and verified.
+- [ ] Final PDF compiled and inspected when required; any undelivered output explicitly marked blocked.
 
 ---
 
@@ -107,15 +113,18 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 | Bombard human readers with low-level code trivia or heavy jargon | Obscures purpose and usage; creates cognitive fatigue | Stick to high-level architecture, mental models, and concise pseudocode |
 | Write module READMEs as internal task checklists or change logs | Fails to teach engineers how or why to consume the module | Document purpose, mental model, quick-start usage, exported surface, and invariants |
 | Stack bullet points 4 levels deep | Creates visual chaos; destroys scannability | Flatten to max 2 levels; convert deep sub-lists into tables or leaf files |
-| Dump extensive reference tables in the main guide | Bloats the guide; obscures the critical path | Move full schemas to `details/<leaf>.md`; leave a router link in the guide |
+| Dump extensive reference tables in the main guide | Bloats the guide; obscures the critical path | Move schemas to leaves in the selected format; include required detail in the shared PDF |
 | Rely on italicized text for emphasis | Poor visual contrast on screens | Use bold lead-in words or a dedicated `> [!NOTE]` callout |
 | Put a blank line inside a raw HTML block (tables, callouts) | CommonMark ends the HTML block at the blank line; renders as literal text | Blank lines only BETWEEN the HTML block and surrounding Markdown |
 | Skip verification of commands in examples | Breaks user trust when copy-pasted | Ground all examples in actual codebase scripts, configs, and CLI tools |
+| Treat Markdown examples or compiler absence as a format exception | Reinstates converter hunting or hides failed delivery | Apply the consumer gate; report build blockers separately |
 
 ---
 
 ## References
 
+- [Document format selection](../../rules/document-formats.md) — Shared default, consumer exceptions, and source/delivery contract.
+- [Typst workflow](references/typst-workflow.md) — Local build, starter, diagrams, safety, and PDF verification.
 - [`references/document-routing-and-audience.md`](references/document-routing-and-audience.md) — Boundary between human docs (`docs/`, module READMEs) and agent memory (`MEMORY_DIR`), abstraction rules, and routing tree.
 - [`references/progressive-disclosure.md`](references/progressive-disclosure.md) — The Index → Entry → Leaf architecture, sizing thresholds, and sharding workflow.
 - [`references/visual-rhythm-and-scannability.md`](references/visual-rhythm-and-scannability.md) — Anti-wall-of-text guidelines, table transformations, and typography.

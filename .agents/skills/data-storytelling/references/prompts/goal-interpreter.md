@@ -36,7 +36,7 @@ Turn the user's request into an explicit analysis brief that the rest of the ski
 - Recommend threshold `3` to `4` for diagnostic analysis with meaningful comparative support.
 - Recommend threshold `5` to `6` only when the user explicitly wants intervention claims and the data plausibly supports them.
 - Recommend `adaptive` unless the user asks for full coverage or a compliance-style sweep.
-- Recommend `executive-summary` for decisions, `analyst-deep-dive` for diagnosis, `ops-action-brief` for ongoing execution, and `structured-markdown` when audience is mixed or unclear.
+- Recommend `executive-summary` for decisions, `analyst-deep-dive` for diagnosis, `ops-action-brief` for ongoing execution, and `structured-report` when audience is mixed or unclear. These select content structure, not Markdown serialization; use the shared document-format gate for saved output.
 - When a value is inferred rather than explicit, prefix it with `[RECOMMENDED]` in the analysis brief.
 
 ## Output Contract

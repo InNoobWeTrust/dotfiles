@@ -34,7 +34,7 @@ Fallback: if no upstream investigation was run, or if any required field is miss
 ### Output Engine
 
 - Recommend a template when the user does not specify one.
-- Build markdown output using one of the defined templates.
+- Build the approved narrative using one of the defined content templates; select saved output via [Document format selection](../../../rules/document-formats.md) (Typst + PDF by default).
 - Adapt tone, density, and action framing for exec, analyst, ops, or customer audiences.
 
 ### Human-In-The-Loop Layer

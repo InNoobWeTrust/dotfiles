@@ -145,7 +145,7 @@ Working memory (leaf) ↔ long-term memory (index) is one instance of the same s
 |---|---|---|
 | Agent execution | `plans/<feature>/phases/*.md`, `consensus/*.md` | `plans/<feature>/plan.md` |
 | Agent memory | `short-term/<created-stamp>--<branch>--<topic>.md` | `long-term/INDEX.md` |
-| Human documentation | `docs/<section>/details/*.md` (deep parameters/schemas) | `docs/README.md`, `docs/<section>/INDEX.md` |
+| Human documentation | `docs/<section>/details/*.typ` (or required `.md`) | Typst index/entry + PDF; required repository README/index stays Markdown per [format policy](../../rules/document-formats.md) |
 | Code | Individual functions, private helpers | Module `README.md` & `index.ts` |
 | Rules | `rules/<name>.md` | `rules/INDEX` |
 | Skills | `skills/<name>/references/*.md` | `SKILL.md` |
@@ -210,4 +210,3 @@ For every invocation:
 - `references/eviction-scoring.md` — scoring function, ranking, archive-then-delete protocol
 - `references/progressive-disclosure-pattern.md` — the leaf/index abstraction and the four properties an index must have
 - `references/pattern-code.md` — applying the pattern to a code module (public surface vs internals)
-

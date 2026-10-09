@@ -40,11 +40,12 @@ Interpretation rules:
 ## Procedure
 
 1. Choose the template if none was specified.
+   - Select serialization separately with [Document format selection](../../../../rules/document-formats.md). For saved human narratives, use Typst + PDF by default and [Typst workflow](../../../doc-craft/references/typst-workflow.md) for build/inspection; preserve required machine intermediates and consumer formats.
 2. Treat the post-QA claim set from skeptic QA as the canonical rendering artifact.
 3. Map only `approved` or `downgraded` claims from that canonical artifact into the required sections for the selected template.
 4. Carry forward confidence notes and caveats; every rendered material claim must include `confidence_label`, `confidence_basis`, and `claim_ceiling`, while `confidence_score` and `limitation_notes` remain internal-only support fields. In multi-claim sections, attach those fields per claim or per insight row rather than once per document.
 5. If a visual plan is approved, place each visual immediately after the claim it supports, with a takeaway-oriented caption or lead-in.
-6. Add the mandatory `## Lenses Used` section required by the template contract.
+6. Add the mandatory `Lenses Used` section required by the template contract, using a native heading in the selected format.
 7. Add revision notes if the draft reflects user feedback.
 8. Keep the output concise enough for the intended audience.
 
@@ -53,7 +54,7 @@ Interpretation rules:
 - `executive-summary`: decision-focused, low detail density.
 - `analyst-deep-dive`: evidence-rich, method-aware.
 - `ops-action-brief`: action-owner-threshold oriented.
-- `structured-markdown`: neutral default.
+- `structured-report`: neutral default content structure, not a serialization format.
 
 ## Output Contract
 
@@ -61,7 +62,7 @@ The final output must always contain:
 
 - A direct answer to the goal.
 - The strongest supporting evidence.
-- A `## Lenses Used` section that lists each lens, the signal it revealed, and the baseline or comparator used.
+- A `Lenses Used` section that lists each lens, the signal it revealed, and the baseline or comparator used.
 - Confidence and caveats, with `confidence_label`, `confidence_basis`, and `claim_ceiling` shown for each material claim.
 - Any approved supporting visual placed near the claim it supports, with a takeaway title or caption.
 - Next actions or open questions, if relevant.

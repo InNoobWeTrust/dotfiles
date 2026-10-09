@@ -162,5 +162,5 @@ Write exactly: TASK_COMPLETE
 *   **Additional lightweight cases**: Direct verification rather than a formal TDD or isolation loop is also appropriate for:
     *   Pure CSS / design changes.
     *   Static configuration or JSON file edits.
-    *   Pure markdown documentation tasks.
+    *   Documentation-only tasks (including Typst and Markdown); executable document logic still needs proportionate verification.
     *   Simple typos or rename-only operations.

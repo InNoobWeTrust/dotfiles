@@ -79,6 +79,8 @@ Determine the capabilities of the current execution environment:
 
 Compile the deliberation results into the following structure:
 
+The outline is format-neutral for saved human reports: apply [Document format selection](../../rules/document-formats.md). Chat summaries and agent consensus records keep their required formats; no document file is necessary for a chat-only deliberation.
+
 ```markdown
 # Deliberation Report: [Topic]
 

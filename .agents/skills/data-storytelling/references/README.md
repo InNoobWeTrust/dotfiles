@@ -40,7 +40,7 @@ Accepted arguments:
 - `audience` (optional): `exec`, `analyst`, `ops`, `customer`, or freeform.
 - `threshold` (optional): causal threshold `1` to `6`.
 - `mode` (optional): `adaptive`, `exhaustive`, or `user-specified`.
-- `template` (optional): explicit output format override.
+- `template` (optional): explicit report-structure override; serialization is a separate consumer decision under [Document format selection](../../../rules/document-formats.md).
 - `hitl_mode` (optional): `continuous-feedback`, `checkpoint`, or `review-and-revise`.
 - `include_lenses` (optional): array of lenses to force include.
 - `exclude_lenses` (optional): array of lenses to remove.
@@ -96,7 +96,7 @@ Recommendation rules:
 
 - Prefer `adaptive` for focused decision support.
 - Prefer `exhaustive` for open exploration or audit-style work.
-- Recommend `executive-summary` for decisions, `analyst-deep-dive` for diagnosis, `ops-action-brief` for operating cadence, and `structured-markdown` when audience is mixed or unknown.
+- Recommend `executive-summary` for decisions, `analyst-deep-dive` for diagnosis, `ops-action-brief` for operating cadence, and `structured-report` when audience is mixed or unknown.
 
 ### 4. Lens Planning
 
@@ -255,6 +255,8 @@ Suggested default mapping:
 
 ## Supported Output Templates
 
+Templates select information structure. Saved human reports default to Typst + PDF via the shared format gate; Markdown examples remain outlines or required consumer inputs, not an alternative default.
+
 ### Executive Summary
 
 - Best for leaders and decisions.
@@ -273,7 +275,7 @@ Suggested default mapping:
 - Best for recurring operating reviews.
 - Focus on actions, owners, thresholds, and exceptions.
 
-### Structured Markdown
+### Structured Report
 
 - Best when audience is mixed or unknown.
 - Use consistent sections and neutral tone.

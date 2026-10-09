@@ -2,6 +2,8 @@
 
 Documentation becomes unreadable when too much information is loaded at once. The **Index → Entry → Leaf** pattern bounds reader cognitive load and agent context windows by enforcing strict information layering.
 
+Apply [Document format selection](../../../rules/document-formats.md) before choosing extensions. Layers describe information structure: Typst is the default, required repository/Markdown consumers retain Markdown, and agent memory remains in its native protocol.
+
 ---
 
 ## The Three-Layer Shape (Human-Facing)
@@ -17,9 +19,9 @@ INDEX (Always loaded / Top-level overview)
 
 | Layer | Responsibility | Typical Size | Example |
 |---|---|---|---|
-| **Index** | Maps the domain; routes reader to topics based on intent | < 40 rows | `docs/README.md`, `docs/<section>/INDEX.md` |
-| **Entry** | Core workflow, high-level architecture, decision router | < 8 KB | `docs/<section>/<topic>.md`, `<module>/README.md` |
-| **Leaf** | Deep dive, edge cases, schema tables, parameter reference | < 16 KB | `docs/<section>/details/<leaf>.md` |
+| **Index** | Maps the domain; routes reader to topics based on intent | < 40 rows | `docs/index.typ`; required `README.md` / `INDEX.md` |
+| **Entry** | Core workflow, high-level architecture, decision router | < 8 KB source | `docs/<section>/<topic>.typ`; required `.md` or module `README.md` |
+| **Leaf** | Deep dive, edge cases, schema tables, parameter reference | < 16 KB source | `docs/<section>/details/<leaf>.typ`; required `.md` |
 
 
 ---
@@ -36,7 +38,9 @@ A file qualifies as an Index only when it satisfies all four:
 
 ## Sharding Large Documents (The Shard-Doc Recipe)
 
-When a document exceeds **12 KB** or addresses multiple distinct audiences / concerns, shard it using one of two patterns:
+When document source exceeds **12 KB** or addresses multiple distinct audiences / concerns, extract appropriate leaves. This is not a PDF-file-size limit; apply the Markdown recipes below only when Markdown is selected.
+
+For Typst, keep one main `.typ` entry and compose chapters/leaves with native includes, such as `#include "details/leaf.typ"`. Preserve valid markup/code boundaries rather than splitting on Markdown headings, and include necessary detail in the distributed PDF so navigation does not depend on the author's checkout.
 
 ### Pattern A: Leaf Extraction (`details/<leaf-name>.md`)
 Use for modular guides where deep sections are moved out of the primary reading path.
@@ -117,18 +121,19 @@ Use when a documentation folder needs an organized table of contents, a quick LL
 
 ## Directory Layout Standards
 
-### Human-Facing Repository Documentation (`docs/`)
+### Human-Facing Repository Documentation (`docs/`, Typst default)
 ```
 docs/
-├── README.md                     # Top-level index: catalog of sections & reader journeys
+├── README.md                     # Only when a Markdown repository entry point is required
+├── index.typ                     # Document index / reader journeys
 ├── <section>/
-│   ├── INDEX.md                  # Section index (when section has 3+ entries)
-│   ├── <topic-1>.md              # Topic entry
-│   ├── <topic-2>.md
+│   ├── index.typ                 # Section index (when section has 3+ entries)
+│   ├── <topic-1>.typ             # Topic entry; compile PDF for distribution
+│   ├── <topic-2>.typ
 │   └── details/
-│       ├── <leaf-a>.md           # Deep leaf details (parameters, schemas, edge cases)
-│       └── <leaf-b>.md
-└── glossary.md                   # Shared terminology (optional)
+│       ├── <leaf-a>.typ          # Deep details; include when needed by the reader
+│       └── <leaf-b>.typ
+└── glossary.typ                  # Optional; preserve a required GLOSSARY.md contract
 ```
 
 ### Human-Facing Code Module Documentation (`<module>/README.md`)
@@ -136,4 +141,3 @@ Placed directly inside each code package or subsystem directory (e.g. `src/auth/
 
 ### Agent Coordination Memory (`MEMORY_DIR` — Not `docs/`)
 Atomic execution plans, vertical slice phase files (`phases/01-*.md`), consensus boards, and session checkpoints live under `MEMORY_DIR` (`.agents/memories/`, `.serena/memories/`), preserving clean human documentation while keeping internal agent tracking file-based and git-committable.
-

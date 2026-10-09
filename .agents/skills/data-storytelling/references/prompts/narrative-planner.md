@@ -18,7 +18,7 @@ Turn ranked insights into an answer-first narrative that stays faithful to the e
 3. Order supporting insights so each one strengthens, qualifies, or narrows the lead answer.
 4. Separate what happened, what may help explain it, what remains uncertain, and what should happen next.
 5. Include counter-signals when they change the interpretation.
-6. Translate ranked insights into section-ready markdown blocks.
+6. Translate ranked insights into section-ready narrative blocks; leave final serialization to the output engine. Markdown intermediate story plans are not the saved human-report default.
 
 ## Story Structure
 

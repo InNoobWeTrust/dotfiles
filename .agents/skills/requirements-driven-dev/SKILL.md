@@ -11,6 +11,8 @@ Before planning, read the relevant section of [Planning working principles](refe
 
 ## Route First
 
+For saved human-facing specifications, apply [Document format selection](../../rules/document-formats.md) before selecting filenames; template examples describe content structure. Preserve required execution plans, parser inputs, BDD syntax, and repository-mandated formats rather than converting them to PDF-only artifacts.
+
 | Signal | Action |
 | --- | --- |
 | User asks for PRD, product requirements, or feature definition | Load `references/rules/prd.md` and `references/templates/prd.md` |

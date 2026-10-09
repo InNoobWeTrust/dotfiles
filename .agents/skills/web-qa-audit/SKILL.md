@@ -1,6 +1,6 @@
 ---
 name: web-qa-audit
-description: "Use this skill for executable web QA/QC work: QA-scoped spot checks, exploratory audits, release smoke passes, scenario-driven browser validation, evidence capture, optional materialization into durable E2E/a11y/responsive/visual suites, audience-adapted stakeholder report packs (Excel, PDF, static HTML), and QA grooming to compose audit-request input files before execution. Owns the operational QA workflow rather than the evaluative review. Load it not only when browser evidence must be run, but also when QA needs help turning a PR, bug, or manual request into an auditable input file."
+description: "Use this skill for executable web QA/QC work: scoped spot checks, exploratory audits, release smoke passes, scenario-driven validation, terminal-browser-first live evidence, optional materialization into durable E2E/a11y/responsive/visual suites, stakeholder report packs (Excel, PDF, static HTML), and grooming audit-request input files. Owns QA orchestration rather than evaluative review. Chrome/CDP is a special-case capability, not a prerequisite. Load when browser evidence must be run or a PR, bug, or manual request needs an auditable QA input file."
 ---
 
 # Web QA Audit
@@ -48,7 +48,9 @@ Start with `references/INDEX.md`, then load only the path matching the request.
 
 ## Rules
 
-- Prefer a dedicated browser-control capability for raw interaction mechanics and low-level performance traces.
+- Use **terminal-browser by default**, side-by-side with the agent; [browser automation](../cdp-browser-automation/SKILL.md) owns CLI mechanics. Ordinary QA does not require Chrome DevTools MCP.
+- Chrome/CDP is reserved for explicit Chrome tasks or demonstrated capability gaps (e.g. Chrome performance traces or heap snapshots). Do not silently enable MCP or change setup.
+- Preserve the requested browser, viewport, accessibility, and trace evidence contract. Missing capabilities are blocked/unverified or need an authorized specialist path, not downgraded passes; durable Playwright/Selenium suites remain separate.
 - Prefer this skill for QA orchestration, evidence contracts, scenario lifecycle, audit reporting, stakeholder pack projection, and pre-run grooming of auditable input files.
 - Start from `references/INDEX.md`; do not load the whole reference tree by default.
 - If the request is runnable-QA oriented but no audit-request/run-card/scenario input file exists yet, enter **Grooming / input composition** mode before any browser execution.
@@ -56,6 +58,7 @@ Start with `references/INDEX.md`, then load only the path matching the request.
 - Do not escalate a small spot check into a full materialization workflow unless the user or risk profile justifies it.
 - Keep success evidence explicit: pass/fail/unverified (and evidence_grade) with browser, viewport, and artifact context.
 - Keep YAML/Markdown as the canonical machine + engineering record; derive Excel/PDF/HTML for business audiences — never reverse that relationship.
+- Author stakeholder PDF narratives in Typst via [Document format selection](../../rules/document-formats.md); this does not change canonical QA YAML/Markdown or native spreadsheet/HTML contracts.
 - Audience-branch reporting: eng-only runs omit Stakeholder Pack section and do not load `stakeholder-report-pack.md`.
 - Stakeholder projection must pass sanitization, sensitive-artifact exclusion, provenance, and count-consistency gates; never map unverified/blocked to pass.
 - Never normalize unsafe auth/session/test-endpoint behavior; require sanctioned target and environment assumptions first.

@@ -256,7 +256,7 @@ Same sections as eng-only, plus:
 ## Stakeholder Pack
 - Audience: [mixed | business | release-owner]
 - Excel: [path | interim CSV | skipped: reason]
-- PDF: [path | interim MD | skipped: reason]
+- PDF: [verified PDF path | uncompiled .typ + blocker | skipped: reason]
 - HTML: [URL/path | skipped: reason]
 - Projection gates: [pass | fail: reason]
 ```

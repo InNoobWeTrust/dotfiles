@@ -2,6 +2,16 @@
 
 Standard scannable templates designed to prevent AI-generated discursive prose and walls of text.
 
+**Choose format first:** [Document format selection](../../../rules/document-formats.md) governs saved output. For Typst, start with [the native starter](typst-workflow.md#2-author-once-compile-directly) and translate the information structures below into native headings/tables/callouts; the Markdown examples and `.md` paths are only for required Markdown consumers.
+
+| Document structure | Default source | Key sections |
+|---|---|---|
+| Technical guide / how-to | `docs/guides/<topic>.typ` | Reader contract, quick start, procedure, verification, failures, references |
+| System overview | `docs/architecture/<system>.typ` | Boundary, topology image, components, trade-offs, invariants |
+| Section index | `docs/<section>/index.typ` | Topic catalog and reader journeys; required repository README/index stays Markdown |
+| Deep detail | `docs/<section>/details/<leaf>.typ` | Scope, parent context, mechanism, full schema; include in the distributed PDF when needed |
+| Code module README | `<module>/README.md` | Required repository-rendered entry point: purpose, flow, usage, public surface, invariants |
+
 ---
 
 ## Template 1: Technical Guide / How-To (`docs/guides/<topic>.md`)
@@ -227,4 +237,3 @@ const result = await client.process(payload);
 - **Side Effect Boundaries**: Pure functions isolate domain business rules; all I/O is routed through injected ports.
 - **Error Handling**: Throws only typed `<ModuleError>` exceptions; never leaks raw database or HTTP network errors to callers.
 ```
-

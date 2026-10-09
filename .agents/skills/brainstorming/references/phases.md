@@ -74,7 +74,7 @@ Subject the top ideas to diverse role-based lenses:
 
 ## Phase 6: Action Plan & Output
 
-Save the brainstorming session as a structured markdown document:
+For a saved human-facing session report, apply [Document format selection](../../../rules/document-formats.md): Typst source + PDF by default. The outline below specifies content, not output syntax; chat and internal coordination retain their required formats.
 
 ```markdown
 # Brainstorming Session: [Topic]

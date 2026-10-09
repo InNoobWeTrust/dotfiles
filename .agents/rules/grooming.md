@@ -85,6 +85,8 @@ For material decisions at commitment gates, use the canonical `Material decision
 
 ## 🔒 Locked Core Implementation Plan Gate (before plan approval)
 
+The Markdown plan/task/phase files below are agent-execution contracts, not a human-document default. Select saved human-facing specifications and reports using [Document format selection](document-formats.md); keep required execution and parser inputs native.
+
 > **Scope & Exemption Gate:** This gate applies to multi-file software engineering features, substantial system overhauls, and architectural changes. It is **explicitly waived** for Trajectory 3 (Fast-Path / Utility Scripting, single-file tools, and bounded fixes $\le 2$ files). Never create multi-file plans or separate phase files for small scripts.
 
 An implementation plan (`implementation_plan.md`, `plan.md`, `task.md`, or atomic slice specification) is **incomplete and non-executable** if it lacks any of the three locked core parts:
