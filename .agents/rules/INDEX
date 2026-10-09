@@ -9,7 +9,7 @@ These rules are referenced from the always-loaded instruction files. Load the ru
 
 | Rule | Trigger | Size |
 |---|---|---|
-| `code-quality.md` | Writing or modifying ANY code | medium |
+| `code-quality.md` | Implementation planning or writing/modifying ANY code (all trajectories) | medium |
 | `skill-compliance.md` | After loading any skill (binding commitment) | medium |
 | `self-grounded-verification.md` | Verification, self-review, "done" claims | medium |
 | `tool-call-integrity.md` | Every tool call that produces a side effect (file write, move, API call, shell command) | medium |

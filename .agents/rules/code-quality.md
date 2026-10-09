@@ -1,5 +1,5 @@
 ---
-description: "Applies to every file written or modified. Enforces core code quality principles, interface-first specifications, locked plan fidelity, and prohibited anti-patterns."
+description: "Applies before code implementation planning and to every file written or modified. Requires library/tool reuse, core code quality principles, interface-first specifications, locked plan fidelity, and prohibited anti-patterns."
 globs: "*"
 alwaysApply: true
 trigger: always_on
@@ -7,13 +7,26 @@ trigger: always_on
 
 # Code Quality Baseline
 
-Applies to every file written or modified. Use this rule for the core design gates and hard stops; load a reference only when its trigger applies.
+Applies before code implementation planning and to every file written or modified. Use this rule for the core design gates and hard stops; load a reference only when its trigger applies.
 
 Approval owner and mode come from [Delivery Ownership](delivery-ownership.md). The autonomous primary may define/reapprove researched contracts inside its authority before implementation; workers still stop on contract defects. Explicit human-only safety, compatibility, and Git gates remain human-owned.
 
+## Reuse Before Implementation (All Code Trajectories)
+
+This gate applies to scientific/EDA implementation and Fast-Path, including small helpers. Exemptions from production-design ceremony do not waive reuse.
+
+Before implementation planning or coding:
+
+1. **Discover per capability, not just per project:** check repository code/dependencies, standard/platform tools, and maintained domain libraries for each new or changed common capability. Inspect the relevant API/command for the available version against the required inputs, outputs, and deployment constraints; do not guess suitability from the package name.
+2. **Reuse the suitable capability:** prefer direct calls, with only necessary project-specific policy/adaptation. Do not recreate a supplied parser, transformation, or operational tool just because a handwritten implementation is short.
+3. **Justify custom code before writing it:** state the specific unmet requirement and evidence that the established option cannot satisfy it. Missing API research is not an evidenced gap. Vendoring or deliberately reimplementing an adequately supplied capability requires explicit user opt-in or repository policy.
+4. **Keep a small, traceable decision:** identify the selected API/command and source, or evidenced gap/authorized exception, in existing task context. No extra plan file, test suite, or wrapper is required. If suitability remains unknown, research or report the gap and stop affected implementation planning/coding rather than coding first.
+
+Do not force mismatched APIs or needless conversions solely to claim library use. Straightforward glue and project-specific research logic remain appropriate where established capabilities do not fit the actual contract.
+
 ## Pre-Implementation Principles
 
-> **Proportionality Note:** These principles govern production codebases, multi-component systems, and public interfaces. For Trajectory 3 (Fast-Path utility scripts, shell tools, dotfiles configurations, or self-contained scripts <100 lines), idiomatic native constructs (such as Python dicts/tuples or straightforward linear functions) are completely acceptable. Do not invent unnecessary classes, DTOs, or abstract layers for simple scripts.
+> **Proportionality Note:** The formal interface/type-design gates below govern production codebases, multi-component systems, and public interfaces. For Trajectory 3 (Fast-Path utility scripts, shell tools, dotfiles configurations, or self-contained scripts <100 lines), idiomatic native constructs (such as Python dicts/tuples or straightforward linear functions) are completely acceptable. Do not invent unnecessary classes, DTOs, or abstract layers for simple scripts.
 
 **Readability-first (all trajectories):** Within correctness, security, and required performance constraints, optimize for human understanding and a small review surface—not cleverness or minimum line count. Keep straightforward code straightforward; add helpers, classes, layers, or flow frameworks only when they reduce what a reader must understand.
 
@@ -27,7 +40,7 @@ Before adding or changing a function, class, or module, confirm all of the follo
 6. **Interface-first specification:** define and agree type signatures, enums, or abstract contracts before implementation logic.
 7. **Explicit DTOs:** use named, typed DTOs or equivalent domain types at boundaries, not positional tuples or untyped dynamic maps.
 8. **Ambiguity stop:** when caller-visible edge or failure behavior has multiple reasonable meanings, resolve and approve the contract before coding. The primary researches delegated choices; involve the user only when outcome or authority requires them.
-9. **Technology fit:** use the established stack, suitable platform capability, or maintained production-proven dependency. Vendoring or deliberately reimplementing an adequately supplied capability requires explicit user opt-in or repository policy.
+9. **Technology fit:** satisfy [Reuse Before Implementation](#reuse-before-implementation-all-code-trajectories).
 
 ## Consumer-Facing Contract Gate
 
@@ -46,7 +59,7 @@ Never unilaterally auto-decide to preserve backward compatibility, generate forw
 ## Pragmatism Over Pedantry (Anti-Perfectionism Circuit Breaker)
 
 Do not burn reasoning tokens, turns, or iterations endlessly polishing "engineering artistry" or debating micro-refactoring on working code.
-- If a script or utility achieves the user's operational goal and runs without error, it is **DONE**.
+- If a script or utility achieves the user's operational goal, runs without error, and passes the applicable contract, safety, and reuse checks, it is **DONE**.
 - Never refactor working, self-contained code into multi-class or multi-file hierarchies solely to satisfy abstract purism.
 - Minor stylistic linter suggestions or cosmetic metrics that do not affect correctness, security, or maintainability must never block task completion.
 

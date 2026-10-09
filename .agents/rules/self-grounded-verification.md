@@ -39,6 +39,7 @@ State what a *correct* outcome must satisfy, derived **only** from the requireme
 - [ ] <observable behavior 1 the requirement demands>
 - [ ] <edge case / failure mode that MUST be handled>
 - [ ] <contract/invariant that MUST hold>
+- [ ] <for code: established capabilities actually reused, or evidenced custom-code gap/authorized exception>
 - [ ] <locked interfaces/DTOs adhered to with zero invented interfaces>
 - [ ] <scoped in-scope file tree matched, out-of-scope boundary respected, zero unapproved files, complete cleanup>
 - [ ] <what would prove this is WRONG — the disconfirming test>
@@ -47,10 +48,13 @@ State what a *correct* outcome must satisfy, derived **only** from the requireme
 Rules for Step 1:
 - Write these criteria **without re-reading the implementation** to seed them. If you catch yourself deriving criteria *from* the code, stop — that is the bias leaking in.
 - Always include at least one **disconfirming criterion**: "what observation would prove this is broken?" Actively seek that observation in Step 2.
+- For code, include [library/tool reuse](code-quality.md#reuse-before-implementation-all-code-trajectories), including scientific/EDA and Fast-Path implementation. For trivial code edits, a focused source check suffices; the trivial-edit exemption below does not waive reuse requirements for changed capabilities.
 
 ### Step 2 — Evaluate Against the Priors
 
 Now examine the artifact and its actual results, checking each criterion from Step 1 one by one. For each: mark PASS / FAIL / UNVERIFIED and cite the concrete evidence (file:line, test output, observed value). An item you cannot ground in evidence is **UNVERIFIED**, never PASS.
+
+For code, inspect the current delivered code, diff, and actual call sites against the selected APIs/commands, input/output contract, and evidenced gaps/authorized exceptions; confirm dependencies where relevant. Green tests, installed or imported-but-unused libraries, memory acknowledgments, or an earlier completion claim are not reuse evidence. Reimplementing an adequately supplied capability without an authorized exception is FAIL; unresolved suitability is UNVERIFIED.
 
 ```markdown
 ### Verification Result
@@ -73,7 +77,7 @@ The verdict is **PASS only if every criterion is PASS**. Any FAIL or UNVERIFIED 
 | Evaluating a user's premise before building on it | Yes, when the premise is load-bearing and checkable |
 | Confirming a bug is actually fixed | Yes — define "fixed" independent of the patch, then check |
 | TDD RED/GREEN gate | Compose: the failing test IS the disconfirming criterion; confirm it fails for the *right* reason |
-| Trivial edits (typos, formatting, config values, renames) | No — skip to avoid process bloat |
+| Trivial edits (typos, formatting, config values, renames) | No full two-step; changed code capabilities still need a focused reuse check |
 
 ---
 
