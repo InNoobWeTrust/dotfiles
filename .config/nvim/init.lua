@@ -619,6 +619,8 @@ require("lazy").setup({
                         --- Python
                         "pyrefly",
                         "ty",
+                        -- Typst
+                        "tinymist",
                     },
                     automatic_enable = {
                         exclude = { "basedpyright", "pyright", "deno", "denols" },

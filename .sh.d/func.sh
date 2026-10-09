@@ -259,7 +259,7 @@ dotfiles_clean() {
                 ;;
             --help|-h)
                 printf 'usage: dotfiles_clean [--dry-run] [--mac-cleanup]\n'
-                printf 'Clean known tool caches (uv, bun, npm, pnpm, go, gh), temporary files, and platform junk.\n'
+                printf 'Clean known tool caches (uv, bun, npm, pnpm, go, gh, docker buildx), temporary files, and platform junk.\n'
                 return 0
                 ;;
             *)
@@ -334,7 +334,21 @@ dotfiles_clean() {
         fi
     fi
 
-    # 9. Platform-specific cleanup
+    # 9. Docker buildx cache and build history
+    if usable docker; then
+        if docker info >/dev/null 2>&1; then
+            printf "Cleaning Docker buildx build history and cache...\n"
+            if [ "$dry_run" -eq 0 ]; then
+                if docker buildx version >/dev/null 2>&1; then
+                    docker buildx history rm --all >/dev/null 2>&1 || true
+                    docker buildx prune --all --force >/dev/null 2>&1 || true
+                fi
+                docker builder prune -a -f >/dev/null 2>&1 || true
+            fi
+        fi
+    fi
+
+    # 10. Platform-specific cleanup
     case "$(uname -s)" in
         Darwin)
             if usable macos_cleanup; then

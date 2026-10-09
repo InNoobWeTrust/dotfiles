@@ -108,8 +108,6 @@ usable docker && \
         alias selenium-docker='docker run --name selenium --rm -d -p 4444:4444 --shm-size 2g selenium/standalone-chrome:latest'
         # Selenium chromium on ARM
         alias selenium-arm-docker='docker run --name selenium --rm -d -p 4444:4444 --shm-size 2g seleniarm/standalone-chromium'
-        # Convert markdown to pdf
-        alias mdpdfinator-docker='docker run --name mdpdfinator --rm -v ${PWD}:/app yjpictures/mdpdfinator'
         # Rancher
         alias rancher-docker='docker run --name rancher --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher'
         # Gitleaks
@@ -175,6 +173,8 @@ usable npx && \
         ! usable bru && alias bru='npx --yes @usebruno/cli'
         # Serve live rendered markdown files
         ! usable mdts && alias mdts='npx --yes mdts'
+        # Convert markdown to pdf
+        ! usable mdpdf && alias mdpdf='npx --yes @mdpdf/mdpdf'
         # Render markdown to html
         ! usable marked && alias marked='npx --yes marked'
         ## Marp
@@ -466,6 +466,8 @@ fi
 
 usable curl && usable bash && alias install-agy='curl -fsSL https://antigravity.google/cli/install.sh | bash'
 usable agy && alias agyolo='agy --dangerously-skip-permissions'
+
+usable curl && usable bash && alias install-terminal-browser='curl -fsSL https://terminal-browser.sh/install | bash'
 
 ################ DevSecMLOps ###################
 
