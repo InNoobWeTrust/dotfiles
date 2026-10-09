@@ -1,0 +1,6 @@
+{
+  "telemetry.usage": "off",
+  "telemetry.crashReports": "off",
+  "render.frameEvents": "off",
+  "render.transmitOutlines": "off"
+}

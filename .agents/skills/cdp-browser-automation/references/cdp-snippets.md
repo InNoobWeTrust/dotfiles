@@ -1,10 +1,12 @@
 # CDP Snippets Reference
 
-Minimal, copy-paste-ready implementations. Add to your own CDP class as needed.
+**Opt-in exception only.** Use [terminal-browser](terminal-browser.md) for routine interaction. These implementations are for an authorized raw-CDP capability gap or explicit Chrome task; first apply the [Chrome exception gate](chrome-connect.md). Do not build a CDP class for ordinary clicks, forms, screenshots, or QA.
+
+Minimal, copy-paste-ready implementations for that exception. Reuse an approved tool before adding custom helpers.
 
 > **Execution rule (`rules/execution-safety.md`):** Write CDP scripts to a
-> temp directory (`/tmp/` or repo scratch dir), then run with
-> `uv run --with websockets --with httpx python /tmp/cdp_script.py`.
+> approved `$TMPDIR` scratch outside the repo, then run with
+> `uv run --with websockets --with httpx python "$TMPDIR/agent-cdp-script.py"`.
 > Do not pipe large inline scripts. Do not `pip install` dependencies.
 
 ---
@@ -12,34 +14,21 @@ Minimal, copy-paste-ready implementations. Add to your own CDP class as needed.
 ## Minimal CDP Client
 
 Requires only `websockets`. Write the script to a temp file and run it with
-`uv run --with websockets python /tmp/cdp_script.py` so the dependency is
-resolved on demand; everything else is stdlib.
+`uv run --with websockets python "$TMPDIR/agent-cdp-script.py"` so the dependency is
+resolved on demand; everything else is stdlib. Supply the explicit loopback port
+of the approved isolated Chrome instance. For a dynamic port, read
+`DevToolsActivePort` only from that task-owned profile; never fall back to a personal profile.
 
 ```python
-import asyncio, base64, json, platform
+import asyncio, base64, json
 from pathlib import Path
 import websockets
 
 
 # ── Connection ────────────────────────────────────────────────────────────────
 
-def read_cdp_port() -> int:
-    """Read the port Chrome wrote to DevToolsActivePort (works Chrome 115+).
-
-    The file format is two lines: port number, then a browser token.
-    Always read only the first line. Supports macOS and Linux paths.
-    """
-    if platform.system() == "Darwin":
-        f = Path.home() / "Library/Application Support/Google/Chrome/Default/DevToolsActivePort"
-    else:
-        f = Path.home() / ".config/google-chrome/Default/DevToolsActivePort"
-    return int(f.read_text().splitlines()[0])
-
-async def get_ws_url(port: int = 9222, poll_timeout: float = 30.0) -> str:
-    """Connect to Chrome, polling up to poll_timeout seconds for the port to appear.
-
-    Chrome writes DevToolsActivePort only after binding — poll before assuming failure.
-    """
+async def get_ws_url(port: int, poll_timeout: float = 30.0) -> str:
+    """Poll only the explicitly approved Chrome endpoint; never discover another profile."""
     import urllib.request, time
     deadline = time.time() + poll_timeout
     last_err: Exception | None = None
@@ -47,26 +36,16 @@ async def get_ws_url(port: int = 9222, poll_timeout: float = 30.0) -> str:
         try:
             data = json.loads(
                 urllib.request.urlopen(
-                    f"http://localhost:{port}/json/version", timeout=2
+                    f"http://127.0.0.1:{port}/json/version", timeout=2
                 ).read()
             )
             return data["webSocketDebuggerUrl"]
         except Exception as e:
             last_err = e
             await asyncio.sleep(0.5)
-    # Final fallback: read DevToolsActivePort file
-    try:
-        port = read_cdp_port()
-        data = json.loads(
-            urllib.request.urlopen(
-                f"http://localhost:{port}/json/version", timeout=2
-            ).read()
-        )
-        return data["webSocketDebuggerUrl"]
-    except Exception:
-        raise RuntimeError(
-            f"Chrome not reachable after {poll_timeout}s. Last error: {last_err}"
-        )
+    raise RuntimeError(
+        f"Approved Chrome endpoint not reachable after {poll_timeout}s. Last error: {last_err}"
+    )
 
 
 # ── Core class ────────────────────────────────────────────────────────────────
@@ -100,9 +79,9 @@ class CDP:
     # ── Input ─────────────────────────────────────────────────────────────────
 
     async def dom_click(self, selector: str, session_id: str | None = None):
-        """Click an element via DOM — fires addEventListener('click') handlers.
+        """Programmatic DOM click: an explicit deviation from normal user input.
 
-        Prefer this over click(x, y) for all standard HTML controls.
+        Use only when the authorized task allows bypassing the input sequence.
         Raises if no element matches the selector.
         """
         clicked = await self.js(
@@ -117,10 +96,9 @@ class CDP:
             raise RuntimeError(f"dom_click: no element matching {selector!r}")
 
     async def click(self, x: float, y: float, button: str = "left"):
-        """Compositor-level click — use for canvas/WebGL or cross-origin iframes.
+        """Dispatch pointer input at verified coordinates, then verify the outcome.
 
-        Does NOT guarantee DOM addEventListener('click') handlers fire.
-        For standard HTML buttons/links, use dom_click() instead.
+        Coordinates can become stale; prefer an approved tool's semantic targeting.
         """
         for t in ("mousePressed", "mouseReleased"):
             await self.send("Input.dispatchMouseEvent",
@@ -179,14 +157,14 @@ class CDP:
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 async def main():
-    ws_url = await get_ws_url()
+    ws_url = await get_ws_url(port=19222)  # match the approved instance, not an arbitrary default
     async with websockets.connect(ws_url) as ws:
         cdp = CDP(ws)
         await cdp.goto("https://example.com")
         # Never use asyncio.sleep(N) — use wait_for_selector or wait_for_load
         await wait_for_selector(cdp, "h1")
         print(await cdp.page_info())
-        await cdp.screenshot("/tmp/shot.png")  # for human inspection only
+        await cdp.screenshot("/tmp/shot.png")  # inspect with an image-capable tool
 ```
 
 ---

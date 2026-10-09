@@ -13,7 +13,7 @@ Standardize:
 - artifact capture
 - teardown expectations
 
-Use `cdp-browser-automation` for the actual browser-control mechanics.
+Use [cdp-browser-automation](../../cdp-browser-automation/SKILL.md) for **terminal-browser-first** control. Ordinary QA needs no Chrome DevTools MCP or custom browser runner.
 
 ---
 
@@ -25,12 +25,38 @@ Before a run, lock answers for:
 3. fixture source (seed command / fixture API / shared preview state)
 4. auth model (anonymous / seeded credentials / cookie bootstrap / test endpoint)
 5. artifact root and naming
+6. terminal-browser availability, intended browser/tab, actual engine/viewport, and any required specialist collectors
 
-If any are unknown, stop or downgrade.
+If prerequisites are unknown, stop affected execution or mark it blocked/unverified; do not relax approved scope.
+
+## Default Side-by-Side CLI Run
+
+After scope and target startup are authorized, reuse the intended pane or open a task-owned one:
+
+```sh
+terminal-browser open http://localhost:3000 --split right
+terminal-browser ls --json
+```
+
+Replace the URL with the sanctioned target. Select `BROWSER_KEY` and `TAB_ID` from the inventory; do not assume the active tab is the task tab. Through the available sandbox, run the observation/action/verification loop directly:
+
+```sh
+terminal-browser action --browser "$BROWSER_KEY" --tab "$TAB_ID" -- snapshot -i
+terminal-browser action --browser "$BROWSER_KEY" --tab "$TAB_ID" -- eval 'JSON.stringify({width: innerWidth, height: innerHeight, dpr: devicePixelRatio, userAgent: navigator.userAgent})'
+terminal-browser action --browser "$BROWSER_KEY" --tab "$TAB_ID" -- screenshot "$ARTIFACT_ROOT/screenshots/current-page.png"
+```
+
+Set `ARTIFACT_ROOT` to the declared access-controlled run directory and ensure its screenshot directory exists before capture. Inspect images with an image-capable tool, refresh element refs after page changes, and verify the expected UI after each action. See [terminal-browser mechanics](../../cdp-browser-automation/references/terminal-browser.md) for exact targeting, waits, viewport checks, and cleanup.
+
+Record tool/version, engine, and observed viewport with the evidence. If a required trace, full a11y check, device profile, or non-Chromium engine cannot be established, mark that coverage blocked/unverified or use an authorized specialist runner; never silently enable Chrome or rename an incompatible artifact.
+
+Finish with `terminal-browser action --browser "$BROWSER_KEY" --tab "$TAB_ID" done`. Close only task-owned tabs when authorized; **never `terminal-browser shutdown`** as routine cleanup because the daemon is shared.
 
 ---
 
 ## Runner Invocation Contract
+
+The following is an **illustrative project-runner contract**, not a CLI installed by this skill. Use an existing project runner when one exists; ordinary bounded CLI checks do not require implementing this wrapper.
 
 ```text
 run-browser-audit \
@@ -215,6 +241,7 @@ Expand when:
 - prior non-Chromium regressions exist
 
 Record the selected matrix in the audit summary or scenario execution metadata.
+For terminal-browser, verify the observed dimensions before each capture; pane resizing may change them. A mobile-width Chromium viewport is not an iPhone/Safari or touch-device run. Use approved specialist suites for requested Firefox/WebKit or real-device coverage, and keep unavailable coverage unverified.
 
 ---
 

@@ -25,6 +25,12 @@ Canonical configuration is stored at `.agents/mcp.json` using the standard MCP `
 > [!IMPORTANT]
 > **Use absolute paths or commands on `$PATH`**: Relative paths break because different agent harnesses execute MCP servers from different working directories.
 
+### Default browser policy
+
+Browser interaction uses [terminal-browser](../../cdp-browser-automation/references/terminal-browser.md), not an always-on MCP. The shared `.agents/mcp.json` intentionally omits `chrome-devtools`, so consumers that do not understand disable flags cannot start it accidentally. Harness-specific Chrome definitions may remain **disabled** for explicit special-case use; synchronization must not re-enable them or add a terminal-browser MCP.
+
+If a canonical entry uses `enabled: false`, preserve that intent using the target's native disable control; omit it when no verified control exists. Do not copy `enabled` blindly into a consumer that ignores it. Existing Kilo and OpenCode-compatible configs use `enabled: false`; native OpenCode V2 uses `mcp.servers.<name>.disabled: true`; this repo's Gemini/Antigravity MCP config uses `disabled: true`.
+
 ---
 
 ## Agent Configuration Matrix
@@ -86,8 +92,9 @@ Kilo Code (≥v7.3) stores MCP configuration inside its main JSONC config file u
 1. **Read Canonical Config**: Read `.agents/mcp.json`. If missing, unparseable, or missing the `mcpServers` object, halt and prompt the user.
 2. **Identify Active Agent**: Determine which harness is currently executing and locate its config file using the matrix above.
 3. **Merge**:
-   - If the agent config file exists, read it and merge the `mcpServers` (or converted `"mcp"`) key, preserving all other existing configurations.
-   - If the file does not exist, create it with the required structure.
+    - If the agent config file exists, read it and merge the `mcpServers` (or converted `"mcp"`) key, preserving all other existing configurations.
+    - If the file does not exist, create it with the required structure.
+    - Honor disabled/default-excluded servers. Do not turn an existing disabled Chrome definition on as a side effect of merging.
 4. **Write**: Save the updated configuration to disk. If modifying an active file that the host process flushes on exit, avoid clobbering or race conditions.
 5. **Report**: Confirm specific changes to the user (servers added, updated, or removed).
 6. **Restart Reminder**: Inform the user that restarting the agent or reloading the IDE window is required for changes to take effect.

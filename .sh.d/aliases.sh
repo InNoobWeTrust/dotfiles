@@ -286,8 +286,8 @@ usable neovide && \
         alias neovide-remote='neovide --server=localhost:6666'
     }
 
-# Chrome debug
-alias chrome-debug='chrome_debug'
+# Browser debug
+alias browser-debug='browser_debug'
 
 ############################### PATH management ###############################
 

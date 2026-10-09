@@ -20,5 +20,5 @@ app-server-control.sock
 /session_index.jsonl
 /tui-thread-reference-capabilities/
 
-# Ignore codex runtime system skills
-skills/.system/
+# Ignore codex system skills
+/skills/

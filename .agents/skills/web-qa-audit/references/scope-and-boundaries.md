@@ -40,6 +40,7 @@ Keep responsibilities clean:
 1. An evaluative review flow identifies risk or the need for evidence.
 2. A QA orchestration flow defines scope, scenario, run profile, and audit contract.
 3. A browser-control flow executes the browser mechanics when live interaction is required.
+   Use terminal-browser by default; Chrome/CDP requires an explicit task or demonstrated capability gap, not generic QA setup.
 4. The QA orchestration flow synthesizes machine evidence (YAML + engineering Markdown).
 5. **Only if** audience is non-dev / business / release-owner: run projection gates, then project into Excel / PDF / optional static HTML.
 6. The QA orchestration flow decides whether to materialize durable tests.
@@ -52,6 +53,7 @@ Keep responsibilities clean:
 - treating raw browser interaction as a full QA audit
 - escalating every spot check into scenario design and materialization
 - confusing performance-debugging with generic QA evidence collection
+- enabling Chrome DevTools MCP for routine browser checks, or silently replacing required browser/viewport/trace/a11y coverage with a CLI snapshot
 - handing business stakeholders raw scenario YAML as the primary report
 - treating Excel/PDF as the source of truth instead of a projection of machine evidence
 - forcing Stakeholder Pack ceremony on eng-only runs

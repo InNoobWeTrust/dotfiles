@@ -2,6 +2,8 @@
 
 Load this index first after activating `web-qa-audit`. It keeps the skill compact while giving a clear path through the executable QA stack.
 
+Live interaction defaults to terminal-browser via [browser mechanics](../../cdp-browser-automation/references/terminal-browser.md). Chrome/CDP is a capability-specific exception, not a preflight dependency; requested browser/artifact coverage must still be satisfied or marked blocked/unverified.
+
 ---
 
 ## What each reference owns

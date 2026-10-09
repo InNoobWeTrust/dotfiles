@@ -62,9 +62,9 @@ recovery_paths:
         expectation: string
 evidence:
   screenshots_on: [pass, fail]
-  trace_on_fail: true
-  a11y_snapshot: true
-  perf_trace: false
+  trace_on_fail: boolean       # opt-in; true requires a compatible collector
+  a11y_snapshot: boolean       # not equivalent to a full accessibility audit
+  perf_trace: boolean          # specialist diagnostic evidence
 materialization:
   promote_to: [e2e, a11y-smoke]
   ci_tier: pr-smoke | nightly | release
@@ -80,6 +80,8 @@ timeouts:
 ---
 
 ## Example
+
+This example intentionally requests multi-engine, trace, and accessibility evidence; it is **not** the default lightweight spot check. Use terminal-browser for supported Chromium interaction and an authorized specialist path for the remaining requirements. Do not change its evidence flags or report unsupported coverage as passed just to fit the default CLI.
 
 ```yaml
 schema_version: 1
@@ -154,5 +156,6 @@ timeouts:
 ## How to Use It
 
 - **Browser audit** uses the route, fixtures, auth state, viewports, and assertions.
+- **Default mechanics** use terminal-browser; choose trace/a11y/perf requirements explicitly and validate capabilities before running. Preserve requirements in approved scenarios.
 - **Materialization** uses the assertions, CI tier, and flake risk to decide what becomes durable tests.
 - **Spot checks** may use only a subset of the file when a full scenario lifecycle is not justified.

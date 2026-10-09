@@ -11,7 +11,7 @@
 |---|---|---|
 | Evaluative review | `reviewer` + lenses (incl. `black-box-qa`) | Useful structure; still depends on operator discipline |
 | QA orchestration | `web-qa-audit` | Draft operational workflow; evolving contracts |
-| Browser mechanics | `cdp-browser-automation` (and similar) | Mechanics capability — not a full QA system |
+| Browser mechanics | `cdp-browser-automation`, terminal-browser by default | Mechanics capability; Chrome/CDP is a special case, not a full QA system |
 | Evidence / run cards | `web-qa-audit` protocol refs | Contracts exist on paper; battle-testing is local |
 | Materialization planning | `materializer-contract` path | Planning aid — does not own your CI |
 | Stakeholder projection | `stakeholder-report-pack` path | Gates designed; not universal org process |

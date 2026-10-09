@@ -8,7 +8,7 @@
         "--browser-url=http://localhost:19222"
       ],
       "command": "npx",
-      "disabled": false
+      "disabled": true
     },
     "sandbox": {
       "command": "mcp-sandbox",

@@ -205,12 +205,86 @@ batch_open() {
 }
 
 #
-# # chrome_debug - Start Chrome with a debug port
-# # usage: chrome_debug [port]
-chrome_debug() {
-    local port chrome_bin cmd 2>/dev/null || true
+# # browser_debug - Start browser for debugging (terminal-browser with SSH mode or Chrome fallback)
+# # usage: browser_debug [--ssh <user@host>|user@host] [port|url] [options]
+# #        browser_debug [--chrome] [port] [options]
+browser_debug() {
+    local port target ssh_target force_chrome chrome_bin cmd 2>/dev/null || true
 
-    port=${1:-9222}
+    port=9222
+    target=''
+    ssh_target="${BROWSER_SSH-}"
+    force_chrome=0
+
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            -h|--help)
+                printf 'usage: browser_debug [--ssh <user@host>|user@host] [port|url] [options]\n'
+                printf '       browser_debug [--chrome] [port] [options]\n'
+                return 0
+                ;;
+            --chrome|-c)
+                force_chrome=1
+                shift
+                ;;
+            --ssh)
+                [ "$#" -gt 1 ] || {
+                    printf 'browser_debug: %s requires a value\n' "$1" >&2
+                    return 2
+                }
+                ssh_target="$2"
+                shift 2
+                ;;
+            --ssh=*)
+                ssh_target="${1#*=}"
+                shift
+                ;;
+            *@*|ssh://*)
+                ssh_target="${1#ssh://}"
+                shift
+                ;;
+            *)
+                if [ -z "$target" ]; then
+                    target="$1"
+                    shift
+                else
+                    break
+                fi
+                ;;
+        esac
+    done
+
+    # Normalize target into port and URL
+    case "$target" in
+        '')
+            target="localhost:${port}"
+            ;;
+        *[!0-9]*)
+            case "$target" in
+                http://*|https://*|localhost:*|*:*|*/*)
+                    ;;
+                *)
+                    target="http://${target}"
+                    ;;
+            esac
+            ;;
+        *)
+            port="$target"
+            target="localhost:${port}"
+            ;;
+    esac
+
+    # Use terminal-browser by default if available and not forced to Chrome
+    if [ "$force_chrome" -eq 0 ] && usable terminal-browser; then
+        if [ -n "$ssh_target" ]; then
+            terminal-browser open --ssh "$ssh_target" "$target" "$@"
+        else
+            terminal-browser open "$target" "$@"
+        fi
+        return $?
+    fi
+
+    # Fallback to Google Chrome / Chromium
     case "$(uname -s)" in
         Darwin)
             chrome_bin="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -226,11 +300,9 @@ chrome_debug() {
     esac
 
     if [ -n "$chrome_bin" ] && [ -x "$chrome_bin" ]; then
-        # Shift the first argument (port) if it was provided
-        [ -n "$1" ] && shift
         "$chrome_bin" --remote-debugging-port="$port" --user-data-dir="$HOME/.local/chrome/user_data" "$@"
     else
-        echo "Chrome or Chromium not found"
+        printf 'Neither terminal-browser nor Chrome/Chromium found\n' >&2
         return 1
     fi
 }

@@ -24,19 +24,13 @@ contribution protocol, three gates, domain file template, and lifecycle rules.
 
 ## Design Constraints (keep your implementation clean)
 
-- **No retries framework** — wrap individual CDP calls with `try/except + sleep`;
-  classify errors (transient: retry with backoff; fatal: surface to caller and stop)
-- **No session manager** — reconnect is two lines: `websockets.connect` +
-  `Target.attachToTarget`; if a websocket drops mid-flow, check whether the
-  in-flight action committed before reconnecting
-- **No config system** — hardcode what you know, parameterize only what changes
-- **Minimal abstraction** — a 200-line CDP class is sufficient for 95% of tasks;
-  add helpers as you discover you need them, not upfront
+- **Reuse the CLI** — [terminal-browser](terminal-browser.md) is the default; do not build a CDP class, session manager, or browser MCP for ordinary interaction.
+- **Explicit targets** — pin the browser and tab from current inventory; let terminal-browser manage its connection and agent-browser session.
+- **Bounded recovery** — classify transient vs fatal failures; check whether an in-flight action committed before retrying. Do not build a retries framework.
+- **No config system** — parameterize only what changes; do not turn one task into a browser framework.
+- **Capability-specific exceptions** — use raw CDP only under the [Chrome exception gate](chrome-connect.md), and reuse an approved tool before adding helpers.
 - **The code is the doc** — short, readable helpers over documented complex ones
-- **Safe Chrome defaults** — always pass `--no-first-run --disable-infobars
-  --disable-notifications --disable-translate --disable-extensions` to suppress
-  overlays; set a navigation timeout; never run headless without `--headless=new`
-  on Chrome 112+
+- **Safe Chrome exceptions** — isolated task-owned profile, loopback-only debugging, bounded readiness/navigation timeouts, and no personal-session reuse. Chrome launch flags are not default prerequisites.
 
 > *"The less you build, the more it works."*
 > Model capability scales with better models. Framework complexity doesn't shrink.

@@ -1,5 +1,7 @@
 # Performance Diagnostics via CDP
 
+**Chrome-specific exception, not the default browser workflow.** Routine interaction and QA use [terminal-browser](terminal-browser.md). Load this guide when the task actually needs Chrome diagnostic capabilities and follow the [exception gate](chrome-connect.md) before enabling MCP or launching Chrome. Verify which tools the current harness exposes; the Kilo names below are examples, not guaranteed interfaces.
+
 Use this reference when the task is about slow pages, Core Web Vitals,
 Lighthouse, traces, frame drops, long tasks, render-blocking requests,
 third-party overhead, or memory leaks.
@@ -15,7 +17,7 @@ performance workflow here.
 
 ---
 
-## Default Rule
+## Rule Within the Chrome Exception
 
 - Start with **environment emulation**, not with a trace.
 - Use **Lighthouse** when operating in Chrome directly, or when the task is about
