@@ -1,5 +1,5 @@
 ---
-description: "Implementation and bounded refactoring of non-confidential code, with verification of the approved behavior."
+description: "Bounded implementation and refactoring of non-confidential code while preserving approved interfaces. Prefer for a simpler module or competing maintainable patch with actual behavior checks."
 mode: subagent
 model: "opencode/muse-spark-1.3-contributor-free"
 permission:

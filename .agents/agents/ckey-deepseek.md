@@ -1,5 +1,5 @@
 ---
-description: "Reasoning and coding for bounded problems with explicit acceptance checks; useful for implementation proposals and technical analysis."
+description: "Correctness/reasoning challenger: derive algorithms, test invariants and find counterexamples in proposals or agy findings. Also handles scoped logic edits with explicit acceptance checks."
 mode: subagent
 model: "ckey/forbiddengun/deepseek"
 variant: high

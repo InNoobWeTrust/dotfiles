@@ -1,5 +1,5 @@
 ---
-description: "Bulk drafting and scouting on non-confidential material; automatic model routing suits tasks that do not depend on one model's particular strengths."
+description: "Bulk summaries, draft variants, extraction and low-risk scouting on non-confidential material. Alternate pool to kilo-auto-free for spot-checkable work; dynamic routing does not guarantee model diversity."
 mode: subagent
 model: "kilo/openrouter/free"
 permission:

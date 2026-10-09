@@ -1,5 +1,5 @@
 ---
-description: "Fast research, source scouting and implementation with checks on non-confidential material."
+description: "Fast native-tool source lookup, repository pattern search and small specified patches on non-confidential material. Prefer for focused scouting or narrow checks with paths, sources and execution evidence."
 mode: subagent
 model: "opencode/mimo-v2.6-flash-free"
 permission:

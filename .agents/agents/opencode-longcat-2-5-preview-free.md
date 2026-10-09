@@ -1,5 +1,5 @@
 ---
-description: "Drafting, source synthesis and bounded coding experiments on non-confidential material."
+description: "Source synthesis, alternative explanations and bounded coding experiments on non-confidential material. Use for a competing approach, ambiguity check or research refinement with source links."
 mode: subagent
 model: "opencode/longcat-2.5-preview-free"
 permission:

@@ -1,5 +1,5 @@
 ---
-description: "Design, deep review, difficult multi-step reasoning and long-context analysis on non-confidential material."
+description: "Deep design stress-testing, cross-document contradictions and interacting constraints using non-confidential sources. An alternative reasoning route; opaque model identity does not guarantee a different-family perspective."
 mode: subagent
 model: "kilo/stealth/glyph-cluster"
 variant: high

@@ -1,5 +1,5 @@
 ---
-description: "Bulk scouting, drafting and straightforward synthesis of non-confidential material; automatic model routing suits tasks that do not require a specific model."
+description: "Bulk extraction, repository inventories, repetitive drafting and straightforward synthesis on non-confidential material. Use for easily spot-checked throughput work; dynamic routing does not guarantee model diversity."
 mode: subagent
 model: "kilo/kilo-auto/free"
 permission:

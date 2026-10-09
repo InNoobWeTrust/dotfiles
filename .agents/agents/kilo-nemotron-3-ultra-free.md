@@ -1,5 +1,5 @@
 ---
-description: "Planning, design analysis and review of non-confidential material; suited to deliberate reasoning rather than rapid edit-test loops."
+description: "Deliberate design/planning challenger for non-confidential assumptions, failure modes and operational trade-offs. Alternate route to opencode-nemotron-3-ultra-free, not an extra independent model."
 mode: subagent
 model: "kilo/nvidia/nemotron-3-ultra-550b-a55b:free"
 permission:

@@ -1,5 +1,5 @@
 ---
-description: "General coding and agentic implementation of bounded tasks on non-confidential material."
+description: "Bounded bugfixes, prototype units and concrete alternative patches on non-confidential code. Use for a simpler implementation candidate; opaque model identity does not prove family independence."
 mode: subagent
 model: "opencode/big-pickle"
 permission:

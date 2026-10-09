@@ -1,5 +1,5 @@
 ---
-description: "Read-only diagnosis of failures, stack traces and performance evidence; useful for identifying causes and proposing a repair before changes are authorized."
+description: "Read-only diagnosis of failures, stack traces and performance evidence. Returns supported causes and next safe checks or repair proposals without changing files."
 mode: subagent
 model: "kilo/~openai/gpt-terra-latest"
 variant: high

@@ -1,5 +1,5 @@
 ---
-description: "Coding and tool-driven verification for a scoped implementation unit with concrete inputs, outputs and checks."
+description: "Scoped implementation and verification: execute settled patches, run checks and probe edge cases within known interfaces. Prefer for bounded edit-test work or an independent implementation alternative."
 mode: subagent
 model: "ckey/forbiddengun/qwen"
 variant: high

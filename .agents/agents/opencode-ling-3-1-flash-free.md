@@ -1,5 +1,5 @@
 ---
-description: "Bounded research, drafting and implementation with checks on non-confidential material."
+description: "Clarity-focused rewrites, concise research synthesis, repetitive transformations and small specified edits on non-confidential material. Prefer for an alternative draft; shares model identity with kilo-ling-3-1-flash."
 mode: subagent
 model: "opencode/ling-3.1-flash-free"
 permission:

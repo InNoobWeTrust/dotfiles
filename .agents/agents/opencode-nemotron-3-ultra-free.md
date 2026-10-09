@@ -1,5 +1,5 @@
 ---
-description: "Planning, design analysis and architecture review of non-confidential material; suited to deliberate reasoning rather than rapid edit-test loops."
+description: "Architecture/planning challenger for non-confidential recovery paths, operational trade-offs and simpler designs. Prefer for deliberate pre-mortems, not fast editing; shares model identity with kilo-nemotron-3-ultra-free."
 mode: subagent
 model: "opencode/nemotron-3-ultra-free"
 permission:

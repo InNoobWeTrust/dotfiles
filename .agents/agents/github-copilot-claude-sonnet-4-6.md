@@ -1,5 +1,5 @@
 ---
-description: "Coding, long-context reasoning and document work; useful for multi-file changes and synthesis across substantial source material."
+description: "Coherent multi-file implementation, document revision and source synthesis across interconnected material. Choose for continuity, integration or contract refinement after scouting, not bulk discovery."
 mode: subagent
 model: "github-copilot/claude-sonnet-4.6"
 variant: high

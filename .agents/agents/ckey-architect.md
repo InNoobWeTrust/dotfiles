@@ -1,5 +1,5 @@
 ---
-description: "Architecture exploration and design review: compare options, interfaces and trade-offs for a bounded system or component."
+description: "Architecture/design challenger: compare simpler alternatives, boundaries, contracts and recovery trade-offs. Prefer for a competing design or pre-mortem rather than another generalist pass."
 mode: subagent
 model: "ckey/forbiddengun/architect"
 variant: high

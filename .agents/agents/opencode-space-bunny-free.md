@@ -1,5 +1,5 @@
 ---
-description: "Fast coding and agentic tool use for scoped implementation tasks on non-confidential material."
+description: "Tool-use executor for non-confidential shell glue, configuration fixes and small mechanical code changes. Prefer for settled low-complexity implementation with exact file limits and checks, not open-ended deliberation."
 mode: subagent
 model: "opencode/space-bunny-free"
 permission:

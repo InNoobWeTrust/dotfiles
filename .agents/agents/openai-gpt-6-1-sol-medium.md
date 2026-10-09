@@ -1,5 +1,5 @@
 ---
-description: "Routine, well-scoped code changes, verification and source synthesis; choose when the task is clear and does not need extended reasoning."
+description: "Routine scoped patches, verification and source synthesis with native tools and multi-turn continuity. Use for settled contracts; agy or ckey-qwen fit separable throughput work."
 mode: subagent
 model: "openai/gpt-6.1-sol"
 variant: medium
