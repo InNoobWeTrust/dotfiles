@@ -13,22 +13,10 @@
   prompt = false
 [diff]
   tool = nvim
-;[url "git@github.com:"]
-;  insteadOf = https://github.com/
 
 [includeIf "gitdir:~/Developer/"]
   path = ~/.gitconfig.d/.weeaboo.gitconfig
 [includeIf "gitdir:~/Developer/InNoobWeTrust/"]
   path = ~/.gitconfig.d/.nerd.gitconfig
-[includeIf "gitdir:~/Developer/tokoinofficial/"]
-  path = ~/.gitconfig.d/.work.gitconfig
-[includeIf "gitdir:~/Developer/homebrew-research/"]
-  path = ~/.gitconfig.d/.work.gitconfig
-[includeIf "gitdir:~/Developer/rex/"]
-  path = ~/.gitconfig.d/.work.collab.gitconfig
-[includeIf "gitdir:~/Developer/interk/"]
-  path = ~/.gitconfig.d/.interk.gitconfig
 [help]
 	autocorrect = 10
-[credential "https://dev.azure.com"]
-	useHttpPath = true

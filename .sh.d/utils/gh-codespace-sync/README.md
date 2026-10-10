@@ -12,10 +12,20 @@ scope: Local extension setup, selection controls, and write safety
 
 ## Install and run
 
-Interactive dotfiles shell startup checks registration automatically. When `gh`
-is available, it installs this local extension and adds `gh codespace sync` only
-if each is missing. Existing extensions and alias expansions are never replaced;
-failures warn without blocking shell startup. Non-interactive shells skip setup.
+Interactive dotfiles shells register this local extension in the background only
+when it is missing and `gh` is available. Once installed, startup skips setup
+without running `gh`; non-interactive shells always skip it. Existing extensions
+and alias expansions are never replaced, and registration failures warn without
+delaying shell startup.
+
+First-time registration may finish after the prompt appears. It also adds
+`gh codespace sync` if missing; to restore only a deleted alias, use the manual
+command below.
+
+If setup is forcibly killed, its lock may remain. After confirming no installer
+is running, clear it with
+`rmdir "${XDG_DATA_HOME:-$HOME/.local/share}/gh/extensions/.gh-codespace-sync-installing"`
+and open another interactive shell.
 
 Run either command:
 
@@ -35,7 +45,7 @@ Local installation links to this directory; dotfiles updates take effect without
 reinstallation. Keep the checkout at this path, or remove and reinstall the
 extension after moving it. No separate extension repository is needed locally.
 
-The automatic check adds this nested command; manual equivalent:
+First-time registration adds this nested command; manual equivalent:
 
 ```sh
 gh alias set 'codespace sync' 'codespace-sync'
@@ -45,7 +55,7 @@ gh codespace sync
 Use `gh codespace-sync --help` for usage. To unregister, run
 `gh alias delete 'codespace sync'` if you added it, then
 `gh extension remove codespace-sync`; the source files remain.
-Interactive dotfiles shells will register them again if missing.
+Removing the extension lets a later interactive dotfiles shell register it again.
 
 Without registering an extension, run `gh_codespace` after sourcing
 `~/.sh.d/func.sh`, or:

@@ -9,3 +9,8 @@ exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", 7
 channels = ["conda-forge"]
 dependencies = { gh = "*", act = "*", lazydocker = "*", bun = "*", uv = "*", helix = "*", go = "*", nodejs = "*", tailscale = "*", tailscaled = "*", typst = "*" }
 exposed = { gh = "gh", act = "act", lazydocker = "lazydocker", bun = "bun", bunx = "bunx", uv = "uv", uvx = "uvx", hx = "hx", go = "go", node = "node", npm = "npm", npx = "npx", tailscale = "tailscale", tailscaled = "tailscaled", typst = "typst" }
+
+[envs.db]
+channels = ["conda-forge"]
+dependencies = { visidata = "*", harlequin = "*" }
+exposed = { vd = "vd", visidata = "visidata", harlequin = "harlequin", hsql = "hsql" }

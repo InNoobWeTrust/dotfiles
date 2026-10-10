@@ -1,13 +1,27 @@
 #!/usr/bin/env sh
 # shellcheck disable=SC3043
 
-# Register the local Codespaces extension only in interactive shells.
+# Register a missing local Codespaces extension without delaying shell startup.
 case $- in
     *i*)
-        if command -v gh >/dev/null 2>&1 &&
+        if [ ! -d "${XDG_DATA_HOME:-$HOME/.local/share}/gh/extensions/gh-codespace-sync" ] &&
+            command -v gh >/dev/null 2>&1 &&
             [ -r "${CONF_SH_DIR:-$HOME/.sh.d}/utils/gh-codespace-sync/install.sh" ]; then
-            command sh "${CONF_SH_DIR:-$HOME/.sh.d}/utils/gh-codespace-sync/install.sh" ||
-                printf '%s\n' 'Could not register the local Codespaces extension; shell startup will continue.' >&2
+            (
+                (
+                    _gh_extensions_dir="${XDG_DATA_HOME:-$HOME/.local/share}/gh/extensions"
+                    _gh_install_lock="$_gh_extensions_dir/.gh-codespace-sync-installing"
+                    mkdir -p "$_gh_extensions_dir" || exit 1
+                    # Only one shell may register the extension at a time.
+                    mkdir "$_gh_install_lock" 2>/dev/null || exit 0
+                    trap 'rmdir "$_gh_install_lock" 2>/dev/null || :' 0
+                    trap 'exit 1' HUP INT TERM
+                    [ -d "$_gh_extensions_dir/gh-codespace-sync" ] && exit 0
+
+                    command sh "${CONF_SH_DIR:-$HOME/.sh.d}/utils/gh-codespace-sync/install.sh" >/dev/null 2>&1 ||
+                        printf '%s\n' 'Could not register the local Codespaces extension; shell startup will continue.' >&2
+                ) </dev/null >/dev/null &
+            )
         fi
         ;;
 esac

@@ -74,13 +74,13 @@ if [ "$(uname -s)" = "Darwin" ]; then
             fi
         fi
 
-        # 7. Optional deep system cleanup via mac-cleanup utility
-        if usable mac-cleanup; then
-            printf "Running mac-cleanup utility...\n"
+        # 7. Optional deep system cleanup via mole utility
+        if usable mole; then
+            printf "Running mole utility...\n"
             if [ "$dry_run" -eq 0 ]; then
-                mac-cleanup
+                mole clean
             else
-                printf "  [dry-run] Would invoke mac-cleanup\n"
+                mole clean --dry-run
             fi
         fi
 
