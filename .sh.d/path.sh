@@ -50,6 +50,7 @@ fi
 
 # bun
 [ -d "$HOME/.bun/bin" ] && setPath "$HOME/.bun/bin"
+[ -d "$XDG_CACHE_HOME/.bun/bin" ] && setPath "$XDG_CACHE_HOME/.bun/bin"
 
 # Nix
 # shellcheck source=/dev/null
