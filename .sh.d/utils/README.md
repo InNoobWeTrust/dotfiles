@@ -10,7 +10,7 @@ and explicitly chosen external repositories, then shows review and progress.
 | --- | --- | --- |
 | Foreground Tailscale SSH here | `dev_tailscale` | Bash, `tailscale`, `tailscaled` |
 | Foreground VS Code tunnel here | `dev_tunnel` | Bash, standalone `code` CLI |
-| Container lifecycle and remote sessions | `dev_workspace` | Bun, Docker; Git for implicit REPO |
+| Container lifecycle and remote sessions | `dev_workspace` | Bun, Podman or Docker; Git for implicit REPO |
 | Allocate/submit/manage cluster sessions | `dev_slurm` | Bash, Slurm; service binaries on compute nodes |
 
 ## Already inside an allocation? Start here
@@ -79,12 +79,16 @@ The repository hash is the first 16 hex characters of SHA-256 of the canonical r
 
 | Command | Behavior |
 | --- | --- |
-| `dev_workspace prepare [REPO]` | Print embedded/adjacent config unchanged, without Docker or writes. |
+| `dev_workspace prepare [REPO]` | Print embedded/adjacent config unchanged, without a container engine or writes. |
 | `dev_workspace up [REPO] [--config PATH]` | Create/resume using embedded config or an explicit file. |
-| `dev_workspace status [REPO]` | Print Docker state or `absent`. |
+| `dev_workspace status [REPO]` | Print selected engine's container state or `absent`. |
 | `dev_workspace stop [REPO]` | Stop without removing the container. |
 
 **Runtime:** The shell entrypoint uses `bun --no-env-file`; Commander 15.0.0 is the sole external runtime import and may be fetched/cached. Devcontainer commands use `bunx --bun --package @devcontainers/cli@0.89.0 devcontainer`.
+
+**Engine:** Run on the host to share its engine. Each operation checks installed Podman and Docker for this repository's container and automatically uses its owning engine. For new workspaces, reachable Podman takes priority, then Docker. Unreachable engines are reported and skipped; if neither is reachable, the command fails. Duplicate workspaces across engines fail without changing either container. `up` passes the resolved executable to the official CLI with `--docker-path`; status/stop/session commands use the same resolution. No manual engine selection is needed, and a failed action never retries on another engine. The engines have separate containers and image stores. No socket service or global `DOCKER_HOST` change is needed for local Podman CLI use. Compose configurations still require a compatible Compose provider; Podman compatibility and rootless limits depend on your configuration.
+
+**Local Distrobox + Kubernetes:** After syncing the host Pixi tools, run `distrobox-kind-setup` in a normal host shell. It checks Podman, Distrobox, kind, rootless/cgroup-v2 support, and both config files, then assembles `main-box` and creates kind cluster `local` if absent. It uses stowed configs under `${XDG_CONFIG_HOME:-$HOME/.config}`, falling back to configs next to the shell directory; alternatively pass `distrobox-kind-setup /path/to/dotfiles/.config`. Existing instances are not replaced or reconfigured. Failures stop setup without deleting already-created resources. It does not install tools, enter the box, or change host services/settings. Then use `distrobox enter main-box` and `kubectl --context kind-local get nodes`.
 
 **Configuration:** Without `--config`, an adjacent `dev_workspace/dev_workspace.json` overrides the embedded template; `up` writes a temporary config and cleans it on exit. Docker bind-mount delimiters in repository paths are not validated.
 

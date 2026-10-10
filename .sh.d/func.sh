@@ -902,6 +902,60 @@ cf_tunnel() (
 
 # --- Remote provisioning and development workspaces ---
 
+# Create the shared main-box and local kind cluster on the rootless Podman host.
+# Usage: distrobox_kind_setup [CONFIG_DIR]; defaults to stowed configs, then repo configs.
+# Stops on failure; reruns preserve existing boxes/clusters. No installs or host tuning.
+distrobox_kind_setup() (
+    case "${1-}" in
+        -h|--help)
+            printf '%s\n' 'Usage: distrobox-kind-setup [CONFIG_DIR]' \
+                'Create main-box and kind-local using host Podman. Requires podman, distrobox, kind.' \
+                'Install kind with pixi global sync first. Existing instances are not replaced.'
+            exit 0 ;;
+    esac
+    [ "$#" -le 1 ] || { printf '%s\n' 'Usage: distrobox-kind-setup [CONFIG_DIR]' >&2; exit 2; }
+    unalias podman distrobox kind 2>/dev/null || true
+    for tool in podman distrobox kind; do
+        command -v "$tool" >/dev/null 2>&1 || {
+            printf 'distrobox-kind-setup: install %s first.\n' "$tool" >&2
+            exit 1
+        }
+    done
+    if [ "$(id -u)" = 0 ] || [ -n "${CONTAINER_ID-}" ] || [ -e /run/.containerenv ] || [ -e /.dockerenv ]; then
+        printf '%s\n' 'distrobox-kind-setup: run in a host shell as your normal user, not inside a container or with sudo.' >&2
+        exit 1
+    fi
+    config_dir=${1:-${XDG_CONFIG_HOME:-$HOME/.config}}
+    if [ "$#" -eq 0 ] && [ ! -r "$config_dir/distrobox/main-box.ini" ]; then
+        config_dir="${CONF_SH_DIR:-$HOME/.sh.d}/../.config"
+    fi
+    for config in distrobox/main-box.ini kind/local.yaml; do
+        [ -r "$config_dir/$config" ] || {
+            printf 'distrobox-kind-setup: missing config %s; stow configs or pass CONFIG_DIR.\n' "$config" >&2
+            exit 1
+        }
+    done
+    export DBX_CONTAINER_MANAGER=podman KIND_EXPERIMENTAL_PROVIDER=podman
+    # Check the engine and cluster list before creating either resource.
+    podman_mode=$(command podman info --format '{{.Host.Security.Rootless}} {{.Host.CgroupVersion}}') || exit $?
+    [ "$podman_mode" = 'true v2' ] || {
+        printf '%s\n' 'distrobox-kind-setup: kind requires rootless Podman with cgroup v2.' >&2
+        exit 1
+    }
+    clusters=$(command kind get clusters) || exit $?
+    command distrobox assemble create --file "$config_dir/distrobox/main-box.ini" || exit $?
+    if printf '%s\n' "$clusters" | grep -Fxq local; then
+        printf '%s\n' 'distrobox-kind-setup: keeping existing kind cluster local (config is not reapplied).'
+    else
+        command kind create cluster --name local --config "$config_dir/kind/local.yaml" --wait 120s || {
+            result=$?
+            printf '%s\n' 'distrobox-kind-setup: kind failed; see main-box.ini for rootless cgroup delegation troubleshooting. main-box is retained.' >&2
+            exit "$result"
+        }
+    fi
+    printf '%s\n' 'Ready: distrobox enter main-box' 'Check cluster: kubectl --context kind-local get nodes'
+)
+
 #
 # # setup_remote_user - Provision a remote user without remembering script path
 # # usage: setup_remote_user [script_args]

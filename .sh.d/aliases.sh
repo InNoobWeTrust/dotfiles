@@ -56,6 +56,9 @@ alias cron-routine='cron_routine'
 # Maintenance and cleanup
 alias dot-clean='dotfiles_clean'
 
+# Runtime checks live in the function, including when tools were installed later.
+alias distrobox-kind-setup='distrobox_kind_setup'
+
 # Batch open links.txt
 usable open && \
     {

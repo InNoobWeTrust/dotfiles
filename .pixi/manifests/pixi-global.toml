@@ -7,8 +7,9 @@ exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", 7
 
 [envs.dev]
 channels = ["conda-forge"]
-dependencies = { gh = "*", act = "*", lazydocker = "*", bun = "*", uv = "*", helix = "*", go = "*", nodejs = "*", tailscale = "*", tailscaled = "*", typst = "*" }
-exposed = { gh = "gh", act = "act", lazydocker = "lazydocker", bun = "bun", bunx = "bunx", uv = "uv", uvx = "uvx", hx = "hx", go = "go", node = "node", npm = "npm", npx = "npx", tailscale = "tailscale", tailscaled = "tailscaled", typst = "typst" }
+# Keep kind/node and kubectl versions aligned with .config/kind/local.yaml.
+dependencies = { gh = "*", act = "*", lazydocker = "*", bun = "*", uv = "*", helix = "*", go = "*", nodejs = "*", tailscale = "*", tailscaled = "*", typst = "*", kubernetes-kind = "0.33.*", kubernetes-client = "1.34.*" }
+exposed = { gh = "gh", act = "act", lazydocker = "lazydocker", bun = "bun", bunx = "bunx", uv = "uv", uvx = "uvx", hx = "hx", go = "go", node = "node", npm = "npm", npx = "npx", tailscale = "tailscale", tailscaled = "tailscaled", typst = "typst", kind = "kind", kubectl = "kubectl" }
 
 [envs.db]
 channels = ["conda-forge"]

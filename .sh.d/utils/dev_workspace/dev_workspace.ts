@@ -91,17 +91,35 @@ function repoHash(repo: string): string {
   return new Bun.CryptoHasher("sha256").update(repo).digest("hex").slice(0, 16);
 }
 
-async function containerId(repo: string): Promise<string | undefined> {
-  const result = await query("docker", [
-    "ps",
-    "-a",
-    "-q",
-    "--filter",
-    `label=dev-workspace.repo=${repo}`,
-  ]);
-  const ids = result.trim().split(/\s+/).filter(Boolean);
-  if (ids.length > 1) throw new Error("Multiple containers match this repository");
-  return ids[0];
+// Reuse the engine owning this repo; new workspaces prefer reachable Podman.
+// Probe only: a failed lifecycle/session command never switches engines.
+async function resolveWorkspace(repo: string): Promise<{ engine: string; id?: string }> {
+  const available: { engine: string; id?: string }[] = [];
+  const failures: string[] = [];
+  let installed = false;
+  for (const name of ["podman", "docker"]) {
+    const engine = Bun.which(name);
+    if (!engine) continue;
+    installed = true;
+    let result: string;
+    try {
+      result = await query(engine, ["ps", "-a", "-q", "--filter", `label=dev-workspace.repo=${repo}`]);
+    } catch (error) {
+      failures.push(`${name}: ${error instanceof Error ? error.message : String(error)}`);
+      continue;
+    }
+    const ids = result.trim().split(/\s+/).filter(Boolean);
+    if (ids.length > 1) throw new Error(`Multiple containers match this repository in ${name}`);
+    available.push({ engine, id: ids[0] });
+  }
+  if (!installed) throw new Error("Install Podman or Docker on the host to use dev_workspace");
+  if (!available.length) throw new Error(`No reachable container engine:\n${failures.join("\n")}`);
+  const owners = available.filter(workspace => workspace.id);
+  if (owners.length > 1) {
+    throw new Error("This repository has workspaces in both Podman and Docker; remove the unwanted duplicate before continuing");
+  }
+  if (failures.length) console.error(`Skipping unavailable container engine:\n${failures.join("\n")}`);
+  return owners[0] ?? available[0];
 }
 
 async function prepare(input?: string): Promise<number> {
@@ -117,6 +135,7 @@ async function prepare(input?: string): Promise<number> {
 
 async function up(input: string | undefined, options: { config?: string }): Promise<number> {
   const repo = await repository(input);
+  const { engine } = await resolveWorkspace(repo);
   let configPath = options.config ? resolve(options.config) : undefined;
   let tempDir: string | undefined;
 
@@ -141,6 +160,8 @@ async function up(input: string | undefined, options: { config?: string }): Prom
     return await run("bunx", [
       ...CLI,
       "up",
+      "--docker-path",
+      engine,
       "--workspace-folder",
       repo,
       "--config",
@@ -160,15 +181,15 @@ async function up(input: string | undefined, options: { config?: string }): Prom
 }
 
 async function stop(input?: string): Promise<number> {
-  const id = await containerId(await repository(input));
+  const { engine, id } = await resolveWorkspace(await repository(input));
   if (!id) { console.log("absent"); return 0; }
-  return run("docker", ["stop", id]);
+  return run(engine, ["stop", id]);
 }
 
 async function status(input?: string): Promise<number> {
-  const id = await containerId(await repository(input));
+  const { engine, id } = await resolveWorkspace(await repository(input));
   if (!id) { console.log("absent"); return 0; }
-  return run("docker", ["inspect", "--format", "{{.State.Status}}", id]);
+  return run(engine, ["inspect", "--format", "{{.State.Status}}", id]);
 }
 
 /**
@@ -178,7 +199,7 @@ async function status(input?: string): Promise<number> {
  */
 async function runSession(input: string | undefined, service: "tunnel" | "tailscale"): Promise<number> {
   const repo = await repository(input);
-  const id = await containerId(repo);
+  const { engine, id } = await resolveWorkspace(repo);
   if (!id) throw new Error("Container is absent; run dev_workspace up first");
   const name = `${service === "tailscale" ? "ts" : "dw"}-${repoHash(repo)}`;
   const session = [
@@ -186,10 +207,10 @@ async function runSession(input: string | undefined, service: "tunnel" | "tailsc
   ];
   if (service === "tunnel") {
     // The generated up config is temporary; exec must not rediscover a project config.
-    return run("docker", ["exec", "-i", "--user", "vscode", id, ...session]);
+    return run(engine, ["exec", "-i", "--user", "vscode", id, ...session]);
   }
-  // stdin EOF is the Tailscale supervisor's lifeline when docker exec disconnects.
-  return run("docker", [
+  // stdin EOF is the Tailscale supervisor's lifeline when engine exec disconnects.
+  return run(engine, [
     "exec", "-i", "--user", "vscode", id, ...session, "--stdin-lifeline",
   ], true);
 }
