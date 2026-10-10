@@ -15,8 +15,10 @@ scope: Local extension setup, selection controls, and write safety
 Interactive dotfiles shells register this local extension in the background only
 when it is missing and `gh` is available. Once installed, startup skips setup
 without running `gh`; non-interactive shells always skip it. Existing extensions
-and alias expansions are never replaced, and registration failures warn without
-delaying shell startup.
+and alias expansions are never replaced. A background, local-only credential check
+quietly skips setup when no token is available; it does not validate the token
+with GitHub. Unexpected registration failures show the installer error and warn
+without delaying shell startup.
 
 First-time registration may finish after the prompt appears. It also adds
 `gh codespace sync` if missing; to restore only a deleted alias, use the manual

@@ -9,6 +9,9 @@ case $- in
             [ -r "${CONF_SH_DIR:-$HOME/.sh.d}/utils/gh-codespace-sync/install.sh" ]; then
             (
                 (
+                    # Check local credentials only; never print tokens or contact GitHub.
+                    command gh auth token >/dev/null 2>&1 || exit 0
+
                     _gh_extensions_dir="${XDG_DATA_HOME:-$HOME/.local/share}/gh/extensions"
                     _gh_install_lock="$_gh_extensions_dir/.gh-codespace-sync-installing"
                     mkdir -p "$_gh_extensions_dir" || exit 1
@@ -18,7 +21,7 @@ case $- in
                     trap 'exit 1' HUP INT TERM
                     [ -d "$_gh_extensions_dir/gh-codespace-sync" ] && exit 0
 
-                    command sh "${CONF_SH_DIR:-$HOME/.sh.d}/utils/gh-codespace-sync/install.sh" >/dev/null 2>&1 ||
+                    command sh "${CONF_SH_DIR:-$HOME/.sh.d}/utils/gh-codespace-sync/install.sh" >/dev/null ||
                         printf '%s\n' 'Could not register the local Codespaces extension; shell startup will continue.' >&2
                 ) </dev/null >/dev/null &
             )
