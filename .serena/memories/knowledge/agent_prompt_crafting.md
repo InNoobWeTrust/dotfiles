@@ -24,6 +24,8 @@ Rules for editing agent prompts, system instructions, documentation, and configu
 - **Verify schema before setting keys**: Only use configuration keys (`variant`, `options`, etc.) when explicitly supported by the target provider configuration in `kilo.jsonc`.
 - **No cargo-culting**: Never copy keys (e.g. `variant: high`) onto providers (e.g. CKey) that do not define or support reasoning variants.
 - **Strict naming & signature invariants**: Never alter, rephrase, or invent names for test suites, functions, or interfaces when defined in specs or sibling conventions.
+- **Derived artifacts ship a rebuild path**: Any checked-in generated file (e.g. `personas.csv`) keeps its generator script plus a one-line regen note in-repo. Deleting a one-off generator orphans the artifact from its source on the next edit.
+- **No deletion without a live-reference check**: Every skill file must have a live consumer. Before removing, grep `SKILL.md` links plus repo-wide consumers (shared entrypoints like `discover-personas.sh` break several references at once). No orphans = no auto-delete.
 
 ## 4. Tiered Agent Complexity Pattern
 

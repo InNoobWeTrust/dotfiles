@@ -18,7 +18,7 @@ Frontier agents often conflate documentation intended for human mental models wi
 
 | Dimension | Human-Facing Documentation | Agent Coordination & Execution Memory |
 |---|---|---|
-| **Primary Audience** | Human engineers, maintainers, users, leadership | Autonomous agents, subagent swarms, execution harnesses |
+| **Primary Audience** | Human engineers, maintainers, users, leadership | Autonomous agents, delegated workers, execution harnesses |
 | **Storage Destination** | `docs/`, `<module>/README.md`, root `README.md` | `MEMORY_DIR` (`.agents/memories/`, `.serena/memories/`) |
 | **Primary Purpose** | Build shared mental models; explain purpose, usage, architecture | Track execution progress, maintain atomic plans, record consensus |
 | **Content Types** | System architecture, how-to guides, module READMEs, API overviews | Atomic plans (`plan.md`), vertical slice phase specs, consensus boards |
@@ -54,7 +54,7 @@ Does the document represent atomic task execution, phase breakdown, or inter-age
 - **Focus on What and Why**: Explain the problem the feature or module solves before showing how it works.
 - **Conceptual Pseudocode over Line-Level Dumps**: When illustrating algorithms or data flows, use clean pseudocode or minimal illustrative snippets that convey the mental model. Do not dump complete 200-line production files.
 - **Feature-Level Boundaries in `docs/`**: Only documents reflecting durable feature-level or system-level abstractions belong in `docs/`. Detailed atomic phases (e.g., "Phase 01: Create schema column X") belong in memory.
-- **Jargon Elimination**: Avoid agent orchestration jargon (e.g., "tracer bullet", "RED/GREEN pass", "swarminator", "harness prompt") in human docs. Use standard industry terms (e.g., "integration test", "data model", "event flow").
+- **Jargon Elimination**: Avoid agent orchestration jargon (e.g., "tracer bullet", "RED/GREEN pass", "harness prompt") in human docs. Use standard industry terms (e.g., "integration test", "data model", "event flow").
 
 ### Code Module `README.md` Standards
 A code module `README.md` must enable an engineer to understand the module in under 60 seconds:

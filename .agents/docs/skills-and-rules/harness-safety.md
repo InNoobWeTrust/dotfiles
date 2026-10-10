@@ -73,6 +73,22 @@ Filesystem/network restrictions do not limit resource consumption. Each tool als
 
 See [Sandbox Resource Budgets](./details/sandbox-resource-limits.md) for defaults, platform limitations, structured results, and failure interpretation.
 
+### Isolated Linux checks
+
+Use `container_acquire`, `container_exec`, and `container_release` for an isolated Linux workload rather than treating host `ulimit` as a memory or process-tree quota. Acquisition defaults to no network or host mounts; a read-only workspace mount is explicit, and commands automatically refresh the container's idle expiry.
+
+**Approval boundary:** Writable host mounts, network access, and increased budgets need scoped human approval. Release only your own returned handle; failed acquisition exposes no usable handle and the server retains exact owned cleanup targets for retries. See the [sandbox package](../../mcps/sandbox/README.md) for enforced defaults and runtime requirements.
+
+## Cross-Harness Delegation
+
+The [Delegate MCP](../../mcps/delegate/README.md) exposes two stable tools. `delegate_status({})` reports inspected configuration and refusal reasons; `delegate_run({harness: "opencode", prompt: "Inspect the named file without edits", workdir: "/absolute/project/path"})` starts one bounded turn only for a selectable harness.
+
+**Readiness boundary:** An executable or shell alias is not an account/provider configuration. Startup and `delegate_status({refresh: true})` use supported CLI inspection commands, never a model prompt; `configured` is not proof of valid billing, quota, credentials, or backend reachability. Unknown readiness is not selectable, and a changed working directory can require fresh inspection.
+
+**Authority boundary:** Delegation is not a sandbox. The child inherits the environment, accounts and native permissions; its prompt must name allowed reads, writes, commands, network, and stop conditions. Obtain human approval before `permissionMode: "bypassPermissions"`; do not infer authority from a tool being callable.
+
+**Lifetime boundary:** Time and output caps attempt process-group cleanup but do not bound token spend or provide hard filesystem, RAM, PID or storage isolation. Nested delegation has a depth guard, not a security boundary; closing the MCP connection does not cancel a running turn. Use the [worker contract](../../skills/subagent-dispatch/references/worker-contract.md) and verified isolation for resource-sensitive or recursive work.
+
 ## Official References
 
 - **Standards:** [AGENTS.md](https://agents.md/) and [Agent Skills](https://agentskills.io/) describe shared formats, not one universal global-instruction discovery mechanism.

@@ -10,3 +10,4 @@ Load references only when the router (`SKILL.md`) directs you here. Do not prelo
 | `facade-guides.md` | Pattern identification (Phase 2) — load the section matching the project facade |
 | `raw-sql-bulk-and-native-operations.md` | Raw SQL queries, bulk INSERT/UPDATE, native driver operations |
 | `testing-and-extensions.md` | Writing tests for data-access adapters; optional extension patterns |
+| `hsql-inspection.md` | Preferred CLI tool: catalog exploration, schema inspection, headless query verification |

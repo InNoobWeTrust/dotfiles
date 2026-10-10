@@ -1,6 +1,6 @@
 # Delegated research, building, and release evaluation
 
-Use [Subagent Dispatch](../../subagent-dispatch/SKILL.md) before every worker launch. Native workers are sufficient; a Full Swarm is optional when explicitly selected/warranted, not a prerequisite for autonomous ownership.
+Use [Subagent Dispatch](../../subagent-dispatch/SKILL.md) before every worker launch. Native workers are sufficient; crowd deliberation via `multi-perspective-deliberation` is optional when explicitly selected/warranted, not a prerequisite for autonomous ownership.
 
 ## Division of responsibility
 
@@ -31,8 +31,8 @@ Before iteration, declare artifact/contract revision, user journeys, machine pro
 - UNVERIFIED requires missing evidence or an honest blocker. It cannot be relabeled PASS by a vote.
 - Independent challenge follows `subagent-dispatch`/`reviewer` using different agent/subagent instances than the primary and any implementers (same-agent self-review is not independent; one instance = one perspective; simulated panels not independent). After fixes, recheck affected criteria/current artifact. No endless cosmetic panel cycles.
 
-## If Full Swarm is selected
+## If crowd deliberation is selected
 
-Load `../../swarm-intelligence/SKILL.md` and its required references. Its own challenge/design/security gates remain binding; this integration does not waive them. External nodes remain read-only where their contract requires it; the primary alone applies approved patch suggestions. For Swarminator artifact extraction use returned `files[]` and each artifact's **`code`** field, not a guessed `content` field.
+Load `../../multi-perspective-deliberation/SKILL.md` and its required references. Its challenge/design/security gates remain binding; this integration does not waive them. Workers stay read-only where their contract requires it; the primary alone applies approved suggestions.
 
 Record a compact decision/evidence handoff to bounded execution rather than copying a second loop/controller into swarm docs. The same release rubric, per-job bounds, state freshness, and user acceptance boundary apply regardless of the chosen worker transport.

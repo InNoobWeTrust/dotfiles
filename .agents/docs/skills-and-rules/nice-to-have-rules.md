@@ -22,7 +22,7 @@ These rules add value but aren't essential on day one. Add them when the failure
 
 **File:** `rules/command-routing.md`
 
-**When to add:** When you want CLI shortcuts (e.g., `/review`, `/swarm`) that route to specific skills without the user needing to know skill names.
+**When to add:** When you want CLI shortcuts (e.g., `/review`, `/party-mode`) that route to specific skills without the user needing to know skill names.
 
 **What it does:** Maps user-facing commands to skill-loading prompts.
 

@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+exec bun --no-env-file "${HOME}/.agents/mcps/delegate/src/server.ts" "$@"

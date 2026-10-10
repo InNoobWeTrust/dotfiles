@@ -1,6 +1,6 @@
 # Multiplexer Process Management (tmux & GNU screen)
 
-> Reference guide for managing background tasks, daemons, watchers, and long-running commands using terminal multiplexers instead of harness-specific background task runners or ad-hoc subshell backgrounding.
+> Reference guide for managing background tasks, daemons, watchers, and long-running commands using terminal multiplexers (preferring tmux with GNU screen as fallback) instead of harness-specific background task runners or ad-hoc subshell backgrounding.
 
 ---
 
@@ -15,7 +15,7 @@ Agent harness background process managers (e.g. async task tools, `IsDaemon`, ba
 Terminal multiplexers solve all four problems:
 - **OS-level session persistence**: Sessions survive subshell exits and harness disconnects.
 - **Complete output inspection**: Buffer capture and log piping capture full stdout/stderr.
-- **Shared visibility**: The human user can attach (`tmux attach -t ...` or `screen -r ...`) to inspect or interact anytime.
+- **Shared visibility**: The human user can attach or see the pane directly to inspect or interact anytime.
 - **Reliable lifecycle control**: Clean signals (SIGINT, SIGTERM) and deterministic teardown.
 
 ---
@@ -24,16 +24,16 @@ Terminal multiplexers solve all four problems:
 
 Always check available multiplexers in this order:
 
-1. **`tmux` (Primary / Gold Standard)**: Modern, highly scriptable, supports robust buffer capture (`capture-pane`), window/pane targeting, and clean status checks.
-2. **GNU `screen` (Fallback / Universal Unix Standard)**: Ubiquitous across almost all Unix/Linux/macOS systems when `tmux` is absent.
-3. **Synchronous execution / Escalate (If neither is available)**: If neither `tmux` nor `screen` is installed, do not silently spawn detached `&` or `nohup` processes. For bounded tasks, run synchronously with an explicit timeout. For persistent background services (e.g. dev servers), ask the user to install `tmux` or launch the process manually.
+1. **`tmux` (Primary / Gold Standard)**: Modern, highly scriptable standalone multiplexer. Supports robust buffer capture (`capture-pane`), window/pane targeting, and clean status checks with `agent-` namespace.
+2. **GNU `screen` (Fallback / Universal Unix Standard)**: Ubiquitous across almost all Unix/Linux/macOS systems when `tmux` is not available.
+3. **Synchronous execution / Escalate (If none is available)**: If no multiplexer is installed, do not silently spawn detached `&` or `nohup` processes. For bounded tasks, run synchronously with an explicit timeout. For persistent background services (e.g. dev servers), ask the user to install `tmux` or launch the process manually.
 
 ---
 
 ## Operational Safety Rules
 
-1. **Mandatory `agent-` Prefix**: Every session created by an agent MUST be named with the `agent-` prefix (e.g., `agent-devserver`, `agent-vite`, `agent-tests`).
-2. **Never Touch User Sessions**: Never attach to, kill, send keys to, or alter any session that does not start with `agent-`, nor any pre-existing user sessions in `zellij`, `tmux`, or `screen`.
+1. **Namespacing and Ownership**: Name agent-created tmux/screen sessions with the `agent-` prefix (e.g., `agent-devserver`, `agent-vite`, `agent-tests`).
+2. **Never Touch User Sessions**: Never attach to, kill, send keys to, or alter any pre-existing user sessions in `zellij`, `tmux`, or `screen`.
 3. **Always Tee to Log File**: When spawning a command, always pipe stdout and stderr to a dedicated log in `/tmp/` (e.g., `2>&1 | tee /tmp/agent-<name>.log`) so output can be queried quickly via `tail` or `grep` without attaching.
 4. **Graceful Shutdown Before Force Kill**: Always attempt a graceful interrupt (SIGINT via `C-c`) and wait 3–5 seconds before terminating the session.
 5. **Clean Up Log Files**: Delete temporary log files in `/tmp/` when tearing down completed sessions.
@@ -47,8 +47,14 @@ Always check available multiplexers in this order:
 Check which multiplexer is installed:
 
 ```bash
-# Check for tmux first
-command -v tmux >/dev/null 2>&1 && echo "tmux" || (command -v screen >/dev/null 2>&1 && echo "screen" || echo "none")
+# Check for tmux first, then screen
+if command -v tmux >/dev/null 2>&1; then
+  echo "tmux"
+elif command -v screen >/dev/null 2>&1; then
+  echo "screen"
+else
+  echo "none"
+fi
 ```
 
 ---
@@ -57,7 +63,7 @@ command -v tmux >/dev/null 2>&1 && echo "tmux" || (command -v screen >/dev/null 
 
 Always launch in detached mode with an explicit working directory and piped logging.
 
-#### With `tmux` (Preferred)
+#### With `tmux`
 ```bash
 # Syntax: tmux new-session -d -s agent-<name> -c "<working_directory>" "<command> 2>&1 | tee /tmp/agent-<name>.log"
 tmux new-session -d -s agent-devserver -c "/path/to/project" "npm run dev 2>&1 | tee /tmp/agent-devserver.log"
@@ -93,7 +99,7 @@ screen -ls | grep -q "agent-devserver" && echo "RUNNING" || echo "STOPPED"
 
 Inspect recent output from the running process:
 
-#### Via Log File (Fastest & recommended for both)
+#### Via Log File (Fastest & universal for all multiplexers)
 ```bash
 tail -n 50 /tmp/agent-devserver.log
 ```
@@ -184,8 +190,8 @@ rm -f /tmp/agent-devserver.log
 ## Summary Checklist for Agents
 
 - [ ] Checked for `tmux` first, then GNU `screen`.
-- [ ] Session name starts with `agent-` (e.g. `agent-build-watcher`).
+- [ ] Session name starts with `agent-` (for tmux/screen).
 - [ ] Log output redirected to `/tmp/agent-<name>.log`.
-- [ ] Confirmed session is running via `has-session` or `screen -ls`.
+- [ ] Confirmed session is running via `tmux has-session` or `screen -ls`.
 - [ ] No user sessions (`zellij`, `tmux`, `screen` without `agent-` prefix) were modified or terminated.
 - [ ] Cleaned up session and logs upon completion or when user requests shutdown.

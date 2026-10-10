@@ -22,6 +22,8 @@ State the mode and boundaries briefly; ask upfront only about missing outcome/au
 
 No default **total iteration or elapsed-time limit**. Optional `MAX_ITER`, `MAX_ELAPSED_SEC`, and `MAX_COST` apply only when specified/authorized; unset means no configured aggregate cap, not infinite resources. Individual jobs still need enforced watchdogs and resource limits. Never bypass harness limits or infer unlimited spending.
 
+For tasks that are part of a persistent multi-role team, load `team-operating-model` first to establish role binding, shared plan, and checkpoint obligations; bounded-iteration then governs the delivery loop within those bounds.
+
 ## Appropriate uses
 
 | Request | Approach |
@@ -48,7 +50,7 @@ Use a dedicated task/memory directory, not consumer `docs/`. Full automation use
 
 For a short manually driven loop, equivalent fields in existing task context are enough; do not scaffold six files for a small patch. Durable checkpoints are needed before context loss. Human usage/decisions belong in product docs/README, not these execution files.
 
-Templates: [TASK](references/templates/TASK.md), [PROMPT](references/templates/PROMPT.md), [machine verifier](references/templates/verify.sh). Load [Procedure](references/procedure.md) before building a verifier/controller/state or starting AFK. Controller guidance: [Loop patterns](references/loop-patterns.md). Delegated work: [Integration](references/swarm-integration.md).
+Templates: [TASK](references/templates/TASK.md), [PROMPT](references/templates/PROMPT.md), [machine verifier](references/templates/verify.sh). Load [Procedure](references/procedure.md) before building a verifier/controller/state or starting AFK. Controller guidance: [Loop patterns](references/loop-patterns.md). Delegated work: [Integration](references/delegation-integration.md).
 
 ## Loop and release
 

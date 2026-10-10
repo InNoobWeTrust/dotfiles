@@ -41,7 +41,7 @@ Run these checks without rewriting healthy files. Produce a **gap report**, then
 
 ## E. Attention / progressive disclosure health
 
-- [ ] Project INDEX does not list unused mega-skills (swarm, video, talent, etc.) unless the team uses them
+- [ ] Project INDEX does not list unused mega-skills (video, talent, etc.) unless the team uses them
 - [ ] No full duplicate of global docs/ under project `.agents/docs/` unless intentional
 - [ ] Rules that are global baselines are not re-expanded into multi-hundred-line project forks without reason
 - [ ] `AGENTS.md` length stays within the anti-bloat heuristic; if it exceeds ~150 lines or 8 KB, load `.agents/skills/skill-author/references/instruction-bloat-and-mcp-caution.md` and refactor into references or rules

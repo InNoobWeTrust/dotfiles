@@ -24,6 +24,10 @@ MCP disappears → last deadline → supervisor exits → container auto-removed
 completion. Expired callers acquire a fresh container; there is no renew path. Graceful close drains the
 current command before removal, bounded by its declared deadline; queued new work is rejected before drain.
 
+Failed acquisition retains its exact allocation ID (or unique creation name) without issuing a token.
+Cleanup verifies this instance's labels and confirms removal; failures stay tracked for the existing
+sweep and shutdown retries. No other instance's containers are adopted or pruned.
+
 ## Effective defaults
 
 | Setting | Default | Boundary |
@@ -51,7 +55,7 @@ file there. All settings are verified against `docker inspect` before any worklo
 - **Writable workspace:** writes are persistent and not rolled back on release.
 - **Command disruption:** timeout or output overflow destroys the container; all pending work on it is affected.
 - **Clock and availability:** deadline expiry depends on daemon scheduling and clock stability; VM suspension or daemon outage delays cleanup.
-- **Creation crash window:** abrupt server loss between `docker create` and supervisor startup leaves a `created`-state orphan whose watchdog has not run. No startup sweep adopts another instance's containers. An operator can inspect containers labeled `sandbox.package=sandbox`, confirm the creating MCP process has exited, and remove only the exact orphan ID; do not prune all labeled containers while other instances are active.
+- **Creation crash window:** abrupt server loss before supervisor startup, or a create request completing after cleanup has already observed absence, can leave a `created`-state orphan without a running watchdog. No startup sweep adopts another instance's containers. An operator can inspect containers labeled `sandbox.package=sandbox`, confirm the creating MCP process has exited, and remove only the exact orphan ID; do not prune all labeled containers while other instances are active.
 
 ## Relationship to host tools and dev_workspace
 

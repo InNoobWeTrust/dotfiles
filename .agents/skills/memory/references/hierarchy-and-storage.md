@@ -29,13 +29,20 @@ else:
 #### 1. Serena Backend (`MEMORY_BACKEND = serena`)
 When the repository already maintains a Serena file-based memory system under `<git-root>/.serena/memories/`:
 - **Single Source of Truth**: Do not create or scaffold duplicate `.agents/memories/`. Use `.serena/memories/` exclusively.
-- **Discovery Root**: `core.md` (`mem:core`) serves as the graph root, pointing to domain memories via `` `mem:<name>` `` references.
-- **Storage Layout**: Flat markdown files inside `<git-root>/.serena/memories/<topic>.md`.
-  - Feature plans: `plan_<feature-slug>.md`
-  - Slice phase specs: `phase_<feature-slug>_<##>.md`
-  - Consensus boards: `consensus_<topic-slug>.md`
-- **Capture**: Write or update topic-specific Markdown files directly in `<git-root>/.serena/memories/<topic>.md` (or call Serena MCP `write_memory`). When adding a new domain memory, register its reference in `core.md`.
-- **Recall**: Inspect `core.md` to discover domain pointers, then load the relevant `<topic>.md` files (or call Serena MCP `read_memory`).
+- **Discovery Root**: `core.md` (`mem:core`) serves as the graph root, pointing to `knowledge/`, `tasks/`, `plans/`, and other entries via `` `mem:<path>` `` references. Recall starts at `core.md` and loads only the relevant subtree, not the entire store.
+- **Storage Layout**: Hierarchical directories inside `<git-root>/.serena/memories/`:
+  - Domain knowledge: `knowledge/<topic>.md`
+  - Task memory: `tasks/<task-id>/task.md`, `tasks/<task-id>/request.md`, `tasks/<task-id>/plan.md`
+  - Role checkpoints (append-only): `tasks/<task-id>/roles/<role-id>.md`
+  - Task-local phases (optional): `tasks/<task-id>/phases/<##>-<slice>.md`
+  - Task-local consensus (optional): `tasks/<task-id>/consensus/<topic-slug>.md`
+  - Standalone feature plans: `plans/<feature-slug>/plan.md`, `plans/<feature-slug>/phases/<##>-<slice>.md`
+  - Session checkpoints: `short-term/<created-stamp>--<branch>--<topic>.md`
+  - Approved long-term: `long-term/INDEX.md` and bucket files
+- **Nested Names**: Serena `read_memory`/`write_memory` accept slash-separated names (e.g., `tasks/company-roles-20261010/roles/protocol-maintainer`). Use these when Serena MCP tools are active; use file paths directly for native read/write.
+- **Reference-Aware Moves**: When renaming or moving an entry, use Serena's reference-aware rename to preserve content, history, and pointer integrity; repair all known discovery pointers in the same operation. When tooling cannot update a known reference (e.g., a pointer resides in a read-only or third-party file), perform bounded manual repair on writable files that hold the old path — never bypass read-only permissions to force the update. Verify all live pointers resolve to the new path before declaring the move complete; a move that leaves a broken pointer graph is incomplete.
+- **Capture**: Write or update files at their canonical hierarchical path (or call Serena MCP `write_memory` with the nested name). When adding a new entry, register a pointer in `core.md` or the relevant parent. Do not rewrite existing knowledge entries; append subsequent evidence.
+- **Recall**: Read `core.md` to discover available pointers, navigate to the relevant subtree, and load only the needed entries (or call Serena MCP `read_memory` by nested name).
 - **Conventions**: Follow `memory_maintenance.md` style — dense invariant bullets, durable non-obvious conventions, zero conversational filler.
 
 #### 2. Default Backend (`MEMORY_BACKEND = default`)
@@ -46,6 +53,11 @@ Maintains the structured file-based layout:
 ├── README.md                    # directory protocol
 ├── short-term/                  # session checkpoints + working notes
 │   └── archive/                # done / merged session entries
+├── tasks/                       # task records, role checkpoints, task-local phases
+│   └── <task-id>/
+│       ├── task.md, request.md, plan.md
+│       └── roles/
+│           └── <role-id>.md     # append-only role checkpoints
 ├── plans/                       # atomic feature plans and execution phase specs
 │   └── <feature-slug>/
 │       ├── plan.md              # atomic plan index (scoped boundaries, locked contracts)
@@ -207,7 +219,7 @@ Each bucket file is a flat list of records. Order: `updated` descending.
 ```markdown
 | Key | Bucket | Type | Score | Updated | Summary |
 |---|---|---|---|---|---|
-| swarm_intelligence_mode_router | project.md | project_decision | 0.88 | 2026-07-14 | Router rule for Single-Node vs Full Swarm — read bucket when choosing between orchestration modes |
+| deliberation_mode_router | project.md | project_decision | 0.88 | 2026-07-14 | Router rule for concurrent delegated vs simulated dialogue — read bucket when choosing deliberation mode |
 ```
 
 **Summary field contract**: one sentence that (a) identifies the covered content or decision and (b) states the condition that warrants descending to the bucket or topic detail (pattern: `<what it covers> — read <bucket> when <condition>`). A row whose Summary only names the entry is not actionable; an agent cannot decide whether to descend without opening the file.
@@ -313,7 +325,7 @@ updated: 2026-10-03T20:15:00+07:00
 - **Verification Command & Exit Criteria**: Exact command to prove slice completion.
 
 ### 3. Inter-Agent Consensus Boards (`MEMORY_DIR/consensus/<topic-slug>.md`)
-Shared boards for multi-agent deliberation, swarm coordination, and design consensus:
+Shared boards for multi-agent deliberation, delegated coordination, and design consensus:
 
 ```yaml
 ---
@@ -337,16 +349,20 @@ Use when the user explicitly asks to save a checkpoint, note, plan, or working s
 
 1. Resolve `MEMORY_BACKEND` and `MEMORY_DIR`.
 2. **When using Serena (`MEMORY_BACKEND = serena`)**:
-   - For feature plans: write or update `<MEMORY_DIR>/plan_<feature-slug>.md`.
-   - For slice phase specs: write `<MEMORY_DIR>/phase_<feature-slug>_<##>.md`.
-   - For consensus boards: write `<MEMORY_DIR>/consensus_<topic-slug>.md`.
-   - For durable knowledge, decisions, or conventions: write or update `<MEMORY_DIR>/<topic>.md` (or call Serena MCP `write_memory`). Ensure `core.md` has a reference to the topic.
-   - For temporary scratchpad/in-progress notes: write to `<appDataDir>/brain/<conversation-id>/scratch/` or maintain in conversation context.
-   - Print: backend (`serena`), file path, memory name, whether `core.md` was updated.
+   - For **existing** domain knowledge entries at `knowledge/<topic>.md`: update in place (or call Serena MCP `write_memory` with name `knowledge/<topic>`). Relocating an entry to `knowledge/` preserves its existing status, frontmatter, and body as-is — it does not promote or reclassify the entry. Ensure `core.md` references the entry.
+   - For **new** working facts, in-progress decisions, or session observations: write to the task-role entry (`tasks/<task-id>/roles/<role-id>.md`) or `short-term/` first. Do not write new working captures directly to `knowledge/` or `long-term/`; promotion to a durable `knowledge/` or long-term entry requires the Consolidate workflow and explicit human approval.
+   - For task records: write to `<MEMORY_DIR>/tasks/<task-id>/{task,request,plan}.md` as appropriate.
+   - For role checkpoints (append-only): write to `<MEMORY_DIR>/tasks/<task-id>/roles/<role-id>.md`.
+   - For task-local phases or consensus boards: write to `<MEMORY_DIR>/tasks/<task-id>/phases/` or `tasks/<task-id>/consensus/`.
+   - For standalone feature plans: write to `<MEMORY_DIR>/plans/<feature-slug>/plan.md`; phases under `plans/<feature-slug>/phases/<##>-<slice>.md`.
+   - For session state or working notes: write to `<MEMORY_DIR>/short-term/<created-stamp>--<branch>--<topic>.md`, or append to an existing task-role entry (`tasks/<task-id>/roles/<role-id>.md`) when the work belongs to a specific role within a task.
+   - For temporary scratchpad/in-progress notes with no durable scope: maintain in conversation context.
+   - Print: backend (`serena`), hierarchical file path or nested memory name, whether `core.md` or a parent index was updated.
 3. **When using Default (`MEMORY_BACKEND = default`)**:
    - **If `MEMORY_DIR` does not exist, create the required directory structure** (`short-term/`, `plans/`, `consensus/`, `long-term/`, `archive/`) now.
    - **Decide destination by content type**:
      - **Session state / Working notes** → `short-term/<created-stamp>--<branch>--<topic>.md`.
+     - **Task record or role checkpoint** → `tasks/<task-id>/{task,request,plan}.md` or `tasks/<task-id>/roles/<role-id>.md`; follow `references/task-role-records.md` for schema and append-only checkpoint format.
      - **Atomic feature plan** → `plans/<feature-slug>/plan.md`.
      - **Vertical slice phase spec** → `plans/<feature-slug>/phases/<##>-<slice-name>.md`.
      - **Inter-agent consensus board** → `consensus/<topic-slug>.md`.
@@ -366,11 +382,13 @@ Use when the user asks to restore, resume, load context, or lists prior notes.
 
 1. Resolve `MEMORY_BACKEND` and `MEMORY_DIR`. If `MEMORY_DIR` does not exist, report **"No memory directory found — this workspace has no prior memory. Use Capture mode to start recording."** and return.
 2. **When using Serena (`MEMORY_BACKEND = serena`)**:
-   - Read `core.md` (`mem:core`) to discover available domain memory references.
-   - Load the relevant `<topic>.md` file (or call Serena MCP `read_memory`).
-   - Print the matching memory content or present summaries if multiple topics are relevant.
+   - Read `core.md` (`mem:core`) to discover available pointers to domain knowledge, tasks, plans, and other entries.
+   - Navigate to the relevant subtree: e.g., `tasks/<task-id>/` for task memory, `knowledge/<topic>` for domain entries, `plans/<feature-slug>/` for feature plans. Do not load the entire store; select only what the query requires.
+   - Nested names are supported: e.g., `mem:tasks/company-roles-20261010/roles/protocol-maintainer` loads the maintainer role entry directly.
+   - When multiple entries are relevant: load the clearly relevant set autonomously when the intent is deterministic (e.g., restore a task's task/plan/role entries when the task-id is known). Ask the user only when the choice depends on genuinely unresolved user intent — for example, two distinct topic areas match and the selection determines which workstream to resume.
+   - Print the matching memory content or summaries.
 3. **When using Default (`MEMORY_BACKEND = default`)**:
-   - Choose search scope: explicit path, current branch (`short-term/*--<branch-slug>--*.md`), recent work summary, topic query via `long-term/INDEX.md`, or similar-trace query via `references/compaction-and-step-recall.md`.
+   - Choose search scope: explicit path, current branch (`short-term/*--<branch-slug>--*.md`), task-role entry (`tasks/<task-id>/roles/<role-id>.md` for a known task-role pair), recent work summary, topic query via `long-term/INDEX.md`, or similar-trace query via `references/compaction-and-step-recall.md`.
    - If `short-term/` and `long-term/` both exist but contain no matching entries, report **"Memory directory exists but no entries match. Use Capture mode to record new knowledge."**
    - If multiple active short-term entries match, present summaries and ask which to load. Do not silently pick one.
    - Parse the selected file. Print Goal, Current Status, Key Decisions, Next Steps, Blockers. Long-term reads print the matching rows plus their bucket entries.

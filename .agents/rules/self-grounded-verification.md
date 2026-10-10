@@ -39,7 +39,7 @@ State what a *correct* outcome must satisfy, derived **only** from the requireme
 - [ ] <observable behavior 1 the requirement demands>
 - [ ] <edge case / failure mode that MUST be handled>
 - [ ] <contract/invariant that MUST hold>
-- [ ] <for code: established capabilities actually reused, or evidenced custom-code gap/authorized exception>
+- [ ] <for code: established capabilities actually reused (e.g. via Terminal Trove for CLI/TUI tools, standard libraries), or evidenced custom-code gap/authorized exception>
 - [ ] <locked interfaces/DTOs adhered to with zero invented interfaces>
 - [ ] <scoped in-scope file tree matched, out-of-scope boundary respected, zero unapproved files, complete cleanup>
 - [ ] <what would prove this is WRONG — the disconfirming test>

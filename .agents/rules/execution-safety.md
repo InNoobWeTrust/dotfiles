@@ -1,5 +1,5 @@
 ---
-description: "Load before the first shell command in every session. Requires sandbox routing for every command, including read-only checks and fast-path scripts; enforces secret isolation, ephemeral runners, script hygiene, and terminal multiplexer priority."
+description: "Load before the first shell command in every session. Requires sandbox routing for every command, including read-only checks and fast-path scripts; enforces secret isolation, ephemeral runners, script hygiene, and terminal multiplexer priority (tmux > screen)."
 globs: "*"
 alwaysApply: true
 trigger: always_on
@@ -199,23 +199,25 @@ Harness-level background process management (async task tools, background flags,
 For any long-running command, dev server, watcher, test runner, or daemon:
 **Prioritize a terminal multiplexer** to ensure OS-level session persistence, inspectable logs, and clean lifecycle management:
 
-1. **`tmux` (Primary)**: Standard modern multiplexer with robust pane/buffer capture and session scripting.
-2. **GNU `screen` (Fallback)**: Universal Unix fallback when `tmux` is absent.
-3. **Neither available**: Run bounded tasks synchronously with an explicit timeout, or ask the user to install `tmux` / start the service manually. **Never silently spawn unmonitored background tasks via `&` or `nohup`.**
+1. **`tmux` (Primary)**: Standard modern standalone multiplexer. Robust pane/buffer capture, session scripting, and `agent-` namespace isolation.
+2. **GNU `screen` (Fallback)**: Universal Unix fallback when `tmux` is unavailable.
+3. **None available**: Run bounded tasks synchronously with an explicit timeout, or ask the user to install `tmux` or start the service manually. **Never silently spawn unmonitored background tasks via `&` or `nohup`.**
 
 ### Mandatory Multiplexer Constraints
 
-- **Prefix session names with `agent-`** (e.g. `agent-devserver`, `agent-tests`).
-- **Never touch user sessions**: Do not attach to, kill, or send keys to any session lacking the `agent-` prefix, nor any existing user sessions in `zellij`, `tmux`, or `screen`.
-- **Piped logging**: Always redirect stdout/stderr to `/tmp/agent-<name>.log` (using `2>&1 | tee /tmp/agent-<name>.log`) for inspectability without attaching.
-- **Graceful termination**: Send `SIGINT` (Ctrl+C) first, wait 2–3 seconds for graceful shutdown, and only then terminate the session. Clean up temporary log files upon exit.
+- **Namespacing & Pane Ownership**:
+  - For `tmux` and `screen`: prefix session names with `agent-` (e.g. `agent-devserver`, `agent-tests`).
+- **Never touch user sessions**: Do not attach to, kill, or send keys to any session lacking the `agent-` prefix, nor any existing user sessions, tabs, or panes in `zellij`, `tmux`, or `screen`.
+- **Piped logging**: For `tmux`/`screen`, always redirect stdout/stderr to `/tmp/agent-<name>.log` (using `2>&1 | tee /tmp/agent-<name>.log`) for inspectability without attaching.
+- **Graceful termination**: Send `SIGINT` (Ctrl+C) first, wait 2–3 seconds for graceful shutdown, and only then terminate the session or pane. Clean up temporary log files upon exit.
 
 ### Multiplexer Operational Matrix
 
-| Action | `tmux` (preferred) | GNU `screen` (fallback) |
+| Action | `tmux` (primary) | GNU `screen` (fallback) |
 |---|---|---|
 | **Check tool** | `command -v tmux` | `command -v screen` |
-| **Spawn detached** | `tmux new-session -d -s agent-<name> -c "<cwd>" "<cmd> 2>&1 \| tee /tmp/agent-<name>.log"` | `screen -dmS agent-<name> bash -c "cd '<cwd>' && <cmd> 2>&1 \| tee /tmp/agent-<name>.log"` |
+| **Spawn / split** | `tmux new-session -d -s agent-<name> -c "<cwd>" "<cmd> 2>&1 \| tee /tmp/agent-<name>.log"` | `screen -dmS agent-<name> bash -c "cd '<cwd>' && <cmd> 2>&1 \| tee /tmp/agent-<name>.log"` |
+| **Run command** | (Included in spawn command above) | (Included in spawn command above) |
 | **Check status** | `tmux has-session -t agent-<name> 2>/dev/null && echo RUNNING` | `screen -ls \| grep -q "agent-<name>" && echo RUNNING` |
 | **Inspect logs** | `tail -n 50 /tmp/agent-<name>.log` or `tmux capture-pane -pt agent-<name> -S -100` | `tail -n 50 /tmp/agent-<name>.log` |
 | **Send input / signal** | `tmux send-keys -t agent-<name> "<input>" C-m` (interrupt: `C-c`) | `screen -S agent-<name> -X stuff "<input>^M"` (interrupt: `^C`) |
@@ -241,7 +243,7 @@ For any long-running command, dev server, watcher, test runner, or daemon:
 - [ ] `python script.py` / `python3 script.py` was not used for scripts that import external packages
 - [ ] `npx`/`bunx` used only for published CLI tools, not custom scripts
 - [ ] Dependency fallback was not silently replaced by a global install
-- [ ] Long-running processes prioritized `tmux` (or `screen` fallback) over harness background tasks or `&`/`nohup`
+- [ ] Long-running processes prioritized `tmux` or `screen` over harness background tasks or `&`/`nohup`
 - [ ] Multiplexer sessions used `agent-` namespace and did not touch user sessions
 - [ ] This rule was loaded before the first shell command; fast-path tasks did not waive it
 - [ ] Every shell command used an available sandbox tool or verified platform sandbox, including inspection, tests, scratch scripts, and cleanup; dependency runners were not mistaken for OS isolation

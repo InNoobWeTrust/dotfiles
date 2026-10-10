@@ -33,7 +33,7 @@ Legend: **Strong** = first-class skill/rule · **Partial** = present but unlabel
 |---|---|---|---|---|
 | Spec-as-docs | Karpathy-style agent ops | `requirements-driven-dev`, `rules/grooming.md`, `rules/slicing.md` | **Strong** | Specs (PRD/TRD/BDD) are the durable interface; implement against them, not chat. |
 | Context-as-wiring-diagram | Karpathy / context eng. | `docs/.../skill-composition.md`, `AGENTS.md` hierarchy, `codebase-exploration` maps | **Partial** | Prefer a small map of systems + handoffs over dumping files; treat wiring as first-class context. |
-| Multi-agent panels | Karpathy / Anthropic parallelization | `multi-perspective-deliberation`, `swarm-intelligence`, `reviewer` | **Strong** | Independent lenses beat one overloaded monologue; synthesize, don’t average. |
+| Multi-agent panels | Karpathy / Anthropic parallelization | `multi-perspective-deliberation`, `reviewer` | **Strong** | Independent lenses beat one overloaded monologue; synthesize, don’t average. |
 | ACI (Agent–Computer Interface) | Anthropic *Building effective agents* | Tool docs in harness; `subagent-dispatch` pillars; partial in skill templates | **Partial** | Design tools/skills like junior-dev APIs: clear names, absolute paths, poka-yoke, minimal overlap. |
 | Evaluator–optimizer loop | Anthropic workflows | `bounded-iteration`, `reviewer` + `rules/self-grounded-verification.md`, TDD in code-craft | **Partial** | Separate *generate* from *score against criteria*; loop only when criteria are objective. |
 | Just-in-time context | Anthropic context eng. | `codebase-exploration` progressive load; skill progressive disclosure | **Strong** | Hold identifiers (paths, queries); load detail on demand; hybrid: small always-on index + JIT leaves. |
@@ -52,7 +52,7 @@ Legend: **Strong** = first-class skill/rule · **Partial** = present but unlabel
 
 1. **Spec-as-docs** — The durable artifact is a written spec (acceptance criteria, interfaces, non-goals). Chat is ephemeral. Already aligned with `requirements-driven-dev` and code-craft Design Intent.
 2. **Context-as-wiring-diagram** — Before deep file reads, produce a small diagram/map: modules, data ownership, call edges, skill handoffs. Prefer that map as context over raw dumps.
-3. **Multi-agent panels** — Parallel specialized roles (product, arch, security, adversarial) with a synthesis step. Already `multi-perspective-deliberation` / swarm modes.
+3. **Multi-agent panels** — Parallel specialized roles (product, arch, security, adversarial) with a synthesis step. Already `multi-perspective-deliberation` deliberation modes.
 
 ### Anthropic guidelines
 
@@ -81,7 +81,7 @@ Legend: **Strong** = first-class skill/rule · **Partial** = present but unlabel
 | G2 | No **compaction checklist** for operators | Context rot → wrong edits | `memory` Structure/Capture + session ops doc |
 | G3 | ACI not named in skill/tool authoring | Skill authors under-document tools | `skill-author` + `subagent-dispatch` refs |
 | G4 | Evaluator–optimizer not a first-class *named* loop outside tests | Subjective “looks good” reviews | Link `bounded-iteration` + `reviewer` criteria-first |
-| G5 | Thought-graft / branch contrast not templated | Parallel agents waste successful reasoning | `swarm-intelligence` / multi-perspective synthesis template |
+| G5 | Thought-graft / branch contrast not templated | Parallel agents waste successful reasoning | `multi-perspective-deliberation` synthesis template |
 | G6 | Wiring-diagram artifact optional | Agents dump files instead of maps | `codebase-exploration` report templates (already partial) |
 | G7 | RAPO-style **step-level** retrieval weak | Session digests too coarse | `memory` recall templates: “similar incident steps” |
 
@@ -104,11 +104,11 @@ Originally ordered for a future implementation slice. **P1–P7 are now material
 | P2 | Name **evaluator–optimizer** in bounded-iteration + reviewer cross-links | S | G4 | **Done** — criteria-before-generation/review wired into both skills |
 | P3 | ACI checklist in skill-author / tool-writing guidance | S | G3 | **Done** — `skill-author` loads `references/aci-checklist.md` |
 | P4 | Compaction + note re-injection checklist in memory refs | M | G2 | **Done** — memory refs now define context compaction use |
-| P5 | Branch-graft synthesis section in multi-perspective / swarm | M | G5 | **Done** — shared branch-graft protocol added for synthesis conflicts |
+| P5 | Branch-graft synthesis section in multi-perspective-deliberation | M | G5 | **Done** — shared branch-graft protocol added for synthesis conflicts |
 | P6 | Step-level “similar trace” recall template in memory | M | G7 | **Done** — Recall can query prior incidents by step/blocker/recovery shape |
 | P7 | Optional “wiring diagram” first deliverable in codebase-exploration | S | G6 | **Done** — architecture-map template is now the default system-understanding deliverable |
 
-Implementation order shipped: **code-craft** → **bounded-iteration/reviewer** → **skill-author** → **memory** → **swarm / multi-perspective** → **codebase-exploration**.
+Implementation order shipped: **code-craft** → **bounded-iteration/reviewer** → **skill-author** → **memory** → **multi-perspective-deliberation** → **codebase-exploration**.
 
 ---
 
@@ -146,4 +146,4 @@ Implementation order shipped: **code-craft** → **bounded-iteration/reviewer** 
 - [Failure patterns catalog (battle-tested)](../../skills-and-rules/failure-patterns-catalog.md)
 - [Working with AI agents (battle-tested)](../../project-lifecycle/working-with-ai-agents.md)
 - [Research INDEX (not battle-tested)](../INDEX.md)
-- Primary skills: `code-craft`, `memory`, `requirements-driven-dev`, `multi-perspective-deliberation`, `swarm-intelligence`, `bounded-iteration`, `subagent-dispatch`, `reviewer`
+- Primary skills: `code-craft`, `memory`, `requirements-driven-dev`, `multi-perspective-deliberation`, `bounded-iteration`, `subagent-dispatch`, `reviewer`

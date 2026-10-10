@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import { realpath, stat } from "node:fs/promises"
 import type {
   ContainerHandle,
@@ -6,6 +7,7 @@ import type {
   ExecInput,
   ExecResult,
 } from "./contracts.ts"
+import { ContainerCreationError } from "./errors.ts"
 import { run } from "./process.ts"
 
 const PACKAGE = "sandbox"
@@ -36,7 +38,12 @@ type RunResult = Awaited<ReturnType<typeof run>>
  * Distinguishes absence from a daemon reachability or permission error.
  */
 function isNotFound(r: RunResult): boolean {
-  return r.stop === "exited" && r.exitCode !== 0 && /no such (container|object)/i.test(r.stderr)
+  return (
+    !r.error &&
+    r.stop === "exited" &&
+    r.exitCode !== 0 &&
+    /no such (container|object)/i.test(r.stderr)
+  )
 }
 
 /**
@@ -44,7 +51,7 @@ function isNotFound(r: RunResult): boolean {
  * Callers that must distinguish "not found" should check isNotFound first.
  */
 function assertOk(r: RunResult, op: string): void {
-  if (r.stop === "exited" && r.exitCode === 0) return
+  if (!r.error && r.stop === "exited" && r.exitCode === 0) return
   const detail = r.stderr.trim() || r.error || `exit ${r.exitCode} stop=${r.stop}`
   throw new Error(`docker ${op}: ${detail}`)
 }
@@ -247,6 +254,9 @@ async function destroyContainer(id: string): Promise<void> {
 export class DockerRuntime implements ContainerRuntime {
   constructor(private readonly instance: string) {}
 
+  /** Creates and verifies an owned container before starting its supervisor.
+   * @throws ContainerCreationError with the exact cleanup target after a Docker create attempt.
+   */
   async create(spec: ContainerSpec): Promise<ContainerHandle> {
     const workspacePath = spec.workspace
     let canonicalWs: string | undefined
@@ -263,41 +273,38 @@ export class DockerRuntime implements ContainerRuntime {
     }
     const createArgs = buildCreateArgs(spec, canonicalWs, buildSupervisorScript(spec.idleSeconds))
 
-    // Create container (does not start it).
-    const createResult = await run(["docker", "create", ...createArgs], { wallTimeMs: T_CREATE })
-    assertOk(createResult, "create")
-    const containerId = createResult.stdout.trim()
-    if (!containerId || !/^[0-9a-f]+$/.test(containerId) || containerId.length < 12)
-      throw new Error(`docker create: unexpected container ID: "${containerId.slice(0, 80)}"`)
-
-    // Inspect before start — verify all security constraints hold.
-    let imageId: string
+    // A known name preserves the exact cleanup target even if create loses its ID response.
+    const name = `agent-sandbox-${randomUUID()}`
+    const handle: ContainerHandle = { id: name, imageId: "" }
     try {
-      const inspResult = await run(["docker", "inspect", "--format", "{{json .}}", containerId], {
+      const createResult = await run(["docker", "create", "--name", name, ...createArgs], {
+        wallTimeMs: T_CREATE,
+      })
+      assertOk(createResult, "create")
+      const containerId = createResult.stdout.trim()
+      if (!containerId || !/^[0-9a-f]+$/.test(containerId) || containerId.length < 12)
+        throw new Error(`docker create: unexpected container ID: "${containerId.slice(0, 80)}"`)
+      handle.id = containerId
+
+      // Inspect before start — verify all security constraints hold.
+      const inspResult = await run(["docker", "inspect", "--format", "{{json .}}", handle.id], {
         wallTimeMs: T_INSPECT,
       })
       assertOk(inspResult, "inspect")
       const raw = inspResult.stdout.trim()
       if (!raw) throw new Error("docker inspect: empty response")
       const data = JSON.parse(raw) as Record<string, unknown>
-      imageId = typeof data.Image === "string" ? data.Image : ""
+      handle.imageId = typeof data.Image === "string" ? data.Image : ""
       verifyConstraints(data, spec, canonicalWs)
-    } catch (err) {
-      // Clean up the created (not-yet-started) container before re-throwing.
-      await run(["docker", "rm", containerId], { wallTimeMs: T_RM })
-      throw err
-    }
 
-    // Start the container; supervisor writes its initial deadline and begins polling.
-    const startResult = await run(["docker", "start", containerId], { wallTimeMs: T_START })
-    if (startResult.stop !== "exited" || startResult.exitCode !== 0) {
-      await run(["docker", "rm", "--force", containerId], { wallTimeMs: T_RM })
-      const detail =
-        startResult.stderr.trim() || startResult.error || `exit ${startResult.exitCode}`
-      throw new Error(`docker start: ${detail}`)
+      // Start the container; supervisor writes its initial deadline and begins polling.
+      const startResult = await run(["docker", "start", handle.id], { wallTimeMs: T_START })
+      assertOk(startResult, "start")
+      return handle
+    } catch (error) {
+      // The manager owns cleanup retries, including failures before a usable handle is issued.
+      throw new ContainerCreationError(handle, error)
     }
-
-    return { id: containerId, imageId }
   }
 
   async alive(id: string): Promise<boolean> {
@@ -380,6 +387,9 @@ export class DockerRuntime implements ContainerRuntime {
     }
   }
 
+  /** Removes only this instance's container, succeeding only after confirmed absence.
+   * @throws On ownership mismatch or unconfirmed cleanup; callers must retain the target for retry.
+   */
   async remove(id: string): Promise<void> {
     // Verify ownership before touching the container.
     const labelResult = await run(
@@ -402,8 +412,6 @@ export class DockerRuntime implements ContainerRuntime {
     // Stop with a short grace period; errors are tolerated — rm is the authoritative step.
     await run(["docker", "stop", "--time", "2", id], { wallTimeMs: T_STOP })
 
-    const rmResult = await run(["docker", "rm", id], { wallTimeMs: T_RM })
-    if (isNotFound(rmResult)) return // container removed by stop or auto-rm (--rm flag); done
-    assertOk(rmResult, "rm")
+    await destroyContainer(id)
   }
 }

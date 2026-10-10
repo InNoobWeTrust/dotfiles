@@ -2,12 +2,14 @@
 /*
 
 # Explicit tracking
+!/.skill-lock.json
 !/agents/
 !/docs/
 !/instructions/
 !/memories/
 !/mcps/
 /mcps/*
+!/mcps/delegate/
 !/mcps/sandbox/
 !/rules/
 !/scripts/

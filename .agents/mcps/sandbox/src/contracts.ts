@@ -73,6 +73,7 @@ export interface ExecResult {
   error?: string
 }
 export interface ContainerRuntime {
+  /** Throws ContainerCreationError when Docker may have allocated a container before failure. */
   create(spec: ContainerSpec): Promise<ContainerHandle>
   alive(id: string): Promise<boolean>
   deadline(id: string, seconds: number): Promise<void>

@@ -102,15 +102,13 @@ Do **not** run branch steps B1–B2 for eng-only spot checks or eng-only audits.
 5. `systematic-investigation` — diagnose repetitions or broken verification, then resume only with a supported changed approach
 6. Deliver guides/evidence for final human user acceptance; feedback begins another scoped loop. AFK still requires verified isolation, state, job bounds, and cleanup.
 
-### Delegated Execution / Swarminator
+### Delegated Execution
 
 Any time a background worker, delegated agent, or external node is launched:
 
 1. `subagent-dispatch` — for named, fallback, and dynamically defined workers, load `subagent-dispatch/references/worker-contract.md`; provide scope, output contract, allowed actions, stop conditions, and usable guidance discovery. Style references or short hints are optional; do not assume parent skills or routing-profile bodies are inherited.
 2. `working-principles` — the worker interprets its assignment, reads the catalog where useful, and loads relevant reference sections itself. Main agents can use the same router without delegation; mechanical tasks may stay with the baseline.
-3. **Environment-native delegated worker** when available, else **`swarm-intelligence`**:
-   - Mode Single-Node — one bounded swarminator node (`swarm-intelligence/references/single-node.md`); pin via `/external-subagent` when that command exists
-   - Mode Full Swarm — multi-phase multi-model orchestration; pin via `/swarm` when that command exists
+3. **`multi-perspective-deliberation`** when crowd thinking is needed — concurrent delegated persona workers or simulated dialogue (`multi-perspective-deliberation/SKILL.md`); pin via `/swarm` or `/party-mode` when those commands exist.
 
 ### Project Foundation (Bootstrap, Materialize, Audit/Evolve)
 
@@ -165,6 +163,17 @@ When designing or implementing data pipelines, analytical querying, feature engi
 3. `data-storytelling` — profile raw files and mine signals using out-of-core Ibis + DuckDB scans
 4. `reviewer` (Python performance / resource lens) — audit data code to eliminate memory-ballooning Pandas loops and isolated Polars lock-in in favor of lazy streaming Ibis expressions
 
+### Persistent Team Work
+
+When work spans multiple sessions, roles, and contributors under the same task:
+
+1. `team-operating-model` — establish role identity, session binding, onboarding, shared plan, checkpoint contract, and accepted-task consolidation routing
+2. `subagent-dispatch` + `worker-contract.md` — bounded handoff with persistent task-role identity, discovery access, and continuation guards
+3. `memory` (Capture) — role checkpoints and task records written to `tasks/<task-id>/` in `MEMORY_DIR`
+4. `bounded-iteration` — authorized delivery loop within the approved plan scope and per-slice bounds
+5. `multi-perspective-deliberation` — joint plan deliberation and design challenge
+6. `memory` (Consolidate via Subagent, report-only) — accepted-task consolidation after recorded user acceptance; apply/markers/archive/eviction require subsequent explicit human approval
+
 ### Skill Authoring & Maintenance
 
 When creating or maintaining the .agents/ governance layer:
@@ -174,7 +183,7 @@ When creating or maintaining the .agents/ governance layer:
 3. `reviewer` (adversarial lens) — challenge the new skill or audit conclusions
 4. `codebase-exploration` — if the new skill needs domain knowledge of the codebase
 
-### Plan / Architecture Challenge (Swarm-Based)
+### Plan / Architecture Challenge (Deliberation-Based)
 
 When a delegated architect, planner, or design agent produces a plan or
 architecture proposal, route it through a challenger before presenting to
@@ -188,7 +197,7 @@ reaching the decision-maker unchallenged.
 
 **Key principle:** The producer agent does NOT load pragmatic-triage — a
 *separate* agent loads it to challenge the producer's output. This is
-swarm-based correction, not self-discipline.
+independent-challenger correction, not self-discipline.
 
 ### Review / Audit Cross-Validation
 
@@ -238,7 +247,7 @@ Natural transitions between skills:
 | `requirements-driven-dev` | `multi-perspective-deliberation` | "Draft specs completed, launching persona review to challenge assumptions" |
 | `multi-perspective-deliberation` | `code-craft` | "Deliberation complete, starting implementation of the peer-reviewed design" |
 | `multi-perspective-deliberation` | `model-benchmarking` | "Deliberation complete, optimizing model assignments for the selected architecture" |
-| `model-benchmarking` | `swarm-intelligence` | "Models selected, ready to launch multi-agent swarm" |
+| `model-benchmarking` | `multi-perspective-deliberation` | "Models selected, ready for multi-agent deliberation" |
 | `model-benchmarking` | `requirements-driven-dev` | "Token costs and model limits analyzed, feeding into TRD/PRD architectural specs" |
 | `talent-screening` | `reviewer` (editorial lens) | "Evaluation reports completed, ready for peer review" |
 | `strategic-osint` | `brainstorming` | "The public-signal map is clear; now generate options or paths" |
@@ -248,20 +257,22 @@ Natural transitions between skills:
 | `brainstorming` | `investment-assessment` | "Options framed; now diligence or allocate capital" |
 | `investment-assessment` | `multi-perspective-deliberation` | "Draft memo ready; finance cast challenge" |
 | `investment-assessment` | `reviewer` (investment-memo lens) | "Memo complete; independent suitability/regime review" |
-| `investment-assessment` | `swarm-intelligence` (finance domain) | "High-stakes allocation; multi-model finance personas" |
+| `investment-assessment` | `multi-perspective-deliberation` (finance cast) | "High-stakes allocation; finance persona challenge" |
 | `reviewer` (investment-memo lens) | `investment-assessment` | "Review failed gates; revise size/allocation" |
 | Any skill | `memory` (Capture) | "Handoff requested, serializing context and saving progress" |
 | `doc-craft` | `memory` (Capture) | "Content is an atomic feature plan, phase spec, or consensus board — route to memory" |
 | `memory` (Recall) | Any skill | "Session restored, resuming active work" |
+| `team-operating-model` | `subagent-dispatch` | "Dispatching a fresh or replacement worker to an existing task-role pair" |
+| `team-operating-model` | `memory` (Capture) | "Checkpointing a completed or interrupted slice to the role record" |
+| `bounded-iteration` | `team-operating-model` | "Task requires persistent role identity, shared plan governance, or accepted-task consolidation routing" |
+| `multi-perspective-deliberation` | `team-operating-model` | "Deliberation produced a joint plan candidate; primary must version and approve it" |
 
 | Any skill | `memory` (Consolidate via Subagent) | "Explicit consolidation request — user says 'consolidate memory', 'dream cycle', 'run consolidation', or 'review my notes'" |
 | `memory` (Consolidate via Subagent) | `memory` (Consolidate) | "Approval received or delegation unavailable; applying approved memory writes" |
 | `memory` (Consolidate) | `memory` (Evict) | "Long-term size limits passed, running eviction pass" |
 | Any skill | `memory` (Structure) | "Applying progressive-disclosure pattern to a docs directory or code module" |
 | Any implementation skill | `reviewer` | "Review my work" |
-| `subagent-dispatch` | `swarm-intelligence` (Single-Node) | "Prompt constructed, one bounded swarminator node (or equivalent explicit single-node mode)" |
-| `subagent-dispatch` | `swarm-intelligence` (Full Swarm) | "Prompt constructed, multi-node orchestration (or equivalent explicit full-swarm mode)" |
-| `swarm-intelligence` (Single-Node) | `swarm-intelligence` (Full Swarm) | "Bounded node insufficient; escalate to full swarm" |
+| `subagent-dispatch` | `multi-perspective-deliberation` | "Need crowd thinking: concurrent persona workers or simulated dialogue" |
 | `multi-perspective-deliberation` | `subagent-dispatch` | "Launching delegated persona workers for the deliberation" |
 | `project-foundation` | `architecture-design` | "Project scaffolded, now writing detailed architecture doc or selecting patterns" |
 | `project-foundation` | `ui-ux` | "Project scaffolded with UI/frontend components; initializing DESIGN.md visual system" |
@@ -304,7 +315,7 @@ skill.
 | Reviewer Sub-Lens | Derived From | Relationship |
 |---|---|---|
 | `reviewer/references/sub-reviewers/design-rigor.md` | `code-craft`, `systematic-investigation` | Reviews whether design discipline and investigation rigor were applied |
-| `reviewer/references/sub-reviewers/investment-memo.md` | `investment-assessment`, swarm finance personas | Reviews rails, regime, role discipline, class-fit, sizing vs pain |
+| `reviewer/references/sub-reviewers/investment-memo.md` | `investment-assessment`, multi-perspective finance personas | Reviews rails, regime, role discipline, class-fit, sizing vs pain |
 | `reviewer/references/sub-reviewers/pragmatic-triage.md` | Ostrich algorithm, YAGNI, probability × impact triage | Challenges whether proposed complexity is justified; filters before adversarial/design-rigor drill in |
 | `reviewer/references/sub-reviewers/findings-skeptic.md` | `rules/self-grounded-verification.md`, agreement-bias research | Cross-validates review/audit/scanner findings for false positives and severity inflation |
 
@@ -322,5 +333,5 @@ skill.
 - **Project setup**: `project-foundation` → `devsecops` (foundation first, then secure the pipeline).
 - **Security hardening**: `devsecops` → `code-craft` → `reviewer` (security lens).
 - **Governance maintenance**: `skill-author` is the entry point; it routes to `project-foundation` or back to itself (Workflow A) as gaps are found.
-- **Personal/portfolio investing (multi-asset)**: `investment-assessment` (author) → optional `multi-perspective-deliberation` finance cast or `reviewer` investment-memo lens → `swarm-intelligence` finance domain only for high-stakes multi-model. Personas under `swarm-intelligence/references/personas/finance/` via `discover-personas.sh`.
+- **Personal/portfolio investing (multi-asset)**: `investment-assessment` (author) → optional `multi-perspective-deliberation` finance cast or `reviewer` investment-memo lens for high-stakes challenge. Personas under `multi-perspective-deliberation/references/personas/finance/` via `discover-personas.sh`.
 - **Management reporting**: Not a skill — refer to `docs/ai-augmented-project-setup-and-evolution.md` §9 for what to report. Define your org's reporting template and generate ad-hoc using `data-storytelling` for data interpretation.

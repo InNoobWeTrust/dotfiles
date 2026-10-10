@@ -8,6 +8,7 @@ import type {
   ExecResult,
   Owner,
 } from "./contracts.ts"
+import { ContainerCreationError } from "./errors.ts"
 
 type Container = {
   handle: ContainerHandle
@@ -24,6 +25,8 @@ const UNAVAILABLE =
   "Container unavailable: expired, released, or not owned by this session. Acquire a fresh container."
 const IDLE_REFRESH_FAILED =
   "Execution completed, but the container inactivity deadline could not be reset. Execution side effects may have occurred; do not blindly retry the command."
+const CREATION_FAILED =
+  "Container creation failed; no handle was issued. Check Docker connectivity, local image availability, workspace path/permissions, and image compatibility before retrying."
 
 /** Owns independent session-bound containers and serializes their runtime effects. */
 export class ContainerManager {
@@ -148,10 +151,15 @@ export class ContainerManager {
   }
 
   private async createContainer(input: AcquireInput, session: string): Promise<ContainerView> {
-    const handle = await this.effect(
-      () => this.runtime.create({ ...input, instance: this.instance }),
-      "Container creation failed. Check Docker connectivity, local image availability, workspace path/permissions, and image compatibility before retrying.",
-    )
+    let handle: ContainerHandle
+    let creationError: ContainerCreationError | undefined
+    try {
+      handle = await this.runtime.create({ ...input, instance: this.instance })
+    } catch (error) {
+      if (!(error instanceof ContainerCreationError)) throw new Error(CREATION_FAILED)
+      handle = error.handle
+      creationError = error
+    }
     const container: Container = {
       handle,
       input,
@@ -164,6 +172,7 @@ export class ContainerManager {
     // Initialization occupies the queue before sweep can observe a temporarily tokenless container.
     return this.serialize(container, async () => {
       try {
+        if (creationError) throw creationError
         this.ensureOpen()
         const expiresAt = Date.now() + input.idleSeconds * 1000
         await this.setDeadline(container, expiresAt)
@@ -188,9 +197,10 @@ export class ContainerManager {
           await this.remove(container)
         } catch {
           throw new Error(
-            "Container acquisition failed and container cleanup failed; no handle was issued. Automatic sweep will retry tracked cleanup. Close the MCP connection to request shutdown; the container deadline is the fallback after server loss.",
+            "Container acquisition failed and container cleanup failed; no handle was issued. Automatic sweep and shutdown will retry tracked cleanup.",
           )
         }
+        if (creationError) throw new Error(CREATION_FAILED)
         throw new Error("Container acquisition failed or manager is closing; no handle was issued.")
       }
     })

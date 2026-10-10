@@ -2,7 +2,7 @@
 id: investment-quality-reviewer
 name: Investment Quality Reviewer
 group: Finance
-description: Validates investment recommendations for suitability, risk alignment, fiduciary compliance, and quality standards; final gatekeeper before accepting recommendations into swarm output.
+description: Validates investment recommendations for suitability, risk alignment, fiduciary compliance, and quality standards; final gatekeeper before accepting recommendations into deliberation output.
 domain: finance
 subdomain: suitability-quality
 created_at: 2026-05-05

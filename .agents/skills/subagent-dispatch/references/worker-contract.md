@@ -12,7 +12,7 @@ Workers use [Working Principles](../../working-principles/SKILL.md) to interpret
 
 The main agent may provide a reference, a short direction such as “skeptical and evidence-first,” or no personality direction. All three are valid. Do not require copied baseline or specialist paragraphs in every request, turn a title into claimed expertise, or conflate personality with authority. Domain workflows and safety gates retain their own triggers.
 
-Select a currently exposed model route for capability and effort, independently of the assignment's working-principle identity. Descriptions are selection guidance, not proof of availability or expertise. Check each route's native permissions; an edit-capable route does not authorize edits in a read-only research/review assignment. Preserve native deny rules and use supported native restrictions when hard read-only isolation is required. Model capability and style selection never grant task authority.
+Select a currently exposed model route for capability and effort, independently of the assignment's working-principle identity and independently of the primary's provider family. For independent evidence (challenge, second opinion, retry after failure) the route must come from a different provider family than the producer. Descriptions are selection guidance, not proof of availability or expertise. Check each route's native permissions; an edit-capable route does not authorize edits in a read-only research/review assignment. Preserve native deny rules and use supported native restrictions when hard read-only isolation is required. Model capability and style selection never grant task authority.
 
 ## Discovery access
 
@@ -54,6 +54,27 @@ requiring extra authority -> INCOMPLETE with partial evidence and exact blocker.
 ```
 
 The worker infers diagnosis and loads its principles from the catalog. An optional reference can name the diagnosis section; an optional hint can say “use falsifiable hypotheses.” Neither is required. Replace task-source placeholders before launch. This is a source-level example, not evidence of Antigravity runtime discovery or compliance.
+
+## Persistent task-role identity
+
+When a session is assigned to a permanent `task_id` + `role_id` pair, first load applicable mandatory guidance and safety rules, then the memory storage protocol and resolve `MEMORY_DIR`, before reading any task source. The following task reads and restoration precede substantive work:
+
+1. Read own role record: `tasks/<task-id>/roles/<role-id>.md` in the resolved `MEMORY_DIR`.
+2. Read the task record and role roster: `tasks/<task-id>/task.md`.
+3. Read the current approved plan.
+4. Confirm identity (matching `task_id` + `role_id`), validate scope against the approved plan, and restore prior knowledge from checkpoints.
+
+**Block substantive work** if any of the following holds: identity mismatch, retired session binding, missing or stale checkpoint that conflicts with approved scope, duplicate active ownership, or unproven prior-worker quiescence.
+
+Session-binding guards (full contract: [Task-role records](../../memory/references/task-role-records.md)):
+- Same-pair only: exact task-role match + non-retired roster binding.
+- Single active: at most one in-flight/assigned actor per role.
+- Stable job only: a new/refined unit within the same stable job is allowed only under the current primary-approved plan and handoff bounds. A distinct review/test/consolidation job requires a new role + fresh session; task-role identity, role contract and native permissions remain unchanged.
+- No cross-task reuse.
+
+After each completed or interrupted slice, append to the role record following the [checkpoint format](../../memory/references/task-role-records.md#checkpoint-format). A primary-approved plan change requires reading and revalidating the new approved scope before continuing — silently inheriting old scope is not permitted.
+
+Native permission boundaries are unchanged: a read-only assignment does not become writable because of a role binding; preserve configured deny rules and supported native restrictions.
 
 ## ACI Pass / prototype
 

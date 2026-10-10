@@ -46,9 +46,7 @@ use one to bypass a safety or correctness requirement.
 
 - Load `references/skill-compliance-execution.md` when selecting a workflow,
   handling a blocked or deferred step, or preparing completion evidence.
-- Load `references/skill-compliance-swarm-intelligence.md` before executing
-  `swarm-intelligence` Mode Full Swarm. Its preflight, model quorum, phase
-  artifacts, and shortcut prohibitions are mandatory for that mode.
+- Load `../skills/multi-perspective-deliberation/references/branch-graft-synthesis.md` when multiple viable branches disagree; preserve the strongest dissent instead of forcing premature consensus.
 
 ## Completion Check
 

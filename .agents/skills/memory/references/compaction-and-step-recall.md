@@ -33,8 +33,8 @@ Rules:
 3. Separate **confirmed facts** from guesses.
 4. Name unresolved forks explicitly instead of merging them into mush.
 5. After compaction, continue from the compact state block, not the whole transcript.
-6. The compact state must have a durable home: either append it to the active short-term entry under a `## Compact State` section, or include it verbatim in a handoff artifact that is itself saved to short-term memory.
-7. The saved handoff artifact must live in `short-term/*--<branch-slug>--<topic-slug>.md` and include at least: topic, updated timestamp, the compact state block, and the intended recipient/session if one exists.
+6. The compact state must have a durable home: append it to the active short-term entry under a `## Compact State` section; or append it to the task-role working entry (`tasks/<task-id>/roles/<role-id>.md`) when the work belongs to a specific role within a task — do not create a duplicate flat short-term file when such an entry already serves as the working record; or include it verbatim in a handoff artifact saved to short-term memory.
+7. The saved handoff artifact lives in `short-term/<created-stamp>--<branch-slug>--<topic-slug>.md` or in an existing task-role entry (`tasks/<task-id>/roles/<role-id>.md`). Either way, include at least: topic, updated timestamp, the compact state block, and the intended recipient/session if one exists.
 8. If neither write target exists yet, stop and create/choose one before claiming compaction is complete.
 
 ## Part 2 — Step-level similar-trace recall
@@ -58,6 +58,7 @@ When a similar-trace query is requested, search memory using 3 buckets:
 Concrete search boundary:
 
 - Search active repo-local `short-term/*.md` first
+- Also search task-role entries at `tasks/<task-id>/roles/<role-id>.md` within `MEMORY_DIR` when the query relates to a known task or role
 - Then search `short-term/archive/*.md` if no active match is strong enough
 - Then search `long-term/INDEX.md` and follow matching topic/bucket entries
 - Normalize the query into 1 token for step shape, 1-3 tokens for blocker shape, and 1-3 tokens for recovery shape

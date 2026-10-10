@@ -187,7 +187,7 @@ Synchronize canonical `.agents/mcp.json` to the current agent harness configurat
 | Temptation | Why wrong | Correct path |
 |---|---|---|
 | INDEX + WIRING only; "skills live globally" | Many environments resolve project `.agents/skills` first; CI/teammates lack `~/.agents` | Materialize core pack (symlink or copy) |
-| Copy entire global skills tree including swarm/video assets | Attention + disk bloat; INDEX becomes unusable | Core pack only; optional skills on demand |
+| Copy entire global skills tree including video assets | Attention + disk bloat; INDEX becomes unusable | Core pack only; optional skills on demand |
 | Rewrite all rules by hand each bootstrap | Drift from global; stale security/TDD | Materialize from source; overlay in AGENTS.md |
 | Bootstrap once; never re-open the skill | Architecture/glossary/INDEX rot | Mode B on drift signals and explicit audit |
 | Overwrite project-specific skills during sync | Destroys local value | Sync core only; leave `kpur`-style custom skills |

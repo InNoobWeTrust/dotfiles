@@ -26,3 +26,11 @@ Learnings from iterative prompt refinement, multi-agent review gating, and obser
 ## 4. Iterative Improvement from Observed Behaviors
 - **Observe the failure mode**: Watch what models actually produce (e.g. bypassed review, over-engineered designs, exaggerated severity).
 - **Prune before adding**: When an agent misbehaves, resist the urge to add more rules to the prompt. Check if existing over-constraints are suffocating the model's judgment, or if a separate challenger agent with a focused lens is needed.
+- **Prune scaffolding before close**: One-off verification files (`_verify_*`, mock/stub modules, throwaway generators) never ship in `skills/*/scripts/`. Close requires `find . -name '*_verify*' -o -name '*mock*' -o -name '*stub*'` (excluding data dirs) returning empty with only the real script remaining.
+
+## 5. MCP Interface Design — Explicit User Preference (2026-10-11)
+- **Default-callable tools:** Treat Delegate like Sandbox for invocation policy: allow ordinary MCP calls by default. Do not add a routine approval gate merely because delegation can spend model time or access files.
+- **Centralize operational complexity:** MCP implementations absorb CLI quirks and enforce supported limits/refusals; MCP and tool descriptions expose remaining constraints so agents can act predictably. Prefer this boundary over repeated caller-side procedures and redundant routing or permission layers.
+- **Preserve actual boundaries:** Default callability does not expand task authority or equate Delegate's isolation with Sandbox's. Explicit escalation and safety constraints still apply; descriptions communicate residual limits, not replace enforceable checks.
+- **Verified choice:** The user staged both `delegate_delegate_status` and `delegate_delegate_run` as `allow` and removed the extra run-approval paragraph from the harness guide. Apply this preference when designing future MCP interfaces.
+- **No obsolete command layer:** The current agent setup has no commands. Do not restore command-routing rules or index entries; use the existing skill discovery surface rather than maintain a redundant command map.

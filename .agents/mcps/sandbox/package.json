@@ -10,7 +10,7 @@
     "format:check": "bunx --bun --package @biomejs/biome@2.5.15 biome format . --error-on-warnings",
     "check": "bunx --bun --package @biomejs/biome@2.5.15 biome check . --error-on-warnings",
     "check:fix": "bunx --bun --package @biomejs/biome@2.5.15 biome check --write . --error-on-warnings",
-    "test": "bun test tests/manager.test.ts",
+    "test": "bun test tests/manager.test.ts tests/docker.test.ts",
     "test:e2e": "CONTAINER_SANDBOX_E2E=1 bun run tests/e2e.ts"
   }
 }

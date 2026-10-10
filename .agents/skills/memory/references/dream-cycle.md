@@ -23,6 +23,17 @@ Do **not** trigger on:
 - Context length thresholds or session startup.
 - `long-term/INDEX.md` age (a stale `last_dream_cycle` timestamp is informational; do not auto-run).
 
+### Accepted-task standing consolidation
+
+When a task's `accepted_by_user` is recorded as `true`, a dedicated fresh consolidator for that task may be recruited:
+
+- **Trigger**: recorded user acceptance event on the specific task + an explicit consolidation request. Not machine PASS, not agent TASK_COMPLETE, not automatic.
+- **Scope**: that task's role captures (`tasks/<task-id>/roles/<role-id>.md`) and its request/plan context. No global memory scan; no cross-task loading.
+- **Default: report-only.** The consolidator reads role captures, extracts and scores candidates, and returns a report. It does not write to long-term, flip `consolidated` markers, archive, evict, or touch Git.
+- **Apply/markers/archive/eviction**: each requires a subsequent explicit human approval after the report, following the normal approval gates in §Phase 3 and §Phase 4 of this document.
+- **Replacement consolidators** restore their own role checkpoint first before running.
+- If subagent delegation is unavailable, apply §Fallback if subagent is unavailable; do not silently replace the dedicated consolidator with the main agent.
+
 ---
 
 ## Subagent consolidation (recommended path)

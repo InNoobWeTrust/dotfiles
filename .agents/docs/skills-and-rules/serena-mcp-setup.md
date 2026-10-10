@@ -41,7 +41,7 @@ Add the `serena` MCP server definition to your project or global MCP configurati
         "-p",
         "3.13",
         "--from",
-        "git+https://github.com/oraios/serena",
+        "serena-agent",
         "serena",
         "start-mcp-server",
         "--project-from-cwd"

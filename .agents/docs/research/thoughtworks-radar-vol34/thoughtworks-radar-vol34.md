@@ -63,7 +63,7 @@ Legend: **Strong** / **Partial** / **Gap** relative to this dotfiles agent stack
 | Feedback flywheel | Retro on harness (skills + sensors), not only product code | skills-and-rules maintaining |
 | Measuring collaboration quality | First-pass acceptance, rework, review burden — not LOC | quality-tooling management metrics |
 | Ralph loop | Fresh-context iterative converge-to-spec | bounded-iteration / research only |
-| Team of coding agents vs swarms | Small deliberate teams vs large swarms | swarm-intelligence (swarm = Caution) |
+| Team of coding agents vs swarms | Small deliberate teams vs large swarms | multi-perspective-deliberation (large swarms = Caution) |
 | Skills as executable onboarding | `/setup` skills > static README | project-foundation / onboarding skills |
 | Toxic flow analysis + Agent Scan | Skills/MCP supply chain | security-auditor research; caution third-party skills |
 | MITRE ATLAS | AI threat taxonomy | security docs |

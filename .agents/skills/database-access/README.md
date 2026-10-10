@@ -21,6 +21,7 @@ It is **not** a schema design skill. For schema modeling, normalization, migrati
 | Aggregate synchronization strategy | Observability instrumentation (optional extension only) |
 | Bulk/native operations safety | — |
 | Test strategy for data-access adapters | — |
+| Database inspection & query testing (`hsql`) | — |
 
 ## Files
 
@@ -35,7 +36,8 @@ database-access/
     ├── write-contracts-idempotency-and-concurrency.md  # Write safety, retries, locking
     ├── facade-guides.md                 # Per-facade risks (ORM, AR, QB, SQL, ODM)
     ├── raw-sql-bulk-and-native-operations.md  # Raw SQL, bulk ops, native driver
-    └── testing-and-extensions.md       # Test doubles, integration tests, optional extensions
+    ├── testing-and-extensions.md       # Test doubles, integration tests, optional extensions
+    └── hsql-inspection.md              # Database inspection, catalog discovery, and query testing with hsql
 ```
 
 ## Lifecycle
@@ -49,6 +51,7 @@ database-access/
 
 ## Design Decisions
 
+- **hsql is the preferred CLI tool for agents.** Use `hsql` for headless schema/catalog exploration and query verification with bounded `--read-only` and `--timeout` controls.
 - **Application services own the unit-of-work boundary by default.** A UoW abstraction is an explicit opt-in per repository or vertical slice.
 - **A project Data Access Contract is authoritative.** Read project `AGENTS.md` first, then any linked dedicated data-access document.
 - **Missing contract → stop before risky writes.** Safe reads and basic local work may continue.

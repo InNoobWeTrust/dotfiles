@@ -24,7 +24,7 @@ For recall shaping and context compaction tactics, load `references/compaction-a
 
 - Save, checkpoint, or restore session state
 - Storing or updating atomic feature plans (`plans/<feature>/plan.md`) or vertical slice phase files (`phases/01-*.md`)
-- Recording inter-agent consensus boards or swarm deliberation records (`consensus/<topic>.md`)
+- Recording inter-agent consensus boards or multi-agent deliberation records (`consensus/<topic>.md`)
 - User says "remember this", "note this", "save context", "resume", "what was I working on"
 - User says "consolidate memory", "dream cycle", "prune memory", "forget X"
 
@@ -53,6 +53,7 @@ Pick one mode per invocation. Modes are separate procedures; do not interleave.
 - User says "save", "checkpoint", "note this", "remember this", "save handoff", "save plan", "record consensus" → **Capture**.
 - User says "resume", "restore", "load context", "what was I working on", "load plan" → **Recall**.
 - User says "consolidate memory", "dream cycle", "run consolidation", "review my notes" → **Consolidate**; prefer **Consolidate via Subagent** when delegation is available; if unavailable, report to the user and ask before switching to in-agent Consolidate.
+- Task has `accepted_by_user: true` and consolidation for that task is requested → recruit a dedicated fresh **Consolidate via Subagent** scoped to that task's role captures; pass is **report-only** until human approves apply/markers/archive/eviction. See `references/dream-cycle.md` §Accepted-task standing consolidation and `references/task-role-records.md`.
 - User says "prune memory", "forget X", "evict Y" → **Evict**.
 
 ### Capture + Subagent consolidation (recommended path)
@@ -86,14 +87,31 @@ Resolve `MEMORY_BACKEND` and `MEMORY_DIR` before any read or write:
 **Serena Backend (`MEMORY_BACKEND=serena`)**:
 ```
 <git-root>/.serena/memories/
-├── core.md                      # Graph root entry point (references domain memories)
-├── memory_maintenance.md        # Discovery model and style guidelines
-├── plan_<feature-slug>.md       # Atomic feature implementation plans
-├── phase_<feature>_<##>.md      # Vertical slice execution phase specs
-├── consensus_<topic-slug>.md    # Inter-agent consensus boards
-└── <topic>.md                   # Focused domain memories (e.g., project_governance.md)
+├── core.md                         # Graph root; references domain and task pointers
+├── memory_maintenance.md           # Discovery model and style guidelines
+├── knowledge/
+│   └── <topic>.md                  # Domain topic entries (e.g., agent_prompt_crafting.md)
+├── tasks/
+│   └── <task-id>/
+│       ├── task.md                 # Task spec and role roster
+│       ├── request.md              # Original request (immutable)
+│       ├── plan.md                 # Versioned approved plan
+│       ├── roles/
+│       │   └── <role-id>.md        # Role memory — append-only checkpoints
+│       ├── phases/                 # Task-local phase specs (optional)
+│       └── consensus/              # Task-local consensus boards (optional)
+├── plans/
+│   └── <feature-slug>/
+│       ├── plan.md                 # Standalone feature plan
+│       └── phases/
+│           └── <##>-<slice>.md     # Sequential vertical slice phase specs
+├── short-term/                     # Session checkpoints and working notes
+│   └── archive/
+└── long-term/                      # Size-limited, INDEX-gated (approved writes only)
+    ├── INDEX.md
+    └── ...
 ```
-*Operations adapt*: Capture/Recall read and write markdown files directly under `.serena/memories/` (or via Serena MCP tools `read_memory`/`write_memory` when active).
+*Operations adapt*: Capture/Recall use nested memory names (e.g., `mem:tasks/<task-id>/roles/<role-id>`, `mem:knowledge/<topic>`) or hierarchical file paths within `.serena/memories/`. Discovery starts at `core.md`; load only the relevant subtree, not the entire store.
 
 **Default Backend (`MEMORY_BACKEND=default`)**:
 ```
@@ -101,6 +119,11 @@ Resolve `MEMORY_BACKEND` and `MEMORY_DIR` before any read or write:
 ├── README.md                    # directory protocol
 ├── short-term/                  # unbounded, append-only per session
 │   └── <created-stamp>--<branch>--<topic>.md  # session checkpoints + working notes
+├── tasks/                       # task records, role checkpoints, task-local phases
+│   └── <task-id>/
+│       ├── task.md, request.md, plan.md
+│       └── roles/
+│           └── <role-id>.md     # append-only role checkpoints
 ├── plans/                       # atomic feature plans and execution phase specs
 │   └── <feature-slug>/
 │       ├── plan.md              # atomic plan index (scoped boundaries, locked contracts)
@@ -206,6 +229,7 @@ For every invocation:
 ## References
 
 - `references/hierarchy-and-storage.md` — storage layout, frontmatter, plans & consensus storage, capture/recall procedure, filename rules
+- `references/task-role-records.md` — canonical task/role record schema, session-binding guards, checkpoint format, and replacement contract
 - `references/dream-cycle.md` — consolidation workflow and scoring inputs
 - `references/eviction-scoring.md` — scoring function, ranking, archive-then-delete protocol
 - `references/progressive-disclosure-pattern.md` — the leaf/index abstraction and the four properties an index must have

@@ -14,7 +14,7 @@
     "new_location": "launch",
     "permissions": "autoaccept",
     "sidebar": "hide",
-    "verbosity": "medium"
+    "verbosity": "low"
   },
   "tabs": {
     "mode": "on",

@@ -1,6 +1,6 @@
 ---
 name: model-benchmarking
-description: "Use this skill to analyze and optimize agent model configurations — benchmark comparisons, pricing analysis, ELO rankings, and provider selection. Activate when optimizing model assignments, comparing LLM cost-performance tradeoffs, selecting model tiers for swarms, or validating agent configs against schemas."
+description: "Use this skill to analyze and optimize agent model configurations — benchmark comparisons, pricing analysis, ELO rankings, and provider selection. Activate when optimizing model assignments, comparing LLM cost-performance tradeoffs, selecting model tiers for delegated workers, or validating agent configs against schemas."
 ---
 
 # Agent Model Benchmarking & Optimization

@@ -7,6 +7,9 @@ Raw SQL (via parameterized driver queries) is appropriate when:
 - Bulk data loading performance is critical and ORM overhead is measurable.
 - The project contract explicitly declares certain operations as raw-SQL paths.
 
+> [!TIP]
+> Use `hsql` with `--read-only` and `--timeout` to safely test, explain (`EXPLAIN`), and verify raw SQL queries against the database before embedding them in application code. See [`hsql-inspection.md`](hsql-inspection.md).
+
 Raw SQL is **not** a workaround for ORM complexity. If the query is expressible cleanly in the ORM, prefer the ORM for its lifecycle integration.
 
 ---

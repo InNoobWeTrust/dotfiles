@@ -29,6 +29,10 @@
       "type": "local",
       "command": ["{env:HOME}/.local/bin/mcp-sandbox"],
     },
+    "delegate": {
+      "type": "local",
+      "command": ["{env:HOME}/.local/bin/mcp-delegate"],
+    },
     "chrome-devtools": {
       "type": "local",
       "command": [
@@ -387,6 +391,8 @@
     { "action": "sandbox_sandbox_ro", "resource": "*", "effect": "allow" },
     { "action": "sandbox_sandbox_pure", "resource": "*", "effect": "allow" },
     { "action": "sandbox_sandbox_rw", "resource": "*", "effect": "allow" },
+    { "action": "delegate_delegate_status", "resource": "*", "effect": "allow" },
+    { "action": "delegate_delegate_run", "resource": "*", "effect": "allow" },
     {
       "action": "sandbox",
       "resource": "*",

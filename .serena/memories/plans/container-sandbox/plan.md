@@ -24,8 +24,8 @@ Integration scope addition: .agents/.gitignore narrowly allows mcps/container-sa
 
 ## Phases
 
-- phase_container-sandbox_01.md: runtime and bounded process adapter.
-- phase_container-sandbox_02.md: ownership manager and critical tests.
+- `mem:plans/container-sandbox/phases/01`: runtime and bounded process adapter.
+- `mem:plans/container-sandbox/phases/02`: ownership manager and critical tests.
 - Main: MCP adapter, docs, live E2E, independent security/UX challenge and corrections.
 
 ## Iteration contract
@@ -40,4 +40,4 @@ Final convergence: independent UX and Security/Operations/Compatibility source-o
 
 ## Code-quality follow-up
 
-User397 approves the public interface and requests linters/formatter, readable code and internal team code review. Approved separate unit phase_sandbox_code_cleanup.md preserves all public and runtime contracts while cleaning existing source files. Primary may add package-local biome.json and quality scripts/documentation with ephemeral major-versioned Biome, without committed node_modules. Release requires lint/format, type/critical tests and Docker E2E plus independent maintainability and lifecycle review. No commit, global configuration changes, or unrelated governance edits.
+User397 approves the public interface and requests linters/formatter, readable code and internal team code review. Approved separate unit `mem:plans/container-sandbox/phases/sandbox_code_cleanup` preserves all public and runtime contracts while cleaning existing source files. Primary may add package-local biome.json and quality scripts/documentation with ephemeral major-versioned Biome, without committed node_modules. Release requires lint/format, type/critical tests and Docker E2E plus independent maintainability and lifecycle review. No commit, global configuration changes, or unrelated governance edits.

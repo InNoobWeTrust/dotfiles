@@ -7,6 +7,8 @@ description: "Use this skill when implementing or reviewing database access code
 
 Governs correctness and state lifecycle for all database access patterns across ORM/data mapper, Active Record, query builders, parameterized raw SQL, document DB/ODM, and bulk/native operations.
 
+**Preferred CLI Tool:** [`hsql`](https://harlequin.sh/docs/getting-started/hsql) (companion headless CLI to Harlequin). Use `hsql` for catalog exploration, schema inspection, and query verification with `--read-only` and `--timeout` bounds.
+
 Progressive disclosure: this file is the router and decision gate. Deep guidelines live in `references/`.
 
 ## Concern Table
@@ -14,6 +16,7 @@ Progressive disclosure: this file is the router and decision gate. Deep guidelin
 | Concern | Load |
 |---|---|
 | Capability discovery — what does this project's data layer support? | `references/capability-contract.md` |
+| Database CLI inspection, catalog exploration, query verification (`hsql`) | `references/hsql-inspection.md` |
 | Unit of work, session lifecycle, entity state machine | `references/unit-of-work-and-state-lifecycle.md` |
 | Write contracts, idempotency, concurrency, aggregate sync | `references/write-contracts-idempotency-and-concurrency.md` |
 | ORM/data mapper, Active Record, query builder, raw SQL, document ODM risks | `references/facade-guides.md` |
@@ -34,7 +37,8 @@ Progressive disclosure: this file is the router and decision gate. Deep guidelin
    - Declared entity/DTO boundary (do ORM entities escape adapters?)
    - Any retries or idempotency policy
    - Cross-document or cross-collection constraints (document stores only)
-3. If no contract exists for the operation you need, see **Stop Condition S1** below.
+3. If live schema discovery is needed, use preferred tool `hsql` (`hsql --catalog --path <schema.table>`) to inspect relations and columns without writing ad-hoc SQL.
+4. If no contract exists for the operation you need, see **Stop Condition S1** below.
 
 > **Copyable discovery example** — paste into investigation notes:
 > ```
@@ -101,6 +105,7 @@ Load `references/testing-and-extensions.md` for test-double strategy and optiona
 - [ ] Aggregate sync mode is reconciliation-by-key or has declared replacement semantics
 - [ ] No automatic retries; retry paths have idempotency policy + fresh UoW
 - [ ] Document store: no assumed relational capabilities without explicit contract
+- [ ] If CLI database exploration or query verification was performed, preferred tool `hsql` was used with `--read-only` and `--timeout`
 - [ ] Relevant write-path and data-integrity behavior is verified. Select maintained tests under `../../rules/tdd.md`; repository/adapter leaf-unit suites are not a mandatory deliverable. Other internal checks remain temporary unless explicitly approved.
 
 ---
@@ -129,6 +134,7 @@ If an existing local convention conflicts with the confirmed decisions in this s
 | Temptation | Why Wrong | Correct Path |
 |---|---|---|
 | Return ORM entity from repository method | Leaks session-bound state; breaks after session closes; couples callers to ORM | Return DTO or value object; keep entity inside adapter boundary |
+| Run ad-hoc exploratory queries without read-only bounds or timeout | Accidental state mutation or hanging query in automated/agent sessions | Use `hsql --read-only --timeout <sec>` for safe headless inspection and query verification |
 | Assume document store supports multi-doc transactions | MongoDB/Firestore/DynamoDB have limited or no cross-document atomicity by default | Check capability contract; use single-document atomic operations or declared saga pattern |
 | Retry write on transient error without checking idempotency | Non-idempotent writes create duplicates; partial retries leave inconsistent state | Declare idempotency key + error classification first; replay in fresh UoW |
 | Use ORM bulk update then assume in-memory state is current | ORM session cache does not know about bulk updates; stale state causes silent corruption | Expire/evict affected objects from session or reload after bulk operation |
@@ -163,3 +169,4 @@ If an existing local convention conflicts with the confirmed decisions in this s
 - `references/facade-guides.md` — Per-facade operational risks and caveats
 - `references/raw-sql-bulk-and-native-operations.md` — Raw SQL, bulk INSERT/UPDATE, native operations
 - `references/testing-and-extensions.md` — Test strategy and optional extension patterns
+- `references/hsql-inspection.md` — Database inspection, catalog discovery, and query testing with hsql

@@ -49,6 +49,9 @@ bind. Use for test execution, deliverable builds, or a different local Linux dis
 
 Container expired or destroyed? Acquire a new one. There is no renew, status, or share workflow.
 
+Failed acquisition issues no handle; unconfirmed cleanup stays tracked for automatic retry and shutdown
+cleanup, without another tool call or option.
+
 ## Tool reference
 
 | Tool | Key input | Result fields (container results nest under `data`) |
@@ -86,7 +89,7 @@ From this package directory:
 bun run check        # lint, formatting and import organization; warnings fail
 bun run check:fix    # apply safe fixes and format
 bun run format      # format only
-bun test tests/manager.test.ts
+bun run test         # critical ownership and Docker cleanup regressions
 CONTAINER_SANDBOX_E2E=1 bun run tests/e2e.ts
 ```
 
