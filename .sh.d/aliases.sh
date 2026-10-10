@@ -130,10 +130,6 @@ usable pkgx && \
         ! usable trash && alias trash='pkgx trash'
         ## System monitor
         ! usable btm && alias btm='pkgx btm'
-        ## Docker
-        ! usable docker && alias docker='pkgx docker'
-        ## Docker management
-        ! usable lazydocker && alias lazydocker='pkgx lazydocker'
         ## Terraform
         ! usable terraform && alias terraform='pkgx terraform'
         ## Helm
@@ -151,6 +147,38 @@ usable pkgx && \
         ## cloudflared
         ! usable cloudflared && alias cloudflared='pkgx cloudflared'
     }
+
+# Lazydocker: explicit host/context and saved non-default Docker contexts win.
+# Otherwise prefer the local rootless Podman socket; leave Docker discovery alone.
+# A subshell scopes DOCKER_HOST to this invocation (no service startup or sudo).
+_lazydocker() (
+    if [ -z "${DOCKER_HOST-}" ] && [ -z "${DOCKER_CONTEXT-}" ]; then
+        # Use installed binaries rather than shell aliases for engine discovery.
+        unalias docker podman 2>/dev/null || true
+        lazydocker_context=default
+        if command -v docker >/dev/null 2>&1; then
+            lazydocker_context=$(command docker context show 2>/dev/null) || lazydocker_context=default
+        fi
+
+        if [ "$lazydocker_context" = default ] && command -v podman >/dev/null 2>&1; then
+            lazydocker_socket="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/podman/podman.sock"
+            if [ -S "$lazydocker_socket" ]; then
+                export DOCKER_HOST="unix://$lazydocker_socket"
+            elif ! command -v docker >/dev/null 2>&1; then
+                printf '%s\n' 'lazydocker: Podman API socket is missing. On Linux, run systemctl --user enable --now podman.socket; otherwise set DOCKER_HOST to your Podman endpoint.' >&2
+                exit 1
+            fi
+        fi
+    fi
+
+    command lazydocker "$@"
+)
+
+# Clear our previous launcher on reload; only wrap an installed Lazydocker.
+unalias lazydocker 2>/dev/null || true
+if command -v lazydocker >/dev/null 2>&1; then
+    alias lazydocker='_lazydocker'
+fi
 
 usable curl && \
     {

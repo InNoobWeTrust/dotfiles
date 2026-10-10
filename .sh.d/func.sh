@@ -331,7 +331,8 @@ dotfiles_clean() {
                 ;;
             --help|-h)
                 printf 'usage: dotfiles_clean [--dry-run] [--mac-cleanup]\n'
-                printf 'Clean known tool caches (uv, bun, npm, pnpm, go, gh, docker buildx), temporary files, and platform junk.\n'
+                printf 'Clean known tool caches (uv, bun, npm, pnpm, go, gh, Podman or Docker builds), temporary files, and platform junk.\n'
+                printf 'Podman cleanup removes dangling images and persistent build cache, not containers or volumes.\n'
                 return 0
                 ;;
             *)
@@ -406,8 +407,16 @@ dotfiles_clean() {
         fi
     fi
 
-    # 9. Docker buildx cache and build history
-    if usable docker; then
+    # 9. Prefer Podman image/build-cache pruning; never system-prune Distroboxes.
+    # --build-cache clears --mount=type=cache data (supported by Podman 5.8).
+    if command -v podman >/dev/null 2>&1; then
+        printf "Pruning Podman dangling images and persistent build cache (keeping containers and volumes)...\n"
+        if [ "$dry_run" -eq 0 ]; then
+            if ! command podman image prune --force --build-cache; then
+                printf 'Warning: Podman cache cleanup failed; check the error above.\n' >&2
+            fi
+        fi
+    elif usable docker; then
         if docker info >/dev/null 2>&1; then
             printf "Cleaning Docker buildx build history and cache...\n"
             if [ "$dry_run" -eq 0 ]; then
