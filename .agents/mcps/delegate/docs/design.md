@@ -81,6 +81,7 @@ can make an executable selectable.
 
 | Inspector | Evidence required |
 |---|---|
+| AGY | Clean exit and a recognized tab-separated `/usage` account quota report; a model catalog alone is not evidence |
 | Claude | `auth status` JSON explicitly says `loggedIn: true` |
 | Codex | `login status` reports the recognized signed-in state; custom-provider proof remains limited |
 | OpenCode V2 | Private API GETs join an inspectable integration connection to a non-disabled provider and an enabled, non-deprecated model |
@@ -89,7 +90,18 @@ can make an executable selectable.
 **Fail closed:** A timeout, truncated output, malformed schema, unknown CLI
 format, or failed refresh cannot retain selectable stale readiness. Reasons are
 fixed prose, never raw inspection output or credentials; a configured result
-does not prove live quota, billing or credential validity.
+does not guarantee billing, future quota or access to a caller-selected model.
+
+**AGY inspection:** `--print /usage` is a CLI-served report that can refresh
+account data without submitting a model prompt. Inspections disable automatic
+updates and direct the CLI log file to the platform's null device.
+The parser recognizes AGY 1.3.3 quota rows with a model group, a weekly/five-hour
+limit label, a percentage and a UTC reset timestamp; unfamiliar formats fail closed.
+
+An unsigned AGY 1.3.3 can still wait for authentication with stdin closed.
+The inspection deadline cancels that wait; no authentication URL or quota values
+are returned to the caller. Zero remaining quota is still configuration evidence,
+not permission to use a model without quota.
 
 **Avoid recursion:** Every inspection subprocess inherits
 `DELEGATE_INSPECTION=1`. A Delegate MCP started by that subprocess resolves
@@ -132,7 +144,7 @@ Permission modes per harness, as of the first release:
   line. When a CLI renames or drops one of those flags, delegation for that
   harness fails with the CLI's own error until the mapping is updated.
 - Version remains a nullable compatibility field and is not probed. Inspectable
-  configuration is not proof of account reachability, quota or access to a
+  configuration is not a guarantee of future account reachability, quota or access to a
   caller-selected model; only returned native model lists are allowlists.
 
 ## Sources
@@ -148,6 +160,8 @@ Permission modes per harness, as of the first release:
 - [OpenCode V2 CLI](https://opencode.ai/v2/docs/cli) and [OpenAPI](https://opencode.ai/v2/openapi.json) for private server inspection and integration/provider/model schemas
 - [Claude CLI reference](https://code.claude.com/docs/en/cli-reference) for `auth status`
 - [Codex authentication](https://developers.openai.com/codex/auth) for `login status`
+- [AGY headless mode](https://antigravity.google/docs/cli/headless/) and [/usage](https://antigravity.google/docs/cli/commands/usage/) for CLI-served account reports; quota output verified with AGY 1.3.3
+- [AGY troubleshooting](https://antigravity.google/docs/cli/troubleshooting/) for `AGY_CLI_DISABLE_AUTO_UPDATE`
 - `@modelcontextprotocol/sdk@1` stdio transport, whose `close()` calls `onclose`
   synchronously
 - `../sandbox/` for the response envelope, launcher shim, and process supervision

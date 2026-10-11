@@ -1,3 +1,4 @@
+import { devNull } from "node:os"
 import { type RunResult, runProcess } from "./execute.ts"
 import type { HarnessSpec } from "./registry.ts"
 
@@ -46,6 +47,13 @@ const AGGREGATE_WALL_TIME_MS = 8_000
 const MAX_OUTPUT_BYTES = 4_194_304
 const INSPECTION_MARKER = "DELEGATE_INSPECTION"
 
+const AGY_CONFIGURED_REASON =
+  "Antigravity CLI returned an account quota report; selected model access still depends on its plan and remaining quota."
+const AGY_NOT_CONFIGURED_REASON =
+  "Antigravity CLI requires authentication here; sign in interactively with `agy` and refresh the startup check."
+const AGY_UNKNOWN_REASON =
+  "Antigravity CLI readiness could not be determined from `agy --print /usage`; check that command manually and sign in with `agy` if needed."
+
 const CLAUDE_CONFIGURED_REASON =
   "Claude Code reports a local signed-in session; custom model availability still depends on Claude's own account settings."
 const CLAUDE_NOT_CONFIGURED_REASON =
@@ -68,7 +76,6 @@ const OPENCODE_UNKNOWN_REASON =
   "OpenCode readiness could not be determined from its documented API inspection endpoints; inspect `/api/integration`, `/api/provider`, and `/api/model` manually."
 
 const UNKNOWN_REASONS: Partial<Record<HarnessSpec["id"], string>> = {
-  agy: "Antigravity CLI readiness is unknown: its documented `models` output is a catalog, not account proof, and no dedicated non-model auth checker is verified.",
   amp: "Sourcegraph Amp readiness is unknown: `amp account list` does not prove which saved account or environment override will actually run.",
   cursor:
     "Cursor CLI readiness is unknown: `agent status` exists, but no stable output contract is verified for automatic parsing yet.",
@@ -182,6 +189,47 @@ function createProbe(executable: string, options: InspectionOptions) {
       maxOutputBytes: MAX_OUTPUT_BYTES,
     })
   }
+}
+
+function isAgyQuotaReport(stdout: string): boolean {
+  if (stdout.trim().length === 0) return false
+  return stdout
+    .trim()
+    .split(/\r?\n/)
+    .every((line) => {
+      const fields = line.split("\t")
+      if (fields.length !== 4) return false
+      const [group, limit, percent, reset] = fields
+      if (!group?.trim() || !percent || !reset) return false
+      if (limit !== "Weekly Limit Remaining" && limit !== "Five Hour Limit Remaining") return false
+      if (!/^\d{1,3}(?:\.\d+)?%$/.test(percent) || Number.parseFloat(percent) > 100) return false
+      return (
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(reset) &&
+        Number.isFinite(Date.parse(reset))
+      )
+    })
+}
+
+async function inspectAgy(
+  executable: string,
+  options: InspectionOptions,
+): Promise<ReadinessResult> {
+  const probe = createProbe(executable, {
+    ...options,
+    env: { ...options.env, AGY_CLI_DISABLE_AUTO_UPDATE: "true" },
+  })
+  // /usage is CLI-served account inspection, not a model turn. Suppress CLI log-file noise.
+  const run = await probe(["--log-file", devNull, "--print", "/usage"])
+  if (!run || !isParseableExit(run)) return result("unknown", AGY_UNKNOWN_REASON)
+
+  const quotaReport = isAgyQuotaReport(run.stdout)
+  const authRequired = outputLines(run).some((line) =>
+    /^Authentication required(?:[.!:]|$)/.test(line),
+  )
+  if (authRequired && !quotaReport) return result("not_configured", AGY_NOT_CONFIGURED_REASON)
+  if (isCleanExit(run) && quotaReport && !authRequired)
+    return result("configured", AGY_CONFIGURED_REASON)
+  return result("unknown", AGY_UNKNOWN_REASON)
 }
 
 async function inspectClaude(
@@ -528,13 +576,14 @@ export async function inspectReadiness(
   options: InspectionOptions,
 ): Promise<ReadinessResult> {
   switch (spec.id) {
+    case "agy":
+      return inspectAgy(executable, options)
     case "claude":
       return inspectClaude(executable, options)
     case "codex":
       return inspectCodex(executable, options)
     case "opencode":
       return inspectOpenCode(executable, options)
-    case "agy":
     case "amp":
     case "cursor":
     case "crush":

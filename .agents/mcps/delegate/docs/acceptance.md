@@ -25,6 +25,7 @@ and processes. Add `DELEGATE_E2E_REAL=1` for one paid turn against the real
 |---|---|
 | The interface stays simple | E2E asserts exactly `delegate_status` and `delegate_run`, including an empty harness PATH; discovery comes from status rather than dynamic tool names |
 | Presence is not readiness | Critical tests distinguish missing, unconfigured and unknown executables; unsupported inspectors spawn no model/login probes and are not selectable |
+| Signed-in AGY becomes selectable without a model probe | Critical tests accept recognized `/usage` quota rows and reject catalogs, auth prompts, malformed output and failed/timed-out probes; E2E covers sign-out refresh, refused dispatch, default model and native model passthrough |
 | Inspection is bounded and non-recursive | Tests assert exact private non-model CLI argv, aggregate inspection budgets, at most two concurrent inspections, fixed safe reasons and no probes under `DELEGATE_INSPECTION=1` |
 | Status recovers without catalog churn | E2E refreshes after configuration changes and verifies unknown/unconfigured harnesses cannot launch a turn |
 | A prompt reaches the CLI as one literal argument | E2E stub logs every argv element and the prompt appears verbatim as the last element; unit tests pass a prompt containing shell syntax and an argument that looks like one to every `buildArgs` and to `runProcess`, and neither is ever re-parsed |
@@ -39,6 +40,27 @@ and processes. Add `DELEGATE_E2E_REAL=1` for one paid turn against the real
 | Protocol shape holds | Every response the server produces is parsed twice: once as structured content and once from the JSON text fallback, and both must be equal. A call the input schema rejects is answered by the MCP SDK before the delegate handler runs, so it arrives as a text-only error and is not covered here. |
 
 ## Current verification — 2026-10-11
+
+AGY readiness fix:
+
+| Check | Result |
+|---|---|
+| Repository `bun run check` | PASS: 17 files, no diagnostics |
+| Readiness, detection, registry and lifecycle tests | PASS: 38 tests, 710 assertions across 4 files |
+| Signed-in AGY 1.3.3 `/usage` | PASS: exit 0 with a recognized account quota report; no model turn |
+| AGY without account/keyring access | No quota report; authentication wait hit the sandbox watchdog. Critical tests keep timed-out probes unavailable |
+| Live MCP status after reconnection | PASS: `agy` listed as `configured` |
+| Process tests and updated stub E2E | UNVERIFIED: container acquisition failed; process/resource tests were not run on the host instead |
+| Strict TypeScript and paid model turns | NOT RUN for this fix |
+
+Unit checks ran in the read-only offline host sandbox; formatting/lint checks
+used the read-only network sandbox with dependency downloads confined to scratch.
+Permission modes and delegation limits are unchanged.
+
+## Prior reported readiness baseline — 2026-10-11
+
+The following evidence predates the AGY inspector and is preserved for provenance,
+not proof of the updated process/E2E checks.
 
 | Check | Result |
 |---|---|
@@ -68,9 +90,9 @@ the paid leg has not been repeated during this revision.
 | `DELEGATE_E2E_REAL=1 bun run test:e2e` | PASS: live `claude` turn, 10694 ms, stdout contained the requested token |
 
 That report states it ran in a sandbox with a writable temporary directory,
-without staging or committing. Current revision checks use temporary,
-resource-bounded Linux containers with a read-only checkout, isolated HOME and
-no host credentials; dependency setup is followed by offline verification.
+without staging or committing. The later readiness baseline above reports
+resource-bounded Linux containers; the AGY fix records its separate checks and
+container blocker under current verification.
 
 Three known limits of the prior report: the twelve-harness registry was validated
 against `claude`, `agy`, and `opencode` on this machine — the other nine are
@@ -94,7 +116,7 @@ Then, from a main agent that has the `delegate` MCP server connected:
    reasons; neither an alias nor a catalog is enough to become selectable.
 2. **Refresh:** After an intentional account/configuration change, call status
    with `refresh: true`. Expect the same two tools and updated readiness; a
-   changed server environment still requires a restart.
+   changed server code or environment still requires reconnection.
 3. **Authorize one turn:** If desired, approve the model spend and use
    `delegate_run` with a configured ID and an explicit absolute workdir to list
    exported harnesses from `src/registry.ts`, read-only with no commands, edits,

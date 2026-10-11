@@ -13,7 +13,7 @@ CLI presence alone is not readiness; startup never submits a model prompt.
 |---|---|
 | Bun | Resolves major-versioned MCP SDK@1 and Zod@4 imports automatically; no committed `node_modules` |
 | An executable on the MCP server's `PATH` | Shell aliases are not executables and are not resolved by a non-login server |
-| Inspectable account/provider configuration | Supported automatic inspectors: Claude, Codex, OpenCode; the status call explains other harnesses' unknown readiness |
+| Inspectable account/provider configuration | Supported automatic inspectors: AGY, Claude, Codex, OpenCode; the status call explains other harnesses' unknown readiness |
 
 ## Start
 
@@ -49,29 +49,41 @@ configured harnesses from missing, unconfigured, or unknown ones:
 
 | State | Meaning | Selectable |
 |---|---|---|
-| `configured` | Supported CLI inspection found local account/provider configuration | Yes; not a live service guarantee |
+| `configured` | Supported CLI inspection found account/provider configuration | Yes; not a model-access guarantee |
 | `not_configured` | Inspection found a missing login or no eligible configured models | No |
 | `unknown` | No supported inspection, malformed output, or inspection failed/timed out | No |
 | `missing` | No supported executable on the server's `PATH` | No |
 
+AGY uses the CLI-served `/usage` account quota report, not a model turn.
 Claude uses `auth status`; Codex uses `login status`; OpenCode uses private,
 non-model API inspection of integrations, providers and enabled models.
 Each harness gets an aggregate eight-second inspection budget, with at most two
 inspections in flight; process cleanup can extend that deadline briefly.
 
-**No account claim:** `configured` does not verify credentials with a model,
-quota, billing, or backend reachability. OpenCode's catalog alone is insufficient;
-anonymous or inline-key providers without inspectable connections stay unknown.
+**No model-access guarantee:** `configured` does not test a model request or
+guarantee billing, remaining quota or access to your chosen model. AGY's report
+may refresh account data from its backend; OpenCode's catalog alone is insufficient.
+Anonymous or inline-key OpenCode providers without inspectable connections stay unknown.
 
-**Unknown harnesses:** `agy`, `cursor`, `amp`, `droid`, `crush`, `hermes`,
+**Unknown harnesses:** `cursor`, `amp`, `droid`, `crush`, `hermes`,
 `gemini`, `qwen`, and `kilo` remain listed with reasons but cannot run through
 this server until a reliable inspection strategy is supported. Sign-in commands
 and model turns are never used as startup probes; raw inspection output is not
 returned.
 
 After fixing login/configuration or installing an executable, call
-`delegate_status({refresh: true})`; no tool-catalog restart is needed. Restart
-only if the server itself needs a changed inherited environment or `PATH`.
+`delegate_status({refresh: true})`; no tool-catalog restart is needed. Reconnect
+the MCP after server code changes or changes to its inherited environment or `PATH`.
+
+### Using AGY
+
+Sign in interactively with `agy` once, then check `agy --print /usage` in the
+same account environment as the MCP. A recognized quota report enables `agy`;
+login prompts, timeouts and unfamiliar output do not.
+
+Select `"harness": "agy"` in `delegate_run`. Omit `model` to use AGY's default,
+or choose a native model slug from `agy models`; that catalog is not login proof.
+An empty status `models` list means no verified model allowlist, not no models.
 
 ## First delegation
 
@@ -85,6 +97,9 @@ Set `workdir` unless you want the task to run in the connected agent's MCP root.
 
 The delegated harness sees only the prompt. It cannot ask a follow-up question,
 so include the paths, the constraints, and the output you need back.
+
+This server makes delegation available; the main agent still chooses which
+independent tasks to dispatch. It does not automatically schedule work.
 
 ## Tool reference
 

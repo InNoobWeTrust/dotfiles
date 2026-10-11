@@ -1,7 +1,7 @@
 import { expect } from "bun:test"
 import { spawn } from "node:child_process"
 import { chmod, mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from "node:fs/promises"
-import { tmpdir } from "node:os"
+import { devNull, tmpdir } from "node:os"
 import path from "node:path"
 import { Client } from "@modelcontextprotocol/sdk@1/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk@1/client/stdio.js"
@@ -27,6 +27,12 @@ if [ "\${DELEGATE_INSPECTION:-0}" = "1" ]; then
   name=$(basename "$0")
   printf '%s %s %s\\n' "$name" "$1" "$2" >> "$STUB_INSPECTION_LOG"
   case "\${name}:$1:$2" in
+    agy:--log-file:${devNull})
+      if [ "$3" != "--print" ] || [ "$4" != "/usage" ] || [ "$AGY_CLI_DISABLE_AUTO_UPDATE" != "true" ]; then exit 2; fi
+      if [ -f "$HOME/.stub-agy-signed-out" ]; then
+        printf 'Authentication required. Please sign in.\\n' >&2; exit 1
+      fi
+      printf 'Gemini Models\\tWeekly Limit Remaining\\t90%%\\t2026-10-15T11:47:50Z\\n'; exit 0 ;;
     claude:auth:status)
       sleep 0.1
       if [ -f "$HOME/.stub-claude-signed-out" ]; then
@@ -48,7 +54,7 @@ if [ "\${DELEGATE_INSPECTION:-0}" = "1" ]; then
           printf '{"data":[{"id":"stub_provider/stub_model","providerID":"stub_provider","enabled":true,"status":"active","variants":[]}]}\\n'; exit 0 ;;
       esac ;;
   esac
-  # Harnesses with no verified inspection strategy (agy, amp, etc.) fall through;
+  # Harnesses with no verified inspection strategy (amp, etc.) fall through;
   # inspectReadiness returns unknown for them without spawning a subprocess.
 fi
 
@@ -181,7 +187,7 @@ async function stubEnvironment(scratch: string) {
   const mcpDirectory = path.join(fakeHome, ".agents", "mcps")
   await mkdir(mcpDirectory, { recursive: true })
   await symlink(root, path.join(mcpDirectory, "delegate"), "dir")
-  for (const name of ["claude", "codex", "agy", "opencode"]) {
+  for (const name of ["claude", "codex", "agy", "amp", "opencode"]) {
     const file = path.join(stubDir, name)
     await writeFile(file, STUB)
     await chmod(file, 0o755)
@@ -233,9 +239,9 @@ async function verifyStubbedEndToEnd() {
     // delegate_status reports readiness, reason, models, permissionModes, modelSupported.
     const status = await api.call<StatusOutput>("delegate_status")
     expect(status.output.ok).toBe(true)
-    // claude, codex, opencode pass their stubs' readiness checks; agy is unknown.
+    // agy, claude, codex, opencode pass their stubs' readiness checks.
     const harnessIds = status.output.data?.harnesses.map((h) => h.id).sort()
-    expect(harnessIds).toEqual(["claude", "codex", "opencode"])
+    expect(harnessIds).toEqual(["agy", "claude", "codex", "opencode"])
     expect(status.output.data?.harnesses.every((h) => h.version === null)).toBe(true)
     expect(status.output.data?.harnesses.every((h) => h.readiness === "configured")).toBe(true)
     expect(status.output.data?.harnesses.every((h) => typeof h.reason === "string")).toBe(true)
@@ -247,9 +253,9 @@ async function verifyStubbedEndToEnd() {
     // opencode stub returns a configured model via /api/model.
     const opencodeSt = status.output.data?.harnesses.find((h) => h.id === "opencode")
     expect(opencodeSt?.models).toEqual(["stub_provider/stub_model"])
-    // agy has unknown readiness → in unsupported, not in harnesses.
-    expect(status.output.data?.unsupported.map((h) => h.id)).toContain("agy")
-    expect(status.output.data?.unsupported.find((h) => h.id === "agy")?.readiness).toBe("unknown")
+    // A quota report proves AGY configuration, not a model catalog or allowlist.
+    expect(status.output.data?.harnesses.find((h) => h.id === "agy")?.models).toEqual([])
+    expect(status.output.data?.unsupported.find((h) => h.id === "amp")?.readiness).toBe("unknown")
     expect(status.output.data?.unsupported.map((h) => h.id)).toContain("kilo")
     expect(status.output.data?.depth).toBe(0)
     expect(status.output.data?.maxDepth).toBe(2)
@@ -259,6 +265,7 @@ async function verifyStubbedEndToEnd() {
     expect(refreshed.response.isError).toBe(false)
     expect(refreshed.output.ok).toBe(true)
     expect(refreshed.output.data?.harnesses.map((h) => h.id).sort()).toEqual([
+      "agy",
       "claude",
       "codex",
       "opencode",
@@ -274,14 +281,18 @@ async function verifyStubbedEndToEnd() {
         prompt: "STUB_OK signed out must not launch",
       }),
     ])
-    expect(signedOut.output.data?.harnesses.map((h) => h.id).sort()).toEqual(["codex", "opencode"])
+    expect(signedOut.output.data?.harnesses.map((h) => h.id).sort()).toEqual([
+      "agy",
+      "codex",
+      "opencode",
+    ])
     expect(signedOut.output.data?.unsupported.find((h) => h.id === "claude")?.readiness).toBe(
       "not_configured",
     )
     expect(signedOutRun.response.isError).toBe(true)
     expect(await callLog(logFile)).toHaveLength(0)
 
-    // Concurrent refresh requests share one inspection pass (1+1+3 CLI probes).
+    // Concurrent refresh requests share one inspection pass (1+1+1+3 CLI probes).
     await rm(signedOutMarker)
     const inspectionsBefore = (await readFile(inspectionLogFile, "utf8")).trim().split("\n").length
     const restored = await Promise.all([
@@ -291,17 +302,59 @@ async function verifyStubbedEndToEnd() {
     for (const result of restored) {
       expect(result.response.isError).toBe(false)
       expect(result.output.data?.harnesses.map((h) => h.id).sort()).toEqual([
+        "agy",
         "claude",
         "codex",
         "opencode",
       ])
     }
     const inspectionsAfter = (await readFile(inspectionLogFile, "utf8")).trim().split("\n").length
-    expect(inspectionsAfter - inspectionsBefore).toBe(5)
+    expect(inspectionsAfter - inspectionsBefore).toBe(6)
     expect((await api.client.listTools()).tools.map((tool) => tool.name).sort()).toEqual([
       "delegate_run",
       "delegate_status",
     ])
+
+    // AGY sign-out removes availability; a refused turn must never reach the CLI.
+    const agySignedOutMarker = path.join(env.HOME, ".stub-agy-signed-out")
+    await writeFile(agySignedOutMarker, "")
+    const agySignedOut = await api.call<StatusOutput>("delegate_status", { refresh: true })
+    expect(agySignedOut.output.data?.harnesses.map((h) => h.id)).not.toContain("agy")
+    expect(agySignedOut.output.data?.unsupported.find((h) => h.id === "agy")?.readiness).toBe(
+      "not_configured",
+    )
+    const agyRefused = await api.call("delegate_run", {
+      harness: "agy",
+      prompt: "STUB_OK signed out must not launch",
+    })
+    expect(agyRefused.response.isError).toBe(true)
+    expect(await callLog(logFile)).toHaveLength(0)
+    await rm(agySignedOutMarker)
+    const agyRestored = await api.call<StatusOutput>("delegate_status", { refresh: true })
+    expect(agyRestored.output.data?.harnesses.map((h) => h.id)).toContain("agy")
+
+    // Configured AGY uses its default model unless a native model slug is supplied.
+    const agyPrompt = "STUB_OK inspect AGY without edits"
+    const agyDefault = await api.call<DelegateOutput>("delegate_run", {
+      harness: "agy",
+      prompt: agyPrompt,
+      workdir: workspacePath,
+    })
+    expect(agyDefault.response.isError).toBe(false)
+    expect(agyDefault.output.data?.stdout).toBe("answer from agy\n")
+    expect(agyDefault.output.data?.workdir).toBe(workspacePath)
+    expect(agyDefault.output.data?.depth).toBe(1)
+    await api.call("delegate_run", {
+      harness: "agy",
+      prompt: agyPrompt,
+      model: "gemini-pro",
+      workdir: workspacePath,
+    })
+    const agyCalls = await callLog(logFile)
+    expect(agyCalls).toHaveLength(2)
+    expect(agyCalls[0]?.argv).toEqual(["--print", agyPrompt])
+    expect(agyCalls[1]?.argv).toEqual(["--print", "--model", "gemini-pro", agyPrompt])
+    await writeFile(logFile, "")
 
     // A successful turn: literal prompt, requested cwd, depth handed down.
     const prompt = "STUB_OK summarise this module"
@@ -341,9 +394,9 @@ async function verifyStubbedEndToEnd() {
     expect(refused.output.error).toContain("not available for this harness")
     expect((await callLog(logFile)).length).toBe(2)
 
-    // An unavailable harness (agy: unknown readiness) is refused before launch.
+    // An unavailable harness (amp: unknown readiness) is refused before launch.
     const unavailRun = await api.call("delegate_run", {
-      harness: "agy",
+      harness: "amp",
       prompt: "STUB_OK should not run",
     })
     expect(unavailRun.response.isError).toBe(true)
@@ -516,7 +569,7 @@ async function verifyStubbedEndToEnd() {
     process.kill(-Number(survivorPid), "SIGKILL")
 
     console.log(
-      "PASS: two-tool catalog, startup detection, readiness gate, literal prompt argv, model passthrough, refused authority modes, unavailable/unknown harness refusal, model allowlist, option-lookalike rejection, pre-launch validation, failed-turn isError with retained data, exit/wall-time/output failures, orphan reaping, concurrency refusal, nested depth refusal, refresh, surviving close, quiet shutdown, structured content with JSON fallback",
+      "PASS: two-tool catalog, startup detection, AGY quota readiness and sign-out refresh, readiness gate, literal prompt argv, model passthrough, refused authority modes, unavailable/unknown harness refusal, model allowlist, option-lookalike rejection, pre-launch validation, failed-turn isError with retained data, exit/wall-time/output failures, orphan reaping, concurrency refusal, nested depth refusal, refresh, surviving close, quiet shutdown, structured content with JSON fallback",
     )
   } finally {
     for (const api of clients) await api.client.close().catch(() => {})

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test"
+import { devNull } from "node:os"
 import type { RunOptions, RunResult } from "../src/execute.ts"
 import { inspectReadiness } from "../src/readiness.ts"
 import { type HarnessSpec, harnessById } from "../src/registry.ts"
@@ -116,17 +117,7 @@ describe("inspectReadiness", () => {
   })
 
   test("returns unknown for harnesses without a verified non-model status command and never spawns a probe", async () => {
-    const ids = [
-      "agy",
-      "amp",
-      "cursor",
-      "crush",
-      "droid",
-      "gemini",
-      "hermes",
-      "kilo",
-      "qwen",
-    ] as const
+    const ids = ["amp", "cursor", "crush", "droid", "gemini", "hermes", "kilo", "qwen"] as const
     const run = async (): Promise<RunResult> => {
       throw new Error("unknown-harness readiness should not spawn a subprocess")
     }
@@ -140,6 +131,62 @@ describe("inspectReadiness", () => {
       expect(result.readiness).toBe("unknown")
       expect(result.models).toEqual([])
       expect(result.reason.length).toBeGreaterThan(0)
+    }
+  })
+
+  test("agy accepts only a clean account quota report, never a model catalog or auth prompt", async () => {
+    const quota =
+      "Gemini Models\tWeekly Limit Remaining\t90%\t2026-10-15T11:47:50Z\n" +
+      "Claude and GPT models\tFive Hour Limit Remaining\t0%\t2026-10-11T15:58:27Z\n"
+    const authRequired =
+      "Authentication required. Please visit the URL to log in:\n__RAW_AUTH_URL__"
+    const cases = [
+      { probe: exited(quota), readiness: "configured" },
+      { probe: exited(quota.replace("90%", "100%")), readiness: "configured" },
+      { probe: exited(quota.replace("90%", "99.5%")), readiness: "configured" },
+      { probe: exited(quota.replace("90%", "100.5%")), readiness: "unknown" },
+      { probe: exited(quota.replace("90%", "-1%")), readiness: "unknown" },
+      { probe: exited(quota.replace("Gemini Models", "")), readiness: "unknown" },
+      { probe: exited(quota.replace("Weekly Limit Remaining", "Model")), readiness: "unknown" },
+      { probe: exited(quota.replace("2026-10-15T11:47:50Z", "unknown")), readiness: "unknown" },
+      { probe: exited(""), readiness: "unknown" },
+      { probe: exited("gemini-pro\tGemini Pro\n"), readiness: "unknown" },
+      { probe: exited('{"status":"SUCCESS","response":"ready"}'), readiness: "unknown" },
+      { probe: exited(`${quota}unexpected output\n`), readiness: "unknown" },
+      { probe: exited(quota, { truncated: true }), readiness: "unknown" },
+      { probe: exited(quota, { exitCode: 1 }), readiness: "unknown" },
+      { probe: exited(quota, { signal: "SIGTERM" }), readiness: "unknown" },
+      { probe: exited(quota, { error: "__RAW_AUTH_URL__" }), readiness: "unknown" },
+      { probe: exited("", { exitCode: 1, stderr: authRequired }), readiness: "not_configured" },
+      { probe: exited(quota, { stderr: authRequired }), readiness: "unknown" },
+      {
+        probe: exited("", { exitCode: null, stop: "wall_time", stderr: authRequired }),
+        readiness: "unknown",
+      },
+    ]
+
+    for (const { probe, readiness } of cases) {
+      const env = { ...BASE_ENV, AGY_CLI_DISABLE_AUTO_UPDATE: "false" }
+      const { calls, run } = queueRun([probe])
+      const result = await inspectReadiness(mustFind("agy"), "/opt/agy", {
+        cwd: "/workspace",
+        env,
+        run,
+      })
+
+      expect(calls).toHaveLength(1)
+      expect(calls[0]?.args).toEqual(["--log-file", devNull, "--print", "/usage"])
+      expect(calls[0]?.options.cwd).toBe("/workspace")
+      expect(calls[0]?.options.wallTimeMs).toBeGreaterThan(0)
+      expect(calls[0]?.options.wallTimeMs).toBeLessThanOrEqual(8_000)
+      expect(calls[0]?.options.maxOutputBytes).toBe(MAX_INSPECTION_BYTES)
+      expect(calls[0]?.options.env.DELEGATE_INSPECTION).toBe("1")
+      expect(calls[0]?.options.env.AGY_CLI_DISABLE_AUTO_UPDATE).toBe("true")
+      expect(env.AGY_CLI_DISABLE_AUTO_UPDATE).toBe("false")
+      expect(result.readiness).toBe(readiness)
+      expect(result.models).toEqual([])
+      expect(result.reason).not.toContain("__RAW_AUTH_URL__")
+      expect(result.reason).not.toContain("90%")
     }
   })
 
