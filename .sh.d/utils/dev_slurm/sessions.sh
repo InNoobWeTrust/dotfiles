@@ -2,6 +2,7 @@
 # session_command SERVICE [host|stop] [REPO] submits or cancels the selected service.
 session_command() {
   local service="$1" action="${2:-host}" repo name payload wrap job_name jobids
+  local -a options
   shift
   case "$action" in host|stop) [ $# -eq 0 ] || shift ;; *) action=host ;; esac
   case "$service" in
@@ -28,7 +29,14 @@ session_command() {
   esac
   payload="$(cat "$script_dir/../dev_$service/session.sh")"
   printf -v wrap 'exec bash -c %q %q %q' "$payload" "dev-$service" "$name"
-  sbatch --job-name="$job_name" --time=0 --signal=B:TERM@10 \
-    --output="$PWD/$job_name-%j.out" --error="$PWD/$job_name-%j.err" --wrap="$wrap"
+  options=(--job-name="$job_name" --time="${SBATCH_TIMELIMIT:-0}" \
+    --signal="${SBATCH_SIGNAL:-B:TERM@10}" \
+    --output="${SBATCH_OUTPUT:-$PWD/$job_name-%j.out}" --error="${SBATCH_ERROR:-$PWD/$job_name-%j.err}")
+  # These explicit request aliases have no native sbatch environment equivalent.
+  [ -z "${SBATCH_NODELIST:-}" ] || options+=(--nodelist="$SBATCH_NODELIST")
+  [ -z "${SBATCH_NODES:-}" ] || options+=(--nodes="$SBATCH_NODES")
+  [ -z "${SBATCH_CPUS_PER_TASK:-}" ] || options+=(--cpus-per-task="$SBATCH_CPUS_PER_TASK")
+  [ -z "${SBATCH_NTASKS:-}" ] || options+=(--ntasks="$SBATCH_NTASKS")
+  sbatch "${options[@]}" --wrap="$wrap"
   echo "Job submitted. Stop with: dev_slurm $service stop"
 }

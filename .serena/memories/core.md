@@ -13,6 +13,9 @@ Top-level entry point for dotfiles agent memory graph.
 
 ## Active Task Memory
 
+- OpenCode compaction/model-switch failure research: `mem:tasks/opencode-compaction-20261011/task` — investigation only; exact error and live root cause unconfirmed.
+- Mandatory real-team activation for the unified operating skill: `mem:tasks/team-required-20261011/task` — active policy refinement; not accepted or consolidated.
+- Slurm scheduling environment propagation fix: `mem:tasks/dev-slurm-env-20261011/task` — scoped team investigation/delivery, not user-accepted or consolidated.
 - Delegate MCP usability, readiness, and current-change integration: `mem:tasks/delegate-wiring-20261010/task` — active review/repair, not accepted or consolidated.
 - Permanent task-role identity and memory-continuity delivery: `mem:tasks/company-roles-20261010/task` — task roster, original request, draft/approved plans, and role checkpoints; not user-accepted or consolidated.
 

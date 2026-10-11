@@ -42,6 +42,10 @@ case "$group" in
     echo "  status                             - Check active tunnel jobs"
     echo "  stop                               - Cancel all tunnel jobs"
     echo "  completion [bash|zsh]              - Generate shell autocompletion script"
+    echo ""
+    echo "Scheduling defaults: inherited SBATCH_* / SLURM_* environment variables."
+    echo "Use SBATCH_PARTITION and SBATCH_NODELIST to select a node pool and host."
+    echo "See .sh.d/utils/README.md for details and managed job-name behavior."
     ;;
   *)
     echo "Unknown command: $group" >&2

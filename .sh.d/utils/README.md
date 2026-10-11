@@ -51,6 +51,35 @@ The wrapper owns foreground execution and cleanup; the native service owns authe
 
 **Slurm requirements:** Install dotfiles and service binaries on storage visible to compute nodes; hosting must see persistent state to reuse authentication. Batch jobs have no interactive terminal: if VS Code requests an account/provider selection, run native `code tunnel user login` first in the same user environment with the same home/credential storage. Obtain site permission for outbound traffic and remote access; `dev_slurm` is for scheduling, while the standalone tools are for an allocation you already hold.
 
+### Slurm scheduling defaults
+
+For cluster users choosing where a development service runs, `dev_slurm` uses the scheduling variables already present in its environment; it reads no configuration file. Native inputs reach `sbatch` unchanged, so no wrapper flag repeats them. Export the variables in your shell profile, or pass them as command-local assignments for a single submission.
+
+```sh
+# Export the scheduling variables your site uses.
+export SBATCH_ACCOUNT=project-account
+export SBATCH_PARTITION=interactive
+```
+
+**One-off override:** An assignment before the command applies to that submission only, without changing your shell.
+
+```sh
+SBATCH_ACCOUNT=project-account SBATCH_PARTITION=interactive dev_slurm tunnel host /path/to/repo
+```
+
+| Setting | Behavior |
+| --- | --- |
+| Native `sbatch` inputs, such as `SBATCH_PARTITION`, `SBATCH_ACCOUNT`, `SBATCH_CONSTRAINT`, `SBATCH_GRES`, `SBATCH_MEM_PER_NODE`, `SLURM_CLUSTERS`, `SLURM_CONF` | Passed to Slurm unchanged; site limits still apply. |
+| `SBATCH_NODELIST`, `SBATCH_NODES`, `SBATCH_CPUS_PER_TASK`, `SBATCH_NTASKS` | `dev_slurm` request aliases for `--nodelist`, `--nodes`, `--cpus-per-task`, `--ntasks`; these are not native `sbatch` environment inputs. |
+| `SBATCH_TIMELIMIT`, `SBATCH_SIGNAL`, `SBATCH_OUTPUT`, `SBATCH_ERROR` | Override defaults of unlimited time (`0`), `B:TERM@10`, and current-directory service logs. Empty values use these defaults. |
+| `SBATCH_JOB_NAME` | Intentionally ignored: names stay `tailscale` / `vscode-tunnel` so stop/status can find managed jobs. |
+| `SLURM_ACCOUNT` | Native account input for `srun`, not `sbatch`; use `SBATCH_ACCOUNT` for `dev_slurm` submissions. |
+| Allocation details such as `SLURM_NODELIST`, `SLURM_JOB_NODELIST`, `SLURM_JOB_PARTITION` | Not converted into new requests; use the matching `SBATCH_*` input instead. |
+
+**Account and partition:** `SBATCH_ACCOUNT` selects the project/billing association and `SBATCH_PARTITION` the pool of eligible nodes. The scheduler then picks a node that the account and partition both allow under site policy, so an exact host is not guaranteed. [`srun` uses `SLURM_ACCOUNT`](https://slurm.schedmd.com/srun.html#SECTION_INPUT-ENVIRONMENT-VARIABLES); this `sbatch` adapter uses `SBATCH_ACCOUNT` instead.
+
+**Optional node narrowing:** `SBATCH_NODELIST` narrows to specific hosts within that pool; it is not required to target account/partition eligible nodes and never bypasses availability or site policy. Use [SchedMD's input-variable reference](https://slurm.schedmd.com/sbatch.html#SECTION_INPUT-ENVIRONMENT-VARIABLES) for native names; arbitrary `SLURM_*` names are not scheduling options.
+
 **Command lookup:** Workers prepend `${PIXI_HOME:-$HOME/.pixi}/bin` and `~/.local/bin` to PATH. Run `pixi global sync` against an updated live manifest for Tailscale, and `install-vscode-cli` for the official standalone VS Code CLI; jobs never install tools themselves.
 
 ## Authentication, identity, and cleanup
@@ -105,7 +134,7 @@ The repository hash is the first 16 hex characters of SHA-256 of the canonical r
 | `dev_tailscale/{dev_tailscale,session}.sh` | Local Tailscale CLI / transportable worker. |
 | `dev_tunnel/{dev_tunnel,session}.sh` | Local VS Code CLI / transportable worker. |
 | `shared/repository.sh` | Shell repository resolution and hashing. |
-| `dev_slurm/{dev_slurm,sessions,jobs}.sh` | Slurm dispatch, transport, job management. |
+| `dev_slurm/{dev_slurm,sessions,jobs}.sh` | Slurm dispatch, scheduling defaults, transport, job management. |
 | `dev_workspace/dev_workspace.{sh,ts}` | Bun entrypoint, container lifecycle, transport. |
 | `dev_workspace/install.sh` | One-time bootstrap using shared installers. |
 | `dev_*/completion.{bash,zsh}` | Shell completion assets. |
