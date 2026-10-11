@@ -1,0 +1,6 @@
+; Optional Fedora SELinux SAML listener compatibility; see README.md.
+; Only for a verified TCP 8020 / hadoop_namenode_port_t denial.
+; Permission follows the port TYPE, not an exact number; check its assignments.
+(allow openfortivpn_t hadoop_namenode_port_t (tcp_socket (name_bind)))
+(allow openfortivpn_t node_t (tcp_socket (node_bind)))
+(allow openfortivpn_t self (tcp_socket (listen accept)))

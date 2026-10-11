@@ -1,93 +1,158 @@
 # OpenFortiVPN Configuration & Usage Guide
 
-This directory contains configuration templates and dotfiles integration for `openfortivpn`.
+| | |
+|---|---|
+| **Objective** | SAML login with a VPN that survives terminal closure on Bazzite or macOS. |
+| **Prerequisites** | Gateway details, browser, administrator access, template environment variables. |
+| **Boundaries** | `config.template` is tracked; generated `config` is secret and never committed. |
 
-## Architecture Overview
+## Platform Routing
 
-1. **Config Template**: `config.template` is tracked in git and uses environment variable placeholders (`${OPENFORTIVPN_HOST}`, `${OPENFORTIVPN_PORT}`, `${OPENFORTIVPN_SAML_PORT}`, `${OPENFORTIVPN_PERSISTENT}`, etc.).
-2. **Dynamic Generation**: When the shell starts (`.sh.d/hooks.sh`), `config` is dynamically generated from the template with strict permissions (`chmod 600`) at `$HOME/.config/openfortivpn/config`.
-3. **Homebrew Service Config**: `.sh.d/hooks.sh` automatically copies `$HOME/.config/openfortivpn/config` to `$(brew --prefix)/etc/openfortivpn/openfortivpn/config` with strict permissions (`chmod 600`) to satisfy macOS root daemon access rules.
-4. **Retry Loop / Persistence**: Defaults to disabled (`persistent = 0`). Because SAML SSO requires an interactive browser authentication flow, `openfortivpn` cannot automatically re-authenticate headlessly upon disconnect; setting `persistent > 0` causes it to loop sending unauthenticated requests that spam the remote auth server. Setting `persistent = 0` allows it to terminate cleanly.
+| Platform | Install | Run | Config path |
+|---|---|---|---|
+| **Bazzite** | `openfortivpn` via `rpm-ostree` or custom image | `openfortivpn@work.service` | `/etc/openfortivpn/work.conf` |
+| **macOS** | `brew install openfortivpn` | `sudo brew services` root daemon | Homebrew config, synced by the shell hook |
 
----
+> [!NOTE]
+> Use a native host package: [Bazzite layering](https://docs.bazzite.gg/Installing_and_Managing_Software/rpm-ostree/) requires a reboot and can encounter upgrade conflicts; a [custom image](https://docs.bazzite.gg/Advanced/creating_custom_image/) can bundle the package instead.
 
-## Homebrew Service Usage (Primary Workflow)
+## Bazzite: reproducible native SAML setup
 
-Because `openfortivpn` requires root privileges to manage PPP interfaces and routing, it runs as a root system LaunchDaemon via `sudo brew services`.
+The [service override](openfortivpn-saml.conf) keeps the packaged root service re-arming its login listener. See [compatibility notes](details/bazzite-compatibility.md) for evidence, limits and alternatives.
 
-### Service Commands
+### 1. Install and prepare the config
 
+**Install the native package** if it is not already included in your image:
 ```bash
-# Start the background service (registers to macOS launchd)
-sudo brew services start openfortivpn
-
-# Stop the service (unregisters from launchd and terminates tunnel)
-sudo brew services stop openfortivpn
-
-# Restart the service
-sudo brew services restart openfortivpn
-
-# Check service status
-sudo brew services info openfortivpn
-# or:
-brew services list
+rpm-ostree install openfortivpn
 ```
 
-### SAML SSO Authentication
-
-When the service starts, open the SAML authentication portal in your browser:
+Reboot after the installation succeeds and when you are ready:
 ```bash
-https://${OPENFORTIVPN_HOST}:${OPENFORTIVPN_PORT}/remote/saml/start?redirect=1
+systemctl reboot
 ```
-*(The exact login link is also printed to the service log file on start).*
 
-Complete the login and 2FA prompt in your browser. The portal redirects back to `http://127.0.0.1:8020/` and openfortivpn establishes the `ppp0` tunnel.
+**Verify the package and supplied service** after reboot:
+```bash
+rpm -q openfortivpn
+systemctl cat openfortivpn@.service
+```
 
-Because the process is managed by `launchd` in the system domain, **closing or quitting your terminal does NOT disconnect the VPN**.
+The instance `work` selects `/etc/openfortivpn/work.conf`; no NetworkManager plugin is needed.
 
-### Viewing Service Logs
+**Prepare the private config** in a new shell with your template variables set, or create it yourself. Check the gateway, required realm, `persistent = 0` and `saml-login = 8020` (a port, not a boolean, matching the browser redirect).
 
-Follow daemon logs in real time:
+### 2. Apply the reusable service recipe
+
+Run from the **checkout root**. This replaces `work.conf` and this recipe's drop-in, enables boot startup, and restarts `work`; review/back up existing destination files privately first.
+```bash
+(
+set -e
+dropin_dir=/etc/systemd/system/openfortivpn@work.service.d
+sudo install -d /etc/openfortivpn "$dropin_dir"
+sudo install -o root -g root -m 600 "$HOME/.config/openfortivpn/config" /etc/openfortivpn/work.conf
+sudo install -o root -g root -m 644 .config/openfortivpn/openfortivpn-saml.conf "$dropin_dir/zz-dotfiles-saml.conf"
+sudo systemctl daemon-reload
+sudo systemctl enable openfortivpn@work.service
+sudo systemctl restart --no-block openfortivpn@work.service
+)
+```
+
+For automation, deploy the private config separately and reuse this recipe. Other drop-ins remain untouched; verify effective `Type=exec`, `Restart=always`, `RestartUSec=2s`:
+```bash
+systemctl show openfortivpn@work.service -p Type -p Restart -p RestartUSec
+```
+
+Repeat after config changes: the hook does not sync `/etc/openfortivpn/work.conf`. Avoid competing clients on the callback port.
+
+### 3. Apply SELinux compatibility only when needed
+
+For a bind failure, follow the [port-owner, audit and label checks](details/bazzite-compatibility.md#selinux-listener-permission). The [local policy](local_openfortivpn_saml.cil) applies only to the documented `openfortivpn_t` → `hadoop_namenode_port_t` denial on TCP `8020`; keep SELinux enforcing and do not apply it blindly.
+
+### 4. Authenticate without keeping a terminal open
+
+```text
+Boot / process exit → local SAML listener → browser SSO/2FA → root VPN tunnel
+```
+
+Get the login URL once, then bookmark the **gateway login URL**, not the token-bearing local callback:
+```bash
+sudo journalctl -u openfortivpn@work.service -f
+```
+
+**Normally, open the bookmark:** boot startup and process restarts re-arm the listener, not the old SAML session. Idle listeners do not contact the gateway; browser authentication is still required.
+
+**Expect short gaps:** versions 1.23.1/1.24.1 have five ten-second callback attempts, then exit; restart follows after two seconds. Retry a refused callback once listening resumes, or begin a fresh login if its token expired.
+
+**If you deliberately stopped the service**, start it again before opening the bookmark:
+```bash
+sudo systemctl start --no-block openfortivpn@work.service
+```
+
+**Verify the tunnel after login:**
+```bash
+systemctl is-active openfortivpn@work.service
+ip -brief address show
+```
+
+`active` means the process started, not that login succeeded. Require `Tunnel is up and running`, a PPP address, and access to a known internal resource to verify routing/DNS.
+
+**Close the terminal:** Ctrl+C exits log viewing only. The VPN survives terminal closure/logout while the host runs.
+
+| Action | Command |
+|---|---|
+| **Stop until manually started or next boot** | `sudo systemctl stop openfortivpn@work.service` |
+| **Stop and disable boot startup** | `sudo systemctl disable --now openfortivpn@work.service` |
+| **Re-arm immediately** | `sudo systemctl restart --no-block openfortivpn@work.service` |
+| **Inspect** | `systemctl status openfortivpn@work.service` |
+
+Keep `persistent = 0`; its retry loop cannot re-arm SAML. For repeated failures despite a valid callback to a live listener, stop and [investigate compatibility](details/bazzite-compatibility.md)—restarts cannot repair it.
+
+### Optional NetworkManager GUI
+
+For password-based gateways, layer `NetworkManager-fortisslvpn-gnome`, reboot, then add **Fortinet SSLVPN** in **Settings → Network → VPN**; it uses its own profile. For TLS failures, obtain a verified CA/fingerprint from the administrator; do not disable verification.
+
+## Configuration generation
+
+`.sh.d/hooks.sh` renders `config.template` to `~/.config/openfortivpn/config` when the client is available and the output is missing or older than the template. Defaults: gateway `443`, callback `8020`, persistence `0`; environment changes alone do not regenerate it.
+
+A newer template may regenerate your config on shell startup; protect manual additions first. Bazzite service sync is explicit; Homebrew sync attempts a mode-`600` copy to `$(brew --prefix)/etc/openfortivpn/openfortivpn/config`.
+
+## Homebrew Service Usage (macOS Primary Workflow)
+
+Homebrew runs the VPN as a root LaunchDaemon to manage PPP and routing. `brew services start` registers it for boot.
+
+| Action | Command |
+|---|---|
+| **Start** | `sudo brew services start openfortivpn` |
+| **Stop** | `sudo brew services stop openfortivpn` |
+| **Reconnect** | `sudo brew services restart openfortivpn` |
+| **Status** | `sudo brew services info openfortivpn` |
+
+**Authenticate** using the URL printed in the service log:
 ```bash
 tail -f "$(brew --prefix)/var/log/openfortivpn.log"
-
-# View recent entries
-tail -n 100 "$(brew --prefix)/var/log/openfortivpn.log"
 ```
 
-### Tunnel Disconnect & SAML Re-authentication
-
-If the network drops (e.g., Wi-Fi reconnection, ISP reset, or router reboot) or the gateway session reaches its server-side timeout:
-1. The TCP stream terminates and `openfortivpn` closes `ppp0`.
-2. Because SAML SSO sessions cannot be renewed headlessly without interactive browser login, `openfortivpn` exits cleanly (`persistent = 0`) instead of spamming the remote gateway with unauthenticated retry requests.
-3. To reconnect, restart the background service and complete the SAML SSO prompt in your browser:
-   ```bash
-   sudo brew services restart openfortivpn
-   ```
-
----
+Complete SSO/2FA and the callback; closing the terminal or stopping `tail` leaves the daemon running. After a disconnect, restart and authenticate again.
 
 ## Direct CLI Execution (Manual / Debugging)
 
-To run `openfortivpn` interactively in the foreground (e.g. for verbose debugging `-v`):
-
-```bash
-sudo openfortivpn
-```
-*(Because `$(brew --prefix)/etc/openfortivpn/openfortivpn/config` is kept in sync with `~/.config/openfortivpn/config`, `-c` is optional).*
-
+- **Bazzite foreground debugging**: Stop the service first, then `sudo openfortivpn -c "$HOME/.config/openfortivpn/config" -v`.
+- **macOS foreground debugging**: `sudo openfortivpn` uses Homebrew's synced default config.
 
 ---
 
 ## Diagnostics
 
-- **Check tunnel interface & IP**:
-  ```bash
-  ifconfig ppp0
-  netstat -rn -f inet | grep ppp
-  ```
+| Check | Bazzite / Linux | macOS |
+|---|---|---|
+| **Tunnel interface & IP** | `ip addr show ppp0` and `ip route show dev ppp0` | `ifconfig ppp0` |
+| **VPN process** | `pgrep -fl openfortivpn` | `pgrep -fl openfortivpn` |
+| **Service state** | `systemctl status openfortivpn@work.service` | `sudo brew services info openfortivpn` |
+| **Logs** | `sudo journalctl -u openfortivpn@work.service -e` | `tail -n 100 "$(brew --prefix)/var/log/openfortivpn.log"` |
 
-- **Check active openfortivpn process**:
-  ```bash
-  pgrep -fl openfortivpn
-  ```
+## References
+
+- **Fedora package**: [openfortivpn](https://packages.fedoraproject.org/pkgs/openfortivpn/openfortivpn/).
+- **Service contract**: [upstream 1.23.1 service template](https://github.com/adrienverge/openfortivpn/blob/v1.23.1/lib/systemd/system/openfortivpn%40.service.in).
