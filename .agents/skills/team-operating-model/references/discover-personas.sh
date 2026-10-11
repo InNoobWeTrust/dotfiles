@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Persona discovery helpers for multi-perspective-deliberation skill.
+# Persona discovery helpers for the team-operating-model deliberation path.
 # Three-level loading: filename scan → frontmatter parse → body load.
 #
 # Usage:

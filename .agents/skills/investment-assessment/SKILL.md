@@ -45,9 +45,9 @@ Credit/bond diligence is one **asset-class module** under `references/asset-clas
 |---|---|
 | Open option space before numbers | `brainstorming` |
 | Issuer / company / country public signals | `strategic-osint` |
-| Challenge a draft memo | `multi-perspective-deliberation` + finance cast |
+| Challenge a draft memo | `team-operating-model` deliberation + finance cast |
 | Independent review of memo | `reviewer` → `investment-memo` lens |
-| High-stakes crowd challenge | `multi-perspective-deliberation` finance cast |
+| High-stakes crowd challenge | `team-operating-model` deliberation/finance cast |
 | Delegation contracts | `subagent-dispatch` |
 
 ### Finance cast (`discover-personas.sh prompt "Name"`)
@@ -161,4 +161,4 @@ Full table: `references/anti-patterns.md`.
 - `references/portfolio-construction.md`  
 - `references/asset-classes/*`  
 - `references/anti-patterns.md`  
-- Related: `strategic-osint`, `brainstorming`, `reviewer` (`investment-memo`), `multi-perspective-deliberation` finance personas
+- Related: `strategic-osint`, `brainstorming`, `reviewer` (`investment-memo`), `team-operating-model` finance personas

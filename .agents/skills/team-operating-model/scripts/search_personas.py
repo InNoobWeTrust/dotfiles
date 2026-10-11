@@ -11,7 +11,6 @@
 Usage:
   ./search_personas.py "<topic or lens needed>" [--group <group>]
   uv run --script scripts/search_personas.py "<query>"
-  python3 scripts/search_personas.py "<query>"
   ./search_personas.py --id <persona-id>
   ./search_personas.py --list-groups
 """

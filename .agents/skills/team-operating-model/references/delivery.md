@@ -1,9 +1,4 @@
----
-name: bounded-iteration
-description: "Own authorized work end to end through research, implementation, evidence-based evaluation, and correction until ready for user acceptance. Use for 'work until done', 'don't ask until complete', or repeated implement-verify loops. Defaults to autonomous delivery with no total turn/time cap; bounds scope, resources, individual jobs, and unsafe actions. Supports collaborative/HITL modes and unattended AFK execution only with verified isolation and resumable state."
----
-
-# Bounded Iteration
+# Authorized Delivery
 
 **Own the result, not the user's calendar.** Research → decide → build → evaluate → correct → deliver for human user acceptance. Bounds protect resources, scope, and safety; they are not an arbitrary number of turns before handing unfinished work back.
 
@@ -11,7 +6,7 @@ This is an **evaluator–optimizer** loop. The optimizer proposes changes; evalu
 
 ## Mode and authority — before starting
 
-Load [Delivery Ownership](../../rules/delivery-ownership.md) and apply it as the authority source.
+Load [Delivery Ownership](../../../rules/delivery-ownership.md) and apply it as the authority source.
 
 - **Autonomous delivery (default):** the primary owns in-scope research, product/technical choices, contracts, implementation, verification, and release readiness. Communicate useful decisions through product docs; the user is the final acceptance gate.
 - **Collaborative:** discuss choices with the user where requested.
@@ -22,7 +17,7 @@ State the mode and boundaries briefly; ask upfront only about missing outcome/au
 
 No default **total iteration or elapsed-time limit**. Optional `MAX_ITER`, `MAX_ELAPSED_SEC`, and `MAX_COST` apply only when specified/authorized; unset means no configured aggregate cap, not infinite resources. Individual jobs still need enforced watchdogs and resource limits. Never bypass harness limits or infer unlimited spending.
 
-For tasks that are part of a persistent multi-role team, load `team-operating-model` first to establish role binding, shared plan, and checkpoint obligations; bounded-iteration then governs the delivery loop within those bounds.
+This delivery path requires a real team, never solo iteration. Apply [Persistent coordination](persistent-coordination.md) first for role binding, shared plan, and checkpoints. Every substantive iteration needs current bounded worker contribution and criterion-linked evidence. Missing required worker participation blocks affected execution until permitted replacement/recovery; a failed launch or simulated panel is not a fallback. The primary still owns integration and user dialogue.
 
 ## Appropriate uses
 
@@ -50,7 +45,7 @@ Use a dedicated task/memory directory, not consumer `docs/`. Full automation use
 
 For a short manually driven loop, equivalent fields in existing task context are enough; do not scaffold six files for a small patch. Durable checkpoints are needed before context loss. Human usage/decisions belong in product docs/README, not these execution files.
 
-Templates: [TASK](references/templates/TASK.md), [PROMPT](references/templates/PROMPT.md), [machine verifier](references/templates/verify.sh). Load [Procedure](references/procedure.md) before building a verifier/controller/state or starting AFK. Controller guidance: [Loop patterns](references/loop-patterns.md). Delegated work: [Integration](references/delegation-integration.md).
+Templates: [TASK](delivery/templates/TASK.md), [PROMPT](delivery/templates/PROMPT.md), [machine verifier](delivery/templates/verify.sh). Load [Procedure](delivery/procedure.md) before building a verifier/controller/state or starting AFK. Controller guidance: [Loop patterns](delivery/loop-patterns.md). Delegated work: [Integration](delivery/delegation-integration.md).
 
 ## Loop and release
 

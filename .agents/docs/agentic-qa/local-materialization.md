@@ -15,7 +15,7 @@
 | Evidence / run cards | `web-qa-audit` protocol refs | Contracts exist on paper; battle-testing is local |
 | Materialization planning | `materializer-contract` path | Planning aid — does not own your CI |
 | Stakeholder projection | `stakeholder-report-pack` path | Gates designed; not universal org process |
-| Evaluator in a loop | `reviewer` + `bounded-iteration` pairing | Pattern present; easy to misuse without HITL |
+| Evaluator in a loop | `reviewer` + `team-operating-model` delivery path | Pattern present; easy to misuse without HITL |
 | Feedback sensors | rules + quality tooling (Part 2) + agent loop | Stronger where repos already have real gates |
 
 Composition sketch lives in `.agents/skills/WIRING` under "Web QA Audit" — treat as **wiring for this toolkit**, not curriculum.

@@ -62,7 +62,7 @@ If work is genuinely blocked, the agent must surface the affected boundary, comp
 ## Maintainer references and adoption limits
 
 - **Ownership authority:** [Delivery Ownership](../../rules/delivery-ownership.md).
-- **Iteration workflow:** [Bounded Iteration](../../skills/bounded-iteration/SKILL.md) and [procedure](../../skills/bounded-iteration/references/procedure.md).
+- **Iteration workflow:** [Team Operating Model](../../skills/team-operating-model/SKILL.md), its [delivery path](../../skills/team-operating-model/references/delivery.md), and [procedure](../../skills/team-operating-model/references/delivery/procedure.md).
 - **Execution safety:** [Harness safety](harness-safety.md).
 
 These instructions guide the agent; they do not provide a service that keeps a session running after disconnect. Real deliveries are still needed to confirm that the workflow is followed, unattended execution is safe, and the result meets the user's needs.

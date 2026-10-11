@@ -36,7 +36,7 @@ This matches the Vol 34 theme *Putting coding agents on a leash* without requiri
 ## Implementation patterns
 
 1. **Make targets / scripts the agent must run** — documented in AGENTS.md or a skill; clear exit codes.
-2. **Reviewer / checker subagent** — separate role runs sensors and returns failures (aligns with `reviewer` + `bounded-iteration`).
+2. **Reviewer / checker subagent** — separate role runs sensors and returns failures (aligns with `reviewer` + `team-operating-model` delivery).
 3. **Companion process** — watch/queryable checks while the implementer agent works.
 4. **Hooks** — pre-commit and agent lifecycle hooks (harness-specific); still keep CLI runnable outside the hook.
 5. **Custom structural tests** — cheap for agents to author; encode architecture rules the generic linter misses.

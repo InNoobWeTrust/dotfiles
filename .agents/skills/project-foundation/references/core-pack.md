@@ -34,7 +34,7 @@ Do **not** invent project-only rule bodies that duplicate global content. Materi
 | `subagent-dispatch` | Yes | Safe delegation prompts |
 | `project-foundation` | Yes | Re-audit / evolve this pack |
 | `skill-author` | Recommended | Governance maintenance |
-| `bounded-iteration` | Recommended | AFK / verify loops |
+| `team-operating-model` | Recommended | Real-team delivery, deliberation, persistent coordination, and verified AFK / evaluation loops |
 | `architecture-design` | Optional | Deep architecture docs, system design, ADRs |
 | `devsecops` | Optional | CI/CD + security scanning |
 

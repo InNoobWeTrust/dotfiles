@@ -1,6 +1,6 @@
 # Procedure: autonomous ownership with bounded execution
 
-Read before implementing a controller, verifier, or state, and before AFK execution. Authority comes from [Delivery Ownership](../../../rules/delivery-ownership.md); process containment from [Autonomy Safety](../../../rules/autonomy-safety.md) and [Execution Safety](../../../rules/execution-safety.md).
+Read before implementing a controller, verifier, or state, and before AFK execution. Authority comes from [Delivery Ownership](../../../../rules/delivery-ownership.md); process containment from [Autonomy Safety](../../../../rules/autonomy-safety.md) and [Execution Safety](../../../../rules/execution-safety.md).
 
 ## 1. Frame the outcome, not every technical choice
 

@@ -93,11 +93,11 @@ phased-delivery escalation rules require formalization. When delegating,
 
 Do **not** run branch steps B1–B2 for eng-only spot checks or eng-only audits.
 
-### Bounded Iteration
+### Authorized Delivery (Intra-Skill Path)
 
-1. `bounded-iteration` + `rules/delivery-ownership.md` — establish autonomous ownership by default or honor requested collaborative/HITL mode; no default aggregate turn/time cap
+1. `team-operating-model` delivery path + `rules/delivery-ownership.md` — form the mandatory real primary-plus-worker team; establish autonomous ownership or honor collaborative/HITL mode. No default aggregate turn/time cap; no solo/simulated fallback.
 2. Matching domain skills — research/design consequential choices and inspect unfamiliar code before implementation; the primary approves in-scope contracts
-3. `subagent-dispatch` — bounded native workers for useful research, implementation, and checks; Full Swarm only when selected/warranted
+3. `subagent-dispatch` — permitted bounded workers for useful research, implementation, and checks; deliberation only when selected/warranted, with persistent coordination guards for multiple contributors
 4. Machine/integration/E2E checks + `reviewer` — current positive proof and independent user-perspective release rubric; add warranted safety/operations lenses
 5. `systematic-investigation` — diagnose repetitions or broken verification, then resume only with a supported changed approach
 6. Deliver guides/evidence for final human user acceptance; feedback begins another scoped loop. AFK still requires verified isolation, state, job bounds, and cleanup.
@@ -108,7 +108,7 @@ Any time a background worker, delegated agent, or external node is launched:
 
 1. `subagent-dispatch` — for named, fallback, and dynamically defined workers, load `subagent-dispatch/references/worker-contract.md`; provide scope, output contract, allowed actions, stop conditions, and usable guidance discovery. Style references or short hints are optional; do not assume parent skills or routing-profile bodies are inherited.
 2. `working-principles` — the worker interprets its assignment, reads the catalog where useful, and loads relevant reference sections itself. Main agents can use the same router without delegation; mechanical tasks may stay with the baseline.
-3. **`multi-perspective-deliberation`** when crowd thinking is needed — concurrent delegated persona workers or simulated dialogue (`multi-perspective-deliberation/SKILL.md`); pin via `/swarm` or `/party-mode` when those commands exist.
+3. **`team-operating-model` deliberation path** when crowd thinking is needed — separately executed permitted workers with complementary lenses; `/swarm` or `/party-mode` can select it when those commands exist. Denied/unavailable workers block; no simulated dialogue fallback.
 
 ### Project Foundation (Bootstrap, Materialize, Audit/Evolve)
 
@@ -163,16 +163,27 @@ When designing or implementing data pipelines, analytical querying, feature engi
 3. `data-storytelling` — profile raw files and mine signals using out-of-core Ibis + DuckDB scans
 4. `reviewer` (Python performance / resource lens) — audit data code to eliminate memory-ballooning Pandas loops and isolated Polars lock-in in favor of lazy streaming Ibis expressions
 
-### Persistent Team Work
+### Unified Delivery, Team Escalation, and Persistent Work
 
-When work spans multiple sessions, roles, and contributors under the same task:
+On non-trivial requests or authorized team delivery, load `team-operating-model`
+alongside the domain skill before substantive work and form a real team: primary
+plus at least one separate worker with current criterion-linked contribution.
+Exclude trivial tasks before activation; once loaded, never continue solo or
+simulate workers. Missing capability, permission, or required worker evidence
+blocks affected execution; skill selection never changes those limits.
 
-1. `team-operating-model` — establish role identity, session binding, onboarding, shared plan, checkpoint contract, and accepted-task consolidation routing
-2. `subagent-dispatch` + `worker-contract.md` — bounded handoff with persistent task-role identity, discovery access, and continuation guards
-3. `memory` (Capture) — role checkpoints and task records written to `tasks/<task-id>/` in `MEMORY_DIR`
-4. `bounded-iteration` — authorized delivery loop within the approved plan scope and per-slice bounds
-5. `multi-perspective-deliberation` — joint plan deliberation and design challenge
-6. `memory` (Consolidate via Subagent, report-only) — accepted-task consolidation after recorded user acceptance; apply/markers/archive/eviction require subsequent explicit human approval
+For authorized build/fix loops, use its delivery reference; research-only discussion
+does not authorize implementation. For decision challenge, use its deliberation reference and persona library.
+Across multiple sessions or contributors (including one-off delegated panels),
+also apply its persistent coordination reference before role task-source reads:
+
+1. `team-operating-model` — form the real team and establish role identity, session binding, onboarding, approved scope, and checkpoint contract
+2. `memory` — resolve role/task records and approved plan under `tasks/<task-id>/` in `MEMORY_DIR`; restore before task sources
+3. `subagent-dispatch` + `worker-contract.md` — bounded handoff with task-role identity, discovery access, and continuation guards
+4. `team-operating-model` deliberation path — joint plan challenge when useful; primary versions and approves a revision before its execution
+5. `team-operating-model` delivery path — authorized iteration and release evaluation within the approved plan scope and per-slice bounds
+6. `memory` (Capture) — append role checkpoints after every completed/interrupted slice
+7. `memory` (Consolidate via Subagent, report-only) — accepted-task consolidation after recorded user acceptance; apply/markers/archive/eviction require subsequent explicit human approval
 
 ### Skill Authoring & Maintenance
 
@@ -244,10 +255,10 @@ Natural transitions between skills:
 | `illustration-craft` | `reviewer` (editorial lens) | "Illustration drafted, ready for critical readability / communication review" |
 | `web-qa-audit` | `reviewer` | "Executable QA produced findings or a plan that needs critical judgment" |
 | `requirements-driven-dev` | `reviewer` (editorial lens) | "Polish specs before sharing with stakeholders" |
-| `requirements-driven-dev` | `multi-perspective-deliberation` | "Draft specs completed, launching persona review to challenge assumptions" |
-| `multi-perspective-deliberation` | `code-craft` | "Deliberation complete, starting implementation of the peer-reviewed design" |
-| `multi-perspective-deliberation` | `model-benchmarking` | "Deliberation complete, optimizing model assignments for the selected architecture" |
-| `model-benchmarking` | `multi-perspective-deliberation` | "Models selected, ready for multi-agent deliberation" |
+| `requirements-driven-dev` | `team-operating-model` (deliberation) | "Draft specs completed, launching persona review to challenge assumptions" |
+| `team-operating-model` (deliberation) | `code-craft` | "Deliberation complete, starting authorized implementation of the approved design" |
+| `team-operating-model` (deliberation) | `model-benchmarking` | "Deliberation complete, optimizing model assignments for the selected architecture" |
+| `model-benchmarking` | `team-operating-model` (deliberation) | "Models selected, ready for multi-agent deliberation" |
 | `model-benchmarking` | `requirements-driven-dev` | "Token costs and model limits analyzed, feeding into TRD/PRD architectural specs" |
 | `talent-screening` | `reviewer` (editorial lens) | "Evaluation reports completed, ready for peer review" |
 | `strategic-osint` | `brainstorming` | "The public-signal map is clear; now generate options or paths" |
@@ -255,25 +266,23 @@ Natural transitions between skills:
 | `strategic-osint` | `reviewer` (editorial lens) | "Positioning draft is ready; now polish or challenge the narrative" |
 | `strategic-osint` | `investment-assessment` | "Public signals gathered; now size/allocate or diligence a product" |
 | `brainstorming` | `investment-assessment` | "Options framed; now diligence or allocate capital" |
-| `investment-assessment` | `multi-perspective-deliberation` | "Draft memo ready; finance cast challenge" |
+| `investment-assessment` | `team-operating-model` (deliberation) | "Draft memo ready; finance cast challenge" |
 | `investment-assessment` | `reviewer` (investment-memo lens) | "Memo complete; independent suitability/regime review" |
-| `investment-assessment` | `multi-perspective-deliberation` (finance cast) | "High-stakes allocation; finance persona challenge" |
+| `investment-assessment` | `team-operating-model` (finance cast) | "High-stakes allocation; finance persona challenge" |
 | `reviewer` (investment-memo lens) | `investment-assessment` | "Review failed gates; revise size/allocation" |
 | Any skill | `memory` (Capture) | "Handoff requested, serializing context and saving progress" |
 | `doc-craft` | `memory` (Capture) | "Content is an atomic feature plan, phase spec, or consensus board — route to memory" |
 | `memory` (Recall) | Any skill | "Session restored, resuming active work" |
 | `team-operating-model` | `subagent-dispatch` | "Dispatching a fresh or replacement worker to an existing task-role pair" |
 | `team-operating-model` | `memory` (Capture) | "Checkpointing a completed or interrupted slice to the role record" |
-| `bounded-iteration` | `team-operating-model` | "Task requires persistent role identity, shared plan governance, or accepted-task consolidation routing" |
-| `multi-perspective-deliberation` | `team-operating-model` | "Deliberation produced a joint plan candidate; primary must version and approve it" |
+| Any domain skill | `team-operating-model` (delivery) | "Authorized outcome needs a real-team implement/evaluate/correct loop; solo work stays outside activation" |
 
 | Any skill | `memory` (Consolidate via Subagent) | "Explicit consolidation request — user says 'consolidate memory', 'dream cycle', 'run consolidation', or 'review my notes'" |
 | `memory` (Consolidate via Subagent) | `memory` (Consolidate) | "Approval received or delegation unavailable; applying approved memory writes" |
 | `memory` (Consolidate) | `memory` (Evict) | "Long-term size limits passed, running eviction pass" |
 | Any skill | `memory` (Structure) | "Applying progressive-disclosure pattern to a docs directory or code module" |
 | Any implementation skill | `reviewer` | "Review my work" |
-| `subagent-dispatch` | `multi-perspective-deliberation` | "Need crowd thinking: concurrent persona workers or simulated dialogue" |
-| `multi-perspective-deliberation` | `subagent-dispatch` | "Launching delegated persona workers for the deliberation" |
+| `subagent-dispatch` | `team-operating-model` (deliberation) | "Need crowd thinking: separately executed permitted workers; unavailable delegation blocks, never simulated dialogue" |
 | `project-foundation` | `architecture-design` | "Project scaffolded, now writing detailed architecture doc or selecting patterns" |
 | `project-foundation` | `ui-ux` | "Project scaffolded with UI/frontend components; initializing DESIGN.md visual system" |
 | `project-foundation` | `devsecops` | "Project scaffolded, now designing CI/CD with integrated security" |
@@ -333,5 +342,5 @@ skill.
 - **Project setup**: `project-foundation` → `devsecops` (foundation first, then secure the pipeline).
 - **Security hardening**: `devsecops` → `code-craft` → `reviewer` (security lens).
 - **Governance maintenance**: `skill-author` is the entry point; it routes to `project-foundation` or back to itself (Workflow A) as gaps are found.
-- **Personal/portfolio investing (multi-asset)**: `investment-assessment` (author) → optional `multi-perspective-deliberation` finance cast or `reviewer` investment-memo lens for high-stakes challenge. Personas under `multi-perspective-deliberation/references/personas/finance/` via `discover-personas.sh`.
+- **Personal/portfolio investing (multi-asset)**: `investment-assessment` (author) → optional `team-operating-model` deliberation/finance cast or `reviewer` investment-memo lens for high-stakes challenge. Personas under `team-operating-model/references/personas/finance/` via `discover-personas.sh`.
 - **Management reporting**: Not a skill — refer to `docs/ai-augmented-project-setup-and-evolution.md` §9 for what to report. Define your org's reporting template and generate ad-hoc using `data-storytelling` for data interpretation.

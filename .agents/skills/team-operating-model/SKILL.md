@@ -1,89 +1,154 @@
 ---
 name: team-operating-model
-description: "Use this skill when coordinating continuing multi-role work across sessions for the same task — binding sessions to permanent task-role pairs, reading role memory before acting, checkpointing completed slices, crafting jointly approved proportionate plans, and governing replacement, onboarding, and user-accepted consolidation. Do not use for simple single-session tasks, runtime main/worker capability selection, or routine delegation that needs no persistent identity."
+description: "Use proactively for non-trivial delivery, ambiguous planning, architecture trade-offs, cross-cutting implementation, difficult diagnosis, high-stakes decisions, independent review, second opinions, swarm/party mode, cross-validation, and team-based 'work until done' or implement-verify-correct loops. Activation REQUIRES a real team: a primary plus at least one separately executed worker with task-relevant evidence. Never run this skill solo or simulate workers; if permitted delegation cannot form or maintain the team, stop and report the blocker. Trivial single-pass tasks stay outside this skill. Unifies team delivery/release evaluation, multi-perspective deliberation, and persistent roles/plans/checkpoints. Autonomous delivery has no default aggregate turn/time cap; jobs, resources, authority, and spending remain bounded. Supports collaborative/HITL and AFK only with verified isolation and resumable state. Does not grant implementation, launch, or billing authority."
 ---
 
 # Team Operating Model
 
-Governs the lifecycle of persistent cross-session team work: role identity, session binding, handoff, shared plans, and accepted-task consolidation. Composes existing skills — it does not replace them.
+Activation requires a real team. Own authorized delivery with complementary workers and preserve continuity.
+Domain skills govern work; `subagent-dispatch` governs launches and `memory` governs storage.
 
-**When to load:** assigning or resuming a permanent task-role; governing a fresh replacement or continuation; jointly crafting or pinning a shared plan; routing accepted-task consolidation. A simple task with only one contributor needs no cast, plan tier, or reference tree — do not force structure that does not serve the actual uncertainty.
+**Inputs:** outcome, uncertainty, sources, authority/resource boundaries, mode, permitted workers, bindings, plans, and state.
+**Outputs:** real team, scoped assignments, evidence/dissent synthesis, plans/checkpoints, current proof, and acceptance handoff.
 
----
+## 1. Form a real team on activation — no exception
 
-## Roles and session binding
+Exclude trivial single-pass work **before loading**; use its domain workflow directly.
+Once loaded, do not switch paths or unload the skill to continue the same task solo.
+A real team is the primary plus at least one separate worker instance with a bounded
+assignment and observed task-relevant contribution. Personas in one context, a
+tool call, a reserved slot, or an uncompleted launch alone are not a team.
 
-Two orthogonal identities coexist and must not be conflated:
+Check actual capability **and permission**, establish records, and dispatch through
+`subagent-dispatch` before substantive work. Preparatory guidance, role/plan setup,
+and bounded capability checks are allowed; implementation is not preflight.
+If delegation is unavailable/denied or cannot produce required worker evidence,
+stop with a blocker. Never continue solo, simulate workers, or broaden authority.
 
-- **Runtime capability (local):** main (delegation available) or worker (execute directly). Determined per harness instance; bridge changes never widen authority.
-- **Permanent job role:** a stable scope within a specific task, persisting across all sessions assigned to it.
+| Team path | Choose when | Required next step |
+|---|---|---|
+| Bounded team | One coherent delivery, investigation, or decision | Primary plus real worker(s); apply coordination guards even for one-off teams |
+| Continuing team | Roles continue, hand off, or are replaced | Restore [Persistent coordination](references/persistent-coordination.md) before role task-source reads |
 
-Every dispatched session is assigned exactly one `task_id` + `role_id` pair. That pair is immutable for the session's lifetime:
+The minimum is not a review quorum; add complementary roles as risk requires.
+Workers can contribute sequentially. Each substantive delivery iteration needs
+current bounded contribution, not token/stale evidence. Required worker failure
+blocks affected work until permitted replacement/recovery supplies missing evidence.
+Deliberation is optional **within the real team**; it never grants implementation authority.
 
-| Guard | Rule |
-|---|---|
-| Same-pair only | Continuation requires exact task-role match + non-retired roster binding. |
-| Single active | At most one in-flight/assigned actor per role at a time. |
-| Stable job only | A new/refined unit within the same stable job is allowed only under the current primary-approved plan and handoff bounds. A distinct review/test/consolidation job requires a new role + fresh session; task-role identity, role contract and native permissions remain unchanged. |
-| No cross-task | A session bound to task A cannot take on a role in task B. |
-| No retired reuse | Retired session IDs are never reused; a replacement is always a fresh session. |
-| No invented IDs | A pending slot may be reserved before the harness returns a real ID; never fabricate one. |
+## 2. Establish roles and a proportionate contract
 
-## Onboarding and replacement
+Keep live user dialogue, material decisions, integration, and acceptance with the
+primary. Choose complementary jobs from actual uncertainty, not a fixed cast or
+worker quota. Distinguish runtime main/worker capability from permanent job roles.
 
-Before any task-source reads, load applicable mandatory guidance and safety rules, then the memory storage protocol and resolve `MEMORY_DIR`. A fresh replacement's first task reads (in order):
-1. Own role record (`tasks/<task-id>/roles/<role-id>.md` in resolved `MEMORY_DIR`).
-2. Task record and role roster.
-3. Current approved plan.
+Before every launch, load `subagent-dispatch` and its worker contract. Supply the
+goal, sources, scope, READ/WRITE/RUN/network boundaries, evidence/output contract,
+job/resource limits, stop behavior, and accessible guidance. Parallelize only
+independent work with disjoint write ownership; sequence dependencies.
 
-Validate identity and restore knowledge before substantive action. Block if: identity mismatch, retired binding, missing/stale checkpoint, unapproved or stale scope, duplicate ownership, or unproven prior-worker quiescence.
+Work across multiple sessions or contributors requires immutable `task_id` +
+`role_id` bindings, single active ownership, role-first restoration, approved scope, and
+append-only checkpoints. A new review/test/consolidation job needs a fresh role
+and session, not re-scoping a bound coder. Apply the persistent reference in full.
+An assigned worker joins the existing primary/worker team; it must not recursively
+spawn another team unless its bounded handoff separately authorizes delegation.
 
-Retirement: stop or complete the outgoing actor's in-flight work first; preserve checkpoint with retirement provenance. Primary updates the roster.
+## 3. Deliberate and synthesize when needed
 
-## Role checkpoints (append-only)
+Load [Deliberation](references/deliberation.md) for panel setup, engineering/finance
+lenses, persona discovery, dialogue rounds, and the synthesis shape. Use separate
+permitted workers for the chosen perspectives; no single-context fallback.
+One worker instance supplies one perspective; independence requirements still apply.
 
-After each completed or interrupted slice, the contributor appends to its role record:
-- Approved plan revision + unit; restored sources confirmed.
-- Changed outputs with PASS/FAIL/UNVERIFIED evidence.
-- Blockers and next safe action.
+Challenge assumptions and have perspectives respond to each other's concerns.
+Keep concise evidence summaries, not raw transcripts or internal reasoning.
+Preserve meaningful disagreement; load [Branch-graft synthesis](references/branch-graft-synthesis.md)
+when multiple viable branches conflict. A vote is not proof.
 
-Preserve all prior bytes. Do not rewrite earlier checkpoints. Failed capture → `CHECKPOINT_PENDING`; no substantive continuation until recovery is authorized. Read-only artifact reviewers may write only explicitly permitted own-role memory.
+The primary resolves in-scope choices and owns the final synthesis. Distinguish
+facts, inferences, and unknowns; return unresolved user-owned decisions with plain
+context and consequences. Required independent challenge gates still apply.
 
-## Shared proportionate plans
+## 4. Approve the plan and execute only authorized work
 
-Plans are jointly crafted by appropriate roles and versioned by primary. Execution pins the approved revision and unit; silently deviating from the approved scope is not permitted. Pinning an old revision requires reading and revalidating the new current scope before acting.
+For execution, use a jointly crafted, primary-approved plan proportionate to the
+task. Bound-role execution pins its revision and unit; read and revalidate a new
+approved revision before continuing. Never silently change scope or contracts.
+Decision-only deliberation does not authorize implementation.
 
-Plan tiers and cast size follow actual uncertainty; no fixed role-count heuristic. A single primary contributor with no plan file is valid for a simple task.
+Load [Delivery](references/delivery.md) before authorized build/fix/work-until-done loops.
+It governs autonomous/collaborative/HITL mode, bounded jobs, criteria, correction, and release.
+No default total turn/time cap; quotas, costs, permissions, and job controls still apply.
+Apply the domain workflow; prove current outcomes and required independent reviews.
+Machine PASS is not release readiness; return ready for user acceptance, never accepted.
+Load [Procedure](references/delivery/procedure.md) before a verifier/controller/state or AFK.
 
-## Accepted-task consolidation
+## 5. Checkpoint and close
 
-Consolidation is triggered only by **recorded user acceptance**, not machine PASS or agent TASK_COMPLETE.
+Persistent contributors append a checkpoint after every completed/interrupted
+slice under the persistent reference; do not rewrite earlier captures. Missing or
+failed capture blocks substantive continuation pending authorized recovery.
 
-On acceptance, a dedicated fresh consolidator may be recruited for that task. Its pass is **report-only**: reads role captures and request/plan context; returns scored candidates. No long-term/knowledge writes, `consolidated` marker flips, archive, eviction, Git, or external effects during the report pass. Applying proposals requires subsequent explicit human approval via `memory` skill approval gates. Do not silently replace the dedicated consolidator with the main.
-
-Replacement consolidators restore their own role checkpoint before running.
-
-## Responsibility split
-
-| Concern | Owner |
-|---|---|
-| Session launch, fallback, bounded handoff | `subagent-dispatch` + `worker-contract.md` |
-| Record schema, Capture/Recall, checkpoint storage | `memory` + `task-role-records.md` |
-| Delivery loop, evaluation, release gate | `bounded-iteration` |
-| Joint plan deliberation, design challenge | `multi-perspective-deliberation` |
+Only **recorded user acceptance** enables accepted-task consolidation: a fresh
+dedicated consolidator's pass is report-only. It cannot write long-term knowledge,
+flip markers, archive/evict, run Git, or cause external effects. Apply proposals
+only after subsequent explicit human approval through `memory`; do not replace
+the consolidator with the primary silently.
 
 ## Stop conditions
 
-- Missing role record, task record, or current approved plan → block and report; do not invent.
-- Identity mismatch, retired binding, or unapproved scope → block affected work.
-- Checkpoint capture failed → `CHECKPOINT_PENDING`; no substantive continuation until recovery authorized.
-- Coder-to-tester re-scoping or cross-task reuse requested → refuse; new role + fresh session required.
-- Accepted-task consolidation report would write/archive/evict without subsequent human approval → stop.
+- Missing authority, unsafe/unbounded execution, or unavailable mandatory evidence → stop affected work; never broaden permissions.
+- No permitted real worker or missing current required worker contribution → block affected work; no solo/simulated fallback.
+- A required independent review cannot run → report UNVERIFIED/blocker, not simulated PASS.
+- Unverified AFK isolation/state/cancellation/cleanup, a real resource boundary, or broken required verification → stop affected execution; diagnose before retrying or raising budgets.
+- Persistent role/task/approved-plan records missing or stale, identity mismatch, retired binding, duplicate ownership, or prior-worker quiescence unproven → block restoration/execution.
+- Capture failed → `CHECKPOINT_PENDING`; no substantive continuation before authorized recovery.
+- Cross-task reuse or coder-to-tester re-scoping → fresh role/session required.
+- Consolidation would apply/archive/evict without later human approval → stop.
+
+## Examples
+
+| Request | Route |
+|---|---|
+| “Rename this config key” | Do not load this skill; if explicitly activated, form a real team anyway |
+| “Work until this is ready; don't ask about implementation details” | Team delivery with current worker evidence; honor human-reserved approvals |
+| “Compare rollout designs with security and recovery trade-offs” | Bounded deliberation with relevant independent lenses, if permitted |
+| “Fix a failure spanning auth, storage, and retries” | Form complementary diagnostic/check roles; keep integration with primary |
+| “Resume the implementation team with a replacement tester” | Persistent route; restore tester role/task/plan before task sources |
+| “Challenge this allocation memo” | Deliberation using finance lenses after the investment domain skill |
+
+## Deliverable check
+
+- [ ] Real team formed and current worker contribution recorded; launch permission verified.
+- [ ] Assignments, ownership, limits, dependencies, and evidence are explicit.
+- [ ] Synthesis preserves dissent and separates evidence from assumptions.
+- [ ] Applicable persistent guards, plan revision, and checkpoints are intact.
+- [ ] Authorized delivery has current required proof/reviews, usable guides, observed cleanup, and an honest readiness or blocker handoff.
+- [ ] Acceptance and consolidation approval boundaries remain human-owned.
+
+## Anti-patterns
+
+| Temptation | Correct path |
+|---|---|
+| Wait for explicit team tags on difficult work | Activate proactively, then form the required real team |
+| Load the skill but choose solo or simulated execution | No exception; form the team or report the blocker |
+| Treat skill selection as permission to spawn | Preserve runtime restrictions; stop rather than bypass them |
+| Count one context's personas or a token launch as workers | Require separate instances and actual criterion-linked contribution |
+| Reuse a coder's bound session as tester/consolidator | Assign a fresh role and session |
+| Manufacture consensus or acceptance from green checks | Preserve dissent; wait for recorded user acceptance |
+
+## ACI pass and prototype
+
+- **Evidence:** distinguish source/worker checks from runtime behavior; automatic activation, blocked-team recovery, and AFK lifecycle require real-use validation.
+- **Upgrades:** mandatory real-team activation, current worker evidence, fail-closed delegation, preserved coordination/release guards, and on-demand references.
+- **Lifecycle:** merged prototype, 2026-10-11; review routing/overhead after 1–2 real uses or the next quarterly audit (2027-01-11).
 
 ## References
 
-- [Task-role records](../memory/references/task-role-records.md) — canonical record schema, session-binding contract, checkpoint format, and replacement/retirement procedure
-- [Worker contract](../subagent-dispatch/references/worker-contract.md) — bounded handoff, discovery access, persistent-task-role identity section
-- [Memory](../memory/SKILL.md) — backend resolution, Capture/Recall, dream-cycle consolidation
-- [Bounded iteration](../bounded-iteration/SKILL.md) — delivery loop, evaluator criteria, release gate
-- [Multi-perspective deliberation](../multi-perspective-deliberation/SKILL.md) — persona deliberation and joint plan challenge
+- [Deliberation](references/deliberation.md) — panel method, finance cast, persona discovery
+- [Persistent coordination](references/persistent-coordination.md) — binding, restoration, replacement, checkpoints, plans, consolidation
+- [Branch-graft synthesis](references/branch-graft-synthesis.md) — preserve competing branches
+- [Subagent dispatch](../subagent-dispatch/SKILL.md) — permitted launches and bounded handoffs
+- [Memory](../memory/SKILL.md) — storage and task-role record schema
+- [Delivery](references/delivery.md) — ownership, evaluator–optimizer loop, release gates, and stops

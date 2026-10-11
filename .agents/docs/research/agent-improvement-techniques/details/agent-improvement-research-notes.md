@@ -17,7 +17,7 @@ Source: [anthropic.com/engineering/building-effective-agents](https://www.anthro
 | Routing | Classify → specialized path | AGENTS skill routing; model tiers |
 | Parallelization | Sectioning / voting | Swarm voting; multi-lens review |
 | Orchestrator–workers | Dynamic subtasks + synthesize | Lead agent + Task/subagents |
-| Evaluator–optimizer | Generate ↔ evaluate loop | bounded-iteration; reviewer; TDD |
+| Evaluator–optimizer | Generate ↔ evaluate loop | team-operating-model delivery path; reviewer; TDD |
 | Agents | LLM + tools in a loop + env ground truth | Full harness agents |
 
 **ACI (Appendix 2):** Treat tool design like HCI for juniors—clear docs, natural formats, absolute paths, poka-yoke parameters, test tool misuse. Invest as much in tools as in the system prompt.

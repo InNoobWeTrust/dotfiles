@@ -141,4 +141,4 @@ Paths: `references/sub-reviewers/<name>.md`.
 1. **Explicit** — user asked for review.
 2. **Self-review before present** — delegate (author bias).
 3. **Proactive** — flag structural/security/assumption issues mid-conversation when not in hot-fix/throwaway mode.
-4. **Evaluator for a loop** — when paired with `bounded-iteration`, score the artifact named in `TASK.md` against the predeclared rubric and return `PASS`, `FAIL`, or `UNVERIFIED` so the next optimizer pass has grounded feedback.
+4. **Evaluator for a loop** — when paired with the `team-operating-model` delivery path, score the artifact named in `TASK.md` against the predeclared rubric and return `PASS`, `FAIL`, or `UNVERIFIED` so the next optimizer pass has grounded feedback.

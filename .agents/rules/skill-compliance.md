@@ -46,7 +46,7 @@ use one to bypass a safety or correctness requirement.
 
 - Load `references/skill-compliance-execution.md` when selecting a workflow,
   handling a blocked or deferred step, or preparing completion evidence.
-- Load `../skills/multi-perspective-deliberation/references/branch-graft-synthesis.md` when multiple viable branches disagree; preserve the strongest dissent instead of forcing premature consensus.
+- Load `../skills/team-operating-model/references/branch-graft-synthesis.md` when multiple viable branches disagree; preserve the strongest dissent instead of forcing premature consensus.
 
 ## Completion Check
 

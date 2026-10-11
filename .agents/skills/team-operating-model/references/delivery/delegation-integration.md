@@ -1,6 +1,6 @@
 # Delegated research, building, and release evaluation
 
-Use [Subagent Dispatch](../../subagent-dispatch/SKILL.md) before every worker launch. Native workers are sufficient; crowd deliberation via `multi-perspective-deliberation` is optional when explicitly selected/warranted, not a prerequisite for autonomous ownership.
+Use [Subagent Dispatch](../../../subagent-dispatch/SKILL.md) before every worker launch. Real workers are mandatory: primary plus at least one separately executed worker with current task-relevant evidence. Crowd deliberation remains optional within that team, not permission for solo delivery. Apply [Persistent coordination](../persistent-coordination.md). Unavailable delegation or missing required worker evidence blocks affected work; no simulated fallback or permission bypass.
 
 ## Division of responsibility
 
@@ -33,6 +33,6 @@ Before iteration, declare artifact/contract revision, user journeys, machine pro
 
 ## If crowd deliberation is selected
 
-Load `../../multi-perspective-deliberation/SKILL.md` and its required references. Its challenge/design/security gates remain binding; this integration does not waive them. Workers stay read-only where their contract requires it; the primary alone applies approved suggestions.
+Load [Deliberation](../deliberation.md); its challenge/design/security gates remain binding, and this integration does not waive them. Workers stay read-only where their contract requires it; the primary alone applies approved suggestions.
 
 Record a compact decision/evidence handoff to bounded execution rather than copying a second loop/controller into swarm docs. The same release rubric, per-job bounds, state freshness, and user acceptance boundary apply regardless of the chosen worker transport.
