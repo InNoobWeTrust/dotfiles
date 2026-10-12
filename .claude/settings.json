@@ -1,19 +1,22 @@
 {
+  "env": {
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  },
   "permissions": {
-    "defaultMode": "default",
-    "ask": ["Bash"]
+    "ask": [
+      "Bash"
+    ],
+    "defaultMode": "auto"
   },
   "sandbox": {
     "enabled": true,
+    "failIfUnavailable": true,
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": true,
-    "failIfUnavailable": true,
     "excludedCommands": []
   },
+  "theme": "auto",
   "editorMode": "normal",
   "verbose": true,
-  "skipAutoPermissionPrompt": false,
-  "env": {
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1
-  }
+  "skipAutoPermissionPrompt": false
 }

@@ -10,9 +10,11 @@ Top-level entry point for dotfiles agent memory graph.
 - Architecture guidelines for discovery, style, and memory maintenance: `mem:memory_maintenance`
 - Model behavioral quirks, hallucination patterns, billing limits, and orchestrator/subagent routing: `mem:knowledge/model_quirks_and_routing`
 - When persisting shared guidance or evaluating account-specific model access, consult the context-leakage correction and deferred follow-up: `mem:knowledge/context_leakage`
+- Stable MCP delivery patterns for this repository (engine detection, `.agents/.gitignore` allowlist): `mem:knowledge/mcp_delivery_patterns`
 
 ## Active Task Memory
 
+- OpenCode-only stateless generation MCP: `mem:tasks/opencode-generate/task` — implementation authorized; not accepted or consolidated.
 - Delegate MCP external-subagent wording and AGY routing preference: `mem:tasks/delegate-subagent-wording-20261011/task` — metadata-only team patch; not accepted or consolidated.
 - OpenCode compaction/model-switch failure research: `mem:tasks/opencode-compaction-20261011/task` — investigation only; exact error and live root cause unconfirmed.
 - Mandatory real-team activation for the unified operating skill: `mem:tasks/team-required-20261011/task` — active policy refinement; not accepted or consolidated.

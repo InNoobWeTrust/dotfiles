@@ -1,11 +1,15 @@
 {
-  "$schema": "https://opencode.ai/config.json",
+  // No $schema here on purpose: the published schema still describes V1
+  // and suggests legacy fields V2 ignores (server, compaction.prune /
+  // tail_turns, experimental.batch_tool, ...). Source of truth:
+  // https://opencode.ai/v2/docs/config
   "small_model": "opencode/mimo-v2.6-flash-free",
   "default_agent": "build",
   "compaction": {
     "auto": true,
-    "prune": true,
-    "tail_turns": 1,
+    "keep": {
+      "tokens": 15000,
+    },
   },
   "agent": {
     "title": {
@@ -14,100 +18,59 @@
     "summary": {
       "model": "opencode/mimo-v2.6-flash-free",
     },
-    "compaction": {
-      "model": "kilo/~openai/gpt-luna-latest",
-    },
-  },
-  "server": {
-    "port": 4096,
-    "hostname": "0.0.0.0",
-    "mdns": true,
-    //"cors": ["https://example.com"],
   },
   "mcp": {
-    "sandbox": {
-      "type": "local",
-      "command": ["{env:HOME}/.local/bin/mcp-sandbox"],
-    },
-    "delegate": {
-      "type": "local",
-      "command": ["{env:HOME}/.local/bin/mcp-delegate"],
-    },
-    "chrome-devtools": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--no-usage-statistics",
-        "--browser-url=http://localhost:19222"
-      ],
-      "enabled": false,
-    },
-    "serena": {
-      "type": "local",
-      "command": [
-        "uvx",
-        "-p",
-        "3.13",
-        "--from",
-        "serena-agent",
-        "serena",
-        "start-mcp-server",
-        "--project-from-cwd"
-      ],
-      "enabled": true,
+    "servers": {
+      "opencode-decisions": {
+        "type": "local",
+        "command": [
+          "{env:HOME}/.local/bin/mcp-opencode-decisions"
+        ],
+        "timeout": {
+          "startup": 30000,
+          "catalog": 10000,
+          "execution": 130000,
+        },
+      },
+      "sandbox": {
+        "type": "local",
+        "command": [
+          "{env:HOME}/.local/bin/mcp-sandbox"
+        ],
+      },
+      "delegate": {
+        "type": "local",
+        "command": [
+          "{env:HOME}/.local/bin/mcp-delegate"
+        ],
+      },
+      "chrome-devtools": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "chrome-devtools-mcp@latest",
+          "--no-usage-statistics",
+          "--browser-url=http://localhost:19222"
+        ],
+        "disabled": true,
+      },
+      "serena": {
+        "type": "local",
+        "command": [
+          "uvx",
+          "-p",
+          "3.13",
+          "--from",
+          "serena-agent",
+          "serena",
+          "start-mcp-server",
+          "--project-from-cwd"
+        ],
+      },
     },
   },
   "providers": {
-    "openai": {
-      "models": {
-        // Avoid in-history reasoning updates on ChatGPT token-sharing routes.
-        // Still needed on 2.0.26: https://github.com/anomalyco/opencode/issues/54075
-        // Remove these overrides after upgrading to a release containing this fix:
-        // https://github.com/anomalyco/opencode/pull/54085
-        "gpt-6.1-sol": {
-          "compatibility": {
-            "supportsEffortUpdates": false,
-          },
-        },
-        "gpt-6.1-sol-fast": {
-          "compatibility": {
-            "supportsEffortUpdates": false,
-          },
-        },
-        "gpt-6-astra": {
-          "compatibility": {
-            "supportsEffortUpdates": false,
-          },
-        },
-        "gpt-6-astra-fast": {
-          "compatibility": {
-            "supportsEffortUpdates": false,
-          },
-        },
-        "gpt-6-luna": {
-          "compatibility": {
-            "supportsEffortUpdates": false,
-          },
-        },
-        "gpt-6-luna-fast": {
-          "compatibility": {
-            "supportsEffortUpdates": false,
-          },
-        },
-        "gpt-6-sol": {
-          "compatibility": {
-            "supportsEffortUpdates": false,
-          },
-        },
-        "gpt-6-sol-fast": {
-          "compatibility": {
-            "supportsEffortUpdates": false,
-          },
-        },
-      },
-    },
     "ckey": {
       "name": "CKey",
       "package": "@opencode/ai/providers/anthropic",
@@ -308,11 +271,31 @@
       "resource": "*",
       "effect": "allow"
     },
-    { "action": "sandbox_sandbox_ro", "resource": "*", "effect": "allow" },
-    { "action": "sandbox_sandbox_pure", "resource": "*", "effect": "allow" },
-    { "action": "sandbox_sandbox_rw", "resource": "*", "effect": "allow" },
-    { "action": "delegate_delegate_status", "resource": "*", "effect": "allow" },
-    { "action": "delegate_delegate_run", "resource": "*", "effect": "allow" },
+    {
+      "action": "sandbox_sandbox_ro",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "sandbox_sandbox_pure",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "sandbox_sandbox_rw",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "delegate_delegate_status",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "delegate_delegate_run",
+      "resource": "*",
+      "effect": "allow"
+    },
     {
       "action": "sandbox",
       "resource": "*",
@@ -404,14 +387,10 @@
       "effect": "allow"
     },
   ],
-  "experimental": {
-    "batch_tool": true,
-    "openTelemetry": false,
-  },
   "plugins": [
     "opencode-models-discovery@latest",
     "@tarquinen/opencode-dcp@latest",
-    "@bybrawe/opencode-loop@latest",
-    //"@daytona/opencode",
+    //"@bybrawe/opencode-loop@latest",
+    //"@daytona/opencode@latest",
   ],
 }

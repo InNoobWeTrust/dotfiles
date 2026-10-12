@@ -39,3 +39,17 @@ This is a user-reported account correction, not a verified subscription-plan map
 - Model-training versus setup causation remains untested. Cross-harness repetition does not separate those causes when models and guidance are shared; a draft-only comparison is a proposed follow-up, not an executed benchmark.
 
 The initial capture followed a description-only check; later user authorization permitted cleanup and the reader-boundary correction. Human-facing lessons are in [Lessons from agent-guidance failures](../../.agents/docs/skills-and-rules/agent-guidance-lessons.md). This note does not claim an independent audit, runtime validation, or proven behavioral improvement.
+
+## Shell Utility Output Privacy Constraint
+
+Shell utilities that consume per-user configuration files must not expose the configuration filename or
+its path in any output channel (help text, error messages, log output, README, documentation).
+- **Never name or quote the configuration file or its path** in any user-facing surface.
+- Generic error messages that omit the path are permitted.
+- Documentation must honestly describe whether the utility reads a configuration file. Do not state
+  "reads no environment configuration file" unless the utility genuinely does not read one.
+
+**Pre-delivery audit**: all output paths (help text, error strings, README sections) must be checked
+for configuration file path references before delivery.
+
+This is a correction-class invariant; do not remove or weaken without explicit user authorization.

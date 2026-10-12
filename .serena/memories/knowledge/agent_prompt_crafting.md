@@ -18,6 +18,13 @@ Rules for editing agent prompts, system instructions, documentation, and configu
 - **Never hardcode model names in prompt prose**: Do not write "powered by GPT-5.6 Terra", "powered by DeepSeek", or "using OpenCode Muse" in instruction bodies.
 - **Orchestrator references agent IDs only**: In `build.md` and routing guides, dispatch to agent names (`code`, `code-fast`, `tester`, `reviewer`), never model names in parentheses (e.g. avoid `code (OpenCode Muse Spark)` or `tester (GPT-5.6 Terra)`).
 - Model assignment belongs exclusively in YAML frontmatter (`model:`). Embedding model names in prompt text causes prompt-model drift whenever models are swapped and wastes context.
+- **Tool `.describe()` strings and JSON schema are the model's interface at invocation time; README is
+  human-facing**: at tool-call time the calling model sees the JSON schema and `.describe()` strings
+  automatically. The README is for human developers and maintainers; it is not automatically present in
+  model context, though a model may explicitly read it via a separate file-read call. Decision triggers,
+  probability caveats, neutral-option guidance, and concurrency constraints must therefore appear in
+  `.describe()`, not only in documentation. When a tool returns probability-style outputs, the description
+  must state "probability estimates, not guarantees."
 
 ## 3. Code & Config Editing: Grounding & Invariants
 

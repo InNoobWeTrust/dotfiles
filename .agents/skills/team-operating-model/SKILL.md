@@ -86,6 +86,8 @@ Load [Procedure](references/delivery/procedure.md) before a verifier/controller/
 
 ## 5. Checkpoint and close
 
+When periodic monitoring is requested, assign one owner and record the target, interval, endpoint, last observation, outstanding timer identifier, and next check due in the existing task checkpoint. Load [Periodic Progress Checks](../subagent-dispatch/references/periodic-checks.md); arm the wait or supported background timer **before** returning to other work, consume each result, and rearm while monitoring remains in scope. Do not assume another teammate is checking, or claim monitoring continues after losing its wake-up mechanism.
+
 Persistent contributors append a checkpoint after every completed/interrupted
 slice under the persistent reference; do not rewrite earlier captures. Missing or
 failed capture blocks substantive continuation pending authorized recovery.

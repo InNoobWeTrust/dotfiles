@@ -194,6 +194,8 @@ Use an explicit target directory when the tool's default is uncertain; a client-
 
 ## Long-Running Processes: Multiplexer Priority
 
+**Periodic-check exception:** keep the actual workload in its multiplexer or distributed queue, but a bounded synchronous `sleep` or one-shot background timer/check worker may provide the next monitoring wake-up. Use background delegation only when its completion notifies the parent; it is not a detached workload runner. Follow [Periodic Progress Checks](../skills/subagent-dispatch/references/periodic-checks.md): one outstanding timer per target, an explicit owner, read-only checks, bounded execution, and rearming before other work. All sandbox/resource gates still apply; no unmonitored `&`/`nohup` loops or recursive timer workers.
+
 Harness-level background process management (async task tools, background flags, subshell daemons) and ad-hoc backgrounding (`&`, `nohup`) are error-prone and brittle across agent harnesses: stdout/stderr buffers are easily lost, processes can become orphaned zombies, and the user has no direct visibility into running jobs.
 
 For any long-running command, dev server, watcher, test runner, or daemon:

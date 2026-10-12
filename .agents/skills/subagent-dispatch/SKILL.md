@@ -1,6 +1,6 @@
 ---
 name: subagent-dispatch
-description: "Use this skill before launching any delegated agent, background worker, or parallel task. It routes delegation decisions and requires bounded prompts, action limits, output contracts, and explicit stop behavior. Do not use it to delegate sequential discovery whose intermediate work must remain in the main thread."
+description: "Use this skill before launching any delegated agent, background worker, or parallel task, or when asked to check periodically, monitor a long-running job, or remind the agent to check later. It routes delegation and periodic checks with bounded actions, output contracts, and explicit stop behavior. Do not use it to delegate sequential discovery whose intermediate work must remain in the main thread."
 ---
 
 # Subagent Dispatch
@@ -8,6 +8,8 @@ description: "Use this skill before launching any delegated agent, background wo
 Use this router before **every** delegated launch: named workers, model-route fallbacks, and workers defined on the fly. Routing profiles do not supply working principles. Read [Portable Worker Contract](references/worker-contract.md) to bound the assignment and establish usable guidance discovery. Workers select and load their own principles through [Working Principles](../working-principles/SKILL.md); a reference or short hint is optional, and no personality direction is valid. Do not assume inherited skills, conversation, or system prompts.
 
 ## Allocation principle
+
+For periodic progress checks or delayed reminders, load [Periodic Progress Checks](references/periodic-checks.md). Assign an owner and arm a real wait or supported background wake-up before continuing other work; intent to remember is not monitoring. Synchronous checks do not require delegation.
 
 The primary owns intent, material decisions, integration, and acceptance—not every operation. Proactively compare direct work, targeted queries, and bounded handoffs by context cost, latency, evidence quality, and coordination cost. Delegate when an independently checkable result is sufficient and the handoff helps; stay direct when intermediate interpretations are inseparable from current decisions or handoff overhead dominates. Later work needing a result does not require the primary to collect all its intermediate details.
 
@@ -68,6 +70,7 @@ TASK_COMPLETE | INCOMPLETE + continuation/resumption state
 
 | Reference | Read when |
 |---|---|
+| `references/periodic-checks.md` | Periodic checks, delayed reminders, or monitoring multiplexer/queue jobs while other work continues. |
 | `references/worker-contract.md` | Before every named, fallback, or dynamic launch: establish task authority and guidance discovery; style direction is optional. |
 | `references/planning-payload-and-preflight.md` | Preparing or validating an L0/L1/L2 planning dispatch. |
 | `references/implementation-payload-and-preflight.md` | Preparing or validating an implementation dispatch, including rewrites. |

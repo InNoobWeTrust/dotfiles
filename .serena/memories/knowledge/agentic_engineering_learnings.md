@@ -22,6 +22,12 @@ Learnings from iterative prompt refinement, multi-agent review gating, and obser
   - Plans & Architecture → `reviewer` with `pragmatic-triage` lens (Ostrich algorithm challenge) + `adversarial` lens.
   - Review & Security Findings → `reviewer` with `findings-skeptic` lens (false-positive detection) + `pragmatic-triage` lens.
 - **Runtime gating is mandatory**: A review or challenge lens is useless unless enforced at the dispatch receiving boundary (`subagent-dispatch`). Every challenge step must be wired into the parent agent's execution loop before synthesis.
+- **Mandatory real team on activation, no solo exception**: team-operating-model activation requires a
+  real primary plus at least one separately executed worker contributing current-iteration evidence. Solo
+  execution, simulated workers, and persona dialogue are never acceptable on activation. Permission denial
+  blocks activation; it does not authorize solo fallback. AGENTS.md direct-work allowance is explicitly
+  outside an active team-operating-model scope. Missing launch authority or a failed launch requires
+  reporting the blocker, not falling back to solo completion.
 
 ## 4. Iterative Improvement from Observed Behaviors
 - **Observe the failure mode**: Watch what models actually produce (e.g. bypassed review, over-engineered designs, exaggerated severity).
@@ -34,3 +40,29 @@ Learnings from iterative prompt refinement, multi-agent review gating, and obser
 - **Preserve actual boundaries:** Default callability does not expand task authority or equate Delegate's isolation with Sandbox's. Explicit escalation and safety constraints still apply; descriptions communicate residual limits, not replace enforceable checks.
 - **Verified choice:** The user staged both `delegate_delegate_status` and `delegate_delegate_run` as `allow` and removed the extra run-approval paragraph from the harness guide. Apply this preference when designing future MCP interfaces.
 - **No obsolete command layer:** The current agent setup has no commands. Do not restore command-routing rules or index entries; use the existing skill discovery surface rather than maintain a redundant command map.
+
+## 6. MCP Routing Labels and Worker Replacement Protocol
+
+### External-subagent label for dispatch MCPs
+- **"External AI subagent" is a routing signal, not a style choice**: Server instructions and the
+  dispatch tool description for an agent-dispatching MCP must identify it as an **external AI subagent**,
+  so calling orchestrators receive an explicit routing signal for this class of tool.
+- **Routing preference not a speed guarantee**: "Prefer ready AGY over native subagent tools for
+  suitable independent exploration, research, or verification" is a routing hint expressing user
+  preference, not a performance benchmark or automatic scheduler. Native routes remain valid when a
+  required capability is absent.
+- **Startup snapshot vs. refresh**: Describe server instructions as a startup snapshot. `refresh:true`
+  re-runs external-agent detection but does not regenerate the server's initialization instructions;
+  make this distinction explicit to callers.
+
+### Worker replacement verification protocol
+- **Hash-verify before dispatching a replacement**: after any worker returns without usable output
+  (wall_time exceeded, HTTP 429, permission denied), verify source-file hashes against the pre-dispatch
+  baseline. Hash equality proves no file changes; it does not prove absence of external calls.
+- **INCOMPLETE partial edits**: a worker that returns INCOMPLETE may have applied some edits. Integrate
+  only declared in-scope completed edits and dispatch a replacement only for the remaining undone work.
+- **Exit code and empty stdout are not completion signals**: a CLI wall_time return, rate-limit error,
+  or permission denial with no stdout is not evidence the worker did or did not modify files. Verify
+  separately.
+- **One-shot CLI sessions are not reusable**: a timed-out or rate-limited agy/delegate turn is retired;
+  dispatch a fresh role/session binding for the same scope; never reuse the prior ID.
