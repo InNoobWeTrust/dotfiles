@@ -1,5 +1,5 @@
 ---
-description: "Tool-use executor for shell glue, configuration fixes and small mechanical code changes. Prefer for settled low-complexity implementation with exact file limits and checks, not open-ended deliberation."
+description: "Preferred OpenCode Zen worker for tool-heavy execution, shell glue and configuration work. Use for settled tasks with explicit action boundaries and observable checks; prefer Muse for substantive coding and refactoring."
 mode: subagent
 model: "opencode/space-bunny-free"
 permission:

@@ -63,6 +63,9 @@
     "openai": {
       "models": {
         // Avoid in-history reasoning updates on ChatGPT token-sharing routes.
+        // Still needed on 2.0.26: https://github.com/anomalyco/opencode/issues/54075
+        // Remove these overrides after upgrading to a release containing this fix:
+        // https://github.com/anomalyco/opencode/pull/54085
         "gpt-6.1-sol": {
           "compatibility": {
             "supportsEffortUpdates": false,

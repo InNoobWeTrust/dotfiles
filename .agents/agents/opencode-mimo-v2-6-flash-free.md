@@ -1,5 +1,5 @@
 ---
-description: "Fast native-tool source lookup, repository pattern search and small specified patches. Prefer for focused scouting or narrow checks with paths, sources and execution evidence."
+description: "Focused repository scouting, source lookup and narrow evidence checks. Use for finding behavior, tracing call sites and returning paths and sources; prefer Muse for substantive implementation and Space Bunny for tool-heavy execution."
 mode: subagent
 model: "opencode/mimo-v2.6-flash-free"
 permission:
