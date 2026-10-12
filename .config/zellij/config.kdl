@@ -345,6 +345,7 @@ theme "gruvbox-dark"
 // the stdin of the program to perform the copy. This can be used with
 // terminal emulators which do not support the OSC 52 ANSI control sequence
 // that will be used by default if this option is not set.
+// Keep copy_command unset so copying over SSH uses the local terminal's clipboard.
 // Examples:
 //
 // copy_command "xclip -selection clipboard" // x11
@@ -358,12 +359,12 @@ theme "gruvbox-dark"
 //   - system (default)
 //   - primary
 //
-// copy_clipboard "primary"
+copy_clipboard "system"
 
 // Enable or disable automatic copy (and clear) of selection when releasing mouse
 // Default: true
 //
-// copy_on_select false
+copy_on_select true
 
 // Path to the default editor to use to edit pane scrollbuffer
 // Default: $EDITOR or $VISUAL
