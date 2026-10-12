@@ -9,6 +9,7 @@ bootstrap\.sh
 # Non-dotfile project dirs
 \.innoobwetrust
 \.opencode
+\.serena
 
 # Application data and state must stay outside the dotfiles checkout.
 ^\.local/share$
