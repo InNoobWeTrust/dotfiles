@@ -1,10 +1,20 @@
-import { describe, expect, test } from "bun:test"
-import { realpath } from "node:fs/promises"
+import { afterAll, describe, expect, test } from "bun:test"
+import { mkdtempSync } from "node:fs"
+import { mkdtemp, readFile, realpath, rm, stat } from "node:fs/promises"
+import { join } from "node:path"
 import { firstLine, runProcess } from "../src/execute.ts"
+import { OutputCapture } from "../src/output.ts"
+
+const testCache = mkdtempSync(join(process.env.TMPDIR ?? "/tmp", "delegate-tests-"))
+afterAll(() => rm(testCache, { recursive: true, force: true }))
 
 const base = {
   cwd: process.cwd(),
-  env: { PATH: process.env.PATH ?? "", HOME: process.env.HOME ?? "/tmp" },
+  env: {
+    PATH: process.env.PATH ?? "",
+    HOME: process.env.HOME ?? "/tmp",
+    XDG_CACHE_HOME: testCache,
+  },
   wallTimeMs: 10_000,
   maxOutputBytes: 1_048_576,
 }
@@ -13,6 +23,26 @@ const sh = (script: string, options: Partial<typeof base> = {}) =>
   runProcess("/bin/sh", ["-c", script], { ...base, ...options })
 
 describe("runProcess", () => {
+  test("cache retains multi-chunk raw bytes with bounded previews and private files", async () => {
+    const capture = new OutputCapture({ XDG_CACHE_HOME: testCache }, 7)
+    const stdout = Buffer.from(`${"architecture: 🌍\n".repeat(300_000)}FINAL`)
+    const stderr = Buffer.from("FINAL-ERROR")
+    for (let i = 0; i < stdout.length; i += 4096) {
+      capture.append("stdout", stdout.subarray(i, i + 4096))
+    }
+    capture.append("stderr", stderr)
+    capture.close()
+    expect(await readFile(capture.stdoutPath)).toEqual(stdout)
+    expect(await readFile(capture.stderrPath)).toEqual(stderr)
+    expect(capture.bytes.stdout).toBe(stdout.length)
+    expect(capture.bytes.stderr).toBe(stderr.length)
+    expect(capture.preview("stdout").length + capture.preview("stderr").length).toBe(7)
+    expect(capture.truncated).toBe(true)
+    expect((await stat(capture.stdoutPath)).mode & 0o777).toBe(0o600)
+    expect((await stat(capture.directory)).mode & 0o777).toBe(0o700)
+    capture.discard()
+  })
+
   test("captures both streams and the exact exit code", async () => {
     const result = await sh("printf 'out'; printf 'err' >&2; exit 3")
     expect(result.stop).toBe("exited")
@@ -22,6 +52,28 @@ describe("runProcess", () => {
     expect(result.stderr).toBe("err")
     expect(result.truncated).toBe(false)
     expect(result.durationMs).toBeGreaterThanOrEqual(0)
+    if (!result.stdoutPath || !result.stderrPath) throw new Error("Missing raw stream paths")
+    expect(await readFile(result.stdoutPath, "utf8")).toBe("out")
+    expect(await readFile(result.stderrPath, "utf8")).toBe("err")
+  })
+
+  test("cache always retains small and empty streams and bounds JSON escaping", async () => {
+    const capture = new OutputCapture({ XDG_CACHE_HOME: testCache })
+    const raw = Buffer.alloc(100_000)
+    capture.append("stdout", raw)
+    capture.close()
+    expect(await readFile(capture.stdoutPath)).toEqual(raw)
+    expect(await readFile(capture.stderrPath)).toEqual(Buffer.alloc(0))
+    expect(
+      Buffer.byteLength(JSON.stringify(capture.preview("stdout").toString("utf8"))) - 2,
+    ).toBeLessThanOrEqual(65_536)
+    expect(capture.truncated).toBe(true)
+    capture.discard()
+    const empty = new OutputCapture({ XDG_CACHE_HOME: testCache })
+    empty.close()
+    expect(await readFile(empty.stdoutPath)).toEqual(Buffer.alloc(0))
+    expect(await readFile(empty.stderrPath)).toEqual(Buffer.alloc(0))
+    empty.discard()
   })
 
   test("runs in the requested working directory", async () => {
@@ -36,6 +88,9 @@ describe("runProcess", () => {
     expect(result.stop).toBe("exited")
     expect(result.exitCode).toBe(0)
     expect(result.stdout).toBe("")
+    if (!result.stdoutPath || !result.stderrPath) throw new Error("Missing empty stream paths")
+    expect(await readFile(result.stdoutPath)).toEqual(Buffer.alloc(0))
+    expect(await readFile(result.stderrPath)).toEqual(Buffer.alloc(0))
   })
 
   test("kills the process group at the wall-clock limit", async () => {
@@ -50,11 +105,66 @@ describe("runProcess", () => {
     expect(result.durationMs).toBeLessThan(8_000)
   })
 
-  test("truncates at the output budget and kills the run", async () => {
-    const result = await sh("yes delegate", { maxOutputBytes: 4_096 })
-    expect(result.stop).toBe("output_limit")
-    expect(result.truncated).toBe(true)
-    expect(Buffer.byteLength(result.stdout)).toBeLessThanOrEqual(4_096)
+  test("preserves oversized streams byte-for-byte and lets the worker finish", async () => {
+    const cache = await mkdtemp(join(process.env.TMPDIR ?? "/tmp", "delegate-output-"))
+    try {
+      const result = await sh(
+        "head -c 20000 /dev/zero; printf 'FINAL'; head -c 9000 /dev/zero >&2; printf 'ERROR-END' >&2",
+        {
+          maxOutputBytes: 4_096,
+          env: { ...base.env, XDG_CACHE_HOME: cache },
+        },
+      )
+      expect(result.stop).toBe("exited")
+      expect(result.exitCode).toBe(0)
+      expect(result.truncated).toBe(true)
+      expect(
+        Buffer.byteLength(result.stdout) + Buffer.byteLength(result.stderr),
+      ).toBeLessThanOrEqual(4_096)
+      expect(result.stdoutPath).toStartWith(join(cache, "delegate", "run-"))
+      if (!result.stdoutPath || !result.stderrPath) throw new Error("Missing output cache paths")
+      expect(await readFile(result.stdoutPath, "utf8")).toBe(`${"\0".repeat(20000)}FINAL`)
+      expect(await readFile(result.stderrPath, "utf8")).toBe(`${"\0".repeat(9000)}ERROR-END`)
+      expect(result.stdoutBytes).toBe(20005)
+      expect(result.stderrBytes).toBe(9009)
+      expect((await stat(result.stdoutPath)).mode & 0o777).toBe(0o600)
+      expect((await stat(join(result.stdoutPath, ".."))).mode & 0o777).toBe(0o700)
+    } finally {
+      await rm(cache, { recursive: true, force: true })
+    }
+  })
+
+  test("reports cache creation failure without launching a worker", async () => {
+    const result = await sh("printf 'must not run'", {
+      env: { ...base.env, XDG_CACHE_HOME: "/dev/null" },
+    })
+    expect(result.stop).toBe("capture_failed")
+    expect(result.stdout).toBe("")
+    expect(result.stdoutPath).toBeNull()
+    expect(result.error).toContain("output cache")
+  })
+
+  test("cache is closed and reported when spawn throws synchronously", async () => {
+    const result = await runProcess("/bin/sh", ["\0"], base)
+    expect(result.stop).toBe("spawn_failed")
+    expect(result.error).toBeDefined()
+    if (!result.stdoutPath || !result.stderrPath) throw new Error("Missing failure artifacts")
+    expect((await readFile(result.stdoutPath)).length).toBe(0)
+    expect((await readFile(result.stderrPath)).length).toBe(0)
+  })
+
+  test("keeps raw bytes when small successful output is not lossless UTF-8", async () => {
+    for (const bytes of ["\\342\\202", "\\200"]) {
+      const result = await sh(`printf 'ok${bytes}'`)
+      expect(result.stop).toBe("exited")
+      expect(result.exitCode).toBe(0)
+      expect(result.truncated).toBe(true)
+      if (!result.stdoutPath) throw new Error("Missing raw output path")
+      const raw = await readFile(result.stdoutPath)
+      expect(raw.length).toBe(result.stdoutBytes)
+      expect(raw.subarray(0, 2).toString()).toBe("ok")
+      expect(Buffer.byteLength(result.stdout)).toBeLessThanOrEqual(raw.length)
+    }
   })
 
   test("reports a launch failure instead of throwing", async () => {

@@ -69,7 +69,7 @@ for arg in "$@"; do last="$arg"; done
 } >> "$STUB_LOG"
 case "$last" in
   *STUB_SLEEP*) printf 'pid %s\\n' "$$" >> "$STUB_LOG"; sleep 120 ;;
-  *STUB_NOISE*) yes stub-noise ;;
+  *STUB_NOISE*) head -c 100000 /dev/zero; printf 'FINAL-ANSWER\n'; printf 'FINAL-ERROR\n' >&2; exit 0 ;;
   *STUB_FAIL*) printf 'stub refused\\n' >&2; exit 3 ;;
 *STUB_ORPHAN*)
     echo "pid $$" >> "$STUB_LOG"
@@ -204,6 +204,7 @@ async function stubEnvironment(scratch: string) {
       STUB_LOG: logFile,
       STUB_INSPECTION_LOG: inspectionLogFile,
       HOME: fakeHome,
+      XDG_CACHE_HOME: path.join(scratch, "cache"),
     },
   }
 }
@@ -240,7 +241,6 @@ async function verifyStubbedEndToEnd() {
     expect(properties?.permissionMode?.description).toMatch(/not read-only/i)
     expect(Object.keys(runTool.inputSchema.properties ?? {}).sort()).toEqual([
       "harness",
-      "maxOutputBytes",
       "model",
       "permissionMode",
       "prompt",
@@ -510,16 +510,30 @@ async function verifyStubbedEndToEnd() {
     if (!sleeping?.pid) throw new Error("The stub never recorded a pid")
     await waitGone(sleeping.pid, "it outlived its wall-clock limit")
 
-    // The output budget truncates and stops instead of buffering without bound.
+    // Preview reduction never stops the run; original streams remain readable.
     const loud = await api.call<DelegateOutput>("delegate_run", {
       harness: "claude",
       prompt: "STUB_NOISE loudly",
-      maxOutputBytes: 300,
     })
-    expect(loud.response.isError).toBe(true)
-    expect(loud.output.data?.stop).toBe("output_limit")
+    expect(loud.response.isError).toBe(false)
+    expect(loud.output.data?.stop).toBe("exited")
     expect(loud.output.data?.truncated).toBe(true)
-    expect(loud.output.data?.ok).toBe(false)
+    expect(loud.output.data?.ok).toBe(true)
+    const loudData = loud.output.data
+    if (!loudData?.stdoutPath || !loudData.stderrPath)
+      throw new Error("Missing complete-output paths")
+    expect(await readFile(loudData.stdoutPath, "utf8")).toBe(`${"\0".repeat(100000)}FINAL-ANSWER\n`)
+    expect(await readFile(loudData.stderrPath, "utf8")).toBe("FINAL-ERROR\n")
+    expect(loudData.stdoutBytes).toBe(100013)
+    expect(loudData.stderrBytes).toBe(12)
+    const serialized = JSON.stringify(loud.output)
+    expect(serialized.indexOf('"stdoutPath":')).toBeLessThan(serialized.indexOf('"stdout":'))
+    expect(serialized.indexOf('"stderrPath":')).toBeLessThan(serialized.indexOf('"stdout":'))
+
+    expect(
+      Buffer.byteLength(JSON.stringify(loudData.stdout)) +
+        Buffer.byteLength(JSON.stringify(loudData.stderr)),
+    ).toBeLessThanOrEqual(65_540)
 
     // A harness that exits 0 while a descendant keeps running does not get to
     // leave that descendant working outside every budget and the slot count.
@@ -581,7 +595,7 @@ async function verifyStubbedEndToEnd() {
     process.kill(-Number(survivorPid), "SIGKILL")
 
     console.log(
-      "PASS: two-tool catalog, startup detection, AGY quota readiness and sign-out refresh, readiness gate, literal prompt argv, model passthrough, refused authority modes, unavailable/unknown harness refusal, model allowlist, option-lookalike rejection, pre-launch validation, failed-turn isError with retained data, exit/wall-time/output failures, orphan reaping, concurrency refusal, nested depth refusal, refresh, surviving close, quiet shutdown, structured content with JSON fallback",
+      "PASS: two-tool catalog, startup detection, AGY quota readiness and sign-out refresh, readiness gate, literal prompt argv, model passthrough, refused authority modes, unavailable/unknown harness refusal, model allowlist, option-lookalike rejection, pre-launch validation, failed-turn isError with retained data, exit/wall-time failures, lossless cached output and safe previews, orphan reaping, concurrency refusal, nested depth refusal, refresh, surviving close, quiet shutdown, structured content with JSON fallback",
     )
   } finally {
     for (const api of clients) await api.client.close().catch(() => {})

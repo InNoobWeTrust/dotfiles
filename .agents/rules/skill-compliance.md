@@ -42,6 +42,11 @@ or blocker, the unmet prerequisite, and the effect on completion. Record a
 permitted deferral or compromise through the applicable canonical process; never
 use one to bypass a safety or correctness requirement.
 
+For permission-solvable shell/sandbox blockers, pause only the affected execution
+and proactively ask using the question tool as required by
+[Permission Escalation](execution-safety.md#permission-escalation). A blocker
+report alone is not a substitute for requesting the permission needed to proceed.
+
 ## Just-in-Time References
 
 - Load `references/skill-compliance-execution.md` when selecting a workflow,

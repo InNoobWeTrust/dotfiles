@@ -16,6 +16,11 @@ const CTRL_DIR = "/run/agent-sandbox"
 const DEADLINE_FILE = `${CTRL_DIR}/deadline`
 const WS_TARGET = "/workspace"
 
+// Internal allowance for engine CLI responses the server must parse, such as
+// `inspect`. Workload output uses the fixed shared preview and is always
+// retained in full on disk.
+const CLI_PREVIEW_BYTES = 4 * 1024 * 1024
+
 // Control tmpfs: only holds the deadline file; kept minimal and root-only.
 const CTRL_TMPFS_BYTES = 65_536 // 64 KiB
 const CTRL_TMPFS_INODES = 32
@@ -234,8 +239,11 @@ function buildCreateArgs(
  * Terminate the exact container on the selected engine and confirm removal, including auto-remove races.
  */
 async function destroyContainer(engine: ContainerEngine, id: string): Promise<void> {
-  await run([engine, "kill", id], { wallTimeMs: T_KILL })
-  const removed = await run([engine, "rm", "--force", id], { wallTimeMs: T_RM })
+  await run([engine, "kill", id], { wallTimeMs: T_KILL, inlineBytes: CLI_PREVIEW_BYTES })
+  const removed = await run([engine, "rm", "--force", id], {
+    wallTimeMs: T_RM,
+    inlineBytes: CLI_PREVIEW_BYTES,
+  })
   if (isNotFound(removed)) return
   // --rm and explicit removal can race. Only observed absence proves cleanup,
   // not the CLI acknowledgement or an "already removing" error.
@@ -243,6 +251,7 @@ async function destroyContainer(engine: ContainerEngine, id: string): Promise<vo
   do {
     const remaining = await run([engine, "inspect", "--format", "{{.Id}}", id], {
       wallTimeMs: T_INSPECT,
+      inlineBytes: CLI_PREVIEW_BYTES,
     })
     if (isNotFound(remaining)) return
     assertOk(remaining, engine, "cleanup confirmation")
@@ -289,6 +298,7 @@ export class ContainerCliRuntime implements ContainerRuntime {
     try {
       const createResult = await run([this.engine, "create", "--name", name, ...createArgs], {
         wallTimeMs: T_CREATE,
+        inlineBytes: CLI_PREVIEW_BYTES,
       })
       assertOk(createResult, this.engine, "create")
       const containerId = createResult.stdout.trim()
@@ -301,6 +311,7 @@ export class ContainerCliRuntime implements ContainerRuntime {
       // Inspect before start — verify all security constraints hold.
       const inspResult = await run([this.engine, "inspect", "--format", "{{json .}}", handle.id], {
         wallTimeMs: T_INSPECT,
+        inlineBytes: CLI_PREVIEW_BYTES,
       })
       assertOk(inspResult, this.engine, "inspect")
       const raw = inspResult.stdout.trim()
@@ -310,7 +321,10 @@ export class ContainerCliRuntime implements ContainerRuntime {
       verifyConstraints(data, spec, canonicalWs)
 
       // Start the container; supervisor writes its initial deadline and begins polling.
-      const startResult = await run([this.engine, "start", handle.id], { wallTimeMs: T_START })
+      const startResult = await run([this.engine, "start", handle.id], {
+        wallTimeMs: T_START,
+        inlineBytes: CLI_PREVIEW_BYTES,
+      })
       assertOk(startResult, this.engine, "start")
       return handle
     } catch (error) {
@@ -322,6 +336,7 @@ export class ContainerCliRuntime implements ContainerRuntime {
   async alive(id: string): Promise<boolean> {
     const r = await run([this.engine, "inspect", "--format", "{{.State.Running}}", id], {
       wallTimeMs: T_INSPECT,
+      inlineBytes: CLI_PREVIEW_BYTES,
     })
     if (isNotFound(r)) return false
     assertOk(r, this.engine, "inspect (alive)")
@@ -335,6 +350,7 @@ export class ContainerCliRuntime implements ContainerRuntime {
     const cmd = `printf '%s\\n' "$(( $(date +%s) + ${deadlineSeconds} ))" > ${DEADLINE_FILE}.new && mv ${DEADLINE_FILE}.new ${DEADLINE_FILE}`
     const r = await run([this.engine, "exec", "--user", "0:0", id, "sh", "-c", cmd], {
       wallTimeMs: T_DEADLINE,
+      inlineBytes: CLI_PREVIEW_BYTES,
     })
     assertOk(r, this.engine, "exec (deadline)")
   }
@@ -356,17 +372,15 @@ export class ContainerCliRuntime implements ContainerRuntime {
       input.command,
     ]
 
+    // Workload output keeps the fixed shared preview and is always retained in
+    // full on disk, so this call passes no inline allowance.
     const processResult = await run([this.engine, ...execArgs], {
       wallTimeMs: input.wallTimeMs,
-      maxOutputBytes: input.maxOutputBytes,
     })
 
-    if (
-      processResult.stop === "timeout" ||
-      processResult.stop === "output_limit" ||
-      processResult.error
-    ) {
-      // Destroy the whole container — all concurrent operations are affected.
+    if (processResult.stop !== "exited" || processResult.error !== undefined) {
+      // Timeout or a real capture failure: destroy the whole container — all
+      // concurrent operations are affected. Preview omission never does this.
       let cleanupError: string | undefined
       try {
         await destroyContainer(this.engine, id)
@@ -376,9 +390,13 @@ export class ContainerCliRuntime implements ContainerRuntime {
       }
       return {
         exitCode: processResult.exitCode,
+        stdoutPath: processResult.stdoutPath,
+        stderrPath: processResult.stderrPath,
+        stdoutBytes: processResult.stdoutBytes,
+        stderrBytes: processResult.stderrBytes,
         stdout: processResult.stdout,
         stderr: processResult.stderr,
-        termination: processResult.stop === "exited" ? "runtime_error" : processResult.stop,
+        termination: processResult.stop === "timeout" ? "timeout" : "runtime_error",
         truncated: processResult.truncated,
         containerDestroyed: cleanupError === undefined,
         error:
@@ -391,6 +409,10 @@ export class ContainerCliRuntime implements ContainerRuntime {
     // Normal process exit: workload completed (exit code may be non-zero); container survives.
     return {
       exitCode: processResult.exitCode,
+      stdoutPath: processResult.stdoutPath,
+      stderrPath: processResult.stderrPath,
+      stdoutBytes: processResult.stdoutBytes,
+      stderrBytes: processResult.stderrBytes,
       stdout: processResult.stdout,
       stderr: processResult.stderr,
       termination: "exited",
@@ -406,7 +428,7 @@ export class ContainerCliRuntime implements ContainerRuntime {
     // Verify ownership before touching the container.
     const labelResult = await run(
       [this.engine, "inspect", "--format", "{{json .Config.Labels}}", id],
-      { wallTimeMs: T_INSPECT },
+      { wallTimeMs: T_INSPECT, inlineBytes: CLI_PREVIEW_BYTES },
     )
     if (isNotFound(labelResult)) return // already gone; idempotent
     assertOk(labelResult, this.engine, "inspect (labels)")
@@ -422,7 +444,10 @@ export class ContainerCliRuntime implements ContainerRuntime {
     }
 
     // Stop with a short grace period; errors are tolerated — rm is the authoritative step.
-    await run([this.engine, "stop", "--time", "2", id], { wallTimeMs: T_STOP })
+    await run([this.engine, "stop", "--time", "2", id], {
+      wallTimeMs: T_STOP,
+      inlineBytes: CLI_PREVIEW_BYTES,
+    })
 
     await destroyContainer(this.engine, id)
   }

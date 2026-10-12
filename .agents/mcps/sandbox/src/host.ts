@@ -14,6 +14,7 @@ import { constants, tmpdir } from "node:os"
 import path from "node:path"
 import type { McpServer } from "@modelcontextprotocol/sdk@1/server/mcp.js"
 import type { CallToolResult } from "@modelcontextprotocol/sdk@1/types.js"
+import { decodePreview, INLINE_OUTPUT_BYTES, OutputCapture } from "../../shared/output.ts"
 
 export const hostInstructions =
   "Use sandbox_ro for read-only commands needing network, sandbox_pure for offline checks, and sandbox_rw only for intentional, authorized workspace writes. " +
@@ -24,7 +25,8 @@ export const hostInstructions =
   "On a restriction or unavailable backend, inspect and report the failure; do not retry unsandboxed or escalate to rw just to make a read-only command pass. " +
   "Resource budgets apply to every invocation. Investigate boundary failures before retrying; obtain human permission before raising budgets, then pass explicit limits for that invocation. " +
   "The MCP applies requested budgets; human approval belongs to the calling harness and conversation, not an MCP approval flag. " +
-  "Host files and inherited environment remain readable: never dump secrets or treat this as hostile-code isolation. Native read/edit tools do not need wrapping."
+  "Host files and inherited environment remain readable: never dump secrets or treat this as hostile-code isolation. Native read/edit tools do not need wrapping. " +
+  "Output volume has no limit: complete stdout/stderr are always retained in the private cache, and bounded previews point to those files."
 
 type SandboxMode = "ro" | "pure" | "rw"
 const launchDirectory = process.cwd()
@@ -34,9 +36,6 @@ const limitsObjectSchema = z
     wallTimeMs: positiveInteger
       .max(2147483647)
       .describe("Elapsed milliseconds, including setup; default 120000."),
-    maxOutputBytes: positiveInteger.describe(
-      "Combined stdout/stderr bytes; default 4194304. Excess output stops the command.",
-    ),
     cpuSeconds: positiveInteger.describe(
       "Per-process soft CPU seconds; default 60, not aggregate or elapsed time.",
     ),
@@ -72,7 +71,6 @@ const limitsSchema = limitsObjectSchema.refine(
 type ResourceLimits = z.infer<typeof limitsSchema>
 const defaultLimits: ResourceLimits = {
   wallTimeMs: 120000,
-  maxOutputBytes: 4 * 1024 * 1024,
   cpuSeconds: 60,
   cpuHardSeconds: 120,
   maxFileBytes: 100 * 1024 * 1024,
@@ -93,8 +91,9 @@ const inputSchema = {
     .optional()
     .describe(
       "Invocation-only resource overrides. Investigate failures and obtain human permission before raising defaults. " +
-        "Milliseconds: wallTimeMs. Bytes: maxOutputBytes (combined streams), maxFileBytes/coreBytes (multiples of 1024), addressSpaceBytes (Linux only, multiple of 1024). " +
-        "CPU seconds: cpuSeconds/cpuHardSeconds. Counts: maxOpenFiles, optional maxProcesses (user-wide, not command-tree).",
+        "Milliseconds: wallTimeMs. Bytes: maxFileBytes/coreBytes (multiples of 1024), addressSpaceBytes (Linux only, multiple of 1024). " +
+        "CPU seconds: cpuSeconds/cpuHardSeconds. Counts: maxOpenFiles, optional maxProcesses (user-wide, not command-tree). " +
+        "Output volume has no limit: complete streams are always retained in the private cache.",
     ),
 }
 
@@ -104,12 +103,22 @@ const outputSchema = {
     .int()
     .nullable()
     .describe("Sandbox process exit code; null if execution could not complete."),
-  stdout: z
+  stdoutPath: z
     .string()
-    .describe("Captured standard output; bounded prefix when output limit is exceeded."),
-  stderr: z
+    .nullable()
+    .describe(
+      "Complete raw standard output in the private cache; null only when capture setup failed.",
+    ),
+  stderrPath: z
     .string()
-    .describe("Captured standard error; bounded prefix when output limit is exceeded."),
+    .nullable()
+    .describe(
+      "Complete raw standard error in the private cache; null only when capture setup failed.",
+    ),
+  stdoutBytes: z.number().int().nonnegative().describe("Raw stdout bytes retained in cache."),
+  stderrBytes: z.number().int().nonnegative().describe("Raw stderr bytes retained in cache."),
+  stdout: z.string().describe("Bounded standard output preview; raw bytes live at stdoutPath."),
+  stderr: z.string().describe("Bounded standard error preview; raw bytes live at stderrPath."),
   workdir: z
     .string()
     .nullable()
@@ -129,9 +138,7 @@ const outputSchema = {
     .describe(
       "Launcher confirmed that requested OS limits were installed before sandbox execution.",
     ),
-  termination: z
-    .enum(["exited", "signal", "timeout", "output_limit", "setup_error", "execution_error"])
-    .optional(),
+  termination: z.enum(["exited", "signal", "timeout", "setup_error", "execution_error"]).optional(),
   signal: z
     .string()
     .nullable()
@@ -184,6 +191,10 @@ async function executeSandbox(
   if (!sandboxBin || (!isMac && process.platform !== "linux")) {
     return {
       exitCode: null,
+      stdoutPath: null,
+      stderrPath: null,
+      stdoutBytes: 0,
+      stderrBytes: 0,
       stdout: "",
       stderr: "",
       error: `Sandbox backend unavailable: ${backend} on ${process.platform}. Refusing unsandboxed execution.`,
@@ -237,7 +248,10 @@ async function executeSandbox(
   // Both backends inherit the environment. macOS has no private mounts;
   // only its per-invocation scratch directory is writable outside the workspace.
   let output: ExecutionOutput
+  let capture: OutputCapture | undefined
   try {
+    // Paths exist only after this succeeds, so pre-exec failure leaves them null.
+    capture = new OutputCapture(Bun.env as Record<string, string>, INLINE_OUTPUT_BYTES, "sandbox")
     tempDir = await mkdtemp(path.join(tmpdir(), "sandbox-"))
     const readyFile = path.join(tempDir, "limits-ready")
     let sandboxArgs = bwrapArgs
@@ -260,11 +274,20 @@ async function executeSandbox(
       childEnv = { ...childEnv, TMPDIR: canonicalTemp, TMP: canonicalTemp, TEMP: canonicalTemp }
     }
     const launch = buildLimitedLaunch([sandboxBin, ...sandboxArgs], limits, isMac, readyFile)
-    output = await superviseCommand(launch, cwd, childEnv, limits, readyFile)
+    output = await superviseCommand(launch, cwd, childEnv, limits, readyFile, capture)
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err)
+    let message = err instanceof Error ? err.message : String(err)
+    try {
+      capture?.close()
+    } catch (closeError: unknown) {
+      message += `; Failed to flush output cache: ${String(closeError)}`
+    }
     output = {
       exitCode: null,
+      stdoutPath: capture?.stdoutPath ?? null,
+      stderrPath: capture?.stderrPath ?? null,
+      stdoutBytes: capture?.bytes.stdout ?? 0,
+      stderrBytes: capture?.bytes.stderr ?? 0,
       stdout: "",
       stderr: "",
       error: `Failed to execute ${backend} sandbox: ${message}`,
@@ -336,13 +359,14 @@ function buildLimitedLaunch(
   ]
 }
 
-/** Own one process group and bounded streams until command exit or a supervisor stop. */
+/** Own one process group and write both streams to the cache until command exit or a supervisor stop. */
 async function superviseCommand(
   args: string[],
   cwd: string,
   env: NodeJS.ProcessEnv,
   limits: ResourceLimits,
   readyFile: string,
+  capture: OutputCapture,
 ): Promise<ExecutionOutput> {
   const child = spawn(args[0], args.slice(1), {
     cwd,
@@ -350,11 +374,10 @@ async function superviseCommand(
     detached: true,
     stdio: ["ignore", "pipe", "pipe"],
   })
-  let stopReason: "timeout" | "output_limit" | undefined
+  let stopReason: "timeout" | undefined
   let executionError: string | undefined
   let cleanupFailure: NodeJS.ErrnoException | undefined
-  let retainedBytes = 0
-  const chunks: { stdout: Buffer[]; stderr: Buffer[] } = { stdout: [], stderr: [] }
+  // Set only when capture itself stopped early; byte counts also mark preview omission.
   const truncated = { stdout: false, stderr: false }
   let drainTimer: ReturnType<typeof setTimeout> | undefined
   let exitObserved = false
@@ -394,21 +417,17 @@ async function superviseCommand(
     stopReason ??= "timeout"
     killGroup()
   }, limits.wallTimeMs)
-  const capture = (stream: "stdout" | "stderr", chunk: Buffer) => {
-    const available = Math.max(0, limits.maxOutputBytes - retainedBytes)
-    const kept = chunk.subarray(0, available)
-    if (kept.length) {
-      chunks[stream].push(Buffer.from(kept))
-      retainedBytes += kept.length
-    }
-    if (kept.length < chunk.length) {
-      truncated[stream] = true
-      stopReason ??= "output_limit"
+  const captureStream = (stream: "stdout" | "stderr", chunk: Buffer) => {
+    // Output volume never stops the command; only a real cache write failure does.
+    try {
+      capture.append(stream, chunk)
+    } catch (err) {
+      executionError = `Output capture failed: ${String(err)}`
       killGroup()
     }
   }
-  child.stdout.on("data", (chunk) => capture("stdout", chunk))
-  child.stderr.on("data", (chunk) => capture("stderr", chunk))
+  child.stdout.on("data", (chunk: Buffer) => captureStream("stdout", chunk))
+  child.stderr.on("data", (chunk: Buffer) => captureStream("stderr", chunk))
   for (const pipe of [child.stdout, child.stderr]) {
     pipe.on("error", (err) => {
       executionError = `Capture failed: ${err.message}`
@@ -441,8 +460,21 @@ async function superviseCommand(
   await pipesDrained
   clearTimeout(timer)
   clearTimeout(drainTimer)
-  const stdout = Buffer.concat(chunks.stdout).toString("utf8")
-  const stderr = Buffer.concat(chunks.stderr).toString("utf8")
+  const stdoutPreview = capture.preview("stdout")
+  const stderrPreview = capture.preview("stderr")
+  const stdout = decodePreview(stdoutPreview)
+  const stderr = decodePreview(stderrPreview)
+  // Both byte-level omission and non-representable bytes keep the raw file authoritative.
+  if (stdoutPreview.length < capture.bytes.stdout || !Buffer.from(stdout).equals(stdoutPreview))
+    truncated.stdout = true
+  if (stderrPreview.length < capture.bytes.stderr || !Buffer.from(stderr).equals(stderrPreview))
+    truncated.stderr = true
+  // Advertise paths only after both files are flushed and closed.
+  try {
+    capture.close()
+  } catch (err) {
+    executionError = `Output capture failed: ${String(err)}`
+  }
   let limitsApplied = false
   try {
     const marker = await open(readyFile, "r")
@@ -473,6 +505,10 @@ async function superviseCommand(
   const restrictionHint = diagnoseFailure(termination, result.code, result.signal, stderr)
   return {
     exitCode: result.code,
+    stdoutPath: capture.stdoutPath,
+    stderrPath: capture.stderrPath,
+    stdoutBytes: capture.bytes.stdout,
+    stderrBytes: capture.bytes.stderr,
     stdout,
     stderr,
     limits,
@@ -501,8 +537,6 @@ function diagnoseFailure(
 ): string | undefined {
   if (termination === "timeout")
     return "Elapsed-time budget exceeded; process-group termination was requested. Check cleanup errors and investigate before requesting a larger budget."
-  if (termination === "output_limit")
-    return "Combined stdout/stderr budget exceeded; captured output is truncated and process-group termination was requested. Check cleanup errors and investigate excessive output before escalation."
   if (termination === "setup_error")
     return "Required limits could not be installed. Inspect the setup error and stderr; do not silently retry without protection."
   if (code === 0 && signal === null) return
@@ -573,6 +607,10 @@ export function registerHostTools(server: McpServer): void {
           const message = err instanceof Error ? err.message : String(err)
           output = {
             exitCode: null,
+            stdoutPath: null,
+            stderrPath: null,
+            stdoutBytes: 0,
+            stderrBytes: 0,
             stdout: "",
             stderr: "",
             workdir: cwd,
@@ -588,10 +626,7 @@ export function registerHostTools(server: McpServer): void {
           // MCP recommends serialized JSON for clients without structured output support.
           content: [{ type: "text", text: JSON.stringify(output) }],
           isError:
-            output.exitCode !== 0 ||
-            output.error !== undefined ||
-            output.termination === "timeout" ||
-            output.termination === "output_limit",
+            output.exitCode !== 0 || output.error !== undefined || output.termination === "timeout",
         }
       },
     )

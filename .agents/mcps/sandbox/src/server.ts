@@ -29,7 +29,8 @@ const CONTAINER_INSTRUCTIONS =
   "Expired or missing container? Simply acquire a new one. No renew/status/attach workflow. " +
   "Containers default to no network and non-root execution with bounded writable scratch. " +
   "Obtain human permission before increasing budgets or exposing writable host files/network. " +
-  "A command timeout/output overflow destroys only its container; workspace writes are not rolled back."
+  "Output volume has no limit: complete stdout/stderr are always retained in the private cache and bounded previews point to those files. " +
+  "A command timeout or an output-cache failure destroys only its container; workspace writes are not rolled back."
 
 const server = new McpServer(
   { name: "sandbox", version: "3.0.0" },
@@ -91,7 +92,7 @@ if (engine !== undefined && manager !== undefined) {
     "container_exec",
     {
       description:
-        "Execute command using the acquired container handle. Automatically refreshes idle lifetime; no renewal required. Non-root /workspace, bounded time/output, separate streams and exact exit code. Missing/expired? Acquire a new container. Timeout/output overflow destroys this container.",
+        "Execute command using the acquired container handle. Automatically refreshes idle lifetime; no renewal required. Non-root /workspace, bounded time, separate streams and exact exit code. Complete output is always retained in the private cache with bounded previews; stdoutPath/stderrPath and byte counts point to the raw files. Missing/expired? Acquire a new container. Timeout or output-cache failure destroys this container.",
       inputSchema: execSchema.shape,
       outputSchema,
     },

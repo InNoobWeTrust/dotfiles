@@ -5,8 +5,6 @@ export const MAX_PROMPT_BYTES = 65_536
 
 export const DEFAULT_WALL_TIME_MS = 900_000
 export const MAX_WALL_TIME_MS = 7_200_000
-export const DEFAULT_MAX_OUTPUT_BYTES = 4_194_304
-export const MAX_OUTPUT_BYTES = 33_554_432
 
 /**
  * Authority granted to the delegated harness, mapped per harness to its own flag.
@@ -74,11 +72,6 @@ export const delegateInputSchema = {
     .describe(
       "Wall-clock limit for the whole delegated turn, including model latency. Default 900000 (15 min), maximum 7200000 (2 h). On expiry the harness process group is killed and partial output is returned.",
     ),
-  maxOutputBytes: positiveInt(MAX_OUTPUT_BYTES)
-    .default(DEFAULT_MAX_OUTPUT_BYTES)
-    .describe(
-      "Combined stdout+stderr byte budget. Default 4194304 (4 MiB), maximum 33554432 (32 MiB). Exceeding it kills the process group and returns the truncated prefix.",
-    ),
 } satisfies Record<string, z.ZodType>
 
 export const delegateInput = z.object(delegateInputSchema).strict()
@@ -109,12 +102,39 @@ export const delegateOutputSchema = z
       .nullable()
       .describe("Terminating signal name, or null when the process exited."),
     stop: z
-      .enum(["exited", "wall_time", "output_limit", "spawn_failed"])
-      .describe("Why the run ended. Any value other than 'exited' is a budget or launch failure."),
+      .enum(["exited", "wall_time", "capture_failed", "spawn_failed"])
+      .describe(
+        "Why the run ended. Any value other than 'exited' is a timeout, capture or launch failure.",
+      ),
     timedOut: z.boolean().describe("True when the wall-clock limit killed the run."),
-    truncated: z.boolean().describe("True when the output budget stopped collection early."),
-    stdout: z.string().describe("Captured standard output."),
-    stderr: z.string().describe("Captured standard error."),
+    truncated: z
+      .boolean()
+      .describe(
+        "True only when inline previews omit bytes; full captured streams are in the returned paths. Check stop for execution/capture failure.",
+      ),
+    // Recovery paths precede previews so a client's own clipping preserves them.
+    stdoutPath: z
+      .string()
+      .nullable()
+      .describe(
+        "Absolute private XDG cache file for original stdout, always retained even for small or empty output; null only when cache creation failed. Failed runs may have partial files.",
+      ),
+    stderrPath: z
+      .string()
+      .nullable()
+      .describe(
+        "Absolute private XDG cache file for original stderr, always retained even for small or empty output; null only when cache creation failed. Failed runs may have partial files.",
+      ),
+    stdoutBytes: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe("Raw stdout bytes preserved in cache before preview reduction."),
+    stderrBytes: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe("Raw stderr bytes preserved in cache before preview reduction."),
     durationMs: z.number().int().nonnegative().describe("Wall-clock time the harness consumed."),
     workdir: z.string().describe("Resolved working directory the harness ran in."),
     argv: z.array(z.string()).describe("Exact argument vector, prompt redacted."),
@@ -124,6 +144,12 @@ export const delegateOutputSchema = z
       .nonnegative()
       .describe("Size of the prompt argument in UTF-8 bytes."),
     depth: z.number().int().nonnegative().describe("Delegation depth of this call, 0 at the top."),
+    stdout: z.string().describe("Standard output, or a bounded inline prefix when truncated."),
+    stderr: z
+      .string()
+      .describe(
+        "Standard error, or a bounded inline prefix when truncated. MCP capture/teardown diagnostics appear in the envelope error, not in this original-stream preview.",
+      ),
   })
   .strict()
 

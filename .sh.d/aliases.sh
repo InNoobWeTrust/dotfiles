@@ -59,6 +59,10 @@ alias dot-clean='dotfiles_clean'
 # Runtime checks live in the function, including when tools were installed later.
 alias distrobox-kind-setup='distrobox_kind_setup'
 
+# Forward a remote loopback TCP port onto this machine's network interfaces.
+# usage: ssh-lan-forward SSH_HOST REMOTE_PORT [LOCAL_PORT]
+alias ssh-lan-forward='ssh_lan_forward'
+
 # Batch open links.txt
 usable open && \
     {

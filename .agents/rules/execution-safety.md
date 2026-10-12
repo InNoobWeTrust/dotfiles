@@ -15,7 +15,7 @@ Load this rule before the first shell command, not only after a denial or when e
 
 1. Prefer native read/search/edit tools when they can perform the operation without shell execution.
 2. For shell execution, select an available sandbox tool or a verified platform sandbox using [Shell Sandbox Routing](#shell-sandbox-routing-linux-and-macos). Classify actual writes and network needs; use the least permissions required, a known target workdir (explicit or verified tool default), and non-login execution unless startup configuration is needed.
-3. If no usable sandbox exists, report the limitation and obtain explicit approval **before** unrestricted execution. A task request, fast-path exemption, prior successful command, or tool availability is not approval to bypass isolation.
+3. If no usable sandbox exists, or sandbox restrictions block an otherwise authorized command, proactively request scoped approval using the question tool **before** unrestricted execution; follow [Permission Escalation](#permission-escalation). Do not end with a blocker report when asking can unblock the task. A task request, fast-path exemption, prior successful command, or tool availability is not approval to bypass isolation.
 
 This gate applies to `pwd`, `ls`, `rg`, Git inspection, syntax checks, package metadata queries, tests, temporary verification scripts, and cleanup as well as mutating commands. Apply it to shell execution through wrappers, code-mode tools, and delegated agents too. Do not escalate permissions or retry unrestricted after a denial without investigating it.
 
@@ -164,7 +164,7 @@ For **every shell command**, require sandboxed execution unless an unrestricted 
 
 1. **Available sandbox tool:** Use a native agent tool or MCP tool that provides the required isolation. Inspect its documented capabilities and arguments; do not assume a particular tool name, schema, or permission model.
 2. **Platform command:** If no suitable sandbox tool is exposed, check for `bwrap` on Linux or `sandbox-exec` on macOS. Use documented flags or a verified policy that enforces the intended restrictions; binary presence alone does not prove the sandbox works. `bwrap` depends on usable Linux namespaces; `sandbox-exec` is deprecated and policy-based, not Linux-style namespace isolation. Do not assume shell aliases are loaded.
-3. **No usable sandbox:** Report the limitation and use native read/search tools where possible. Ask for approval before an unrestricted shell fallback. No platform is an automatic exemption; do not install packages or restart services without consent.
+3. **No usable sandbox:** Use native read/search tools where possible, and immediately offer the scoped approval request in [Permission Escalation](#permission-escalation) for required shell work. No platform is an automatic exemption; do not install packages or restart services without consent.
 
 Select the least-permissive policy matching the authorized intent:
 
@@ -184,11 +184,21 @@ Use an explicit target directory when the tool's default is uncertain; a client-
 - Inspect the specific error. Fix unintended writes using genuine read-only flags or designated scratch/cache paths, then re-run sandboxed.
 - Do not disable the sandbox, retry unsandboxed, or grant workspace writes merely to make a read-only check pass. Use a fallback only after establishing that the current mechanism is unusable for the intended operation; preserve the same restrictions or obtain approval for reduced isolation.
 
+### Permission Escalation
+
+**Pause the blocked command, not the whole task.** When missing sandbox access or a sandbox restriction prevents authorized work:
+
+1. Inspect the specific failure and use an obvious sandbox-compatible correction if available. Keep diagnosis proportional; do not exhaust unrelated alternatives before asking for a straightforward fallback.
+2. Use the harness's **question tool** to request permission in the current interaction, rather than merely reporting the blocker or waiting for the user to suggest escalation. If no question tool exists, ask directly in chat.
+3. State the reason, exact command(s), working directory, expected writes/network effects, timeout, and the isolation being removed. Offer **Allow scoped fallback** (recommended when suitable) and **Keep sandbox / skip blocked check**. For example: “The sandbox blocks SSH config inspection. May I run `ssh -G HOST` outside the sandbox in the current repository, with a 15-second timeout? This reads configuration, makes no network connection, and writes no files.”
+4. After explicit approval, execute only the approved scope using the available shell tool, retain applicable time/resource limits and secret protections, verify the result, and continue the task. Reuse approval within its stated scope; ask again only when commands, effects, authority, or bounds materially expand. Editing this rule is not itself approval for an unsandboxed command.
+5. If permission is declined or cannot be obtained, continue independent safe work and report only the remaining blocked portion. Never silently bypass isolation. Separate hard prohibitions (such as secret dumping or destructive Git actions) remain in force; this path does not override them or higher-priority harness restrictions.
+
 ### ACI Pass
 
 - Result: PASS
 - Main risks: fixed-tool assumptions, unrestricted-shell bypass, unjustified permission escalation, overstating isolation.
-- Interface upgrades applied: capability-based routing, platform fallbacks, intent-based permissions, denial investigation, approved fallback only.
+- Interface upgrades applied: capability-based routing, platform fallbacks, intent-based permissions, proportional denial investigation, proactive question-tool escalation with exact scope, explicit approval/decline outcomes, approved fallback only.
 
 ---
 
@@ -250,3 +260,4 @@ For any long-running command, dev server, watcher, test runner, or daemon:
 - [ ] This rule was loaded before the first shell command; fast-path tasks did not waive it
 - [ ] Every shell command used an available sandbox tool or verified platform sandbox, including inspection, tests, scratch scripts, and cleanup; dependency runners were not mistaken for OS isolation
 - [ ] Denials were investigated without silent bypass or unjustified permission escalation; any unrestricted fallback had explicit approval before execution
+- [ ] A permission-solvable sandbox blocker triggered a scoped question-tool request, not a premature final blocker report

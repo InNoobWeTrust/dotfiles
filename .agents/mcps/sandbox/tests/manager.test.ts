@@ -22,6 +22,10 @@ const input: AcquireInput = {
 }
 const success: ExecResult = {
   exitCode: 0,
+  stdoutPath: null,
+  stderrPath: null,
+  stdoutBytes: 0,
+  stderrBytes: 0,
   stdout: "ok",
   stderr: "",
   termination: "exited",
@@ -108,7 +112,7 @@ afterEach(() => {
 })
 
 function command(container: string, wallTimeMs = 1000): ExecInput {
-  return { container, command: "printf ok", wallTimeMs, maxOutputBytes: 1024 }
+  return { container, command: "printf ok", wallTimeMs }
 }
 
 describe("session-bound independent containers", () => {

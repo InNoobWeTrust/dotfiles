@@ -14,6 +14,8 @@ Top-level entry point for dotfiles agent memory graph.
 
 ## Active Task Memory
 
+- Delegate MCP lossless oversized output: `mem:tasks/delegate-output-20261012/task` — authorized redesign, not accepted or consolidated.
+
 - OpenCode-only stateless generation MCP: `mem:tasks/opencode-generate/task` — implementation authorized; not accepted or consolidated.
 - Delegate MCP external-subagent wording and AGY routing preference: `mem:tasks/delegate-subagent-wording-20261011/task` — metadata-only team patch; not accepted or consolidated.
 - OpenCode compaction/model-switch failure research: `mem:tasks/opencode-compaction-20261011/task` — investigation only; exact error and live root cause unconfirmed.

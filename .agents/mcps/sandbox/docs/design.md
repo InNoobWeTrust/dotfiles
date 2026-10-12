@@ -15,8 +15,9 @@ scope: Container CLI runtime (Podman/Docker) and session ownership; excludes hos
 
 ## Engine selection (startup snapshot)
 
-`detectEngine` probes `podman info` then `docker info` once at startup, each bounded to 5 s and 64 KiB
-combined output. Only a clean exit with no error, timeout, or truncation selects an engine; every failed
+`detectEngine` probes `podman info` then `docker info` once at startup, each bounded to 5 s with an internal
+4 MiB combined preview allowance wide enough for the engine's own response to be read in full. Only a clean
+exit with no error, timeout, or omitted preview bytes selects an engine; every failed
 probe is skipped with a terse name/status-only diagnostic on server stderr — raw CLI output and environment
 values never leak. Both probes failing leaves the server host-only: no container tools, no container
 instruction block, no manager or sweep timer. A missing engine is not a startup failure.
@@ -57,18 +58,32 @@ sweep and shutdown retries. No other instance's containers are adopted or pruned
 | Exec user | MCP process UID/GID; root falls back to 1000 | Preserves bind-mount permissions without chown |
 | Capabilities | All dropped | No new privileges; Docker default seccomp retained |
 | Logs / restart | None / no | Output captured only through bounded exec streams |
-| Command time / output | 120 s / 4 MiB combined | Overflow or deadline destroys this container |
+| Command time | 120 s | Timeout destroys only this container; no output limit exists |
+| Output capture | Fixed 64 KiB combined inline preview | Never a process limit; complete raw streams always retained in the private cache |
 | Inactivity expiry | 900 s (`idleSeconds`) | Automatic; exec resets it; max 86400 s |
 
 Control tmpfs at `/run/agent-sandbox` is `noexec`, `0700`, root-only: the supervisor writes the deadline
 file there. All settings are verified against the selected engine's `inspect` before any workload starts.
+
+## Output capture and recovery
+
+Both host commands and container exec write every byte to private cache files before any inline preview is
+derived, so output volume can neither truncate nor terminate a command. The shared capture module owns the
+fixed combined 64 KiB preview, the private `$XDG_CACHE_HOME/sandbox/run-*` directories (`0700`, files `0600`),
+synchronous writes with `fsync`/`close` before a path is advertised, and bounded preview decoding that never
+inflates malformed UTF-8. Results report `stdoutPath`/`stderrPath`/`stdoutBytes`/`stderrBytes` ahead of the
+previews so recovery metadata survives downstream client clipping; paths are null only when capture setup
+failed before the command started. Previews are bounded representations only: internal engine-CLI calls
+retain a wider allowance so `inspect` output still parses, and a preview that omits bytes never affects the
+process or the container. Only a genuine cache failure terminates and reports explicitly — container exec
+then reports `runtime_error` and destroys its container, host tools report `execution_error`.
 
 ## Limits that remain
 
 - **Trusted host components:** MCP process and container engine have host authority; containers receive no socket, host secrets, or inherited environment. Explicitly mounted workspaces may contain secrets.
 - **Image trust:** local images are operator-selected; this is not a defense against kernel/container escapes.
 - **Writable workspace:** writes are persistent and not rolled back on release.
-- **Command disruption:** timeout or output overflow destroys the container; all pending work on it is affected.
+- **Command disruption:** a timeout or a genuine output-cache failure destroys the container; all pending work on it is affected. Output volume alone never does.
 - **Clock and availability:** deadline expiry depends on engine scheduling and clock stability; VM suspension or engine outage delays cleanup.
 - **Creation crash window:** abrupt server loss before supervisor startup, or a create request completing after cleanup has already observed absence, can leave a `created`-state orphan without a running watchdog. No startup sweep adopts another instance's containers. An operator can inspect containers labeled `sandbox.package=sandbox`, confirm the creating MCP process has exited, and remove only the exact orphan ID; do not prune all labeled containers while other instances are active.
 

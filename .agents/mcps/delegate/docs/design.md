@@ -9,8 +9,8 @@ scope: Internal design and operating limits; usage lives in ../README.md
 
 A translator for external AI subagents, not an orchestrator. Two stable tools
 discover configured workers and run a bounded task through a selected CLI,
-returning what it printed. It has no queue, no retries, no session resumption, and no result
-store: every call is one turn that either completed inside its budget or did not.
+returning what it printed. It has no queue, retries, or session resumption;
+oversized output is retained in private cache files rather than lost at a response limit.
 
 ```
 main agent ──MCP stdio──▶ delegate server ──argv──▶ harness CLI ──▶ model
@@ -47,14 +47,15 @@ the instructions already sent to the client.
 | Refuse a `prompt` or `model` that starts with `-` | A trailing positional is only safe if the harness treats it as one. Four harnesses read the prompt from a value-taking flag instead, and a model value can be misread as an option that escalates authority (`--yolo`) or replaces the task (`--version`, which would print a version and exit 0 while the call reported success). Both fields are refused at the schema, before any process starts; there is no `--` delimiter that all twelve CLIs agree on. |
 | `promptFlag` per harness | `gemini`, `qwen`, `hermes` read the prompt from `-p`/`-z` and `amp` from `-x`; placing that flag immediately before the prompt keeps it the last argv element while leaving nothing between the flag and its value. The server calls `assertRegistryInvariants()` while loading, and `assertArgv()` on the arguments of every call it is about to run, so a malformed entry — a missing prompt flag, a flag in the wrong position, a duplicated one, a prompt that is not last, or a permission mode that disagrees with `buildArgs` — is refused instead of producing one odd command line during a real turn. |
 | `opencode run --standalone` | Plain `run` can attach to an already-running OpenCode server, which would run the turn outside this process group and outside the inherited `DELEGATE_DEPTH`. `--standalone` forces a private server so the wall-clock kill and the depth cap still apply. |
-| One shared input schema | `workdir`, `model`, `permissionMode`, and the two budgets mean the same thing everywhere, so the main agent learns them once. Harnesses that lack a flag simply do not get one; `amp` has no model flag, so passing `model` to it is refused rather than dropped. |
+| One shared input schema | `workdir`, `model`, `permissionMode` and wall-clock limit mean the same thing everywhere. Harnesses that lack a flag simply do not get one; `amp` has no model flag, so passing `model` to it is refused rather than dropped. Preview size is server-owned, not an input. |
 | Refuse an unsupported permission mode | Silently dropping `--dangerously-skip-permissions` would turn a deliberate escalation into a silent downgrade of the caller's intent, and dropping it upward would run something the caller did not ask for. Failing loudly keeps the tool description honest about what each harness can do. |
 | Detached process group, killed as a group | Harness CLIs spawn their own children. Signalling only the direct child leaves those running, still holding tokens and file handles. `spawn(..., { detached: true })` plus `process.kill(-pid, …)` reaps the whole tree, with SIGTERM then SIGKILL after a grace period. |
 | Reap the group even when the parent exits 0 | A harness can background a child with its streams redirected and then exit successfully. Settling on the parent's exit would release the concurrency slot while that child keeps working unsupervised, so the group is reaped on clean exit too. |
 | Poll for the group's disappearance instead of scheduling a fixed `SIGKILL` | A delayed kill outliving its run is dangerous: process-group ids are reused, so a stale signal can hit an unrelated group. `stopGroup()` therefore signals `SIGTERM`, polls `kill(-pid, 0)` every 50 ms, escalates to `SIGKILL` only if the group is still there after the grace period, and keeps polling until it is gone — once the group is observed gone, nothing further is sent. If it is still there after a short drain the call gives up rather than signalling forever, and reports `ok: false` with the reason, so a surviving process is never reported as a clean turn. |
 | Truncate output on UTF-8 boundaries | The byte budget can land mid-character. Decoding the cut sequence produced a replacement character larger than the bytes it represented, so the returned output exceeded its own advertised budget; `decode()` drops the dangling bytes instead. |
 | stdin closed (`stdio: ["ignore", …]`) | `codex exec "<prompt>"` hangs indefinitely when stdin is an open pipe with no writer (openai/codex#20919). Closing stdin makes "no interactive input available" immediate instead of a stall. |
-| Wall-clock and output budgets are kill budgets | A delegated turn is a billable model session. Hitting a budget ends the run and returns the partial output rather than letting it keep spending. |
+| Separate output preservation from presentation | Raw streams are incrementally written to owner-only XDG cache files before preview reduction; memory holds only bounded prefixes. Output size never kills the worker. Files are flushed and closed before paths are returned; storage failure explicitly stops capture and the turn. |
+| Only wall-clock expiry ends work for a budget | A delegated turn is billable. The timeout still ends the run and returns partial output; an inline-preview allowance must not decide answer length or execution lifetime. |
 | Depth carried in `DELEGATE_DEPTH`, capped at 2 | A delegated harness inherits the same MCP configuration, so it could delegate again. Two hops is deep enough for useful fan-out; the third is refused, which stops a runaway chain without needing session identity. |
 | Concurrency refused at 6 | Each turn is a real model session on the user's account. Refusing the seventh call says so, instead of queueing work the caller did not ask to wait for. |
 | Depth sent as an environment variable | It is set on the child process, so any harness that happens to launch this server again inherits the count without this server having to know which harness launched it. |
@@ -68,12 +69,26 @@ the instructions already sent to the client.
 | Setting | Value | Where it comes from |
 |---|---|---|
 | Wall-clock limit | 900000 ms, maximum 7200000 | `wallTimeMs`, default and cap in `contracts.ts` |
-| Output budget | 4194304 bytes, maximum 33554432 | `maxOutputBytes`, same |
+| Inline preview | 65536 bytes combined, counting JSON escapes | Fixed `INLINE_OUTPUT_BYTES` in shared/output.ts; not a tool input or generation limit |
 | Prompt size | 65536 bytes | `MAX_PROMPT_BYTES`; refused before any process starts |
 | Concurrent turns | 6 | `MAX_CONCURRENT` in `server.ts` |
 | Chain depth | 2 | `MAX_DEPTH`; the third hop is refused |
 | Readiness inspection | Aggregate 8000 ms per harness; at most 2 concurrently | CLI inspection only, no model prompt; cleanup grace may extend elapsed time |
 | SIGTERM grace | 2000 ms, then SIGKILL, 250 ms drain | `GRACE_MS` and `DRAIN_MS` in `execute.ts` |
+
+## Output cache
+
+`../../shared/output.ts` writes both raw streams incrementally using standard filesystem APIs;
+synchronous chunk writes bound memory without an unbounded pending-write queue.
+`execute.ts` owns lifecycle, process teardown, and final cache flush/close.
+
+Each run has a unique 0700 directory and 0600 stream files under the absolute
+XDG cache home, or HOME/.cache when XDG is absent/relative. Every run retains
+both paths, including successful small and empty output.
+
+There is no automatic expiry or output-size kill threshold. Disk exhaustion or
+IO failure yields `capture_failed` and incomplete files, never a clean result;
+upstream harness/model generation limits remain outside this MCP's control.
 
 ## Working directory
 

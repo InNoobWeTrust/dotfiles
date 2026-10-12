@@ -124,7 +124,6 @@ scheduler. The main agent still decides what to dispatch and checks the result.
 | `model` | the harness's default | Exact native ID when status has a model list; otherwise passed to the native CLI without claiming model access. Must not begin with `-`; check `modelSupported`. |
 | `permissionMode` | `default` | `default`, `acceptEdits`, or `bypassPermissions`, mapped to that harness's own flag. An unsupported mode is refused, never downgraded. |
 | `wallTimeMs` | 900000 | Wall-clock limit for the whole turn; maximum 7200000 |
-| `maxOutputBytes` | 4194304 | Combined stdout+stderr budget; maximum 33554432 |
 
 Successful responses are `{ "ok": true, "data": … }`; validation/readiness
 failures are `{ "ok": false, "error": … }`. Failed turns also retain `data`,
@@ -133,21 +132,39 @@ the same JSON. A call the input schema rejects is
 answered by the MCP SDK before the delegate handler runs, so it arrives as a
 text-only error rather than in this shape.
 Inside `data`, `ok` is true only when the harness exited 0 inside every limit;
-`stop` says why a run ended (`exited`, `wall_time`, `output_limit`,
+`stop` says why a run ended (`exited`, `wall_time`, `capture_failed`,
 `spawn_failed`).
 
 For project-sensitive harnesses, a different workdir triggers fresh inspection
 before launch; the check does not overwrite the server's startup snapshot.
 
-**Limits are kill limits.** On wall-clock or output expiry the whole delegated
-process group is signalled, then killed, and whatever it printed is returned. A
-partial answer is the normal result of a tight budget.
+**Server-controlled preview:** Combined previews are fixed at 64 KiB (counting JSON escaping); callers cannot choose a size. The former `maxOutputBytes` input is removed.
+
+**Long answers finish normally.** When `truncated: true`, only the inline preview
+is shortened: read `data.stdoutPath` and `data.stderrPath` to get the original
+streams, including their ending. `stdoutBytes` and `stderrBytes` count raw saved bytes.
+
+**Cache location:** `$XDG_CACHE_HOME/delegate/run-*/{stdout,stderr}`, falling back
+to `$HOME/.cache/delegate` when XDG_CACHE_HOME is unset or relative. Run directories
+are private (0700) and files owner-only (0600); the returned paths are absolute.
+
+**Retention:** Every launched run retains both files and returns their paths,
+including small or empty replies. Files remain until you remove them.
+They can contain sensitive output and consume disk space; there is no automatic expiry.
+
+**Raw bytes:** Non-UTF-8 output also retains cache files and sets `truncated`, even
+when small, because JSON text cannot represent it losslessly. MCP storage/cleanup
+diagnostics appear in the envelope `error`, not in the original stderr preview.
+
+**Failures stay explicit.** Wall-clock expiry kills the process group and returns
+captured partial output. Cache creation/write/flush failure reports `capture_failed`,
+not success; any returned files may be incomplete.
 
 ## What a turn costs and can do
 
 Each call runs a real model session on the account that harness CLI is logged
 into, and it may make many model requests before it stops. There is no monetary
-cap here: the wall-clock and output budgets end the run, not the bill. A turn
+cap here: the wall-clock limit can end the run, not the bill. Output size does not. A turn
 that stops midway leaves whatever edits it already made in place, and
 `workdir` only chooses where it starts — it does not confine the harness to
 that directory.

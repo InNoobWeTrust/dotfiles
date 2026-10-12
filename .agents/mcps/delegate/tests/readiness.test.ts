@@ -23,6 +23,10 @@ const exited = (stdout: string, overrides: Partial<RunResult> = {}): RunResult =
   stderr: "",
   durationMs: 1,
   truncated: false,
+  stdoutPath: null,
+  stderrPath: null,
+  stdoutBytes: Buffer.byteLength(stdout),
+  stderrBytes: 0,
   ...overrides,
 })
 

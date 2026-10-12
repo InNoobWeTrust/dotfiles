@@ -11,7 +11,7 @@
 | The skill has no explicit lighter option | Execute its complete workflow. Do not infer one from task size. |
 | A selected workflow has optional artifacts | Omit only artifacts the skill explicitly marks optional for that workflow. |
 | A required step depends on another rule | Apply both; use the stricter compatible control. |
-| A prerequisite, resource, or approval is missing | Stop and report it. Do not substitute an unapproved shortcut. |
+| A prerequisite, resource, or approval is missing | Pause the affected step. Proactively request obtainable approval; for shell/sandbox blockers, use the question-tool workflow in [Permission Escalation](../execution-safety.md#permission-escalation). Continue independent safe work, and report what remains blocked if approval is declined or unavailable. Do not substitute an unapproved shortcut. |
 | A required step conflicts with another applicable contract | Stop and report the conflict for resolution. Do not choose a contract unilaterally. |
 | A deferral or compromise is allowed | Record it through the canonical process required by the applicable rule or skill. |
 | A deferral would bypass safety, correctness, or a hard stop | Do not defer it; stop and report the blocker. |

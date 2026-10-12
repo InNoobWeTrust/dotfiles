@@ -78,12 +78,19 @@ cleanup, without another tool call or option.
 | `sandbox_pure` | same | Same; offline (no network) |
 | `sandbox_rw` | same | Same; resolved workdir is writable |
 | `container_acquire` | opt `workspace`, `access`, `network`, `image`, `idleSeconds`, `budgets` | `container` handle, `containerId`, `imageId`, `expiresAt`, budgets |
-| `container_exec` | `container`, `command`; opt `wallTimeMs`, `maxOutputBytes` | Exit code, streams, `termination`, `truncated`, `containerDestroyed` |
+| `container_exec` | `container`, `command`; opt `wallTimeMs` | Exit code, `stdoutPath`/`stderrPath`/`stdoutBytes`/`stderrBytes`, bounded stream previews, `termination`, `truncated`, `containerDestroyed` |
 | `container_release` | `container` | `{ released: boolean }` |
 
 Every container response: `{ "ok": true/false, "data": ... }` or `{ "ok": false, "error": ... }`.
-Structured content and the JSON text fallback match. Check both `ok` and `termination`: output overflow
-can race a successful process exit.
+Structured content and the JSON text fallback match. Check both `ok` and `termination`.
+
+**No output-size option, no output-size termination.** There is no output limit to choose and no volume
+that can kill a command. Complete `stdout` and `stderr` are always written to private cache files
+(`stdoutPath`/`stderrPath`) under the sandbox XDG cache, and the `stdout`/`stderr` fields are bounded
+previews that point at them. `stdoutBytes`/`stderrBytes` report the retained file sizes, and `truncated`
+marks previews that omitted bytes or are not losslessly representable. The paths are absolute and always
+private; they are null only when capture setup failed before the command ran. A genuine capture failure or
+a timeout reports a runtime error and destroys only that container.
 
 `container_acquire` options: `workspace` (optional absolute host path), `access` (`ro` default / `rw`
 explicit), `network` (`none` default / `bridge` explicit), `image` (already-local Linux distro only; no
@@ -92,7 +99,15 @@ automatic pulls), `idleSeconds` (default 900, max 86400), `budgets` (`cpus`, `me
 
 Container commands run as the MCP process's non-root UID/GID (root falls back to 1000). `HOME` and `TMPDIR`
 are `/tmp`; scratch and a clean `/workspace` are separate bounded tmpfs mounts. An explicit host workspace
-bind is not a tmpfs or storage quota. Host-tool responses retain their top-level fields, without `ok`/`data` wrapping.
+bind is not a tmpfs or storage quota. Host-tool responses carry the same `stdoutPath`/`stderrPath`/
+`stdoutBytes`/`stderrBytes` fields plus their top-level host fields, without `ok`/`data` wrapping.
+
+**Private output cache.** Raw stream files live under the sandbox namespace of the configured XDG cache
+(`$XDG_CACHE_HOME/sandbox`, falling back to `$HOME/.cache/sandbox`). Directories are `0700` and files `0600`;
+creation happens before the command starts, and files are flushed and closed before a response advertises
+their paths. Internal engine-CLI calls keep a wider preview allowance so their responses still parse, while
+workload output uses the fixed combined preview. Budgets cover CPU, memory, PIDs, scratch, wall time and file
+size only — never output volume.
 
 **No unsandboxed fallback.** On restriction or backend failure, report the failure and investigate.
 Obtain explicit approval before raising budgets, enabling bridge networking, or requesting `access: "rw"`.
@@ -107,7 +122,7 @@ From this package directory:
 bun run check        # lint, formatting and import organization; warnings fail
 bun run check:fix    # apply safe fixes and format
 bun run format      # format only
-bun run test         # ownership/cleanup, engine pinning and startup capability regressions
+bun run test         # ownership/cleanup, engine pinning, startup capability and output-integrity regressions
 CONTAINER_SANDBOX_E2E=1 bun run tests/e2e.ts
 ```
 

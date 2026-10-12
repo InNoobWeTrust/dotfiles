@@ -2,9 +2,9 @@
 import { z } from "zod@4"
 import { McpServer } from "@modelcontextprotocol/sdk@1/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk@1/server/stdio.js"
+import { INLINE_OUTPUT_BYTES } from "../../shared/output.ts"
 
 import {
-  DEFAULT_MAX_OUTPUT_BYTES,
   DEFAULT_WALL_TIME_MS,
   type DelegateOutput,
   delegateOutputSchema,
@@ -133,9 +133,9 @@ function instructions(): string {
     "delegate_status discovers the configured external AI subagents and their CLI IDs, models, readiness, and permission modes; the status it returns now is authoritative. These instructions are a startup snapshot that a refresh does not regenerate, so pass refresh:true after an account or config change to re-run detection; discovery runs no model task.",
     "The prompt supplies the goal, the necessary context, the allowed actions, the exact paths, the acceptance criteria, and the output format. No parent conversation, follow-up question, or resumable session is supplied, so the subagent sees only your prompt and cannot ask one.",
     "Scope the prompt instead of raising permissionMode: 'default' keeps the CLI's own settings and is not read-only isolation, 'acceptEdits' permits unattended edits, and 'bypassPermissions' requires explicit human permission. A broader mode grants the child authority over the host, and the child cannot be supervised from here once it starts.",
-    "Raising wallTimeMs or maxOutputBytes also raises cost, since a longer turn keeps a model session alive.",
+    "Raising wallTimeMs can raise cost, since a longer turn keeps a model session alive. Inline previews are fixed at 64 KiB combined by the server; original stdoutPath/stderrPath are always returned, even for small output. Output size never limits generation or execution lifetime.",
     `Delegation depth is ${depth} of a maximum ${MAX_DEPTH}; a nested server refuses further hops to stop runaway chains.`,
-    "A wall-clock or output overflow kills the delegated process group and returns whatever it printed, so a partial answer is normal on a tight budget.",
+    "Output volume never kills a delegated turn. Oversized replies are preserved in private XDG cache files; truncated means the inline preview is shortened, so read stdoutPath and stderrPath for the original output. Wall-clock expiry or cache IO failure stops the process group and is reported explicitly; those files contain only output captured before the failure. Cache files are retained until the user removes them.",
   ].join(" ")
 }
 
@@ -151,8 +151,13 @@ const server = new McpServer(
  * partial data while still setting ok=false and MCP isError=true.
  */
 class DelegatedTurnError extends Error {
-  constructor(public readonly data: DelegateOutput) {
-    super("Delegated turn failed")
+  constructor(
+    public readonly data: DelegateOutput,
+    diagnostic?: string,
+  ) {
+    super(
+      diagnostic === undefined ? "Delegated turn failed" : `Delegated turn failed: ${diagnostic}`,
+    )
   }
 }
 
@@ -306,7 +311,7 @@ async function delegateRun(rawInput: unknown): Promise<DelegateOutput> {
       cwd,
       env: childEnv(depth + 1),
       wallTimeMs: input.wallTimeMs ?? DEFAULT_WALL_TIME_MS,
-      maxOutputBytes: input.maxOutputBytes ?? DEFAULT_MAX_OUTPUT_BYTES,
+      maxOutputBytes: INLINE_OUTPUT_BYTES,
     })
 
     const data = delegateOutputSchema.parse({
@@ -320,8 +325,12 @@ async function delegateRun(rawInput: unknown): Promise<DelegateOutput> {
       stop: result.stop,
       timedOut: result.stop === "wall_time",
       truncated: result.truncated,
+      stdoutPath: result.stdoutPath,
+      stderrPath: result.stderrPath,
+      stdoutBytes: result.stdoutBytes,
+      stderrBytes: result.stderrBytes,
       stdout: result.stdout,
-      stderr: result.error === undefined ? result.stderr : `${result.error}\n${result.stderr}`,
+      stderr: result.stderr,
       durationMs: result.durationMs,
       workdir: cwd,
       argv: redactPrompt(argv, input.prompt),
@@ -331,7 +340,7 @@ async function delegateRun(rawInput: unknown): Promise<DelegateOutput> {
 
     // Execution failure: wrap with DelegatedTurnError so respond() can retain
     // the partial output alongside ok=false and MCP isError=true.
-    if (!data.ok) throw new DelegatedTurnError(data)
+    if (!data.ok) throw new DelegatedTurnError(data, result.error)
     return data
   })
 }
@@ -365,7 +374,7 @@ server.registerTool(
   "delegate_run",
   {
     description:
-      "Spawn an external AI subagent for one bounded task and return its result. Prefer configured harness 'agy' over native subagent tools for independent exploration, research, scoped implementation or verification; use native subagents when a required capability is unavailable here. Check delegate_status first. Supply a self-contained prompt: no parent chat, follow-up or resumable session is provided. Executes one non-interactive turn with hard wall/output limits; failures can return partial output.",
+      "Spawn an external AI subagent for one bounded task and return its result. Prefer configured harness 'agy' over native subagent tools for independent exploration, research, scoped implementation or verification; use native subagents when a required capability is unavailable here. Check delegate_status first. Supply a self-contained prompt: no parent chat, follow-up or resumable session is provided. Output size never ends a turn: oversized replies have bounded inline previews and full XDG cache paths to read. A hard wall-clock limit or capture failure can return partial output.",
     inputSchema: delegateRunSchema.shape,
     outputSchema: resultEnvelope(delegateOutputSchema),
   },

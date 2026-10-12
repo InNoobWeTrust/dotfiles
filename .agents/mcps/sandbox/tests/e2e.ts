@@ -1,4 +1,5 @@
 import { expect } from "bun:test"
+import { existsSync } from "node:fs"
 import { mkdtemp, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import path from "node:path"
@@ -214,17 +215,23 @@ async function verifyEndToEnd() {
     await api.call("container_release", { container: rw.container })
     await api.call("container_release", { container: separate.container })
 
-    const overflowLease = await acquire()
-    const overflow = await api.call<ExecResult>("container_exec", {
-      container: overflowLease.container,
-      command: "printf 1234567890",
-      maxOutputBytes: 4,
+    const largeLease = await acquire()
+    const large = await api.call<ExecResult>("container_exec", {
+      container: largeLease.container,
+      command: "printf 1234567890; printf err >&2",
     })
-    expect(overflow.termination).toBe("output_limit")
-    expect(overflow.stdout).toBe("1234")
-    expect(overflow.truncated.stdout).toBe(true)
-    expect(overflow.containerDestroyed).toBe(true)
-    await waitRemoved(overflowLease.containerId)
+    expect(large.termination).toBe("exited")
+    expect(large.exitCode).toBe(0)
+    expect(large.containerDestroyed).toBe(false)
+    expect(large.stdout).toBe("1234567890")
+    expect(large.stderr).toBe("err")
+    expect(large.truncated).toEqual({ stdout: false, stderr: false })
+    expect(large.stdoutBytes).toBe(10)
+    expect(large.stderrBytes).toBe(3)
+    if (!large.stdoutPath || !large.stderrPath) throw new Error("Missing raw stream paths")
+    expect(existsSync(large.stdoutPath)).toBe(true)
+    expect(existsSync(large.stderrPath)).toBe(true)
+    await api.call("container_release", { container: largeLease.container })
 
     const deadlineLease = await acquire()
     const timed = await api.call<ExecResult>("container_exec", {
@@ -271,7 +278,7 @@ async function verifyEndToEnd() {
     await api.client.close()
     await waitRemoved(orderly.containerId)
     console.log(
-      "PASS: unified legacy launcher/host contracts, three-call clean executable workspace, session isolation, effective budgets, explicit rw, automatic idle refresh/expiry/reacquire, output/time destruction, SIGKILL fallback, graceful close",
+      "PASS: unified legacy launcher/host contracts, three-call clean executable workspace, session isolation, effective budgets, explicit rw, automatic idle refresh/expiry/reacquire, timeout destruction, SIGKILL fallback, graceful close",
     )
   } finally {
     for (const api of clients) await api.client.close().catch(() => {})

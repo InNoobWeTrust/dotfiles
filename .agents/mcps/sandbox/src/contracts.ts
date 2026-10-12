@@ -38,7 +38,6 @@ export const execSchema = z
     container: tokenSchema,
     command: z.string().min(1),
     wallTimeMs: positive.max(86400000).default(120000),
-    maxOutputBytes: positive.max(67108864).default(4194304),
   })
   .strict()
 export type AcquireInput = z.infer<typeof acquireSchema>
@@ -65,9 +64,15 @@ export interface ContainerView {
 }
 export interface ExecResult {
   exitCode: number | null
+  /** Complete raw stdout path in the private cache; null only when capture setup failed. */
+  stdoutPath: string | null
+  /** Complete raw stderr path in the private cache; null only when capture setup failed. */
+  stderrPath: string | null
+  stdoutBytes: number
+  stderrBytes: number
   stdout: string
   stderr: string
-  termination: "exited" | "timeout" | "output_limit" | "runtime_error"
+  termination: "exited" | "timeout" | "runtime_error"
   truncated: { stdout: boolean; stderr: boolean }
   containerDestroyed: boolean
   error?: string

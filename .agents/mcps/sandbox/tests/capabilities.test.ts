@@ -36,15 +36,23 @@ type ProbeOutput = { instructions: string; toolNames: string[]; diagnostics: str
 const PROBE_HELPER = [
   'import { Client } from "@modelcontextprotocol/sdk@1/client/index.js"',
   'import { StdioClientTransport } from "@modelcontextprotocol/sdk@1/client/stdio.js"',
+  'import os from "node:os"',
+  'import path from "node:path"',
   "",
-  "const [serverPath, binDir] = process.argv.slice(2)",
-  'if (!serverPath || !binDir) throw new Error("usage: probe <serverPath> <binDir>")',
+  "const [serverPath, binDir, cacheHome] = process.argv.slice(2)",
+  'if (!serverPath || !binDir || !cacheHome) throw new Error("usage: probe <serverPath> <binDir> <cacheHome>")',
   'let diagnostics = ""',
+  // Keep bun's install cache where it resolves offline while giving the server a
+  // writable scratch cache for output capture.
+  "const bunCache = process.env.BUN_INSTALL_CACHE_DIR ?? path.join(",
+  '  process.env.XDG_CACHE_HOME ?? path.join(os.homedir(), ".cache"),',
+  '  ".bun", "install", "cache",',
+  ")",
   "const transport = new StdioClientTransport({",
   "  command: process.execPath,",
   '  args: ["--no-env-file", serverPath],',
   "  // Only synthetic engines are reachable, including when an engine is absent.",
-  "  env: { ...process.env, PATH: binDir },",
+  "  env: { ...process.env, PATH: binDir, XDG_CACHE_HOME: cacheHome, BUN_INSTALL_CACHE_DIR: bunCache },",
   '  stderr: "pipe",',
   "})",
   'transport.stderr?.on("data", (chunk) => {',
@@ -77,16 +85,23 @@ async function writeEngine(bin: string, name: string, state: Exclude<EngineState
 }
 
 /** Spawn the scratch probe in its own process group with bounded stdout/stderr capture. */
-function probeServer(helperPath: string, bin: string): Promise<ProbeOutput> {
+function probeServer(helperPath: string, bin: string, cacheHome: string): Promise<ProbeOutput> {
   return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, ["--no-env-file", helperPath, serverPath, bin], {
-      cwd: root,
-      // Inherit for bun's module cache; the server child still gets only bin on PATH.
-      env: { ...process.env },
-      stdio: ["ignore", "pipe", "pipe"],
-      // Own process group so the watchdog terminates helper and server together.
-      detached: true,
-    })
+    const child = spawn(
+      process.execPath,
+      ["--no-env-file", helperPath, serverPath, bin, cacheHome],
+      {
+        cwd: root,
+        // Inherit for bun's module cache; the server child still gets only bin on PATH.
+        // No XDG_CACHE_HOME override here: it would relocate bun's own install cache
+        // and break offline SDK resolution. The helper points only the server child
+        // at a writable scratch cache.
+        env: { ...process.env },
+        stdio: ["ignore", "pipe", "pipe"],
+        // Own process group so the watchdog terminates helper and server together.
+        detached: true,
+      },
+    )
     let stdout = ""
     let stderr = ""
     let settled = false
@@ -166,7 +181,7 @@ async function runProbe(engines: Record<"podman" | "docker", EngineState>): Prom
     }
     const helperPath = path.join(scratch, "probe.ts")
     await writeFile(helperPath, PROBE_HELPER, { mode: 0o644 })
-    return await probeServer(helperPath, bin)
+    return await probeServer(helperPath, bin, path.join(scratch, "cache"))
   } finally {
     // Teardown failures surface as errors; scratch is agent-created and always removed.
     await rm(scratch, { recursive: true, force: true })

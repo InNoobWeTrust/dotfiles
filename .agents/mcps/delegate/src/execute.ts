@@ -1,7 +1,8 @@
 import { spawn } from "node:child_process"
+import { OutputCapture } from "./output.ts"
 
 /** Why a delegated process stopped. Anything but `exited` is a budget or launch failure. */
-export type StopReason = "exited" | "wall_time" | "output_limit" | "spawn_failed"
+export type StopReason = "exited" | "wall_time" | "capture_failed" | "spawn_failed"
 
 export interface RunOptions {
   /** Directory the child starts in. */
@@ -10,7 +11,7 @@ export interface RunOptions {
   env: Record<string, string>
   /** Hard wall-clock limit. */
   wallTimeMs: number
-  /** Combined stdout+stderr budget. */
+  /** Combined inline preview allowance; never a process/output limit. */
   maxOutputBytes: number
 }
 
@@ -22,6 +23,10 @@ export interface RunResult {
   stderr: string
   durationMs: number
   truncated: boolean
+  stdoutPath: string | null
+  stderrPath: string | null
+  stdoutBytes: number
+  stderrBytes: number
   error?: string
 }
 
@@ -44,7 +49,12 @@ function decode(buffer: Buffer): string {
     if (needed > back) end -= back
     break
   }
-  return buffer.subarray(0, end).toString("utf8")
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(buffer.subarray(0, end))
+  } catch {
+    // Invalid raw bytes are available in cache, not inflated into replacements.
+    return ""
+  }
 }
 
 /**
@@ -52,7 +62,7 @@ function decode(buffer: Buffer): string {
  * process group so the whole tree can be torn down. stdin is closed rather than
  * inherited: `codex exec` blocks forever on an open pipe with no writer.
  *
- * The group is brought down on every exit path — a wall-clock or output-budget
+ * The group is brought down on every exit path — a wall-clock or capture-failure
  * abort, and a clean exit that left background descendants behind — and the run
  * is not reported until that teardown has finished, so a caller never releases
  * a concurrency slot or starts a new run while something is still working.
@@ -61,23 +71,41 @@ function decode(buffer: Buffer): string {
 export function runProcess(file: string, args: string[], options: RunOptions): Promise<RunResult> {
   return new Promise<RunResult>((resolve) => {
     const startedAt = Date.now()
-    const child = spawn(file, args, {
-      cwd: options.cwd,
-      env: options.env,
-      shell: false,
-      detached: true,
-      stdio: ["ignore", "pipe", "pipe"],
-    })
+    let output: OutputCapture
+    try {
+      output = new OutputCapture(options.env, options.maxOutputBytes)
+    } catch (error) {
+      resolve({
+        exitCode: null,
+        signal: null,
+        stop: "capture_failed",
+        stdout: "",
+        stderr: "",
+        durationMs: Date.now() - startedAt,
+        truncated: false,
+        stdoutPath: null,
+        stderrPath: null,
+        stdoutBytes: 0,
+        stderrBytes: 0,
+        error: `Could not create output cache: ${(error as Error).message}`,
+      })
+      return
+    }
+    const launch = () =>
+      spawn(file, args, {
+        cwd: options.cwd,
+        env: options.env,
+        shell: false,
+        detached: true,
+        stdio: ["ignore", "pipe", "pipe"],
+      })
+    let child: ReturnType<typeof launch>
 
     let settled = false
     let aborting = false
     let stop: StopReason = "exited"
-    let truncated = false
     let spawnError: string | undefined
     let exit: { code: number | null; signal: NodeJS.Signals | null } | undefined
-    let retainedBytes = 0
-    const stdout: Buffer[] = []
-    const stderr: Buffer[] = []
     const pending = new Set<ReturnType<typeof setTimeout>>()
 
     /** Later, cancellable. Every timer the teardown owns is tracked so none outlives the run. */
@@ -178,19 +206,37 @@ export function runProcess(file: string, args: string[], options: RunOptions): P
       settled = true
       for (const timer of pending) clearTimeout(timer)
       pending.clear()
+      const stdout = decode(output.preview("stdout"))
+      const stderr = decode(output.preview("stderr"))
+      // Even a small stream may not be losslessly representable as JSON text.
+      if (
+        !Buffer.from(stdout).equals(output.preview("stdout")) ||
+        !Buffer.from(stderr).equals(output.preview("stderr"))
+      )
+        output.truncated = true
+      try {
+        output.close()
+      } catch (error) {
+        stop = "capture_failed"
+        spawnError = `Could not finalize output cache: ${(error as Error).message}`
+      }
       resolve({
         exitCode: exit?.code ?? null,
         signal: exit?.signal ?? null,
         stop,
-        stdout: decode(Buffer.concat(stdout)),
-        stderr: decode(Buffer.concat(stderr)),
+        stdout,
+        stderr,
         durationMs: Date.now() - startedAt,
-        truncated,
+        truncated: output.truncated,
+        stdoutPath: output.stdoutPath,
+        stderrPath: output.stderrPath,
+        stdoutBytes: output.bytes.stdout,
+        stderrBytes: output.bytes.stderr,
         ...(spawnError !== undefined ? { error: spawnError } : {}),
       })
     }
 
-    const abort = (reason: "wall_time" | "output_limit") => {
+    const abort = (reason: "wall_time" | "capture_failed") => {
       if (settled || aborting) return
       aborting = true
       stop = reason
@@ -203,26 +249,36 @@ export function runProcess(file: string, args: string[], options: RunOptions): P
       })
     }
 
-    later(() => abort("wall_time"), options.wallTimeMs)
-
-    const capture = (chunks: Buffer[], chunk: Buffer) => {
+    const capture = (stream: "stdout" | "stderr", chunk: Buffer) => {
       if (settled) return
-      const available = Math.max(0, options.maxOutputBytes - retainedBytes)
-      const kept = chunk.subarray(0, available)
-      if (kept.length > 0) {
-        chunks.push(Buffer.from(kept))
-        retainedBytes += kept.length
-      }
-      if (kept.length < chunk.length) {
-        truncated = true
-        abort("output_limit")
+      try {
+        output.append(stream, chunk)
+      } catch (error) {
+        spawnError = `Could not preserve output: ${(error as Error).message}`
+        stop = "capture_failed"
+        abort("capture_failed")
       }
     }
 
-    child.stdout.on("data", (chunk: Buffer) => capture(stdout, chunk))
-    child.stderr.on("data", (chunk: Buffer) => capture(stderr, chunk))
-    child.stdout.on("error", () => {})
-    child.stderr.on("error", () => {})
+    try {
+      child = launch()
+    } catch (error) {
+      stop = "spawn_failed"
+      spawnError = (error as Error).message
+      finish()
+      return
+    }
+    later(() => abort("wall_time"), options.wallTimeMs)
+    const streamFailed = (error: Error) => {
+      if (settled || aborting) return
+      spawnError = `Could not read output stream: ${error.message}`
+      stop = "capture_failed"
+      abort("capture_failed")
+    }
+    child.stdout.on("data", (chunk: Buffer) => capture("stdout", chunk))
+    child.stderr.on("data", (chunk: Buffer) => capture("stderr", chunk))
+    child.stdout.on("error", streamFailed)
+    child.stderr.on("error", streamFailed)
     child.on("error", (error: Error) => {
       spawnError = error.message
       stop = "spawn_failed"

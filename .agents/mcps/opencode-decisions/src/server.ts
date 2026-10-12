@@ -1,6 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk@1/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk@1/server/stdio.js"
-import { evaluate, evaluateSchema, failure } from "./api.ts"
+import { evaluate, failure } from "./api.ts"
+import { serializeAnonymousError } from "./response.ts"
+import { evaluateSchema, parseResponseBody } from "./schema.ts"
 
 const server = new McpServer({ name: "opencode-decisions", version: "1.0.0" })
 // WHY: server-owned gate prevents parallel calls from multiplying account requests.
@@ -15,10 +17,14 @@ server.registerTool("evaluate", {
   inputSchema: evaluateSchema,
   annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: true },
 }, async (args, extra) => {
-  if (evaluating) return result({ ok: false, error: { code: "BUSY", message: "One evaluation is already running; wait for it to finish." } })
+  if (evaluating) {
+    const busyPayload = { ok: false as const, error: { code: "BUSY", message: "One evaluation is already running; wait for it to finish." } }
+    const resultPath = serializeAnonymousError(process.env, busyPayload)
+    return result({ ...busyPayload, responsePath: null, resultPath, truncated: false })
+  }
   evaluating = true
   try {
-    return result(await evaluate(args, extra.signal))
+    return result(await evaluate(args, extra.signal, parseResponseBody))
   } catch (error) {
     return result(failure(error))
   } finally {

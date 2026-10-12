@@ -23,7 +23,6 @@ const input = (overrides: Partial<DelegateInput> = {}): DelegateInput => ({
   prompt: "summarise the auth module",
   permissionMode: "default",
   wallTimeMs: 900_000,
-  maxOutputBytes: 4_194_304,
   ...overrides,
 })
 

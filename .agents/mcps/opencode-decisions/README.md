@@ -54,7 +54,9 @@ Call `evaluate` with:
 }
 ```
 
-Successful output has `ok: true`, `model`, named `answers` and optional token `usage`. Choice answers include the selected option and probabilities; scores range from **0 to number of criteria minus 1** and may be fractional; boolean answers return `probability` in **0–1**.
+Successful output has `ok: true`, `model`, `responsePath`, `resultPath`, `truncated`, and — when the serialized result is at most 64 KiB — named `answers` and optional token `usage` inline. Choice answers include the selected option and probabilities; scores range from **0 to number of criteria minus 1** and may be fractional; boolean answers return `probability` in **0–1**.
+
+When the serialized result exceeds 64 KiB, `answers` and `usage` are omitted from the inline envelope; the full normalized result is on disk at `resultPath`. Oversized is not an error: `ok` is `true` and `truncated` is `true`. `responsePath` always points to the raw HTTP response body; `resultPath` points to the normalized JSON result (null on failure). Both paths are null only if the cache directory could not be created.
 
 | Input | Limit |
 |---|---|
@@ -71,13 +73,14 @@ Successful output has `ok: true`, `model`, named `answers` and optional token `u
 - **Account reuse:** The inherited `OPENCODE_API_KEY` is sent only as a bearer header to the fixed Zen endpoint. No credential arguments, account-file reads, anonymous fallback or configurable destination.
 - **Auth missing:** `AUTH_UNAVAILABLE` means OpenCode did not inherit the variable. Supply the existing Zen key outside chat and relaunch with it; do not paste secrets into prompts.
 - **Provider rejection:** `HTTP_ERROR` includes the HTTP status, not the raw provider body. Check account access, rate limits and API compatibility.
-- **Resource bounds:** One evaluation at a time (`BUSY` for concurrent calls), at most 256 KiB serialized request and 1 MiB response. Invalid or oversized structured answers fail explicitly; decisions are never clipped.
+- **Resource bounds:** One evaluation at a time (`BUSY` for concurrent calls), at most 256 KiB serialized request. The full HTTP response body is streamed to a private XDG cache before parsing; there is no response-size limit. Invalid structured answers fail explicitly. Large results that exceed the 64 KiB inline threshold are stored at `resultPath` and the envelope omits `answers`; the result is never clipped.
+- **Output paths:** Every response includes `responsePath` (raw HTTP body) and `resultPath` (normalized result JSON). Both paths are absolute, private (0700/0600) and not auto-expired; do not store secrets in `state` or `questions`. Paths are null only when the cache directory could not be created (`OUTPUT_CAPTURE_FAILED`); error envelopes also include paths when capture succeeded before the failure.
 - **Cost and privacy:** State and questions go to Zen. Do not send secrets; timeouts are not token/spend caps and do not guarantee upstream generation stops. No retries are attempted.
 - **Interpretation:** Probabilities are model estimates, not guarantees. Validate consequential decisions independently.
 
 ## Maintenance
 
-[server.ts](src/server.ts) registers only `evaluate` and owns concurrency; [api.ts](src/api.ts) validates inputs, sends a bounded native request and validates the selected model and answers. The adapter translates boolean questions to Zen's wire type `noul` and maps `noul` back to a probability.
+[server.ts](src/server.ts) registers only `evaluate` and owns concurrency; [api.ts](src/api.ts) validates inputs, streams the HTTP response body to a private XDG cache via [response.ts](src/response.ts), validates the selected model and answers, serializes the normalized result, and returns path metadata. The adapter translates boolean questions to Zen's wire type `noul` and maps `noul` back to a probability.
 
 Runtime follows the repository's Bun/MCP SDK v1/Zod v4 conventions, with automatic package resolution and no local `node_modules`. Native `mcp.servers` registration coexists with legacy OpenCode entries; other harnesses are unchanged.
 

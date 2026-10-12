@@ -6,11 +6,13 @@ export type ContainerEngine = "podman" | "docker"
 const CANDIDATES: readonly ContainerEngine[] = ["podman", "docker"]
 
 const PROBE_WALL_TIME_MS = 5_000
-const PROBE_MAX_OUTPUT_BYTES = 65_536 // 64 KiB
+// Internal allowance only: an engine must answer `info` in full for the probe to
+// count. It never bounds command output or process lifetime.
+const PROBE_INLINE_BYTES = 4 * 1024 * 1024
 
 /**
  * Probe candidates in priority order and return the first engine that answers
- * `info` cleanly: exit 0 with no spawn error, timeout, or truncated output.
+ * `info` cleanly: exit 0 with no spawn error, timeout, or omitted preview bytes.
  * Every unsuccessful probe is skipped with a terse name/status-only diagnostic;
  * raw CLI output and environment values never reach server stderr. Returning
  * undefined keeps the server host-only — a missing engine is not a startup
@@ -24,7 +26,7 @@ export async function detectEngine(): Promise<ContainerEngine | undefined> {
   for (const engine of CANDIDATES) {
     const probe = await run([engine, "info"], {
       wallTimeMs: PROBE_WALL_TIME_MS,
-      maxOutputBytes: PROBE_MAX_OUTPUT_BYTES,
+      inlineBytes: PROBE_INLINE_BYTES,
     })
     if (
       !probe.error &&
@@ -44,6 +46,6 @@ export async function detectEngine(): Promise<ContainerEngine | undefined> {
 function probeStatus(probe: Awaited<ReturnType<typeof run>>): string {
   if (probe.error !== undefined) return "executable could not be run"
   if (probe.stop === "timeout") return "probe timed out"
-  if (probe.stop === "output_limit") return "probe output exceeded its budget"
+  if (probe.stop === "capture_failed") return "probe output could not be preserved"
   return `probe exited with status ${String(probe.exitCode)}`
 }

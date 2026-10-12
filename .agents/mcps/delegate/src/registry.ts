@@ -367,7 +367,6 @@ export function assertRegistryInvariants(harnesses: readonly HarnessSpec[] = HAR
         prompt: "registry probe",
         permissionMode,
         wallTimeMs: 1,
-        maxOutputBytes: 1,
       }
       const listed = spec.permissionModes.includes(permissionMode)
       let argv: string[]

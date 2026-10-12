@@ -26,6 +26,10 @@ type Failure =
 
 function result(stdout = "", stderr = "", exitCode = 0): processRunner.ProcessResult {
   return {
+    stdoutPath: null,
+    stderrPath: null,
+    stdoutBytes: 0,
+    stderrBytes: 0,
     stdout,
     stderr,
     exitCode,
@@ -235,7 +239,6 @@ describe("selected engine reaches every operation and cleanup", () => {
           container: container.container,
           command: "printf ok",
           wallTimeMs: 1000,
-          maxOutputBytes: 1024,
         },
         owner,
       )
