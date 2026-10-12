@@ -55,9 +55,18 @@ if ! command -v stow >/dev/null 2>&1; then
     STOW_COMMAND="pixi exec stow"
 fi
 
-# Symlink dotfiles by running stow
+# Existing folded links need a separate, backed-up migration; Stow won't
+# unfold a link that already points to the same package.
+for runtime_dir in "$HOME/.local" "$HOME/.local/share" "$HOME/.local/state"; do
+    if [ -L "$runtime_dir" ]; then
+        echo "Error: $runtime_dir is a directory symlink. Back up its data and replace it with a real directory before stowing." >&2
+        exit 1
+    fi
+done
+
+# Link individual files so application writes don't enter the dotfiles repo.
 printf '\n%s\n' "Symlinking dotfiles..."
-eval "$STOW_COMMAND -d '$SCRIPT_DIR' . -t ~ --dotfiles $STOW_IGNORE_ARGS" || {
+eval "$STOW_COMMAND -d '$SCRIPT_DIR' . -t ~ --dotfiles --no-folding $STOW_IGNORE_ARGS" || {
     echo "Error: stow failed; dotfiles were not fully linked. If Pixi cannot run Stow, install it with your system package manager and rerun." >&2
     exit 1
 }

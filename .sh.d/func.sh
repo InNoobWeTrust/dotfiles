@@ -223,9 +223,10 @@ ssh_lan_forward() (
     printf 'Listening on all interfaces, TCP %s -> %s:127.0.0.1:%s; Ctrl+C to stop\n' \
         "$local_port" "$host" "$remote_port" >&2
     # Dual-stack wildcard listener; cap concurrent clients to limit SSH fan-out.
+    # Both socat parsing passes must preserve the destination colon (three backslashes).
     exec socat -d -d \
         "TCP6-LISTEN:$local_port,ipv6only=0,reuseaddr,fork,max-children=32" \
-        "EXEC:ssh -T -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=10 -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -W 127.0.0.1:$remote_port $host"
+        "EXEC:ssh -T -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=10 -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -W 127.0.0.1"'\\\:'"$remote_port $host"
 )
 
 # --- Browser and web utilities ---

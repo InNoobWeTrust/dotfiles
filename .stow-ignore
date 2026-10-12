@@ -1,5 +1,6 @@
 # Directories and files that should stay in the repo, not be stowed to $HOME.
-# One regex pattern per line (anchored to basename by stow).
+# One regex pattern per line, passed by bootstrap.sh as Stow --ignore flags.
+# Patterns match package-relative paths and are anchored at the end by Stow.
 
 # Repo management
 bootstrap\.sh
@@ -8,6 +9,10 @@ bootstrap\.sh
 # Non-dotfile project dirs
 \.innoobwetrust
 \.opencode
+
+# Application data and state must stay outside the dotfiles checkout.
+^\.local/share$
+^\.local/state$
 
 # Hermes secrets — never stow the live .env (use .env.example)
 \.hermes/\.env$
