@@ -1,7 +1,7 @@
 ---
 audience: MCP operators and package maintainers
 purpose: Container ownership, isolation, cleanup and operational trade-offs
-scope: Docker runtime and session ownership; excludes host quotas and UI presence detection
+scope: Container CLI runtime (Podman/Docker) and session ownership; excludes host quotas and UI presence detection
 ---
 # Ownership and isolation
 
@@ -10,8 +10,23 @@ scope: Docker runtime and session ownership; excludes host quotas and UI presenc
 | One container per acquire; no sharing | Conversations do not inherit another session's state |
 | Single owner per container | Token plus calling session; no capability grant or share workflow |
 | In-memory ownership per MCP process | No persisted tokens or adoption of user containers; reconnect creates a new ownership domain |
-| Container-side deadline | A crashed MCP cannot keep workloads alive merely by leaving Docker running |
-| Direct constrained Docker runtime | Arbitrary devcontainer `initializeCommand` can execute on the host; no repository configs or hooks evaluated |
+| Container-side deadline | A crashed MCP cannot keep workloads alive merely by leaving the engine running |
+| Direct constrained container CLI runtime | Arbitrary devcontainer `initializeCommand` can execute on the host; no repository configs or hooks evaluated |
+
+## Engine selection (startup snapshot)
+
+`detectEngine` probes `podman info` then `docker info` once at startup, each bounded to 5 s and 64 KiB
+combined output. Only a clean exit with no error, timeout, or truncation selects an engine; every failed
+probe is skipped with a terse name/status-only diagnostic on server stderr — raw CLI output and environment
+values never leak. Both probes failing leaves the server host-only: no container tools, no container
+instruction block, no manager or sweep timer. A missing engine is not a startup failure.
+
+The probe proves CLI connectivity only, not lifecycle capability: image availability and resource
+enforcement remain unverified, and acquisition keeps its fail-closed `inspect` verification. Both engines
+are held to the same Docker inspect semantics; no weaker Podman normalization is assumed. The selected
+engine is pinned for the process lifetime — every lifecycle operation, helper, and error message uses that
+exact binary, with no hot fallback to the other engine later, including cleanup. No devcontainer
+configuration participates in selection.
 
 ## Ownership flow
 
@@ -46,15 +61,15 @@ sweep and shutdown retries. No other instance's containers are adopted or pruned
 | Inactivity expiry | 900 s (`idleSeconds`) | Automatic; exec resets it; max 86400 s |
 
 Control tmpfs at `/run/agent-sandbox` is `noexec`, `0700`, root-only: the supervisor writes the deadline
-file there. All settings are verified against `docker inspect` before any workload starts.
+file there. All settings are verified against the selected engine's `inspect` before any workload starts.
 
 ## Limits that remain
 
-- **Trusted host components:** MCP process and Docker daemon have host authority; containers receive no socket, host secrets, or inherited environment. Explicitly mounted workspaces may contain secrets.
+- **Trusted host components:** MCP process and container engine have host authority; containers receive no socket, host secrets, or inherited environment. Explicitly mounted workspaces may contain secrets.
 - **Image trust:** local images are operator-selected; this is not a defense against kernel/container escapes.
 - **Writable workspace:** writes are persistent and not rolled back on release.
 - **Command disruption:** timeout or output overflow destroys the container; all pending work on it is affected.
-- **Clock and availability:** deadline expiry depends on daemon scheduling and clock stability; VM suspension or daemon outage delays cleanup.
+- **Clock and availability:** deadline expiry depends on engine scheduling and clock stability; VM suspension or engine outage delays cleanup.
 - **Creation crash window:** abrupt server loss before supervisor startup, or a create request completing after cleanup has already observed absence, can leave a `created`-state orphan without a running watchdog. No startup sweep adopts another instance's containers. An operator can inspect containers labeled `sandbox.package=sandbox`, confirm the creating MCP process has exited, and remove only the exact orphan ID; do not prune all labeled containers while other instances are active.
 
 ## Relationship to host tools and dev_workspace

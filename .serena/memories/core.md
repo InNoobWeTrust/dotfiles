@@ -13,6 +13,7 @@ Top-level entry point for dotfiles agent memory graph.
 
 ## Active Task Memory
 
+- Delegate MCP external-subagent wording and AGY routing preference: `mem:tasks/delegate-subagent-wording-20261011/task` — metadata-only team patch; not accepted or consolidated.
 - OpenCode compaction/model-switch failure research: `mem:tasks/opencode-compaction-20261011/task` — investigation only; exact error and live root cause unconfirmed.
 - Mandatory real-team activation for the unified operating skill: `mem:tasks/team-required-20261011/task` — active policy refinement; not accepted or consolidated.
 - Slurm scheduling environment propagation fix: `mem:tasks/dev-slurm-env-20261011/task` — scoped team investigation/delivery, not user-accepted or consolidated.

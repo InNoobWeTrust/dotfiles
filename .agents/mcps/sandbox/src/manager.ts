@@ -26,7 +26,7 @@ const UNAVAILABLE =
 const IDLE_REFRESH_FAILED =
   "Execution completed, but the container inactivity deadline could not be reset. Execution side effects may have occurred; do not blindly retry the command."
 const CREATION_FAILED =
-  "Container creation failed; no handle was issued. Check Docker connectivity, local image availability, workspace path/permissions, and image compatibility before retrying."
+  "Container creation failed; no handle was issued. Check container engine connectivity, local image availability, workspace path/permissions, and image compatibility before retrying."
 
 /** Owns independent session-bound containers and serializes their runtime effects. */
 export class ContainerManager {

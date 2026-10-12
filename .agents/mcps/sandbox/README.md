@@ -1,7 +1,7 @@
 ---
 audience: AI-agent users and MCP operators
 purpose: Start and use the unified sandbox server (host tools + container tools)
-scope: Local host sandbox and Docker-backed containers; not a devcontainer runner or multi-tenant service
+scope: Local host sandbox and Podman- or Docker-backed containers; not a devcontainer runner or multi-tenant service
 ---
 # Sandbox MCP
 
@@ -10,7 +10,7 @@ One server exposes both host process sandboxes and isolated Linux containers.
 | Prerequisite | Notes |
 |---|---|
 | Bun | Resolves major-versioned MCP SDK@1 and Zod@4 imports automatically; no committed `node_modules` |
-| Trusted Docker daemon (containers only) | Local images only; no automatic pulls, builds, or hooks |
+| Usable Podman or Docker engine (containers only) | Probed once at startup: Podman first, then Docker; without a usable engine the server is host-only. Local images only; no automatic pulls, builds, or hooks |
 | Already-local Linux image | Default: `mcr.microsoft.com/devcontainers/base:ubuntu`; otherwise supply an available compatible `image` |
 | Linux or macOS (host tools) | Bubblewrap on Linux, sandbox-exec on macOS |
 
@@ -30,8 +30,26 @@ bun --no-env-file src/server.ts
 existing host files readable. Use for inspections, workspace builds, and bounded file writes.
 
 **Container tools** give a clean isolated Linux environment without forwarding host environment or mounting
-host files or the Docker socket by default. Host files are exposed only through an explicit `workspace`
-bind. Use for test execution, deliverable builds, or a different local Linux distro image; one session owns each handle.
+host files or the container engine socket by default. Host files are exposed only through an explicit
+`workspace` bind. Use for test execution, deliverable builds, or a different local Linux distro image; one
+session owns each handle.
+
+## Container engine selection (startup snapshot)
+
+Container tools are registered only when a usable engine is detected while the server starts, probed in the
+built-in priority order **Podman, then Docker**. The probe is a bounded `engine info` connectivity check: it
+does not certify image availability or resource enforcement, and acquisition stays fail-closed with strict
+inspect verification before any workload starts.
+
+- Podman usable → container tools plus a `<container_sandbox engine="podman">` instruction block.
+- Podman unusable, Docker usable → the same with `engine="docker"`.
+- Neither usable → host tools only: no container tools and no container instruction block; the host
+  sandbox keeps working unchanged.
+
+Selection is a startup snapshot with **no hot fallback** to the other engine later, including during
+container cleanup. Restart the server (reconnect the MCP client) after installing or repairing an engine.
+Agent-facing instructions are scoped blocks: the `<host_sandbox>` block is always present, and capability
+blocks such as `<container_sandbox>` are appended only when the matching tools are registered.
 
 ## Container first-use (3 calls)
 
@@ -89,10 +107,10 @@ From this package directory:
 bun run check        # lint, formatting and import organization; warnings fail
 bun run check:fix    # apply safe fixes and format
 bun run format      # format only
-bun run test         # critical ownership and Docker cleanup regressions
+bun run test         # ownership/cleanup, engine pinning and startup capability regressions
 CONTAINER_SANDBOX_E2E=1 bun run tests/e2e.ts
 ```
 
 Biome 2.5.15 resolves through `bunx`; no local installation or committed `node_modules` is required.
 `lint` and `format:check` are available separately. Source, tests and package JSON share the same settings;
-Docker E2E checks require the local image and daemon described above.
+the E2E harness drives Docker specifically and requires its local engine and image as described above.

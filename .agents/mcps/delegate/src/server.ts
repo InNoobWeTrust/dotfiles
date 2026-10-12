@@ -124,14 +124,16 @@ function instructions(): string {
   const names = snapshot.detected.map((h) => h.spec.id)
   const headline =
     names.length === 0
-      ? "No supported harness is configured, so delegate_run will refuse all harnesses. Use delegate_status to see what is missing and why."
-      : `Delegate a bounded task to a separate agent CLI: ${names.join(", ")}. Use delegate_status for detected harnesses and versions.`
+      ? "External AI subagent delegation is available, but no CLI was configured at startup. Use delegate_status for current readiness and refusal reasons."
+      : `Spawn an external AI subagent for one bounded task. Configured CLI workers at startup: ${names.join(", ")}. Use delegate_status for current readiness.`
   return [
     headline,
-    "Each tool runs exactly one non-interactive turn in a detached process group and returns that harness's final message; nothing is chained or shared between harnesses.",
-    "The delegated harness sees only your prompt. It cannot ask a follow-up question, so include the paths, the constraints, and the exact output contract you need back.",
-    "Scope the prompt instead of raising permissionMode: a broader mode grants the child authority over the host, and the child cannot be supervised from here once it starts.",
-    "Obtain human permission before using permissionMode 'bypassPermissions'. Raising wallTimeMs or maxOutputBytes also raises cost, since a longer turn keeps a model session alive.",
+    "delegate_run executes exactly one non-interactive turn in a detached process group and returns that external AI subagent's final message as the result; nothing is chained or shared between subagents.",
+    "Prefer a configured agy over native subagent tools for suitable independent exploration, research, scoped implementation, or verification. Use native subagents when a required capability is unavailable here; keep tightly coupled work with the main agent. This is routing guidance, not a speed benchmark.",
+    "delegate_status discovers the configured external AI subagents and their CLI IDs, models, readiness, and permission modes; the status it returns now is authoritative. These instructions are a startup snapshot that a refresh does not regenerate, so pass refresh:true after an account or config change to re-run detection; discovery runs no model task.",
+    "The prompt supplies the goal, the necessary context, the allowed actions, the exact paths, the acceptance criteria, and the output format. No parent conversation, follow-up question, or resumable session is supplied, so the subagent sees only your prompt and cannot ask one.",
+    "Scope the prompt instead of raising permissionMode: 'default' keeps the CLI's own settings and is not read-only isolation, 'acceptEdits' permits unattended edits, and 'bypassPermissions' requires explicit human permission. A broader mode grants the child authority over the host, and the child cannot be supervised from here once it starts.",
+    "Raising wallTimeMs or maxOutputBytes also raises cost, since a longer turn keeps a model session alive.",
     `Delegation depth is ${depth} of a maximum ${MAX_DEPTH}; a nested server refuses further hops to stop runaway chains.`,
     "A wall-clock or output overflow kills the delegated process group and returns whatever it printed, so a partial answer is normal on a tight budget.",
   ].join(" ")
@@ -340,14 +342,14 @@ server.registerTool(
   "delegate_status",
   {
     description:
-      "Report which harness CLIs are configured, their readiness, inspected models, and supported permission modes. Pass refresh:true to re-inspect after an account or config change without restarting the server.",
+      "Discover the configured external AI subagents and their CLI IDs, models, readiness, and supported permission modes, plus why a checked CLI cannot serve as one. The status returned now is authoritative; the server's instructions stay a startup snapshot that this refresh does not regenerate. Pass refresh:true to re-run detection after an account or config change without restarting the server; discovery runs no model task.",
     inputSchema: {
       refresh: z
         .boolean()
         .optional()
         .default(false)
         .describe(
-          "Re-run startup detection and return the updated snapshot. Concurrent callers share one detection run. Default false.",
+          "Re-run startup detection and return the updated snapshot; the server's startup instructions are not regenerated. Concurrent callers share one detection run. Default false.",
         ),
     },
     outputSchema: resultEnvelope(statusOutputSchema),
@@ -363,7 +365,7 @@ server.registerTool(
   "delegate_run",
   {
     description:
-      "Delegate one non-interactive turn to a configured harness and return its final message. The harness runs in a detached process group with a hard wall-clock and output budget; partial output is returned on timeout or truncation. Use delegate_status to pick a harness and verify its readiness before calling.",
+      "Spawn an external AI subagent for one bounded task and return its result. Prefer configured harness 'agy' over native subagent tools for independent exploration, research, scoped implementation or verification; use native subagents when a required capability is unavailable here. Check delegate_status first. Supply a self-contained prompt: no parent chat, follow-up or resumable session is provided. Executes one non-interactive turn with hard wall/output limits; failures can return partial output.",
     inputSchema: delegateRunSchema.shape,
     outputSchema: resultEnvelope(delegateOutputSchema),
   },

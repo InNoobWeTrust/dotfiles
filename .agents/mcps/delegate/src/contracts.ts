@@ -16,7 +16,7 @@ export const MAX_OUTPUT_BYTES = 33_554_432
 export const permissionModeSchema = z
   .enum(["default", "acceptEdits", "bypassPermissions"])
   .describe(
-    "Authority granted to the delegated harness. 'default' (no permission flag) keeps the harness's own non-interactive policy; 'acceptEdits' lets it apply file edits unattended; 'bypassPermissions' drops all approval prompts for every tool. Higher modes execute whatever the prompt asks for, so scope the prompt instead of escalating this.",
+    "Authority granted to the delegated harness. 'default' (no permission flag) keeps the harness's own non-interactive policy and is not read-only isolation; 'acceptEdits' lets it apply file edits unattended; 'bypassPermissions' drops all approval prompts for every tool and requires explicit human permission. Higher modes execute whatever the prompt asks for, so scope the prompt instead of escalating this.",
   )
 
 export type PermissionMode = z.infer<typeof permissionModeSchema>
@@ -48,13 +48,13 @@ export const delegateInputSchema = {
     .min(1)
     .refine(notAnOption, optionSafe("prompt"))
     .describe(
-      "Complete, self-contained instructions for the delegated harness, including the exact paths, acceptance criteria, and output contract it must satisfy. Passed as one command-line argument, so it must be under 64 KiB, cannot contain shell syntax, and cannot start with '-'.",
+      "Complete, self-contained instructions for the external AI subagent: the goal, necessary context, allowed actions, exact paths, acceptance criteria, and output format. No parent conversation, follow-up, or resumable session is supplied. Passed literally as one argv element that is not interpreted by a shell; it allows at most 64 KiB of UTF-8 bytes, cannot start with '-', and text that looks like shell syntax is passed through unchanged.",
     ),
   workdir: z
     .string()
     .optional()
     .describe(
-      "Absolute directory the harness runs in. Defaults to this session's MCP root when the client exposes one, otherwise the server's working directory.",
+      "Absolute directory the harness runs in; it supplies the working directory, not filesystem isolation. Defaults to this session's MCP root when the client exposes one, otherwise the server's working directory.",
     ),
   model: z
     .string()
@@ -62,11 +62,13 @@ export const delegateInputSchema = {
     .refine(notAnOption, optionSafe("model"))
     .optional()
     .describe(
-      "Harness-native model identifier or alias. Leave unset to use that harness's configured default. Must not start with '-'.",
+      "Harness-native model identifier or alias. Leave unset to use that harness's configured default. An empty inspected model list does not mean the harness has no models. Must not start with '-'.",
     ),
   permissionMode: permissionModeSchema
     .default("default")
-    .describe("Defaults to 'default'; see the field description for what each level authorises."),
+    .describe(
+      "Authority granted to the delegated harness. 'default' (no permission flag) keeps the harness's own non-interactive policy and is not read-only isolation; 'acceptEdits' lets it apply file edits unattended; 'bypassPermissions' drops all approval prompts for every tool and requires explicit human permission. Higher modes execute whatever the prompt asks for, so scope the prompt instead of escalating this. Defaults to 'default'.",
+    ),
   wallTimeMs: positiveInt(MAX_WALL_TIME_MS)
     .default(DEFAULT_WALL_TIME_MS)
     .describe(
@@ -91,7 +93,7 @@ export const delegateRunSchema = delegateInput.extend({
     .string()
     .min(1)
     .describe(
-      "Stable registry ID of the harness to run (e.g. 'claude', 'opencode'). Use delegate_status to list configured harnesses and their supported permission modes.",
+      "External subagent CLI ID from delegate_status. Prefer 'agy' when configured and suitable for the independent task; use another configured worker or native subagent when the required capability is unavailable. This selects a CLI worker, not a model.",
     ),
 })
 export type DelegateRunInput = z.infer<typeof delegateRunSchema>
@@ -134,7 +136,7 @@ export const statusOutputSchema = z
       .array(
         z
           .object({
-            id: z.string().describe("Harness id and advertised tool name suffix."),
+            id: z.string().describe("External subagent CLI ID to pass as delegate_run.harness."),
             executable: z.string().describe("Absolute path of the detected binary."),
             version: z
               .string()
@@ -149,7 +151,7 @@ export const statusOutputSchema = z
             models: z
               .array(z.string())
               .describe(
-                "Inspected model selectors in provider/model[#variant] form. Empty when the model list could not be verified (still usable).",
+                "Inspected harness-native model selectors; OpenCode uses provider/model[#variant]. An empty list means no verified model allowlist, not no models. Check modelSupported before setting a model.",
               ),
             permissionModes: z
               .array(permissionModeSchema)
@@ -167,7 +169,9 @@ export const statusOutputSchema = z
           })
           .strict(),
       )
-      .describe("Harnesses detected at server startup, in advertisement order."),
+      .describe(
+        "External AI subagents in the current status snapshot, in advertisement order; refresh:true returns the re-inspected list.",
+      ),
     unsupported: z
       .array(
         z
@@ -179,7 +183,9 @@ export const statusOutputSchema = z
               .describe("Absolute path of the binary, or null when not found on PATH."),
             readiness: z
               .enum(["missing", "not_configured", "unknown"])
-              .describe("Why no tool was advertised for it."),
+              .describe(
+                "Why this CLI is unavailable as an external subagent: missing, not configured, or unknown.",
+              ),
             reason: z.string().describe("Human-readable explanation, credential-free."),
           })
           .strict(),

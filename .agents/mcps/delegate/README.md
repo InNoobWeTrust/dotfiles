@@ -1,12 +1,12 @@
 ---
 audience: AI-agent users and MCP operators
-purpose: Delegate one non-interactive task to another agent CLI
+purpose: Spawn an external AI subagent for one bounded task
 scope: Harnesses that take the prompt as one command-line argument; not a multi-agent orchestrator, not a session-resumable runner
 ---
 # Delegate MCP
 
-Delegate one bounded task through two stable tools: inspect configuration with
-`delegate_status`, then use `delegate_run` with the selected harness ID.
+Spawn an **external AI subagent** through two stable tools: discover configured
+workers with `delegate_status`, then use `delegate_run` with a CLI harness ID.
 CLI presence alone is not readiness; startup never submits a model prompt.
 
 | Prerequisite | Notes |
@@ -87,26 +87,32 @@ An empty status `models` list means no verified model allowlist, not no models.
 
 ## First delegation
 
+**Prefer ready AGY:** For independent exploration, research, scoped implementation
+or verification, prefer `delegate_run` with `"harness": "agy"` over a native
+subagent when this one-turn interface fits. Use a native subagent when a required
+capability is unavailable here; keep tightly coupled work with the main agent.
+
 Set `workdir` unless you want the task to run in the connected agent's MCP root.
 
 ```jsonc
 // 2. Run only after status lists this harness as configured
-{ "tool": "delegate_run", "input": { "harness": "claude", "prompt": "Read src/registry.ts and list every harness id it declares, one per line. Read only; no commands, edits, network or further delegation.", "workdir": "/abs/path/to/this/package" } }
+{ "tool": "delegate_run", "input": { "harness": "agy", "prompt": "Read src/registry.ts and list every harness id it declares, one per line. Read only; no commands, edits, network or further delegation.", "workdir": "/abs/path/to/this/package" } }
 // → { "ok": true, "data": { "exitCode": 0, "stdout": "amp\nagy\n…", "stop": "exited", … } }
 ```
 
-The delegated harness sees only the prompt. It cannot ask a follow-up question,
-so include the paths, the constraints, and the output you need back.
+The external subagent receives no parent conversation or resumable session and
+cannot ask a follow-up question. Include the goal, necessary context, allowed
+actions, exact paths, acceptance criteria and return format in the prompt.
 
-This server makes delegation available; the main agent still chooses which
-independent tasks to dispatch. It does not automatically schedule work.
+The AGY preference is routing guidance, not a speed benchmark or an automatic
+scheduler. The main agent still decides what to dispatch and checks the result.
 
 ## Tool reference
 
 | Tool | Input | Result |
 |---|---|---|
-| `delegate_status` | optional `refresh: true` | Readiness, native model IDs when inspectable, supported permission modes, refusal reasons and depth |
-| `delegate_run` | `harness`, `prompt`, optional controls below | Exit status, both streams, duration, resolved workdir, redacted argv and depth |
+| `delegate_status` | optional `refresh: true` | Discover configured external subagents: readiness, native model IDs when inspectable, permission modes, refusal reasons and depth |
+| `delegate_run` | `harness`, `prompt`, optional controls below | Run one external-subagent task and return exit status, both streams, duration, resolved workdir, redacted argv and depth |
 
 ### Shared input
 

@@ -7,6 +7,7 @@ import type {
   ExecInput,
   ExecResult,
 } from "./contracts.ts"
+import type { ContainerEngine } from "./engine.ts"
 import { ContainerCreationError } from "./errors.ts"
 import { run } from "./process.ts"
 
@@ -34,8 +35,8 @@ const T_RM = 15_000
 type RunResult = Awaited<ReturnType<typeof run>>
 
 /**
- * True only when docker CLI reports the object does not exist.
- * Distinguishes absence from a daemon reachability or permission error.
+ * True only when the selected engine CLI reports the object does not exist.
+ * Distinguishes absence from an engine reachability or permission error.
  */
 function isNotFound(r: RunResult): boolean {
   return (
@@ -47,19 +48,20 @@ function isNotFound(r: RunResult): boolean {
 }
 
 /**
- * Throw a descriptive error when the result is not a clean success.
- * Callers that must distinguish "not found" should check isNotFound first.
+ * Throw a descriptive error naming the selected engine when the result is not a
+ * clean success. Callers that must distinguish "not found" should check isNotFound first.
  */
-function assertOk(r: RunResult, op: string): void {
+function assertOk(r: RunResult, engine: ContainerEngine, op: string): void {
   if (!r.error && r.stop === "exited" && r.exitCode === 0) return
   const detail = r.stderr.trim() || r.error || `exit ${r.exitCode} stop=${r.stop}`
-  throw new Error(`docker ${op}: ${detail}`)
+  throw new Error(`${engine} ${op}: ${detail}`)
 }
 
 /**
- * Verify that the docker-inspect object matches all declared security
+ * Verify that the engine-inspect object matches all declared security
  * constraints and resource budgets. Throws with a combined failure list
- * rather than stopping at the first mismatch.
+ * rather than stopping at the first mismatch. The same Docker inspect
+ * semantics apply to every selected engine; no weaker normalization is assumed.
  */
 function verifyConstraints(
   data: Record<string, unknown>,
@@ -229,21 +231,21 @@ function buildCreateArgs(
 }
 
 /**
- * Terminate the exact container and confirm removal, including auto-remove races.
+ * Terminate the exact container on the selected engine and confirm removal, including auto-remove races.
  */
-async function destroyContainer(id: string): Promise<void> {
-  await run(["docker", "kill", id], { wallTimeMs: T_KILL })
-  const removed = await run(["docker", "rm", "--force", id], { wallTimeMs: T_RM })
+async function destroyContainer(engine: ContainerEngine, id: string): Promise<void> {
+  await run([engine, "kill", id], { wallTimeMs: T_KILL })
+  const removed = await run([engine, "rm", "--force", id], { wallTimeMs: T_RM })
   if (isNotFound(removed)) return
   // --rm and explicit removal can race. Only observed absence proves cleanup,
   // not the CLI acknowledgement or an "already removing" error.
   const end = Date.now() + 5000
   do {
-    const remaining = await run(["docker", "inspect", "--format", "{{.Id}}", id], {
+    const remaining = await run([engine, "inspect", "--format", "{{.Id}}", id], {
       wallTimeMs: T_INSPECT,
     })
     if (isNotFound(remaining)) return
-    assertOk(remaining, "cleanup confirmation")
+    assertOk(remaining, engine, "cleanup confirmation")
     await new Promise((resolve) => setTimeout(resolve, 100))
   } while (Date.now() < end)
   throw new Error("Container removal was not confirmed")
@@ -251,11 +253,19 @@ async function destroyContainer(id: string): Promise<void> {
 
 // ── exported class ───────────────────────────────────────────────────────────
 
-export class DockerRuntime implements ContainerRuntime {
-  constructor(private readonly instance: string) {}
+/**
+ * Container CLI runtime pinned to one engine chosen at server startup. Every
+ * lifecycle operation, helper, and error message uses that exact binary; there
+ * is no fallback to the other engine later, including during cleanup.
+ */
+export class ContainerCliRuntime implements ContainerRuntime {
+  constructor(
+    private readonly instance: string,
+    private readonly engine: ContainerEngine,
+  ) {}
 
   /** Creates and verifies an owned container before starting its supervisor.
-   * @throws ContainerCreationError with the exact cleanup target after a Docker create attempt.
+   * @throws ContainerCreationError with the exact cleanup target after a container create attempt.
    */
   async create(spec: ContainerSpec): Promise<ContainerHandle> {
     const workspacePath = spec.workspace
@@ -277,29 +287,31 @@ export class DockerRuntime implements ContainerRuntime {
     const name = `agent-sandbox-${randomUUID()}`
     const handle: ContainerHandle = { id: name, imageId: "" }
     try {
-      const createResult = await run(["docker", "create", "--name", name, ...createArgs], {
+      const createResult = await run([this.engine, "create", "--name", name, ...createArgs], {
         wallTimeMs: T_CREATE,
       })
-      assertOk(createResult, "create")
+      assertOk(createResult, this.engine, "create")
       const containerId = createResult.stdout.trim()
       if (!containerId || !/^[0-9a-f]+$/.test(containerId) || containerId.length < 12)
-        throw new Error(`docker create: unexpected container ID: "${containerId.slice(0, 80)}"`)
+        throw new Error(
+          `${this.engine} create: unexpected container ID: "${containerId.slice(0, 80)}"`,
+        )
       handle.id = containerId
 
       // Inspect before start — verify all security constraints hold.
-      const inspResult = await run(["docker", "inspect", "--format", "{{json .}}", handle.id], {
+      const inspResult = await run([this.engine, "inspect", "--format", "{{json .}}", handle.id], {
         wallTimeMs: T_INSPECT,
       })
-      assertOk(inspResult, "inspect")
+      assertOk(inspResult, this.engine, "inspect")
       const raw = inspResult.stdout.trim()
-      if (!raw) throw new Error("docker inspect: empty response")
+      if (!raw) throw new Error(`${this.engine} inspect: empty response`)
       const data = JSON.parse(raw) as Record<string, unknown>
       handle.imageId = typeof data.Image === "string" ? data.Image : ""
       verifyConstraints(data, spec, canonicalWs)
 
       // Start the container; supervisor writes its initial deadline and begins polling.
-      const startResult = await run(["docker", "start", handle.id], { wallTimeMs: T_START })
-      assertOk(startResult, "start")
+      const startResult = await run([this.engine, "start", handle.id], { wallTimeMs: T_START })
+      assertOk(startResult, this.engine, "start")
       return handle
     } catch (error) {
       // The manager owns cleanup retries, including failures before a usable handle is issued.
@@ -308,11 +320,11 @@ export class DockerRuntime implements ContainerRuntime {
   }
 
   async alive(id: string): Promise<boolean> {
-    const r = await run(["docker", "inspect", "--format", "{{.State.Running}}", id], {
+    const r = await run([this.engine, "inspect", "--format", "{{.State.Running}}", id], {
       wallTimeMs: T_INSPECT,
     })
     if (isNotFound(r)) return false
-    assertOk(r, "inspect (alive)")
+    assertOk(r, this.engine, "inspect (alive)")
     return r.stdout.trim() === "true"
   }
 
@@ -321,14 +333,14 @@ export class DockerRuntime implements ContainerRuntime {
     const deadlineSeconds = Math.floor(seconds)
     // Write atomically relative to container clock; only the root supervisor owns control.
     const cmd = `printf '%s\\n' "$(( $(date +%s) + ${deadlineSeconds} ))" > ${DEADLINE_FILE}.new && mv ${DEADLINE_FILE}.new ${DEADLINE_FILE}`
-    const r = await run(["docker", "exec", "--user", "0:0", id, "sh", "-c", cmd], {
+    const r = await run([this.engine, "exec", "--user", "0:0", id, "sh", "-c", cmd], {
       wallTimeMs: T_DEADLINE,
     })
-    assertOk(r, "exec (deadline)")
+    assertOk(r, this.engine, "exec (deadline)")
   }
 
   async exec(id: string, input: ExecInput): Promise<ExecResult> {
-    const dockerArgs = [
+    const execArgs = [
       "exec",
       "--user",
       `${process.getuid?.() || 1000}:${process.getgid?.() || 1000}`,
@@ -344,7 +356,7 @@ export class DockerRuntime implements ContainerRuntime {
       input.command,
     ]
 
-    const processResult = await run(["docker", ...dockerArgs], {
+    const processResult = await run([this.engine, ...execArgs], {
       wallTimeMs: input.wallTimeMs,
       maxOutputBytes: input.maxOutputBytes,
     })
@@ -357,7 +369,7 @@ export class DockerRuntime implements ContainerRuntime {
       // Destroy the whole container — all concurrent operations are affected.
       let cleanupError: string | undefined
       try {
-        await destroyContainer(id)
+        await destroyContainer(this.engine, id)
       } catch {
         cleanupError =
           "Container cleanup could not be confirmed; release the lease to retry cleanup. Processes may remain running."
@@ -393,11 +405,11 @@ export class DockerRuntime implements ContainerRuntime {
   async remove(id: string): Promise<void> {
     // Verify ownership before touching the container.
     const labelResult = await run(
-      ["docker", "inspect", "--format", "{{json .Config.Labels}}", id],
+      [this.engine, "inspect", "--format", "{{json .Config.Labels}}", id],
       { wallTimeMs: T_INSPECT },
     )
     if (isNotFound(labelResult)) return // already gone; idempotent
-    assertOk(labelResult, "inspect (labels)")
+    assertOk(labelResult, this.engine, "inspect (labels)")
 
     const labels = JSON.parse(labelResult.stdout.trim()) as Record<string, string> | null
     const pkgLabel = labels?.[`${PACKAGE}.package`]
@@ -410,8 +422,8 @@ export class DockerRuntime implements ContainerRuntime {
     }
 
     // Stop with a short grace period; errors are tolerated — rm is the authoritative step.
-    await run(["docker", "stop", "--time", "2", id], { wallTimeMs: T_STOP })
+    await run([this.engine, "stop", "--time", "2", id], { wallTimeMs: T_STOP })
 
-    await destroyContainer(id)
+    await destroyContainer(this.engine, id)
   }
 }

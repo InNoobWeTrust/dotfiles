@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test"
 import type { AcquireInput } from "../src/contracts.ts"
-import { DockerRuntime } from "../src/docker.ts"
+import { ContainerCliRuntime } from "../src/docker.ts"
 import { ContainerManager } from "../src/manager.ts"
 import * as processRunner from "../src/process.ts"
 
@@ -15,7 +15,14 @@ const input: AcquireInput = {
   idleSeconds: 10,
   budgets: { cpus: 1, memoryBytes: 536870912, pids: 128, tmpfsBytes: 67108864 },
 }
-type Failure = "none" | "inspect" | "start" | "create_timeout" | "invalid_id" | "create_rejected"
+type Failure =
+  | "none"
+  | "inspect"
+  | "start"
+  | "create_timeout"
+  | "invalid_id"
+  | "create_rejected"
+  | "exec_timeout"
 
 function result(stdout = "", stderr = "", exitCode = 0): processRunner.ProcessResult {
   return {
@@ -87,9 +94,13 @@ beforeEach(() => {
       if (failure === "create_timeout") return { ...result(), exitCode: null, stop: "timeout" }
       return result(failure === "invalid_id" ? "invalid response" : id)
     }
-    const target = operation === "exec" ? args[4] : args.at(-1)
+    // Deadline exec places the id directly after --user; workload exec adds --workdir/--env first.
+    const target =
+      operation === "exec" ? (args.includes("--workdir") ? args.at(-4) : args[4]) : args.at(-1)
     if (!exists || (target !== id && target !== name))
       return result("", "Error: No such container", 1)
+    if (operation === "exec" && failure === "exec_timeout" && args.includes("--workdir"))
+      return { ...result(), exitCode: null, stop: "timeout" }
     if (operation === "inspect") {
       if (args[3] === "{{json .Config.Labels}}")
         return result(
@@ -110,7 +121,7 @@ beforeEach(() => {
     return result()
   })
   restoreRun = () => runner.mockRestore()
-  manager = new ContainerManager(new DockerRuntime(instance), instance)
+  manager = new ContainerManager(new ContainerCliRuntime(instance, "docker"), instance)
 })
 afterEach(() => restoreRun())
 
@@ -210,4 +221,30 @@ describe("verified exact-container removal", () => {
     expect(await manager.release(container.container, owner)).toEqual({ released: true })
     expect(exists).toBe(false)
   })
+})
+
+describe("selected engine reaches every operation and cleanup", () => {
+  test.each(["podman", "docker"] as const)(
+    "every lifecycle and cleanup CLI call pins the selected engine binary",
+    async (engine) => {
+      manager = new ContainerManager(new ContainerCliRuntime(instance, engine), instance)
+      failure = "exec_timeout"
+      const container = await manager.acquire(input, owner)
+      const execution = await manager.exec(
+        {
+          container: container.container,
+          command: "printf ok",
+          wallTimeMs: 1000,
+          maxOutputBytes: 1024,
+        },
+        owner,
+      )
+      expect(execution.containerDestroyed).toBe(true)
+      await manager.release(container.container, owner)
+      expect(calls.filter((args) => args[1] === "kill")).toHaveLength(1)
+      expect(calls.length).toBeGreaterThan(0)
+      expect(calls.every((args) => args[0] === engine)).toBe(true)
+      await manager.close()
+    },
+  )
 })

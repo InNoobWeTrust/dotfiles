@@ -13,8 +13,9 @@ const DEFAULT_WALL_TIME_MS = 10_000
 const DEFAULT_MAX_OUTPUT_BYTES = 1_048_576 // 1 MiB
 
 /**
- * Forwarded to child processes. Limited to what docker CLI requires;
- * avoids exposing the full host environment including secrets.
+ * Forwarded to child container CLI processes. Limited to what the selected
+ * engine (Podman or Docker) requires; avoids exposing the full host
+ * environment including secrets.
  */
 const FORWARDED_ENV_KEYS = [
   "PATH",
@@ -25,6 +26,13 @@ const FORWARDED_ENV_KEYS = [
   "DOCKER_CONFIG",
   "DOCKER_CONTEXT",
   "USER",
+  // Podman connection/runtime configuration for rootless and remote engines.
+  "XDG_RUNTIME_DIR",
+  "XDG_CONFIG_HOME",
+  "XDG_DATA_HOME",
+  "CONTAINER_HOST",
+  "CONTAINER_CONNECTION",
+  "SSH_AUTH_SOCK",
 ] as const
 
 /**
