@@ -1,5 +1,5 @@
 ---
-description: "Load before the first shell command in every session. Requires sandbox routing for every command, including read-only checks and fast-path scripts; enforces secret isolation, ephemeral runners, script hygiene, and terminal multiplexer priority (tmux > screen)."
+description: "Load before the first shell command in every session. Defaults to sandboxed shell execution with prompt scoped native-shell permission recovery when blocked; enforces secret isolation, ephemeral runners, script hygiene, and terminal multiplexer priority (tmux > screen)."
 globs: "*"
 alwaysApply: true
 trigger: always_on
@@ -15,7 +15,7 @@ Load this rule before the first shell command, not only after a denial or when e
 
 1. Prefer native read/search/edit tools when they can perform the operation without shell execution.
 2. For shell execution, select an available sandbox tool or a verified platform sandbox using [Shell Sandbox Routing](#shell-sandbox-routing-linux-and-macos). Classify actual writes and network needs; use the least permissions required, a known target workdir (explicit or verified tool default), and non-login execution unless startup configuration is needed.
-3. If no usable sandbox exists, or sandbox restrictions block an otherwise authorized command, proactively request scoped approval using the question tool **before** unrestricted execution; follow [Permission Escalation](#permission-escalation). Do not end with a blocker report when asking can unblock the task. A task request, fast-path exemption, prior successful command, or tool availability is not approval to bypass isolation.
+3. If the sandbox/MCP is missing, broken or unsuitable, or its restrictions block an otherwise authorized command, inspect the failure only enough to describe the needed fallback, then **immediately request scoped permission** to use the harness's native shell via [Permission Escalation](#permission-escalation). Do not stall on repeated retries, require MCP repair first, or end with a blocker report when asking can unblock the task. Continue independent safe work while awaiting permission; after approval, execute the bounded fallback. A task request, fast-path exemption, prior successful command, or tool availability is not approval to bypass isolation.
 
 This gate applies to `pwd`, `ls`, `rg`, Git inspection, syntax checks, package metadata queries, tests, temporary verification scripts, and cleanup as well as mutating commands. Apply it to shell execution through wrappers, code-mode tools, and delegated agents too. Do not escalate permissions or retry unrestricted after a denial without investigating it.
 
@@ -164,7 +164,7 @@ For **every shell command**, require sandboxed execution unless an unrestricted 
 
 1. **Available sandbox tool:** Use a native agent tool or MCP tool that provides the required isolation. Inspect its documented capabilities and arguments; do not assume a particular tool name, schema, or permission model.
 2. **Platform command:** If no suitable sandbox tool is exposed, check for `bwrap` on Linux or `sandbox-exec` on macOS. Use documented flags or a verified policy that enforces the intended restrictions; binary presence alone does not prove the sandbox works. `bwrap` depends on usable Linux namespaces; `sandbox-exec` is deprecated and policy-based, not Linux-style namespace isolation. Do not assume shell aliases are loaded.
-3. **No usable sandbox:** Use native read/search tools where possible, and immediately offer the scoped approval request in [Permission Escalation](#permission-escalation) for required shell work. No platform is an automatic exemption; do not install packages or restart services without consent.
+3. **No usable sandbox, or only the native shell can do the job:** Use native read/search tools where sufficient; otherwise immediately request scoped native-shell approval under [Permission Escalation](#permission-escalation). This is a normal recovery path, not a whole-task failure. Do not install packages, restart services or widen permissions merely to avoid asking.
 
 Select the least-permissive policy matching the authorized intent:
 
@@ -178,6 +178,14 @@ Map these policies to the available tool or command's documented controls, not f
 
 Use an explicit target directory when the tool's default is uncertain; a client-declared workspace or disclosed launch-directory default is acceptable only when it matches the intended target. Check the reported directory and supply an explicit override on mismatch; before writable execution, establish which directory becomes writable. Avoid login-shell startup unless needed; do not assume skipping profiles strips the inherited environment. Use the sandbox's designated scratch/cache path (such as `$TMPDIR` when provided), not hard-coded `/tmp`. Verify actual boundaries: private scratch directories, isolated mounts, host-file readability, and environment filtering vary by implementation. Sandboxing does not by itself protect readable secrets or establish hostile-code isolation.
 
+### Container lifecycle boundary
+
+Use MCP container tools (`container_acquire`/`container_exec`/`container_release`) for container lifecycle and in-container execution. Necessary engine metadata writes and image downloads are supporting tool side effects within the task's authority, not agent-issued host shell commands or literally read-only operations. Do not wrap these lifecycle operations in the host-command sandbox or project host-command restrictions onto them; the container isolates its workload. Respect explicit image-trust, network and resource restrictions: a whole-task network prohibition also forbids registry pulls, even when the workload uses network-none. If acquisition would need a prohibited download, use a verified local-image workflow or report that limitation instead.
+
+Bare shell `podman`/`docker` commands remain under the shell gate unless explicitly authorized by scoped approval. An engine-runtime metadata denial (for example, `chmod` on its runtime directory) can indicate wrong-layer routing rather than a sandbox defect: use the MCP lifecycle tools for container use, or obtain scoped approval for a necessary direct engine diagnostic. Do not silently retry unsandboxed or widen the sandbox merely to accommodate engine writes.
+
+Workload isolation is unchanged: preserve non-root, no-network and bounded-resource defaults, with approval for increases or writable host mounts. Lifecycle watchdogs and owned-container cleanup remain necessary process controls, not an additional OS sandbox layer.
+
 ### Denials
 
 - A denial is a signal to investigate, **not proof of a filesystem write**: `Operation not permitted` can also mean another restricted operation, including network access or nested sandbox setup.
@@ -186,7 +194,7 @@ Use an explicit target directory when the tool's default is uncertain; a client-
 
 ### Permission Escalation
 
-**Pause the blocked command, not the whole task.** When missing sandbox access or a sandbox restriction prevents authorized work:
+**Ask promptly; pause only the affected command, not the whole task.** A broken MCP, missing sandbox or operation only possible through the harness's native shell is a routine permission-recovery case:
 
 1. Inspect the specific failure and use an obvious sandbox-compatible correction if available. Keep diagnosis proportional; do not exhaust unrelated alternatives before asking for a straightforward fallback.
 2. Use the harness's **question tool** to request permission in the current interaction, rather than merely reporting the blocker or waiting for the user to suggest escalation. If no question tool exists, ask directly in chat.

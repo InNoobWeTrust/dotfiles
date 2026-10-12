@@ -10,8 +10,7 @@ One server exposes both host process sandboxes and isolated Linux containers.
 | Prerequisite | Notes |
 |---|---|
 | Bun | Resolves major-versioned MCP SDK@1 and Zod@4 imports automatically; no committed `node_modules` |
-| Usable Podman or Docker engine (containers only) | Probed once at startup: Podman first, then Docker; without a usable engine the server is host-only. Local images only; no automatic pulls, builds, or hooks |
-| Already-local Linux image | Default: `mcr.microsoft.com/devcontainers/base:ubuntu`; otherwise supply an available compatible `image` |
+| Usable Podman or Docker engine (containers only) | Probed once at startup: Podman first, then Docker; without a usable engine the server is host-only |
 | Linux or macOS (host tools) | Bubblewrap on Linux, sandbox-exec on macOS |
 
 ## Start
@@ -93,8 +92,11 @@ private; they are null only when capture setup failed before the command ran. A 
 a timeout reports a runtime error and destroys only that container.
 
 `container_acquire` options: `workspace` (optional absolute host path), `access` (`ro` default / `rw`
-explicit), `network` (`none` default / `bridge` explicit), `image` (already-local Linux distro only; no
-automatic pulls), `idleSeconds` (default 900, max 86400), `budgets` (`cpus`, `memoryBytes`, `pids`,
+explicit), `network` (`none` default / `bridge` explicit), `image` (Linux image; default
+`mcr.microsoft.com/devcontainers/base:ubuntu`; missing images are pulled automatically from the registry
+using normal engine credentials before container creation — no extra login or secret handling is added;
+image fetch uses the host network, separate from the container workload network which remains none by
+default), `idleSeconds` (default 900, max 86400), `budgets` (`cpus`, `memoryBytes`, `pids`,
 `tmpfsBytes`; see [defaults](docs/design.md#effective-defaults)).
 
 Container commands run as the MCP process's non-root UID/GID (root falls back to 1000). `HOME` and `TMPDIR`

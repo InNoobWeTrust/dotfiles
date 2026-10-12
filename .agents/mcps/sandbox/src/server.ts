@@ -3,7 +3,7 @@ import { z } from "zod@4"
 import { randomUUID } from "node:crypto"
 import { McpServer } from "@modelcontextprotocol/sdk@1/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk@1/server/stdio.js"
-import { acquireSchema, execSchema, type Owner, tokenSchema } from "./contracts"
+import { acquireSchema, DEFAULT_IMAGE, execSchema, type Owner, tokenSchema } from "./contracts"
 import { ContainerCliRuntime } from "./docker"
 import { detectEngine } from "./engine"
 import { hostInstructions, registerHostTools } from "./host"
@@ -82,7 +82,11 @@ if (engine !== undefined && manager !== undefined) {
     "container_acquire",
     {
       description:
-        "Start a lightweight isolated Linux sandbox. Default: clean writable /workspace scratch, no host mounts/network. Requires an already-local trusted Linux image; default mcr.microsoft.com/devcontainers/base:ubuntu, never pulled automatically. Optional image selects another Linux distribution; optional workspace explicitly binds host files (ro by default). Returns data.container for exec/release. Inactivity expiry and cleanup are automatic.",
+        `Start a lightweight isolated Linux sandbox. Default: clean writable /workspace scratch, no host mounts/network. ` +
+        `Default image ${DEFAULT_IMAGE}; missing images are pulled automatically from the registry using normal engine credentials before container creation — ` +
+        `image fetch uses the host network, separate from the container workload network which remains none by default. ` +
+        `Optional image selects another Linux distribution; optional workspace explicitly binds host files (ro by default). ` +
+        `Returns data.container for exec/release. Inactivity expiry and cleanup are automatic.`,
       inputSchema: acquireSchema.shape,
       outputSchema,
     },

@@ -24,6 +24,10 @@ type Failure =
   | "create_rejected"
   | "exec_timeout"
 
+type ImageInspect = "present" | "absent" | "error"
+type PullOutcome = "success" | "timeout" | "fail"
+type PodmanCapsState = "null" | "nonempty" | "missing"
+
 function result(stdout = "", stderr = "", exitCode = 0): processRunner.ProcessResult {
   return {
     stdoutPath: null,
@@ -67,6 +71,35 @@ function inspection() {
   }
 }
 
+// Podman with --cap-drop ALL reports EffectiveCaps/BoundingCaps as null at the top level;
+// CapDrop is expanded to specific cap names, not the sentinel "ALL".
+const PODMAN_CAP_DROP_EXPANDED = [
+  "CAP_AUDIT_CONTROL",
+  "CAP_AUDIT_READ",
+  "CAP_BLOCK_SUSPEND",
+  "CAP_BPF",
+  "CAP_CHECKPOINT_RESTORE",
+  "CAP_DAC_READ_SEARCH",
+  "CAP_IPC_LOCK",
+  "CAP_IPC_OWNER",
+  "CAP_LINUX_IMMUTABLE",
+  "CAP_MAC_ADMIN",
+  "CAP_MAC_OVERRIDE",
+]
+
+function podmanInspection(capsState: PodmanCapsState): Record<string, unknown> {
+  const base = inspection()
+  const r: Record<string, unknown> = {
+    ...base,
+    HostConfig: { ...base.HostConfig, CapDrop: PODMAN_CAP_DROP_EXPANDED },
+  }
+  if (capsState !== "missing") {
+    r.EffectiveCaps = capsState === "null" ? null : ["CAP_NET_ADMIN", "CAP_SYS_ADMIN"]
+    r.BoundingCaps = capsState === "null" ? null : ["CAP_NET_ADMIN", "CAP_SYS_ADMIN"]
+  }
+  return r
+}
+
 // WHY: global — hooks reset a fake Docker allocation and restore the CLI spy after each test.
 let calls: string[][]
 let exists: boolean
@@ -78,6 +111,10 @@ let confirmationReply: processRunner.ProcessResult
 let labelInstance: string
 let manager: ContainerManager
 let restoreRun: () => void
+let imageInspect: ImageInspect
+let pullOutcome: PullOutcome
+let podmanCapsState: PodmanCapsState
+let engineMode: "docker" | "podman"
 
 beforeEach(() => {
   calls = []
@@ -88,9 +125,25 @@ beforeEach(() => {
   confirmationFails = false
   confirmationReply = result("", "private daemon error", 1)
   labelInstance = instance
+  imageInspect = "present"
+  pullOutcome = "success"
+  podmanCapsState = "null"
+  engineMode = "docker"
   const runner = spyOn(processRunner, "run").mockImplementation(async (args) => {
     calls.push([...args])
     const operation = args[1]
+    // Image provisioning: inspect and pull run before any container allocation.
+    if (operation === "image") {
+      if (imageInspect === "present") return result("sha256:local-image-id")
+      if (imageInspect === "error") return result("", "private engine inspect error", 1)
+      return result("", "Error: No such image: local:test", 1)
+    }
+    if (operation === "pull") {
+      if (pullOutcome === "timeout") return { ...result(), exitCode: null, stop: "timeout" }
+      if (pullOutcome === "fail") return result("", "private pull error", 1)
+      imageInspect = "present"
+      return result()
+    }
     if (operation === "create") {
       name = args.includes("--name") ? (args[args.indexOf("--name") + 1] ?? "") : ""
       if (failure === "create_rejected") return result("", "No such image: local:test", 1)
@@ -114,7 +167,11 @@ beforeEach(() => {
       if (args[3] === "{{json .}}")
         return failure === "inspect"
           ? result("", "private inspect error", 1)
-          : result(JSON.stringify(inspection()))
+          : result(
+              JSON.stringify(
+                engineMode === "podman" ? podmanInspection(podmanCapsState) : inspection(),
+              ),
+            )
       return result("true")
     }
     if (operation === "start" && failure === "start") return result("", "private start error", 1)
@@ -231,6 +288,7 @@ describe("selected engine reaches every operation and cleanup", () => {
   test.each(["podman", "docker"] as const)(
     "every lifecycle and cleanup CLI call pins the selected engine binary",
     async (engine) => {
+      engineMode = engine
       manager = new ContainerManager(new ContainerCliRuntime(instance, engine), instance)
       failure = "exec_timeout"
       const container = await manager.acquire(input, owner)
@@ -250,4 +308,135 @@ describe("selected engine reaches every operation and cleanup", () => {
       await manager.close()
     },
   )
+})
+
+describe("image provisioning before container allocation", () => {
+  test("present image skips pull and proceeds to create", async () => {
+    imageInspect = "present"
+    await manager.acquire(input, owner)
+    expect(calls.filter((args) => args[1] === "image").length).toBe(1)
+    expect(calls.filter((args) => args[1] === "pull").length).toBe(0)
+    expect(calls.some((args) => args[1] === "create")).toBe(true)
+    await manager.close()
+  })
+
+  test("absent image triggers pull then proceeds to create", async () => {
+    imageInspect = "absent"
+    await manager.acquire(input, owner)
+    const imageCalls = calls.filter((args) => args[1] === "image")
+    const pullCalls = calls.filter((args) => args[1] === "pull")
+    expect(imageCalls.length).toBe(1)
+    expect(pullCalls.length).toBe(1)
+    expect(pullCalls[0]).toContain("local:test")
+    expect(calls.some((args) => args[1] === "create")).toBe(true)
+    await manager.close()
+  })
+
+  test("unknown inspect failure aborts before allocation with sanitized error and no pull or create", async () => {
+    imageInspect = "error"
+    const { ImageProvisioningError } = await import("../src/errors.ts")
+    const error = await manager.acquire(input, owner).catch((e) => e as Error)
+    expect(error).toBeInstanceOf(ImageProvisioningError)
+    expect(error.message).toBe(ImageProvisioningError.MESSAGE)
+    expect(error.message).not.toContain("private")
+    expect(error.message).not.toContain("local:test")
+    expect(calls.filter((args) => args[1] === "pull").length).toBe(0)
+    expect(calls.filter((args) => args[1] === "create").length).toBe(0)
+    expect(exists).toBe(false)
+    await manager.close()
+  })
+
+  test("pull timeout aborts before allocation with sanitized error and no create", async () => {
+    imageInspect = "absent"
+    pullOutcome = "timeout"
+    const { ImageProvisioningError } = await import("../src/errors.ts")
+    const error = await manager.acquire(input, owner).catch((e) => e as Error)
+    expect(error).toBeInstanceOf(ImageProvisioningError)
+    expect(error.message).toBe(ImageProvisioningError.MESSAGE)
+    expect(error.message).not.toContain("private")
+    expect(calls.filter((args) => args[1] === "pull").length).toBe(1)
+    expect(calls.filter((args) => args[1] === "create").length).toBe(0)
+    expect(exists).toBe(false)
+    await manager.close()
+  })
+
+  test("pull failure aborts before allocation with sanitized error and no create", async () => {
+    imageInspect = "absent"
+    pullOutcome = "fail"
+    const { ImageProvisioningError } = await import("../src/errors.ts")
+    const error = await manager.acquire(input, owner).catch((e) => e as Error)
+    expect(error).toBeInstanceOf(ImageProvisioningError)
+    expect(error.message).toBe(ImageProvisioningError.MESSAGE)
+    expect(error.message).not.toContain("private")
+    expect(calls.filter((args) => args[1] === "pull").length).toBe(1)
+    expect(calls.filter((args) => args[1] === "create").length).toBe(0)
+    expect(exists).toBe(false)
+    await manager.close()
+  })
+
+  test("concurrent acquires for the same absent image share one in-flight pull", async () => {
+    imageInspect = "absent"
+    const runtime = new ContainerCliRuntime(instance, "docker")
+    const mgr = new ContainerManager(runtime, instance)
+    const [first, second] = await Promise.all([
+      mgr.acquire(input, owner),
+      mgr.acquire(input, owner),
+    ])
+    expect(first.container).not.toBe(second.container)
+    // Image inspect runs once per concurrent pair; pull runs at most once.
+    expect(calls.filter((args) => args[1] === "pull").length).toBe(1)
+    await mgr.close()
+  })
+
+  test("create args include --pull=never and no nr_inodes in any tmpfs option", async () => {
+    await manager.acquire(input, owner)
+    const createCall = calls.find((args) => args[1] === "create")
+    expect(createCall).toBeDefined()
+    expect(createCall).toContain("--pull=never")
+    const tmpfsValues = createCall?.filter((_, i, arr) => i > 0 && arr[i - 1] === "--tmpfs")
+    expect(tmpfsValues?.length).toBeGreaterThan(0)
+    expect(tmpfsValues?.every((v) => !v.includes("nr_inodes"))).toBe(true)
+    await manager.close()
+  })
+})
+
+describe("Podman capability constraints", () => {
+  test("Podman with null EffectiveCaps and BoundingCaps passes verification", async () => {
+    engineMode = "podman"
+    podmanCapsState = "null"
+    manager = new ContainerManager(new ContainerCliRuntime(instance, "podman"), instance)
+    const container = await manager.acquire(input, owner)
+    expect(container.container).toMatch(/^[a-f0-9]{64}$/)
+    await manager.close()
+  })
+
+  test("Podman with nonempty EffectiveCaps fails verification and cleans up", async () => {
+    engineMode = "podman"
+    podmanCapsState = "nonempty"
+    manager = new ContainerManager(new ContainerCliRuntime(instance, "podman"), instance)
+    const error = await manager.acquire(input, owner).catch((e) => e as Error)
+    expect(error).toBeInstanceOf(Error)
+    expect(error.message).not.toContain("private")
+    expect(exists).toBe(false)
+    await manager.close()
+  })
+
+  test("Podman with missing EffectiveCaps/BoundingCaps fields fails closed and cleans up", async () => {
+    engineMode = "podman"
+    podmanCapsState = "missing"
+    manager = new ContainerManager(new ContainerCliRuntime(instance, "podman"), instance)
+    const error = await manager.acquire(input, owner).catch((e) => e as Error)
+    expect(error).toBeInstanceOf(Error)
+    expect(error.message).not.toContain("private")
+    expect(exists).toBe(false)
+    await manager.close()
+  })
+
+  test("Docker keeps CapDrop ALL check and is not affected by Podman capability logic", async () => {
+    engineMode = "docker"
+    manager = new ContainerManager(new ContainerCliRuntime(instance, "docker"), instance)
+    const container = await manager.acquire(input, owner)
+    expect(container.container).toMatch(/^[a-f0-9]{64}$/)
+    await manager.close()
+  })
 })

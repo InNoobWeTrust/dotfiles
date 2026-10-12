@@ -12,6 +12,7 @@ scope: Container CLI runtime (Podman/Docker) and session ownership; excludes hos
 | In-memory ownership per MCP process | No persisted tokens or adoption of user containers; reconnect creates a new ownership domain |
 | Container-side deadline | A crashed MCP cannot keep workloads alive merely by leaving the engine running |
 | Direct constrained container CLI runtime | Arbitrary devcontainer `initializeCommand` can execute on the host; no repository configs or hooks evaluated |
+| Automatic image provisioning on acquire | Missing images are pulled from the registry using normal engine credentials before allocation; one pull per image per runtime; workload network remains isolated |
 
 ## Engine selection (startup snapshot)
 
@@ -23,11 +24,12 @@ values never leak. Both probes failing leaves the server host-only: no container
 instruction block, no manager or sweep timer. A missing engine is not a startup failure.
 
 The probe proves CLI connectivity only, not lifecycle capability: image availability and resource
-enforcement remain unverified, and acquisition keeps its fail-closed `inspect` verification. Both engines
-are held to the same Docker inspect semantics; no weaker Podman normalization is assumed. The selected
-engine is pinned for the process lifetime — every lifecycle operation, helper, and error message uses that
-exact binary, with no hot fallback to the other engine later, including cleanup. No devcontainer
-configuration participates in selection.
+enforcement remain unverified, and acquisition keeps its fail-closed `inspect` verification. For Podman,
+`--cap-drop ALL` reports `EffectiveCaps: null` and `BoundingCaps: null` in container inspect; the runtime
+verifies these fields rather than the Docker-style `CapDrop: ["ALL"]` sentinel. Both engines are otherwise
+held to the same security and resource constraints. The selected engine is pinned for the process lifetime —
+every lifecycle operation, helper, and error message uses that exact binary, with no hot fallback to the
+other engine later, including cleanup. No devcontainer configuration participates in selection.
 
 ## Ownership flow
 
@@ -81,7 +83,7 @@ then reports `runtime_error` and destroys its container, host tools report `exec
 ## Limits that remain
 
 - **Trusted host components:** MCP process and container engine have host authority; containers receive no socket, host secrets, or inherited environment. Explicitly mounted workspaces may contain secrets.
-- **Image trust:** local images are operator-selected; this is not a defense against kernel/container escapes.
+- **Image trust:** Registry-pulled images satisfy the operator's engine credential configuration; this is not a defense against kernel/container escapes or malicious registry content.
 - **Writable workspace:** writes are persistent and not rolled back on release.
 - **Command disruption:** a timeout or a genuine output-cache failure destroys the container; all pending work on it is affected. Output volume alone never does.
 - **Clock and availability:** deadline expiry depends on engine scheduling and clock stability; VM suspension or engine outage delays cleanup.

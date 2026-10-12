@@ -7,6 +7,7 @@ import type {
   ExecInput,
   ExecResult,
 } from "../src/contracts.ts"
+import { ImageProvisioningError } from "../src/errors.ts"
 import { ContainerManager } from "../src/manager.ts"
 
 // Critical ownership, expiry, atomicity, cleanup, and queue races protect data and avoid stranded containers.
@@ -355,6 +356,21 @@ describe("initialization, queue ordering, and missing containers", () => {
     expect(runtime.removals).toEqual(["container-1"])
     await manager.close()
     expect(runtime.removals.length).toBe(1)
+  })
+
+  test("ImageProvisioningError from runtime propagates with its sanitized message and no cleanup", async () => {
+    runtime.createHook = async () => {
+      throw new ImageProvisioningError(new Error("private:registry:auth"))
+    }
+    const failed = await observe(manager.acquire(input, alice))
+    expect(failed.error).toBeInstanceOf(ImageProvisioningError)
+    expect(failed.error?.message).toBe(ImageProvisioningError.MESSAGE)
+    expect(failed.error?.message).not.toContain("private")
+    expect(failed.error?.message).not.toContain("auth")
+    // No container was allocated; no cleanup should be attempted.
+    expect(runtime.removals).toEqual([])
+    expect(runtime.live.size).toBe(0)
+    await manager.close()
   })
 
   test("failed acquisition cleanup stays tracked for sweep without issuing a token", async () => {

@@ -12,3 +12,15 @@ export class ContainerCreationError extends Error {
     this.name = "ContainerCreationError"
   }
 }
+
+/** Thrown before any container allocation when the requested image cannot be provisioned.
+ * The public message is sanitized; raw engine output stays internal.
+ */
+export class ImageProvisioningError extends Error {
+  static readonly MESSAGE =
+    "Container image provisioning failed before allocation; check engine connectivity and registry access before retrying."
+  constructor(cause: unknown) {
+    super(ImageProvisioningError.MESSAGE, { cause })
+    this.name = "ImageProvisioningError"
+  }
+}

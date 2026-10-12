@@ -1,5 +1,7 @@
 import { z } from "zod@4"
 
+export const DEFAULT_IMAGE = "mcr.microsoft.com/devcontainers/base:ubuntu"
+
 const positive = z.number().int().positive().max(Number.MAX_SAFE_INTEGER)
 export const budgetsSchema = z
   .object({
@@ -21,9 +23,11 @@ export const acquireSchema = z
     image: z
       .string()
       .min(1)
-      .default("mcr.microsoft.com/devcontainers/base:ubuntu")
+      .default(DEFAULT_IMAGE)
       .describe(
-        "Already-local trusted Linux image. Default mcr.microsoft.com/devcontainers/base:ubuntu must be present; no automatic pulls.",
+        "Linux image for the container. Default mcr.microsoft.com/devcontainers/base:ubuntu. " +
+          "Missing images are pulled automatically using the engine's configured registry credentials before container creation; " +
+          "no extra login or secret handling is added. Workload network remains none by default.",
       ),
     idleSeconds: positive
       .max(86400)

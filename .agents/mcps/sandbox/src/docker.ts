@@ -8,7 +8,7 @@ import type {
   ExecResult,
 } from "./contracts.ts"
 import type { ContainerEngine } from "./engine.ts"
-import { ContainerCreationError } from "./errors.ts"
+import { ContainerCreationError, ImageProvisioningError } from "./errors.ts"
 import { run } from "./process.ts"
 
 const PACKAGE = "sandbox"
@@ -23,12 +23,11 @@ const CLI_PREVIEW_BYTES = 4 * 1024 * 1024
 
 // Control tmpfs: only holds the deadline file; kept minimal and root-only.
 const CTRL_TMPFS_BYTES = 65_536 // 64 KiB
-const CTRL_TMPFS_INODES = 32
-const TMP_TMPFS_INODES = 16_384
 
 // Per-operation timeouts (ms)
 const T_CREATE = 60_000
 const T_INSPECT = 10_000
+const T_PULL = 120_000
 const T_START = 30_000
 const T_DEADLINE = 10_000
 const T_KILL = 5_000
@@ -53,6 +52,20 @@ function isNotFound(r: RunResult): boolean {
 }
 
 /**
+ * True only when the engine CLI confirms the image is not present locally.
+ * Positive absence: nonzero exit, no transport error, and a recognised absence message.
+ * Any other inspection failure is not treated as absence.
+ */
+function isImageAbsent(r: RunResult): boolean {
+  return (
+    !r.error &&
+    r.stop === "exited" &&
+    r.exitCode !== 0 &&
+    /no such image|image not known/i.test(r.stderr)
+  )
+}
+
+/**
  * Throw a descriptive error naming the selected engine when the result is not a
  * clean success. Callers that must distinguish "not found" should check isNotFound first.
  */
@@ -65,13 +78,14 @@ function assertOk(r: RunResult, engine: ContainerEngine, op: string): void {
 /**
  * Verify that the engine-inspect object matches all declared security
  * constraints and resource budgets. Throws with a combined failure list
- * rather than stopping at the first mismatch. The same Docker inspect
- * semantics apply to every selected engine; no weaker normalization is assumed.
+ * rather than stopping at the first mismatch. Docker uses CapDrop ALL;
+ * Podman with --cap-drop ALL reports null for EffectiveCaps and BoundingCaps.
  */
 function verifyConstraints(
   data: Record<string, unknown>,
   spec: ContainerSpec,
   canonicalWs?: string,
+  engine?: ContainerEngine,
 ): void {
   const hostConfig = (data.HostConfig ?? {}) as Record<string, unknown>
   const failures: string[] = []
@@ -79,9 +93,26 @@ function verifyConstraints(
   if (hostConfig.ReadonlyRootfs !== true)
     failures.push(`ReadonlyRootfs: expected true, got ${hostConfig.ReadonlyRootfs}`)
 
-  const capDrop = Array.isArray(hostConfig.CapDrop) ? (hostConfig.CapDrop as string[]) : []
-  if (!capDrop.some((c) => c.toUpperCase() === "ALL"))
-    failures.push(`CapDrop: expected ALL, got ${JSON.stringify(capDrop)}`)
+  if (engine === "podman") {
+    // Podman expands --cap-drop ALL into a list of cap names; use EffectiveCaps and
+    // BoundingCaps instead. Both must be present and each null or empty array.
+    const isNullOrEmpty = (v: unknown): boolean =>
+      v === null || (Array.isArray(v) && (v as unknown[]).length === 0)
+    const eff = Object.hasOwn(data, "EffectiveCaps") ? data.EffectiveCaps : undefined
+    const bnd = Object.hasOwn(data, "BoundingCaps") ? data.BoundingCaps : undefined
+    if (!isNullOrEmpty(eff))
+      failures.push(
+        `EffectiveCaps: Podman --cap-drop ALL requires null or empty array, got ${JSON.stringify(eff)}`,
+      )
+    if (!isNullOrEmpty(bnd))
+      failures.push(
+        `BoundingCaps: Podman --cap-drop ALL requires null or empty array, got ${JSON.stringify(bnd)}`,
+      )
+  } else {
+    const capDrop = Array.isArray(hostConfig.CapDrop) ? (hostConfig.CapDrop as string[]) : []
+    if (!capDrop.some((c) => c.toUpperCase() === "ALL"))
+      failures.push(`CapDrop: expected ALL, got ${JSON.stringify(capDrop)}`)
+  }
 
   const secOpt = Array.isArray(hostConfig.SecurityOpt) ? (hostConfig.SecurityOpt as string[]) : []
   if (!secOpt.some((o) => o === "no-new-privileges" || o === "no-new-privileges=true"))
@@ -183,14 +214,11 @@ function buildCreateArgs(
   const { budgets, network, image, access } = spec
   const workspaceArgs = canonicalWs
     ? ["-v", `${canonicalWs}:${WS_TARGET}${access === "ro" ? ":ro" : ""}`]
-    : [
-        "--tmpfs",
-        `${WS_TARGET}:rw,exec,nosuid,nodev,size=${budgets.tmpfsBytes},mode=1777,nr_inodes=${TMP_TMPFS_INODES}`,
-      ]
+    : ["--tmpfs", `${WS_TARGET}:rw,exec,nosuid,nodev,size=${budgets.tmpfsBytes},mode=1777`]
   // Deliverables built in container scratch must be runnable; privilege controls
   // remain nosuid/nodev, cap-drop, no-new-privileges and the container boundary.
-  const tmpTmpfs = `/tmp:rw,exec,nosuid,nodev,size=${budgets.tmpfsBytes},mode=1777,nr_inodes=${TMP_TMPFS_INODES}`
-  const ctrlTmpfs = `${CTRL_DIR}:rw,noexec,nosuid,nodev,size=${CTRL_TMPFS_BYTES},mode=0700,nr_inodes=${CTRL_TMPFS_INODES}`
+  const tmpTmpfs = `/tmp:rw,exec,nosuid,nodev,size=${budgets.tmpfsBytes},mode=1777`
+  const ctrlTmpfs = `${CTRL_DIR}:rw,noexec,nosuid,nodev,size=${CTRL_TMPFS_BYTES},mode=0700`
 
   return [
     "--pull=never",
@@ -268,15 +296,62 @@ async function destroyContainer(engine: ContainerEngine, id: string): Promise<vo
  * is no fallback to the other engine later, including during cleanup.
  */
 export class ContainerCliRuntime implements ContainerRuntime {
+  private readonly imageProvisioning = new Map<string, Promise<void>>()
+
   constructor(
     private readonly instance: string,
     private readonly engine: ContainerEngine,
   ) {}
 
+  /**
+   * Ensures the requested image is available locally, pulling from the registry if absent.
+   * Shares one in-flight provision per image; map entries are removed on both outcomes.
+   * Throws ImageProvisioningError on any non-absence inspect failure or on pull failure.
+   */
+  private ensureImage(image: string): Promise<void> {
+    const inflight = this.imageProvisioning.get(image)
+    if (inflight !== undefined) return inflight
+    const work = (async () => {
+      const inspResult = await run(
+        [this.engine, "image", "inspect", "--format", "{{.Id}}", "--", image],
+        { wallTimeMs: T_INSPECT, inlineBytes: CLI_PREVIEW_BYTES },
+      )
+      if (!inspResult.error && inspResult.stop === "exited" && inspResult.exitCode === 0) return
+      if (!isImageAbsent(inspResult)) {
+        throw new ImageProvisioningError(
+          new Error(
+            inspResult.stderr.trim() ||
+              `image inspect: exit ${inspResult.exitCode} stop=${inspResult.stop}`,
+          ),
+        )
+      }
+      // Image absent — pull once, no retries.
+      const pullResult = await run([this.engine, "pull", "--", image], {
+        wallTimeMs: T_PULL,
+        inlineBytes: CLI_PREVIEW_BYTES,
+      })
+      if (!pullResult.error && pullResult.stop === "exited" && pullResult.exitCode === 0) return
+      throw new ImageProvisioningError(
+        new Error(
+          pullResult.stderr.trim() ||
+            `image pull: exit ${pullResult.exitCode} stop=${pullResult.stop}`,
+        ),
+      )
+    })().finally(() => {
+      this.imageProvisioning.delete(image)
+    })
+    this.imageProvisioning.set(image, work)
+    return work
+  }
+
   /** Creates and verifies an owned container before starting its supervisor.
+   * @throws ImageProvisioningError when the image cannot be provisioned (before allocation).
    * @throws ContainerCreationError with the exact cleanup target after a container create attempt.
    */
   async create(spec: ContainerSpec): Promise<ContainerHandle> {
+    // Provision image before workspace validation or any allocation tracking.
+    await this.ensureImage(spec.image)
+
     const workspacePath = spec.workspace
     let canonicalWs: string | undefined
     if (workspacePath !== undefined) {
@@ -318,7 +393,7 @@ export class ContainerCliRuntime implements ContainerRuntime {
       if (!raw) throw new Error(`${this.engine} inspect: empty response`)
       const data = JSON.parse(raw) as Record<string, unknown>
       handle.imageId = typeof data.Image === "string" ? data.Image : ""
-      verifyConstraints(data, spec, canonicalWs)
+      verifyConstraints(data, spec, canonicalWs, this.engine)
 
       // Start the container; supervisor writes its initial deadline and begins polling.
       const startResult = await run([this.engine, "start", handle.id], {
