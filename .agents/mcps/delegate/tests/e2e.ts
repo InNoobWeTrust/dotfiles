@@ -139,7 +139,7 @@ type Api = Awaited<ReturnType<typeof connect>>
 
 async function connect(env: Record<string, string>) {
   const transport = new StdioClientTransport({
-    command: path.resolve(root, "../../../.local/bin/mcp-delegate"),
+    command: path.resolve(root, "bin/mcp-delegate"),
     cwd: root,
     env,
     stderr: "pipe",
@@ -644,7 +644,7 @@ async function verifyRealHarness() {
   const client = new Client({ name: "delegate-e2e-real", version: "1" })
   try {
     const transport = new StdioClientTransport({
-      command: path.resolve(root, "../../../.local/bin/mcp-delegate"),
+    command: path.resolve(root, "bin/mcp-delegate"),
       cwd: scratch,
       env: { ...process.env, DELEGATE_DEPTH: "" },
       stderr: "pipe",

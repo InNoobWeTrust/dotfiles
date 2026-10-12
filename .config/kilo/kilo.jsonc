@@ -21,7 +21,15 @@
   "mcp": {
     "sandbox": {
       "type": "local",
-      "command": ["{env:HOME}/.local/bin/mcp-sandbox"],
+      "command": [
+        "mcp-sandbox"
+      ],
+    },
+    "delegate": {
+      "type": "local",
+      "command": [
+        "mcp-delegate"
+      ],
     },
     "chrome-devtools": {
       "type": "local",

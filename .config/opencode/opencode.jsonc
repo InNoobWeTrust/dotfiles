@@ -24,7 +24,7 @@
       "opencode-decisions": {
         "type": "local",
         "command": [
-          "{env:HOME}/.local/bin/mcp-opencode-decisions"
+          "mcp-opencode-decisions"
         ],
         "timeout": {
           "startup": 30000,
@@ -35,13 +35,13 @@
       "sandbox": {
         "type": "local",
         "command": [
-          "{env:HOME}/.local/bin/mcp-sandbox"
+          "mcp-sandbox"
         ],
       },
       "delegate": {
         "type": "local",
         "command": [
-          "{env:HOME}/.local/bin/mcp-delegate"
+          "mcp-delegate"
         ],
       },
       "chrome-devtools": {

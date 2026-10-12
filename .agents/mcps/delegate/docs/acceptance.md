@@ -124,7 +124,7 @@ that `tests/lifecycle.test.ts` covers directly.
 ## Final user acceptance
 
 **Startup:** Ensure the existing dotfiles install links
-`~/.local/bin/mcp-delegate`, and the MCP process can find Bun on its inherited
+`~/.agents/mcps/delegate/bin/mcp-delegate`, and the MCP process can find Bun on its inherited
 PATH. See [Start](../README.md#start); the normal bootstrap installs more than
 this package and need not be repeated when those links already exist.
 

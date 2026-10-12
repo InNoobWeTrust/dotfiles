@@ -37,7 +37,7 @@ async function waitRemoved(id: string, milliseconds = 10000) {
 }
 async function connect() {
   const transport = new StdioClientTransport({
-    command: path.resolve(root, "../../../.local/bin/mcp-sandbox"),
+    command: path.resolve(root, "bin/mcp-sandbox"),
     cwd: root,
     env: { ...process.env, CONTAINER_SANDBOX_HOST_ONLY: "not-forwarded-to-container" },
     stderr: "pipe",

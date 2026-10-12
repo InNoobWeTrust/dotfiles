@@ -16,7 +16,7 @@ One server exposes both host process sandboxes and isolated Linux containers.
 
 ## Start
 
-`mcp-sandbox` is already configured in `.agents/mcp.json`. No second server or global enablement is needed.
+`mcp-sandbox` is configured separately in `.claude/mcp.json`, `.codex/config.toml`, `.gemini/config/mcp_config.json`, `.config/kilo/kilo.jsonc` and `.config/opencode/opencode.jsonc`. Start the client from a shell that has loaded `~/.shrc` so its inherited `PATH` includes the package-local [launcher](bin/mcp-sandbox) and Bun. The Claude shell alias passes its config using `--mcp-config`.
 
 To start directly from this package directory:
 

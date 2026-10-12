@@ -17,15 +17,23 @@ CLI presence alone is not readiness; startup never submits a model prompt.
 
 ## Start
 
-`mcp-delegate` is configured in `.agents/mcp.json`, `.gemini/config/mcp_config.json`
-and `.config/opencode/opencode.jsonc`. The first two resolve it on `PATH`;
-OpenCode uses `{env:HOME}/.local/bin/mcp-delegate`. This checkout's `.local/bin`
-is linked by the normal dotfiles `./bootstrap.sh` flow, like `mcp-sandbox`;
+`mcp-delegate` is configured separately in `.claude/mcp.json`, `.codex/config.toml`,
+`.config/kilo/kilo.jsonc` and `.config/opencode/opencode.jsonc`.
+All launch the package-local
+[`mcp-delegate`](bin/mcp-delegate) at `~/.agents/mcps/delegate/bin/mcp-delegate`
+directly, without a `sh -c` layer. This package is linked by the normal
+dotfiles `./bootstrap.sh` flow, like `mcp-sandbox`;
 that command installs the broader dotfiles setup, not just this MCP.
 
-The launcher must exist at `~/.local/bin/mcp-delegate`, and Bun must be on the
+The launcher must exist at `~/.agents/mcps/delegate/bin/mcp-delegate`, and Bun must be on the
 server's inherited `PATH`. A missing launcher is a startup error, not a harness
 readiness result.
+
+Start each client from a shell that has loaded `~/.shrc`: its PATH setup includes
+the package `bin` directories under `~/.agents/mcps/`. The Claude shell alias
+passes its separate config using `--mcp-config`.
+Launchers use the client's exported environment; they do not
+source shell startup files or override client environment filtering.
 
 To start directly from this package directory instead:
 

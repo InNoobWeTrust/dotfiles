@@ -7,6 +7,14 @@
         setPath "$d"
     done
 
+# Commands maintained by these dotfiles (not a package-manager install directory)
+[ -d "${CONF_SH_DIR:-$HOME/.sh.d}/bin" ] && setPath "${CONF_SH_DIR:-$HOME/.sh.d}/bin"
+
+# Package-local agent commands, invoked directly by MCP clients
+for d in "$HOME"/.agents/mcps/*/bin; do
+    [ -d "$d" ] && setPath "$d"
+done
+
 # dart-sdk
 [ -d /usr/lib/dart/bin ] && setPath '/usr/lib/dart/bin'
 

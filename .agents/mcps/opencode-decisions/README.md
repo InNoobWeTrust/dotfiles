@@ -20,7 +20,7 @@ System One answers **choice, score and boolean questions**, not chat prompts. Ea
 
 ## Use
 
-Launch OpenCode with your existing `OPENCODE_API_KEY` available in its environment and the repository's dotfiles deployed. The [launcher](../../../.local/bin/mcp-opencode-decisions) reads no `.env` files; no new key is stored in MCP configuration or output.
+Launch OpenCode from a shell that has loaded `~/.shrc`, with your existing `OPENCODE_API_KEY` available in its environment and the repository's dotfiles deployed. The [launcher](bin/mcp-opencode-decisions) reads no `.env` files; no new key is stored in MCP configuration or output.
 
 This MCP exposes just **`evaluate`**; call it directly, with no status or preflight step.
 

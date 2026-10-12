@@ -1,5 +1,10 @@
 {
   "mcpServers": {
+    "sandbox": {
+      "command": "mcp-sandbox",
+      "args": [],
+      "disabled": false
+    },
     "chrome-devtools": {
       "args": [
         "-y",
@@ -9,14 +14,6 @@
       ],
       "command": "npx",
       "disabled": true
-    },
-    "delegate": {
-      "command": "mcp-delegate",
-      "disabled": false
-    },
-    "sandbox": {
-      "command": "mcp-sandbox",
-      "disabled": false
     },
     "serena": {
       "args": [

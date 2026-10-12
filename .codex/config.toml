@@ -24,3 +24,8 @@ theme = "gruvbox-dark"
 
 [mcp_servers.sandbox]
 command = "mcp-sandbox"
+args = []
+
+[mcp_servers.delegate]
+command = "mcp-delegate"
+args = []
