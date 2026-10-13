@@ -9,7 +9,7 @@ The primary owns the outcome, decision authority, bounded contracts, integration
 | Work | Worker contract | Primary action |
 |---|---|---|
 | Research | Bounded question, permitted sources/network, evidence and uncertainty; no edits | Compare evidence, decide in-scope choices, document consequential rationale |
-| Implementation | One approved slice, exact contracts/files, existing domain verification requirements | Integrate and verify; reapprove contract defects before redispatch |
+| Implementation | One approved slice, exact contracts/files, approved materialization choices and accessible code-craft/API sources, existing domain verification requirements | Integrate and verify actual API reuse; reapprove contract defects before redispatch |
 | Execution/E2E | Fixed checks/journeys, authorized isolated environment and resource controls | Validate receipts; do not let the executor silently alter assertions |
 | Independent review | One distinct perspective (different agent/subagent instance than primary and implementers), declared rubric, current artifact/evidence; read-only. One instance = one perspective; simulated panels not independent. For substantial work, include goal-alignment reviewer with original request/feedback. If perspectives ambiguous, identify candidates and consult independent generalist reviewer by default - do not skip; only STOP_INPUT_AMBIGUOUS if specialized judgment materially required and no qualified reviewer identifiable. | Challenge findings, resolve blockers, recheck changed surface |
 
@@ -20,6 +20,8 @@ Use concurrency only for independent work, with explicit limits. Serialize overl
 Keep outcome/invariants fixed while choices are being investigated. The primary records a decision with source/experiment evidence, concrete contract, authority, risks, and validation. For substantial implementation, reference the approved active phase file and scoped file tree required by domain governance. A worker finding an unworkable contract returns `INCOMPLETE: CONTRACT_DEFECT`; the primary revises inside authority or stops only the affected boundary.
 
 Product-facing decision notes go in product docs; execution packets/checkpoints/consensus go in task memory. Do not expose full worker transcripts or ask the user to become integrator.
+
+For software capabilities, use the [materialization contract](../../../subagent-dispatch/references/implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) in the existing approved plan/phase file and copy its unit-relevant rows into each implementation handoff, including atomic patches and route replacements. The primary settles recommended library/API choices and justified repository/standard-library exceptions before coding. Missing or incompatible selections return to the primary; dependency installation, manifest edits, and network still require their own scoped authority. Evaluators compare actual API call sites and behavior against that same revision; an import or green test suite alone cannot prove reuse.
 
 ## Evaluator-to-optimizer handoff
 

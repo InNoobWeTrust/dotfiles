@@ -28,7 +28,7 @@ explicit `Atomic patch exception` may be used for ONE coherent, independently
 verifiable outcome where phased delivery does not apply and no design or
 contract decision remains open; no plan file is required for that exception.]
 
-### Selected Unit (all eight fields must be bounded)
+### Selected Unit (all nine fields must be bounded)
 1. Plan basis: [cite the specific approved separate phase file referenced in main plan] OR Atomic patch exception rationale: [why the outcome is coherent, independently verifiable, and leaves no design/contract decision open]
 2. Unit ID and one-sentence outcome: [...]
 3. Exact writable surface: [files matching the locked scoped file tree delta within in-scope boundary; out-of-scope paths untouched; zero unapproved files; cleanup required]
@@ -37,6 +37,7 @@ contract decision remains open; no plan file is required for that exception.]
 6. Explicit out-of-scope list: [...]
 7. Acceptance criteria and required evidence: [...]
 8. Stop conditions: [see below]
+9. Approved materialization choices: [unit-relevant capability → selected library/tool/API; compatibility; rationale and accessible code-craft/API sources; authorized dependency-file changes; approved exceptions/prohibited substitutions; actual reuse evidence. Use implementation-payload-and-preflight.md's materialization contract, or explicit N/A + rationale. Confirm required sources before coding; missing choices → INCOMPLETE; incompatible choices → INCOMPLETE: CONTRACT_DEFECT, never silent fallback.]
 
 If you find zero or multiple units, missing acceptance criteria/evidence, an
 unresolved design or contract decision, or a request that expands scope: do
@@ -147,7 +148,7 @@ Run through this before every delegated worker launch:
 - [ ] **Discovery and authority**: Do named, fallback, and dynamic workers have a usable guidance entry point and explicit task authority? Are required task/rule sources accessible, and permitted guidance reads available, without assumed inheritance or relaxed native deny permissions? A reference, short hint, or no personality direction are all valid; copied principle paragraphs are not required.
 - [ ] **Scope**: Does the prompt name the exact files, URLs, or data — not a vague domain?
 - [ ] **Code target — exactly one unit**: If dispatching implementation to code implementer, does the prompt carry exactly one selected functional unit (plan pasted as context only), with the dispatch basis declared (approved plan / Active Milestone Packet, or explicit `Atomic patch exception`)?
-- [ ] **Code target — unit payload complete**: Are all eight fields bounded — plan basis/exception rationale, unit ID + one-sentence outcome, exact writable surface, contracts/invariants, satisfied prerequisites, explicit out-of-scope list, acceptance criteria/evidence, stop conditions?
+- [ ] **Code target — unit payload complete**: Are all nine fields bounded — plan basis/exception rationale, unit ID + one-sentence outcome, exact writable surface, contracts/invariants, satisfied prerequisites, explicit out-of-scope list, acceptance criteria/evidence, stop conditions, approved materialization choices?
 - [ ] **Code target — no stop-before-dispatch condition**: Confirm none of these holds: zero or multiple units · missing acceptance criteria/evidence · an unresolved design or contract decision · a scope-expansion request. If one holds, do NOT dispatch; report `INCOMPLETE` + continuation state to the main orchestrator instead.
 - [ ] **Delivery Contract**: When the phased-delivery trigger applies, does every implementation, exploration, or review prompt include the canonical populated contract plus scope-expansion, adjacent-work, and continuation/resumption instructions?
 - [ ] **Return contract**: Does the chosen report or receipt preserve observed evidence, obstacles, uncertainty, and completion state without unnecessary output?
@@ -166,6 +167,7 @@ When the delegated worker returns:
 1. **Check completion state** in the report or receipt. `INCOMPLETE` is an explicit partial result, not an automatic retry: continue only if the evidence is insufficient for the next decision.
 2. **Check obstacles and scope**. Retain relevant workarounds, input/environment mismatches, skipped checks, or boundary violations so they are not rediscovered; do not treat a completion marker as proof of contract compliance.
 3. **Check evidence and uncertainty**. Judge the return against acceptance criteria; inspect relevant underlying evidence when risk, contradictions, or missing diagnostics require it. Do not automatically reread every transcript or rerun every check. Low-confidence claims must be verified before acting on them.
+   For implementation, compare actual dependency changes and call sites with the approved materialization choices and behavior evidence. Installed or imported-but-unused libraries do not satisfy reuse; unapproved substitutions/reimplementations fail acceptance even when tests pass. Missing reuse evidence remains UNVERIFIED.
 4. **Challenge gate — route through independent reviewer before synthesis.**
    The host produced nothing, so agreement bias is the primary risk: you are primed to accept what the delegated worker returned. Before synthesizing for the user, route the output through a **separate** challenger agent using the `reviewer` skill with the appropriate lens. Do not self-review — delegate the challenge.
 
@@ -204,6 +206,7 @@ When the delegated worker returns:
 | Sending a whole multi-unit plan to code implementer | Worker absorbs adjacent units, expands scope, and returns partial work that cannot be verified against any single acceptance criterion | Dispatch exactly ONE functional unit per code implementer call (approved-plan basis or explicit atomic-patch exception); paste the plan as context only |
 | Treating "You are a Python expert" as proof of expertise | A short hint cannot establish credentials, evidence, or authority | Allow hints, but have the worker discover useful guidance and obey the bounded task |
 | Assuming parent skills or old profile bodies reach the worker | Dynamic/fallback worker may lack a usable discovery entry point | Establish accessible guidance discovery once per worker context; do not require copied personalities |
+| Passing only core logic or “follow code-craft” | Worker reconstructs library/API choices from training memory | Pass the approved capability/provider contract and accessible sources; verify real API use, not just imports |
 | Requiring a full personality for every request | Adds prompt bulk and mixes working style with task content | Reference, short hint, or no style direction; workers infer and load useful principles |
 | Changing models changes task authority | Fallback loses the original task's safety and evidence obligations | Retain the assignment and constraints; reassess route limits and discovery access |
 | Handoff of inseparable cross-task reasoning | Essential interpretations or unresolved contracts get lost | Keep integrated judgment in the primary; a bounded worker result may still supply prerequisites |
@@ -233,7 +236,7 @@ AVOID:
 
 WORKER SETUP = usable guidance discovery; worker selects useful principles; no assumed parent/profile inheritance
 
-DELEGATION PROMPT = [optional style reference or short hint] + Understanding/authority + Task + Context (surgical) + [Implementation Dispatch Gate for code implementer targets: ONE selected unit, 8 bounded fields, plan as context only] + [canonical Delivery Contract when its trigger applies] + delegation-only action boundaries + Output Template + Stop Conditions
+DELEGATION PROMPT = [optional style reference or short hint] + Understanding/authority + Task + Context (surgical) + [Implementation Dispatch Gate for code implementer targets: ONE selected unit, 9 bounded fields including materialization choices, plan as context only] + [canonical Delivery Contract when its trigger applies] + delegation-only action boundaries + Output Template + Stop Conditions
 
 CODE TARGET = one unit per dispatch · basis = approved plan / Active Milestone Packet OR explicit atomic-patch exception · zero/multiple units or missing evidence → no dispatch, report `INCOMPLETE` + continuation state
 

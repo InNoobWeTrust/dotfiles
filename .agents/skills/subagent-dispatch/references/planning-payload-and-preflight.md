@@ -22,6 +22,7 @@ Set every applicable field before launch:
 4. **Goal context:** the full goal for L0; only the target slice and cross-cutting constraints for L1/L2.
 5. **Out of scope:** what this pass must not expand into.
 6. **Stop conditions:** do not skip levels or produce detail beyond the selected depth.
+7. **Materialization constraints:** existing stack/dependencies, explicit user requirements, and relevant code-craft language/pattern guidance. L0/L1 retain settled choices and identify unresolved capability choices without prematurely specifying units. Any dispatchable `[ATOMIC]` or L2 unit must include primary-approved [materialization choices](implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) in its plan/phase file: selected libraries/APIs, compatibility, rationale/sources, dependency surface, exceptions, and reuse evidence. Planners may research/propose selections; implementation waits for primary approval. Do not defer provider selection to an implementer's learned patterns.
 
 ## Stop-before-dispatch conditions
 
@@ -34,6 +35,7 @@ Do not dispatch if no level is declared, more than one section is targeted, an L
 - [ ] The plan file path is explicit.
 - [ ] L1/L2 names exactly one target.
 - [ ] Context matches the selected level; L1/L2 include only the target slice and cross-cutting constraints.
+- [ ] Settled materialization choices survive decomposition; dispatchable units carry the concrete capability/provider contract, and unresolved choices remain blockers to implementation rather than implicit worker discretion.
 - [ ] For L2: boundary units define locked code-level interface signatures and DTO schemas, not loose prose descriptions (zero invented interfaces).
 - [ ] For L2: scope boundary (in-scope vs out-of-scope paths) and scoped target file tree structure are explicitly locked with `[CREATE]`, `[MODIFY]`, `[DELETE]`, and `[CLEANUP]` annotations (zero invented files).
 - [ ] For L2: implementation phases are sharded into separate phase files referenced in the main plan file.
