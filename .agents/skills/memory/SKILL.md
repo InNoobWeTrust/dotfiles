@@ -1,6 +1,6 @@
 ---
 name: memory
-description: "Use this skill to save, restore, or manage agent memory, execution plans, and consensus across sessions. Handles session checkpoints, context handoffs, atomic feature plans, vertical slice phase specs, and inter-agent consensus boards in memory dirs, leaving docs/ for human-facing documentation. Also runs dream-cycle consolidation and memory eviction. All files remain file-based, human-traceable, and git-committable plain text."
+description: "Use this skill to save, restore, or manage agent memory, execution plans, and consensus across sessions; explicitly remember or recall scoped preferences, accepted/corrected examples, and evidence-backed experience. Handles checkpoints, handoffs, plans, and consensus in memory dirs, leaving docs/ for human-facing documentation. Also runs dream-cycle consolidation and memory eviction. All files remain file-based, human-traceable, and git-committable plain text."
 ---
 
 # Memory
@@ -18,6 +18,8 @@ Storage, protocol, and templates live in `references/hierarchy-and-storage.md`. 
 
 For recall shaping and context compaction tactics, load `references/compaction-and-step-recall.md` only when Recall or Consolidate needs it.
 
+For explicit preference/example capture or task-relevant personal-context recall, load [Scoped context](references/scoped-context.md). It adds optional entry-body records and relevance/privacy checks, not a new store, automatic loader, or consolidation trigger.
+
 ---
 
 ## When to load this skill
@@ -27,6 +29,7 @@ For recall shaping and context compaction tactics, load `references/compaction-a
 - Recording inter-agent consensus boards or multi-agent deliberation records (`consensus/<topic>.md`)
 - User says "remember this", "note this", "save context", "resume", "what was I working on"
 - User says "consolidate memory", "dream cycle", "prune memory", "forget X"
+- User explicitly asks to remember or use a collaboration preference, accepted/corrected example, or sourced experience relevant to the task
 
 Do **not** load this skill for:
 
@@ -52,6 +55,7 @@ Pick one mode per invocation. Modes are separate procedures; do not interleave.
 
 - User says "save", "checkpoint", "note this", "remember this", "save handoff", "save plan", "record consensus" → **Capture**.
 - User says "resume", "restore", "load context", "what was I working on", "load plan" → **Recall**.
+- User explicitly asks to remember a preference/example/lesson → **Capture**; asks to use an existing one → **Recall**. Apply `references/scoped-context.md` without changing storage or approval gates.
 - User says "consolidate memory", "dream cycle", "run consolidation", "review my notes" → **Consolidate**; prefer **Consolidate via Subagent** when delegation is available; if unavailable, report to the user and ask before switching to in-agent Consolidate.
 - Task has `accepted_by_user: true` and consolidation for that task is requested → recruit a dedicated fresh **Consolidate via Subagent** scoped to that task's role captures; pass is **report-only** until human approves apply/markers/archive/eviction. See `references/dream-cycle.md` §Accepted-task standing consolidation and `references/task-role-records.md`.
 - User says "prune memory", "forget X", "evict Y" → **Evict**.

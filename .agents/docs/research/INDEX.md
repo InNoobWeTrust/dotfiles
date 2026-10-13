@@ -16,6 +16,7 @@ docs/research/INDEX.md        ← you are here
 
 | Topic | What it covers | Read when |
 |---|---|---|
+| [Personal context from Claude video](./claude-personal-context/claude-personal-context.md) | Scoped preferences, experience evidence, small trials; original Gemini proposal and timestamped video findings | Improving selective memory without automatic profiling or duplicate skills |
 | [Agent improvement techniques](./agent-improvement-techniques/agent-improvement-techniques.md) | Karpathy / Anthropic / STAPO / RAPO / T-STAR / SOAR-analog map → skill backlog | Deciding what research to adopt into skills |
 | [→ research notes (leaf)](./agent-improvement-techniques/details/agent-improvement-research-notes.md) | Source fidelity, arXiv links, paper summaries | Validating a claim or deepening context |
 | [Thoughtworks Radar Vol 34](./thoughtworks-radar-vol34/thoughtworks-radar-vol34.md) | Agent harness, skills, sensors, cautions; quality-tool gaps for Part 2 | Aligning industry radar with skills/quality docs |

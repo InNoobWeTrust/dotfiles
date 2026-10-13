@@ -8,7 +8,7 @@
     "scrollbar": true,
     "thinking": "show",
     "markdown": "rendered",
-    "grouping": "auto",
+    "grouping": "none",
     "image_preview": true,
     "tps": true,
     "new_location": "launch",
