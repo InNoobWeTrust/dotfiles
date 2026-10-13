@@ -1,0 +1,49 @@
+# Optional Fedora routing + systemd-resolved compatibility; see README.md.
+# Additive to the SAML listener module; never makes a domain permissive.
+module local_openfortivpn_network 1.0;
+
+require {
+    type openfortivpn_t, bin_t;
+    type system_dbusd_t, system_dbusd_var_run_t;
+    type systemd_resolved_t, systemd_resolved_var_run_t;
+
+    class capability net_admin;
+    class tcp_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown listen accept };
+    class udp_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown };
+    class netlink_route_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown nlmsg_read nlmsg_write };
+    class unix_stream_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown connectto };
+    class file { getattr open map read execute ioctl execute_no_trans };
+    class lnk_file { getattr read };
+    class dir { getattr search };
+    class sock_file { getattr write };
+    class dbus send_msg;
+}
+
+# Network administration is host-wide, not limited to the PPP interface.
+# Linux openfortivpn 1.23.1 changes routes via UDP socket ioctls.
+allow openfortivpn_t self:capability net_admin;
+allow openfortivpn_t self:tcp_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown listen accept };
+allow openfortivpn_t self:udp_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown };
+allow openfortivpn_t self:netlink_route_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown nlmsg_read nlmsg_write };
+
+# resolvconf is a symlink to resolvectl, correctly labeled bin_t on Fedora.
+# This permits ALL bin_t executables, but keeps them inside openfortivpn_t.
+allow openfortivpn_t bin_t:dir { getattr search };
+allow openfortivpn_t bin_t:lnk_file { getattr read };
+allow openfortivpn_t bin_t:file { getattr open map read execute ioctl execute_no_trans };
+
+# DNS helper IPC: system bus transport, requests and replies.
+allow openfortivpn_t self:unix_stream_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown };
+allow openfortivpn_t system_dbusd_var_run_t:dir { getattr search };
+allow openfortivpn_t system_dbusd_var_run_t:sock_file { getattr write };
+allow openfortivpn_t system_dbusd_t:unix_stream_socket connectto;
+allow openfortivpn_t self:dbus send_msg;
+allow openfortivpn_t system_dbusd_t:dbus send_msg;
+allow system_dbusd_t openfortivpn_t:dbus send_msg;
+allow openfortivpn_t systemd_resolved_t:dbus send_msg;
+allow systemd_resolved_t openfortivpn_t:dbus send_msg;
+
+# Also allow resolved's native Unix socket transport (varlink).
+allow openfortivpn_t systemd_resolved_var_run_t:dir { getattr search };
+allow openfortivpn_t systemd_resolved_var_run_t:sock_file { getattr write };
+allow openfortivpn_t systemd_resolved_t:unix_stream_socket connectto;

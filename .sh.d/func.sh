@@ -561,6 +561,9 @@ mux() {
         else
             zellij "$@"
         fi
+    elif usable pixi; then
+        # Use pixi exec to run zellij
+        pixi exec zellij "$@"
     elif [ -n "$BASH_VERSION" ] || [ -n "$ZSH_VERSION" ]; then
         # If shell supports process substitution, use it to avoid creating a temporary file
         # shellcheck disable=SC3001

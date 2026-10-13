@@ -69,6 +69,13 @@ Repeat after config changes: the hook does not sync `/etc/openfortivpn/work.conf
 
 For a bind failure, follow the [port-owner, audit and label checks](details/bazzite-compatibility.md#selinux-listener-permission). The [local policy](local_openfortivpn_saml.cil) applies only to the documented `openfortivpn_t` → `hadoop_namenode_port_t` denial on TCP `8020`; keep SELinux enforcing and do not apply it blindly.
 
+**Post-login routing or DNS permission failures:** the listener policy does not cover these. The optional [network/DNS policy](local_openfortivpn_network.te) adds host-wide network administration and confined helper execution; review its [scope, install and rollback instructions](details/bazzite-compatibility.md#selinux-routing-and-dns-permissions) before applying it.
+
+After reviewing both policies, install them together from the checkout root (no VPN restart):
+```bash
+bash .config/openfortivpn/install-selinux-policy.sh
+```
+
 ### 4. Authenticate without keeping a terminal open
 
 ```text

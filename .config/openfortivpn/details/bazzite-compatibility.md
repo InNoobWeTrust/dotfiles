@@ -37,10 +37,9 @@ sudo semanage port -l | grep '^hadoop_namenode_port_t[[:space:]]'
 
 The supplied policy allows binding to every TCP port carrying that label, not just the number 8020. Review the output; if the relevant port has another label or the permission is no longer missing, do not apply this file or relabel the port blindly.
 
-**Apply the reviewed policy** from the checkout root, then restart:
+**Install through the shared entry point** after reviewing this listener policy and the [network/DNS permissions](#selinux-routing-and-dns-permissions). It installs both modules; it does not restart the VPN:
 ```bash
-sudo semodule -i .config/openfortivpn/local_openfortivpn_saml.cil
-sudo systemctl restart --no-block openfortivpn@work.service
+bash .config/openfortivpn/install-selinux-policy.sh
 ```
 
 The three rules permit port binding, node binding and listening/accepting connections for `openfortivpn_t`. Node binding covers nodes labelled `node_t`, not just loopback; the client source itself binds only to loopback. Enforcing mode and restrictions on other port types remain intact.
@@ -48,6 +47,33 @@ The three rules permit port binding, node binding and listening/accepting connec
 For configuration management, make this a **conditional compatibility task**, gated by the verified denial, current labels and reviewed policy. Keep the source file with the deployment rather than generating a broad policy from arbitrary audit output; do not enable unrelated SELinux booleans or use a blanket `audit2allow` result.
 
 If `semanage` is unavailable, provide the native policy-management tools before doing the label check. If new denials appear later, investigate them separately rather than expanding this module automatically.
+
+## SELinux routing and DNS permissions
+
+Use the optional [network/DNS module](../local_openfortivpn_network.te) when authentication and PPP succeed but route setup is denied, or an audit event denies `openfortivpn_t` executing `resolvectl` labeled `bin_t`. A routing `EPERM` alone does not prove SELinux is the cause; also check that the root service has `CAP_NET_ADMIN` and no network sandbox restrictions.
+
+**Permission scope:** this module adds host-wide `net_admin`, TCP/UDP socket use, route netlink access, and DNS-helper communication with the system bus and `systemd-resolved`. Network administration is not limited to VPN routes, and execution permission applies to **every `bin_t` executable**, not just `resolvectl`; helpers remain confined to `openfortivpn_t` rather than becoming unconfined. It does not make SELinux permissive, add generic file-write permissions, relabel binaries, or replace the separate SAML listener policy; existing port-label restrictions remain.
+
+**Executable trust:** helpers inherit the domain's existing permissions as well as these additional allowances; confinement is not helper-specific least privilege. Use this policy only with trusted, root-controlled `bin_t` executables and parent directories.
+
+**Build and install both modules** from the checkout root using the [shared SELinux installer](../install-selinux-policy.sh). Review the [listener's port-label scope](#selinux-listener-permission) too: the installer always includes that allowance, not just networking/DNS. It requires `checkmodule`, `semodule_package`, `semodule`, `getenforce` and `sudo`; no policy development headers are needed:
+```bash
+bash .config/openfortivpn/install-selinux-policy.sh
+```
+
+The installer compiles the adjacent network/DNS source and installs it alongside the adjacent SAML CIL policy in one `semodule` invocation. It checks enforcing mode before installation, verifies both module names, and leaves the VPN service untouched; temporary build files are removed on exit, with no prebuilt package or fixed `/tmp` path required.
+
+The install links against the host's policy and rejects missing types or incompatible rules; compilation alone does not validate that linkage. Do not disable enforcement to make installation succeed; if installation succeeds but the listing check fails, inspect the installed state before retrying or rolling back.
+
+**No automatic reconnect:** installation takes effect for the running process without re-authentication, but does not replay failed route/DNS operations. If the tunnel has already passed setup, reconnect and authenticate when convenient; then check `ip route show dev ppp0`, `resolvectl status ppp0`, and access to a known internal resource by address and by name. Inspect new audit events separately if failures remain; do not treat a running process or a successful module install as proof of a working tunnel.
+
+**Rollback only this additional allowance:**
+```bash
+sudo semodule -r local_openfortivpn_network
+```
+Removing the policy does not undo routes or DNS settings already applied; it may also prevent their cleanup by the confined client, so disconnect before removal when the module has been used for tunnel setup.
+
+**Policy basis:** explicit permissions follow Fedora's [socket/executable permission sets](https://github.com/fedora-selinux/selinux-policy/blob/rawhide/policy/support/obj_perm_sets.spt), [system-bus client interface](https://github.com/fedora-selinux/selinux-policy/blob/rawhide/policy/modules/contrib/dbus.if) and [resolved chat interface](https://github.com/fedora-selinux/selinux-policy/blob/rawhide/policy/modules/system/systemd.if). Linux route ioctls are visible in [openfortivpn 1.23.1](https://github.com/adrienverge/openfortivpn/blob/v1.23.1/src/ipv4.c); these sources explain the allowance, not a verified repair on every installed policy.
 
 ## Why process restart, and when to change approach
 

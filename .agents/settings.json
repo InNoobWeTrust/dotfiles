@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "defaultMode": "auto"
-  },
-  "effortLevel": "high",
-  "editorMode": "normal",
-  "verbose": true,
-  "skipAutoPermissionPrompt": true
-}
