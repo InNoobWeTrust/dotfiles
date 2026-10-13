@@ -96,8 +96,10 @@ export const HARNESSES: HarnessSpec[] = [
         bypassPermissions: ["--mode", "accept-edits", "--dangerously-skip-permissions"],
       })
       const args = ["--print"]
+      if (input.agySandbox) args.push("--sandbox")
       if (input.model) args.push("--model", input.model)
-      return join([args, permission(input.permissionMode), [input.prompt]])
+      const mode = input.agySandbox ? "bypassPermissions" : input.permissionMode
+      return join([args, permission(mode), [input.prompt]])
     },
   },
   {

@@ -29,3 +29,9 @@ args = []
 [mcp_servers.delegate]
 command = "mcp-delegate"
 args = []
+
+[mcp_servers.rea]
+command = "npx"
+args = ["-y", "rea-agents@6.4.0", "mcp"]
+startup_timeout_sec = 30
+enabled = false

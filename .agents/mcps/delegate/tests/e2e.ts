@@ -68,6 +68,10 @@ for arg in "$@"; do last="$arg"; done
   for arg in "$@"; do printf 'arg %s\\n' "$arg"; done
 } >> "$STUB_LOG"
 case "$last" in
+  *STUB_BLOCKED_NOISE*) printf 'partial answer\n'; head -c 100000 /dev/zero >&2; printf 'jetski: no output produced — a tool required the "read_url" permission that headless mode cannot prompt for, so it was auto-denied.\n' >&2; exit 0 ;;
+  *STUB_BLANK_NOISE*) printf ' \n'; head -c 100000 /dev/zero >&2; exit 0 ;;
+  *STUB_BLOCKED*) printf 'jetski: no output produced — a tool required the "read_url" permission that headless mode cannot prompt for, so it was auto-denied.\n' >&2; exit 0 ;;
+  *STUB_EMPTY*) exit 0 ;;
   *STUB_SLEEP*) printf 'pid %s\\n' "$$" >> "$STUB_LOG"; sleep 120 ;;
   *STUB_NOISE*) head -c 100000 /dev/zero; printf 'FINAL-ANSWER\n'; printf 'FINAL-ERROR\n' >&2; exit 0 ;;
   *STUB_FAIL*) printf 'stub refused\\n' >&2; exit 3 ;;
@@ -240,6 +244,7 @@ async function verifyStubbedEndToEnd() {
     expect(properties?.permissionMode?.description).toMatch(/human.*permission/i)
     expect(properties?.permissionMode?.description).toMatch(/not read-only/i)
     expect(Object.keys(runTool.inputSchema.properties ?? {}).sort()).toEqual([
+      "agySandbox",
       "harness",
       "model",
       "permissionMode",
@@ -366,6 +371,21 @@ async function verifyStubbedEndToEnd() {
     expect(agyCalls).toHaveLength(2)
     expect(agyCalls[0]?.argv).toEqual(["--print", agyPrompt])
     expect(agyCalls[1]?.argv).toEqual(["--print", "--model", "gemini-pro", agyPrompt])
+    const sandboxed = await api.call<DelegateOutput>("delegate_run", {
+      harness: "agy",
+      prompt: agyPrompt,
+      agySandbox: true,
+    })
+    expect(sandboxed.output.data?.argv).toContain("--sandbox")
+    expect(sandboxed.output.data?.argv).toContain("--dangerously-skip-permissions")
+    expect(sandboxed.output.data?.outcome).toBe("answered")
+    const unsupportedSandbox = await api.call("delegate_run", {
+      harness: "claude",
+      prompt: agyPrompt,
+      agySandbox: true,
+    })
+    expect(unsupportedSandbox.response.isError).toBe(true)
+    expect((await callLog(logFile)).length).toBe(3)
     await writeFile(logFile, "")
 
     // A successful turn: literal prompt, requested cwd, depth handed down.
@@ -495,6 +515,26 @@ async function verifyStubbedEndToEnd() {
     expect(failed.output.data?.ok).toBe(false)
     expect(failed.output.data?.exitCode).toBe(3)
     expect(failed.output.data?.stderr).toContain("stub refused")
+    expect(failed.output.data?.outcome).toBe("failed")
+
+    for (const [prompt, outcome] of [
+      ["STUB_BLOCKED", "blocked"],
+      ["STUB_EMPTY", "empty"],
+      ["STUB_BLOCKED_NOISE", "blocked"],
+      ["STUB_BLANK_NOISE", "empty"],
+    ]) {
+      const incomplete = await api.call<DelegateOutput>("delegate_run", { harness: "agy", prompt })
+      expect(incomplete.response.isError).toBe(true)
+      expect(incomplete.output.ok).toBe(false)
+      expect(incomplete.output.data?.ok).toBe(false)
+      expect(incomplete.output.data?.exitCode).toBe(0)
+      expect(incomplete.output.data?.outcome).toBe(outcome)
+      expect(incomplete.output.data?.stdoutPath).toBeTruthy()
+      expect(incomplete.output.data?.stderrPath).toBeTruthy()
+      expect(incomplete.output.error).toMatch(
+        outcome === "blocked" ? /explicit human approval/ : /without an answer/,
+      )
+    }
 
     // The wall-clock limit kills the delegated process group.
     const slow = await api.call<DelegateOutput>("delegate_run", {
@@ -644,7 +684,7 @@ async function verifyRealHarness() {
   const client = new Client({ name: "delegate-e2e-real", version: "1" })
   try {
     const transport = new StdioClientTransport({
-    command: path.resolve(root, "bin/mcp-delegate"),
+      command: path.resolve(root, "bin/mcp-delegate"),
       cwd: scratch,
       env: { ...process.env, DELEGATE_DEPTH: "" },
       stderr: "pipe",

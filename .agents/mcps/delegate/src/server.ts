@@ -1,5 +1,6 @@
 #!/usr/bin/env -S bun --no-env-file
 import { z } from "zod@4"
+import { createReadStream } from "node:fs"
 import { McpServer } from "@modelcontextprotocol/sdk@1/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk@1/server/stdio.js"
 import { INLINE_OUTPUT_BYTES } from "../../shared/output.ts"
@@ -20,6 +21,29 @@ import { onceAsync } from "./lifecycle.ts"
 import { inspectReadiness } from "./readiness.ts"
 import { assertArgv, assertRegistryInvariants, harnessById } from "./registry.ts"
 import { resolveWorkdir } from "./workdir.ts"
+
+const AGY_HEADLESS_DENIAL = [
+  /jetski: no output produced/i,
+  /headless mode cannot prompt for/i,
+  /auto-denied/i,
+]
+
+/** Scan retained streams without loading arbitrarily large answers into memory. */
+async function streamMatches(path: string | null, patterns: RegExp[]): Promise<boolean> {
+  if (path === null) throw new Error("Retained stream unavailable for outcome verification.")
+  const matched = patterns.map(() => false)
+  let tail = ""
+  for await (const chunk of createReadStream(path, { encoding: "utf8" })) {
+    const text = tail + chunk
+    for (const [index, pattern] of patterns.entries()) {
+      matched[index] ||= pattern.test(text)
+    }
+    if (matched.every(Boolean)) return true
+    // Known diagnostic fragments are shorter than this overlap.
+    tail = text.slice(-256)
+  }
+  return false
+}
 
 // A malformed registry entry would misbuild argv for a real delegated turn, so
 // it stops the server here rather than surfacing as one odd command line later.
@@ -133,6 +157,7 @@ function instructions(): string {
     "delegate_status discovers the configured external AI subagents and their CLI IDs, models, readiness, and permission modes; the status it returns now is authoritative. These instructions are a startup snapshot that a refresh does not regenerate, so pass refresh:true after an account or config change to re-run detection; discovery runs no model task.",
     "The prompt supplies the goal, the necessary context, the allowed actions, the exact paths, the acceptance criteria, and the output format. No parent conversation, follow-up question, or resumable session is supplied, so the subagent sees only your prompt and cannot ask one.",
     "Scope the prompt instead of raising permissionMode: 'default' keeps the CLI's own settings and is not read-only isolation, 'acceptEdits' permits unattended edits, and 'bypassPermissions' requires explicit human permission. A broader mode grants the child authority over the host, and the child cannot be supervised from here once it starts.",
+    "AGY agySandbox:true is an all-tool autoapproval profile: it adds --sandbox and overrides permissionMode to bypassPermissions, without editing user settings. Use it only with explicit human authorization; terminal restrictions do not make native tools/MCP read-only. Otherwise keep the requested permissionMode. Check outcome and retained stderr even on exit 0; answered is not proof of task completion. Do not silently downgrade independent research to synthesis of supplied excerpts.",
     "Raising wallTimeMs can raise cost, since a longer turn keeps a model session alive. Inline previews are fixed at 64 KiB combined by the server; original stdoutPath/stderrPath are always returned, even for small output. Output size never limits generation or execution lifetime.",
     `Delegation depth is ${depth} of a maximum ${MAX_DEPTH}; a nested server refuses further hops to stop runaway chains.`,
     "Output volume never kills a delegated turn. Oversized replies are preserved in private XDG cache files; truncated means the inline preview is shortened, so read stdoutPath and stderrPath for the original output. Wall-clock expiry or cache IO failure stops the process group and is reported explicitly; those files contain only output captured before the failure. Cache files are retained until the user removes them.",
@@ -237,6 +262,9 @@ const WORKDIR_SENSITIVE_IDS = new Set<string>(["opencode", "codex", "cursor"])
 
 async function delegateRun(rawInput: unknown): Promise<DelegateOutput> {
   const input = delegateRunSchema.parse(rawInput)
+  if (input.agySandbox !== undefined && input.harness !== "agy") {
+    throw new Error("agySandbox is supported only by the agy harness.")
+  }
 
   const promptBytes = Buffer.byteLength(input.prompt, "utf8")
   if (promptBytes > MAX_PROMPT_BYTES) {
@@ -314,10 +342,43 @@ async function delegateRun(rawInput: unknown): Promise<DelegateOutput> {
       maxOutputBytes: INLINE_OUTPUT_BYTES,
     })
 
+    const executionOk =
+      result.stop === "exited" && result.exitCode === 0 && result.error === undefined
+    // Match AGY's actual headless diagnostic, not arbitrary worker prose.
+    let blocked =
+      spec.id === "agy" && AGY_HEADLESS_DENIAL.every((pattern) => pattern.test(result.stderr))
+    let outcome: DelegateOutput["outcome"] = "answered"
+    let outcomeError: string | undefined
+    let hasAnswer = result.stdoutBytes > 0 && result.stdout.trim() !== ""
+    if (executionOk && result.truncated) {
+      try {
+        if (!hasAnswer && result.stdoutBytes > 0) {
+          hasAnswer = await streamMatches(result.stdoutPath, [/\S/u])
+        }
+        if (spec.id === "agy" && !blocked) {
+          blocked = await streamMatches(result.stderrPath, AGY_HEADLESS_DENIAL)
+        }
+      } catch (error) {
+        outcome = "failed"
+        outcomeError = `Could not verify retained streams: ${String(error)}`
+      }
+    }
+    if (!executionOk || outcomeError !== undefined) {
+      outcome = "failed"
+    } else if (blocked) {
+      outcome = "blocked"
+      outcomeError =
+        "AGY headless tool permission was denied. Inspect retained stderr before retrying. With explicit human approval, agySandbox:true enables terminal sandboxing plus ALL-tool autoapproval without editing user settings. Do not silently escalate authority or substitute supplied excerpts for independent research."
+    } else if (!hasAnswer) {
+      outcome = "empty"
+      outcomeError =
+        "Harness exited without an answer; task completion is unverified. Inspect the retained streams before retrying."
+    }
     const data = delegateOutputSchema.parse({
       // A teardown that could not finish leaves a process running unsupervised, so
       // it fails the turn even when the harness itself exited 0.
-      ok: result.stop === "exited" && result.exitCode === 0 && result.error === undefined,
+      ok: outcome === "answered",
+      outcome,
       harness: spec.id,
       executable: detectedHarness.executable,
       exitCode: result.exitCode,
@@ -340,7 +401,7 @@ async function delegateRun(rawInput: unknown): Promise<DelegateOutput> {
 
     // Execution failure: wrap with DelegatedTurnError so respond() can retain
     // the partial output alongside ok=false and MCP isError=true.
-    if (!data.ok) throw new DelegatedTurnError(data, result.error)
+    if (!data.ok) throw new DelegatedTurnError(data, result.error ?? outcomeError)
     return data
   })
 }

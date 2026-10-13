@@ -9,7 +9,7 @@ export const MAX_WALL_TIME_MS = 7_200_000
 /**
  * Authority granted to the delegated harness, mapped per harness to its own flag.
  * `default` passes no permission flag at all, so the harness keeps its own
- * non-interactive behaviour (read-only or tool-denying on most CLIs).
+ * non-interactive behaviour; this is not a read-only guarantee.
  */
 export const permissionModeSchema = z
   .enum(["default", "acceptEdits", "bypassPermissions"])
@@ -36,9 +36,8 @@ const optionSafe = (label: string) => ({
 })
 
 /**
- * One schema shared by every advertised tool. Harnesses that cannot honour a
- * field ignore it; the registry records which capabilities each one supports so
- * the tool description can say so before the call.
+ * One schema shared by every advertised tool. Unsupported authority controls
+ * are refused rather than silently ignored.
  */
 export const delegateInputSchema = {
   prompt: z
@@ -65,12 +64,18 @@ export const delegateInputSchema = {
   permissionMode: permissionModeSchema
     .default("default")
     .describe(
-      "Authority granted to the delegated harness. 'default' (no permission flag) keeps the harness's own non-interactive policy and is not read-only isolation; 'acceptEdits' lets it apply file edits unattended; 'bypassPermissions' drops all approval prompts for every tool and requires explicit human permission. Higher modes execute whatever the prompt asks for, so scope the prompt instead of escalating this. Defaults to 'default'.",
+      "Authority granted to the delegated harness. 'default' (no permission flag) keeps the harness's own non-interactive policy and is not read-only isolation; 'acceptEdits' lets it apply file edits unattended; 'bypassPermissions' drops all approval prompts for every tool and requires explicit human permission. For AGY, agySandbox:true overrides this to bypassPermissions. Higher modes execute whatever the prompt asks for, so scope the prompt instead of escalating this. Defaults to 'default'.",
     ),
   wallTimeMs: positiveInt(MAX_WALL_TIME_MS)
     .default(DEFAULT_WALL_TIME_MS)
     .describe(
       "Wall-clock limit for the whole delegated turn, including model latency. Default 900000 (15 min), maximum 7200000 (2 h). On expiry the harness process group is killed and partial output is returned.",
+    ),
+  agySandbox: z
+    .boolean()
+    .optional()
+    .describe(
+      "AGY only: true passes --sandbox and automatically selects bypassPermissions (--mode accept-edits --dangerously-skip-permissions), overriding permissionMode. Approves ALL tools, not just URLs; requires explicit human approval for this profile. Terminal restrictions are not hard read-only isolation. Omitted or false preserves permissionMode; other harnesses reject this field. No user settings are edited.",
     ),
 } satisfies Record<string, z.ZodType>
 
@@ -93,7 +98,16 @@ export type DelegateRunInput = z.infer<typeof delegateRunSchema>
 
 export const delegateOutputSchema = z
   .object({
-    ok: z.boolean().describe("True only when the harness exited 0 within every limit."),
+    ok: z
+      .boolean()
+      .describe(
+        "True only when execution succeeded and a nonempty answer was returned without a recognized headless permission denial. Not proof of task completion.",
+      ),
+    outcome: z
+      .enum(["answered", "blocked", "empty", "failed"])
+      .describe(
+        "Observable run outcome, not semantic verification of the answer. Blocked means a recognized headless permission denial; empty means no stdout answer.",
+      ),
     harness: z.string().describe("Harness id that ran, e.g. 'claude'."),
     executable: z.string().describe("Absolute path of the binary that was executed."),
     exitCode: z.number().int().nullable().describe("Exit status, or null when killed by a signal."),

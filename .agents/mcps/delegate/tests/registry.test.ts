@@ -106,6 +106,39 @@ describe("harness registry", () => {
     expect(bypass).toContain("--dangerously-skip-permissions")
   })
 
+  test("AGY sandbox profile autoapproves every tool exactly once for every permission mode", () => {
+    const agy = mustFind("agy")
+    for (const permissionMode of MODES) {
+      const task = input({ agySandbox: true, permissionMode, model: "some-model" })
+      const argv = agy.buildArgs(task, "/tmp/work")
+      expect(argv).toEqual([
+        "--print",
+        "--sandbox",
+        "--model",
+        "some-model",
+        "--mode",
+        "accept-edits",
+        "--dangerously-skip-permissions",
+        task.prompt,
+      ])
+      assertArgv(agy, argv, task.prompt)
+    }
+  })
+
+  test("AGY false or omitted sandbox profile preserves the requested permission mode", () => {
+    const agy = mustFind("agy")
+    for (const permissionMode of MODES) {
+      const original = agy.buildArgs(input({ permissionMode }), "/tmp/work")
+      expect(original).not.toContain("--sandbox")
+      expect(original.includes("--dangerously-skip-permissions")).toBe(
+        permissionMode === "bypassPermissions",
+      )
+      expect(agy.buildArgs(input({ permissionMode, agySandbox: false }), "/tmp/work")).toEqual(
+        original,
+      )
+    }
+  })
+
   test("harnesses with a directory flag receive the resolved workdir", () => {
     for (const harness of HARNESSES.filter((entry) => entry.cwdFlag !== null)) {
       const flag = harness.cwdFlag

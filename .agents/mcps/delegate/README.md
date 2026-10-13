@@ -94,6 +94,33 @@ or choose a native model slug from `agy models`; that catalog is not login proof
 An empty status `models` list means no verified model allowlist, not no models.
 
 ## First delegation
+### Headless web research
+
+AGY cannot prompt for new permissions in `--print` mode. With explicit human
+approval for **all-tool autoapproval**, use the per-invocation sandbox profile:
+
+```json
+{ "harness": "agy", "agySandbox": true, "prompt": "Your bounded task" }
+```
+
+This passes `--sandbox --mode accept-edits --dangerously-skip-permissions`.
+It overrides `permissionMode` to `bypassPermissions`, even when that field is
+omitted or set to `default` or `acceptEdits`. **Every tool is autoapproved**, not
+just URL reads: file edits, commands, interactive website actions and MCP calls.
+Delegate does not edit user settings or create a temporary configuration.
+
+The sandbox imposes terminal restrictions; it is **not hard read-only isolation**
+for native tools or MCP, and the workspace can remain writable. Scope the task
+and use this profile only within explicit human authorization. `agySandbox: false`
+or omission preserves the requested `permissionMode`; it does not disable any
+sandbox already enabled in AGY settings. No automatic approval is added unless
+the caller selects this profile or explicitly selects `bypassPermissions`.
+
+If a run is blocked, inspect retained stderr before retrying; do not silently
+escalate authority or replace independent research with main-agent excerpts.
+Label any agreed fallback as synthesis of supplied sources.
+
+### Dispatch
 
 **Prefer ready AGY:** For independent exploration, research, scoped implementation
 or verification, prefer `delegate_run` with `"harness": "agy"` over a native
@@ -130,8 +157,9 @@ scheduler. The main agent still decides what to dispatch and checks the result.
 | `prompt` | required | The whole task, as one argument. Max 64 KiB. Must not begin with `-`. |
 | `workdir` | MCP root, else the server's directory | Absolute directory the harness runs in |
 | `model` | the harness's default | Exact native ID when status has a model list; otherwise passed to the native CLI without claiming model access. Must not begin with `-`; check `modelSupported`. |
-| `permissionMode` | `default` | `default`, `acceptEdits`, or `bypassPermissions`, mapped to that harness's own flag. An unsupported mode is refused, never downgraded. |
+| `permissionMode` | `default` | `default`, `acceptEdits`, or `bypassPermissions`, mapped to that harness's own flag. An unsupported mode is refused. AGY `agySandbox: true` overrides it to `bypassPermissions`. |
 | `wallTimeMs` | 900000 | Wall-clock limit for the whole turn; maximum 7200000 |
+| `agySandbox` | omitted | AGY only: `true` enables terminal sandboxing plus all-tool autoapproval, overriding `permissionMode`; requires explicit human authorization. `false`/omitted preserves `permissionMode`. Other harnesses refuse this field. No settings edits; not read-only isolation. |
 
 Successful responses are `{ "ok": true, "data": … }`; validation/readiness
 failures are `{ "ok": false, "error": … }`. Failed turns also retain `data`,
@@ -139,7 +167,12 @@ including partial output, and set the MCP error flag; the text fallback contains
 the same JSON. A call the input schema rejects is
 answered by the MCP SDK before the delegate handler runs, so it arrives as a
 text-only error rather than in this shape.
-Inside `data`, `ok` is true only when the harness exited 0 inside every limit;
+Inside `data`, `ok` requires a successful execution with a nonempty answer and
+no recognized AGY headless permission denial. `outcome` is `answered`, `blocked`,
+`empty`, or `failed`. This is observable execution evidence, not proof that the
+task was completed correctly; the main agent must check the answer. Denial
+detection matches AGY's known stderr diagnostic and is not a general semantic
+classifier. `blocked` and `empty` set the MCP error flag even on exit 0;
 `stop` says why a run ended (`exited`, `wall_time`, `capture_failed`,
 `spawn_failed`).
 

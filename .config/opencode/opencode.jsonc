@@ -21,6 +21,11 @@
   },
   "mcp": {
     "servers": {
+      "rea": {
+        "type": "local",
+        "command": ["npx", "-y", "rea-agents@6.4.0", "mcp"],
+        "disabled": true,
+      },
       "opencode-decisions": {
         "type": "local",
         "command": [
@@ -40,6 +45,7 @@
       },
       "delegate": {
         "type": "local",
+        "codemode": false,
         "command": [
           "mcp-delegate"
         ],

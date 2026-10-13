@@ -40,7 +40,31 @@ and processes. Add `DELEGATE_E2E_REAL=1` for one paid turn against the real
 | Shutdown runs once | `lifecycle.test.ts` drives the re-entrant close path and asserts the transport closes exactly once; it fails (`Expected: 1 / Received: 11`) against the naive guard. E2E additionally confirms the server exits 0 with empty stderr on stdin hang-up |
 | Protocol shape holds | Every response the server produces is parsed twice: once as structured content and once from the JSON text fallback, and both must be equal. A call the input schema rejects is answered by the MCP SDK before the delegate handler runs, so it arrives as a text-only error and is not covered here. |
 
-## Current verification — 2026-10-12
+## Current verification — 2026-10-13
+
+Headless permission recovery and explicitly approved sandbox/autoapproval profile:
+
+| Check | Result |
+|---|---|
+| Formatting and lint | PASS: Biome checked 18 files with no diagnostics; scoped native execution authorized after the sandbox could not access Bun scratch/cache |
+| Registry tests | PASS: 20 tests, 285 assertions in the offline read-only sandbox, including exact sandbox/autoapproval argv for all permission modes and unchanged false/omitted behavior |
+| Targeted retained-stream checks | PASS: scanner recognizes the previously captured real AGY denial, empty stdout and a successful answer; no model/network calls |
+| AGY sandbox argument checks | PASS: true adds `--sandbox` and automatically selects all-tool approval; false/omitted preserve `permissionMode`. The user explicitly authorized this coupling |
+| Source compilation | PASS: Bun bundles the server with external packages without writing workspace files |
+| Independent source review | Corrected truncated-preview denial detection, blank-output detection and early refusal of unsupported sandbox controls; subsequent review confirmed the approved autoapproval coupling, unchanged defaults and matching schema/documentation warnings |
+| Stub MCP E2E and full process suite | UNVERIFIED: container creation failed; no host process-tree substitute |
+| Live narrowly allowed web retrieval | UNVERIFIED: bounded AGY attempt timed out without an answer; no confirmed permission success or new denial |
+
+Four documentation-host read grants were initially added to host AGY settings,
+then removed at the user's request to avoid persistent permission changes.
+Unrelated preferences were preserved. The approved per-invocation profile uses
+AGY's existing `--sandbox --mode accept-edits --dangerously-skip-permissions`
+flags, not a settings-file override or temporary HOME. It autoapproves every
+tool and is not hard read-only isolation. Shared skills were not changed.
+Reconnect the Delegate MCP to load the new schema and recovery instructions.
+No running service was restarted.
+
+## Prior verification — 2026-10-12
 
 Lossless output redesign:
 

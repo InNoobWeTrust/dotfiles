@@ -14,6 +14,7 @@ Top-level entry point for dotfiles agent memory graph.
 
 ## Active Task Memory
 
+- REA MCP and global skill-lock integration: `mem:tasks/rea-integration/task` — six opt-in registrations configured; live startup blocked by unsupported host runtime, not user-accepted.
 - OpenFortiVPN networking and DNS SELinux compatibility: `mem:tasks/openfortivpn-network-20261013/task` — broad networking/DNS authorized, not unrestricted access; functional retry pending.
 
 - Delegate MCP lossless oversized output: `mem:tasks/delegate-output-20261012/task` — authorized redesign, not accepted or consolidated.

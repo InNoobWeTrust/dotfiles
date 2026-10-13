@@ -491,6 +491,11 @@ approvals:
   cron_mode: deny
   mcp_reload_confirm: true
   destructive_slash_confirm: true
+mcp_servers:
+  rea:
+    command: npx
+    args: ['-y', 'rea-agents@6.4.0', mcp]
+    enabled: false
 command_allowlist: []
 quick_commands: {}
 hooks: {}
