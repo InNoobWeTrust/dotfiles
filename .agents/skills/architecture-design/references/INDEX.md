@@ -24,6 +24,8 @@ Master index for all reference material. Load only what the current workflow nee
 ## Focused Stack Selection
 
 - `dataflow-stack-selection.md` — inspectable analytical/scientific dataflows; plain Python/Ibis/marimo vs Hamilton vs dbt; graph and run-provenance contracts. Use without the full enterprise workflow for a narrow stack recommendation.
+- [Parallel compute selection](parallel-compute-selection.md) — local workers, Dask/Ray, Slurm/MPI, Nextflow, Hadoop/Spark and untrusted compute boundaries; source-backed prototype, no benchmark claims.
+- [Distributed integrity selection](distributed-integrity-selection.md) — storage availability, sync, Raft, CRDTs, hashes/signatures, transparency and BFT/ledger boundaries; source-backed prototype, no deployed guarantees.
 
 ## Patterns
 

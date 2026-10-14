@@ -1,6 +1,6 @@
 ---
 name: architecture-design
-description: "Use this skill for software architecture work — system design, architecture documentation, pattern selection (Modular Monolith default), modular component design (C4 L1-L3), DDD bounded contexts, ADR writing, architecture audits, API/data/security architecture, and fitness functions. Composes with db-design and code-craft."
+description: "Use this skill for software architecture work — system design, architecture documentation, pattern selection (Modular Monolith default), modular component design (C4 L1-L3), DDD bounded contexts, ADR writing, architecture audits, API/data/security architecture, parallel/distributed compute selection (workers, Hadoop, HPC), storage/sync/ledger integrity, and fitness functions. Composes with db-design and code-craft."
 ---
 
 # Architecture Design
@@ -20,6 +20,9 @@ Deep detail lives in `references/`.
 | Modular Monolith & Bounded Context design | `references/patterns/modular-architecture.md` |
 | Operational Database Schema Design | Route to `db-design` skill |
 | Analytical/scientific pipeline stack selection; inspectable DAGs or dataflow lineage | `references/dataflow-stack-selection.md` |
+| Local parallelism, distributed workers, Hadoop/Spark, HPC or compute networks | `references/parallel-compute-selection.md` — provisional selection brief, not deployment authority |
+| Distributed storage/sync, consensus, CRDTs, content addressing or ledger integrity | `references/distributed-integrity-selection.md` — provisional selection brief, not a security certification |
+| Platform already chosen; integrating/using workers, storage/sync or consensus safely | Route to `distributed-systems-operations` for execution, retry/commit, resource and recovery contracts |
 | Drawing C4 diagrams | `references/visualization/c4-mermaid-templates.md` |
 | Writing an ADR | `references/adr-templates.md` |
 | Analyzing tradeoffs or fitness | `references/analysis/fitness-functions.md` |

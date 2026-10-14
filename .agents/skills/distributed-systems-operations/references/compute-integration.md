@@ -1,0 +1,49 @@
+# Compute integration: make parallelism pay
+
+Apply to an already-chosen local pool, task runtime, HPC allocation or data engine. [Sources](sources.md) distinguish verified platform semantics from engineering guidance. Establish the [run contract](run-contract.md) first.
+
+## 1. Partition by correctness and cost
+
+- Extract the existing computation into an explicit input → result boundary before distributing it. Keep worker inputs serializable and small: immutable IDs, paths and configuration rather than live database connections, clients, locks or large closures. Initialize process-local clients/models/resources in workers as required by the platform.
+- Partition on meaningful units; verify coverage, ordering, joins, overlap/halos and reduction semantics. Floating-point reductions may change with execution order; compare with a declared tolerance rather than promising byte identity.
+- Measure task-duration distribution. Batch tiny units to amortize scheduling, serialization and initialization; split large/skewed partitions to avoid one straggler dominating the run. Do not hardcode a universal minimum task duration.
+- Reuse costly immutable assets at the appropriate worker/process/node level; account for one copy per process and initialization concurrency. Stateful actors retain memory, not inherently durable application state.
+
+## 2. Bound both execution and demand
+
+Running slots and outstanding submissions are different controls. Resource declarations limit scheduling; a bounded submission window limits queued descriptors, futures and retained results. Stream/consume completed results and persist needed output descriptors instead of collecting everything in coordinator RAM. With Ray, `ray.wait` supports a pending-work window [C1]; calling `ray.get` immediately on each submission serializes the loop.
+
+For an allocation of C cores, begin with a budget such as `worker_processes × native_threads_per_process ≤ C`, then account for coordinator/other load. It is a budget check, not a throughput theorem. Bound nested BLAS/OpenMP/data-loader threads, ranks, GPU processes and simultaneous jobs. Scheduler CPU/GPU labels are not proof of hard memory isolation or enough VRAM: verify enforcement and measure RSS/VRAM.
+
+Budget peak concurrent chunks, temporary copies, serialization buffers, object store, shuffle/spill and result retention—not input file size alone. Bound shared-storage readers/writers and metadata operations. A thousand workers loading the same model or creating tiny files can stall the filesystem despite spare CPU.
+
+## 3. Move references, minimize transfers
+
+Map data paths from each worker's perspective. Stage explicitly; distinguish shared filesystem, node-local scratch and object storage. Copy durable results/checkpoints before scratch eviction under the site's lifecycle policy. A path valid on the submit host may refer to unrelated or missing bytes remotely.
+
+Load data on workers or use the runtime's supported data placement. Avoid embedding huge client objects in task graphs [C2]. Persist intermediate results only when measured reuse justifies memory/storage pressure; cache is not a recovery copy. Partition/layout changes can outperform adding workers; change one lever at a time and record the effect.
+
+## 4. Treat failures by effect, not exception name alone
+
+| Observation | Safe next action |
+|---|---|
+| Transient read/network failure, no visible effect | Bounded retry with deadline/backoff if policy permits |
+| Bad input/schema, deterministic code exception | Record failing identity; stop/quarantine per declared completeness policy; do not retry unchanged forever |
+| OOM or worker killed repeatedly | Inspect resource/partition evidence; do not expand a cluster or migrate the same crashing task across all workers blindly |
+| Timeout/lost connection during write | Outcome is unknown; reconcile commit/request ID before replay |
+| Coordinator/driver loss | Reconstruct from durable manifest/commits/checkpoints; runtime in-memory futures are not the sole resume record |
+| Cancelled job/task | Determine which descendants/attempts remain and whether effects may arrive late; do not label cancellation as rollback |
+
+Make side effects idempotent or controlled by an established sink commit protocol. Framework retries, user retry wrappers, scheduler requeues and speculative attempts can multiply execution; bound the combined policy. Separate logical task identity, attempt count and scientific replicate identity.
+
+## 5. Observe useful work and tune one bottleneck
+
+Record input/code/config identity, queue delay, staging/startup, compute, shuffle/transfer, publication/aggregation, task skew, errors/retries and committed-valid outputs. Measure steady-state throughput and end-to-end latency/cost; include failed and duplicate attempts. A busy dashboard is not progress.
+
+Tune partition/batch size, concurrency or placement one at a time. Watch memory, disk capacity/inodes, object-store/spill growth, I/O latency and oldest pending task. Set stall/failure thresholds and a stop-submitting action within the contract. If increased concurrency reduces useful throughput, roll back the tuning change rather than raising every limit.
+
+## 6. Resume without repeating the whole experiment
+
+Inventory expected units, valid commits, active attempts and incomplete work. Verify input/config/environment compatibility before reusing checkpoints or cached outputs; a changed command can invalidate resume assumptions. Resume only reconciled missing/failed units according to policy, and validate the complete aggregate again.
+
+Local execution follows the same semantics: protect multiprocessing entrypoints and verify the actual process start method/runtime requirements, choose threads only when library/GIL/I/O behavior fits, and cap nested threads. Do not replace a working environment or install a runtime simply to follow this checklist. See [platform quirks](platform-quirks.md) for the chosen deployment.
