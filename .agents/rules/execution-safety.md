@@ -214,11 +214,11 @@ Workload isolation is unchanged: preserve non-root, no-network and bounded-resou
 
 ## Long-Running Processes: Multiplexer Priority
 
-**Periodic-check exception:** keep the actual workload in its multiplexer or distributed queue, but a bounded synchronous `sleep` or one-shot background timer/check worker may provide the next monitoring wake-up. Use background delegation only when its completion notifies the parent; it is not a detached workload runner. Follow [Periodic Progress Checks](../skills/subagent-dispatch/references/periodic-checks.md): one outstanding timer per target, an explicit owner, read-only checks, bounded execution, and rearming before other work. All sandbox/resource gates still apply; no unmonitored `&`/`nohup` loops or recursive timer workers.
+**Lightweight background-command exception:** for bounded sleeps, delayed reminders, and simple shell/status commands, prefer the harness's native background-command facility with completion notifications over a subagent or multiplexer. Do not launch an LLM worker merely to sleep, run supplied shell commands, or relay their output; reserve delegation for substantive reasoning. Follow [Periodic Progress Checks](../skills/subagent-dispatch/references/periodic-checks.md) for monitoring ownership, one outstanding timer per target, bounds, and rearming. All sandbox/resource gates still apply: native background execution is not permission for unsandboxed shell execution. If no safe notifying background route exists, use a bounded synchronous command or report the limitation, not a sleep-only subagent.
 
-Harness-level background process management (async task tools, background flags, subshell daemons) and ad-hoc backgrounding (`&`, `nohup`) are error-prone and brittle across agent harnesses: stdout/stderr buffers are easily lost, processes can become orphaned zombies, and the user has no direct visibility into running jobs.
+Outside that lightweight exception, harness-level background process management and ad-hoc backgrounding (`&`, `nohup`) can lose logs or leave orphaned processes; use a multiplexer for persistent workloads. The exception requires inspectable output, bounded lifetime, and supported lifecycle controls, not detached shell loops.
 
-For any long-running command, dev server, watcher, test runner, or daemon:
+For long-running commands outside the lightweight exception, including dev servers, watchers, test runners, and daemons:
 **Prioritize a terminal multiplexer** to ensure OS-level session persistence, inspectable logs, and clean lifecycle management:
 
 1. **`tmux` (Primary)**: Standard modern standalone multiplexer. Robust pane/buffer capture, session scripting, and `agent-` namespace isolation.
@@ -265,7 +265,7 @@ For any long-running command, dev server, watcher, test runner, or daemon:
 - [ ] `python script.py` / `python3 script.py` was not used for scripts that import external packages
 - [ ] `npx`/`bunx` used only for published CLI tools, not custom scripts
 - [ ] Dependency fallback was not silently replaced by a global install
-- [ ] Long-running processes prioritized `tmux` or `screen` over harness background tasks or `&`/`nohup`
+- [ ] Persistent workloads prioritized `tmux` or `screen`; bounded waits/simple checks used safe native background commands when available, never sleep-only subagents or unmonitored `&`/`nohup`
 - [ ] Multiplexer sessions used `agent-` namespace and did not touch user sessions
 - [ ] This rule was loaded before the first shell command; fast-path tasks did not waive it
 - [ ] Every shell command used an available sandbox tool or verified platform sandbox, including inspection, tests, scratch scripts, and cleanup; dependency runners were not mistaken for OS isolation

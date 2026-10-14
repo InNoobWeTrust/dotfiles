@@ -30,6 +30,8 @@ Stop / deliverable / anti-patterns: `references/stop-deliverable-antipatterns.md
 
 ## Workflow A (summary)
 
+If unfamiliar-domain knowledge or practitioners' judgment is still missing, use [domain-curation](../domain-curation/SKILL.md) before encoding domain advice. Receive its sources, conditional judgments, task-attempt evidence and unresolved limits; a brief without sufficient reuse/evidence need not become a skill. Skip this handoff when the authoring contract is already grounded.
+
 1. Validate need (extend existing skill first; not one-offs).
 2. Define scope and reader contract (name, description, exclusions, I/O, phases, capability requirements).
 3. Design phases, stop conditions, deliverables, anti-patterns.

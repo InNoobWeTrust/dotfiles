@@ -42,15 +42,17 @@ Default posture: **act on low-risk reversible work inside agreed bounds; ask pro
 
 ## Process-Resource Incident Gate (Mandatory)
 
-Before delegating or self-executing any task that may spawn processes, recurse agents, run parallel loops, fan out work, or stress/test resources, perform and record a preflight risk assessment: process-tree shape, maximum concurrency, CPU, RAM+swap, PIDs, writable storage, network, timeout, and cleanup/stop conditions. Do not start until hard upper bounds are explicit and positively verified.
+Classify the assigned workload, not merely the fact that a CLI worker runs as a process. Ordinary bounded delegation (source reads, document checks, scoped edits) requires explicit scope, allowed actions, concurrency, a wall-clock limit and cancellation/cleanup behavior. It does not require separately verified CPU, RAM+swap or PID isolation just to launch the worker. Apply the same distinction to external CLI and native workers; a read-only prompt is an instruction boundary, not hard isolation.
+
+For workloads that intentionally create process trees, recurse agents, run parallel execution loops, fan out child workloads, or stress/test resources, perform and record a preflight risk assessment: process-tree shape, maximum concurrency, CPU, RAM+swap, PIDs, writable storage, network, timeout, and cleanup/stop conditions. Do not start those workloads until their hard upper bounds are explicit and positively verified. An ordinary worker assignment must not silently expand into one of these workloads.
 
 - Recursive/process-tree/botnet-like tests are prohibited on the host. Run them only in an explicitly constrained container or VM with CPU, RAM+swap, PID, writable-storage, network, timeout, and no-host-PID/no-host-socket limits.
-- Never run an unattended/AFK process-spawning workload without those isolation and bound controls.
+- Never run an unattended/AFK process-tree, recursive, fan-out or stress workload without those isolation and bound controls. Other AFK isolation requirements remain binding.
 - Stop immediately on resource exhaustion, unexpected process proliferation, bound violations, or loss of containment; preserve the checkpoint and escalate.
 
 This gate applies before delegation **and** before the autonomous agent executes a command itself; a task prompt must carry an explicit safety contract covering scope, bounds, isolation, observables, stop signal, and cleanup.
 
-These are per-workload controls, not a default deadline or iteration cap for the overall delivery. Apply controls to actual process-spawning/stress work; a read-only native-tool reviewer needs bounded scope/concurrency and cancellation, not a fabricated claim of OS isolation. Do not launch process workloads whose required controls cannot be verified.
+These are per-workload controls, not a default deadline or iteration cap for the overall delivery. Missing OS resource isolation alone is not a reason to reject ordinary bounded CLI delegation or prefer a native reviewer. Preserve explicitly required hard isolation, authorization and sandbox boundaries; when the actual workload needs controls that cannot be verified, stop only that affected workload.
 
 ---
 

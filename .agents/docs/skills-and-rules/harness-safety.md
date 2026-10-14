@@ -83,11 +83,11 @@ Use `container_acquire`, `container_exec`, and `container_release` for an isolat
 
 ### Periodic wake-ups
 
-For “check periodically” requests, use [Periodic Progress Checks](../../skills/subagent-dispatch/references/periodic-checks.md). The workload stays in tmux/screen or its distributed scheduler; a bounded wait or timer worker schedules inspection independently of other work.
+For “check periodically” requests, use [Periodic Progress Checks](../../skills/subagent-dispatch/references/periodic-checks.md). The workload stays in tmux/screen or its distributed scheduler; prefer a bounded native background command with completion notification for sleeps and simple shell checks. Do not launch a subagent just to wait or relay command output.
 
 **Capability boundary:** synchronous `sleep` resumes the current waiting turn when the tool returns. To continue other work meanwhile, the harness must deliver a background completion notification to the parent. A detached sleep, log update, or synchronous external delegate alone does not schedule a new parent turn. Verify the selected tool's notification behavior before promising background monitoring; if unavailable, offer synchronous checking or report the limitation.
 
-**Timing and lifetime:** notifications may queue while the parent is busy, so cadence is approximate. Shutdown, disconnection, and restart persistence are not implied. Checkpoint the monitoring owner and next action, report lost monitoring, and never confuse persisted state with an active wake-up. Timer/check workers remain bounded and do not relax workload lifecycle or sandbox rules.
+**Timing and lifetime:** notifications may queue while the parent is busy, so cadence is approximate. Shutdown, disconnection, and restart persistence are not implied. Checkpoint the monitoring owner and next action, report lost monitoring, and never confuse persisted state with an active wake-up. Background commands require explicit timeouts, retained output, and cancellation or bounded expiry; they do not relax workload lifecycle or sandbox rules.
 
 ### External worker boundaries
 

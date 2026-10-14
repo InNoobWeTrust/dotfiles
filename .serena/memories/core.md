@@ -14,6 +14,10 @@ Top-level entry point for dotfiles agent memory graph.
 
 ## Active Task Memory
 
+- Domain knowledge curation metaskill: `mem:tasks/domain-curation-20261015/task` — prototype authoring; real-domain pilot and user acceptance pending.
+
+- ML training safeguard skill: `mem:tasks/ml-training-skill-20261015/task` — authoring only; research-project recovery and training excluded, acceptance pending.
+
 - Container lifecycle boundary repair: `mem:tasks/container-boundary-20261013/task`; tooling repair/probes complete, relocated from research; acceptance/consolidation not recorded.
 
 - Scoped personal context and video research archive: `mem:tasks/personal-context-20261014/task` — authorized memory extension and documentation; not user-accepted or consolidated.

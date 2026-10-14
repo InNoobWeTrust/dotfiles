@@ -9,7 +9,7 @@ Use this router before **every** delegated launch: named workers, model-route fa
 
 ## Allocation principle
 
-For periodic progress checks or delayed reminders, load [Periodic Progress Checks](references/periodic-checks.md). Assign an owner and arm a real wait or supported background wake-up before continuing other work; intent to remember is not monitoring. Synchronous checks do not require delegation.
+For periodic progress checks or delayed reminders, load [Periodic Progress Checks](references/periodic-checks.md). Prefer native background commands with completion notifications for bounded sleeps and simple shell checks; do not delegate merely to wait, execute supplied commands, or relay output. Assign an owner and arm a real wait or supported background wake-up before continuing other work; intent to remember is not monitoring. Neither synchronous nor native background checks require a subagent.
 
 The primary owns intent, material decisions, integration, and acceptance—not every operation. Proactively compare direct work, targeted queries, and bounded handoffs by context cost, latency, evidence quality, and coordination cost. Delegate when an independently checkable result is sufficient and the handoff helps; stay direct when intermediate interpretations are inseparable from current decisions or handoff overhead dominates. Later work needing a result does not require the primary to collect all its intermediate details.
 
@@ -25,6 +25,8 @@ Good candidates include bounded exploration, complementary research questions, a
 Read `references/pillars-and-templates.md` when wording a pillar or selecting a findings template.
 
 ## Dispatch routing and gates
+
+Discover the current environment's available delegation interfaces and follow its applicable routing policy; this reusable skill does not prescribe a provider, transport or named worker. If that policy specifies a preferred route, use it when available and suitable; justify a fallback with observed failure, unavailability or a concrete capability/interface mismatch. Ordinary source reads or document checks do not need separately verified CPU/RAM/PID isolation merely because the worker is a CLI process. Bound scope, actions, concurrency, wall time and cancellation; retain any task-specific hard isolation requirements. Do not invent resource prerequisites for the assigned workload or expand it into recursive, fan-out or stress work without the required controls.
 
 Approval owner follows `../../rules/delivery-ownership.md`: the autonomous primary may approve and revise researched in-scope plans/contracts before dispatch; workers cannot assume approval or invent changes. Contract defects return to the primary, not automatically to the user. Human-reserved authority/safety gates remain with the user.
 

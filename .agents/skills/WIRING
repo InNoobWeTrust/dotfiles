@@ -63,6 +63,14 @@ phased-delivery escalation rules require formalization. When delegating,
 3. `research-ideation` — Phase 4: Falsifiable proposal & experimental notebook blueprint (Colab/Marimo)
 4. `reviewer` (scientific lens) — verify negative controls, statistical tests, and falsifiability before laboratory commitment
 
+### ML Experiment Execution and Recovery
+
+1. `research-ideation` — when needed, establish hypotheses/falsifiable claims; ideation alone does not authorize compute.
+2. `ml-training` — before configuring or launching training, establish split provenance, update/event schedules, preflight and retention. For existing runs use recovery mode; no rerun by default.
+3. `systematic-investigation` — trace failed evaluation, callbacks, serialization or logging before repair.
+4. `code-craft` — for non-trivial training-pipeline code changes, not ceremony for scientific ideation.
+5. `data-storytelling` — present measured results with split/checkpoint identities and missing coverage; snapshots are not trajectories.
+
 ### Documentation Craftsmanship
 
 1. `doc-craft` — audience routing, [document format selection](../rules/document-formats.md) (Typst source + PDF by default; required Markdown consumers preserved), information layering (Index → Entry → Leaf), abstraction levels, and visual rhythm
@@ -194,6 +202,16 @@ also apply its persistent coordination reference before role task-source reads:
 6. `memory` (Capture) — append role checkpoints after every completed/interrupted slice
 7. `memory` (Consolidate via Subagent, report-only) — accepted-task consolidation after recorded user acceptance; apply/markers/archive/eviction require subsequent explicit human approval
 
+### Domain Knowledge Curation
+
+When unfamiliar-domain knowledge or veterans' experience must become usable guidance:
+
+1. `domain-curation` — concrete learning task → credible source map → conditional practitioner judgment → representative/boundary checks → brief/checklist
+2. Load just in time: `systematic-investigation` for observed failures; `decision-support` for meaningful uncertain choices; `reviewer` for evidence/guidance challenge
+3. `research-ideation` only when the next outcome is scientific hypotheses or experiments, not general domain learning
+4. `doc-craft` for reader-ready documents; `memory` for requested retention/recall
+5. `skill-author` only when recurring use and appropriately scoped evidence justify packaging; otherwise keep the brief
+
 ### Skill Authoring & Maintenance
 
 When creating or maintaining the .agents/ governance layer:
@@ -202,6 +220,8 @@ When creating or maintaining the .agents/ governance layer:
 2. `project-foundation` — if the audit reveals missing foundational files
 3. `reviewer` (adversarial lens) — challenge the new skill or audit conclusions
 4. `codebase-exploration` — if the new skill needs domain knowledge of the codebase
+
+If the gap is unfamiliar-domain knowledge or practitioner judgment rather than code location, acquire it through `domain-curation` before authoring domain advice; skip acquisition when already grounded.
 
 ### Plan / Architecture Challenge (Deliberation-Based)
 
@@ -241,6 +261,9 @@ Natural transitions between skills:
 
 | From | To | Trigger |
 |---|---|---|
+| `skill-author` | `domain-curation` | "Domain knowledge or practitioners' judgment is not grounded enough to encode" |
+| `domain-curation` | `skill-author` | "Recurring workflow, critical evidence and real task-attempt limits justify authorized packaging" |
+| `domain-curation` | `research-ideation` | "Grounded domain map is ready; next task is scientific hypothesis generation or experiments" |
 | `codebase-exploration` | `systematic-investigation` | "I understand the codebase, now I need to debug" |
 | `codebase-exploration` | `code-craft` | "I understand the codebase, now I need to implement" |
 | Feature planning | `requirements-driven-dev` | "The active milestone has a material PRD/TRD/BDD escalation trigger" |

@@ -116,7 +116,7 @@ Activating a skill by reading its `SKILL.md` is a binding commitment to execute 
 
 ## Process Management
 
-- **Long-running commands & background tasks:** Prioritize terminal multiplexers (`tmux`, then GNU `screen` if absent) over harness background tasks or ad-hoc backgrounding (`&`, `nohup`). See `rules/execution-safety.md`.
+- **Long-running workloads:** Prioritize terminal multiplexers (`tmux`, then GNU `screen`). For bounded sleeps, reminders, and simple shell checks, prefer native background commands with completion notifications, not subagents; see `rules/execution-safety.md`.
 - **Namespacing:** Always prefix agent-spawned sessions with `agent-` (e.g., `agent-devserver`) and redirect stdout/stderr to `/tmp/agent-<name>.log`.
 - **User session protection:** Never kill, hijack, or alter user processes or existing sessions in zellij, tmux, or screen. Only manage agent-created `agent-*` sessions.
 - **Shell sandbox routing:** Enforce the Core Principles pre-execution gate using `rules/execution-safety.md`; investigate denials without silent bypass or permission escalation.
