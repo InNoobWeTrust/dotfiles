@@ -7,6 +7,7 @@
 | [Autonomous delivery](./autonomous-delivery.md) | Delegate decisions, get an inspectable result, and retain final acceptance | Requesting end-to-end ownership or tuning iteration/approval behavior |
 | [Agent orchestration design](./agent-orchestration-design.md) | Orchestrator selection, prompt engineering for model tiers, rate limit budgeting | Configuring multi-agent orchestration layers |
 | [Global harness instructions](./harness-safety.md) | Shared native instructions, sandbox/container tools, delegation, and resource boundaries | Installing instructions across harnesses or configuring execution and delegation |
+| [Container lifecycle failure case](./container-lifecycle-context-leakage.md) | Observed Podman/MCP lifecycle boundary failure and repair evidence | Diagnosing host lifecycle effects versus isolated workload execution |
 | [Installing skills via npx](./installing-skills.md) | Installing skills via `npx skills add` & pairing with rules | Installing skills in new or existing repos |
 | [Serena MCP setup](./serena-mcp-setup.md) | Setting up `serena-mcp` for semantic code context & LSP search | Boosting agents with symbol indexing & AST context |
 | [Why rules and skills exist](./why-rules-and-skills.md) | Mental model: rules constrain, skills direct | Starting the section |

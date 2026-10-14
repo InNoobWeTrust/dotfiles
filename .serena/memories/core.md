@@ -14,6 +14,8 @@ Top-level entry point for dotfiles agent memory graph.
 
 ## Active Task Memory
 
+- Container lifecycle boundary repair: `mem:tasks/container-boundary-20261013/task`; tooling repair/probes complete, relocated from research; acceptance/consolidation not recorded.
+
 - Scoped personal context and video research archive: `mem:tasks/personal-context-20261014/task` — authorized memory extension and documentation; not user-accepted or consolidated.
 - REA MCP and global skill-lock integration: `mem:tasks/rea-integration/task` — six opt-in registrations configured; live startup blocked by unsupported host runtime, not user-accepted.
 - OpenFortiVPN networking and DNS SELinux compatibility: `mem:tasks/openfortivpn-network-20261013/task` — broad networking/DNS authorized, not unrestricted access; functional retry pending.

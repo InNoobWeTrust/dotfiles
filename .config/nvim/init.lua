@@ -180,6 +180,10 @@ function _G.ReloadConfig()
 end
 
 local autocmds = {
+    typst_filetype = {
+        -- vim-polyglot also claims *.typ for SQL; prefer Typst documents.
+        { "BufRead,BufNewFile", "*.typ", "setlocal filetype=typst" },
+    },
     -- reload_vimrc = {
     --     -- Reload vim config automatically (incompatible with lazy.nvim)
     --     { "BufWritePost", [[$VIM_PATH/{*.vim,*.yaml,vimrc} nested source $MYVIMRC | redraw]] },
@@ -1333,6 +1337,26 @@ require("lazy").setup({
             end,
         },
         { "nvim-treesitter/nvim-treesitter-locals" },
+        -- Live rendered Typst preview in the browser; reuse Mason's Tinymist.
+        {
+            "chomosuke/typst-preview.nvim",
+            version = "1.*",
+            ft = { "typst" },
+            dependencies = { "williamboman/mason.nvim" },
+            opts = {
+                dependencies_bin = {
+                    tinymist = fn.has("win32") == 1 and "tinymist.cmd" or "tinymist",
+                },
+            },
+            keys = {
+                {
+                    "<leader>tp",
+                    "<cmd>TypstPreviewToggle<cr>",
+                    ft = { "typst" },
+                    desc = "Typst: toggle rendered preview",
+                },
+            },
+        },
         -- Render preview for Markdown
         {
             "MeanderingProgrammer/render-markdown.nvim",
