@@ -40,7 +40,26 @@ and processes. Add `DELEGATE_E2E_REAL=1` for one paid turn against the real
 | Shutdown runs once | `lifecycle.test.ts` drives the re-entrant close path and asserts the transport closes exactly once; it fails (`Expected: 1 / Received: 11`) against the naive guard. E2E additionally confirms the server exits 0 with empty stderr on stdin hang-up |
 | Protocol shape holds | Every response the server produces is parsed twice: once as structured content and once from the JSON text fallback, and both must be equal. A call the input schema rejects is answered by the MCP SDK before the delegate handler runs, so it arrives as a text-only error and is not covered here. |
 
-## Current verification — 2026-10-13
+## Current verification — 2026-10-15
+
+AGY unattended approval is now independent of sandbox selection. All three
+permission modes include `--mode accept-edits --dangerously-skip-permissions`;
+`--print` immediately precedes the final prompt. The latter fixes the observed
+pre-execution CLI error where `--print` consumed `--sandbox` as its prompt.
+
+| Check | Result |
+|---|---|
+| Registry tests | PASS: 20 tests, 291 assertions in the offline read-only sandbox, including all permission modes with sandbox true, false and omitted, and prompt adjacency |
+| Source compilation | PASS: Bun bundles both Delegate and decision MCP servers with external packages, without workspace writes |
+| Decision output regressions | PASS: 21 existing tests, 76 assertions with mocked fetch, including error capture and truncated results |
+| Formatting and lint | UNVERIFIED: no cached Biome binary; `--no-install` refused to download one |
+| Stub MCP E2E and full process suite | UNVERIFIED: container image provisioning failed before allocation; no host process-tree substitute |
+| Live AGY read success | UNVERIFIED: running MCP still has the old code; reconnect before an authorized bounded turn. No service restarted |
+
+Earlier verification below records the superseded sandbox/approval coupling,
+not the current permission mapping.
+
+## Prior verification — 2026-10-13
 
 Headless permission recovery and explicitly approved sandbox/autoapproval profile:
 
@@ -167,6 +186,8 @@ Then, from a main agent that has the `delegate` MCP server connected:
    clearly failed run retaining its output; configuration is not a live guarantee.
 4. **Check refusal:** An unknown/unconfigured ID or a prompt of `"--version"`
    must fail without launching a turn. An unsupported permission mode must also
-   fail; do not use a supported bypass mode without separate human approval.
+   fail; do not use a supported bypass mode without human approval. AGY always
+   uses its approved all-tool autoapproval profile, even for read-only prompts;
+   `permissionMode: "default"` does not restrict it.
 5. **Check limits with stubs:** Use `test:e2e` to verify timeout/lossless-output/cleanup
    behavior without paying for a deliberately interrupted model session.

@@ -28,6 +28,30 @@ skills/<skill-name>/
 └── assets/                  # Data files, CSVs, images (optional)
 ```
 
+### Keep Reusable Skills Portable and Self-Contained
+
+Write reusable skills for the capability and workflow, not the author's current
+machine or harness. “Use an existing solution” means discover and reuse what the
+current environment provides; it does not mean require a particular integration.
+
+- **Discover the interface:** Native harness tools, configured integrations and
+  other authorized existing interfaces may satisfy the same capability. Read the
+  available interface's contract rather than inventing a tool name or schema.
+- **Keep the workflow self-contained:** Include the inputs, decision process,
+  outputs, safety boundaries and unavailable-capability behavior needed to act
+  without the author's chat or local setup. Do not require a machine-specific adapter.
+- **Separate deployment details:** Named servers, providers, credentials, local
+  paths and exact API payloads belong in the relevant integration's documentation,
+  not as prerequisites in a reusable skill or its routing pointers.
+- **Check portability:** Walk through a harness with a native capability, one
+  with a configured integration, and one without the capability. The workflow
+  should remain usable or state its limitation without installing a replacement.
+
+For example, say “consult an available decision-support capability using its
+documented interface,” not “load our decision-server adapter and call `evaluate`.”
+A genuinely product-specific skill may name its required product, but declare
+that scope explicitly rather than narrowing a generic request implicitly.
+
 ### Writing the SKILL.md
 
 A SKILL.md starts with YAML frontmatter (used by the harness for semantic matching and trigger routing) followed by the workflow body. The frontmatter replaces any inline "When to Load" section — that information is redundant once the skill is already loaded, so keep it out of the body to conserve context.
@@ -127,7 +151,8 @@ Before deploying a skill, verify:
 2. **Stop conditions**: Are there gates that prevent the AI from producing bad output?
 3. **Anti-pattern table**: Are the most common shortcuts documented and countered?
 4. **Deliverable checklist**: Can the user verify the skill was followed correctly?
-5. **Length**: Is the SKILL.md under 500 lines? If longer, move deep content to `references/`.
+5. **Length**: Aim for a router under ~150 lines; 500 is the upper guideline, not a target. Move relevant deep methods to `references/`, not deployment records.
+6. **Reader and portability**: Can someone without the author's chat use the skill and its existing explicit references? Check native, integrated and missing-capability cases; do not claim a walkthrough proves runtime behavior.
 
 ### Skill References: When to Split
 

@@ -3,7 +3,9 @@ audience: OpenCode users and MCP maintainers
 purpose: Obtain structured Jev decisions through Zen System One
 scope: OpenCode-only stateless decision API; not chat generation or agent delegation
 ---
-# OpenCode Decisions MCP
+# Decisions MCP
+
+A decision-support MCP, currently backed by OpenCode Zen System One and enabled only in OpenCode. The service name does not depend on its backend; additional capabilities or providers are not implemented yet.
 
 | Property | Value |
 |---|---|
@@ -20,34 +22,36 @@ System One answers **choice, score and boolean questions**, not chat prompts. Ea
 
 ## Use
 
-Launch OpenCode from a shell that has loaded `~/.shrc`, with your existing `OPENCODE_API_KEY` available in its environment and the repository's dotfiles deployed. The [launcher](bin/mcp-opencode-decisions) reads no `.env` files; no new key is stored in MCP configuration or output.
+Launch OpenCode from a shell that has loaded `~/.shrc`, with your existing `OPENCODE_API_KEY` available in its environment and the repository's dotfiles deployed. The [launcher](bin/mcp-decisions) reads no `.env` files; no new key is stored in MCP configuration or output.
 
 This MCP exposes just **`evaluate`**; call it directly, with no status or preflight step.
 
-Use it for a second opinion on consequential trade-offs: selecting an approach, prioritizing alternatives or judging a proposal against criteria. Decide trivial choices directly; this is not a chat, research or tool-execution endpoint. Gather relevant evidence first, then supply self-contained context and neutrally worded alternatives; the model cannot see your chat or repository.
+Use it proactively for meaningful choices among plausible options: autonomous next steps, recommendations before asking the user, or a worker deciding between another authorized check and returning findings to the primary. Decide trivial deterministic choices directly. This is not a chat, research or tool-execution endpoint. Gather evidence first, then supply self-contained facts, unknowns, constraints, authority and neutrally worded alternatives; the model cannot see your chat or repository.
+
+The [Decision Support skill](../../skills/decision-support/SKILL.md) provides the agent workflow and a bounded-worker example. The server also advertises this usage through MCP initialization instructions and the tool description. Consultation advises the responsible agent; it never supplies user approval, mandatory evidence, independent review or permission to bypass a hard stop. Workers in other harnesses may not have this OpenCode-local tool.
 
 Call `evaluate` with:
 
 ```json
 {
-  "state": "We need a local decision helper. Reusing an existing API costs less maintenance than adding a new hosted service.",
+  "state": "Goal: diagnose a flag-ordering failure, not edit code. One fixture fails while the default passes. Unknown: ordering versus validation. Both options below are authorized; one targeted offline fixture takes 5 seconds. The primary can integrate partial findings. No network or new implementation is allowed.",
   "questions": {
-    "approach": {
+    "next_action": {
       "type": "choice",
-      "instructions": "Choose the lower-maintenance approach.",
+      "instructions": "Choose the next action balancing useful evidence, latency and assignment scope.",
       "criteria": {
-        "reuse": "Use the existing API",
-        "new_service": "Build another hosted service"
+        "targeted_check": "Run the one authorized ordering fixture, then report evidence and limits",
+        "return_now": "Return partial findings and propose the check to the primary"
       }
     },
-    "maintenance": {
+    "check_value": {
       "type": "score",
-      "instructions": "Rate the maintenance burden of reusing the existing API.",
+      "instructions": "Rate the expected diagnostic value of the targeted fixture given the supplied evidence.",
       "criteria": ["Low", "Moderate", "High"]
     },
-    "prefer_reuse": {
+    "ordering_cause": {
       "type": "boolean",
-      "instructions": "Does the supplied context favor API reuse?"
+      "instructions": "Is flag ordering more likely than validation to explain the failure?"
     }
   },
   "timeoutMs": 20000
@@ -77,6 +81,7 @@ When the serialized result exceeds 64 KiB, `answers` and `usage` are omitted fro
 - **Output paths:** Every response includes `responsePath` (raw HTTP body) and `resultPath` (normalized result JSON). Both paths are absolute, private (0700/0600) and not auto-expired; do not store secrets in `state` or `questions`. Paths are null only when the cache directory could not be created (`OUTPUT_CAPTURE_FAILED`); error envelopes also include paths when capture succeeded before the failure.
 - **Cost and privacy:** State and questions go to Zen. Do not send secrets; timeouts are not token/spend caps and do not guarantee upstream generation stops. No retries are attempted.
 - **Interpretation:** Probabilities are model estimates, not guarantees. Validate consequential decisions independently.
+- **Decision ownership:** Compare the suggestion with evidence; choose only within authority or explain a recommendation before asking the user. On failure/unavailability, report the limitation and use ordinary judgment only where the active workflow allows; never waive a hard stop or retry blindly.
 
 ## Maintenance
 

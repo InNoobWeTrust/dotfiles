@@ -33,6 +33,12 @@ This is a discovery instruction, not a personality setting. Do not repeat it in 
 3. Check discovery access. A working-style reference or short hint is optional; omit it when the assignment already gives the worker enough to infer a useful approach. Do not dump full skills or make the parent compose a complete personality.
 4. For planning/implementation, carry settled [materialization choices](implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) and accessible task-relevant code-craft/API sources. Library/API choices are mandatory task constraints, not optional working-style hints. Implementers confirm sources before coding and report incompatible selections rather than silently substituting. Keep the same choices and exceptions on route fallback; re-resolve source access, not the architecture.
 
+For genuine next-action or continue/return uncertainty, point workers to
+[Decision Support](../../decision-support/SKILL.md) and allow an existing decision-support
+capability only if available and authorized in their harness. Do not assume they inherit
+the primary's tools. Consultation is advisory, not nested delegation or review;
+hard stops and missing authority still require return to the primary.
+
 When selecting a fallback after an invocation failure, preserve the assignment and constraints. The replacement worker selects useful guidance for the same task; change only the execution route and necessary capability details. Reassess access and route limits, not just the agent name. [Named fallbacks are preferences](context-stewardship.md#treat-named-fallbacks-as-preferences), not a mandatory retry chain.
 
 Native controls remain separate: preserve configured deny rules and apply supported native restrictions to dynamic workers when available. “Read-only” prose is not hard isolation. If a required hard boundary cannot be established, report that limitation rather than claiming equivalent enforcement. Workers do not gain nested-delegation authority by selecting a style.

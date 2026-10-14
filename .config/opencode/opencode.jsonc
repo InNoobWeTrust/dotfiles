@@ -26,10 +26,10 @@
         "command": ["npx", "-y", "rea-agents@6.4.0", "mcp"],
         "disabled": true,
       },
-      "opencode-decisions": {
+      "decisions": {
         "type": "local",
         "command": [
-          "mcp-opencode-decisions"
+          "mcp-decisions"
         ],
         "timeout": {
           "startup": 30000,
@@ -278,32 +278,17 @@
       "effect": "allow"
     },
     {
-      "action": "sandbox_sandbox_ro",
+      "action": "sandbox_*",
       "resource": "*",
       "effect": "allow"
     },
     {
-      "action": "sandbox_sandbox_pure",
+      "action": "delegate_*",
       "resource": "*",
       "effect": "allow"
     },
     {
-      "action": "sandbox_sandbox_rw",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "delegate_delegate_status",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "delegate_delegate_run",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "sandbox",
+      "action": "decisions_*",
       "resource": "*",
       "effect": "allow"
     },

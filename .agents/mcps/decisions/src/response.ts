@@ -9,7 +9,7 @@ function cacheRoot(env: Record<string, string | undefined>): string {
   const xdg = env.XDG_CACHE_HOME
   const home = env.HOME && isAbsolute(env.HOME) ? env.HOME : homedir()
   const base = xdg && isAbsolute(xdg) ? xdg : join(home, ".cache")
-  return join(base, "opencode-decisions")
+  return join(base, "decisions")
 }
 
 /**

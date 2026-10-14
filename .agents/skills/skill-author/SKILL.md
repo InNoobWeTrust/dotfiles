@@ -20,6 +20,8 @@ Two workflows — choose one first.
 
 Load `references/aci-checklist.md` when designing a new skill, command, prompt interface, or tool-shaped workflow.
 
+For reusable skills, load [Portability and reader contract](references/portability-and-reader-contract.md) before writing or auditing the workflow. Discover capabilities; do not prescribe the author's deployment.
+
 Load `references/instruction-bloat-and-mcp-caution.md` before expanding `AGENTS.md`, adding always-on rules, or choosing MCP as the integration path.
 
 Load `references/remote-skills-sync.md` when checking, fetching, or updating remote skills from external GitHub repositories (`remote-skills-manifest.json`, `sync-remotes.sh`).
@@ -29,7 +31,7 @@ Stop / deliverable / anti-patterns: `references/stop-deliverable-antipatterns.md
 ## Workflow A (summary)
 
 1. Validate need (extend existing skill first; not one-offs).
-2. Define scope contract (name, description, exclusions, I/O, phases).
+2. Define scope and reader contract (name, description, exclusions, I/O, phases, capability requirements).
 3. Design phases, stop conditions, deliverables, anti-patterns.
 4. Apply the ACI checklist when the artifact behaves like an interface (`references/aci-checklist.md`).
 5. Write `SKILL.md` (YAML frontmatter per https://agentskills.io spec; body under ~150 lines; deep content in `references/`).
@@ -40,7 +42,7 @@ Stop / deliverable / anti-patterns: `references/stop-deliverable-antipatterns.md
 
 1. Rule audit table (effectiveness, false positives, gaps).
 2. Skill audit table (usage, health, length, lifecycle).
-3. Failure review (mistake → rule/skill gap).
+3. Failure review (aggregate existing feedback → smallest evidenced correction).
 4. Maintenance report + next review date. Never fabricate metrics.
 
 ## Hard rules
@@ -49,4 +51,5 @@ Stop / deliverable / anti-patterns: `references/stop-deliverable-antipatterns.md
 - Consult https://agentskills.io and https://agents.md to verify compliance with latest specs.
 - Do not invent skills for single-use tasks.
 - Do not bulk-load every rule/skill during audits — sample by evidence.
+- Reusable skills and their references must be portable and usable without the author's chat or setup. “Existing solution” includes native tools and authorized integrations; neither implies MCP. Declare genuinely product-specific scope explicitly.
 - Progressive disclosure is mandatory for skills (router SKILL + refs; see `references/agentskills-spec.md`).

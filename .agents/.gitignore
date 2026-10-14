@@ -10,7 +10,7 @@
 !/mcps/
 /mcps/*
 !/mcps/delegate/
-!/mcps/opencode-decisions/
+!/mcps/decisions/
 !/mcps/sandbox/
 !/mcps/shared/
 !/rules/

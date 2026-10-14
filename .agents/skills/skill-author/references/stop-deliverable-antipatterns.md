@@ -2,6 +2,7 @@
 
 - **Workflow A, Phase A1 fails**: Skill not needed. Propose extending existing skill or simpler approach.
 - **Workflow A, Phase A2 unclear**: Scope can't be defined — ask for clarification.
+- **Hidden deployment prerequisite or missing reference**: Repair the capability/reader contract or report the unavailable resource before calling a reusable skill ready. Missing tooling does not authorize setup.
 - **Workflow B, insufficient data**: If audit data sources (metrics, logs, usage tracking) are not accessible, produce a qualitative audit using available artifacts (git history, handoff files, manual inspection). Document what data was missing and recommend what the org should start tracking. Never fabricate statistics.
 
 ---
@@ -11,6 +12,7 @@
 **For Workflow A (Create)**:
 - [ ] Skill need validated (A1)
 - [ ] Skill scope defined (A2)
+- [ ] Reader/capability contract, portable references and unavailable-capability behavior checked
 - [ ] Workflow outline designed (A3)
 - [ ] SKILL.md written with all 7 sections (A4)
 - [ ] INDEX updated (A5)
@@ -24,6 +26,9 @@
 - [ ] Consolidated maintenance report (B4)
 - [ ] Data gaps and tracking recommendations documented
 - [ ] Next review date documented
+
+For targeted maintenance, use the compact scope-bounded report in B4; do not invent
+quarterly metrics, lifecycle transitions or unrelated rule audits.
 
 ---
 
@@ -39,6 +44,8 @@
 | "No failures found — the audit is done" | Absence of documented failures ≠ absence of failures | Check git history for revert commits and patches |
 | "I'll deprecate every low-usage skill to clean up" | A lean catalog is good, but removing specialized skills loses institutional knowledge | Deprecate only when the task type no longer occurs; keep rare-but-valuable skills |
 | "I'll reorganize all skill files to follow a new convention" | Format churn creates merge conflicts and breaks cross-references | Propose reorganization as a separate, dedicated task |
+| "Move our server adapter under references and the generic skill is portable" | Disclosure depth does not fix deployment coupling | Keep deployment docs separate; discover the available capability |
+| "Existing solution means the MCP I have installed" | Other harnesses may expose a native or different interface | Use the actual authorized capability contract, with explicit absence behavior |
 
 ---
 

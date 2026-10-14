@@ -85,21 +85,20 @@ export const HARNESSES: HarnessSpec[] = [
     cwdFlag: null,
     stdinClosed: true,
     permissionModes: ["default", "acceptEdits", "bypassPermissions"],
-    promptFlag: null,
+    promptFlag: "--print",
     modelSupported: true,
     notes:
       "Antigravity CLI print mode. Uses agy's own agent and model catalogue, so `model` takes an agy model id rather than a provider string.",
     buildArgs: (input) => {
       const permission = permissionFlags({
-        default: [],
-        acceptEdits: ["--mode", "accept-edits"],
+        default: ["--mode", "accept-edits", "--dangerously-skip-permissions"],
+        acceptEdits: ["--mode", "accept-edits", "--dangerously-skip-permissions"],
         bypassPermissions: ["--mode", "accept-edits", "--dangerously-skip-permissions"],
       })
-      const args = ["--print"]
+      const args: string[] = []
       if (input.agySandbox) args.push("--sandbox")
       if (input.model) args.push("--model", input.model)
-      const mode = input.agySandbox ? "bypassPermissions" : input.permissionMode
-      return join([args, permission(mode), [input.prompt]])
+      return join([args, permission(input.permissionMode), ["--print", input.prompt]])
     },
   },
   {

@@ -6,13 +6,19 @@ This workflow produces an audit report using whatever tracking data the organiza
 
 **If no tracking data is available**: Produce a qualitative audit based on available sources (git history, session handoffs, review findings, manual inspection). Document what data was missing and recommend what to start tracking for future quarters. Never fabricate statistics.
 
+**Scope first**: For a targeted drift check, sample only source-linked rules/skills;
+do not turn it into a catalog-wide quarterly audit. Compare guidance docs with
+executable skill instructions, resolve contradictions against current constraints,
+and report what was not inspected. Apply `portability-and-reader-contract.md` to
+reusable workflows, including their references and routing pointers.
+
 ### Phase B1 — Quarterly Rule Audit
 
-For every rule file in `rules/`, answer:
+For each rule in the declared audit scope, answer:
 
-1. **Effectiveness**: Has this rule prevented a failure? Check session handoffs, review findings, git history. No evidence → candidate for deprecation.
+1. **Effectiveness**: Has this rule prevented a failure? Check session handoffs, review findings, git history. No evidence means unknown effectiveness, not automatic deprecation.
 2. **False positives**: Has this rule blocked correct code? Yes → too strict, recommend softening.
-3. **Coverage gap**: New failure pattern not covered? Observed in practice → recommend new rule.
+3. **Coverage gap**: New failure pattern not covered? Refine existing guidance first; propose the smallest evidenced correction. Scale formality to recurrence and consequence, responding immediately to evidenced data-loss/security/financial hazards rather than waiting for a frequency quota.
 4. **Abstraction level**: Too specific (dead) or too general (false positives)? Recommend: keep, soften, tighten, lift, or deprecate.
 
 **Format**:
@@ -27,13 +33,14 @@ For every rule file in `rules/`, answer:
 
 ### Phase B2 — Skill Audit
 
-For every skill in `skills/`, answer:
+For each skill in the declared audit scope, answer:
 
 1. **Usage**: Is this skill still being loaded? If it hasn't been invoked in a full quarter and the task type no longer occurs, candidate for deprecation. Rare use with correct task type → keep.
 2. **Quality**: Is the skill producing high-quality output? Check handoffs and review findings. High finding rate → workflow isn't preventing issues.
 3. **Completeness**: Is the workflow still correct given codebase changes? New frameworks, tools, patterns?
 4. **Length**: Has the skill grown? Justified growth → keep. Bloat → trim. Over 500 lines → move to references/.
 5. **Lifecycle stage**: Prototype → Hardening → Team Adoption → Maintenance → Deprecation candidate. What's the next transition?
+6. **Reader outcome and portability**: Can the intended user/agent complete the original task without hidden chat or deployment assumptions? Compare before/after first use and a relevant missing-capability/error path; do not confuse source presence with observed effectiveness.
 
 **Format**:
 ```markdown
@@ -48,6 +55,13 @@ For every skill in `skills/`, answer:
 ### Phase B3 — Monthly Failure Review
 
 Review AI output that needed significant human correction:
+
+Start with completed feedback entries instead of re-investigating each incident.
+The [feedback flywheel](../../project-foundation/references/feedback-flywheel.md)
+is a human-maintainer checklist: reuse its evidence, or present it to the maintainer
+when needed; do not fabricate a maintainer assessment. Aggregate the first detection
+source, gap type (routing/workflow/rule/context/tool), smallest correction and
+evidence still needed. Keep execution records in memory, not consumer docs.
 
 1. **What was the AI's mistake?**
 2. **Was there a rule that should have prevented it?** Why didn't it work?
@@ -79,5 +93,11 @@ Consolidate into an actionable report:
 6. **Glossary drift** (if applicable): New terms found that aren't in GLOSSARY.md.
 7. **Data gaps**: What tracking data was unavailable and should be collected for the next audit.
 8. **Next review date**: Schedule the next audit.
+
+For a targeted audit, a compact source → gap → change → evidence table is enough;
+mark uninspected rule/lifecycle metrics as out of scope or unknown. State source
+checks separately from executed journeys. Trial methods remain prototypes until
+scoped promotion is justified; new wording alone proves neither adoption nor
+effectiveness. See the [outcome-review trial](../../../docs/skills-and-rules/end-user-outcome-reviews.md).
 
 ---

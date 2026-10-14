@@ -40,3 +40,11 @@ Rules for editing agent prompts, system instructions, documentation, and configu
   - `<agent>-fast`: atomic patches, shallow diffs, trivial single-unit verification, rapid turnaround.
   - `<agent>`: moderate complexity, standard multi-file tasks, deep contextual logic.
   - `<agent>-deep`: macro-architectural contracts, cross-boundary refactors, security-sensitive logic, critical invariants.
+
+## 5. Reusable Skills: Portability & Self-Containment
+
+- **User-confirmed correction (2026-10-15):** Reusable skills must be generic and self-contained, not tailored to the current machine or harness. “Use an existing solution” means discover and reuse an available, authorized capability—not assume MCP, a named server, provider or API.
+- Native harness tools, configured integrations and other existing interfaces can provide the same capability. Discover the actual contract; never mandate the author's local adapter, tool name, schema, credential or installation path.
+- Keep workflow inputs, outputs, authority boundaries and unavailable-capability behavior understandable without the author's chat or setup. Put deployment-specific instructions in integration documentation; explicitly declare any genuinely product-specific skill scope.
+- Check native-capability, configured-integration and unavailable-capability scenarios before claiming portability. Keep skill indexes and composition/worker pointers equally generic.
+- This authoring requirement belongs in the knowledge base, not only task memory. Source: explicit user correction to decision-support and subsequent instruction to record it in KB memory. Maintainer guidance: `.agents/docs/skills-and-rules/designing-skills.md`, “Keep Reusable Skills Portable and Self-Contained.”

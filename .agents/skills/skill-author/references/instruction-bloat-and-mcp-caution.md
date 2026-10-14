@@ -25,7 +25,7 @@ Before adding text to `AGENTS.md` or an always-on rule, answer:
 
 | Question | If yes, the text probably belongs elsewhere |
 |---|---|
-| Is this only needed when a specific skill is loaded? | Move it to that skill's `references/`. |
+| Is this a reusable method needed only by a specific skill? | Move it to that skill's `references/`; deployment records stay in scoped integration docs. |
 | Is this a worked example longer than 5 lines? | Move it to `references/` and leave a one-line pointer. |
 | Does this duplicate a skill stop condition or phase? | Delete the duplication; link the skill. |
 | Is this about one harness (Kilo, Claude Code, Cursor, etc.)? | Keep it in harness config or a thin adapter, not in project skills. |
@@ -42,7 +42,7 @@ MCP (Model Context Protocol) is useful, but "MCP by default" is a caution blip i
 | Alternative | Use when | MCP only when |
 |---|---|---|
 | **CLI script / Makefile target** | One command, deterministic output, local use | You need cross-harness reuse of the same tool surface |
-| **Skill reference with bootstrap commands** | The agent needs context + examples + stop conditions | The protocol gives governance (permissions, multi-tenant isolation) that scripts cannot |
+| **Skill reference with capability guidance** | The agent needs methods + examples + stop conditions | Protocol-level governance or reuse is required and verified, rather than assumed from using MCP |
 | **Existing harness tool** | The harness already exposes read/edit/search | You are adding a capability the harness lacks (e.g., LSP symbol graph) |
 
 ### MCP warning signs
@@ -58,9 +58,9 @@ If any are true, reconsider whether a script or skill reference is enough.
 
 ## Safe patterns for MCP when it is justified
 
-1. **Isolate MCP details in a thin adapter** — a harness-specific note or config file, not in the core skill body.
+1. **Isolate MCP details in scoped integration docs/config** — a generic skill must not require a local adapter, even under `references/`. Discover the available capability and read its actual contract.
 2. **Disable duplicate fallback tools** — if the harness has `read_file`, the MCP server should not expose its own plain-file read.
-3. **Bootstrap in the reference** — provide exact install/run commands so the agent can set up the server on demand, but do not make the skill depend on it being pre-installed.
+3. **Keep setup separately authorized** — integration docs may describe verified setup commands for an authorized setup task. Missing capability in a generic workflow is not permission to install, reconfigure or create a replacement.
 4. **Gate promotion by evidence** — run a pilot with objective metrics (tool turns, correctness) before making an MCP-backed workflow the default.
 
 ---

@@ -112,27 +112,27 @@ describe("harness registry", () => {
       const task = input({ agySandbox: true, permissionMode, model: "some-model" })
       const argv = agy.buildArgs(task, "/tmp/work")
       expect(argv).toEqual([
-        "--print",
         "--sandbox",
         "--model",
         "some-model",
         "--mode",
         "accept-edits",
         "--dangerously-skip-permissions",
+        "--print",
         task.prompt,
       ])
       assertArgv(agy, argv, task.prompt)
     }
   })
 
-  test("AGY false or omitted sandbox profile preserves the requested permission mode", () => {
+  test("AGY always autoapproves independently of omitted or false sandbox", () => {
     const agy = mustFind("agy")
     for (const permissionMode of MODES) {
       const original = agy.buildArgs(input({ permissionMode }), "/tmp/work")
       expect(original).not.toContain("--sandbox")
-      expect(original.includes("--dangerously-skip-permissions")).toBe(
-        permissionMode === "bypassPermissions",
-      )
+      expect(original.filter((arg) => arg === "--dangerously-skip-permissions")).toHaveLength(1)
+      expect(original.slice(-2)).toEqual(["--print", input().prompt])
+      assertArgv(agy, original, input().prompt)
       expect(agy.buildArgs(input({ permissionMode, agySandbox: false }), "/tmp/work")).toEqual(
         original,
       )

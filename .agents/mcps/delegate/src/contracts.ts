@@ -8,13 +8,13 @@ export const MAX_WALL_TIME_MS = 7_200_000
 
 /**
  * Authority granted to the delegated harness, mapped per harness to its own flag.
- * `default` passes no permission flag at all, so the harness keeps its own
- * non-interactive behaviour; this is not a read-only guarantee.
+ * Except for AGY's explicitly configured always-autoapprove profile, `default`
+ * keeps the harness's own policy; this is not a read-only guarantee.
  */
 export const permissionModeSchema = z
   .enum(["default", "acceptEdits", "bypassPermissions"])
   .describe(
-    "Authority granted to the delegated harness. 'default' (no permission flag) keeps the harness's own non-interactive policy and is not read-only isolation; 'acceptEdits' lets it apply file edits unattended; 'bypassPermissions' drops all approval prompts for every tool and requires explicit human permission. Higher modes execute whatever the prompt asks for, so scope the prompt instead of escalating this.",
+    "For non-AGY harnesses: 'default' keeps the harness's own policy (not read-only isolation); 'acceptEdits' allows unattended edits; 'bypassPermissions' skips all tool approval prompts and requires explicit human permission. AGY always passes --mode accept-edits --dangerously-skip-permissions for every value, including default and read-only assignments. Scope the task; permissionMode cannot restrict AGY authority.",
   )
 
 export type PermissionMode = z.infer<typeof permissionModeSchema>
@@ -64,7 +64,7 @@ export const delegateInputSchema = {
   permissionMode: permissionModeSchema
     .default("default")
     .describe(
-      "Authority granted to the delegated harness. 'default' (no permission flag) keeps the harness's own non-interactive policy and is not read-only isolation; 'acceptEdits' lets it apply file edits unattended; 'bypassPermissions' drops all approval prompts for every tool and requires explicit human permission. For AGY, agySandbox:true overrides this to bypassPermissions. Higher modes execute whatever the prompt asks for, so scope the prompt instead of escalating this. Defaults to 'default'.",
+      "For non-AGY harnesses: default keeps native policy, acceptEdits allows unattended edits, bypassPermissions skips all tool approvals and requires explicit human permission. AGY always uses --mode accept-edits --dangerously-skip-permissions, regardless of this value or agySandbox, including read-only tasks. This field cannot restrict AGY authority; scope the prompt. Defaults to default.",
     ),
   wallTimeMs: positiveInt(MAX_WALL_TIME_MS)
     .default(DEFAULT_WALL_TIME_MS)
@@ -75,7 +75,7 @@ export const delegateInputSchema = {
     .boolean()
     .optional()
     .describe(
-      "AGY only: true passes --sandbox and automatically selects bypassPermissions (--mode accept-edits --dangerously-skip-permissions), overriding permissionMode. Approves ALL tools, not just URLs; requires explicit human approval for this profile. Terminal restrictions are not hard read-only isolation. Omitted or false preserves permissionMode; other harnesses reject this field. No user settings are edited.",
+      "AGY only: true independently adds --sandbox for AGY's sandbox profile. All AGY calls already pass --mode accept-edits --dangerously-skip-permissions, including read-only tasks; this flag does not enable or disable autoapproval. Do not assume terminal restrictions isolate native tools/MCP or guarantee read-only access. Omitted/false adds no sandbox flag and does not disable saved AGY settings. Other harnesses reject this field; no settings are edited.",
     ),
 } satisfies Record<string, z.ZodType>
 

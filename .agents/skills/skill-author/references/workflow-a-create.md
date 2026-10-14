@@ -1,6 +1,9 @@
 # workflow-a-create
 
-## Workflow A — Create a New Skill
+## Workflow A — Create or Modify a Skill
+
+For an existing skill, confirm the gap and preserve its intended contract; do not
+repeat new-skill justification or registration unless scope/routing changes.
 
 ### Phase A1 — Validate Need for a New Skill
 
@@ -27,6 +30,7 @@ Write the contract before the body:
 5. **Inputs**: What does the skill need to start?
 6. **Outputs**: What does the skill produce?
 7. **Estimated phases**: 3-10 is typical.
+8. **Reader and capability contract**: Who acts, what context/resources can they access, and what happens if a capability is missing? Apply `portability-and-reader-contract.md`; declare product-specific requirements rather than assuming a local setup.
 
 **Deliverable**:
 ```
@@ -70,6 +74,9 @@ ANTI-PATTERNS:
 
 Write the file following the documented template:
 
+Carry the A2 inputs, reader assumptions, authority and capability/absence contract
+into the body or an explicit reachable resource; do not leave it only in a design outline.
+
 1. **YAML frontmatter**: `name`, `description` (2-5 sentences with trigger phrases AND exclusion criteria). Use `\"` to escape internal quotes. Do NOT duplicate description content in the skill body.
 
 2. **Intro paragraph**: 1-2 sentences expanding the frontmatter with post-loading context.
@@ -82,11 +89,11 @@ Write the file following the documented template:
 
 6. **Anti-pattern table**: 5-10 rows (Temptation, Why Wrong, Correct Path).
 
-7. **ACI details when applicable**: examples, absolute-path/file-shape expectations, failure modes, and misuse-resistant wording for any agent-facing interface.
+7. **ACI details when applicable**: examples, explicit path roots/file shapes, failure modes, and misuse-resistant wording. Resolve absolute tool paths at runtime; do not publish host-specific paths as reusable prerequisites.
 
-8. **References section**: Related docs, skills, or reference files (even if they don't exist yet — they're contracts).
+8. **References section**: Related docs, skills, or reference files that exist and resolve from an explicit root. A planned reference is unfinished work, not a usable resource. Deployment records do not become reusable methodology merely by moving them to `references/`.
 
-**Length guideline**: Keep SKILL.md under 500 lines. Move deep content to `references/`. Move content to references when it's only needed for variants, is implementation detail rather than methodology, changes frequently, or is a sub-workflow.
+**Length guideline**: Aim for a router under ~150 lines; 500 lines is the upper guideline, not a target. Move relevant deep methods and variants to `references/`, not unrelated deployment details. Before delivery, check the native-capability, configured-integration and unavailable-capability scenarios and read the workflow without its author chat. Report walkthroughs separately from executed behavior.
 
 ### Phase A5 — Register the Skill
 

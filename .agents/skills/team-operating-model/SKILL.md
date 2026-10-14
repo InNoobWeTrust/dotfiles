@@ -70,6 +70,11 @@ The primary resolves in-scope choices and owns the final synthesis. Distinguish
 facts, inferences, and unknowns; return unresolved user-owned decisions with plain
 context and consequences. Required independent challenge gates still apply.
 
+For meaningful in-scope choices, recommendations before asking the user, or
+worker continue/return uncertainty, use [Decision Support](../decision-support/SKILL.md)
+with an existing decision-support capability when available and authorized. Estimates advise the responsible
+agent; they neither supply a real worker nor waive authority, evidence or stop gates.
+
 ## 4. Approve the plan and execute only authorized work
 
 For execution, use a jointly crafted, primary-approved plan proportionate to the

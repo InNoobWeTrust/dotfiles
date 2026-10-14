@@ -12,6 +12,14 @@ description: "[One-sentence summary]. Load for [specific task types]. Activate o
 
 [Brief intro — 1-2 sentences on what this skill does, expand the frontmatter description with context the agent needs after loading.]
 
+## Inputs and capability boundary
+
+[State required inputs, reader assumptions and authority. Discover the current
+environment's documented capability; do not require the author's transport,
+provider, machine path or local adapter. Declare any product-specific scope.]
+[If a capability is unavailable, state the limitation and preserve mandatory stops;
+absence is not authorization to install or reconfigure.]
+
 ---
 
 ## Skill Workflow
@@ -56,5 +64,5 @@ This skill has [N] phases. All must be completed.
 
 ## References
 
-- `references/[file].md` — [what it contains, loaded on demand]
+- `references/[file].md` — [existing reusable resource, loaded on demand; remove placeholder before delivery]
 ```

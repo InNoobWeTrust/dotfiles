@@ -7,6 +7,10 @@ Write the SKILL.md as a checklist, not a polished document. Use it yourself for 
 - What steps took too long?
 - What steps produced no value?
 
+Include valid `name`/`description` frontmatter and register the skill in `skills/INDEX`
+from creation (`skills/WIRING` when composition applies); discovery is not deferred
+until adoption. Treat use counts as review prompts, not proof of effectiveness.
+
 ### Stage 2: Hardening (3-5 uses)
 
 Add stop conditions for the steps the AI skipped. Add anti-pattern examples for the shortcuts the AI tried. If a step produced no value in any of the 5 uses, remove it.
@@ -14,9 +18,8 @@ Add stop conditions for the steps the AI skipped. Add anti-pattern examples for 
 ### Stage 3: Team Adoption (5+ uses)
 
 Share the skill with the team. This is when you add:
-- A polished `description` field in the YAML frontmatter with explicit trigger phrases and exclusion criteria
-- The INDEX.md entry mapping task types to this skill
-- The WIRING.md entry showing how this skill composes with others
+- A refined `description` field with tested triggers and exclusions
+- Validated routing in `skills/INDEX` and composition in `skills/WIRING`
 - Examples of good and bad outputs
 
 ### Stage 4: Maintenance

@@ -18,12 +18,14 @@ Run this checklist when creating or materially changing any agent-facing interfa
 - [ ] **Trigger clarity** — are the routing signals concrete, not vague synonyms?
 - [ ] **Inputs declared** — what must be provided before execution starts?
 - [ ] **Outputs declared** — what artifact, report, or state change must come back?
-- [ ] **Absolute references** — should paths, commands, or schemas be forced into a safer format?
+- [ ] **Explicit roots** — are path roots and file shapes unambiguous? Resolve absolute tool paths at runtime without baking host-specific paths into reusable files.
 - [ ] **Examples included** — is there at least one copyable example for the main path?
 - [ ] **Failure contract** — what does the agent do on ambiguity, missing context, invalid inputs, or unsafe requests?
 - [ ] **Poka-yoke wording** — does the prompt steer away from common misuse (wrong files, over-broad scope, silent fallback)?
 - [ ] **Overlap reduced** — is this interface distinct from neighboring skills/tools, or will agents confuse them?
 - [ ] **Progressive disclosure respected** — is deep detail moved to `references/` instead of bloating the router surface?
+- [ ] **Portable capability contract** — can native tooling or an authorized integration satisfy the need, and is absence handled without assuming an install? Declare product-specific scope explicitly.
+- [ ] **Reader independence** — can a reader use the workflow and its existing explicit resources without the author's chat? Do body, references and routing avoid deployment/account residue?
 
 ## Common ACI upgrades
 

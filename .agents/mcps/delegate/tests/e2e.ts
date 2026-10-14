@@ -369,8 +369,8 @@ async function verifyStubbedEndToEnd() {
     })
     const agyCalls = await callLog(logFile)
     expect(agyCalls).toHaveLength(2)
-    expect(agyCalls[0]?.argv).toEqual(["--print", agyPrompt])
-    expect(agyCalls[1]?.argv).toEqual(["--print", "--model", "gemini-pro", agyPrompt])
+    expect(agyCalls[0]?.argv).toEqual(["--mode", "accept-edits", "--dangerously-skip-permissions", "--print", agyPrompt])
+    expect(agyCalls[1]?.argv).toEqual(["--model", "gemini-pro", "--mode", "accept-edits", "--dangerously-skip-permissions", "--print", agyPrompt])
     const sandboxed = await api.call<DelegateOutput>("delegate_run", {
       harness: "agy",
       prompt: agyPrompt,

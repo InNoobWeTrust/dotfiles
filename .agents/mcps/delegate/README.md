@@ -96,25 +96,26 @@ An empty status `models` list means no verified model allowlist, not no models.
 ## First delegation
 ### Headless web research
 
-AGY cannot prompt for new permissions in `--print` mode. With explicit human
-approval for **all-tool autoapproval**, use the per-invocation sandbox profile:
+AGY cannot prompt for new permissions in `--print` mode. This integration always
+passes `--mode accept-edits --dangerously-skip-permissions`, for **every**
+`permissionMode`, including read-only assignments. Use AGY only with authorization
+for this all-tool autoapproval profile. To additionally select its sandbox profile:
 
 ```json
 { "harness": "agy", "agySandbox": true, "prompt": "Your bounded task" }
 ```
 
-This passes `--sandbox --mode accept-edits --dangerously-skip-permissions`.
-It overrides `permissionMode` to `bypassPermissions`, even when that field is
-omitted or set to `default` or `acceptEdits`. **Every tool is autoapproved**, not
+This independently adds `--sandbox`. **Every tool is autoapproved**, not
 just URL reads: file edits, commands, interactive website actions and MCP calls.
 Delegate does not edit user settings or create a temporary configuration.
 
 The sandbox imposes terminal restrictions; it is **not hard read-only isolation**
 for native tools or MCP, and the workspace can remain writable. Scope the task
-and use this profile only within explicit human authorization. `agySandbox: false`
-or omission preserves the requested `permissionMode`; it does not disable any
-sandbox already enabled in AGY settings. No automatic approval is added unless
-the caller selects this profile or explicitly selects `bypassPermissions`.
+within authorization. `agySandbox: false` or omission adds no sandbox flag; it
+does not disable any sandbox already enabled in AGY settings, and does not turn
+off autoapproval. `permissionMode` cannot restrict AGY's authority. All options
+precede `--print`, which immediately precedes the final prompt so it cannot
+consume another flag as its value.
 
 If a run is blocked, inspect retained stderr before retrying; do not silently
 escalate authority or replace independent research with main-agent excerpts.
@@ -157,9 +158,9 @@ scheduler. The main agent still decides what to dispatch and checks the result.
 | `prompt` | required | The whole task, as one argument. Max 64 KiB. Must not begin with `-`. |
 | `workdir` | MCP root, else the server's directory | Absolute directory the harness runs in |
 | `model` | the harness's default | Exact native ID when status has a model list; otherwise passed to the native CLI without claiming model access. Must not begin with `-`; check `modelSupported`. |
-| `permissionMode` | `default` | `default`, `acceptEdits`, or `bypassPermissions`, mapped to that harness's own flag. An unsupported mode is refused. AGY `agySandbox: true` overrides it to `bypassPermissions`. |
+| `permissionMode` | `default` | `default`, `acceptEdits`, or `bypassPermissions`, mapped per harness. Unsupported modes are refused. AGY always autoapproves all tools for every value; this field cannot restrict it. |
 | `wallTimeMs` | 900000 | Wall-clock limit for the whole turn; maximum 7200000 |
-| `agySandbox` | omitted | AGY only: `true` enables terminal sandboxing plus all-tool autoapproval, overriding `permissionMode`; requires explicit human authorization. `false`/omitted preserves `permissionMode`. Other harnesses refuse this field. No settings edits; not read-only isolation. |
+| `agySandbox` | omitted | AGY only: `true` independently adds `--sandbox`; all AGY calls already autoapprove all tools. `false`/omitted adds no sandbox flag, without disabling saved settings. Other harnesses refuse this field. No settings edits; not hard read-only isolation. |
 
 Successful responses are `{ "ok": true, "data": … }`; validation/readiness
 failures are `{ "ok": false, "error": … }`. Failed turns also retain `data`,

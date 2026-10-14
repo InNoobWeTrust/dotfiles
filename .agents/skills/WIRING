@@ -102,6 +102,15 @@ Do **not** run branch steps B1–B2 for eng-only spot checks or eng-only audits.
 5. `systematic-investigation` — diagnose repetitions or broken verification, then resume only with a supported changed approach
 6. Deliver guides/evidence for final human user acceptance; feedback begins another scoped loop. AFK still requires verified isolation, state, job bounds, and cleanup.
 
+### Decision Consultation (Cross-Cutting)
+
+Use `decision-support` alongside the matching domain workflow when a meaningful
+choice remains: autonomous next action, recommendation before a user decision,
+or worker continue/return triage. Gather evidence first, consult an existing
+decision-support capability available and authorized in that harness, then own the recommendation. This is
+not delegation, independent review or permission to bypass a hard stop. Skip
+trivial deterministic choices; unavailable consultation does not waive gates.
+
 ### Delegated Execution
 
 Any time a background worker, delegated agent, or external node is launched:
