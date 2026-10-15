@@ -17,6 +17,8 @@ The primary owns intent, material decisions, integration, and acceptance—not e
 
 Good candidates include bounded exploration, complementary research questions, approved implementation units, execution/verification, and independent review. Keep live user dialogue and cross-task judgment in the primary thread; workers may reason and synthesize within their assigned boundary. Choose parallelism by actual dependencies and ownership, not a quota. Named fallbacks express preferences, not mandatory retry chains; a failed attempt permits another suitable agent or direct work where allowed. For deeper guidance, fallback selection, or execution receipts, read [Context Stewardship](references/context-stewardship.md).
 
+For substantive role selection or reuse after a quality incident, use targeted [Assignment outcomes](references/assignment-outcomes.md) recall from authorized existing memory. Capture a compact evidence-linked outcome when accepting, correcting, rejecting or interrupting an assignment; completion labels alone are not acceptance. Keep solution quality separate from provider health and primary-owned design choices.
+
 ## Four prompt pillars
 
 1. **Precise scope**: exact deliverable, explicit out-of-scope boundary, and the smallest sufficient context with relevant contracts and sources.

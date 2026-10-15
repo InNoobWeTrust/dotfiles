@@ -82,6 +82,12 @@ task. Bound-role execution pins its revision and unit; read and revalidate a new
 approved revision before continuing. Never silently change scope or contracts.
 Decision-only deliberation does not authorize implementation.
 
+Before affected implementation, independently challenge **material cross-component
+designs**, whether authored by the primary or a worker. Apply [Design acceptance](references/design-acceptance.md)
+to responsibility/dependency direction, shared contracts, orchestration and state ownership.
+Primary approval or a compromise register alone does not satisfy this gate. Reuse a
+current revision's receipt; mechanical edits with no changed design are exempt.
+
 For software work, the primary approves concrete library/tool/API selections using repository constraints and applicable code-craft guidance. Keep the [materialization contract](../subagent-dispatch/references/implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) in the existing plan/phase file (inline for an atomic patch), carry its unit-relevant rows into worker handoffs, and revalidate changed choices on replacement/revision. Acceptance checks actual API use and behavior, not imports alone; workers report missing/incompatible choices rather than silently reverting to learned patterns.
 
 Load [Delivery](references/delivery.md) before authorized build/fix/work-until-done loops.
@@ -132,6 +138,7 @@ the consolidator with the primary silently.
 - [ ] Real team formed and current worker contribution recorded; launch permission verified.
 - [ ] Assignments, ownership, limits, dependencies, and evidence are explicit.
 - [ ] Software plans and implementer handoffs retain approved materialization choices/exception rationale; current call-site and behavior evidence confirms actual reuse.
+- [ ] Material cross-component design has a revision-linked independent challenge receipt; integration checks actual dependency direction and consumer wiring, not runtime success alone.
 - [ ] Synthesis preserves dissent and separates evidence from assumptions.
 - [ ] Applicable persistent guards, plan revision, and checkpoints are intact.
 - [ ] Authorized delivery has current required proof/reviews, usable guides, observed cleanup, and an honest readiness or blocker handoff.

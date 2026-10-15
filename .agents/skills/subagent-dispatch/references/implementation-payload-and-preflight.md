@@ -78,6 +78,7 @@ Do not dispatch if there are zero or multiple units; the unit is not bound to a 
 - [ ] The decision gate permits delegation.
 - [ ] Exactly one functional unit is selected from an approved separate phase file; any plan is context only.
 - [ ] Exactly one accepted dispatch basis is declared.
+- [ ] Material cross-component design has the current independent challenge receipt required by [Design acceptance](../../team-operating-model/references/design-acceptance.md), regardless of author; or no material design is changed. Primary approval alone is insufficient.
 - [ ] Every required unit-payload field is bounded.
 - [ ] Materialization choices are resolved and primary-approved (or explicitly N/A); the dispatch carries the unit-relevant rows, accessible guidance/API sources, dependency-edit scope, and reuse evidence. Missing/incompatible choices block implementation, including atomic patches.
 - [ ] Boundary interfaces, method signatures, DTO types, and error variants are locked as concrete code, leaving zero contract degrees of freedom to the implementer (zero invented interfaces).

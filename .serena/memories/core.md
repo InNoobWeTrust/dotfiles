@@ -14,6 +14,8 @@ Top-level entry point for dotfiles agent memory graph.
 
 ## Active Task Memory
 
+- Design acceptance and agent-specific outcome evidence: `mem:tasks/design-health-20261015/task` — Algotrap incident sample and scoped routing cautions; no model-wide ranking or profile demotion, not user-accepted.
+
 - Subagent health guard: `mem:tasks/subagent-health-20261015/task` — approved guidance/runtime guard, installed-contract verification underway; not user-accepted.
 
 - Domain knowledge curation metaskill: `mem:tasks/domain-curation-20261015/task` — prototype authoring; real-domain pilot and user acceptance pending.

@@ -23,6 +23,8 @@ Keep delegated work productive without mistaking silence for failure. This polic
 
 Avoid retaining raw prompts, arguments, provider responses or tool output in health logs. Prefer bounded counts, hashes, session IDs, route and sanitized failure categories. A runtime heuristic is a safety net, not proof that two semantically different calls are identical.
 
+Record availability failures separately from solution quality using [Assignment outcomes](assignment-outcomes.md). A quota/overload failure supplies no reasoning-quality evidence; an empty completion is a missing deliverable with unknown cause until investigated. Task-local cooldown is not a permanent model demotion.
+
 ## Stop, reconcile, then recover
 
 1. Verify the exact owned target and stop authority. Interrupt only that worker with the documented no-resume behavior. Never delete a session to implement cancellation, interrupt its parent, or kill a user process.
