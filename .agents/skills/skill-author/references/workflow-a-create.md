@@ -113,4 +113,14 @@ Mark the new skill for maintenance rotation:
 - **Lifecycle stage**: Stage 1: Prototype (1-2 uses). Track first usage in whatever audit system the org maintains.
 - Register the creation date as a known point for the next quarterly audit cycle.
 
+Before expanding guidance, use a small paired evaluation on representative tasks:
+compare the current guidance with the proposed revision under the same inputs,
+capabilities and acceptance criteria. Include a failure/unavailable-capability case.
+Correctness and safety are gates; only then compare unnecessary edits, completion
+time and user corrections. Keep evaluation notes in the existing audit/task record,
+not an always-on checklist or new benchmark framework. Separate observed runs from
+walkthroughs, record confounders, and report missing evidence instead of inventing
+improvement metrics. After the first 1–2 real uses, retain, revise or remove the
+guidance based on those observations.
+
 ---

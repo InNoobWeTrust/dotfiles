@@ -43,6 +43,18 @@ For a Patch, `In scope`, `Non-goals`, acceptance criteria, constraints, and know
 
 Approval ownership follows `../../../rules/delivery-ownership.md`: the autonomous primary may approve researched in-scope choices before implementation; human-reserved boundaries remain human-owned. Record caller-visible examples, relevant evidence, consequences, and validation proportionately.
 
+## Affected surface before simplification
+
+Before locking scope or minimizing an implementation, inspect the affected callers,
+tests, fixtures, configuration, exports and deployment entrypoints (mark genuinely
+irrelevant items N/A). Include untouched consumers of changed contracts. Record a
+brief surface map in the existing intent or change context, not a new plan file.
+Prefer repository capabilities, then suitable platform/standard-library features,
+then existing dependencies. Minimize the complete behavior, not just its edited
+lines: preserve validation, failure handling, security and accessibility contracts.
+If tracing reveals an out-of-scope dependency change, revise scope through its
+authorized owner before editing it.
+
 ## Technology and dependency policy
 
 Preserve the repository's established stack. Prefer a suitable standard library/platform capability; otherwise use a mature, maintained, production-proven ecosystem package rather than recreating an adequately supplied capability. Vendored third-party copies and deliberate dependency-free reimplementations require explicit user opt-in or an existing repository policy, and must record ownership, update, and security rationale.

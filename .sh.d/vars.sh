@@ -4,6 +4,9 @@ export use_color=true
 export friendly_builtin=true
 export XDG_CONFIG_HOME="$HOME/.config"
 
+# Resolve the source file through Stow; this file is shared by Bash and Zsh.
+export OPENCODE_LOCAL_PLUGINS="${OPENCODE_LOCAL_PLUGINS:-$(dirname "$(realpath "${CONF_SH_DIR:-$HOME/.sh.d}/vars.sh")")/../.agents/plugins}"
+
 # Fix TLS certificate lookup in Termux
 if [ -n "${TERMUX_VERSION:-}" ] && [ -f "${PREFIX:-}/etc/tls/cert.pem" ]; then
     export SSL_CERT_FILE="$PREFIX/etc/tls/cert.pem"

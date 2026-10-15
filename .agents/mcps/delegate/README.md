@@ -162,6 +162,15 @@ scheduler. The main agent still decides what to dispatch and checks the result.
 | `wallTimeMs` | 900000 | Wall-clock limit for the whole turn; maximum 7200000 |
 | `agySandbox` | omitted | AGY only: `true` independently adds `--sandbox`; all AGY calls already autoapprove all tools. `false`/omitted adds no sandbox flag, without disabling saved settings. Other harnesses refuse this field. No settings edits; not hard read-only isolation. |
 
+For substantive AGY work, retain the 15-minute whole-turn default unless task
+evidence supports another bound. Budget CLI startup, model/tool round trips,
+internal swarm coordination and synthesis; single-model speed is not end-to-end
+task latency. A two-minute cap is not a research/review default. State the actual
+runner budget in the handoff, allow time to return partial evidence, and keep any
+outer request deadline compatible. Prompt text cannot extend `wallTimeMs`.
+An agent-chosen short timeout is not proof that AGY or its provider is broken.
+Longer budgets can cost more; this guidance does not authorize unlimited runs.
+
 Successful responses are `{ "ok": true, "data": … }`; validation/readiness
 failures are `{ "ok": false, "error": … }`. Failed turns also retain `data`,
 including partial output, and set the MCP error flag; the text fallback contains

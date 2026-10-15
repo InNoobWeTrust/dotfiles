@@ -11,6 +11,7 @@ Run a checkpoint when any of these happen:
 - Two plausible fixes are competing and the path is getting muddy
 - Confidence drops below "I know the next best step"
 - You notice thrash: undo/redo cycles, widening scope, or speculative edits
+- The user repeatedly corrects the same approach or supplies an existing implementation you have not examined
 
 ## Micro-protocol
 
@@ -37,6 +38,7 @@ Out of scope    :
 3. If the checkpoint reveals scope creep, narrow back to the smallest testable slice.
 4. If two branches remain plausible, name both and choose one explicitly.
 5. Do not continue with "I'll just try things" after a checkpoint.
+6. On repeated correction, revisit the underlying model and inspect the user's example before editing again. Separate a factual correction from a preference change; do not answer either by merely reformatting the same disputed approach.
 
 ## Outcome
 

@@ -9,6 +9,8 @@ Use this router before **every** delegated launch: named workers, model-route fa
 
 ## Allocation principle
 
+For provider retries, repeated tool failures, stalled workers, or model-route recovery, load [Worker Health Supervision](references/worker-health.md). Establish health bounds before launch; a foreground call that blocks the primary needs an independent runtime deadline or guard, not a promise to check later.
+
 For periodic progress checks or delayed reminders, load [Periodic Progress Checks](references/periodic-checks.md). Prefer native background commands with completion notifications for bounded sleeps and simple shell checks; do not delegate merely to wait, execute supplied commands, or relay output. Assign an owner and arm a real wait or supported background wake-up before continuing other work; intent to remember is not monitoring. Neither synchronous nor native background checks require a subagent.
 
 The primary owns intent, material decisions, integration, and acceptance—not every operation. Proactively compare direct work, targeted queries, and bounded handoffs by context cost, latency, evidence quality, and coordination cost. Delegate when an independently checkable result is sufficient and the handoff helps; stay direct when intermediate interpretations are inseparable from current decisions or handoff overhead dominates. Later work needing a result does not require the primary to collect all its intermediate details.
@@ -74,6 +76,7 @@ TASK_COMPLETE | INCOMPLETE + continuation/resumption state
 
 | Reference | Read when |
 |---|---|
+| `references/worker-health.md` | Before long/blocking delegation, or when provider retries, repeated tool calls, or fallback routes threaten productivity. |
 | `references/periodic-checks.md` | Periodic checks, delayed reminders, or monitoring multiplexer/queue jobs while other work continues. |
 | `references/worker-contract.md` | Before every named, fallback, or dynamic launch: establish task authority and guidance discovery; style direction is optional. |
 | `references/planning-payload-and-preflight.md` | Preparing or validating an L0/L1/L2 planning dispatch. |

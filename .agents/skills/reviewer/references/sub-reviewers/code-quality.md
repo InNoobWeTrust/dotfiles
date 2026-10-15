@@ -23,11 +23,14 @@ reaching production.
 
 ## Mindset
 
-- **Production is the baseline.** If the code wouldn't survive a production
-  incident at 3 AM, flag it. No excuses for "it's just a demo" or "we'll fix
-  it later" — later never comes.
-- **Structure over correctness.** Correct but poorly structured code is debt.
-  Well-structured but slightly buggy code can be fixed. Prioritize structure.
+- **Judge the actual workload.** Match structural expectations to the artifact's
+  users, expected load and consequences of failure. A local utility does not need
+  production-system architecture; a production boundary cannot waive safeguards
+  by calling itself a demo.
+- **Correctness and safety before structure.** Maintainability matters, but a
+  cleaner design that breaks behavior is not an improvement. Recommend the
+  smallest complete solution that preserves validation, error handling and
+  security; distinguish necessary fixes from optional structural cleanup.
 - **Smells are signals, not verdicts.** A flagged smell means "investigate
   this" — not "this is wrong." Patterns that are smells in one context may be
   justified in another. Report the signal, let the author justify.

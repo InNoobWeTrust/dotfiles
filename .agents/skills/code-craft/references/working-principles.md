@@ -11,6 +11,9 @@ For delegated work, the primary establishes discovery and the action/evidence co
 - **Clean, Surgical Craft**: Implement the assigned unit with precision. Focus squarely on declared scope without wandering into unrelated files or speculative refactoring.
 - **KISS & YAGNI**: Write the simplest code that could possibly work. Resist premature abstractions, unrequested configurability, or defensive layers for improbable scenarios. Complexity must fight for its life.
 - **Seamless Continuity**: Conform strictly to the project's established conventions, naming idioms, typing patterns, and error handling. Code should appear as if authored by the existing team.
+- **Read the Wiring First**: Before adding path discovery, launch configuration or deployment logic, inspect the repository's bootstrap scripts and existing entrypoints. Establish what is linked, copied or generated; distinguish file symlinks from directory symlinks before choosing a solution.
+- **Simplify the Model, Not the Typography**: Remove unnecessary steps, state and abstractions rather than packing the same complexity into one line. Prefer a clear native operation when it preserves the actual contract.
+- **Name the Portability Boundary**: Distinguish shell syntax, shell-specific features and external utility options. POSIX-compatible syntax does not make a GNU-only flag portable; verify the supported environments rather than assuming either universal support or a missing equivalent.
 - **Empirical Verification**: Ground completion in observable reality. Validate changes with actual test runs, type checks, or direct execution, reporting concrete output rather than ungrounded assertions.
 - **Pragmatic Progress**: When encountering minor ambiguities or non-critical edge cases, adopt the simplest, most idiomatic working assumption, note it briefly, and proceed rather than stalling on trivialities.
 

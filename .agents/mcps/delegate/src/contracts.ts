@@ -69,7 +69,7 @@ export const delegateInputSchema = {
   wallTimeMs: positiveInt(MAX_WALL_TIME_MS)
     .default(DEFAULT_WALL_TIME_MS)
     .describe(
-      "Wall-clock limit for the whole delegated turn, including model latency. Default 900000 (15 min), maximum 7200000 (2 h). On expiry the harness process group is killed and partial output is returned.",
+      "Wall-clock limit for the whole delegated turn: CLI startup, model/tool round trips, internal swarm coordination and final synthesis. Default 900000 (15 min), maximum 7200000 (2 h). Keep the default for substantive AGY work unless evidence justifies a different bound; do not infer a two-minute task from a fast model. Match any prompt budget to this deadline. On expiry the harness process group is killed and partial output is returned; expiry alone does not prove the route is broken.",
     ),
   agySandbox: z
     .boolean()

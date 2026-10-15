@@ -379,6 +379,7 @@
     },
   ],
   "plugins": [
+    "{env:OPENCODE_LOCAL_PLUGINS}/subagent-health",
     "opencode-models-discovery@latest",
     "@tarquinen/opencode-dcp@latest",
     //"@bybrawe/opencode-loop@latest",

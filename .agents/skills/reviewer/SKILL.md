@@ -43,10 +43,10 @@ escalation.
 
 ## Gate 4 — Anti-Context-Bleed (Diff Boundary Invariant)
 
-Context exploration tools (`file_read`, `code_search`, `grep_search`, `view_file`) exist solely to clarify the diff under review (checking callers, types, or imports).
-- **Hard Prohibition**: Reviewers are strictly forbidden from reporting findings on external or legacy code outside the diff.
-- A finding is valid ONLY if it anchors directly to lines modified or added within the active changeset.
-- If an external smell or bug is spotted in untouched code, discard it from the review report (do not distract the PR author with pre-existing technical debt).
+Trace the changed contract through affected callers, types, imports, tests and configuration, including untouched consumers. Review the change's causal impact, not just the edited lines.
+- Anchor each finding to a modified or added root-cause line in the active changeset; cite an untouched consumer as evidence when that change breaks it.
+- **Hard Prohibition**: Do not report unrelated, pre-existing legacy defects or smells discovered during tracing.
+- For an explicitly scoped artifact audit rather than a changeset review, the named artifact is the review boundary; do not invent a diff requirement or expand into adjacent legacy cleanup.
 
 ## Diff Preparation & Scoping (Preflight, Bundles, Gating)
 

@@ -4,6 +4,8 @@ Use when asked to “check periodically,” “monitor this job,” “check aga
 
 **Periodic checks are scheduled work, not something to remember.** Use ordinary `sleep` and existing status tools through native command execution; no custom scheduler or LLM timer worker is required.
 
+For owned-worker retry/doom-loop stops, use the separate [Worker Health Supervision](worker-health.md) contract. Read-only monitoring alone still grants no cancellation authority.
+
 ## 1. Establish the monitoring contract
 
 - Identify the exact target: session/pane or scheduler job ID, host/cluster, and absolute log paths where relevant. Supply concrete read-only status commands and completion evidence.
