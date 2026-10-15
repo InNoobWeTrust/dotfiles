@@ -19,9 +19,13 @@ Record in existing task context: design revision, author/reviewer identities, so
 
 The primary resolves in-scope findings before dispatch. A documented compromise must explain its effect on the requested outcome, not silently redefine it. Requirements/authority conflicts return to the user; ordinary in-scope choices remain primary-owned. Changed material contracts or dependency direction invalidate the affected receipt and dependent checks, not all unrelated work.
 
+Coordination ownership is not architectural immunity. Any contributor may raise an evidenced responsibility, dependency or contract defect and stop affected work, including under a primary-approved contract. Preserve the objection and evidence; resolve contested material design findings through the independent challenge, recording the correction or evidence-based rebuttal before resuming. Primary approval alone cannot close an objection. This grants neither unilateral rewrite authority nor a unanimity requirement; unresolved requirements/authority conflicts remain user-owned.
+
 ## Integration acceptance
 
 Compare the implemented manifest/import graph and representative caller→adapter→core flow against the reviewed design, including untouched consumers. Use source tracing or existing dependency tooling within authorized execution bounds; record the source/check and result. Runtime tests prove behavior, not dependency independence. Perform relevant runtime checks as well; neither replaces the other. Missing boundary evidence is UNVERIFIED, not a clean architecture claim.
+
+A receipt covers only the question, revision and sources actually examined. A cycle check or a PASS for removing one application dependency cannot approve responsibility placement it did not assess. Report build/runtime results, dependency-boundary results and design acceptance separately; never widen a scoped PASS during synthesis.
 
 Example: a standalone protocol adapter may run without messaging credentials yet still depend on the messaging application library. Runtime smoke passes do not settle that design. The review must examine manifest direction and shared-analysis placement before approving the adapter boundary.
 

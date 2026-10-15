@@ -33,6 +33,8 @@ This is a discovery instruction, not a personality setting. Do not repeat it in 
 3. Check discovery access. A working-style reference or short hint is optional; omit it when the assignment already gives the worker enough to infer a useful approach. Do not dump full skills or make the parent compose a complete personality.
 4. For planning/implementation, carry settled [materialization choices](implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) and accessible task-relevant code-craft/API sources. Library/API choices are mandatory task constraints, not optional working-style hints. Implementers confirm sources before coding and report incompatible selections rather than silently substituting. Keep the same choices and exceptions on route fallback; re-resolve source access, not the architecture.
 
+A locked or primary-approved contract does not require implementing an evidenced architectural defect. Any worker may stop the affected unit with `INCOMPLETE: CONTRACT_DEFECT`, citing the responsibility/dependency/contract conflict and a proposed correction. Preserve unaffected safe work and write bounds; do not silently redesign. The primary must resolve the objection under [Design acceptance](../../team-operating-model/references/design-acceptance.md) before resuming affected implementation, not return the same contract solely because it was already approved.
+
 For genuine next-action or continue/return uncertainty, point workers to
 [Decision Support](../../decision-support/SKILL.md) and allow an existing decision-support
 capability only if available and authorized in their harness. Do not assume they inherit
