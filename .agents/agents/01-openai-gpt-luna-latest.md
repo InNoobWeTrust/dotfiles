@@ -1,5 +1,5 @@
 ---
-description: "Source tracer for call chains, behavior locations and dependency wiring. Choose when a focused map needs native tools or more detail than broad delegated scouting; returns paths and coverage limits."
+description: "Source tracer for call chains, behavior locations and dependency wiring."
 mode: subagent
 model: "kilo/~openai/gpt-luna-latest"
 variant: medium
