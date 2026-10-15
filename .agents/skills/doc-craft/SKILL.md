@@ -7,10 +7,11 @@ description: "Use this skill when designing, writing, restructuring, or auditing
 
 Technical documentation exists to build shared mental models, communicate decisions, and enable immediate action. Unstructured walls of text, discursive essays, nested bullet points, and confusing low-level execution minutiae undermine human readability.
 
-This skill enforces three primary disciplines:
+This skill enforces four primary disciplines:
 1. **Audience & Destination Routing**: Route human-facing mental models to `docs/` and `<module>/README.md`; route internal agent task tracking, atomic plans, and consensus boards to `memory` (`MEMORY_DIR`).
 2. **Abstraction Level & Plain Language**: Keep human docs concise, to-the-point, and jargon-free. Provide high-level architecture, mental models, and conceptual pseudocode rather than bombarding readers with low-level execution trivia.
-3. **Visual Rhythm & Scannability**: Replace verbose prose with structured tables, 3-sentence paragraph limits, bold lead-in lists, diagram anchors, and progressive disclosure (**Index → Entry → Leaf**).
+3. **Reader Path & Supporting Layers**: Keep a coherent main reading path visible; make worthwhile optional depth findable through contents, notes, appendices, or linked reference sections appropriate to the medium.
+4. **Visual Rhythm & Scannability**: Replace verbose prose with structured tables, 3-sentence paragraph limits, bold lead-in lists, diagram anchors, and progressive disclosure (**Index → Entry → Leaf**). Formatting supports information flow; it does not establish it.
 
 ---
 
@@ -51,7 +52,8 @@ Preserve decision-relevant constraints, testable contracts, uncertainties and ne
     - **Index**: Router/catalog or document outline; use `.typ` by default, `README.md`/`INDEX.md` where repository navigation requires Markdown. Must stay under 40 rows.
     - **Entry**: Primary guide/topic overview (`<topic>.typ`, `.md` for a required consumer) or module `README.md`. Focuses on core flow and common paths (< 8 KB of source).
     - **Leaf**: Deep details, edge cases, full parameter schemas (`details/<leaf>.typ`, or required `.md`); include relevant Typst leaves in a self-contained PDF.
-3. **Apply Size Limits & Progressive Splitting**: If an existing document exceeds **12 KB**, shard it into leaves (Pattern A) or ordered sequential files (Pattern B). For directory indexing ("index docs") or document sharding ("shard doc"), follow [`references/progressive-disclosure.md`](references/progressive-disclosure.md).
+3. **Establish the Reading Path**: Before visual formatting, follow [Reader path and supporting layers](references/reader-path.md): classify material as essential, optional, or unnecessary for the declared audience/task. Keep prerequisites and consequential caveats near their use; give optional support named, navigable destinations and remove material that serves no reader need.
+4. **Apply Size Limits & Progressive Splitting**: If an existing document exceeds **12 KB**, shard it into leaves (Pattern A) or ordered sequential files (Pattern B). For directory indexing ("index docs") or document sharding ("shard doc"), follow [`references/progressive-disclosure.md`](references/progressive-disclosure.md).
 
 ### Phase 2 — Abstraction Calibration & Visual Scaffolding
 Before drafting sentences, calibrate abstraction and build the visual skeleton:
@@ -74,6 +76,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 
 ### Phase 4 — Scannability, Abstraction, & Link Audit
 1. **The 5-Second Scan Test**: Can a reader glance at the page and immediately identify the goal, components, and primary command/table?
+   - **Reader-path check**: Can the intended reader understand and act correctly while skipping optional notes? Can they locate a named supporting detail and return without hunting? Check the delivered medium; report source-only checks separately from reader testing.
 2. **Abstraction & Jargon Audit**: Confirm no low-level agent execution noise, raw task checklists, or unexplained jargon leaked into the document.
    - Compare the prose against the declared audience, purpose, and scope: flag both unnecessary context and missing explanation. Check the declaration itself against the requested document; metadata is not proof that the content belongs.
 3. **Link Verification**: Verify source references and distributed links. A detached PDF must not depend on the author's checkout; use internal labels/references, accessible URLs, or an explicitly tested distribution bundle.
@@ -86,6 +89,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 
 - **Agent Execution Artifacts in `docs/`**: If the document being created is an atomic feature plan, phase breakdown, or inter-agent consensus board, halt immediately and route to `memory` (`MEMORY_DIR`).
 - **Uncalibrated Abstraction Level**: If the document bombards human readers with low-level execution minutiae, commit logs, or heavy internal jargon instead of high-level architecture and clear usage, halt and recalibrate.
+- **Hidden Essentials**: If understanding a claim or acting correctly requires an optional note, appendix, or disclosure, restore the essential information to the main path before proceeding.
 - **Unclear Audience or Goal**: If the target reader (beginner vs maintainer) or primary objective is ambiguous, stop and clarify.
 - **Monolithic File Creep**: If an entry exceeds 16 KB and has not been sharded into `details/`, halt writing and extract leaves first.
 - **Invented / Unverified Commands**: Never document commands, flags, or configuration keys without verifying they exist in the repository.
@@ -100,6 +104,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 - [ ] Reader contract recorded in frontmatter where supported, otherwise in the body; content checked against it.
 - [ ] Appropriate abstraction level maintained (concise, jargon-free, high-level choices with pseudocode).
 - [ ] Clear layer established (Index, Entry, or Leaf; or module README).
+- [ ] Main reading path works without optional notes; supporting detail has clear routes and return paths appropriate to the delivered medium.
 - [ ] Top metadata summary table present.
 - [ ] Visual diagram anchor included for multi-component flows.
 - [ ] No prose paragraph exceeds 3 sentences.
@@ -120,6 +125,8 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 | Write module READMEs as internal task checklists or change logs | Fails to teach engineers how or why to consume the module | Document purpose, mental model, quick-start usage, exported surface, and invariants |
 | Stack bullet points 4 levels deep | Creates visual chaos; destroys scannability | Flatten to max 2 levels; convert deep sub-lists into tables or leaf files |
 | Dump extensive reference tables in the main guide | Bloats the guide; obscures the critical path | Move schemas to leaves in the selected format; include required detail in the shared PDF |
+| Hide consequential caveats in notes or appendices | Makes the main path misleading or unsafe | Keep essential qualifications near the claim or action; defer only optional depth |
+| Add footnotes, headings, or tables to every dense passage | Changes appearance without fixing information flow | Establish the reader's main path first; choose support channels by audience and medium |
 | Rely on italicized text for emphasis | Poor visual contrast on screens | Use bold lead-in words or a dedicated `> [!NOTE]` callout |
 | Put a blank line inside a raw HTML block (tables, callouts) | CommonMark ends the HTML block at the blank line; renders as literal text | Blank lines only BETWEEN the HTML block and surrounding Markdown |
 | Skip verification of commands in examples | Breaks user trust when copy-pasted | Ground all examples in actual codebase scripts, configs, and CLI tools |
@@ -133,5 +140,6 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 - [Typst workflow](references/typst-workflow.md) — Local build, starter, diagrams, safety, and PDF verification.
 - [`references/document-routing-and-audience.md`](references/document-routing-and-audience.md) — Boundary between human docs (`docs/`, module READMEs) and agent memory (`MEMORY_DIR`), abstraction rules, and routing tree.
 - [`references/progressive-disclosure.md`](references/progressive-disclosure.md) — The Index → Entry → Leaf architecture, sizing thresholds, and sharding workflow.
+- [Reader path and supporting layers](references/reader-path.md) — Main text versus optional support, contents, notes, appendices, medium choices, and validation.
 - [`references/visual-rhythm-and-scannability.md`](references/visual-rhythm-and-scannability.md) — Anti-wall-of-text guidelines, table transformations, and typography.
 - [`references/templates.md`](references/templates.md) — Canonical templates for guides, architecture docs, indices, deep leaves, and code module READMEs.

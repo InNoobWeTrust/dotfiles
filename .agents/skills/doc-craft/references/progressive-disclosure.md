@@ -4,6 +4,8 @@ Documentation becomes unreadable when too much information is loaded at once. Th
 
 Apply [Document format selection](document-formats.md) before choosing extensions. Layers describe information structure: Typst is the default, required repository/Markdown consumers retain Markdown, and agent memory remains in its native protocol.
 
+Before splitting files, establish the [main reading path and supporting layers](reader-path.md). Index → Entry → Leaf organizes the document collection; contents, notes, and appendices organize attention within a document, without hiding essential qualifications.
+
 ---
 
 ## The Three-Layer Shape (Human-Facing)
