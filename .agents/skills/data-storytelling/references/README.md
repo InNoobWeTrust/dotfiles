@@ -40,7 +40,7 @@ Accepted arguments:
 - `audience` (optional): `exec`, `analyst`, `ops`, `customer`, or freeform.
 - `threshold` (optional): causal threshold `1` to `6`.
 - `mode` (optional): `adaptive`, `exhaustive`, or `user-specified`.
-- `template` (optional): explicit report-structure override; serialization is a separate consumer decision under [Document format selection](../../../rules/document-formats.md).
+- `template` (optional): explicit report-structure override; serialization is a separate consumer decision under [Document format selection](../../doc-craft/references/document-formats.md).
 - `hitl_mode` (optional): `continuous-feedback`, `checkpoint`, or `review-and-revise`.
 - `include_lenses` (optional): array of lenses to force include.
 - `exclude_lenses` (optional): array of lenses to remove.

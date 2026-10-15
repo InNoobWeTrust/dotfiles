@@ -234,13 +234,16 @@ async function verifyStubbedEndToEnd() {
     const statusTool = catalog.tools.find((tool) => tool.name === "delegate_status")
     if (!statusTool) throw new Error("delegate_status was not advertised")
     expect(runTool.description).toMatch(/external.*subagent/i)
-    expect(runTool.description).toMatch(/prefer.*agy/i)
+    expect(runTool.description).toMatch(/task suitability/i)
+    expect(runTool.description).not.toMatch(/\bprefer(?:red|ence)?\b/i)
     expect(runTool.description).toMatch(/native.*subagent/i)
     expect(statusTool.description).toMatch(/external.*subagent/i)
     const properties = runTool.inputSchema.properties as
       | Record<string, { description?: string }>
       | undefined
     expect(properties?.prompt?.description).toMatch(/self-contained/i)
+    expect(properties?.harness?.description).toMatch(/task suitability/i)
+    expect(properties?.harness?.description).not.toMatch(/\bprefer(?:red|ence)?\b/i)
     expect(properties?.permissionMode?.description).toMatch(/human.*permission/i)
     expect(properties?.permissionMode?.description).toMatch(/not read-only/i)
     expect(Object.keys(runTool.inputSchema.properties ?? {}).sort()).toEqual([

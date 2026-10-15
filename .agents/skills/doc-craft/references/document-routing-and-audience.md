@@ -2,7 +2,7 @@
 
 This reference establishes the boundary between **Human-Facing Documentation** (routed to `docs/` or module `README.md`) and **Agent-Facing Coordination Memory** (routed to `MEMORY_DIR`).
 
-Destination and format are separate decisions. Apply [Document format selection](../../../rules/document-formats.md): human documents default to Typst source + PDF, while required READMEs, instruction references, and memory protocols stay Markdown; use [Typst workflow](typst-workflow.md) for build and delivery.
+Destination and format are separate decisions. Apply [Document format selection](document-formats.md): human documents default to Typst source + PDF, while required READMEs, instruction references, and memory protocols stay Markdown; use [Typst workflow](typst-workflow.md) for build and delivery.
 
 ---
 

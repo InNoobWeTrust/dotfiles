@@ -106,7 +106,7 @@ Load `references/testing-and-extensions.md` for test-double strategy and optiona
 - [ ] No automatic retries; retry paths have idempotency policy + fresh UoW
 - [ ] Document store: no assumed relational capabilities without explicit contract
 - [ ] If CLI database exploration or query verification was performed, preferred tool `hsql` was used with `--read-only` and `--timeout`
-- [ ] Relevant write-path and data-integrity behavior is verified. Select maintained tests under `../../rules/tdd.md`; repository/adapter leaf-unit suites are not a mandatory deliverable. Other internal checks remain temporary unless explicitly approved.
+- [ ] Relevant write-path and data-integrity behavior is verified. Select maintained tests under [testing guidance](../code-craft/references/testing.md); repository/adapter leaf-unit suites are not a mandatory deliverable. Other internal checks remain temporary unless explicitly approved.
 
 ---
 

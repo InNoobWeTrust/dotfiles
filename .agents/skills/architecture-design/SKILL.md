@@ -1,6 +1,6 @@
 ---
 name: architecture-design
-description: "Use this skill for software architecture work — system design, architecture documentation, pattern selection (Modular Monolith default), modular component design (C4 L1-L3), DDD bounded contexts, ADR writing, architecture audits, API/data/security architecture, parallel/distributed compute selection (workers, Hadoop, HPC), storage/sync/ledger integrity, and fitness functions. Composes with db-design and code-craft."
+description: "Use this skill for software architecture and technical specifications (including spec-only TRDs), system design, architecture documentation, pattern selection (Modular Monolith default), modular component design (C4 L1-L3), DDD bounded contexts, ADR writing, architecture audits, API/data/security architecture, parallel/distributed compute selection (workers, Hadoop, HPC), storage/sync/ledger integrity, and fitness functions. Composes with db-design and code-craft."
 ---
 
 # Architecture Design
@@ -101,7 +101,7 @@ Match the scenario, load only the matching workflow file.
 | **Greenfield design** | New system, no existing architecture | `references/workflows/greenfield.md` |
 | **Brownfield documentation** | Existing system, missing/outdated docs | `references/workflows/brownfield.md` |
 | **Architecture audit** | Review existing system, fitness check | `references/workflows/architecture-audit.md` |
-| **ADR writing** | Consequential, hard-to-reverse architecture choice with competing options; see `../../rules/phased-delivery.md` | `references/workflows/adr-writing.md` |
+| **ADR writing** | Consequential, hard-to-reverse architecture choice with competing options; see `../team-operating-model/references/phased-delivery.md` | `references/workflows/adr-writing.md` |
 | **Migration planning** | Monolith→micro, cloud migration, DB migration | `references/workflows/migration.md` |
 
 ### Specialized Scenarios (if common ones don't match)
@@ -136,8 +136,22 @@ When choosing an architecture pattern:
 - **Illustration-first for canonical docs**: Every canonical architecture section MUST have at least one mermaid diagram. Milestone notes follow their lighter diagram rule below.
 - **Explicit types over tuples**: Inter-component interfaces must use explicit DTO types.
 - **Evidence over aspiration**: Document what IS, mark aspirational targets as "Target State".
-- **Locked Plan Core Parts**: When architecture transitions to implementation or migration plans, lock concrete code interfaces & DTO schemas (zero invented interfaces), lock in-scope/out-of-scope boundaries and the scoped target file tree structure with cleanup (zero invented files), and shard execution into separate phase files referenced in the main plan.
-- **Informed alignment for decisions**: Before asking non-trivial choices, present a plain-language decision brief per `rules/grooming.md` — current understanding, evidence, options with consequences — and define C4/DDD/ports-adapters and other jargon only insofar as it affects the decision. Ask only unresolved questions.
+- **Locked Plan Core Parts**: When architecture transitions to implementation or migration plans, keep scope and approved behavior always clear; settle concrete code interfaces and file boundaries only where real consumer or handoff coordination needs them, and use separate phase files only for independently delegated or resumable units.
+- **Informed alignment for decisions**: Before asking non-trivial choices, use [Planning and shared understanding](../working-principles/references/planning.md) — current understanding, evidence, options with consequences — and define C4/DDD/ports-adapters and other jargon only insofar as it affects the decision. Ask only unresolved questions.
+
+### Technical specifications, including spec-only requests
+
+A request for a technical specification or TRD is a design assignment, not implementation authority. Start from the requested outcome, existing system evidence and constraints; a parent PRD is not required. Resolve missing product intent with [brainstorming](../brainstorming/SKILL.md)'s product-brief path, not invented requirements.
+
+Capture the following at the depth needed by affected consumers and operators:
+
+- **Constraints and options**: current state, intended change, scope/non-goals, technical limits, alternatives, trade-offs and why the proposed approach fits. Distinguish evidence from assumptions; record consequential hard-to-reverse decisions as ADRs at the existing threshold.
+- **Boundaries and contracts**: component responsibilities, data ownership/invariants, caller-visible inputs, outputs, errors and compatibility. Settle concrete schemas/signatures where real consumers or handoffs need them; do not manufacture exact file trees or DTO inventories for unspecified local helpers.
+- **Operational quality**: measurable performance, capacity and reliability targets with workload/measurement conditions; observability, dependencies, failure propagation, recovery and migration/rollback where applicable. “p95 under 200 ms at 1,000 requests/s” is testable; “fast” is not. Unknown targets stay open rather than becoming invented commitments.
+- **Security and privacy**: assess trust and privilege boundaries, sensitive data/retention, input validation, secrets/configuration, dependency trust and fail-open/fail-closed behavior. Explain inapplicable concerns rather than leaving a generic security heading empty; use the security workflow for material security design and `reviewer`'s security lens when review is needed.
+- **Verification and unresolved decisions**: explain how the contracts and quality targets will be checked, what evidence is missing, and which owner must resolve blocking choices. [code-craft](../code-craft/SKILL.md) owns detailed behavior/acceptance examples; link them only when separately needed.
+
+Deliver a narrow engineering note unless the user requests a formal TRD or durable coordination needs one. Use the artifact calibration below for diagrams, and [doc-craft](../doc-craft/SKILL.md) for saved-document presentation. Stop the affected design on contradictory constraints or missing consequential consumer decisions. Do not attach an automatic implementation plan, phase files or child specs; specification completion proves neither implementation nor runtime quality.
 
 ### Artifact Level Calibration
 
@@ -147,8 +161,8 @@ The hard rules and illustration budget scale to the artifact being produced or r
 |---|---|---|
 | **Canonical architecture doc** | Full C4 L1-L3 (system context + containers + components/bounded contexts), complete illustration budget, all hard rules. | Implementation DDL, code, migration scripts. |
 | **Milestone architecture note** | Only the touched boundaries, contracts, invariants, data ownership, failure behavior, and a one-step evolutionary runway. Add one diagram only when the relevant interactions are unclear; otherwise concise structured prose is sufficient. Preserve high-risk security, data, and migration requirements. | Canonical C4 completeness, re-documenting unaffected topology, speculative future architecture. |
-| **Subsystem engineering design doc (TRD)** | Component-level diagrams for the subsystem scope, ER diagram if schema is involved, locked code interfaces/DTOs, locked scope boundary and scoped target file tree structure, sharded phase file links, ADR only for a consequential, hard-to-reverse architecture choice with competing options per `../../rules/phased-delivery.md`, dependency direction. Does NOT need to re-draw system context or container diagrams if the canonical architecture doc already has them — reference it instead. | Full C4 L1 system context, container diagram, exact module port interfaces (those are implementation), migration DDL. |
-| **Delivery spec / migration plan** | Current-state + target-state + transition-sequence diagrams, locked interface/DTO contracts, locked scope boundary and scoped target file tree structure with cleanup, referenced separate phase files, exit criteria, rollback guidance. | Design rationale, ADR only when the `../../rules/phased-delivery.md` consequential + hard-to-reverse + competing-options threshold applies (defer to TRD), component diagrams (defer to TRD). |
+| **Subsystem engineering design doc (TRD)** | Component-level diagrams for the subsystem scope, ER diagram if schema is involved, scope boundary with contracts settled proportionately to consumer/handoff need, delivery sequence only when requested or needed for coordination (separate files only for independently delegated or resumable units), ADR only for a consequential, hard-to-reverse architecture choice with competing options per `../team-operating-model/references/phased-delivery.md`, dependency direction. Does NOT need to re-draw system context or container diagrams if the canonical architecture doc already has them — reference it instead. | Full C4 L1 system context, container diagram, exact module port interfaces (those are implementation), migration DDL. |
+| **Delivery spec / migration plan** | Current-state + target-state + transition-sequence diagrams, scope boundary with contracts settled proportionately, phase sequence (separate files only for independently delegated or resumable units), exit criteria, rollback guidance. | Design rationale, ADR only when the `../team-operating-model/references/phased-delivery.md` consequential + hard-to-reverse + competing-options threshold applies (defer to TRD), component diagrams (defer to TRD). |
 | **Code review (PR)** | Code implements the design correctly: dependency direction, typed interfaces, no black-box components. | Design-level questions (defer to TRD review). |
 
 **Do not fail a subsystem TRD for not containing a full C4 L1 system context diagram.** If the canonical architecture doc (`docs/architecture.md` or equivalent) already covers system context and containers, a subsystem TRD only needs the component-level diagrams, ER diagrams, and decision records relevant to its scope. The TRD's job is to specify *what* and *why* for the subsystem, not to re-document the entire system topology.
@@ -174,7 +188,7 @@ Use one focused interaction, sequence, data-flow, or boundary diagram only when 
 - [ ] Milestone note records touched boundaries/contracts/invariants/data ownership/failure behavior and one-step runway when using milestone delivery
 - [ ] Modular Monolith / Bounded Context breakdown specified when the artifact's scope needs it
 - [ ] Database schema delegated to `db-design` (ER diagram + typed repository DTOs)
-- [ ] ADR written only for a consequential, hard-to-reverse architecture choice with competing options, per `../../rules/phased-delivery.md`
+- [ ] ADR written only for a consequential, hard-to-reverse architecture choice with competing options, per `../team-operating-model/references/phased-delivery.md`
 
 ---
 

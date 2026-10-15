@@ -53,7 +53,7 @@ graph TD
 2. Match project concerns to pattern tags (scaling, decoupling, consistency, etc.)
 3. Load the relevant category file
 4. Document chosen-pattern rationale in the active design; select an ADR only when
-   the canonical ADR threshold in `.agents/rules/phased-delivery.md` is met.
+   the ADR threshold in `../../../team-operating-model/references/phased-delivery.md` is met.
 
 **Potential ADR candidates (only at the canonical threshold):**
 - Monolith vs microservices vs modular monolith

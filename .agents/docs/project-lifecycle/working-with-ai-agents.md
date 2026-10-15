@@ -43,7 +43,7 @@ A good prompt has these properties:
 
 Skills are the AI's training manuals — complete workflows for specific task types. They live in `.agents/skills/` as directories with a `SKILL.md` entry point and optional `references/` for deep-dive content.
 
-**Skill loading is a binding contract.** When the AI loads a skill, it commits to executing the full workflow — every phase, every checkpoint, every deliverable. It cannot selectively skip steps. This is enforced by the Skill Compliance rule.
+**Activating a skill is a binding contract.** Reading a catalog entry, description, or `SKILL.md` body to judge suitability costs nothing. Once the agent explicitly invokes a skill, selects a workflow track, or begins its first workflow action, it commits to that track — every phase, checkpoint, and deliverable in it. It cannot selectively skip steps of an activated workflow. This is enforced by the `rules/skill-use.md` policy.
 
 **Skill routing works like this:**
 1. The AI checks `INDEX.md` to find which skill matches the current task
@@ -56,7 +56,9 @@ Skills are the AI's training manuals — complete workflows for specific task ty
 |---|---|---|
 | Write or refactor code | `code-craft` | 5-phase design discipline with SOLID checks |
 | Debug a bug | `systematic-investigation` | Structured root cause analysis protocol |
-| Design a new feature | `requirements-driven-dev` | PRD → TRD → BDD traceability |
+| Define product intent or outcomes | `brainstorming` | Clarify the goal, including an already-settled direction |
+| Resolve technical constraints or trade-offs | `architecture-design` | Technical decisions and optional technical specification |
+| Define acceptance behavior, including spec-only examples | `code-craft` | Observable outcomes and evidence without requiring implementation |
 | Review code or specs | `reviewer` | Multi-lens review with bias-prevention gate |
 | Build CI/CD pipeline | Project-specific CI/CD skill | Infrastructure templates and conventions |
 | Write E2E tests | Project-specific testing skill | Page object models and data seeding patterns |
@@ -77,13 +79,15 @@ Debugging a bug:
 4. reviewer                → Verify the fix addressed the root cause
 
 Implementing a new feature:
-1. requirements-driven-dev → Write the spec (if feature is large/ambiguous)
+1. working-principles      → Clarify consequential unknowns using references/planning.md
 2. codebase-exploration    → Map the target frontend views and backend domains
 3. code-craft              → Disciplined implementation
 4. reviewer                → Post-implementation review
 ```
 
-### The Grooming Interview (Reverse Interview)
+Use `brainstorming` for product intent, `architecture-design` for technical constraints, and `code-craft` for acceptance behavior. Use `ui-ux` for journeys and `doc-craft` for presentation when needed; a PRD → TRD → BDD chain is not required.
+
+### The Clarification Interview (Reverse Interview)
 
 Before the AI builds anything complex, it should ask YOU questions — not the other way around. This prevents the most common AI failure: building the wrong thing because it filled in ambiguous requirements with assumptions.
 
@@ -94,7 +98,7 @@ The AI is required to probe for:
 - **Dependencies** — What existing modules, APIs, or services does this connect to?
 - **Interface Concept** — From the caller's/user's perspective, what do they see/do?
 
-The AI should ask 3-5 high-value questions, prioritized by architectural impact. If the AI doesn't ask clarifying questions before a complex task, it's skipping the grooming step — stop the task and ask for questions.
+The AI should ask only unresolved questions whose answers would change the outcome, prioritized by consequence. Use [discovery and planning principles](../../skills/working-principles/references/planning.md); do not repeat settled questions or require a fixed interview count.
 
 **When to skip the interview:** Simple edits (typos, config values, renames), tasks where the specification is already exact and unambiguous, tasks that are purely mechanical.
 

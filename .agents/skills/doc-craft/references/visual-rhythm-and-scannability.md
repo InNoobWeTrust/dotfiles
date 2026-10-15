@@ -2,13 +2,13 @@
 
 The cure for AI-generated "walls of text" and dense discursive prose. This guide establishes visual and structural rules that make technical documentation effortless to scan, reason about, and navigate.
 
-These are information-design rules, not a Markdown default. Follow [Document format selection](../../../rules/document-formats.md); use native Typst constructs for `.typ` and the Markdown examples only for required Markdown output.
+These are information-design rules, not a Markdown default. Follow [Document format selection](document-formats.md); use native Typst constructs for `.typ` and the Markdown examples only for required Markdown output.
 
 ---
 
 ## The Core Problem
 
-Frontier models (especially reasoning-heavy models like GPT-5.6) default to academic, conversational, or discursive prose:
+Watch for academic, conversational, or discursive prose that obscures the reader's task:
 - Paragraphs of 6–10 sentences explaining context before delivering facts.
 - Deeply nested bullet points with italicized commentary.
 - Absence of visual anchors, leaving the human eye unable to locate key decisions.

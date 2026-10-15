@@ -29,10 +29,10 @@ verifiable outcome where phased delivery does not apply and no design or
 contract decision remains open; no plan file is required for that exception.]
 
 ### Selected Unit (all nine fields must be bounded)
-1. Plan basis: [cite the specific approved separate phase file referenced in main plan] OR Atomic patch exception rationale: [why the outcome is coherent, independently verifiable, and leaves no design/contract decision open]
+1. Plan basis: [cite the approved unit or inline atomic contract; separate phase file where useful for handoff/resumption]
 2. Unit ID and one-sentence outcome: [...]
-3. Exact writable surface: [files matching the locked scoped file tree delta within in-scope boundary; out-of-scope paths untouched; zero unapproved files; cleanup required]
-4. Contracts and hard invariants to preserve: [locked code interfaces and DTOs; zero invented interfaces]
+3. Writable surface: [authorized paths/components, exclusions and cleanup; exact file delta where ownership requires it]
+4. Contracts and hard invariants: [approved behavior; settled consumer signatures/schema where needed; no invented business semantics]
 5. Prerequisites already satisfied: [...]
 6. Explicit out-of-scope list: [...]
 7. Acceptance criteria and required evidence: [...]
@@ -46,8 +46,8 @@ NOT dispatch substitutes, rescope silently, or absorb adjacent units. Return
 current location, remaining steps, evidence so far, blockers, next safe
 action) so the main orchestrator can replan.
 
-## Delivery Contract (only when `../../rules/phased-delivery.md` applies)
-[Populate the canonical inline template from `../../rules/phased-delivery.md`.
+## Delivery Contract (for phased delivery)
+[Populate the proportionate template from `../../team-operating-model/references/phased-delivery.md`.
 Do not duplicate or alter its classifications, budgets, compromise schema, or
 trajectory protocol here.]
 
@@ -58,7 +58,7 @@ trajectory protocol here.]
 
 If incomplete, distinguish a true Never Defer blocker from Must Ship work
 remaining, May Defer items, and Out of Scope items. Follow
-`../../rules/phased-delivery.md` for all contract semantics. Omit both sections
+`../../team-operating-model/references/phased-delivery.md` for contract semantics. Omit both sections
 when that rule's trigger does not apply.
 
 ## Allowed Actions
@@ -112,7 +112,7 @@ Collect [facts for ASSET/PRODUCT or macro series] from [sources]. Decision type:
 ## Context
 Investor rails: [max pain / horizon / job of money if known]. Separate Observed vs Inferred. No buy call unless asked.
 
-## Delivery Contract (only when `../../rules/phased-delivery.md` applies)
+## Delivery Contract (for phased delivery)
 Include the canonical Delivery Contract and the delegation-only scope-expansion, adjacent-work, and continuation/resumption fields from the standard template above. Otherwise omit these sections.
 
 ## Allowed Actions
@@ -216,8 +216,8 @@ When the delegated worker returns:
 | Outsourcing interactive brainstorming or interface co-design | Worker replaces live alignment with an isolated all-in proposal | Keep dialogue and overall decisions in the primary; bounded supporting evidence does not replace that dialogue |
 | Dispatching implementer with prose-only contracts | Worker invents DTO fields and method shapes, breaking consistency across units and causing compiler/runtime hallucination loops | Lock concrete DTO schemas, method signatures, and error variants as code in the plan/payload before dispatch |
 | Implementer silently altering declared interfaces | Subtle contract drift breaks callers across the repository; cascading compiler errors | Enforce frozen contract rule; worker must report INCOMPLETE: CONTRACT_DEFECT instead of modifying signatures |
-| Dispatching with a full-repo tree dump or without locked scope boundaries | Dumps excessive context bloat, causes confusion, or allows worker to touch out-of-scope files and invent ad-hoc helpers | Lock in-scope vs out-of-scope boundaries (irrelevant repo parts implicitly unchanged) and provide a scoped target file tree with [CREATE], [MODIFY], [DELETE], [CLEANUP] before dispatch |
-| Dispatching from a monolithic plan mega-file | Worker gets distracted, absorbs out-of-scope phases, or hallucinates cross-phase changes | Shard execution into smaller separate phase files referenced in the main plan; dispatch one phase file at a time |
+| Dispatching a full-repo dump or omitting scope | Excess context obscures ownership and permits unrelated edits | State writable/excluded paths and cleanup; use exact file deltas when disjoint ownership needs them |
+| Dispatching an unbounded plan as executable scope | Worker absorbs adjacent phases | Select one coherent unit; use a focused excerpt/inline contract, or a separate phase file when independently resumable |
 
 ---
 

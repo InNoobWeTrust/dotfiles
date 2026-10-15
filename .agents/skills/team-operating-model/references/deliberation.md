@@ -86,7 +86,7 @@ versions and approves it. Execute only the current approved revision/unit.
 ## Output shape
 
 Chat summaries need no file. Saved human-facing reports follow
-[Document format selection](../../../rules/document-formats.md); execution
+[Document format selection](../../doc-craft/references/document-formats.md); execution
 consensus/checkpoints use `memory`, not consumer documentation.
 
 ```markdown

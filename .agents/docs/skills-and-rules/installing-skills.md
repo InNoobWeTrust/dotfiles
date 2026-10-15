@@ -42,9 +42,10 @@ If you install `.agents/skills/` without `.agents/rules/`, AI agents may attempt
 
 | Rule (`.agents/rules/`) | Skill (`.agents/skills/`) | Pairing Benefit |
 |---|---|---|
-| `skill-compliance.md` | All skills | Guarantees the agent strictly executes the complete `SKILL.md` workflow without skipping steps or hallucinating phase completion. |
-| `code-quality.md` & `tdd.md` | `code-craft`, `db-design` | Enforces SOLID, DRY, KISS, and test-driven standards during feature creation and refactoring. |
-| `self-grounded-verification.md` | `reviewer`, `web-qa-audit` | Requires machine-verifiable proof before claiming tasks are "done" or tests pass. |
+| `skill-use.md` | All skills | Index-first discovery plus binding execution of an activated skill's workflow steps, stops, and deliverables. |
+| `code-quality.md` | `code-craft`, `db-design` | Reuse-first quality baseline, design principles, and the test selection/persistence boundary during feature creation and refactoring. |
+| `evidence.md` | `reviewer`, `web-qa-audit` | Requires artifact-independent criteria and machine-verifiable proof before claiming tasks are "done" or tests pass. |
+| `authority.md` | `team-operating-model`, `subagent-dispatch` | Decision ownership, consequence-first safety, resource bounds, and mandatory human-in-the-loop triggers. |
 | `git-safety.md` & `execution-safety.md` | `subagent-dispatch`, `devsecops` | Protects git status/staging, prevents destructive shell commands, and guards credentials. |
 
 ---

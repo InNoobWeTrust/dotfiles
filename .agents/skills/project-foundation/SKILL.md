@@ -63,15 +63,15 @@ Stop: if comprehensive, leave it; if incomplete, patch sections only.
 
 ### A3 — GLOSSARY.md
 
-Bootstrap ≥10 domain terms from code/schema (or fewer with justification). Canonical names + prohibited aliases. Extend existing file; do not rename canon without drift resolution.
+Honor an existing glossary. Bootstrap a small domain glossary only when requested or when recurring business ambiguity justifies it; no term-count quota. Resolve conflicting critical meanings before renaming canon; routine code names need no approval ritual.
 
 ### A4 — Rules
 
-Materialize **required rules** from `references/core-pack.md` into `.agents/rules/` (symlink or copy). Do not hand-write full rule bodies when a global source exists.
+If governance installation is in scope, discover the authorized source pack's current manifest and materialize its selected artifact tree as described in `references/core-pack.md`. This is installation work, not a dependency on those policies for using this skill. Preserve existing project instructions and do not invent missing policy bodies.
 
 ### A5 — Skills core pack (critical)
 
-Materialize **required skill trees** from `references/core-pack.md` — full directories including `references/` for `reviewer` and `requirements-driven-dev`.
+Materialize **required skill trees** from `references/core-pack.md` — full directories including `references/` for `reviewer` and `working-principles`. Include domain owners and their referenced guidance when the project advertises those routes.
 
 **Forbidden:** creating only `INDEX` / `WIRING` that *mention* global skills without a project-resolvable path.
 

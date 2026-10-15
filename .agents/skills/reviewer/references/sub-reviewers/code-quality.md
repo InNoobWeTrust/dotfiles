@@ -62,9 +62,9 @@ This is the core defense against AI laziness. Before showing code to the user:
 - Verify every external I/O call has timeout and error handling
 - Ensure module boundaries have input validation
 - Confirm no placeholder implementations (`pass`, `return []`, `throw NotImplementedError`) remain on happy paths
-- Verify zero invented interfaces: confirm code strictly satisfies locked code interfaces/DTOs without ad-hoc methods or modified signatures
-- Check boundary and file tree conformity: confirm all changes remain within designated in-scope boundaries (out-of-scope files untouched), all touched files match the approved locked scoped file tree, and all scratch/temporary artifacts are cleaned up
-- Verify phase boundary: ensure changes strictly address the active referenced phase file without bleeding into adjacent phases
+- Verify contract fidelity only where the plan settled contracts for coordination: confirm code follows approved interfaces without ad-hoc drift where such contracts exist
+- Check scope conformity: confirm changes stay within the approved scope and scratch/temporary artifacts are cleaned up; flag exact-file deviations only where the plan listed exact files for coordination
+- Verify unit boundary: ensure changes stay within the active plan unit; flag bleed into adjacent work only when the plan actually sharded units
 
 Surface tensions inline:
 

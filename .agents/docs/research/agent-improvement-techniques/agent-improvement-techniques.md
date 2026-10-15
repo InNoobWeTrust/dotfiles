@@ -29,13 +29,15 @@ Agents in this repo already have strong discipline (code-craft phases, memory, m
 
 Legend: **Strong** = first-class skill/rule · **Partial** = present but unlabeled or incomplete · **Gap** = missing or only accidental.
 
+The coverage verdicts are a point-in-time assessment. "Repo home today" paths have been updated to the current layout (seven always-on policies under `rules/`, methods inside skills) without re-scoring the findings. The original spec-as-docs framing is historical research, not a requirement for a PRD/TRD/BDD chain; current routing uses lightweight planning and task-specific owners.
+
 | Technique | Source family | Repo home today | Coverage | Prompt-level takeaway |
 |---|---|---|---|---|
-| Spec-as-docs | Karpathy-style agent ops | `requirements-driven-dev`, `rules/grooming.md`, `rules/slicing.md` | **Strong** | Specs (PRD/TRD/BDD) are the durable interface; implement against them, not chat. |
+| Spec-as-docs | Karpathy-style agent ops | `working-principles` planning, `code-craft` acceptance/evidence, `team-operating-model` slicing | **Strong** (historical verdict) | Keep useful intent, constraints and behavior durable; formal specs are optional. |
 | Context-as-wiring-diagram | Karpathy / context eng. | `docs/.../skill-composition.md`, `AGENTS.md` hierarchy, `codebase-exploration` maps | **Partial** | Prefer a small map of systems + handoffs over dumping files; treat wiring as first-class context. |
 | Multi-agent panels | Karpathy / Anthropic parallelization | `team-operating-model` deliberation, `reviewer` | **Strong** | Independent lenses beat one overloaded monologue; synthesize, don’t average. |
 | ACI (Agent–Computer Interface) | Anthropic *Building effective agents* | Tool docs in harness; `subagent-dispatch` pillars; partial in skill templates | **Partial** | Design tools/skills like junior-dev APIs: clear names, absolute paths, poka-yoke, minimal overlap. |
-| Evaluator–optimizer loop | Anthropic workflows | `team-operating-model` delivery path, `reviewer` + `rules/self-grounded-verification.md`, TDD in code-craft | **Partial** | Separate *generate* from *score against criteria*; loop only when criteria are objective. |
+| Evaluator–optimizer loop | Anthropic workflows | `team-operating-model` delivery path, `reviewer` + `rules/evidence.md`, testing reference in code-craft | **Partial** | Separate *generate* from *score against criteria*; loop only when criteria are objective. |
 | Just-in-time context | Anthropic context eng. | `codebase-exploration` progressive load; skill progressive disclosure | **Strong** | Hold identifiers (paths, queries); load detail on demand; hybrid: small always-on index + JIT leaves. |
 | Context compaction | Anthropic context eng. | Memory dream cycle; subagent return summaries | **Partial** | Summarize high-fidelity before window rot; clear stale tool results; keep decisions + open bugs. |
 | Structured note-taking | Anthropic agentic memory | `memory` skill (short-term / long-term) | **Strong** | Persist NOTES outside the window; re-read after compaction/session reset. |
@@ -50,7 +52,7 @@ Legend: **Strong** = first-class skill/rule · **Partial** = present but unlabel
 
 ### Karpathy-style frameworks
 
-1. **Spec-as-docs** — The durable artifact is a written spec (acceptance criteria, interfaces, non-goals). Chat is ephemeral. Already aligned with `requirements-driven-dev` and code-craft Design Intent.
+1. **Spec-as-docs** — Preserve acceptance criteria, interfaces and non-goals where useful beyond chat. Current owners are `brainstorming` for product intent, `architecture-design` for technical constraints, and `code-craft` for acceptance behavior/evidence; `working-principles` supplies lightweight discovery and planning.
 2. **Context-as-wiring-diagram** — Before deep file reads, produce a small diagram/map: modules, data ownership, call edges, skill handoffs. Prefer that map as context over raw dumps.
 3. **Multi-agent panels** — Parallel specialized roles (product, arch, security, adversarial) with a synthesis step. Now under `team-operating-model` deliberation modes.
 
@@ -146,4 +148,4 @@ Implementation order shipped: **code-craft** → **bounded-iteration/reviewer** 
 - [Failure patterns catalog (battle-tested)](../../skills-and-rules/failure-patterns-catalog.md)
 - [Working with AI agents (battle-tested)](../../project-lifecycle/working-with-ai-agents.md)
 - [Research INDEX (not battle-tested)](../INDEX.md)
-- Primary skills: `code-craft`, `memory`, `requirements-driven-dev`, `team-operating-model`, `subagent-dispatch`, `reviewer`
+- Primary skills: `code-craft`, `memory`, `working-principles`, `team-operating-model`, `subagent-dispatch`, `reviewer`

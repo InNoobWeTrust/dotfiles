@@ -8,7 +8,7 @@
 
 ## Required Sections
 
-This outline specifies sections and evidence fields, not serialization. Saved human reports follow [Document format selection](../../../../rules/document-formats.md): Typst + PDF by default; use required Markdown/other syntax for an identified downstream consumer.
+This outline specifies sections and evidence fields, not serialization. Saved human reports follow [Document format selection](../../../doc-craft/references/document-formats.md): Typst + PDF by default; use required Markdown/other syntax for an identified downstream consumer.
 
 ```markdown
 # Data Story: <topic>

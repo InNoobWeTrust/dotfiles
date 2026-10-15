@@ -6,7 +6,7 @@
 
 **What happens:** The code compiles but has logic errors. The AI's confidence is indistinguishable from correctness. You only discover the bugs in manual testing.
 
-**Defending rule:** TDD Enforcement
+**Defending rule:** Testing method (`skills/code-craft/references/testing.md`) plus the evidence policy in `rules/evidence.md` §2 — no completion claim without observed execution output.
 
 **Escalation:** Require the AI to post test output as part of its completion message. If tests weren't run, the task isn't done.
 
@@ -16,9 +16,9 @@
 
 **What happens:** 2 hours of implementation → code review reveals wrong approach → 1 hour of rework. Total waste: 3 hours on a 1-hour task.
 
-**Defending rule:** Grooming (Reverse Interview)
+**Defending method:** Discovery and clarification (`skills/working-principles/references/planning.md`)
 
-**Escalation:** If the AI skips the grooming interview, stop the task and re-prompt with: "Before implementing, ask me 3-5 clarifying questions about this feature."
+**Escalation:** If consequential ambiguity remains, pause the affected work and ask the unresolved question; do not require a fixed interview count or reopen settled decisions.
 
 #### B3. Skill Workflow Skipping
 
@@ -26,7 +26,7 @@
 
 **What happens:** The code passes basic review but accumulates structural problems: mixed responsibilities, no error contracts, undocumented design decisions. Over 10 tasks, the module becomes unmaintainable.
 
-**Defending rule:** Skill Compliance
+**Defending rule:** Skill Use (`rules/skill-use.md` §2) — an activated skill's workflow steps and stops are binding.
 
 **Escalation:** Add a checkpoint requirement — the AI must post its Design Intent block and SOLID checklist before writing code. If it doesn't, it's a rule violation.
 
@@ -36,7 +36,7 @@
 
 **What happens:** Integration bugs are discovered late. A schema mistake discovered after the UI is built requires changing everything.
 
-**Defending rule:** Vertical Slicing
+**Defending method:** Vertical slicing (`skills/team-operating-model/references/slicing.md`)
 
 #### B5. Agreement Bias in Self-Review
 
@@ -44,7 +44,7 @@
 
 **What happens:** Bugs the AI actually knows how to catch slip through, because success criteria were never stated independent of the artifact — the AI checked the code against itself, a circular loop that always passes. This is distinct from B1 (no tests were run at all): here tests may run and even pass, but they don't test the actual requirement, or the "verification" was really just re-reading the code with a favorable eye.
 
-**Defending rule:** Self-Grounded Verification (`rules/self-grounded-verification.md`) — state artifact-independent success criteria and a disconfirming check FIRST, then evaluate the artifact against them with cited evidence.
+**Defending rule:** Self-Grounded Verification (`rules/evidence.md` §2) — state artifact-independent success criteria and a disconfirming check FIRST, then evaluate the artifact against them with cited evidence.
 
 **Escalation:** If the AI keeps declaring things "done" without a Step-1/Step-2 split, require it to output the Success Criteria checklist before the Verification Result table in any completion message. If in-context bias persists even with the checklist, escalate to delegation — hand the review to an independent subagent (see `reviewer` skill's Author Bias Gate) since no amount of single-context restructuring fully eliminates shared-context bias.
 
@@ -56,5 +56,4 @@
 
 **What happens:** Working code is broken, false technical premises are accepted without inspection, and the session degenerates into circular debugging. RLHF rater bias causes models to optimize for ego appeasement rather than objective correctness.
 
-**Defending rule:** Anti-Gaslight & Sycophancy Circuit Breaker (`rules/anti-gaslight.md`) — tripwire against fawning apologies, decouple user claim from reality, inspect disk/test ground truth, and push back respectfully when the user is mistaken.
-
+**Defending rule:** Anti-Gaslight & Sycophancy Circuit Breaker (`rules/evidence.md` §1) — tripwire against fawning apologies, decouple user claim from reality, inspect disk/test ground truth, and push back respectfully when the user is mistaken.

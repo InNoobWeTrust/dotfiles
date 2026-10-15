@@ -6,7 +6,7 @@
 
 **What happens:** A new developer or AI agent reading the codebase must constantly translate between naming conventions. Search-and-replace becomes dangerous because you can't tell if `itemCode` and `productId` are the same thing.
 
-**Defending rule:** Ubiquitous Language (GLOSSARY.md)
+**Defending rule:** Ubiquitous Language (`rules/code-quality.md` §6)
 
 #### C2. Fabricated APIs and Functions
 

@@ -101,9 +101,9 @@ Review request received
 **Environment-agnostic approach**: Most execution environments provide capability information for delegated reviewers/workers. Look for:
 
 ### Intelligence Indicators (for audit reviews)
-- Model name/tier in description: "claude-sonnet-4", "gpt-4", "powered by X"
-- Capability descriptions: "advanced reasoning", "complex problem solving", "expert analysis"
-- Role descriptions: "senior", "principal", "architect", "specialist"
+- Select a currently exposed route using task-relevant capability and access evidence, not fixed model names or tiers.
+- Capability descriptions such as "advanced reasoning" or "expert analysis" are selection hints, not proof of expertise or availability.
+- Role descriptions such as "senior", "architect", or "specialist" do not establish competence; verify findings against source evidence.
 
 ### Specialized Agents (for domain-specific reviews)
 - **Debug/Investigation**: descriptions mentioning "debug", "troubleshoot", "root cause", "systematic investigation"

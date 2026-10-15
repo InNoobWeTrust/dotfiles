@@ -26,23 +26,24 @@ The project's `.agents/` directory follows this structure:
 
 ```
 <project-root>/.agents/
-├── rules/                    # Non-negotiable constraints active on every task
-│   ├── code-quality.md       # Design checkpoint, naming, prohibited patterns
-│   ├── tdd.md                # Red-Green-Refactor protocol
-│   ├── grooming.md           # Reverse interview before complex tasks
-│   ├── ubiquitous-language.md # Sync with GLOSSARY.md before coding
-│   ├── slicing.md            # Vertical slicing for feature work
-│   ├── skill-compliance.md   # Loading a skill = binding commitment to full workflow
-│   └── self-grounded-verification.md # Anti-agreement-bias: separate criteria from artifact
-│   └── skills-discovery.md   # How to select the right skill for a task
+├── rules/                    # Short always-on policies (7) + INDEX map
+│   ├── INDEX                 # Trigger table: load a policy body only when it fires
+│   ├── authority.md          # Decision ownership, consequence-first safety, alignment
+│   ├── evidence.md           # Self-grounded verification, tool-call checks, anti-gaslight
+│   ├── skill-use.md          # Index-first discovery, activation, binding workflows
+│   ├── execution-safety.md   # Pre-execution gate, sandbox routing, secrets, processes
+│   ├── git-safety.md         # Staging, committing, pushing, destructive actions
+│   ├── code-quality.md       # Reuse-first baseline, design principles, test persistence
+│   └── document-formats.md   # Typst/PDF default, Markdown exceptions
 │
 ├── skills/                   # Complete workflows loaded per-task
-│   ├── INDEX.md              # Routing table: which skill fits which task
-│   ├── WIRING.md             # How skills compose for complex tasks
+│   ├── INDEX                 # Routing table: which skill fits which task
+│   ├── WIRING               # How skills compose for complex tasks
 │   ├── code-craft/           # Default implementation skill (5-phase workflow)
 │   ├── systematic-investigation/ # Debugging and root cause analysis
 │   ├── reviewer/             # Multi-lens code/spec review
-│   ├── requirements-driven-dev/  # PRD → TRD → BDD specification workflow
+│   ├── working-principles/   # Lightweight discovery and planning principles
+│   ├── architecture-design/ # Technical constraints, trade-offs, optional specification
 │   ├── codebase-exploration/ # Navigating unfamiliar codebases
 │   ├── memory/               # Short-term + long-term memory with dream-cycle
 │   ├── brainstorming/        # Creative ideation and problem framing
@@ -50,6 +51,8 @@ The project's `.agents/` directory follows this structure:
 │
 └── memory/                   # short-term/, long-term/, archive/ — see skills/memory
 ```
+
+Keep policies short and load them through `rules/INDEX`. Detailed methods (testing loops, discovery interviews, phased delivery, slicing, document formats) live in the skills listed above and load only when a workflow needs them. Skills never link back to `rules/` — that one-way boundary is what keeps a skill portable outside a governed harness.
 
 ### Key Files Explained
 
@@ -69,7 +72,7 @@ Debugging: codebase-exploration → systematic-investigation → code-craft → 
 
 This prevents the AI from trying to debug without first understanding the codebase, or fixing without verifying the root cause was addressed.
 
-**Rules** are always active — the AI must follow them on every task without being told. **Skills** are loaded on demand — the AI loads them only when the task matches the skill's trigger phrases.
+**Rules** are always active — the AI must follow them on every task without being told. **Skills** are loaded on demand — the AI loads them only when the task matches the skill's trigger phrases, and activating one binds its workflow steps and stops.
 
 ### Adapting to Harness Limitations
 
@@ -96,11 +99,11 @@ When `rules/` files are not auto-loaded, embed the essential rule content direct
 
 **What to embed:**
 
-1. **Code quality baseline** — The prohibited patterns list (silent error swallowing, magic literals, mixing layers, guessing through ambiguity, extend-by-parameter). This is the highest-value rule set for preventing AI output quality degradation.
-2. **TDD protocol** — Red-Green-Refactor cycle and when it's required vs skippable.
-3. **Grooming protocol** — Requirement to ask clarifying questions before complex tasks.
-4. **Skill compliance** — Loading a skill = binding commitment to execute its full workflow.
-5. **Self-grounded verification** — Before declaring work done, state success criteria independent of the artifact (including a disconfirming check), then evaluate the artifact against them with cited evidence. Counters agreement bias — the tendency to validate whatever is already in context.
+1. **Code quality baseline** — The prohibited patterns list (silent error swallowing, magic literals, mixing layers, guessing through ambiguity, extend-by-parameter). This is the highest-value policy for preventing AI output quality degradation.
+2. **Decision ownership and safety** — Operating mode, consequence-first classification of actions, and the mandatory human-in-the-loop triggers (`rules/authority.md`).
+3. **Evidence discipline** — Before declaring work done, state success criteria independent of the artifact (including a disconfirming check), then evaluate against them with cited evidence (`rules/evidence.md`).
+4. **Test persistence boundary** — What may be kept in the repository versus cleaned up, and the protection of existing suites (`rules/code-quality.md` §5).
+5. **Skill routing** — Index-first discovery, and that activating a skill binds the smallest applicable workflow track with its stops (`rules/skill-use.md`).
 6. **Project-specific hard rules** — Where business logic lives, data integrity constraints, rules against manipulating servers.
 
 **What NOT to embed** in the instructions file (keep in separate docs for human reference):

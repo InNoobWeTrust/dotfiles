@@ -88,9 +88,9 @@ Same pattern affects:
 
 ---
 
-## Relationship to Tool-Call Integrity Rule
+## Relationship to the Verify-After-Call Protocol
 
-This document explains **why** the verify-after-call protocol exists. The tool-call integrity rule (`tool-call-integrity.md`) defines **how** to apply it.
+This document explains **why** the verify-after-call protocol exists. The policy in `rules/evidence.md` §3 (Tool-Call Integrity) defines **how** to apply it.
 
 When a tool behaves unpredictably → this doc  
 When any side-effect tool is called → tool-call integrity rule

@@ -68,15 +68,18 @@ Every project with non-trivial domain logic needs a `GLOSSARY.md`. This prevents
 
 **Rules for the glossary:**
 
-1. Every domain concept gets exactly one canonical name
+1. Every domain concept that already recurs in the code gets exactly one canonical name
 2. If a concept has multiple names in the existing code, pick one and list the rest as "Prohibited Aliases"
-3. Before any new feature is implemented, check if its domain terms exist in GLOSSARY.md. If not, define them first
-4. If the project lacks a GLOSSARY.md, the AI should offer to generate one by scanning entity files, class declarations, and database schemas
+3. Before implementing a feature, check whether its domain terms exist in GLOSSARY.md; surface conflicts in critical business meaning rather than inventing silently
+4. Routine variable, method, or helper names need no glossary entry — the glossary tracks shared domain meaning, not every identifier
+5. If the project lacks a GLOSSARY.md, the AI should offer to generate one by scanning entity files, class declarations, and database schemas
 
 **Bootstrap protocol for new projects:**
 1. Scan main entity files, class declarations, and database schemas
-2. Extract the top 10-15 recurrent nouns and domain concepts
+2. Collect the domain concepts that already recur across those sources
 3. Verify synonyms: check if identical logical concepts appear under different names
 4. Draft the glossary table with canonical names, definitions, code locations, and prohibited aliases
+
+Let the entry count follow the domain's real vocabulary rather than a target number; add terms as conflicting names surface.
 
 ---

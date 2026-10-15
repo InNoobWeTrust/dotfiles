@@ -61,9 +61,9 @@ How ui-ux interacts with other skills:
 
 | Composing Skill | Direction | Handoff Point | What's Exchanged |
 |---|---|---|---|
-| `requirements-driven-dev` | → ui-ux | PRD/BDD outputs feed Phase 1 Discovery | User stories, acceptance criteria, persona definitions |
-| `brainstorming` | → ui-ux | Brainstorming outputs feed Phase 1 context | Ideas, concepts, competitive insights |
-| `grooming` rule | ↔ ui-ux | Phase 1 IS the UX-specific grooming interview | Discovery questions, design concept alignment |
+| `brainstorming` | → ui-ux | Ideas or settled-direction product brief feed Phase 1 context | Product goals, scope, users, use cases and evidence |
+| `code-craft` | → ui-ux | Behavior/acceptance specification informs Phase 1 and state design | Observable outcomes, acceptance examples and failure behavior |
+| [Planning and shared understanding](../../working-principles/references/planning.md) | ↔ ui-ux | Phase 1 applies shared discovery to UX decisions | Evidence, unresolved questions, consumer boundaries and design alignment |
 | `code-craft` | ← ui-ux | Phase 6 follows code-craft methodology | UX-SPEC.md as implementation contract |
 | `reviewer` | ↔ ui-ux | Can review UX-SPEC.md before Phase 6, or review code after | Design review feedback, code quality assessment |
 | `web-qa-audit` | ← ui-ux | Phase 7 can delegate browser verification | Verification checklist, expected states |
@@ -74,8 +74,10 @@ How ui-ux interacts with other skills:
 
 ### Pattern 1: Full Product Design (Most Common)
 ```
-requirements-driven-dev (PRD) → ui-ux (all phases) → code-craft (implementation details)
+brainstorming (product intent, if needed) → ui-ux (all phases) → code-craft (authorized implementation)
 ```
+
+A formal product brief/PRD is optional, not a prerequisite for UX discovery. Reuse existing intent and acceptance criteria; route technical constraints to architecture-design rather than adding a separate specification chain.
 
 ### Pattern 2: Feature Addition
 ```
@@ -100,11 +102,11 @@ ui-ux (Phases 1-5 only) → reviewer (design audit) → ui-ux (revise) → code-
 ## AFK / Non-Interactive Mode
 
 When the user is not available for the Discovery interview:
-1. Load `rules/grooming.md` AFK mode (Self-Grooming Audit)
+1. Follow [Planning and shared understanding](../../working-principles/references/planning.md): research first, distinguish evidence from assumptions, and preserve owner decisions; user absence grants no new authority
 2. Analyze codebase for existing design patterns, component library, DESIGN.md
 3. Infer discovery answers from requirements/PRD/existing code
 4. Mark all inferred answers with `⚠️ Assumed:` in UX-SPEC.md
-5. Proceed with Standard track but document all assumptions
+5. Proceed with Standard track only within authorized scope and reversible assumptions; stop affected work on unresolved consequential decisions
 6. Flag UX-SPEC.md for human review before considering work "done"
 
 ## Existing UI Audit (Replaces Old Phase 2)

@@ -88,8 +88,8 @@ Use this mode when:
 Query your environment for available delegated reviewers/workers. Look for:
 
 **For audit reviews** (need highest intelligence):
-- Model indicators: "claude-sonnet-4", "gpt-4", "o1", "advanced reasoning"
-- Capability: "expert analysis", "complex problem solving", "senior", "principal"
+- Select a currently exposed route using task-relevant capability and access evidence, not fixed model names or tiers.
+- Descriptions such as "expert analysis" or "complex problem solving" are selection hints, not proof of expertise or availability.
 
 **For specialized reviews** (need domain expertise):
 - **Debug/Investigation**: "debug", "troubleshoot", "root cause", "systematic"

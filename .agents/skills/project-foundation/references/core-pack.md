@@ -2,24 +2,16 @@
 
 Materialize this pack into `<project>/.agents/` so agents work **even when global `~/.agents` is unavailable** (CI, teammates, fresh machines). Prefer **symlinks to the global source of truth** when the repo is only used on machines that have the global pack; **copy** when the repo must be self-contained (shared team repos).
 
-## Rules (always materialize)
+## Governance installation artifacts
 
-| File | Required | Notes |
-|---|---|---|
-| `code-quality.md` | Yes | Always-on baseline |
-| `tdd.md` | Yes | Logic modules |
-| `grooming.md` | Yes | Ambiguity / reverse interview |
-| `ubiquitous-language.md` | Yes | Points at project `GLOSSARY.md` |
-| `slicing.md` | Yes | Feature planning |
-| `skill-compliance.md` | Yes | Binding skill execution |
-| `self-grounded-verification.md` | Yes | Anti agreement-bias |
-| `anti-gaslight.md` | Yes | Anti-sycophancy / circuit breaker against false user premises |
-| `autonomy-safety.md` | Yes | Elevated autonomy / AFK |
-| `INDEX` | Yes (project) | Rule map and routing foundation |
-| `skills-discovery.md` | Yes (project) | Index-first routing |
-| `command-routing.md` | Optional | Only if project has local commands |
-
-Do **not** invent project-only rule bodies that duplicate global content. Materialize from the global pack, then add **project overlays** only for true local exceptions (prefer `AGENTS.md` for product constraints). Treat a missing `rules/INDEX` as a broken instruction-routing foundation.
+When the requested foundation includes a governance pack, discover its current
+manifest/index at the authorized source and copy/link the selected artifact tree.
+Do not hardcode a historical filename list or require that pack to execute this
+skill. Governance is installation input/output, not a workflow dependency.
+Preserve its index and relative layout, validate copied links, and add project
+overlays only for real local constraints. Do not synthesize duplicate policy
+bodies or overwrite existing project instructions blindly. If a requested source
+is missing, report that installation gap; do not invent its policies.
 
 ## Skills (core — materialize full trees, not INDEX stubs)
 
@@ -29,7 +21,7 @@ Do **not** invent project-only rule bodies that duplicate global content. Materi
 | `systematic-investigation` | Yes | Debug / root cause |
 | `codebase-exploration` | Yes | Unfamiliar navigation |
 | `reviewer` (+ `references/`) | Yes | Explicit review; needs sub-reviewers |
-| `requirements-driven-dev` (+ `references/`) | Yes | Specs / PRD / TRD / BDD |
+| `working-principles` (+ `references/` and catalog) | Yes | Lightweight planning, shared understanding and task perspectives |
 | `memory` | Yes | Two-tier memory + dream cycle + progressive-disclosure structuring |
 | `subagent-dispatch` | Yes | Safe delegation prompts |
 | `project-foundation` | Yes | Re-audit / evolve this pack |
@@ -39,6 +31,8 @@ Do **not** invent project-only rule bodies that duplicate global content. Materi
 | `devsecops` | Optional | CI/CD + security scanning |
 
 Also materialize:
+
+- Referenced guidance needed by enabled routes: include the full `team-operating-model` tree when consumers need its delivery/slicing methods; those standalone references do not require team activation. Include `brainstorming`, `architecture-design` and `doc-craft` when product/technical specification or publication routes are enabled. Verify cross-skill targets; do not advertise unavailable owners through INDEX stubs. Optional routes may instead be omitted until their complete guidance is available.
 
 - `skills/INDEX` — project routing table (may slim specialized skills)
 - `skills/WIRING` — composition (can symlink to global)

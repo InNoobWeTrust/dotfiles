@@ -294,7 +294,7 @@ When `project-foundation` detects a complex stack, it should:
 ## Related
 
 - `.agents/skills/project-foundation/SKILL.md` — bootstrap mode
-- `.agents/rules/execution-safety.md` — script sandboxing and dependency isolation
+- Script execution: use the available compatible sandbox, declared dependencies and authorized writable/network boundaries; report missing capability rather than installing or retrying unrestricted.
 - `.agents/skills/devsecops/SKILL.md` — CI pipeline setup
 - Research: `.agents/docs/research/thoughtworks-radar-vol34/` — "Skills as executable onboarding" blip
 

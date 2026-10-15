@@ -4,7 +4,7 @@ Use when deciding where work belongs or designing a handoff. These are reasoning
 
 **Inputs:** the user's goal, settled decisions, acceptance criteria, relevant sources, available workers/tools, action boundaries, and operational constraints.
 **Outputs:** a justified allocation of work and attention, plus enough retrievable evidence to accept the result or identify what remains unresolved.
-**Stop:** missing authority, an unsafe execution boundary, or an unresolved implementation contract is not solved by delegation. The primary researches and approves delegated choices under `../../../rules/delivery-ownership.md`; only user-owned decisions/capabilities require asking the user. Workers narrow/report `INCOMPLETE` to the primary. Existing sandbox, process-resource, implementation-contract, and review gates still apply.
+**Stop:** missing authority, an unsafe execution boundary or an unresolved implementation contract is not solved by delegation. The primary researches and approves in-scope choices; only user-owned decisions/capabilities require asking the user. Workers narrow/report `INCOMPLETE` to the primary. Preserve applicable runtime, resource, contract and review restrictions.
 
 ## Own outcomes, distribute bounded work
 
@@ -22,7 +22,7 @@ Adapt to the model, tools, and task. No minimum worker count, fixed token thresh
 
 ## Treat named fallbacks as preferences
 
-Explicit fallbacks express preference, not a required retry chain. If delegation is needed after the original agent fails, try its preferred fallback first. One failed fallback attempt is enough to reconsider: the primary may choose another task-appropriate agent based on its description or perform the work directly where permitted. Weigh failure evidence, progress, and coordination cost; do not require repeated attempts, exhaust a list, or impose a fixed retry count. Existing safety and independent-review requirements remain binding. Do not default to the same provider family as the failed agent or the primary: prefer a different provider prefix (openai, github-copilot, ckey, kilo, opencode) for the retry unless capability constraints forbid it, and never stack producer, challenger, and retry all inside one family.
+Explicit fallbacks express preference, not a required retry chain. If delegation is needed after the original agent fails, try its preferred fallback first. One failed fallback attempt is enough to reconsider: the primary may choose another task-appropriate agent based on its description or perform the work directly where permitted. Weigh failure evidence, progress, and coordination cost; do not require repeated attempts, exhaust a list, or impose a fixed retry count. Existing safety and independent-review requirements remain binding. Do not default to the same provider family as the failed agent or the primary: prefer a different provider prefix for the retry unless capability constraints forbid it, and never stack producer, challenger, and retry all inside one family.
 
 Configuration does not prove provider availability, and a failed task does not prove provider unavailability. Use observed invocation results rather than requiring speculative availability checks. Avoid persisting with the same unresolved failure merely because an agent is named as a fallback.
 
@@ -85,7 +85,7 @@ These principles apply to primary collaboration across harnesses, whether or not
 
 #### Thinking Principles
 
-- **Shared Understanding First**: Help establish the problem and explain unfamiliar choices; do not assume the user brings a complete specification or can independently audit the solution. Follow the [shared-understanding contract](../../../AGENTS.md#informed-alignment-universal-invariant) and [grooming guidance](../../../rules/grooming.md). Exploration is not implementation authorization.
+- **Shared Understanding First**: Help establish the problem and explain unfamiliar choices; do not assume the user brings a complete specification or can independently audit the solution. Use [Planning and shared understanding](../../working-principles/references/planning.md). Exploration is not implementation authorization.
 - **First-Principles Simplicity**: Solve problems with the minimum necessary mechanism. Favor existing platform capabilities, built-in tools, and established primitives over custom implementations or new architectural layers. Every additional line of code and layer of abstraction is an ongoing maintenance cost.
 - **Proportionality**: Calibrate ceremony to uncertainty and consequence as well as scope. Clear, authorized tasks call for direct, pragmatic resolution—not multi-phase plans or ritual approvals. A small patch with unclear behavior still needs proportionate discovery.
 - **Empirical Grounding**: Value observable reality over assumption. Verify state through concrete execution and tangible evidence rather than inferred correctness or self-justification.

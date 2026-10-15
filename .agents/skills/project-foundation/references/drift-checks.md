@@ -10,7 +10,7 @@ Run these checks without rewriting healthy files. Produce a **gap report**, then
 - [ ] Every **required** rule from `core-pack.md` is present and non-empty
 - [ ] Every **required** skill tree from `core-pack.md` is present with `SKILL.md`
 - [ ] `reviewer/references/sub-reviewers/` has at least: code-quality, security, adversarial, design-rigor, edge-case-hunter, editorial
-- [ ] `requirements-driven-dev/references/` exists if that skill is listed required
+- [ ] `working-principles/references/planning.md` exists; enabled domain routes and required cross-skill targets are materialized, not INDEX-only stubs
 - [ ] `skills/INDEX` lists all required skills with Use When / Do Not Use When
 - [ ] `skills/WIRING` exists
 - [ ] `Makefile` has help/fix/lint/quality/test/dev/build (or documented equivalents)

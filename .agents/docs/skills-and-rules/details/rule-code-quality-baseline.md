@@ -9,13 +9,15 @@
 ```
 1. Pre-implementation design checkpoint (7 questions answered BEFORE writing)
 2. Naming conventions (verb-phrase functions, noun-phrase variables, boolean prefixes)
-3. Structure limits (max 3 levels nesting, max 50 lines per function, guard clauses)
+3. Structure limits (project lint thresholds; guard clauses over nested conditionals — no universal line or nesting number)
 4. Prohibited patterns (silent error swallowing, magic literals, mixed layers)
 5. Tech debt marking (TODO(debt): format)
 6. Refactoring signal markers (REFACTOR-SIGNAL: pattern)
 7. Module README requirement (every module directory must have documentation)
 8. Docstring requirement (all public APIs must have ecosystem-standard docstrings)
 ```
+
+Numeric thresholds belong to project lint configuration, not to a portable policy. A hard-coded function-length or nesting number produces false positives without reviewable reasoning; bind the number where it can be measured automatically.
 
 **Without this rule:** The AI will produce code that works for the current test case but collapses under real use — deeply nested, 200-line functions with no documentation, no error handling, and business logic tangled with framework code.
 

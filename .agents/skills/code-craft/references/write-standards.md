@@ -1,15 +1,15 @@
 # Write standards (code-craft Phase 3)
 
-Load only during Phase 3. Hard limits: `rules/code-quality.md`, `rules/tdd.md`.
+Load during writing or the readability audit, alongside [Code quality guidance](code-quality-guidance.md) and [Testing](testing.md).
 
 ### Phase 3 — Write with High-Quality Standards
 
-Write the implementation following `rules/code-quality.md` and these advanced crafting guidelines:
+Write the implementation using the repository's conventions and these crafting guidelines:
 
 #### A. Defensive Boundaries (Robust Exception Handling)
 - **Zero Silent Failures:** Never catch exceptions without recording diagnostic information or recovering.
 - **Fail Explicitly:** Every network call, file IO, or database query must configure explicit timeouts and an explicit failure contract. Use mapped errors, retries, or contract-approved defaults only when the caller-visible semantics are already defined. Do not invent `[]`, `null`, `false`, or no-op fallbacks just to keep execution moving.
-- **Resolve Semantic Ambiguity:** If an edge case has competing meanings, pause affected implementation and report the contract gap. Under `../../../rules/delivery-ownership.md`, the autonomous primary researches and approves in-scope behavior; ask the user only for reserved decisions. Surface a domain error rather than inventing a fallback while the contract is unresolved.
+- **Resolve Semantic Ambiguity:** If an edge case has competing meanings, pause affected implementation and report the contract gap. The autonomous primary researches and approves in-scope behavior; ask the user only for reserved decisions. Surface a domain error rather than inventing a fallback while the contract is unresolved.
 - **Preserve Diagnostics:** Propagate source context (error code, field name, upstream status, correlation data) so a reviewer can see why the failure path happened.
 - **Sanitize Boundaries:** Validate external API payloads immediately upon receiving them before passing them to internal functions.
 
@@ -27,13 +27,13 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 - **Discriminated Unions / ADTs:** Represent states and outcomes using strong types, union types, and enums rather than raw string matching or magic numbers.
 
 #### E. Technology Selection
-- **Default:** Follow the technology-fit checkpoint in `rules/code-quality.md` and record the decision in Code Craft's Design Intent. Preserve repository conventions first; otherwise, prefer a suitable standard-library/platform capability, then a mature and maintained ecosystem dependency.
+- **Default:** Apply [reuse guidance](code-quality-guidance.md) and record consequential choices in Design Intent. Preserve repository conventions first; otherwise, prefer a suitable standard-library/platform capability, then a mature and maintained ecosystem dependency.
 - **Vendoring / reimplementation:** Do not create a third-party copy or dependency-free substitute merely for ownership. Require explicit user opt-in or existing repository policy, then document long-term ownership, updates, and vulnerability response.
 - **Language-specific defaults:** When selecting a language or framework stack, load the matching `languages/*.md` reference. These references are greenfield defaults; they never override established project constraints, compatibility, licensing, security, or performance requirements.
 - **Dependency/API alignment:** Inspect versions resolved by the actual entry point before choosing APIs. Preserve the current major unless a change is agreed; do not downgrade a dependency to fit newly written code. For standalone auto-resolving scripts, declare each external dependency's resolved major using supported version selectors; retain repository-native manifests/lockfiles where present.
 
 #### F. Test-Driven Development (TDD Cycle)
-- **Select Before Writing:** Apply `rules/tdd.md` to select meaningful checks and their persistence category. When TDD is warranted, write those checks before the logic; temporary checks stay outside the repository, not in a newly generated leaf-unit suite.
+- **Select Before Writing:** Apply [Testing](testing.md) to select meaningful checks and their persistence category. When TDD is warranted, write those checks before the logic; temporary checks stay outside the repository, not in a newly generated leaf-unit suite.
 - **RED**: Execute the test command and confirm that the test fails as expected.
 - **GREEN**: Write the minimal code to satisfy the test cases. Confirm all tests pass.
 - **Refactor**: Refactor to meet all code quality criteria, maintaining passing test states.
@@ -41,7 +41,7 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 
 #### G. Quality Tooling Pass
 
-> **Cross-reference `rules/execution-safety.md`:** Write custom scripts to a temp dir and run with `uv`/`bun`. Use `npx`/`bunx`/`uvx` only for published CLI tools. Never `pip install` or `npm install -g`.
+> **Script isolation:** Write custom scripts to approved scratch and declare dependencies with `uv`/`bun`. Registry runners (`npx`/`bunx`/`uvx`) are for published packages. Keep writes/network within granted scope; no global installs, sandbox bypass or secret output. Missing capability is a blocker, not permission to install.
 
 - **Prefer Repo-Native Commands:** Discover and use the repo's existing verification entrypoints first: project scripts, `Makefile`/`justfile`, `tox`/`nox`, `pre-commit`, CI jobs, or documented contributor workflows. These encode the team's actual policy and should win over ad hoc commands.
 - **Verify Deployment Resolution:** Run the real entry point with its normal imports and launch context. Dependency-substituted tests or alternate installations are supplementary, not proof of deployment compatibility; for MCP servers, include initialization and catalog listing rather than only direct handler tests.
@@ -74,11 +74,11 @@ Write the implementation following `rules/code-quality.md` and these advanced cr
 - **Deliverable requirement:** Post the repo-native commands you ran, or the exact fallback commands you recommend, and summarize the results. If you only suggested commands because the repo lacked setup, say so explicitly.
 
 #### H. Docstring & API Documentation Standards
-All new or modified public modules, classes, functions, and interfaces MUST include detailed docstrings conforming to ecosystem standards:
+Document public contracts where callers need information beyond names and types. Match repository/ecosystem conventions; do not add boilerplate to every declaration:
 - **TypeScript / JavaScript**: Use JSDoc (`/** ... */`) specifying parameters (`@param`), return values (`@returns`), and thrown errors (`@throws`).
 - **Python**: Use PEP 257 docstrings (triple quotes) detailing arguments (`Args:`), return types (`Returns:`), and exceptions raised (`Raises:`).
 - **Go**: Standard Go doc comments directly preceding the declaration.
-- **Content**: The docstring must state *what* the unit does, its invariants, its input preconditions, output postconditions, and all potential side effects or errors.
+- **Content**: Explain relevant invariants, preconditions, effects and errors that a caller cannot safely infer. Keep routine typed parameters out of redundant prose.
 
 #### I. Abstraction & Boundary Rules (Avoiding Shallow Helpers)
 - **The Abstraction Ratio**: Extract a function when its contract hides meaningful complexity or clarifies a responsibility, invariant, or effect boundary. Do not create trivial wrappers merely to shorten the caller; line count alone neither requires nor prohibits extraction.
@@ -98,23 +98,20 @@ After writing, read the code as a new engineer with zero context. Answer these:
 5. **Resilience** — What happens if the filesystem is full, a database connection drops, or a network request times out?
 6. **Ambiguity handling** — For every fallback or error mapping, can a reviewer tell why this behavior is correct and when execution escalates instead?
 7. **Metric smell** — Did any complexity, maintainability, or duplication check flag this unit, and if so, did you refactor or explicitly record the debt?
-8. **Docstring Check** — Do all public declarations have complete and accurate docstrings detailing inputs, outputs, errors, and side effects?
+8. **API documentation** — Can callers discover the necessary contract, consequential errors and effects without redundant boilerplate?
 9. **Abstraction Boundary** — Do helper boundaries clarify meaningful responsibilities or hide complexity? Did we keep trivial cohesive logic inline and avoid splitting solely for a line-count target?
-10. **Locked Interface Check** — Did we implement only the locked contracts without inventing new interfaces or modifying method signatures?
-11. **Scoped File Tree & Boundary Check** — Does the repository state strictly match the locked scoped file tree? Were out-of-scope boundaries respected with no files touched outside scope? Have all temporary, scratch, and intermediate files been completely cleaned up?
+10. **Consumer contracts** — Were approved consumer contracts preserved, with defects returned to the authorized owner?
+11. **Scope and cleanup** — Were writable boundaries and any explicit file restrictions respected, unrelated work preserved and scratch artifacts removed?
 
 For any "no" or weak answer, resolve the relevant clarity or robustness issue within scope. Comments explain non-obvious rationale; a `// CLARITY:` annotation does not substitute for fixing hidden control flow, surprising effects, or excessive indirection. Report material limitations rather than silently broadening the task.
 
 **Inspection evidence (proportional):** For non-trivial behavior changes, include a compact, repository-relative source-linked walkthrough in the existing change summary or module README: entry point -> important decisions/stages -> result; effect/state ownership; consequential failure exits; relevant tests or observed outputs and what remains unverified. A small script or linear patch needs only understandable code and a brief explanation. Add a flow/state view or targeted runtime evidence only for a concrete inspection gap—not a separate artifact or tracing system for every change. See [Inspectable code](inspectable-code.md) for the copyable shape and conditional tool selection.
 
 #### J. Module README & Architecture Design Audit
-For any module directory created or modified, you must ensure it has an up-to-date, high-quality `README.md` documenting its architecture, responsibility, public interface, and behavior:
-- **Create**: If the module directory has no `README.md`, create it immediately.
-- **Update**: If the changes modify the module's public interface, internal logic flow, dependencies, or core responsibility, update the directory's `README.md`.
-- **Content guidelines (flexible but thorough)**: The `README.md` must contain sufficient detail to allow a human auditor to understand what the module does, its responsibility, public APIs, key design decisions, and external coupling without having to read the source code.
+Update the existing consumer/maintainer documentation when changed behavior or responsibilities need explanation. Create a module README only when it provides a useful entry point not already supplied by code or project documentation. Explain necessary use, constraints and maintenance decisions; a directory edit alone does not justify a new document.
 
 #### K. Adherence to Locked Plan Core Parts & Scoped File Tree Cleanliness
 When implementing from an approved plan:
 - **Strict Interface Fidelity (Zero Invented Interfaces)**: Implement code strictly adhering to the approved code interfaces, method signatures, return types, and DTO contracts. Implementers must not invent new interfaces, alter parameter types or orders, or add ad-hoc contracts on the fly. If an approved contract is found to be unworkable or defective during coding, halt execution immediately and report `INCOMPLETE: CONTRACT_DEFECT`.
-- **Scoped File Tree Cleanliness, Scope Boundaries & Mandatory Cleanup (Zero Invented Files)**: All files created, modified, or removed must match the approved locked scoped file tree within the designated in-scope boundary. Do not touch files or components designated out-of-scope (other parts of the repository are implicitly unchanged). Do not create unapproved helper files, scripts, or extra modules in ad-hoc paths. All scratch scripts, temporary files, test outputs, or debug files must be completely removed before completing the task.
-- **Sequential Phase Execution**: Implementers must execute against the designated separate phase file (e.g., `phases/01-*.md`), completing and verifying its acceptance criteria before advancing.
+- **Scope and cleanup**: Respect the approved writable boundary and any explicitly fixed file delta. Internal helper/file choices within a sufficiently authorized component need not be prelisted. Do not touch unrelated work; remove owned scratch and debug artifacts before handoff.
+- **Unit execution**: Verify the selected approved unit before advancing. Inline contracts are sufficient for coherent changes; separate phase files serve independent delegation or resumption needs.

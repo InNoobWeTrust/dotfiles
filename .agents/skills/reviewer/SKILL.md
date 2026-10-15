@@ -17,16 +17,16 @@ Trivial exception: &lt;10 lines, no structural impact → skip review rather tha
 
 ## Gate 2 — Self-grounded verification
 
-Any in-context review must follow `rules/self-grounded-verification.md`: criteria + disconfirming test **before** judging the artifact; then PASS/FAIL/UNVERIFIED with evidence.
+Any in-context review must state its criteria and run a disconfirming check **before** judging the artifact; then verdict PASS/FAIL/UNVERIFIED with evidence. Criteria come from the artifact's own acceptance contract; a disconfirming check is one concrete attempt to break the finding (counter-example, alternate reading, or missing-evidence test) recorded alongside the verdict.
 
 In research terms, Reviewer is the repo's **evaluator** half of an evaluator–optimizer loop. It must score against declared criteria, not vibe-check or rewrite the rubric after seeing the artifact.
 
 ## Gate 3 — Contract-Bounded Phase Review
 
 When the artifact belongs to phased delivery, obtain the populated Delivery
-Contract from `../../rules/phased-delivery.md` or its active packet before
-judging it. Apply that canonical contract; do not reproduce its lifecycle,
-classification, budgets, compromise schema, or trajectory table here.
+Contract from `../team-operating-model/references/phased-delivery.md` or its active packet before
+judging it. Apply that cross-skill contract; do not reproduce its lifecycle,
+classification, budgets, compromise schema, or trajectory table here. Choose formal review artifacts proportionately to coordination need per that contract.
 
 Every finding must include evidence, severity, and exactly one canonical
 classification. Reviewers recommend a classification and remediation; the

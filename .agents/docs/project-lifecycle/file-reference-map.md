@@ -4,13 +4,21 @@
 |---|---|---|
 | `AGENTS.md` | Agent instructions, project rules, tooling commands, debugging protocol | Engineering lead |
 | `GLOSSARY.md` | Domain terminology, code references, prohibited aliases | Engineering lead + domain experts |
-| `.agents/rules/code-quality.md` | Design checkpoint, naming conventions, structure limits, prohibited patterns | Engineering lead |
-| `.agents/rules/tdd.md` | Red-Green-Refactor protocol, test-first requirements | Engineering lead |
-| `.agents/rules/grooming.md` | Reverse interview protocol, AFK mode self-audit | Engineering lead |
-| `.agents/rules/ubiquitous-language.md` | Glossary sync protocol, bootstrap procedure | Engineering lead |
-| `.agents/rules/slicing.md` | Vertical slicing protocol for feature decomposition | Engineering lead |
-| `.agents/rules/skill-compliance.md` | Binding workflow enforcement, hard-stop gates | Engineering lead |
-| `.agents/rules/self-grounded-verification.md` | Two-step anti-agreement-bias verification protocol | Engineering lead |
+| `.agents/rules/INDEX` | Rules map: trigger per policy, load on fire | Engineering lead |
+| `.agents/rules/authority.md` | Decision ownership, consequence-first safety, resource bounds, informed alignment | Engineering lead |
+| `.agents/rules/evidence.md` | Self-grounded verification, tool-call outcome checks, anti-gaslight circuit breaker | Engineering lead |
+| `.agents/rules/skill-use.md` | Index-first discovery, activation vs. inspection, binding workflow execution | Engineering lead |
+| `.agents/rules/execution-safety.md` | Pre-execution gate, sandbox routing, secrets, long-running processes | Engineering lead |
+| `.agents/rules/git-safety.md` | Staging, committing, pushing, destructive git operations | Engineering lead |
+| `.agents/rules/code-quality.md` | Reuse-first baseline, design principles, test persistence boundary, ubiquitous language | Engineering lead |
+| `.agents/rules/document-formats.md` | Typst/PDF default, Markdown exceptions | Engineering lead |
+| `.agents/skills/code-craft/references/testing.md` | Acceptance behavior (including spec-only examples), evidence, testing strategies, context isolation | Engineering lead |
+| `.agents/skills/code-craft/references/code-quality-guidance.md` | Detailed quality guidance, patterns, smells | Engineering lead |
+| `.agents/skills/working-principles/references/planning.md` | Lightweight discovery, primary planning and tactical planning | Engineering lead |
+| `.agents/skills/brainstorming/SKILL.md` | Product intent, outcomes and product briefs, including settled direction | Engineering lead |
+| `.agents/skills/architecture-design/SKILL.md` | Technical constraints, trade-offs and optional technical specification | Engineering lead |
+| `.agents/skills/team-operating-model/references/phased-delivery.md` | Proportionate phased delivery, usable directly for solo work | Engineering lead |
+| `.agents/skills/team-operating-model/references/slicing.md` | Vertical slicing, usable directly for solo work | Engineering lead |
 | `.agents/skills/INDEX` | Skill routing table with cost and applicability columns | Engineering lead |
 | `.agents/skills/WIRING` | Skill composition pathways and skill-to-skill transitions | Engineering lead |
 | `.agents/skills/memory/` | Two-tier memory skill: short-term entries, long-term consolidation, dream cycle, eviction protocol, progressive-disclosure structuring | Engineering lead |

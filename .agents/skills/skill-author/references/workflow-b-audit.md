@@ -28,7 +28,7 @@ For each rule in the declared audit scope, answer:
 | Rule | Effective? | False Positives? | Coverage Gap? | Level? | Action |
 |---|---|---|---|---|---|
 | code-quality.md | Yes — caught 3 silent swallows | No | No | Good | Keep |
-| tdd.md | Yes — enforced across tasks | No | No | Good | Keep |
+| Example testing policy | Unknown — gather usage evidence | Check false positives | Check gaps | Unassessed | Keep only universal safeguards; place methods in the owning skill |
 ```
 
 ### Phase B2 — Skill Audit

@@ -1,6 +1,8 @@
 # Rule 7: Self-Grounded Verification
 
-**File:** `rules/self-grounded-verification.md`
+**Current policy:** `rules/evidence.md` §2 — Self-Grounded Verification.
+
+*Archived leaf: the standalone `rules/self-grounded-verification.md` file was consolidated into `rules/evidence.md`. The rationale and research grounding below are unchanged.*
 
 **What it prevents:** AI validating its own (or a user's) work because it is already in context — *agreement bias*.
 

@@ -2,7 +2,7 @@
 
 Standard scannable templates designed to prevent AI-generated discursive prose and walls of text.
 
-**Choose format first:** [Document format selection](../../../rules/document-formats.md) governs saved output. For Typst, start with [the native starter](typst-workflow.md#2-author-once-compile-directly) and translate the information structures below into native headings/tables/callouts; the Markdown examples and `.md` paths are only for required Markdown consumers.
+**Choose format first:** [Document format selection](document-formats.md) governs saved output. For Typst, start with [the native starter](typst-workflow.md#2-author-once-compile-directly) and translate the information structures below into native headings/tables/callouts; the Markdown examples and `.md` paths are only for required Markdown consumers.
 
 | Document structure | Default source | Key sections |
 |---|---|---|

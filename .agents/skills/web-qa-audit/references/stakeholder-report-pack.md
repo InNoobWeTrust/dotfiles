@@ -366,7 +366,7 @@ When audience is decision-only and must not receive the full matrix:
 
 ## PDF Executive Summary Contract
 
-Author the stakeholder narrative directly in `.typ`, applying [Document format selection](../../../rules/document-formats.md) and [Typst workflow](../../doc-craft/references/typst-workflow.md). Derive facts/counts from the approved projection, keep the existing YAML/Markdown engineering record, and compile/inspect the final revision before claiming PDF delivery; no manually maintained Markdown mirror is needed.
+Author the stakeholder narrative directly in `.typ`, applying [Document format selection](../../doc-craft/references/document-formats.md) and [Typst workflow](../../doc-craft/references/typst-workflow.md). Derive facts/counts from the approved projection, keep the existing YAML/Markdown engineering record, and compile/inspect the final revision before claiming PDF delivery; no manually maintained Markdown mirror is needed.
 
 ### File name
 

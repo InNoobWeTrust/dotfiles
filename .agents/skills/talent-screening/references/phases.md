@@ -9,7 +9,7 @@ Define the ideal target profile before looking at individual applications.
    - LinkedIn turnover signals (how long do employees stay in similar roles?).
    - Legal filings, labor disputes, or regulatory issues.
    - Leadership stability and team growth context (expanding vs. backfilling attrition).
-3. **Produce Candidate Profile**: Save a structured profile containing must-have traits, strong-signal traits, bonus traits, candidate red flags, and 2-3 persona sketches of ideal candidates. Apply [Document format selection](../../../rules/document-formats.md): Typst + PDF for human readers; preserve an identified ATS/parser's required format.
+3. **Produce Candidate Profile**: Save a structured profile containing must-have traits, strong-signal traits, bonus traits, candidate red flags, and 2-3 persona sketches of ideal candidates. Apply [Document format selection](../../doc-craft/references/document-formats.md): Typst + PDF for human readers; preserve an identified ATS/parser's required format.
 
 ---
 

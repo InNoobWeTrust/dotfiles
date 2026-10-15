@@ -1,19 +1,24 @@
 ---
 name: code-craft
-description: "Use this skill for any non-trivial code write, feature implementation, refactor, or restructuring — it is the default skill for all implementation tasks. Enforces SOLID, KISS, DRY, modularity, and human-readability at the function, class, and module level. Applies when writing new code, adding features, decomposing large functions, extracting modules, cleaning up code, or touching more than one file, even if the user doesn't explicitly ask for \"clean code\" or \"refactoring.\""
+description: "Use this skill for non-trivial implementation, refactoring and behavior/acceptance specifications, including BDD examples without implementation. Default implementation skill: SOLID, KISS, DRY, modularity and human-readability. Applies to new features, code restructuring and multi-file changes."
 ---
 
 # Code Craft
 
-Core delivery router for non-trivial implementation. Obey always-on `rules/code-quality.md` and `rules/tdd.md`; they own hard constraints, naming, prohibited patterns, and debt markers. Skip only for typos, formatting, config values, and logic-neutral renames.
+Core delivery router for non-trivial implementation. Use [Code quality guidance](references/code-quality-guidance.md) and [Testing](references/testing.md) for readable implementation, verification and test persistence. Skip delivery phases for typos, formatting, config values and logic-neutral renames.
 
-Approval follows `../../rules/delivery-ownership.md`: the autonomous primary researches and signs off in-scope contracts or revisions before implementation resumes; workers cannot invent them. Human-reserved approvals remain human-owned, and AFK is never assumed approval.
+The autonomous primary researches and approves in-scope contracts or revisions before implementation resumes; workers cannot invent them. Human-reserved approvals remain human-owned, and AFK is never assumed approval.
 
 Before implementation, read [Implementation principles](references/working-principles.md#implementation). For test authoring or execution-only assignments, read [Verification principles](references/working-principles.md#verification); that reference alone does not activate production delivery phases.
 
 ## Track selection
 
-Choose the smallest track that preserves acceptance criteria, hard invariants, and safety. When phased delivery applies, use the roadmap or active milestone packet and canonical compromise register in `../../rules/phased-delivery.md`.
+For behavior specifications or acceptance criteria **without implementation**, use
+[Behavior and acceptance](references/testing.md#behavior-and-acceptance) directly.
+Define observable outcomes and examples; skip implementation phases. A specification
+request does not authorize code changes or test execution.
+
+Choose the smallest track that preserves acceptance criteria, hard invariants, and safety. For phased work use [Phased delivery](../team-operating-model/references/phased-delivery.md), independently usable without activating a team.
 
 | Track | Use when | Required controls |
 |---|---|---|
@@ -24,22 +29,22 @@ Choose the smallest track that preserves acceptance criteria, hard invariants, a
 
 ## Rewrite and consumer hard gate
 
-For rewrite, overhaul, or delete-and-rebuild work, load `rules/grooming.md` first. Before Phase 1, classify every old semantic/interface as **delete** or **preserve**. If a public API or consumer app is affected, define consumer-facing signatures/schema and stubs and obtain informed sign-off per `rules/grooming.md` — show caller-visible examples, define decision-relevant terms, and explain alternatives/consequences — before implementation. Do not infer the contract, preserve old behavior by default, or patch old code when deletion is intended.
+For rewrite, overhaul, or delete-and-rebuild work, use [Planning and shared understanding](../working-principles/references/planning.md). Classify affected old semantics/interfaces as **delete** or **preserve**. Settle affected consumer-facing contracts with the authorized owner before implementation; explain caller-visible examples and consequences. Do not preserve old behavior by reflex or patch code whose deletion was approved.
 
 ## Workflow
 
-1. **Phase 1 — Design Intent:** Before writing, load `references/design-intent-template.md` for non-trivial work or when a full/compact intent is required. When implementing from an approved plan, bind directly to the referenced active phase file, the locked code interfaces & DTO contracts, and the locked scoped file tree structure within declared in-scope boundaries. Implementers have zero degrees of freedom to alter method signatures, change DTO shapes, invent interfaces, breach scope boundaries, or create unapproved files. For a greenfield language/framework choice or substantial platform capability, first load `references/languages/README.md`, then the smallest matching language reference. Repository conventions and explicit constraints win. For non-trivial orchestration, branching, stateful/effectful behavior, or readability-first requests, load `references/inspectable-code.md` before choosing abstractions. For micro code patterns (Result, Typestate, Functional Options, Builder, Strategy, Specification, Value Object, Discriminated Union, Constructor DI), local concurrency/resilience (worker pools, task groups, backoff/jitter), stack-specific language blueprints, or model traps, query the code-craft pattern catalog (`./.agents/skills/code-craft/scripts/search.py "<query>" --stack <stack>`) per `references/pattern-catalog.md` to prevent model training bias. For macro system topology (Modular Monolith, Hexagonal, CQRS, Sagas, Outbox), route to `architecture-design`; for storage schemas, indexing, and migrations, route to `db-design`.
+1. **Phase 1 — Design Intent:** Load `references/design-intent-template.md` and record proportionate intent. Follow approved scope and consumer contracts; use concrete signatures or exact file deltas where consumers or disjoint worker ownership need them. Inline intent is sufficient for a coherent patch; separate phase files are for useful handoff/resumption boundaries. Contract changes return to the authorized owner. For a greenfield stack or substantial platform capability, load `references/languages/README.md` and the smallest matching reference. Repository conventions win. For non-trivial effects or orchestration, load `references/inspectable-code.md`. Query micro patterns, stack blueprints or resilience guidance per `references/pattern-catalog.md` where useful. For system topology use `architecture-design`; for schemas/indexing/migrations use `db-design`.
 2. **Phase 2 — SOLID review:** Before writing, load `references/solid-checklist.md`. Patch and MVP Slice apply relevant boundary checks and explicitly mark N/A; Expansion / Refactor and Hardening complete the full checklist.
-3. **Phase 3 — Write:** Select proportionate verification and test persistence under `../../rules/tdd.md`; use RED → GREEN → REFACTOR where warranted and post observed evidence. Load `references/write-standards.md`; re-check a selected language reference when Phase 1 selected a new stack/capability. Prefer repo-native `make` or scripts. On drift, long tool chains, confidence loss, or thrash, load `references/trajectory-checkpoint.md` before continuing.
-4. **Phase 4 — Readability audit:** Load `references/write-standards.md` and audit as a new engineer. Fix structural clarity issues; comments explain rationale, not hidden flow. Include proportionate source-linked flow evidence for non-trivial behavior changes; create or update module `README.md` when responsibility or public surface changes. Verify repository cleanliness against the locked scoped file tree (ensuring out-of-scope files remain untouched) and remove all scratch/temporary artifacts.
+3. **Phase 3 — Write:** Select proportionate verification and test persistence under [Testing](references/testing.md); use RED → GREEN → REFACTOR where warranted and post observed evidence. Load `references/write-standards.md`; re-check a selected language reference when Phase 1 selected a new stack/capability. Prefer repo-native `make` or scripts. On drift, long tool chains, confidence loss, or thrash, load `references/trajectory-checkpoint.md` before continuing.
+4. **Phase 4 — Readability audit:** Load `references/write-standards.md` and audit as a new engineer. Fix structural clarity issues; comments explain rationale, not hidden flow. Include proportionate source-linked flow evidence for non-trivial behavior changes; update consumer/maintainer documentation where changed behavior requires it. Check scope and cleanup; leave unrelated work untouched.
 5. **Phase 5 — Tech-debt inventory:** For phased delivery, record material or cross-slice deferred debt in the canonical compromise register. Otherwise record only small local deferrals in change context. Never prebuild infrastructure, abstractions, flags, or extension points speculatively.
 
 ## Hard stops
 
 - Isolation fails: redesign.
-- Required consumer contract/stubs or informed interface sign-off is missing or unapproved: obtain informed sign-off per `rules/grooming.md` (caller-visible examples + terms + alternatives/consequences) before implementation.
+- Required consumer contract or approval is missing: clarify with the authorized owner using caller-visible examples and consequences before affected implementation.
 - Contract defect: if a locked contract from planning is flawed or unworkable, STOP immediately and report `INCOMPLETE: CONTRACT_DEFECT` with proposed adjustment; do not invent ad-hoc interfaces or alter signatures.
-- Boundary / file tree violation: creating files not declared in the approved locked scoped file tree, breaching declared scope boundaries, or leaving uncleaned scratch files; stop and align strictly with the locked boundary and file tree.
+- Scope violation: breaching the approved writable boundary, altering a locked consumer contract, or leaving scratch artifacts. Revise through the authorized owner before affected work continues.
 - Edge-case semantics are unspecified: clarify; AFK fails closed and invents no fallback.
 - Vendoring or reimplementing an adequately supplied capability lacks explicit opt-in or repository policy: use the platform/established dependency or clarify.
 - Applicable SOLID, safety, or correctness check fails: fix; only material cross-slice phased debt may enter the canonical register. Local debt never substitutes for a required safety or correctness fix.
@@ -47,11 +52,11 @@ For rewrite, overhaul, or delete-and-rebuild work, load `rules/grooming.md` firs
 ## Deliverable
 
 - [ ] Track controls, Phase 1 intent, and applicable Phase 2 review are complete.
-- [ ] Active phase file referenced, locked code interfaces/DTOs implemented with zero invented contracts.
-- [ ] Locked in-scope file tree structure conformed to, out-of-scope boundaries respected, zero unapproved files created, and all scratch artifacts cleaned up.
+- [ ] Approved behavior and required consumer contracts preserved; phase/handoff references included where applicable.
+- [ ] Writable scope respected, unrelated work untouched, and scratch artifacts cleaned up.
 - [ ] Verification/write standards are applied, TDD is used where warranted, test persistence is authorized, and observed evidence is posted.
 - [ ] No invented semantic fallback; rewrite transitions and required consumer contracts/stubs have informed sign-off.
-- [ ] Readability audit and required module README maintenance are complete.
+- [ ] Readability audit and necessary consumer/maintainer documentation are complete.
 - [ ] Drift checkpoint and debt-recording rules are followed; no speculative prebuild.
 
 ## References
@@ -68,4 +73,4 @@ For rewrite, overhaul, or delete-and-rebuild work, load `rules/grooming.md` firs
 | Long tool chain, confidence drop, re-reading, or thrash in Phase 3/4 | `references/trajectory-checkpoint.md` |
 | Locking, mutual exclusion, atomic file updates, Git lockfile pattern (`lockfile.h`), decision tree | `references/lock-patterns.md` |
 | Tempted by a design shortcut | `references/anti-patterns.md` |
-| Phased delivery or material cross-slice debt | `../../rules/phased-delivery.md` |
+| Phased delivery or material cross-slice debt | `../team-operating-model/references/phased-delivery.md` |

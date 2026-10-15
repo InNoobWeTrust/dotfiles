@@ -17,11 +17,13 @@ When a complex task needs multiple skills, the AI must know what order to load t
 4. `reviewer` — verify fix addressed root cause
 
 ### Feature Implementation
-1. `requirements-driven-dev` — if feature is large or ambiguous
+1. `working-principles` planning reference — clarify consequential unknowns
 2. `codebase-exploration` — map target areas
 3. `code-craft` — disciplined implementation
 4. `reviewer` — post-implementation review
 ```
+
+Product intent belongs to `brainstorming`, technical constraints/trade-offs to `architecture-design`, and acceptance behavior (including spec-only examples) to `code-craft`. Use `ui-ux` for journeys and `doc-craft` for presentation; compose only what the task needs, without a mandatory specification chain.
 
 ### Handoff Matrix
 

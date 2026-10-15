@@ -1,10 +1,12 @@
 # Rule 3: Grooming (Reverse Interview)
 
-**File:** `rules/grooming.md`
+**Current method:** `skills/working-principles/references/planning.md`
+
+*Historical rationale: `rules/grooming.md` was removed. The interview sequence below describes the former rule, not current mandatory steps. Current discovery is proportionate: ask only consequential unresolved questions, respect settled direction, and do not require formal specifications.*
 
 **What it prevents:** AI building the wrong thing because it misunderstood requirements.
 
-**Core components:**
+**Historical components (not current instructions):**
 
 ```
 1. Stop-and-probe: before building, identify gaps and assumptions

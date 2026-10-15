@@ -117,7 +117,7 @@ The skill's output is working code that satisfies:
 - [ ] Design Intent & Resilience Plan block was produced
 - [ ] SOLID & Clean Architecture check passed or debt documented
 - [ ] Code follows naming, structure, and traceability rules
-- [ ] Tests written and passing per TDD protocol
+- [ ] Tests written and run where warranted, per the testing reference
 - [ ] Tech Debt Inventory produced
 ```
 
@@ -139,9 +139,11 @@ Point to deep-dive documents that should only be loaded when needed:
 
 ## References
 
-- `references/code-quality.md` — Detailed code quality checklist
+- `references/code-quality-guidance.md` — Detailed code quality checklist
 - `references/templates/prd.md` — PRD output template
 ```
+
+A reusable skill must not link back to `rules/*.md`. Governance rules are universal invariants enforced by the harness; when a skill workflow needs a constraint, the skill states that constraint itself and the rule reinforces it independently.
 
 ### Quality Bar for Skills
 

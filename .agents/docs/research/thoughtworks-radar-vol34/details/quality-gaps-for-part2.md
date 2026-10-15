@@ -79,7 +79,7 @@ What Part 2 already taught well vs what Vol 34 shows we under-covered.
 
 ### P3 — Spec feedforward (mention only in Part 2)
 
-OpenSpec, GitHub Spec Kit, Superpowers sit closer to Part 1 (skills/rules) and requirements-driven-dev. Part 2 can one-line: “feedforward = skills + specs; feedback = sensors.”
+OpenSpec, GitHub Spec Kit and Superpowers sit closer to Part 1 (skills/rules). The historical comparison concerned spec-driven workflows; current routing uses `working-principles` planning plus product intent (`brainstorming`), technical constraints (`architecture-design`) and acceptance behavior (`code-craft`), without mandatory formal specs. Part 2 can one-line: “feedforward = skills + clear intent; feedback = sensors.”
 
 ### P3 — Agent supply chain (security sidebar)
 

@@ -153,7 +153,7 @@ function instructions(): string {
   return [
     headline,
     "delegate_run executes exactly one non-interactive turn in a detached process group and returns that external AI subagent's final message as the result; nothing is chained or shared between subagents.",
-    "Prefer a configured agy over native subagent tools for suitable independent exploration, research, scoped implementation, or verification. Use native subagents when a required capability is unavailable here; keep tightly coupled work with the main agent. This is routing guidance, not a speed benchmark.",
+    "Choose between configured external workers and native subagents by task suitability, capabilities, interface needs and observed availability. No harness or provider has a fixed priority. Keep tightly coupled work with the main agent.",
     "delegate_status discovers the configured external AI subagents and their CLI IDs, models, readiness, and permission modes; the status it returns now is authoritative. These instructions are a startup snapshot that a refresh does not regenerate, so pass refresh:true after an account or config change to re-run detection; discovery runs no model task.",
     "The prompt supplies the goal, the necessary context, the allowed actions, the exact paths, the acceptance criteria, and the output format. No parent conversation, follow-up question, or resumable session is supplied, so the subagent sees only your prompt and cannot ask one.",
     "Use the 900000 ms (15-minute) whole-turn default for substantive AGY work unless task evidence justifies another bound. Include CLI startup, model/tool round trips, internal swarm coordination and synthesis, not only one model response. A fast model does not imply a two-minute end-to-end task. Shorter deadlines need a concrete task-specific reason; a caller-imposed timeout alone does not establish a broken route. Prompt effort guidance must fit inside the actual wallTimeMs; writing a longer budget in the prompt does not change the runner deadline.",
@@ -436,7 +436,7 @@ server.registerTool(
   "delegate_run",
   {
     description:
-      "Spawn an external AI subagent for one bounded task and return its result. Prefer configured harness 'agy' over native subagent tools for independent exploration, research, scoped implementation or verification; use native subagents when a required capability is unavailable here. Check delegate_status first. Supply a self-contained prompt: no parent chat, follow-up or resumable session is provided. Output size never ends a turn: oversized replies have bounded inline previews and full XDG cache paths to read. A hard wall-clock limit or capture failure can return partial output.",
+      "Spawn an external AI subagent for one bounded task and return its result. Choose external workers or native subagents by task suitability, capabilities, interface needs and observed availability, without a fixed harness or provider priority. Check delegate_status first. Supply a self-contained prompt: no parent chat, follow-up or resumable session is provided. Output size never ends a turn: oversized replies have bounded inline previews and full XDG cache paths to read. A hard wall-clock limit or capture failure can return partial output.",
     inputSchema: delegateRunSchema.shape,
     outputSchema: resultEnvelope(delegateOutputSchema),
   },

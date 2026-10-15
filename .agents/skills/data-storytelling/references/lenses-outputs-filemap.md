@@ -24,7 +24,7 @@ The output engine must support at least these templates:
 - `assets/templates/ops-action-brief.md`
 - `assets/templates/structured-report.md`
 
-These Markdown files are agent-facing content outlines, not a Markdown delivery default. Select report structure separately from serialization: saved human narratives follow [Document format selection](../../../rules/document-formats.md), with Typst + PDF by default and required downstream formats preserved.
+These Markdown files are agent-facing content outlines, not a Markdown delivery default. Select report structure separately from serialization: saved human narratives follow [Document format selection](../../doc-craft/references/document-formats.md), with Typst + PDF by default and required downstream formats preserved.
 
 ## Required Prompt Components
 

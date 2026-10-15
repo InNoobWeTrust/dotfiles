@@ -93,7 +93,7 @@ Legend: **Strong** / **Partial** / **Gap** relative to this dotfiles agent stack
 | Agent Scan | Assess | Agent supply-chain / toxic flow | Security deep-dive, not core Part 2 |
 | DeepEval | Trial | LLM/agent eval (beyond code gates) | Agent product eval, not repo lint |
 | Langfuse / Agent Trace / Git AI | Trial–Assess | Observability / AI code attribution | Management/ops, not inner loop |
-| OpenSpec / GitHub Spec Kit / Superpowers | Assess | Spec-driven feedforward | Aligns with `requirements-driven-dev` |
+| OpenSpec / GitHub Spec Kit / Superpowers | Assess | Spec-driven feedforward | Historical spec-workflow comparison; current owners: `brainstorming` (intent), `architecture-design` (technical constraints), `code-craft` (acceptance) |
 | ty | Assess | Python type fast loop | Already in baselines |
 | Dev Containers / Sprites | Trial–Assess | Sandbox execution | Security + agent isolation |
 | Claude Code / Cursor | Adopt | Coding agent hosts | Out of quality-layer scope |

@@ -1,6 +1,8 @@
 # Rule 8: Autonomy Safety (Consequence-First Agency)
 
-**File:** `rules/autonomy-safety.md`
+**Current policy:** `rules/authority.md` — operating modes, consequence-first action classification, and mandatory human-in-the-loop triggers.
+
+*Archived leaf: the standalone `rules/autonomy-safety.md` file was consolidated into `rules/authority.md`. The rationale below is unchanged.*
 
 **What it prevents:** Agents with auto-approved tools or AFK modes treating capability as authorization and performing irreversible, high-blast-radius actions without consensus.
 

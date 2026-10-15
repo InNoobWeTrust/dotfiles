@@ -1,6 +1,6 @@
 # Procedure: autonomous ownership with bounded execution
 
-Read before implementing a controller, verifier, or state, and before AFK execution. Authority comes from [Delivery Ownership](../../../../rules/delivery-ownership.md); process containment from [Autonomy Safety](../../../../rules/autonomy-safety.md) and [Execution Safety](../../../../rules/execution-safety.md).
+Read before implementing a controller, verifier, state or AFK execution. Apply [Authorized delivery](../delivery.md): establish outcome, explicit action authority, isolated writable/network surfaces, per-job time/resource limits, cancellation, persistent state and observed cleanup. AFK does not grant permission. Recursive/process-tree or stress workloads need an explicitly constrained container/VM, not host execution. Use available compatible sandboxes; a denial is not permission to retry unrestricted or increase budgets.
 
 ## 1. Frame the outcome, not every technical choice
 

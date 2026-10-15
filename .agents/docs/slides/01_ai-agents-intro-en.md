@@ -135,6 +135,8 @@ AI agent = a junior engineer who is:
 
 # The 7 Essential Rules
 
+> **Current layout note:** these seven concerns are still the right ones, but they now ship as seven short always-on policies (`authority`, `evidence`, `skill-use`, `execution-safety`, `git-safety`, `code-quality`, `document-formats`). The methods in the slides below — testing loops, clarification interviews, slicing — live inside skills and load when a workflow needs them. Mapping: [Essential policies](../skills-and-rules/essential-rules.md).
+
 Every AI-augmented project needs these:
 
 1. **Code Quality Baseline** — Naming, nesting limits, prohibited patterns
@@ -227,8 +229,9 @@ Each slice independently testable and mergeable.
 
 Prevents the AI from loading a skill and selectively skipping steps.
 
-- Loading a SKILL.md is a **binding contract**
-- Complexity is NOT a valid reason to skip steps
+- Reading a catalog entry or SKILL.md to judge fit is free
+- **Activation is a binding contract** — explicit invocation, a selected track, or the first workflow action
+- Complexity is NOT a valid reason to skip steps of an activated workflow
 - Every mandatory step must execute in order
 - Every artifact the skill specifies must be produced
 
@@ -299,7 +302,9 @@ Skills are the AI's **training manuals** — complete workflows for specific tas
 |---|---|
 | Write or refactor code | `code-craft` |
 | Debug a bug | `systematic-investigation` |
-| Design a new feature | `requirements-driven-dev` |
+| Define product intent/outcomes | `brainstorming` |
+| Decide technical constraints/trade-offs | `architecture-design` |
+| Specify acceptance behavior (even spec-only) | `code-craft` |
 | Review code or specs | `reviewer` |
 | Navigate unknown code | `codebase-exploration` |
 | Design UI | `ui-ux` |
@@ -339,10 +344,12 @@ Complex tasks chain multiple skills in sequence:
 4. `reviewer` → verify fix addressed root cause
 
 **Implementing a Feature**
-1. `requirements-driven-dev` → spec (if large/ambiguous)
+1. `working-principles` planning reference → clarify consequential unknowns
 2. `codebase-exploration` → map target areas
 3. `code-craft` → disciplined implementation
 4. `reviewer` → post-implementation review
+
+Use product, architecture, acceptance, journey and presentation skills only as needed; no mandatory PRD → TRD → BDD chain.
 
 ---
 
@@ -531,7 +538,7 @@ Predictive quality suggestions, cross-project knowledge sharing, skill effective
 
 1. Create `AGENTS.md` with source-of-truth hierarchy
 2. Create `GLOSSARY.md` with domain terminology
-3. Set up `.agents/rules/` with the 7 essential rules
+3. Set up `.agents/rules/` with the 7 always-on policies (see [Essential policies](../skills-and-rules/essential-rules.md))
 4. Set up `.agents/skills/INDEX` and `WIRING`
 5. Define quality gates with thresholds
 6. Set up automated build & deploy pipeline with environment separation

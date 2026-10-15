@@ -1,6 +1,8 @@
 # Rule 9: Anti-Gaslight & Sycophancy Circuit Breaker
 
-**File:** `rules/anti-gaslight.md`
+**Current policy:** `rules/evidence.md` §1 — Anti-Gaslight & Sycophancy Circuit Breaker.
+
+*Archived leaf: the standalone `rules/anti-gaslight.md` file was consolidated into `rules/evidence.md`. The rationale and research grounding below are unchanged.*
 
 **What it prevents:** The AI reflexively agreeing with incorrect user assertions ("You are absolutely right!"), apologizing for phantom errors, or breaking functioning code when challenged ("Are you sure?").
 

@@ -8,7 +8,7 @@
 | [Architecture of governance](./architecture-of-governance.md) | `.agents/` layout, AGENTS.md, routing | Creating project structure |
 | [Onboarding: first 30 minutes](./onboarding-first-30-minutes.md) | Fast path to productivity | Day-one onboarding |
 | [Onboarding: first week](./onboarding-first-week.md) | Architecture, CI, quality, security map | Deep onboarding |
-| [Working with AI agents](./working-with-ai-agents.md) | Prompts, skills, grooming, memory | Daily collaboration |
+| [Working with AI agents](./working-with-ai-agents.md) | Prompts, skills, clarification, memory | Daily collaboration |
 | [Code quality gates](./code-quality-gates.md) | Six gates + debt markers | Enforcing engineering discipline |
 | [Automation, CI/CD & deployment](./automation-cicd-deployment.md) | Makefile, pipeline, deploy patterns | Wiring delivery automation |
 | [Security, audit & compliance](./security-audit-compliance.md) | Secrets, deps, audit trails | Hardening posture |

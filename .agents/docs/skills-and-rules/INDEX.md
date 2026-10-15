@@ -11,7 +11,7 @@
 | [Installing skills via npx](./installing-skills.md) | Installing skills via `npx skills add` & pairing with rules | Installing skills in new or existing repos |
 | [Serena MCP setup](./serena-mcp-setup.md) | Setting up `serena-mcp` for semantic code context & LSP search | Boosting agents with symbol indexing & AST context |
 | [Why rules and skills exist](./why-rules-and-skills.md) | Mental model: rules constrain, skills direct | Starting the section |
-| [Essential rules](./essential-rules.md) | Core always-on rules every project needs | Implementing baseline rules |
+| [Essential policies](./essential-rules.md) | The seven always-on policies, plus the methods that moved into skills | Implementing a baseline rule set |
 | [Nice-to-have rules](./nice-to-have-rules.md) | Memory, discovery, routing optional rules | Expanding beyond baseline |
 | [Failure → rule evolution](./failure-pattern-evolution.md) | How failures become durable rules | Improving rule quality |
 | [Failure patterns catalog](./failure-patterns-catalog.md) | Catalog A–E of AI failure modes | Debugging bad AI output |

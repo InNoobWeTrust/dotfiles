@@ -26,7 +26,7 @@ The useful mechanism is **authentic input → targeted questions → small real 
 | Voice profile from authentic examples | Distinguish collaboration preferences from writing-on-behalf profiles; retain scope and source | [Memory scoped context](../../../skills/memory/references/scoped-context.md) |
 | Experience over job titles | Separate demonstrated accomplishments, inferred capabilities, and hypotheses | Existing working memory captures |
 | Real story repository | Situation, constraints, action, result, source, applicability limits | Existing memory backend; no parallel story bank |
-| Improve an unclear prompt | Demonstrate outcome, supplied constraints, and consequential unknowns without expanding intent | [Grooming](../../../rules/grooming.md), unchanged |
+| Improve an unclear prompt | Demonstrate outcome, supplied constraints, and consequential unknowns without expanding intent | [Discovery and planning principles](../../../skills/working-principles/references/planning.md) |
 | Test demand before building | Trial a proposed context/workflow before making it permanent | Prototype evaluation below |
 | Daily progress and adjustment | Optional outcome/evidence/changed-assumption fields in checkpoints | Existing checkpoint protocol |
 

@@ -40,7 +40,7 @@ GREEN    → Write the minimum code to make the test pass. Run tests. Confirm PA
 REFACTOR → Clean up naming, nesting, structure. Re-run tests. Confirm still PASS.
 ```
 
-Report the verification command and observed results, including failures and unverified criteria. Without explicit approval, maintained additions are limited to end-to-end behavior tests and important unit tests for critical logic. Keep other internal checks outside the repository and clean them up before handoff; do not chase coverage counts or mirror every helper. Existing tests and agreed project gates remain binding, and removing or weakening them requires authorization. See [test selection and persistence](../../rules/tdd.md#test-selection-and-persistence).
+Report the verification command and observed results, including failures and unverified criteria. Without explicit approval, maintained additions are limited to end-to-end behavior tests and important unit tests for critical logic. Keep other internal checks outside the repository and clean them up before handoff; do not chase coverage counts or mirror every helper. Existing tests and agreed project gates remain binding, and removing or weakening them requires authorization. See [test selection and persistence](../../rules/code-quality.md#5-test-selection--persistence-boundary).
 
 ### Gate 3: Code Quality Rules
 

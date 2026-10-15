@@ -91,5 +91,6 @@ Lifecycle: **Prototype**, created **2026-10-08**. Review selection and source ac
 
 - [Catalog](catalog.csv)
 - [Baseline](references/baseline.md)
+- [Planning and shared understanding](references/planning.md) — lightweight discovery, bounded plans and consumer transitions; usable without formal specifications
 - [Research](references/research.md)
 - [Delegation setup and authority](../subagent-dispatch/references/worker-contract.md)

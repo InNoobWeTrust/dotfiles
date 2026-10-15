@@ -22,7 +22,7 @@ Think of `.agents/` as the project's **engineering handbook for its AI workforce
 | **Rules** (`rules/*.md`) | Non-negotiable constraints active on every task | Coding standards + code review checklist |
 | **Skills** (`skills/*/SKILL.md`) | Complete workflows loaded per-task | SOPs for specific job types |
 
-Rules are always active. Skills are loaded on demand. Both are binding — once loaded, the AI must complete every step.
+Rules are always active. Skills are loaded on demand. Selecting a skill binds its workflow: once activated, the agent must complete every step and stop of the track it selected.
 
 ### Two Critical Design Principles
 

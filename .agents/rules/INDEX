@@ -1,49 +1,39 @@
-# Rules map (index-first routing)
+# Rules Map (Index-First Routing)
 
 **Do not load every file in this directory into context.**  
 `../AGENTS.md` is the universal always-on entry point for all harnesses. It **points** at rules. Load a rule body only when its trigger fires or you must enforce a gate.
 
-## Always-Active (pointers in AGENTS.md / instructions)
+## Always-Active (Pointers in AGENTS.md / Instructions)
 
 These rules are referenced from the always-loaded instruction files. Load the rule body when you encounter the trigger condition.
 
 | Rule | Trigger | Size |
 |---|---|---|
-| `code-quality.md` | Implementation planning or writing/modifying ANY code (all trajectories) | medium |
-| `skill-compliance.md` | After loading any skill (binding commitment) | medium |
-| `self-grounded-verification.md` | Verification, self-review, "done" claims | medium |
-| `tool-call-integrity.md` | Every tool call that produces a side effect (file write, move, API call, shell command) | medium |
-| `autonomy-safety.md` | Always-on autonomy gate; especially before delegation or self-execution that may spawn, recurse, fan out, parallelize, or stress processes | medium |
-| `execution-safety.md` | Before the first shell command in every session; every command thereafter, including read-only/fast-path checks, sandbox denials/fallbacks, long-running processes, reading env/config | medium |
-| `git-safety.md` | Git staging, committing, pushing | small |
-| `anti-gaslight.md` | User pushback, skepticism ("are you sure?"), contradiction of working code, or urge to agree/apologize | small |
+| `authority.md` | Decision ownership, operating mode selection, elevated autonomy, process/resource safety, material decisions | small |
+| `evidence.md` | Verification, self-review, "done" claims, side-effect tool calls, user skepticism or pushback | small |
+| `skill-use.md` | Discovering a skill (index-first) or after selecting a skill (binding workflow commitment) | small |
+| `execution-safety.md` | Before the first shell command in every session; every command thereafter, sandbox routing, secrets, long-running processes | small |
+| `git-safety.md` | Git staging, committing, pushing, or destructive git operations | small |
+| `code-quality.md` | Code implementation, capability reuse, test persistence and existing domain vocabulary | small |
 
-## On-Demand (load when trigger fires)
+## On-Demand (Load When Trigger Fires)
 
 | Rule | Trigger | Size |
 |---|---|---|
-| `delivery-ownership.md` | Authorized build/fix/deliver requests, operating-mode selection, autonomous or unattended iteration, approval ownership | medium |
-| `tdd.md` | Verification/test authoring: persistence boundary always applies; formal TDD is risk-proportionate and waived for Fast-Path | medium |
-| `grooming.md` | Problem/solution discovery, plans, ambiguous requirements, multi-file systems (formal planning gates waived for Fast-Path, not alignment) | medium |
-| `document-formats.md` | Creating, saving, substantially revising, or sharing documents; choosing report/specification output formats | small |
-| `ubiquitous-language.md` | Logic that introduces or renames domain terms | small |
-| `slicing.md` | Feature plans / `task.md` checklists | small |
-| `phased-delivery.md` | Multi-step product/feature delivery, roadmap/milestone planning, or phased execution | medium |
-| `skills-discovery.md` | Need to choose a skill (index-first) | small |
-| `requirements-driven-dev.md` | Adapter → load `requirements-driven-dev` skill | tiny |
-| `research-ideation.md` | Scientific research, paper reproduction, hypothesis tournaments (Adapter → load `research-ideation` skill) | tiny |
+| `document-formats.md` | Creating, saving, substantially revising, or sharing human-facing documents; choosing report/specification formats | small |
 
-## Layering
+## Layering & One-Way Boundary
 
 ```
 AGENTS.md / instructions (always) → rule pointer → rule body (on fire)
                                   → skills/INDEX → SKILL.md → references/*
 ```
 
+**One-way boundary:** Rules may reference skills and skill references for domain workflows. Skills must **never** depend on or link back to rule files.
+
 ## Anti-patterns
 
 - Bulk-reading `rules/*.md` at session start — load only when triggered
 - Modifying `.agents/`, skills, or rules without loading `skill-author` and checking https://agentskills.io + https://agents.md
-- Duplicating rule text into every skill (link instead)
-- Project forks of global rules without a documented overlay reason
+- Duplicating rule text into skills or creating rule dependencies inside skills
 - Loading skills without checking `skills/INDEX` first

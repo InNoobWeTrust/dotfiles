@@ -58,7 +58,7 @@ Start with `references/INDEX.md`, then load only the path matching the request.
 - Do not escalate a small spot check into a full materialization workflow unless the user or risk profile justifies it.
 - Keep success evidence explicit: pass/fail/unverified (and evidence_grade) with browser, viewport, and artifact context.
 - Keep YAML/Markdown as the canonical machine + engineering record; derive Excel/PDF/HTML for business audiences — never reverse that relationship.
-- Author stakeholder PDF narratives in Typst via [Document format selection](../../rules/document-formats.md); this does not change canonical QA YAML/Markdown or native spreadsheet/HTML contracts.
+- Author stakeholder PDF narratives in Typst via [Document format selection](../doc-craft/references/document-formats.md); this does not change canonical QA YAML/Markdown or native spreadsheet/HTML contracts.
 - Audience-branch reporting: eng-only runs omit Stakeholder Pack section and do not load `stakeholder-report-pack.md`.
 - Stakeholder projection must pass sanitization, sensitive-artifact exclusion, provenance, and count-consistency gates; never map unverified/blocked to pass.
 - Never normalize unsafe auth/session/test-endpoint behavior; require sanctioned target and environment assumptions first.

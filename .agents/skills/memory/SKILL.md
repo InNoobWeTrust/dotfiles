@@ -172,9 +172,9 @@ Working memory (leaf) ↔ long-term memory (index) is one instance of the same s
 |---|---|---|
 | Agent execution | `plans/<feature>/phases/*.md`, `consensus/*.md` | `plans/<feature>/plan.md` |
 | Agent memory | `short-term/<created-stamp>--<branch>--<topic>.md` | `long-term/INDEX.md` |
-| Human documentation | `docs/<section>/details/*.typ` (or required `.md`) | Typst index/entry + PDF; required repository README/index stays Markdown per [format policy](../../rules/document-formats.md) |
+| Human documentation | `docs/<section>/details/*.typ` (or required `.md`) | Typst index/entry + PDF; required repository README/index stays Markdown per [format policy](../doc-craft/references/document-formats.md) |
 | Code | Individual functions, private helpers | Module `README.md` & `index.ts` |
-| Rules | `rules/<name>.md` | `rules/INDEX` |
+| Governance (outside this skill) | Governance detail file | Governance index |
 | Skills | `skills/<name>/references/*.md` | `SKILL.md` |
 
 **Rule**: the index carries only the smallest key facts + pointers. The leaf carries detail and is loaded on demand. This is exactly the routing pattern the project already uses for skills (`skills/INDEX` → `SKILL.md` → `references/*`).

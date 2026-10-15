@@ -44,11 +44,11 @@ Legend: **Strong** = first-class rule/skill · **Partial** = present but unlabel
 |---|---|---|---|---|
 | **Anti-Context-Bleed Invariant** | Prevents agents from complaining about legacy/untouched code read during context inspection | `reviewer` lenses inspect context freely; no explicit boundary constraint | **Gap** | Add hard stop to `reviewer/SKILL.md` forbidding comments on unchanged files. |
 | **Snippet-Anchored Line Resolution** | Eliminates LLM line-number hallucinations and offset drift across diffs | Reviewers output estimated line numbers or full files | **Gap** | Mandate verbatim `existing_code` snippet quotes + deterministic context matching. |
-| **Threshold-Gated Review Planning** | Skips redundant planning for small diffs; enforces read-only checklist for large changes | `grooming.md` handles planning, but lacks change-size line thresholds for reviews | **Partial** | Introduce 50-line file / 100-line group heuristic in `reviewer` skill / built-in review. |
+| **Threshold-Gated Review Planning** | Skips redundant planning for small diffs; enforces read-only checklist for large changes | Historical planning comparison; current lightweight owner is `working-principles/references/planning.md`, without review-size thresholds | **Partial** (historical verdict) | Introduce 50-line file / 100-line group heuristic in `reviewer` skill / built-in review. |
 | **Semantic Bundle Grouping** | Prevents PR-wide context dilution without losing cross-file contract awareness | Reviews run either monolithically on git diff or per-file ad-hoc | **Gap** | Pre-cluster changed files using metadata (paths + status + +/- stats) before review. |
 | **Glob-Targeted Micro-Rulesets** | Replaces generic "find bugs" prompts with file-specific defect checklists | `reviewer` has cross-cutting sub-lenses (`security`, `design-rigor`), but lacks file-glob routing | **Partial** | Create file-pattern rule matrix (Go, Java, XML, CI workflows, package files). |
 | **Deterministic Pre-Filtering** | Drops secrets, binaries, generated code, and test noise before spending tokens | `git-safety.md` forbids staging secrets; no dedicated diff pre-filter for reviews | **Partial** | Wire secret-pattern and vendor exclusion into `reviewer` preflight. |
-| **Evaluator Separation** | Reviewer acts as independent judge rather than patch generator | `rules/self-grounded-verification.md` & `reviewer` Gate 1 author bias | **Strong** | Maintain existing two-step verification and author-bias delegation gates. |
+| **Evaluator Separation** | Reviewer acts as independent judge rather than patch generator | `rules/evidence.md` §2 & `reviewer` Gate 1 author bias | **Strong** | Maintain existing two-step verification and author-bias delegation gates. |
 
 ---
 

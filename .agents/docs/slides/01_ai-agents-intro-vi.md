@@ -135,6 +135,8 @@ AI agent = một lập trình viên junior:
 
 # 7 Rules Thiết Yếu
 
+> **Ghi chú về layout hiện tại:** 7 mối quan tâm này vẫn đúng, nhưng hiện được triển khai thành 7 policy ngắn luôn bật (`authority`, `evidence`, `skill-use`, `execution-safety`, `git-safety`, `code-quality`, `document-formats`). Các phương pháp trong các slide dưới đây — vòng lặp kiểm thử, phỏng vấn làm rõ yêu cầu, slicing — nằm trong skill và chỉ tải khi workflow cần. Ánh xạ: [Essential policies](../skills-and-rules/essential-rules.md).
+
 Mọi dự án AI-augmented đều cần:
 
 1. **Code Quality Baseline** — Quy tắc đặt tên, giới hạn nesting, patterns bị cấm
@@ -227,8 +229,9 @@ Mỗi slice test được và merge được độc lập.
 
 Ngăn AI tải skill xong rồi chọn lọc bỏ qua các bước.
 
-- Tải SKILL.md là một **cam kết ràng buộc**
-- Độ phức tạp KHÔNG phải lý do hợp lệ để bỏ qua bước
+- Đọc catalog entry hoặc SKILL.md để đánh giá mức phù hợp là miễn phí
+- **Kích hoạt là một cam kết ràng buộc** — gọi tường minh, chọn track, hoặc hành động workflow đầu tiên
+- Độ phức tạp KHÔNG phải lý do hợp lệ để bỏ qua bước của workflow đã kích hoạt
 - Mọi bước bắt buộc phải thực thi theo đúng thứ tự
 - Mọi artifact skill yêu cầu phải được tạo ra
 
@@ -282,7 +285,9 @@ Skills là **sổ tay huấn luyện** của AI — workflow hoàn chỉnh cho t
 |---|---|
 | Viết hoặc refactor code | `code-craft` |
 | Debug lỗi | `systematic-investigation` |
-| Thiết kế feature mới | `requirements-driven-dev` |
+| Xác định mục tiêu/kết quả sản phẩm | `brainstorming` |
+| Quyết định ràng buộc/đánh đổi kỹ thuật | `architecture-design` |
+| Đặc tả hành vi nghiệm thu (kể cả không triển khai) | `code-craft` |
 | Review code hoặc specs | `reviewer` |
 | Khám phá codebase lạ | `codebase-exploration` |
 | Thiết kế UI | `ui-ux` |
@@ -322,10 +327,12 @@ Task phức tạp kết hợp nhiều skill theo chuỗi:
 4. `reviewer` → xác minh sửa lỗi đã giải quyết nguyên nhân gốc
 
 **Triển Khai Một Feature**
-1. `requirements-driven-dev` → spec (nếu feature lớn/mơ hồ)
+1. Tài liệu planning của `working-principles` → làm rõ điểm chưa biết có ảnh hưởng
 2. `codebase-exploration` → vẽ bản đồ khu vực mục tiêu
 3. `code-craft` → triển khai có kỷ luật
 4. `reviewer` → review sau triển khai
+
+Chỉ kết hợp skill sản phẩm, kiến trúc, nghiệm thu, hành trình và trình bày khi cần; không bắt buộc chuỗi PRD → TRD → BDD.
 
 ---
 
@@ -514,7 +521,7 @@ Gợi ý cải thiện cấu trúc tự động, chia sẻ kiến thức xuyên 
 
 1. Tạo `AGENTS.md` với source-of-truth hierarchy
 2. Tạo `GLOSSARY.md` với thuật ngữ domain
-3. Thiết lập `.agents/rules/` với 6 rules thiết yếu
+3. Thiết lập `.agents/rules/` với 7 policy luôn bật (xem [Essential policies](../skills-and-rules/essential-rules.md))
 4. Thiết lập `.agents/skills/INDEX` và `WIRING`
 5. Định nghĩa quality gates với ngưỡng
 6. Thiết lập pipeline build & deploy tự động với phân tách môi trường

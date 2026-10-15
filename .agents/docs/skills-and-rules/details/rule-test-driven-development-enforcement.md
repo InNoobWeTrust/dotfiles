@@ -1,6 +1,9 @@
 # Rule 2: Test-Driven Development Enforcement
 
-**File:** `rules/tdd.md`
+**Current policy:** `rules/code-quality.md` §5 — Test Selection & Persistence Boundary.
+**Current method:** `skills/code-craft/references/testing.md` — Red-Green-Refactor loop and context isolation.
+
+*Archived leaf: the standalone `rules/tdd.md` file was consolidated. The policy keeps the retention boundary; the loop itself is a skill method.*
 
 **What it prevents:** AI producing large blocks of code that have never been executed.
 
@@ -22,4 +25,4 @@
 - The AI cleans up and re-runs tests (REFACTOR)
 - The AI posts the test output as proof
 
-Use that loop where warranted, not as a requirement to persist a test for every helper. Without explicit approval, maintained additions are limited to meaningful end-to-end behavior tests and important unit tests for critical logic. Other internal checks belong outside the repository and are cleaned up by the agent. Existing suites and project gates remain in force; do not remove or weaken them without authorization. See `rules/tdd.md` for the selection and persistence boundary.
+Use that loop where warranted, not as a requirement to persist a test for every helper. Without explicit approval, maintained additions are limited to meaningful end-to-end behavior tests and important unit tests for critical logic. Other internal checks belong outside the repository and are cleaned up by the agent. Existing suites and project gates remain in force; do not remove or weaken them without authorization. See `rules/code-quality.md` §5 for the selection and persistence boundary.

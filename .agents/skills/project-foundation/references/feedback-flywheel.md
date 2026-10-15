@@ -53,7 +53,7 @@ What caught the problem first — a sensor, a rule, a human, or nothing?
 |---|---|---|
 | **Skill routing** — wrong skill loaded, or no skill existed | `skills/INDEX` or new skill | Task needs architecture review but only `code-craft` was loaded. |
 | **Skill workflow** — right skill, but a phase is missing or unclear | Skill `references/` | `code-craft` skipped verification step. |
-| **Rule missing** — no rule covered the failure | `.agents/rules/` or `AGENTS.md` | Agent staged secrets because no secret-scan rule was active. |
+| **Policy gap** — no applicable safeguard covered the failure | Project governance artifact, within authorized maintenance scope | Agent staged secrets because no secret-scan safeguard was active. |
 | **Rule ignored** — rule exists but agent did not follow it | Rule wording or stop condition | Rule was too long and buried in context. |
 | **Context gap** — agent lacked the right information | Memory capture or skill discovery | Prior decision was not recalled. |
 | **Tool overlap** — agent chose the wrong tool | ACI checklist / tool design | Two read tools caused the agent to use the expensive one. |

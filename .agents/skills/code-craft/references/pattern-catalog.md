@@ -13,7 +13,7 @@ To prevent mixing concerns across the codebase, patterns are partitioned across 
 | **Macro / System Topology** (C4 L1–L3) | `architecture-design` | Hexagonal / Ports & Adapters, Modular Monolith, Microservices, CQRS, Event Sourcing, Transactional Outbox, Sagas, Strangler Fig, API Gateway, BFF, Anti-Corruption Layer. |
 | **Storage & Schema Design** | `db-design` | UUIDv7/ULID PK strategies, 1NF–3NF, composite B-tree/GIN indexing, structural constraints, string enum storage, zero-downtime expand-contract migrations, append-only audit tables. |
 | **Data Access & Session Lifecycle** | `database-access` | Unit of work boundaries, repository vs active record, query builders, parameterized raw SQL, document ODM boundaries, aggregate synchronization, write idempotency. |
-| **Code Craftsmanship (C4 L4)** | `code-craft` | Function/class/struct patterns, type-driven design, local concurrency/cancellation, language idioms, and model-specific code generation traps. |
+| **Code Craftsmanship (C4 L4)** | `code-craft` | Function/class/struct patterns, type-driven design, local concurrency/cancellation, language idioms, and code generation traps. |
 
 ---
 
@@ -37,7 +37,7 @@ python3 .agents/skills/code-craft/scripts/search.py "<query>" [--stack <stack>]
 
 # Specialized queries
 ./.agents/skills/code-craft/scripts/search.py "<requirements>" --decide
-./.agents/skills/code-craft/scripts/search.py --traps --model claude --stack typescript
+./.agents/skills/code-craft/scripts/search.py --traps --stack typescript
 ```
 
 ---
@@ -49,7 +49,7 @@ python3 .agents/skills/code-craft/scripts/search.py "<query>" [--stack <stack>]
 | **Code Patterns** | `patterns` / `pattern` | Structuring classes, functions, and modules (Result, Typestate, Functional Options, Builder, Strategy, Specification, Value Object, Discriminated Union, Constructor DI). |
 | **Concurrency & Resilience** | `concurrency` / `resilience` | In-process execution safety, retries, rate limits, worker pools, structured concurrency (TaskGroup), and deadline propagation. |
 | **Stacks** | `stacks` / `stack` | Pulling concrete, idiomatic syntax blueprints for Go, Rust, Python, TypeScript, C#, Java. |
-| **Model Traps** | `traps` | Checking common model-specific hallucinations (Claude over-abstraction, Gemini error omission, GPT class bloat). |
+| **Model Traps** | `traps` | Checking generated code for observable defects such as over-abstraction, lost error context, and class bloat, regardless of model family. |
 | **Decisions** | `reasoning` / `decide` | Evaluating micro-level trade-offs (e.g. exceptions vs Result, typestate vs boolean flags, closures vs ABCs). |
 
 ---
@@ -79,7 +79,7 @@ If command execution is restricted, reference the canonical IDs below:
 - `concur-deadline-propagation`: **Context Cancellation** — Propagate deadlines through all RPC/DB calls; check `ctx.Done()`.
 
 ### Model Anti-Pattern Traps
-- **Claude:** Stop over-abstracting simple functions into generic ABCs/monads. Don't catch broad exceptions and return `None` silently.
-- **GPT:** Stop generating Java-style class hierarchies with getters/setters in TypeScript. Use interfaces and functions. Avoid mutable defaults in Python.
-- **Gemini:** Always validate data at boundaries (Zod/Pydantic). Wrap Go errors with `%w` context instead of returning naked errors.
-- **General:** Don't overuse Go channels for basic mutex needs. Don't call `.clone()` in Rust just to escape borrow checker without understanding ownership. Don't invent distributed locks (Redis/ZooKeeper) or in-place writes for local CLI/state files—use Git lockfile (`references/lock-patterns.md`).
+- **Abstraction and errors:** Avoid generic ABCs/monads for simple functions. Don't catch broad exceptions and return `None` silently.
+- **Language idioms:** Prefer interfaces and functions over redundant TypeScript class hierarchies. Avoid mutable defaults in Python.
+- **Boundaries and context:** Validate data at external boundaries with the project's chosen tooling. Wrap Go errors with `%w` context instead of returning naked errors.
+- **Concurrency and ownership:** Don't overuse Go channels for basic mutex needs. Don't call `.clone()` in Rust just to escape borrow checker without understanding ownership. Don't invent distributed locks (Redis/ZooKeeper) or in-place writes for local CLI/state files—use Git lockfile (`references/lock-patterns.md`).

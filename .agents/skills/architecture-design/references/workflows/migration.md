@@ -79,8 +79,8 @@ flowchart LR
 - [ ] Bounded context definitions & CDC event schemas
 - [ ] Dual-running proxy & reconciliation pipeline
 - [ ] Traffic cutover runbook & automated rollback plan
-- [ ] Locked interface/DTO contracts, explicit scope boundary, and locked scoped target file tree structure with cleanup
-- [ ] Cutover implementation phases sharded into separate phase files referenced in migration plan
+- [ ] Scope boundary with contracts settled proportionately to consumer/handoff need, and cleanup noted
+- [ ] Cutover implementation phases proportionate to delegation need (separate phase files only for independently delegated or resumable units, otherwise inline sequence)
 - [ ] Legacy decommissioning sign-off & cleanup verification
 
 ## Pitfalls

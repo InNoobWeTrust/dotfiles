@@ -75,5 +75,5 @@ If any are true, reconsider whether a script or skill reference is enough.
 
 - `.agents/skills/skill-author/references/aci-checklist.md` — interface design for any agent-facing surface
 - `.agents/skills/skill-author/SKILL.md` — workflow for creating skills
-- `.agents/rules/execution-safety.md` — script sandboxing and dependency isolation
+- Script execution: use available compatible sandboxes, declared dependencies and authorized writable/network boundaries; a missing capability is not permission to install or bypass restrictions.
 - Research: `.agents/docs/research/thoughtworks-radar-vol34/` — "MCP by default" caution blip

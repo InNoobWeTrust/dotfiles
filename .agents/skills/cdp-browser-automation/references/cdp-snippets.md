@@ -4,7 +4,7 @@
 
 Minimal, copy-paste-ready implementations for that exception. Reuse an approved tool before adding custom helpers.
 
-> **Execution rule (`rules/execution-safety.md`):** Write CDP scripts to a
+> **Execution safety:** Write CDP scripts to an
 > approved `$TMPDIR` scratch outside the repo, then run with
 > `uv run --with websockets --with httpx python "$TMPDIR/agent-cdp-script.py"`.
 > Do not pipe large inline scripts. Do not `pip install` dependencies.

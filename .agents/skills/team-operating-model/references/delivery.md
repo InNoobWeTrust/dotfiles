@@ -6,7 +6,7 @@ This is an **evaluator–optimizer** loop. The optimizer proposes changes; evalu
 
 ## Mode and authority — before starting
 
-Load [Delivery Ownership](../../../rules/delivery-ownership.md) and apply it as the authority source.
+Establish the actual task's authority before execution. Research or discussion alone never grants build, launch, spending or external-effect authority. In-scope primary decisions cannot waive user-reserved approvals.
 
 - **Autonomous delivery (default):** the primary owns in-scope research, product/technical choices, contracts, implementation, verification, and release readiness. Communicate useful decisions through product docs; the user is the final acceptance gate.
 - **Collaborative:** discuss choices with the user where requested.

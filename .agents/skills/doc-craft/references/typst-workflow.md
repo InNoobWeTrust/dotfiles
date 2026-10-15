@@ -1,12 +1,12 @@
 # Typst Authoring and PDF Delivery
 
-Use for human-facing documents selected by [Document format selection](../../../rules/document-formats.md). Keep the task's domain skill for content; this reference supplies authoring and delivery, not a second research/specification workflow.
+Use for human-facing documents selected by [Document format selection](document-formats.md). Keep the task's domain skill for content; this reference supplies authoring and delivery, not a second research/specification workflow.
 
 ## 1. Establish the Reader and Build Inputs
 
 - **Reader contract:** State audience, purpose, scope, and assumed knowledge visibly. Set document title/author metadata where appropriate and the correct text language; do not add Markdown YAML frontmatter to `.typ`.
 - **Dependencies:** Prefer built-in Typst features and local assets. Record the compiler version, required fonts, asset paths, and exact package versions when used; pinning a package does not make it available offline.
-- **Local and bounded:** Follow [execution safety](../../../rules/execution-safety.md). Typst defaults its input root to the main file's parent; widen `--root` only to the smallest necessary, secret-free input tree. Root containment is a compiler restriction, not an OS sandbox or protection for secrets inside that tree.
+- **Local and bounded:** Follow execution safety practices. Typst defaults its input root to the main file's parent; widen `--root` only to the smallest necessary, secret-free input tree. Root containment is a compiler restriction, not an OS sandbox or protection for secrets inside that tree.
 - **Acquisition and privacy:** Uncached published packages download on demand; use approved network access and scratch/cache locations. Do not install tools or send content to the hosted editor without authorization. A missing compiler/package is a build blocker, not a reason to revert to Markdown.
 
 ## 2. Author Once, Compile Directly

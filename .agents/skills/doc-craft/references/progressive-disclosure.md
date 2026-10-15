@@ -2,7 +2,7 @@
 
 Documentation becomes unreadable when too much information is loaded at once. The **Index → Entry → Leaf** pattern bounds reader cognitive load and agent context windows by enforcing strict information layering.
 
-Apply [Document format selection](../../../rules/document-formats.md) before choosing extensions. Layers describe information structure: Typst is the default, required repository/Markdown consumers retain Markdown, and agent memory remains in its native protocol.
+Apply [Document format selection](document-formats.md) before choosing extensions. Layers describe information structure: Typst is the default, required repository/Markdown consumers retain Markdown, and agent memory remains in its native protocol.
 
 ---
 

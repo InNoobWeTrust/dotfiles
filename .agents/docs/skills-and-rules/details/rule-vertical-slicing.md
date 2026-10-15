@@ -1,6 +1,8 @@
 # Rule 5: Vertical Slicing
 
-**File:** `rules/slicing.md`
+**Current method:** `skills/team-operating-model/references/slicing.md`
+
+*Archived leaf: `rules/slicing.md` was removed. Slicing is now a delivery method inside the team operating model, selected when a workflow needs it. The rationale below is unchanged.*
 
 **What it prevents:** AI building the entire database schema, then all the APIs, then all the UI — resulting in a feature that isn't testable until everything is done.
 

@@ -91,7 +91,7 @@ export const delegateRunSchema = delegateInput.extend({
     .string()
     .min(1)
     .describe(
-      "External subagent CLI ID from delegate_status. Prefer 'agy' when configured and suitable for the independent task; use another configured worker or native subagent when the required capability is unavailable. This selects a CLI worker, not a model.",
+      "External subagent CLI ID from delegate_status, selected by task suitability, capabilities, interface needs and observed availability. No harness has a fixed priority. This selects a CLI worker, not a model.",
     ),
 })
 export type DelegateRunInput = z.infer<typeof delegateRunSchema>

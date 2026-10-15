@@ -22,7 +22,7 @@ When debugging or fixing a problem:
 
 ### Feature Implementation
 
-Apply `rules/phased-delivery.md` for its trigger. Keep the active milestone
+Use `team-operating-model/references/phased-delivery.md` for phased work. Keep the active milestone
 packet as the contract passed between steps.
 
 1. Shallow research (`codebase-exploration` only for unfamiliar areas) — stop
@@ -31,11 +31,14 @@ packet as the contract passed between steps.
 3. Active-milestone architecture calibration → phase and vertical-slice planning
 4. `code-craft` — implement and verify one active slice at a time
 5. `reviewer` — phase-aware review of the active contract, evidence, and compromises
-6. Record evidence and feedback; select the canonical feedback decision in `rules/phased-delivery.md`
+6. Record evidence and feedback; select the feedback decision in `team-operating-model/references/phased-delivery.md`
 
-Use `requirements-driven-dev` and PRD/TRD/BDD artifacts only when the
-phased-delivery escalation rules require formalization. When delegating,
-`subagent-dispatch` receives the complete Active Milestone Packet contract.
+Use `working-principles/references/planning.md` for lightweight clarification.
+When a durable specification is useful or requested, use its domain owner:
+`brainstorming` for product intent, `architecture-design` for technical constraints,
+`code-craft` for behavior/acceptance, and `ui-ux` for journeys/states. `doc-craft`
+handles presentation. No PRD → TRD → BDD ladder is required. When delegating,
+`subagent-dispatch` receives the active unit's proportionate scope and contract.
 
 ### UI/UX Implementation
 
@@ -84,7 +87,7 @@ Keep `architecture-design` selection guides for undecided stacks. For AI agent d
 
 ### Documentation Craftsmanship
 
-1. `doc-craft` — audience routing, [document format selection](../rules/document-formats.md) (Typst source + PDF by default; required Markdown consumers preserved), information layering (Index → Entry → Leaf), abstraction levels, and visual rhythm
+1. `doc-craft` — audience routing, [document format selection](doc-craft/references/document-formats.md) (Typst source + PDF by default; required Markdown consumers preserved), information layering (Index → Entry → Leaf), abstraction levels, and visual rhythm
 2. `mermaid-validation` — validate Mermaid sources; render to SVG/PNG for Typst rather than embedding diagram code as the visual
 3. `reviewer` (editorial lens) — grammar, tone, clarity, and scannability review
 
@@ -114,7 +117,7 @@ Do **not** run branch steps B1–B2 for eng-only spot checks or eng-only audits.
 
 ### Authorized Delivery (Intra-Skill Path)
 
-1. `team-operating-model` delivery path + `rules/delivery-ownership.md` — form the mandatory real primary-plus-worker team; establish autonomous ownership or honor collaborative/HITL mode. No default aggregate turn/time cap; no solo/simulated fallback.
+1. `team-operating-model` delivery path — form the mandatory real primary-plus-worker team; establish authorized autonomous ownership or honor collaborative/HITL mode. No default aggregate turn/time cap; no solo/simulated fallback. Its phased-delivery reference is independently usable and does not itself activate the team workflow.
 2. Matching domain skills — research/design consequential choices and inspect unfamiliar code before implementation; the primary approves in-scope contracts
 3. `subagent-dispatch` — permitted bounded workers for useful research, implementation, and checks; deliberation only when selected/warranted, with persistent coordination guards for multiple contributors
 4. Machine/integration/E2E checks + `reviewer` — current positive proof and independent user-perspective release rubric; add warranted safety/operations lenses
@@ -163,7 +166,7 @@ When public signals should shape outreach, direction, or decision-making:
 1. `strategic-osint` — gather and translate public evidence into priorities, positioning, and next actions
 2. Use `strategic-osint` for researching the target organization, decision-maker, or market to shape outreach; use `talent-screening` for evaluating people as candidates or hiring prospects
 3. `brainstorming` — expand options after the signal map is clear
-4. `requirements-driven-dev` — formalize the chosen direction into a PRD/TRD/spec if needed
+4. The relevant domain owner — clarify product intent with `brainstorming`, technical constraints with `architecture-design`, or behavior/acceptance with `code-craft`, only as needed
 5. `reviewer` (editorial or adversarial lens) — stress-test the resulting narrative or recommendation
 
 ### Database Design → Database Access Implementation
@@ -277,16 +280,15 @@ Natural transitions between skills:
 | `domain-curation` | `research-ideation` | "Grounded domain map is ready; next task is scientific hypothesis generation or experiments" |
 | `codebase-exploration` | `systematic-investigation` | "I understand the codebase, now I need to debug" |
 | `codebase-exploration` | `code-craft` | "I understand the codebase, now I need to implement" |
-| Feature planning | `requirements-driven-dev` | "The active milestone has a material PRD/TRD/BDD escalation trigger" |
+| Feature planning | Domain owner (`brainstorming`, `architecture-design`, `code-craft` or `ui-ux`) | "Product, technical, behavior or UX meaning needs clarification or a durable specification" |
 | `code-craft` | `reviewer` | "Active slice complete; review its contract, evidence, and compromises" |
 | `reviewer` | Feature planning | "Select or revisit the canonical phased-delivery feedback decision" |
 | `systematic-investigation` | `brainstorming` | "Root cause analyzed, now brainstorming potential solutions" |
 | `systematic-investigation` | `code-craft` | "Root cause found, now implementing the fix" |
 | `systematic-investigation` | `skill-author` | "Failure pattern discovered, cataloging for governance review" |
-| `brainstorming` | `requirements-driven-dev` | "Ideation complete, translating concepts to PRD/specs" |
+| `brainstorming` | `architecture-design` or `code-craft` | "Product direction settled; technical boundaries or behavior examples need detail" |
 | `brainstorming` | `code-craft` | "Concepts finalized, ready to prototype/implement" |
 | `code-craft` | `reviewer` | "Implementation complete, ready for review" |
-| `requirements-driven-dev` | `code-craft` | "Specs approved, now implementing" |
 | `reviewer` (black-box-qa lens) | `web-qa-audit` | "Heuristic review says live browser evidence or structured QA is required" |
 | `web-qa-audit` (grooming path) | `web-qa-audit` (browser-audit path) | "Audit-request/run-card is now explicit and QA has approved the scope" |
 | `web-qa-audit` | `cdp-browser-automation` | "Audit scope is set; use terminal-browser for interaction and evidence; escalate only demonstrated capability gaps" |
@@ -297,15 +299,15 @@ Natural transitions between skills:
 | `architecture-design` | `data-storytelling` | "Architecture is mapped, but the audience needs an answer-first narrative or decision framing" |
 | `illustration-craft` | `reviewer` (editorial lens) | "Illustration drafted, ready for critical readability / communication review" |
 | `web-qa-audit` | `reviewer` | "Executable QA produced findings or a plan that needs critical judgment" |
-| `requirements-driven-dev` | `reviewer` (editorial lens) | "Polish specs before sharing with stakeholders" |
-| `requirements-driven-dev` | `team-operating-model` (deliberation) | "Draft specs completed, launching persona review to challenge assumptions" |
+| Domain specification owner | `doc-craft` | "Domain meaning is established; prepare a usable stakeholder document" |
+| Domain specification owner | `reviewer` | "Specification needs independent semantic or editorial challenge" |
 | `team-operating-model` (deliberation) | `code-craft` | "Deliberation complete, starting authorized implementation of the approved design" |
 | `team-operating-model` (deliberation) | `model-benchmarking` | "Deliberation complete, optimizing model assignments for the selected architecture" |
 | `model-benchmarking` | `team-operating-model` (deliberation) | "Models selected, ready for multi-agent deliberation" |
-| `model-benchmarking` | `requirements-driven-dev` | "Token costs and model limits analyzed, feeding into TRD/PRD architectural specs" |
+| `model-benchmarking` | `architecture-design` | "Verified token costs and model limits inform technical constraints and tradeoffs" |
 | `talent-screening` | `reviewer` (editorial lens) | "Evaluation reports completed, ready for peer review" |
 | `strategic-osint` | `brainstorming` | "The public-signal map is clear; now generate options or paths" |
-| `strategic-osint` | `requirements-driven-dev` | "OSINT clarified priorities; now formalize the chosen direction" |
+| `strategic-osint` | `brainstorming` | "OSINT clarified priorities; document product intent and outcomes for the chosen direction" |
 | `strategic-osint` | `reviewer` (editorial lens) | "Positioning draft is ready; now polish or challenge the narrative" |
 | `strategic-osint` | `investment-assessment` | "Public signals gathered; now size/allocate or diligence a product" |
 | `brainstorming` | `investment-assessment` | "Options framed; now diligence or allocate capital" |
@@ -369,7 +371,7 @@ skill.
 | `reviewer/references/sub-reviewers/design-rigor.md` | `code-craft`, `systematic-investigation` | Reviews whether design discipline and investigation rigor were applied |
 | `reviewer/references/sub-reviewers/investment-memo.md` | `investment-assessment`, multi-perspective finance personas | Reviews rails, regime, role discipline, class-fit, sizing vs pain |
 | `reviewer/references/sub-reviewers/pragmatic-triage.md` | Ostrich algorithm, YAGNI, probability × impact triage | Challenges whether proposed complexity is justified; filters before adversarial/design-rigor drill in |
-| `reviewer/references/sub-reviewers/findings-skeptic.md` | `rules/self-grounded-verification.md`, agreement-bias research | Cross-validates review/audit/scanner findings for false positives and severity inflation |
+| `reviewer/references/sub-reviewers/findings-skeptic.md` | Requirement-derived criteria, disconfirming checks and agreement-bias research | Cross-validates review/audit/scanner findings for false positives and severity inflation |
 
 ---
 

@@ -40,7 +40,7 @@ Interpretation rules:
 ## Procedure
 
 1. Choose the template if none was specified.
-   - Select serialization separately with [Document format selection](../../../../rules/document-formats.md). For saved human narratives, use Typst + PDF by default and [Typst workflow](../../../doc-craft/references/typst-workflow.md) for build/inspection; preserve required machine intermediates and consumer formats.
+   - Select serialization separately with [Document format selection](../../../doc-craft/references/document-formats.md). For saved human narratives, use Typst + PDF by default and [Typst workflow](../../../doc-craft/references/typst-workflow.md) for build/inspection; preserve required machine intermediates and consumer formats.
 2. Treat the post-QA claim set from skeptic QA as the canonical rendering artifact.
 3. Map only `approved` or `downgraded` claims from that canonical artifact into the required sections for the selected template.
 4. Carry forward confidence notes and caveats; every rendered material claim must include `confidence_label`, `confidence_basis`, and `claim_ceiling`, while `confidence_score` and `limitation_notes` remain internal-only support fields. In multi-claim sections, attach those fields per claim or per insight row rather than once per document.

@@ -1,6 +1,6 @@
 # ADR Templates & Lifecycle
 
-Apply `.agents/rules/phased-delivery.md`: create an ADR only for a consequential,
+Apply `../../team-operating-model/references/phased-delivery.md`: create an ADR only for a consequential,
 hard-to-reverse architecture choice with competing options (or when explicitly
 requested or regulation/coordination requires it). ADRs capture those decisions.
 

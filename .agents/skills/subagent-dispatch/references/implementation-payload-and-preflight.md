@@ -8,17 +8,17 @@ Use exactly one basis:
 
 | Basis | Use when |
 |---|---|
-| Approved plan / Active Milestone Packet | Work is non-atomic, multi-step, or phased; cite the specific approved separate phase file referenced in the main plan. |
+| Approved plan / Active Milestone Packet | Cite the specific approved unit; a separate phase file is useful for persistent/resumable handoffs, not mandatory for file count. |
 | Atomic patch exception | One coherent, independently verifiable outcome has a fully known scope and evidence, and no design or contract decision remains open. |
 
 ## Required unit payload
 
 Bound all fields before launch:
 
-1. Plan-basis citation (pointing to the specific separate phase file) or Atomic patch exception rationale.
+1. Approved plan-unit citation or explicit inline atomic contract.
 2. Unit ID and one-sentence outcome.
-3. Exact writable surface: matching the approved locked scoped file tree delta for this phase within in-scope boundaries (files to create/modify/delete; out-of-scope files untouched; zero unapproved files; scratch cleanup required).
-4. Locked interface & DTO contracts: concrete code signatures, data schemas/types, and error variants to implement or preserve (zero contract degrees of freedom; zero invented interfaces; no loose prose descriptions).
+3. Approved writable surface, exclusions and cleanup: use exact file deltas when ownership needs them; otherwise a bounded directory/component surface may suffice.
+4. Approved behavior and affected consumer contracts: concrete signatures/schema/errors where consumers need them. Internal helper choices need not be frozen; business semantics and public contracts cannot be invented.
 5. Prerequisites already satisfied.
 6. Explicit out-of-scope list.
 7. Acceptance criteria and required evidence.
@@ -71,18 +71,18 @@ For a rewrite, overhaul, or delete-and-rebuild unit, classify each old semantic/
 
 ## Stop-before-dispatch conditions
 
-Do not dispatch if there are zero or multiple units; the unit is not bound to a referenced separate phase file; acceptance criteria/evidence are absent; boundary interfaces or DTO contracts are described in loose prose rather than locked code types; writable surface does not conform to the locked scoped file tree or breaches scope boundaries; any design or contract decision is unresolved; a prerequisite is blocked; a required consumer contract is absent or unapproved; or scope expansion is requested. Return `INCOMPLETE` with continuation state rather than substituting, silently rescoping, or absorbing adjacent work.
+Do not dispatch without one coherent approved unit, scope, acceptance evidence, required consumer contracts and satisfied prerequisites. Unresolved material decisions or requested scope expansion return to the primary. Missing phase-file scaffolding alone is not a blocker. Return `INCOMPLETE` with continuation state rather than silently substituting, rescoping or absorbing adjacent work.
 
 ## Preflight
 
 - [ ] The decision gate permits delegation.
-- [ ] Exactly one functional unit is selected from an approved separate phase file; any plan is context only.
+- [ ] One approved functional unit is selected; a broad plan is context only.
 - [ ] Exactly one accepted dispatch basis is declared.
 - [ ] Material cross-component design has the current independent challenge receipt required by [Design acceptance](../../team-operating-model/references/design-acceptance.md), regardless of author; or no material design is changed. Primary approval alone is insufficient.
 - [ ] Every required unit-payload field is bounded.
 - [ ] Materialization choices are resolved and primary-approved (or explicitly N/A); the dispatch carries the unit-relevant rows, accessible guidance/API sources, dependency-edit scope, and reuse evidence. Missing/incompatible choices block implementation, including atomic patches.
-- [ ] Boundary interfaces, method signatures, DTO types, and error variants are locked as concrete code, leaving zero contract degrees of freedom to the implementer (zero invented interfaces).
-- [ ] Declared writable surface strictly matches the locked scoped file tree delta within in-scope boundaries, out-of-scope boundaries are respected, and cleanup of temporary artifacts is required (zero invented files).
+- [ ] Required consumer signatures/schema/errors are settled; no invented business semantics or unapproved public contract changes.
+- [ ] Writable scope, disjoint ownership and cleanup are explicit; exact file deltas are conditional on coordination needs.
 - [ ] Rewrite semantics/interfaces are classified delete or preserve.
 - [ ] Affected public APIs or consumer apps have approved contract/stubs and sign-off.
 - [ ] The declared writable surface, allowed actions, out-of-scope boundary, and stop conditions agree.

@@ -1,9 +1,11 @@
 # Agent Operating Rules
 
-### Skill Compliance (Non-Negotiable)
-Loading or reading a skill's SKILL.md is a binding commitment to execute
-its complete workflow. You do not have discretion to simplify or abbreviate
-a skill's workflow once you have selected it.
+### Skill Workflow (Binding Once Activated)
+Inspecting a skill's catalog entry, description, or SKILL.md body to judge
+suitability is free. Activation — an explicit invocation, a selected workflow
+track, or the first workflow action — binds the smallest applicable track. You
+do not have discretion to simplify or abbreviate an activated workflow's steps
+or stops.
 
 ### Code Quality Baseline
 Before writing any new function, class, or module:

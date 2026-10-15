@@ -41,9 +41,9 @@ For redesigns or polish of existing UI, perform a brief visual audit as part of 
 
 **Purpose**: Understand what we're building, for whom, under what constraints.
 
-1. Load `references/discovery-questions.md` and `rules/grooming.md` (informed alignment)
+1. Load `references/discovery-questions.md` and follow [Planning and shared understanding](../working-principles/references/planning.md) for informed alignment; reuse available product intent and behavior criteria, without requiring a PRD
 2. Explain observed UI context, decision-relevant terminology, and why pending choices matter before asking
-3. Select at most 3–5 highest-impact questions from the bank; ask only unresolved decisions (or self-groom per `rules/grooming.md` AFK mode)
+3. Select at most 3–5 highest-impact questions from the bank; ask only unresolved decisions. When the user is unavailable, research existing evidence and mark reversible in-scope assumptions `⚠️ Assumed:` for review; missing consequential owner decisions still stop the affected work, not become inferred permission
 4. Create `UX-SPEC.md` from `references/ux-spec-template.md`
 5. Write findings to `UX-SPEC.md` § Discovery
 

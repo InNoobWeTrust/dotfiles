@@ -58,6 +58,8 @@ Test all 3 hypotheses against the **4 Scientific Rigor Axes** (acting as your ow
 3. **Falsifiability & Negative Controls:** What observation would definitively **disprove** the hypothesis? A hypothesis without a disconfirming test is unscientific.
 4. **Feasibility & Compute:** Can this be executed on available hardware (e.g. Marimo MoLab B200, Colab, local GPUs) within a sensible timeframe?
 
+*Reference: `references/scientific-anti-sycophancy.md` for methodology on preventing sycophantic validation and doubt collapse during adversarial critique.*
+
 ---
 
 ## Phase 4: Falsifiable Proposal & Experiment Blueprint
@@ -81,3 +83,4 @@ Synthesize the winning hypothesis into an actionable scientific proposal:
 | **Buzzword Mashup** | Concatenating model names + lab buzzwords without mechanistic coupling | Demand a step-by-step physical/biological pathway for how data flows through the model. |
 | **Modality Blindness** | Treating single-cell expression matrices as DNA strings or vice-versa | Explicitly state the tensor shape, biological unit, and coordinate system in Phase 1. |
 | **Unfalsifiable Claims** | "The model will learn holistic multi-omic patterns" | Define exact positive signals and exact negative control baselines. |
+| **Sycophantic Validation** | Uncritically validating flawed ideas or caving on negative controls under user doubt | Enforce epistemic rigor, zero-fawn gating, and disconfirming tests (`references/scientific-anti-sycophancy.md`). |

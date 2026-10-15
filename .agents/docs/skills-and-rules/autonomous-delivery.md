@@ -61,7 +61,7 @@ If work is genuinely blocked, the agent must surface the affected boundary, comp
 
 ## Maintainer references and adoption limits
 
-- **Ownership authority:** [Delivery Ownership](../../rules/delivery-ownership.md).
+- **Ownership authority:** [Authority & Delivery Governance](../../rules/authority.md).
 - **Iteration workflow:** [Team Operating Model](../../skills/team-operating-model/SKILL.md), its [delivery path](../../skills/team-operating-model/references/delivery.md), and [procedure](../../skills/team-operating-model/references/delivery/procedure.md).
 - **Execution safety:** [Harness safety](harness-safety.md).
 

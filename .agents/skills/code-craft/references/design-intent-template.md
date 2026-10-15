@@ -2,7 +2,7 @@
 
 Load for Phase 1 of non-trivial implementation, whenever a compact or full Design Intent is required, and before choosing a greenfield stack or substantial platform capability.
 
-For Expansion / Refactor and Hardening, complete the full block. For Patch and MVP Slice, it may be compact, but required slice fields come first.
+Select relevant fields; mark genuine non-applicability rather than generating paperwork. A patch needs outcome, scope, constraints and observable checks; cross-component work needs affected contracts and ownership too.
 
 ```text
 DESIGN INTENT
@@ -10,20 +10,20 @@ DESIGN INTENT
 In scope        : [explicitly locked in-scope paths/components]
 Out of scope    : [explicitly locked out-of-scope paths; other repo parts implicitly unchanged]
 Milestone/phase/slice reference: [when present]
-Active Phase File: [path/link to referenced phase file from main plan]
-Locked Interfaces: [exact code signatures/schemas from plan; zero invented interfaces]
-Scoped File Tree: [exact files created/modified/deleted in this phase within in-scope boundary; cleanup verified]
+Active unit     : [inline task or phase reference; separate file when useful]
+Consumer contracts: [approved signatures/schemas where consumers need them; otherwise behavior]
+Writable scope  : [paths/components; exact file delta when ownership requires it; cleanup]
 Acceptance criteria:
 Constraints     :
 Known compromises: [canonical register references when phased; local deferrals otherwise; or none]
 Unit name       :
 Responsibility  : [one sentence, no "and"]
 Caller interface: [in → out]
-Glossary Sync   : yes/no
+Domain terms    : [existing glossary respected; critical ambiguity resolved]
 Interface contract: [signature / schema]
 Rewrite transition: [old semantics/interfaces → delete | preserve; or N/A]
 Consumer contract/stubs: [required approved / N/A]
-Docstring Spec  : yes/no
+API documentation: [consumer needs or N/A]
 Interface sign-off: [approved/not-approved; authorized owner + authority source + revision; never assumed-approved because AFK]
 Module README   : yes/no/updated
 Technology choice: [repo-native stack / established package + why]
@@ -41,7 +41,7 @@ Traceability    :
 
 For a Patch, `In scope`, `Non-goals`, acceptance criteria, constraints, and known compromises may each be one line. For an MVP Slice, those fields are mandatory even when all other fields are compact. Do not invent a milestone or canonical-register reference when none exists.
 
-Approval ownership follows `../../../rules/delivery-ownership.md`: the autonomous primary may approve researched in-scope choices before implementation; human-reserved boundaries remain human-owned. Record caller-visible examples, relevant evidence, consequences, and validation proportionately.
+The autonomous primary may approve researched in-scope choices before implementation; human-reserved boundaries remain human-owned. Record caller-visible examples, relevant evidence, consequences, and validation proportionately.
 
 ## Affected surface before simplification
 
@@ -64,10 +64,10 @@ When choosing a greenfield language/framework stack or adding a substantial plat
 ## Stop conditions
 
 - **Isolation test = no:** redesign.
-- **Required consumer contract/stubs or informed interface sign-off missing or unapproved:** obtain informed sign-off per `rules/grooming.md` (caller-visible examples + terms + alternatives/consequences) before implementation.
+- **Required consumer contract or approval missing:** use [Planning and shared understanding](../../working-principles/references/planning.md) to clarify caller-visible behavior and consequences before affected implementation.
 - **Contract defect:** if an approved contract is defective or unworkable, STOP immediately and report `INCOMPLETE: CONTRACT_DEFECT` with proposed adjustment; do not invent ad-hoc interfaces or alter signatures.
-- **Boundary / file tree violation:** creating files not declared in the locked scoped tree, modifying out-of-scope files, or leaving uncleaned scratch files; stop and align strictly with the locked boundary and file tree.
+- **Scope violation:** modifying out-of-scope paths, violating an explicitly fixed file delta or leaving scratch artifacts; revise through the authorized owner and clean up.
 - **Edge-case semantics unspecified:** stop the affected implementer; the primary researches and approves an in-scope contract. Ask the user only for user-only outcome or authority/safety decisions; AFK never invents a fallback while coding.
 - **Proposed vendoring/reimplementation lacks explicit opt-in or documented repository policy:** choose the platform/established dependency or clarify.
 
-For rewrite, overhaul, or delete-and-rebuild work, load `rules/grooming.md` first. Record each old semantic/interface as **delete** or **preserve** before Phase 1. When a public API or consumer app is affected, define consumer-facing signatures/schema and stubs and obtain informed sign-off (caller-visible examples + terms + alternatives/consequences); do not infer the contract, preserve old behavior by default, or patch old code when deletion is intended.
+For rewrite, overhaul, or delete-and-rebuild work, use [Planning and shared understanding](../../working-principles/references/planning.md). Record affected old semantics/interfaces as **delete** or **preserve**. Settle affected consumer contracts with the authorized owner using caller-visible examples and consequences; do not preserve behavior by reflex or patch code intended for deletion.

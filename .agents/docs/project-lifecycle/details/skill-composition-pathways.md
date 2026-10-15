@@ -7,11 +7,13 @@
 4. `reviewer` — verify fix addressed root cause
 
 ### Feature Implementation
-1. `requirements-driven-dev` — if feature is large/ambiguous
+1. `working-principles` planning reference — clarify consequential unknowns
 2. `codebase-exploration` — map target areas
 3. `code-craft` — disciplined implementation
 4. `reviewer` — post-implementation review
 ```
+
+Route product intent to `brainstorming`, technical constraints/trade-offs to `architecture-design`, acceptance behavior to `code-craft`, journeys to `ui-ux`, and presentation to `doc-craft` as needed. A formal specification chain is optional, not an implementation prerequisite.
 
 #### Skill Frontmatter: The Only Routing Mechanism
 

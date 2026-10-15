@@ -6,7 +6,7 @@ Use this checklist when bootstrapping a new project or auditing an existing one 
 
 - [ ] `AGENTS.md` at repo root with source-of-truth hierarchy, project rules, tooling rules
 - [ ] `GLOSSARY.md` with domain terms, code references, and prohibited aliases
-- [ ] `.agents/rules/` with code quality baseline, TDD enforcement, grooming protocol, glossary sync, vertical slicing, skill compliance
+- [ ] `.agents/rules/` with the seven baseline policies: authority, evidence, skill-use, execution-safety, git-safety, code-quality, document-formats (plus an `INDEX` trigger map)
 - [ ] `.agents/skills/INDEX` routing table (which skill fits which task)
 - [ ] `.agents/skills/WIRING` composition pathways (how skills chain together)
 - [ ] `docs/architecture.md` with responsibility split and data ownership model
@@ -20,7 +20,7 @@ Use this checklist when bootstrapping a new project or auditing an existing one 
 
 - [ ] Code quality rules enforced via linter configuration (not just documented)
 - [ ] Complexity thresholds defined and measured (cyclomatic complexity, max nesting, max statements)
-- [ ] TDD enforced for all logic components (parsers, validators, state machines)
+- [ ] Test selection boundary agreed (what stays in the repo versus temporary checks, existing suites protected)
 - [ ] Pre-implementation design checkpoint required for any new class, function, or module
 - [ ] Tech debt marking convention established (`TODO(debt):` format)
 - [ ] Refactoring signal convention established (`REFACTOR-SIGNAL:` format)
@@ -28,8 +28,8 @@ Use this checklist when bootstrapping a new project or auditing an existing one 
 
 ### AI Integration (Should Have — add as team adopts AI tools)
 
-- [ ] Skill loading rules defined (default to `code-craft` for code, skip for formatting)
-- [ ] Grooming interview protocol active (3-5 clarifying questions before complex tasks)
+- [ ] Skill routing defined (index-first lookup, default to `code-craft` for code, skip for formatting)
+- [ ] Clarification interview available for ambiguous work (3-5 high-value questions before complex tasks)
 - [ ] Memory protocol defined (repo-local short-term + long-term with dream-cycle consolidation)
 - [ ] Server management rules (AI agent must not start/stop servers or manipulate processes)
 - [ ] Debugging protocol documented (reproduce → inspect → compare → trace → test → fix → verify)

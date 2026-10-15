@@ -123,10 +123,11 @@ Label any agreed fallback as synthesis of supplied sources.
 
 ### Dispatch
 
-**Prefer ready AGY:** For independent exploration, research, scoped implementation
-or verification, prefer `delegate_run` with `"harness": "agy"` over a native
-subagent when this one-turn interface fits. Use a native subagent when a required
-capability is unavailable here; keep tightly coupled work with the main agent.
+Choose configured external workers or native subagents by task suitability,
+capabilities, interface needs and observed availability. Neither route has a
+fixed priority. External workers fit self-contained one-turn assignments;
+native subagents can support session continuity. Keep tightly coupled work
+with the main agent.
 
 Set `workdir` unless you want the task to run in the connected agent's MCP root.
 
@@ -140,8 +141,8 @@ The external subagent receives no parent conversation or resumable session and
 cannot ask a follow-up question. Include the goal, necessary context, allowed
 actions, exact paths, acceptance criteria and return format in the prompt.
 
-The AGY preference is routing guidance, not a speed benchmark or an automatic
-scheduler. The main agent still decides what to dispatch and checks the result.
+The main agent selects the route and checks the result. A configured harness
+or a profile's position in a list does not establish task fitness or speed.
 
 ## Tool reference
 

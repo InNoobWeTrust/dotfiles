@@ -24,13 +24,12 @@ main agent ──MCP stdio──▶ delegate server ──argv──▶ harness 
 ## Subagent discovery and selection
 
 Initialization instructions and tool descriptions identify this as an external
-AI subagent route, with a preference for configured AGY over native subagent tools
-when a self-contained, one-turn task fits. The preference reflects the user's
-routing policy; it is not a comparative speed result or proof that an agent will
-select the tool.
+AI subagent route. The main agent chooses external workers or native subagents
+by task suitability, capabilities, interface needs and observed availability,
+without a fixed harness or provider priority. A configured route is not a
+comparative speed result or proof that an agent will select the tool.
 
-Native subagents remain appropriate when a required capability is unavailable
-through this interface. Calls need complete context and action boundaries because
+Calls need complete context and action boundaries because
 the external worker receives no parent chat, follow-up or resumable session.
 
 Current `delegate_status` is authoritative for readiness. Initialization

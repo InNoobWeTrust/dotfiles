@@ -1,6 +1,6 @@
 ---
 name: doc-craft
-description: "Use this skill when designing, writing, restructuring, or auditing human-facing technical documentation — Typst-first guides and architecture overviews with PDF delivery, required Markdown READMEs and documentation sites, topic entries, and docs directories. Enforces audience/format routing, progressive disclosure (Index → Entry → Leaf), visual rhythm, and appropriate abstraction levels without jargon. Do not use for code implementation, formal PRD/TRD/BDD, UI wireframing, or internal agent execution/consensus tracking (use memory)."
+description: "Use this skill when designing, writing, restructuring, or auditing human-facing technical documentation, including presentation of domain-owned specifications — Typst-first guides and architecture overviews with PDF delivery, required Markdown READMEs and documentation sites, topic entries, and docs directories. Enforces audience/format routing, progressive disclosure, visual rhythm, and appropriate abstraction levels. Not the owner of product/technical/behavior requirements, code implementation, UI wireframing, or internal agent tracking (use memory)."
 ---
 
 # Document Craftsmanship (`doc-craft`)
@@ -16,7 +16,7 @@ This skill enforces three primary disciplines:
 
 Before editing, read [Editorial working principles](references/working-principles.md#editing). The principles are reusable for non-technical writing or governance without imposing this technical-document workflow; keep the task's owning skill and audience contract.
 
-Apply [Document format selection](../../rules/document-formats.md) before choosing a filename or template. Use [Typst workflow](references/typst-workflow.md) for the default `.typ` → PDF path; retain Markdown only for an identified required consumer.
+Apply [Document format selection](references/document-formats.md) before choosing a filename or template. Use [Typst workflow](references/typst-workflow.md) for the default `.typ` → PDF path; retain Markdown only for an identified required consumer.
 
 ## When to Load This Skill
 
@@ -27,11 +27,17 @@ Apply [Document format selection](../../rules/document-formats.md) before choosi
 
 Do **not** load for:
 - Writing code, refactoring modules, or fixing bugs
-- Formal requirements definitions like PRDs, TRDs, or BDD specs
+- Defining product, technical or behavior requirements: use the domain owner below; compose this skill only for human-facing presentation
 - UI/UX visual mockups or design tokens
 - Internal agent execution tracking, atomic feature plans, vertical slice phase specs, or inter-agent consensus boards (route directly to `memory`)
 
 ---
+
+## Domain-owned specifications
+
+[brainstorming](../brainstorming/SKILL.md) owns product briefs/PRDs, [architecture-design](../architecture-design/SKILL.md) owns technical design/TRDs, and [code-craft](../code-craft/SKILL.md) owns behavior/acceptance specifications and BDD examples. This skill can structure, format and polish those outputs without redefining their semantics or imposing a document ladder. Select the domain method by content, not by the label “spec.”
+
+Preserve decision-relevant constraints, testable contracts, uncertainties and necessary technical detail for the intended reader. Do not abstract them away merely to fit a guide template; executable specs retain their native consumer format per [Document format selection](references/document-formats.md).
 
 ## Workflow Phases
 
@@ -123,7 +129,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 
 ## References
 
-- [Document format selection](../../rules/document-formats.md) — Shared default, consumer exceptions, and source/delivery contract.
+- [Document format selection](references/document-formats.md) — Shared default, consumer exceptions, and source/delivery contract.
 - [Typst workflow](references/typst-workflow.md) — Local build, starter, diagrams, safety, and PDF verification.
 - [`references/document-routing-and-audience.md`](references/document-routing-and-audience.md) — Boundary between human docs (`docs/`, module READMEs) and agent memory (`MEMORY_DIR`), abstraction rules, and routing tree.
 - [`references/progressive-disclosure.md`](references/progressive-disclosure.md) — The Index → Entry → Leaf architecture, sizing thresholds, and sharding workflow.
