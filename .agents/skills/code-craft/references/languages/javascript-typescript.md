@@ -4,10 +4,11 @@ Use for greenfield JavaScript/TypeScript services, libraries, and shared tooling
 
 ## Baseline
 
-- Prefer TypeScript with strict compiler options. Use Node.js LTS and pnpm by default; Bun is suitable when the project intentionally standardizes on its integrated runtime/toolchain.
-- Use Vite for browser applications and `tsup` or a repository-standard build tool for libraries. Use Vitest for unit/integration tests and Playwright for browser end-to-end tests.
-- Use Biome where its supported rule set is sufficient; otherwise use ESLint plus Prettier. Always keep `tsc --noEmit` (or the framework equivalent) as a type-check gate.
-- Use platform `fetch`, Web APIs, and Node built-ins when suitable. Use Zod for runtime schemas at external boundaries; do not use runtime validation for purely static internal values.
+- Prefer TypeScript with strict compiler options and Bun for package management and application/script execution. Use Node.js when required by dependencies, deployment targets, existing-project compatibility, or explicit team preference; it is not the greenfield default.
+- Prefer a project-pinned Vite+ toolchain for compatible new browser applications, using its bundled Vitest, Oxlint, and Oxfmt rather than duplicating them with standalone test/lint/format tools. Keep Playwright for browser end-to-end tests. For libraries, consider Vite+ pack/tsdown after verifying emitted imports, declarations, and consumer compatibility; retain repository-standard builds in existing projects.
+- Bun-first does not mean Node-free: Vite+ currently documents Node.js as its tooling runtime and Bun as a separate package-manager choice. Verify the selected release's requirements; do not assume selecting Bun switches Vite+ tooling to the Bun runtime.
+- Always keep `tsc --noEmit` (or the framework equivalent) as a type-check gate unless an equivalent replacement is verified. Vite+ `check` requires both `lint.options.typeAware: true` and `lint.options.typeCheck: true` for full type checking; do not assume framework-specific checks are covered. Where Vite+ is unsuitable, use Vitest and Biome if their coverage is sufficient, otherwise ESLint plus Prettier; add overlapping tools only for demonstrated gaps.
+- Use platform `fetch`, Web APIs, and runtime-compatible built-ins when suitable. Use Zod for runtime schemas at external boundaries; do not use runtime validation for purely static internal values.
 
 ## Standalone Bun Dependencies
 
@@ -20,14 +21,18 @@ Use for greenfield JavaScript/TypeScript services, libraries, and shared tooling
 - Use **Zod** (or **Valibot** for minimal bundle size) to validate parsed arguments, flags, and environment configurations into strongly typed DTOs.
 - Use **Chalk** (or zero-dependency **picocolors**) for terminal coloring and formatting; pair with **cli-table3** and **boxen** for tables and bordered output.
 - Use **`@clack/prompts`** for modern inline interactive CLI wizards (selects, multi-selects, text inputs, spinners) without taking over the full terminal window.
-- Use **OpenTUI** (`@opentui/react` / `@opentui/solid`) for high-performance, full-screen TUIs only when the selected release's runtime and platform requirements are acceptable; check its [runtime requirements](https://github.com/anomalyco/opentui/tree/main/packages/core#runtime-and-platform-support), including Node ESM/FFI requirements, rather than assuming compatibility with Node LTS. Prefer **Ink** when retaining the Node LTS baseline or using its mature React-for-CLI ecosystem.
+- Use **OpenTUI** (`@opentui/react` / `@opentui/solid`) for high-performance, full-screen TUIs only when the selected release's runtime and platform requirements are acceptable; check its [runtime requirements](https://github.com/anomalyco/opentui/tree/main/packages/core#runtime-and-platform-support), including Node ESM/FFI requirements, rather than assuming compatibility with Bun or Node LTS. Prefer **Ink** when targeting Node LTS or using its mature React-for-CLI ecosystem.
 - For cross-language patterns and decision guidance, see [CLI & TUI Stacks](cli-tui-stacks.md).
 
 ## Sources
 
 - https://www.typescriptlang.org/tsconfig/#strict
 - https://nodejs.org/en/about/previous-releases
-- https://pnpm.io/
+- https://bun.sh/docs
+- https://viteplus.dev/guide/local-cli
+- https://viteplus.dev/guide/env
+- https://viteplus.dev/guide/check
+- https://viteplus.dev/guide/pack
 - https://vite.dev/guide/
 - https://vitest.dev/
 - https://playwright.dev/
