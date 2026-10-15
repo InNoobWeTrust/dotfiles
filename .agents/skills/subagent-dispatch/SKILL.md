@@ -40,12 +40,17 @@ The autonomous primary may approve and revise researched in-scope plans/contract
 | Implementation | Select one approved coherent unit with a writable boundary, acceptance evidence and settled affected contracts. A broad plan is context, not executable scope. | `references/implementation-payload-and-preflight.md` |
 | Review or exploration | Bound the question, context, actions, and evidence; do not implement adjacent findings. | `references/prompt-template-and-anti-patterns.md` |
 | Execution / verification | Define the supplied check, expected evidence, authorized environment/actions, and failure boundary; do not silently alter checks or repair code. | `references/context-stewardship.md` |
+| User-requirement conformance | For substantive delegated work or an explicit conformance request, assign a dedicated read-only subagent to check **every cumulative user requirement**, not just the latest instruction or the primary's checklist. | `references/worker-contract.md#dedicated-user-requirement-conformance` |
 
 Planning and implementation must carry approved **materialization choices**—which libraries/tools and APIs implement each affected capability—not just core logic. Read the [materialization contract](references/implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract); preserve selections through decomposition, atomic patches, and fallback routes. Missing selections block implementation; incompatibility returns to the primary, never a silent substitution. Check actual reuse when accepting results.
 
 For implementation, cite an approved plan/packet unit or an explicit inline atomic contract. Separate phase files are useful for independently resumable handoffs, not mandatory for every multi-file change. Respect approved behavior, consumer contracts and writable scope; return defects rather than inventing new business semantics or scope. Use exact signatures/schema where consumers need them and exact file deltas where ownership needs them. Classify rewrite semantics as **delete** or **preserve** and settle affected public consumer contracts before launch.
 
 For phased work use the independently usable [Delivery Contract](../team-operating-model/references/phased-delivery.md). Add delegation-specific writable scope, adjacent-finding handling, allowed actions and continuation state; do not duplicate the lifecycle.
+
+## Cumulative requirement conformance
+
+Preserve earlier compatible requirements when adapting to new information. The dedicated [conformance checker](references/worker-contract.md#dedicated-user-requirement-conformance) must cover audience, assumed knowledge, writing style, format, and constraints alongside functional goals. Recheck affected requirements after requirement/artifact revisions and require a current full receipt before final handoff; self-checks or generic quality reviews do not substitute.
 
 ## Host-side synthesis gate (mandatory before user-facing decision)
 
@@ -58,6 +63,8 @@ Delegated results are internal evidence, not shared context. Before synthesizing
 ## Essential stop conditions
 
 Do not launch without an unambiguous target, authorized scope, acceptance evidence and usable affected contracts, or to replace live user Q&A. Stop and report `INCOMPLETE` (`INCOMPLETE: CONTRACT_DEFECT` for unworkable contracts) when prerequisites or required approvals are missing, material decisions remain unresolved, or work would exceed the writable boundary. Never silently rescope or absorb adjacent units. Missing phase-file scaffolding alone is not a blocker for a bounded inline contract.
+
+Missing required conformance capability, original requirement evidence, or a current all-requirement receipt blocks unqualified completion/readiness claims. Report gaps as `UNVERIFIED`; never silently drop a requirement to obtain PASS.
 
 ## Default report shape
 
@@ -81,6 +88,7 @@ TASK_COMPLETE | INCOMPLETE + continuation/resumption state
 | `references/worker-health.md` | Before long/blocking delegation, or when provider retries, repeated tool calls, or fallback routes threaten productivity. |
 | `references/periodic-checks.md` | Periodic checks, delayed reminders, or monitoring multiplexer/queue jobs while other work continues. |
 | `references/worker-contract.md` | Before every named, fallback, or dynamic launch: establish task authority and guidance discovery; style direction is optional. |
+| `references/worker-contract.md#dedicated-user-requirement-conformance` | Assigning the dedicated checker, preserving cumulative audience/style constraints, or rechecking after adaptation. |
 | `references/planning-payload-and-preflight.md` | Preparing or validating an L0/L1/L2 planning dispatch. |
 | `references/implementation-payload-and-preflight.md` | Preparing or validating an implementation dispatch, including rewrites. |
 | `references/prompt-template-and-anti-patterns.md` | Assembling a full prompt, preflighting it, receiving results, or checking delegation anti-patterns. |

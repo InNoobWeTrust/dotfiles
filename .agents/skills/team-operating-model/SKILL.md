@@ -54,6 +54,8 @@ and session, not re-scoping a bound coder. Apply the persistent reference in ful
 An assigned worker joins the existing primary/worker team; it must not recursively
 spawn another team unless its bounded handoff separately authorizes delegation.
 
+Assign a **dedicated user-requirement conformance subagent**, separate from the primary and artifact authors. Follow [the conformance contract](../subagent-dispatch/references/worker-contract.md#dedicated-user-requirement-conformance): independently reconcile original user instructions with a cumulative baseline and check every active point, including audience, assumed knowledge, writing style, format, and constraints. One stable checker job covers all points; an existing goal-alignment reviewer qualifies only with this contract. Preserve its role/binding across repeated checks under the persistent rules.
+
 ## 3. Deliberate and synthesize when needed
 
 Load [Deliberation](references/deliberation.md) for panel setup, engineering/finance
@@ -99,6 +101,8 @@ Load [Procedure](references/delivery/procedure.md) before a verifier/controller/
 
 ## 5. Checkpoint and close
 
+When new information or revised artifacts arrive, preserve earlier compatible requirements; record only source-supported supersessions. Recheck affected rows and regressions, especially audience/style, and require the dedicated checker's current whole-baseline receipt before final handoff. Primary self-review, general quality review, or technical PASS cannot substitute; unresolved requirements remain visible blockers.
+
 When periodic monitoring is requested, assign one owner and record the target, interval, endpoint, last observation, outstanding timer identifier, and next check due in the existing task checkpoint. Load [Periodic Progress Checks](../subagent-dispatch/references/periodic-checks.md); arm the wait or supported background timer **before** returning to other work, consume each result, and rearm while monitoring remains in scope. Do not assume another teammate is checking, or claim monitoring continues after losing its wake-up mechanism.
 
 Persistent contributors append a checkpoint after every completed/interrupted
@@ -116,6 +120,7 @@ the consolidator with the primary silently.
 - Missing authority, unsafe/unbounded execution, or unavailable mandatory evidence → stop affected work; never broaden permissions.
 - No permitted real worker or missing current required worker contribution → block affected work; no solo/simulated fallback.
 - A required independent review cannot run → report UNVERIFIED/blocker, not simulated PASS.
+- Missing dedicated conformance evidence, stale/omitted requirements, or FAIL/UNVERIFIED rows → block unqualified readiness; repair/recheck or report exact gaps, never silently waive user instructions.
 - Unverified AFK isolation/state/cancellation/cleanup, a real resource boundary, or broken required verification → stop affected execution; diagnose before retrying or raising budgets.
 - Persistent role/task/approved-plan records missing or stale, identity mismatch, retired binding, duplicate ownership, or prior-worker quiescence unproven → block restoration/execution.
 - Capture failed → `CHECKPOINT_PENDING`; no substantive continuation before authorized recovery.
@@ -137,6 +142,7 @@ the consolidator with the primary silently.
 
 - [ ] Real team formed and current worker contribution recorded; launch permission verified.
 - [ ] Assignments, ownership, limits, dependencies, and evidence are explicit.
+- [ ] Dedicated conformance subagent checked original-source baseline completeness and every active user requirement against the current revision, including earlier audience/style constraints after adaptation; no FAIL/UNVERIFIED rows hidden by technical success.
 - [ ] Software plans and implementer handoffs retain approved materialization choices/exception rationale; current call-site and behavior evidence confirms actual reuse.
 - [ ] Material cross-component design has a revision-linked independent challenge receipt; integration checks actual dependency direction and consumer wiring, not runtime success alone.
 - [ ] Synthesis preserves dissent and separates evidence from assumptions.
@@ -154,6 +160,7 @@ the consolidator with the primary silently.
 | Count one context's personas or a token launch as workers | Require separate instances and actual criterion-linked contribution |
 | Reuse a coder's bound session as tester/consolidator | Assign a fresh role and session |
 | Manufacture consensus or acceptance from green checks | Preserve dissent; wait for recorded user acceptance |
+| Adapt to new facts and forget earlier audience or writing style | Keep cumulative source-linked requirements; obtain the dedicated checker's point-by-point current receipt |
 
 ## ACI pass and prototype
 

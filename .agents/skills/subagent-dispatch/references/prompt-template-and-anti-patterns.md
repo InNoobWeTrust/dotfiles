@@ -18,6 +18,14 @@ Investigation/design is not implementation authority. No scope expansion or nest
 [Paste only the relevant context — file paths, excerpts, error messages, URLs.
 Do not paste the whole codebase. Be surgical.]
 
+## Cumulative User Requirements
+[Applicable stable requirement IDs and original source pointers/text, including
+earlier audience, assumed knowledge, writing style, format, and constraints;
+source-linked supersessions and unresolved conflicts. New information is not a
+waiver. For the dedicated checker supply the requirement-source coverage set,
+whole cumulative baseline, exact artifact revision and prior receipt/change set;
+follow worker-contract.md#dedicated-user-requirement-conformance.]
+
 ## Implementation Dispatch Gate (only when the delegated target is code implementer)
 [Applies whenever implementation work is dispatched to code implementer, regardless of
 whether the phased-delivery trigger below also applies. You are assigned
@@ -147,6 +155,7 @@ Run through this before every delegated worker launch:
 
 - [ ] **Discovery and authority**: Do named, fallback, and dynamic workers have a usable guidance entry point and explicit task authority? Are required task/rule sources accessible, and permitted guidance reads available, without assumed inheritance or relaxed native deny permissions? A reference, short hint, or no personality direction are all valid; copied principle paragraphs are not required.
 - [ ] **Scope**: Does the prompt name the exact files, URLs, or data — not a vague domain?
+- [ ] **Cumulative requirements**: Are earlier applicable constraints preserved with sources, rather than replaced by latest steering? When required, is a separate dedicated checker assigned with original requirement evidence and revision-bound whole-baseline coverage?
 - [ ] **Code target — exactly one unit**: If dispatching implementation to code implementer, does the prompt carry exactly one selected functional unit (plan pasted as context only), with the dispatch basis declared (approved plan / Active Milestone Packet, or explicit `Atomic patch exception`)?
 - [ ] **Code target — unit payload complete**: Are all nine fields bounded — plan basis/exception rationale, unit ID + one-sentence outcome, exact writable surface, contracts/invariants, satisfied prerequisites, explicit out-of-scope list, acceptance criteria/evidence, stop conditions, approved materialization choices?
 - [ ] **Code target — no stop-before-dispatch condition**: Confirm none of these holds: zero or multiple units · missing acceptance criteria/evidence · an unresolved design or contract decision · a scope-expansion request. If one holds, do NOT dispatch; report `INCOMPLETE` + continuation state to the main orchestrator instead.

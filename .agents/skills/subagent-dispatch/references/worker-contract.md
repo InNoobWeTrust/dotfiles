@@ -32,6 +32,7 @@ This is a discovery instruction, not a personality setting. Do not repeat it in 
 2. Supply precise sources and boundaries, acceptance evidence, action/resource limits, a proportionate return shape, and stop behavior. Retain applicable [implementation/planning gates](../SKILL.md#dispatch-routing-and-gates). These are task obligations, not optional personality settings.
 3. Check discovery access. A working-style reference or short hint is optional; omit it when the assignment already gives the worker enough to infer a useful approach. Do not dump full skills or make the parent compose a complete personality.
 4. For planning/implementation, carry settled [materialization choices](implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) and accessible task-relevant code-craft/API sources. Library/API choices are mandatory task constraints, not optional working-style hints. Implementers confirm sources before coding and report incompatible selections rather than silently substituting. Keep the same choices and exceptions on route fallback; re-resolve source access, not the architecture.
+5. Carry the applicable cumulative user requirements with source identifiers, including audience, assumed knowledge, tone/writing style, format, exclusions, and prohibitions. These are deliverable constraints, not the worker's optional working-style direction. Apply the dedicated conformance gate below; forwarding only the latest steering is insufficient.
 
 A locked or primary-approved contract does not require implementing an evidenced architectural defect. Any worker may stop the affected unit with `INCOMPLETE: CONTRACT_DEFECT`, citing the responsibility/dependency/contract conflict and a proposed correction. Preserve unaffected safe work and write bounds; do not silently redesign. The primary must resolve the objection under [Design acceptance](../../team-operating-model/references/design-acceptance.md) before resuming affected implementation, not return the same contract solely because it was already approved.
 
@@ -44,6 +45,85 @@ hard stops and missing authority still require return to the primary.
 When selecting a fallback after an invocation failure, preserve the assignment and constraints. The replacement worker selects useful guidance for the same task; change only the execution route and necessary capability details. Reassess access and route limits, not just the agent name. [Named fallbacks are preferences](context-stewardship.md#treat-named-fallbacks-as-preferences), not a mandatory retry chain.
 
 Native controls remain separate: preserve configured deny rules and apply supported native restrictions to dynamic workers when available. “Read-only” prose is not hard isolation. If a required hard boundary cannot be established, report that limitation rather than claiming equivalent enforcement. Workers do not gain nested-delegation authority by selecting a style.
+
+## Dedicated user-requirement conformance
+
+**Trigger:** substantive delegated/team work, or an explicit user request for
+conformance checking. Assign a dedicated read-only subagent job, separate from
+the primary and anyone authoring the checked artifact. One checker covers all
+requirements; do not create an agent per point or an always-running monitor.
+This is a job identity, not a prescribed model/personality. Retain the existing
+different-provider-family rule for independent evidence and all launch limits.
+
+### Inputs and cumulative baseline
+
+The primary supplies an authorized requirement source set: original user
+requirement messages with stable source IDs/order, or accessible task/request
+records retaining their verbatim text. Include earlier instructions and later
+corrections, not just the latest turn or a primary-authored summary. Forward only
+requirement-bearing messages and necessary context, not unrelated conversation.
+List the covered source range and known gaps; never claim unseen history was checked.
+
+Keep a cumulative table in the existing task/plan/checkpoint (inline for bounded
+work): `ID | user requirement + source | active/superseded | acceptance evidence`.
+Split independently checkable obligations into separate rows. Include audience,
+assumed reader knowledge, tone/style, language, format, content, functional goals,
+and action limits when requested; do not invent absent preferences. Record a
+source-linked reason for supersession and retain the old row. New facts or
+compatible steering do not waive previous requirements. If an actual conflict
+or ambiguous replacement cannot be resolved from the sources, mark the affected
+row unresolved and return `UNVERIFIED`; the primary seeks clarification where
+needed rather than letting the checker choose new user intent.
+
+Supply the exact artifact paths/content and revision identity, prior receipt if
+any, changes since that receipt, and allowed READ/RUN/WRITE/network boundaries.
+Default: WRITE NONE, no repair, no new workloads or nested delegation. Missing
+original requirements or unavailable authorized checker capability yields
+`INCOMPLETE` with exact gaps, never a vacuous PASS or a primary self-check fallback.
+
+### Check and receipt
+
+1. Independently reconcile the cumulative table with the supplied original
+   requirement sources. Report missing, distorted, or silently superseded rows;
+   a complete-looking primary checklist alone is not evidence of completeness.
+2. Check **every active row** against the identified artifact revision and
+   authorized execution evidence where required. Return
+   `ID | PASS/FAIL/UNVERIFIED | exact artifact/evidence location | rationale/gap`.
+   Cite concrete passages/examples for qualitative audience/style judgments;
+   do not reduce them to keyword matches, infer reader expertise from the topic,
+   or accept the primary's assurance as proof. If evidence cannot support a
+   judgment, use `UNVERIFIED`. Source inspection does not prove runtime behavior.
+3. State source coverage, baseline additions/disputes, revision checked, failed
+   or unverified rows, and `TASK_COMPLETE` or `INCOMPLETE`. A completed review
+   with FAIL rows is not a conforming artifact or user acceptance.
+
+After any requirement or artifact revision, recheck affected rows and regressions
+against earlier constraints; record why any prior evidence still applies. A
+small edit can change audience/style. After new-information adaptations and
+before final handoff, require a current receipt covering the **whole** active
+baseline, not just changed rows. Bound checks to these events, not a polling loop.
+The same stable conformance job may repeat checks; continuing teams preserve
+its task/role binding and append checkpoints under the persistent contract.
+A coder/general reviewer cannot be silently re-scoped into this job; a distinct
+job or replacement follows the existing fresh-role/session and ownership rules.
+
+The primary corrects failures within authorized scope and obtains rechecks;
+it cannot waive a user criterion to turn a row green. FAIL, unresolved conflicts,
+missing sources, stale coverage, or UNVERIFIED rows block unqualified readiness.
+Report partial outcomes and blockers honestly. This checks user-requirement
+coverage, not general correctness/security; retain separately triggered quality,
+design, and findings-challenge gates. A dedicated goal-alignment reviewer may
+perform this job only with this full contract and no artifact authorship.
+
+**Example:** the user requests a guide for new lab members, plain language, and
+no assumed ML knowledge; later supplies a technical discovery. Keep all three
+reader/style rows active while adding the discovery. The checker verifies the
+new content is explained for those readers, not merely included. A later explicit
+request to write for ML specialists supersedes only the affected reader criteria
+with that message cited; it does not silently remove format or scope constraints.
+
+**Prototype:** source-level contract, not proof of automatic requirement retention.
+Review after 1–2 real adaptations, including a missing-source/checker case.
 
 ## Example: request with no personality direction
 
