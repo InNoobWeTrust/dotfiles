@@ -119,7 +119,8 @@ database. No score/boost/alias/shortcut parity with the older CLI catalog script
 for specialized operations, and skills may prefer generic CSV search. `src/scope.ts` owns base/scope/metadata,
 `src/corpus.ts` the bounded FS walk, change detection, chunking and strict CSV parsing, `src/engine.ts` the
 ephemeral MiniSearch BM25+ ranking, response bounds and strict Zod validation, and `src/server.ts`
-wire schemas and registration. Startup loads the SDK before dynamically importing the engine to avoid
-Bun 1.4.2's cold-cache versioned CSV-subpath resolution failure in the combined static import graph.
+wire schemas and registration. Startup loads the SDK before dynamically importing the engine;
+the [shared startup guard](../README.md#startup-coordination) also prevents competing MCP dependency
+loads from racing over Bun's cold cache.
 Extend by documented schema/engine behavior with an
 advertised or rejected test branch; do not add generic RPC or arbitrary executable arguments.

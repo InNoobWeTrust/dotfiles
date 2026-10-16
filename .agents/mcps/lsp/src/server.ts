@@ -1,10 +1,9 @@
 import { z } from "zod@4"
 import { McpServer } from "@modelcontextprotocol/sdk@1/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk@1/server/stdio.js"
-// Bun resolves versioned runtime dependencies at the entry graph on a cold cache.
-import "vscode-jsonrpc@8/node"
+import { withStartupLock } from "../../shared/startup.ts"
 import { AstGrep, astGrepInput } from "./ast-grep.ts"
-import { LspClient } from "./client.ts"
+import type { LspClient } from "./client.ts"
 import { discover } from "./discovery.ts"
 import { supportedMethods } from "./methods.ts"
 import { recipes, wrapperName } from "./recipes.ts"
@@ -195,6 +194,8 @@ server.registerTool(
       reserved = true
       const recipe = (await discover(cwd)).find((recipe) => recipe.id === id)
       if (!recipe) throw new Error("Recipe not installed; run discover")
+      // Discovery and AST tools do not need the JSON-RPC runtime dependency.
+      const { LspClient } = await withStartupLock(() => import("./client.ts"))
       if (closing) throw new Error("Server is closing")
       const session = {
         id: `s${++nextId}`,

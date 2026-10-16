@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "bun --no-env-file src/server.ts",
+    "start": "bun --no-env-file bin/mcp-sandbox",
     "lint": "bunx --bun --package @biomejs/biome@2.5.15 biome lint . --error-on-warnings",
     "format": "bunx --bun --package @biomejs/biome@2.5.15 biome format --write .",
     "format:check": "bunx --bun --package @biomejs/biome@2.5.15 biome format . --error-on-warnings",

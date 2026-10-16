@@ -6,7 +6,7 @@ import {
   ResponseError,
   StreamMessageReader,
   StreamMessageWriter,
-} from "vscode-jsonrpc@8/node"
+} from "vscode-jsonrpc@8"
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process"
 import { pathToFileURL } from "node:url"
 

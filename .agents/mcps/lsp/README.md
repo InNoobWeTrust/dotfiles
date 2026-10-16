@@ -28,7 +28,7 @@ OpenCode currently launches `mcp-lsp` from PATH. If a running service predates t
 The package must first be deployed under `~/.agents/mcps/lsp` using the repository's dotfile links; adding files in this checkout alone does not deploy them.
 The process working directory is its workspace; it starts no language servers until asked.
 Bun may fetch the three protocol libraries on a cold cache, following the neighboring MCP packages' versioned-import convention; it does not install language servers.
-Cold-cache nested dependency resolution failed on tested Bun 1.4.2; the current passing protocol suite used a prewarmed `vscode-jsonrpc` cache. Live startup with installed dependencies works; cold-cache reliability remains WIP.
+The executable and `bun run start` use the [shared startup guard](../README.md#startup-coordination) for initial dependencies and the later JSON-RPC import. Concurrent cold-cache executable startup and LSP sessions pass on Linux with Bun 1.4.2; macOS runtime verification is still outstanding.
 
 1. **Discover:** call `discover`; choose an installed recipe ID. It searches nearest project `node_modules/.bin`, `.venv/bin`, `venv/bin`, `.pixi/envs/default/bin`, then inherited PATH, stopping at `.git`, filesystem root or 12 ancestors. It also returns `astGrep` availability/version/errors and refreshes the AST tool registrations.
 2. **Start:** call `start` with `{"id":"ty"}` and optional native `initializationOptions` / `settings`. Starting executes installed code with inherited permissions; only use trusted workspace executables.

@@ -2,7 +2,7 @@ import {
   createMessageConnection,
   StreamMessageReader,
   StreamMessageWriter,
-} from "vscode-jsonrpc@8/node"
+} from "vscode-jsonrpc@8"
 
 const connection = createMessageConnection(
   new StreamMessageReader(process.stdin),
