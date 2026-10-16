@@ -233,26 +233,58 @@ ssh_lan_forward() (
 
 #
 # # batch_open - open links in batches
-# # usage: batch_open [file_contain_links] [batch_size] [start]
+# # usage: batch_open [file_contain_links] [batch_size] [start] [browser]
+# # Uses the system default browser; optional browser is an executable on Linux.
 batch_open() {
     local f size start browser links_all len s links 2>/dev/null || true
 
     f=${1:-links.txt}
     size=${2:-10}
     start=${3:-1}
-    browser=${4:-firefox}
-    links_all=$(grep -Eo 'https?://[^ ]+' "$f" 2>/dev/null || true)
+    browser=${4:-}
+    for s in "$size" "$start"; do
+        case "$s" in
+            ''|0*|*[!0-9]*)
+                printf '%s\n' 'batch_open: batch_size and start must be positive integers without leading zeros' >&2
+                return 2 ;;
+        esac
+    done
+    [ -r "$f" ] || {
+        printf 'batch_open: cannot read %s\n' "$f" >&2
+        return 1
+    }
+    links_all=$(grep -Eo 'https?://[^[:space:]]+' < "$f")
     len=$(printf '%s\n' "$links_all" | awk 'NF {c++} END {print c+0}')
 
     [ "$len" -eq 0 ] && return 0
+
+    case "$(uname -s)" in
+        Darwin)
+            if [ -n "$browser" ]; then
+                set -- xargs -0 open -a "$browser"
+            else
+                set -- xargs -0 open
+            fi ;;
+        Linux)
+            if [ -n "$browser" ]; then
+                set -- xargs -0 "$browser"
+            else
+                # xdg-open accepts one URL at a time and resolves desktop defaults.
+                set -- xargs -0 -n 1 xdg-open
+            fi ;;
+        *)
+            printf '%s\n' 'batch_open: unsupported operating system' >&2
+            return 1 ;;
+    esac
 
     for s in $(seq "$start" "$size" "$len"); do
         echo "$s"+"$size":
         links=$(printf '%s\n' "$links_all" | awk 'NF' | tail -n +"$s" | head -n "$size")
         echo "$links"
         printf 'Press ENTER to continue...'
-        IFS= read -r _
-        printf '%s\n' "$links" | xargs open -a "$browser"
+        IFS= read -r _ || return 0
+        # NUL delimiters preserve URL quotes and backslashes literally.
+        printf '%s\n' "$links" | tr '\n' '\000' | "$@" || return $?
     done
 }
 
