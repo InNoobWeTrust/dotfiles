@@ -31,7 +31,7 @@ After necessary instruction/safety bootstrap and before task work—even small t
 
 Establish outcome, scope and observable success before substantial implementation. Authorized delivery defaults to autonomous ownership within bounds; honor collaborative/HITL requests. Exploration is not implementation permission. Explain material choices before asking for a decision; do not manufacture agreement or verification. No default aggregate task cap waives bounded jobs or safety stops.
 
-Never stage, commit, push or discard changes without the required explicit approval. Protect secrets, user work and user processes. Sandbox failures do not authorize bypasses or larger budgets. Report server issues; do not restart unexpectedly. Harness-specific controls: [Harness safety](docs/skills-and-rules/harness-safety.md).
+Never stage, commit, push or discard changes without the required explicit approval. Protect secrets, user work and user processes. Approval of a bounded operation covers scoped native execution when sandboxing is unsuitable, not new effects, larger budgets or bypassing mandatory isolation. Report server issues; do not restart unexpectedly. Harness-specific controls: [Harness safety](docs/skills-and-rules/harness-safety.md).
 
 ## Choose the trajectory
 

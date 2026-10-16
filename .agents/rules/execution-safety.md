@@ -11,11 +11,18 @@ trigger: always_on
   network and host-context needs. Prefer native read/search/edit tools. Otherwise
   use an available compatible sandbox with the least authorized access: read-only
   and offline by default, restricted workspace/scratch writes when approved.
-- If explicitly approved host context exceeds sandbox capability, use scoped
-  native execution directly, without a predictably failing attempt or duplicate
-  approval. Otherwise investigate a denial and request scoped permission stating
-  command, directory, effects and timeout. Never silently retry unrestricted or
-  raise budgets. Continue independent safe work while a command is blocked.
+- Explicit approval of a bounded operation (for example, "commit and push") also
+  covers scoped native shell execution when the sandbox is unsuitable, unless
+  higher-priority restrictions or mandatory isolation forbid it. Tool choice is
+  not a separate approval gate: use native execution directly when the mismatch
+  is known, without a predictably failing sandbox attempt or duplicate approval.
+- After a sandbox failure, distinguish an environment/tool mismatch from a real
+  authorization or safety denial. For an already approved operation needing host
+  context, briefly explain and retry through the native shell with the same scope
+  and a timeout; do not merely report failure or hand the command back to the user.
+  Ask only if permission is missing or effects would expand. A failure alone never
+  authorizes new effects, higher budgets, or bypassing mandatory isolation; do not
+  disable security checks or modify host configuration to force success.
 - MCP-managed container lifecycle and engine side effects are tool operations,
   not host commands to wrap in another sandbox. Installation/download effects
   still require the applicable authority.

@@ -37,7 +37,7 @@ Use the repository's existing [bootstrap](../../../bootstrap.sh) to install the 
 
 **Runtime check:** Start each installed harness in that fresh repository and inspect its loaded context using its documented context view, where available. Files resolving correctly proves installation, not that a particular harness/version loaded them; an agent merely claiming to have loaded them is not sufficient evidence.
 
-**Execution behavior:** Keep instruction discovery separate from permissions. Sandboxed commands should run automatically, including bounded side effects in writable sandboxes; a failed sandbox must not silently trigger unrestricted retries. Necessary host operations require a scoped approval and should then be executed by the agent, not handed back to the user.
+**Execution behavior:** Prefer compatible sandboxes, but explicit approval of a bounded operation also covers native shell execution when sandboxing is unsuitable; no separate tool-choice approval is needed. Use the shell directly for a known mismatch, or explain an observed mismatch and retry the approved operation with the same scope and a timeout, rather than stopping at the sandbox failure. This does not authorize new effects, larger budgets, disabling security checks or bypassing mandatory isolation or higher-priority restrictions.
 
 ## Shared Sandbox Tools
 
