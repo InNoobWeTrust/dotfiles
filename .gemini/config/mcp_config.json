@@ -1,37 +1,19 @@
 {
   "mcpServers": {
-    "rea": {
-      "command": "npx",
-      "args": ["-y", "rea-agents@6.4.0", "mcp"],
-      "disabled": true
-    },
     "sandbox": {
       "command": "mcp-sandbox",
       "args": [],
       "disabled": false
     },
-    "chrome-devtools": {
-      "args": [
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--no-usage-statistics",
-        "--browser-url=http://localhost:19222"
-      ],
-      "command": "npx",
-      "disabled": true
-    },
-    "serena": {
-      "args": [
-        "-p",
-        "3.13",
-        "--from",
-        "serena-agent",
-        "serena",
-        "start-mcp-server",
-        "--project-from-cwd"
-      ],
-      "command": "uvx",
+    "lsp": {
+      "command": "mcp-lsp",
+      "args": [],
       "disabled": false
+    },
+    "rea": {
+      "command": "npx",
+      "args": ["-y", "rea-agents@6.4.0", "mcp"],
+      "disabled": true
     }
   }
 }

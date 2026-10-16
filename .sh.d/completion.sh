@@ -3,11 +3,11 @@
 # github's cli
 if usable gh; then
     gh_completion_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}"
-    gh_completion_cache_file="$gh_completion_cache_dir/gh-completion.$(basename "$SHELL")"
+    gh_completion_cache_file="$gh_completion_cache_dir/gh-completion.${SHELL##*/}"
     [ -d "$gh_completion_cache_dir" ] || mkdir -p "$gh_completion_cache_dir"
 
     if [ ! -s "$gh_completion_cache_file" ] || [ "$(command -v gh)" -nt "$gh_completion_cache_file" ]; then
-        gh completion --shell "$(basename "$SHELL")" > "$gh_completion_cache_file" 2>/dev/null || true
+        gh completion --shell "${SHELL##*/}" > "$gh_completion_cache_file" 2>/dev/null || true
     fi
 
     [ -s "$gh_completion_cache_file" ] && . "$gh_completion_cache_file"
@@ -53,7 +53,7 @@ fi
 
 # daytona
 if usable daytona; then
-    . <(daytona completion "$(basename "$SHELL")")
+    . <(daytona completion "${SHELL##*/}")
 fi
 
 # Development utilities ship completion assets; no CLI invocation or cache needed.

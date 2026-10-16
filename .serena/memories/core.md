@@ -14,6 +14,8 @@ Top-level entry point for dotfiles agent memory graph.
 
 ## Active Task Memory
 
+- Thin installed-LSP MCP WIP: `mem:tasks/lsp-mcp-wip/task` — curation and design in progress; OpenCode-only disabled registration authorized; not user-accepted.
+
 - Dedicated user-requirement conformance: `mem:short-term/20261015T2203Z--master--requirement-conformance` — both skills updated; source conformance/challenge complete, other-session evidence and runtime behavior unverified; not user-accepted.
 
 - Design acceptance and agent-specific outcome evidence: `mem:tasks/design-health-20261015/task` — Algotrap incident sample and scoped routing cautions; no model-wide ranking or profile demotion, not user-accepted.

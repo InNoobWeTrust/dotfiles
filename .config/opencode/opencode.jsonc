@@ -21,22 +21,6 @@
   },
   "mcp": {
     "servers": {
-      "rea": {
-        "type": "local",
-        "command": ["npx", "-y", "rea-agents@6.4.0", "mcp"],
-        "disabled": true,
-      },
-      "decisions": {
-        "type": "local",
-        "command": [
-          "mcp-decisions"
-        ],
-        "timeout": {
-          "startup": 30000,
-          "catalog": 10000,
-          "execution": 130000,
-        },
-      },
       "sandbox": {
         "type": "local",
         "command": [
@@ -50,29 +34,33 @@
           "mcp-delegate"
         ],
       },
-      "chrome-devtools": {
+      "decisions": {
+        "type": "local",
+        "command": [
+          "mcp-decisions"
+        ],
+        "timeout": {
+          "startup": 30000,
+          "catalog": 10000,
+          "execution": 130000,
+        },
+      },
+      "lsp": {
+        "type": "local",
+        "command": [
+          "mcp-lsp"
+        ],
+        "disabled": false,
+      },
+      "rea": {
         "type": "local",
         "command": [
           "npx",
           "-y",
-          "chrome-devtools-mcp@latest",
-          "--no-usage-statistics",
-          "--browser-url=http://localhost:19222"
+          "rea-agents@6.4.0",
+          "mcp"
         ],
         "disabled": true,
-      },
-      "serena": {
-        "type": "local",
-        "command": [
-          "uvx",
-          "-p",
-          "3.13",
-          "--from",
-          "serena-agent",
-          "serena",
-          "start-mcp-server",
-          "--project-from-cwd"
-        ],
       },
     },
   },

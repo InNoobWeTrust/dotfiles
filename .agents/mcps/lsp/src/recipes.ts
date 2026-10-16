@@ -1,0 +1,167 @@
+import type { Recipe } from "./discovery.ts"
+
+// Fixed, documentation-grounded launch recipes, not an installer or runtime scan.
+export const recipes: Recipe[] = [
+  {
+    id: "typescript",
+    name: "typescript-language-server",
+    executables: ["typescript-language-server"],
+    args: ["--stdio"],
+    languageIds: ["javascript", "typescript", "javascriptreact", "typescriptreact"],
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
+    caveat:
+      "Requires TypeScript/tsserver. Vue scripts need an explicitly configured @vue/typescript-plugin.",
+  },
+  // Python preference order is preserved by discovery; starting remains explicit.
+  {
+    id: "ty",
+    name: "ty",
+    executables: ["ty"],
+    args: ["server"],
+    languageIds: ["python"],
+    extensions: [".py", ".pyi"],
+  },
+  {
+    id: "pyrefly",
+    name: "pyrefly",
+    executables: ["pyrefly"],
+    args: ["lsp"],
+    languageIds: ["python"],
+    extensions: [".py", ".pyi"],
+  },
+  {
+    id: "pyright",
+    name: "pyright",
+    executables: ["pyright-langserver"],
+    args: ["--stdio"],
+    languageIds: ["python"],
+    extensions: [".py", ".pyi"],
+    caveat: "Interpreter/environment resolution may require settings.",
+  },
+  {
+    id: "basedpyright",
+    name: "basedpyright",
+    executables: ["basedpyright-langserver"],
+    args: ["--stdio"],
+    languageIds: ["python"],
+    extensions: [".py", ".pyi"],
+  },
+  {
+    id: "rust",
+    name: "rust-analyzer",
+    executables: ["rust-analyzer"],
+    args: [],
+    languageIds: ["rust"],
+    extensions: [".rs"],
+    caveat: "Non-Cargo projects need rust-project.json or linkedProjects.",
+  },
+  {
+    id: "go",
+    name: "gopls",
+    executables: ["gopls"],
+    args: [],
+    languageIds: ["go", "gomod", "gowork"],
+    extensions: [".go", "go.mod", "go.work"],
+  },
+  {
+    id: "bash",
+    name: "bash-language-server",
+    executables: ["bash-language-server"],
+    args: ["start"],
+    languageIds: ["shellscript", "bash", "sh"],
+    extensions: [".sh", ".bash"],
+    caveat: "Not zsh. shellcheck/shfmt are optional external tools.",
+  },
+  {
+    id: "dockerfile",
+    name: "dockerfile-language-server",
+    executables: ["docker-langserver"],
+    args: ["--stdio"],
+    languageIds: ["dockerfile"],
+    extensions: ["Dockerfile", ".dockerfile"],
+  },
+  {
+    id: "markdown",
+    name: "marksman",
+    executables: ["marksman"],
+    args: ["server"],
+    languageIds: ["markdown"],
+    extensions: [".md"],
+    caveat: "Cross-file features need git workspace or .marksman.toml.",
+  },
+  {
+    id: "typst",
+    name: "tinymist",
+    executables: ["tinymist"],
+    args: [],
+    languageIds: ["typst"],
+    extensions: [".typ"],
+  },
+  {
+    id: "makefile",
+    name: "autotools-language-server",
+    executables: ["autotools-language-server"],
+    args: [],
+    languageIds: ["make", "automake"],
+    extensions: ["Makefile", ".mk"],
+    caveat: "Bare stdio launch documented by nvim-lspconfig; not locally runtime-verified.",
+  },
+  {
+    id: "yaml",
+    name: "yaml-language-server",
+    executables: ["yaml-language-server"],
+    args: ["--stdio"],
+    languageIds: ["yaml"],
+    extensions: [".yaml", ".yml"],
+    caveat: "Kubernetes schemas require configuration; schema stores can fetch network resources.",
+  },
+  {
+    id: "json",
+    name: "json-lsp",
+    executables: ["vscode-json-language-server"],
+    args: ["--stdio"],
+    languageIds: ["json", "jsonc"],
+    extensions: [".json", ".jsonc"],
+  },
+  {
+    id: "html",
+    name: "html-lsp",
+    executables: ["vscode-html-language-server"],
+    args: ["--stdio"],
+    languageIds: ["html"],
+    extensions: [".html"],
+  },
+  {
+    id: "css",
+    name: "css-lsp",
+    executables: ["vscode-css-language-server"],
+    args: ["--stdio"],
+    languageIds: ["css", "scss", "less"],
+    extensions: [".css", ".scss", ".less"],
+  },
+  {
+    id: "vue",
+    name: "vue-language-server",
+    executables: ["vue-language-server"],
+    args: ["--stdio"],
+    languageIds: ["vue"],
+    extensions: [".vue"],
+    caveat:
+      "Modern Vue hybrid TS features need companion TS server/plugin; no automatic cross-server routing.",
+  },
+  {
+    id: "tailwind",
+    name: "tailwindcss-language-server",
+    executables: ["tailwindcss-language-server"],
+    args: ["--stdio"],
+    languageIds: ["html", "css", "javascriptreact", "typescriptreact", "vue"],
+    extensions: [".html", ".css", ".jsx", ".tsx", ".vue"],
+    caveat: "Requires recognizable Tailwind workspace/configuration; v4 differs from v3.",
+  },
+]
+
+// Mason package identity, not a Neovim alias or executable name. Session IDs stay separate.
+export function wrapperName(serverName: string, method: string): string {
+  const normalize = (value: string) => value.replace(/[^A-Za-z0-9]/g, "_")
+  return `lsp_${normalize(serverName)}_${normalize(method)}`
+}

@@ -11,6 +11,7 @@
 /mcps/*
 !/mcps/delegate/
 !/mcps/decisions/
+!/mcps/lsp/
 !/mcps/sandbox/
 !/mcps/shared/
 !/plugins/

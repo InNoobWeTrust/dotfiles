@@ -45,14 +45,14 @@ export VISUAL="$EDITOR"
 
 # starship
 if usable starship; then
-    eval "$(starship init "$(basename "$SHELL")")"
+    eval "$(starship init "${SHELL##*/}")"
 fi
 
 # nodenv
 usable nodenv && eval "$(nodenv init -)"
 
 # direnv
-usable direnv && eval "$(direnv hook "$(basename "$SHELL")")"
+usable direnv && eval "$(direnv hook "${SHELL##*/}")"
 
 # cliproxyapi hook
 if usable cliproxyapi; then
