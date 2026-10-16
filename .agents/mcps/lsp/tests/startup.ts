@@ -26,14 +26,21 @@ const deadline = setTimeout(() => {
 }, 20000)
 try {
   await client.connect(transport)
-  assert.deepEqual((await client.listTools()).tools.map((tool) => tool.name).sort(), [
+  const initialTools = (await client.listTools()).tools.map((tool) => tool.name).sort()
+  const result = await client.callTool({ name: "discover", arguments: {} })
+  assert.notEqual(result.isError, true)
+  const discovered = JSON.parse((result.content as { text: string }[])[0]?.text ?? "null") as {
+    astGrep: { available: boolean; supported: boolean }
+  }
+  assert.deepEqual(initialTools, [
+    ...(discovered.astGrep.available && discovered.astGrep.supported
+      ? ["ast_grep_discover", "ast_grep_search"]
+      : []),
     "discover",
     "events",
     "start",
     "stop",
   ])
-  const result = await client.callTool({ name: "discover", arguments: {} })
-  assert.notEqual(result.isError, true)
   console.log(`PASS executable startup, initialize, tools/list and discover: ${command}`)
 } finally {
   await transport.close()

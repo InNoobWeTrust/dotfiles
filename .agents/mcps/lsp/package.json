@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "bun --no-env-file src/server.ts",
-    "test": "bun --no-env-file tests/e2e.ts && bun --no-env-file tests/startup.ts",
+    "test": "bun --no-env-file tests/ast-grep.ts && bun --no-env-file tests/e2e.ts && bun --no-env-file tests/startup.ts",
     "format": "bunx --bun --package @biomejs/biome@2.5.15 biome format --write .",
     "check": "bunx --bun --package @biomejs/biome@2.5.15 biome check ."
   }

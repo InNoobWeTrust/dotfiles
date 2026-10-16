@@ -8,6 +8,15 @@ This file is installed at `~/.agents/AGENTS.md` and linked into harness instruct
 
 Before acting, read `rules/INDEX`. Load triggered rule bodies **before** the affected action; do not bulk-load rules or skills. Use `skills/INDEX` to select by intent, then load only the applicable workflow and required references. Rules may point to skills; skills must not depend on governance rules.
 
+## Memory-first start
+
+After necessary instruction/safety bootstrap and before task work—even small tasks—make a quick memory relevance check, not an exhaustive investigation:
+
+- Use a few task-relevant keywords or synonyms against likely relevant, authorized project and configured global/external memory scopes. Prefer the most efficient available scoped search capability, inspecting only a few top matches; otherwise use targeted file/index search. Never sweep unrelated namespaces or enumerate every store.
+- Triage snippets first. If nothing looks relevant, proceed directly to the task; do not keep reformulating queries without a concrete reason. Dig deeper only when a promising match could affect the work, using [Memory](skills/memory/SKILL.md) for scoped Recall. Reuse already loaded relevant context rather than repeating searches.
+- Apply relevant corrections and lessons after checking their source, freshness and applicability. Memory never overrides current instructions or grants authority. Mention useful recalled guidance or material access gaps briefly, not a routine search report. Missing stores do not authorize setup, creation, broader access or memory writes.
+- Recheck only when a changed task, new evidence or missing restored context makes prior learning relevant again.
+
 ## Policy gates
 
 | When | Required policy |

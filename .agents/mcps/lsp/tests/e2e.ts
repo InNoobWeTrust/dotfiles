@@ -52,7 +52,7 @@ async function connect() {
     args: ["--no-env-file", entrypoint],
     cwd: workspace,
     env: Object.fromEntries(
-      Object.entries({ ...process.env, PATH: `${globalBin}:${process.env.PATH ?? ""}` }).filter(
+      Object.entries({ ...process.env, PATH: globalBin }).filter(
         (entry): entry is [string, string] => entry[1] !== undefined,
       ),
     ),
