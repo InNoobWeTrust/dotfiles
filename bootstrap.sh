@@ -71,7 +71,7 @@ eval "$STOW_COMMAND -d '$SCRIPT_DIR' . -t ~ --dotfiles --no-folding $STOW_IGNORE
     exit 1
 }
 
-# Pixi sync reads its live manifest (it has no --manifest flag).
+# Pixi global commands read the live manifest (they have no --manifest flag).
 if command -v pixi >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.pixi/manifests/pixi-global.toml" ]; then
     pixi_manifest="$HOME/.pixi/manifests/pixi-global.toml"
     repo_manifest="$SCRIPT_DIR/.pixi/manifests/pixi-global.toml"
@@ -94,10 +94,16 @@ if command -v pixi >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.pixi/manifests/pixi-glo
             exit 1
         }
     fi
-    printf '\n%s\n' "Syncing Pixi global environments..."
-    pixi global sync || {
-        echo "Error: Pixi global sync failed; check connectivity or rerun when online (manifest: $pixi_manifest)." >&2
+    # Targeted update installs missing environments too; sync cannot select them.
+    # Keep this required list aligned with the manifest; only lsps is optional.
+    printf '\n%s\n' "Installing/updating required Pixi global environments..."
+    pixi global update core-utils dev db system-tools || {
+        echo "Error: required Pixi environments failed; check connectivity or rerun when online (manifest: $pixi_manifest)." >&2
         exit 1
+    }
+    printf '\n%s\n' "Installing/updating optional Pixi LSP environment..."
+    pixi global update lsps || {
+        echo "Warning: optional Pixi LSP environment failed (packages may be unavailable on this platform); continuing without guaranteed LSP availability. Retry with: pixi global update lsps" >&2
     }
     # Keep the five newest backups by filename timestamp, not preserved mtime.
     (

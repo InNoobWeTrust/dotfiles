@@ -16,3 +16,16 @@ exposed = { gh = "gh", act = "act", lazydocker = "lazydocker", k9s = "k9s", bun 
 channels = ["conda-forge"]
 dependencies = { visidata = "*", harlequin = "*" }
 exposed = { vd = "vd", visidata = "visidata", harlequin = "harlequin", hsql = "hsql" }
+
+[envs.system-tools]
+channels = ["conda-forge"]
+dependencies = { btop = "*" }
+exposed = { btop = "btop" }
+
+# Optional in bootstrap.sh; manual `pixi global sync` still requires this environment.
+[envs.lsps]
+channels = ["conda-forge"]
+# Typst, Rust, Python, JS/TS, shell, TOML, YAML, and web/config languages.
+# Include TypeScript itself for typescript-language-server; keep Node on the dev release line.
+dependencies = { tinymist = "*", rust-analyzer = "*", ty = "*", ruff = "*", typescript-language-server = "*", typescript = "*", nodejs = ">=22,<25", bash-language-server = "*", shellcheck = "*", yaml-language-server = "*", taplo = "*", vscode-langservers-extracted = "*" }
+exposed = { tinymist = "tinymist", rust-analyzer = "rust-analyzer", ty = "ty", ruff = "ruff", typescript-language-server = "typescript-language-server", bash-language-server = "bash-language-server", shellcheck = "shellcheck", yaml-language-server = "yaml-language-server", taplo = "taplo", vscode-json-language-server = "vscode-json-language-server", vscode-html-language-server = "vscode-html-language-server", vscode-css-language-server = "vscode-css-language-server", vscode-eslint-language-server = "vscode-eslint-language-server", vscode-markdown-language-server = "vscode-markdown-language-server" }
