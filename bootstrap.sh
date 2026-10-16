@@ -118,6 +118,11 @@ if command -v pixi >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.pixi/manifests/pixi-glo
     }
 fi
 
+# Optional Bash line editor; shell startup itself never downloads dependencies.
+bash "$SCRIPT_DIR/.sh.d/utils/install-blesh.sh" || {
+    echo "Warning: ble.sh installation failed; Bash autosuggestions are unavailable. Retry: bash '$SCRIPT_DIR/.sh.d/utils/install-blesh.sh'" >&2
+}
+
 # Load .shrc from shell config file by checking default shell
 printf '\n%s\n' "Set autoload of .shrc from shell config file..."
 if [ -n "$ZSH_VERSION" ] && [ -z "$CONF_SH_DIR" ]; then

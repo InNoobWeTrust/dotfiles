@@ -10,6 +10,11 @@ export CONF_SH_DIR="$HOME/.sh.d"
 # Custom environment
 [ -r "$HOME/.vars.user" ] && . "$HOME/.vars.user"
 
+# ble.sh must load before prompt/completion hooks, and attach after user config.
+if [ -n "$BASH_VERSION" ] && [ -r "$CONF_SH_DIR/.bash.d/blesh.bash" ]; then
+    . "$CONF_SH_DIR/.bash.d/blesh.bash"
+fi
+
 # Function definitions.
 # shellcheck source=.sh.d/func.sh
 [ -r "$CONF_SH_DIR/func.sh" ] && . "$CONF_SH_DIR/func.sh"
@@ -57,3 +62,7 @@ fi
 
 # Custom definitions
 [ -r "$HOME/.shrc.user" ] && . "$HOME/.shrc.user"
+
+if [ -n "$BASH_VERSION" ] && [ -n "${BLE_VERSION-}" ]; then
+    case $- in *i*) ble-attach ;; esac
+fi

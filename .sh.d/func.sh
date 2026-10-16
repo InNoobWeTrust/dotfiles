@@ -183,7 +183,9 @@ gh_codespace() {
 # # batch_open - open links in batches
 # # usage: batch_open [file_contain_links] [batch_size] [start] [browser]
 # # Uses the system default browser; optional browser is an executable on Linux.
-batch_open() {
+batch_open() (
+    # Keep cancellation explicit (including during read) without changing caller traps.
+    trap 'exit 130' INT
     local f size start browser links_all len s links 2>/dev/null || true
 
     f=${1:-links.txt}
@@ -234,7 +236,7 @@ batch_open() {
         # NUL delimiters preserve URL quotes and backslashes literally.
         printf '%s\n' "$links" | tr '\n' '\000' | "$@" || return $?
     done
-}
+)
 
 #
 # # browser_debug - Start browser for debugging (terminal-browser with SSH mode or Chrome fallback)
