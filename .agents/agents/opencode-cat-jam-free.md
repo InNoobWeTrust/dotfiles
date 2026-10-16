@@ -1,5 +1,5 @@
 ---
-description: "Text-based reasoning, coding and technical problem solving, including explanations, implementation and analysis."
+description: "Low-latency coding and text-based reasoning across large contexts, including repository analysis, tool-driven implementation and structured extraction."
 mode: subagent
 model: "opencode/cat-jam-free"
 permission:
