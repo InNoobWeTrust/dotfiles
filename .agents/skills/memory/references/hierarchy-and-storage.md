@@ -4,85 +4,17 @@ Every read or write goes through this file first. Storage layout, filename rules
 
 ---
 
-## Resolve Memory Backend & `MEMORY_DIR`
+## Resolve scope and `MEMORY_DIR`
 
-Run once per invocation. Print the resolved backend and path before any file operation. Always prefer an **existing repo-local, file-based memory system** (such as Serena) over creating duplicate infrastructure.
+Load [Scopes](scopes.md) before any operation. Project knowledge is managed directly in `<git-root>/.agents/memories/` (`MEMORY_BACKEND=project-files`). Prefer an available external-memory capability for short-lived or sensitive shared-global, harness-global, repository-private, repository-task and harness-session context; direct access to an explicitly selected external directory works without any integration (`MEMORY_BACKEND=resolved-files`). All global/shared notes use the same external store, never `~/.agents/memories/`. No MCP dependency, opaque authority or implicit store switching.
 
-```
-if git rev-parse --show-toplevel succeeds:
-    if <git-root>/.serena/memories exists or serena MCP is available:
-        MEMORY_BACKEND = serena
-        MEMORY_DIR = <git-root>/.serena/memories
-    elif <other-repo-local-file-memory-exists>:
-        MEMORY_BACKEND = custom
-        MEMORY_DIR = <custom-path>
-    else:
-        MEMORY_BACKEND = default
-        MEMORY_DIR = <git-root>/.agents/memories
-else:
-    MEMORY_BACKEND = default
-    MEMORY_DIR = ~/.agents/memories
-```
+Resolve only the selected scope and required identities; print scope and selected absolute path. Missing integration does not block direct-file operation; missing identity or an inaccessible selected root blocks only affected persistence. Do not create a second store inside Git. Root paths are host-local; remote files need an explicitly shared filesystem for direct editing.
 
-### Backend Selection & Behavior
+Project layout: `core.md`/`README.md` → `knowledge/<topic>.md`, approved `long-term/INDEX.md` → bucket/topic files. Private scopes may use `short-term/`, `plans/`, `consensus/`, `long-term/` and `archive/` as needed. Create only the needed subtree, not an empty scaffold.
 
-#### 1. Serena Backend (`MEMORY_BACKEND = serena`)
-When the repository already maintains a Serena file-based memory system under `<git-root>/.serena/memories/`:
-- **Single Source of Truth**: Do not create or scaffold duplicate `.agents/memories/`. Use `.serena/memories/` exclusively.
-- **Discovery Root**: `core.md` (`mem:core`) serves as the graph root, pointing to `knowledge/`, `tasks/`, `plans/`, and other entries via `` `mem:<path>` `` references. Recall starts at `core.md` and loads only the relevant subtree, not the entire store.
-- **Storage Layout**: Hierarchical directories inside `<git-root>/.serena/memories/`:
-  - Domain knowledge: `knowledge/<topic>.md`
-  - Task memory: `tasks/<task-id>/task.md`, `tasks/<task-id>/request.md`, `tasks/<task-id>/plan.md`
-  - Role checkpoints (append-only): `tasks/<task-id>/roles/<role-id>.md`
-  - Task-local phases (optional): `tasks/<task-id>/phases/<##>-<slice>.md`
-  - Task-local consensus (optional): `tasks/<task-id>/consensus/<topic-slug>.md`
-  - Standalone feature plans: `plans/<feature-slug>/plan.md`, `plans/<feature-slug>/phases/<##>-<slice>.md`
-  - Session checkpoints: `short-term/<created-stamp>--<branch>--<topic>.md`
-  - Approved long-term: `long-term/INDEX.md` and bucket files
-- **Nested Names**: Serena `read_memory`/`write_memory` accept slash-separated names (e.g., `tasks/company-roles-20261010/roles/protocol-maintainer`). Use these when Serena MCP tools are active; use file paths directly for native read/write.
-- **Reference-Aware Moves**: When renaming or moving an entry, use Serena's reference-aware rename to preserve content, history, and pointer integrity; repair all known discovery pointers in the same operation. When tooling cannot update a known reference (e.g., a pointer resides in a read-only or third-party file), perform bounded manual repair on writable files that hold the old path — never bypass read-only permissions to force the update. Verify all live pointers resolve to the new path before declaring the move complete; a move that leaves a broken pointer graph is incomplete.
-- **Capture**: Write or update files at their canonical hierarchical path (or call Serena MCP `write_memory` with the nested name). When adding a new entry, register a pointer in `core.md` or the relevant parent. Do not rewrite existing knowledge entries; append subsequent evidence.
-- **Recall**: Read `core.md` to discover available pointers, navigate to the relevant subtree, and load only the needed entries (or call Serena MCP `read_memory` by nested name).
-- **Conventions**: Follow `memory_maintenance.md` style — dense invariant bullets, durable non-obvious conventions, zero conversational filler.
+A selected task root is the task directory itself: `TASK_DIR=MEMORY_DIR`, with `task.md`, `request.md`, `plan.md`, `roles/`, optional `phases/` and `consensus/`. In the templates below, historical `tasks/<task-id>/...` means this logical task subtree; do not append another task directory. Sessions contain `scratchpad.md` and optional role/consensus leaves. New notes include scope identity metadata per Scopes; existing records retain provenance and approval state during migration.
 
-#### 2. Default Backend (`MEMORY_BACKEND = default`)
-Used as fallback when no established repo-local memory system exists.
-Maintains the structured file-based layout:
-```
-<MEMORY_DIR>/
-├── README.md                    # directory protocol
-├── short-term/                  # session checkpoints + working notes
-│   └── archive/                # done / merged session entries
-├── tasks/                       # task records, role checkpoints, task-local phases
-│   └── <task-id>/
-│       ├── task.md, request.md, plan.md
-│       └── roles/
-│           └── <role-id>.md     # append-only role checkpoints
-├── plans/                       # atomic feature plans and execution phase specs
-│   └── <feature-slug>/
-│       ├── plan.md              # atomic plan index (scoped boundaries, locked contracts)
-│       └── phases/              # sequential vertical slice phase files
-│           ├── 01-<slice>.md
-│           └── 02-<slice>.md
-├── consensus/                   # inter-agent consensus boards & deliberation records
-│   └── <topic-slug>.md
-├── long-term/                   # size-limited, INDEX-gated curated memory
-│   ├── INDEX.md
-│   ├── project.md
-│   ├── environment.md
-│   ├── corrections.md
-│   └── topics/                 # created on first topic write, not pre-scaffolded
-└── archive/                    # evicted long-term entries only (not session archive)
-```
-
-Never scan a `MEMORY_DIR` outside the repo when working in a repo unless the user asks for global memory explicitly.
-
-### File-Based, Human-Traceable, Git-Committable Invariant
-Storing agent-focused documents in memory does **not** permit opaque, binary, or ephemeral storage:
-1. **Plain Text-Based**: All short-term notes, plans, phases, consensus boards, and long-term bucket files must be stored as plain Markdown (`.md`) files with clean YAML frontmatter.
-2. **Human-Traceable**: Files must use human-readable markdown tables and clear headings so developers can inspect, audit, or edit them directly at any time.
-3. **Git-Committable**: Content must generate clean text diffs. Repositories may commit `plans/`, `consensus/`, and `long-term/` to Git when team tracking of feature progression or agent consensus is desired. Transient scratch files remain in `.agents/memories/short-term/` or Conversation Scratch space.
-
+All authoritative entries remain Markdown with YAML frontmatter. Direct edits are supported; indexes are disposable and must be rebuilt/refreshed by the search capability. Text format permits human review, not permission to commit private/task/session notes. Never scan another scope merely because its directory is reachable. Discovery begins at the selected root's entry point and loads only relevant leaves; repair active pointers after moves, and report pre-existing missing sources separately.
 
 ---
 
@@ -278,7 +210,7 @@ When in doubt, leave it in short-term. Consolidate promotes only what clears thi
 
 ### Maintenance — rename and stale-pointer hygiene
 
-- **Rename**: when an entry key, topic file, or index row is renamed, use the environment's reference-aware migration tool if one exists; otherwise search `long-term/` and every index for the old name and update all pointers in the same commit. Never rename in isolation.
+- **Rename**: when an entry key, topic file, or index row is renamed, use the environment's reference-aware migration tool if one exists; otherwise search the selected scope's `long-term/` and indexes for the old name and update its active pointers in the same bounded change. External memory does not require a Git commit. Never rename in isolation or sweep unrelated scopes.
 - **Delete**: after removing any entry, scan `long-term/INDEX.md` and all bucket/topic files for pointers to the deleted key. Remove or redirect stale rows before the next dream cycle.
 
 ---
@@ -347,28 +279,15 @@ updated: 2026-10-03T20:15:00+07:00
 
 Use when the user explicitly asks to save a checkpoint, note, plan, or working state.
 
-1. Resolve `MEMORY_BACKEND` and `MEMORY_DIR`.
-2. **When using Serena (`MEMORY_BACKEND = serena`)**:
-   - For **existing** domain knowledge entries at `knowledge/<topic>.md`: update in place (or call Serena MCP `write_memory` with name `knowledge/<topic>`). Relocating an entry to `knowledge/` preserves its existing status, frontmatter, and body as-is — it does not promote or reclassify the entry. Ensure `core.md` references the entry.
-   - For **new** working facts, in-progress decisions, or session observations: write to the task-role entry (`tasks/<task-id>/roles/<role-id>.md`) or `short-term/` first. Do not write new working captures directly to `knowledge/` or `long-term/`; promotion to a durable `knowledge/` or long-term entry requires the Consolidate workflow and explicit human approval.
-   - For task records: write to `<MEMORY_DIR>/tasks/<task-id>/{task,request,plan}.md` as appropriate.
-   - For role checkpoints (append-only): write to `<MEMORY_DIR>/tasks/<task-id>/roles/<role-id>.md`.
-   - For task-local phases or consensus boards: write to `<MEMORY_DIR>/tasks/<task-id>/phases/` or `tasks/<task-id>/consensus/`.
-   - For standalone feature plans: write to `<MEMORY_DIR>/plans/<feature-slug>/plan.md`; phases under `plans/<feature-slug>/phases/<##>-<slice>.md`.
-   - For session state or working notes: write to `<MEMORY_DIR>/short-term/<created-stamp>--<branch>--<topic>.md`, or append to an existing task-role entry (`tasks/<task-id>/roles/<role-id>.md`) when the work belongs to a specific role within a task.
-   - For temporary scratchpad/in-progress notes with no durable scope: maintain in conversation context.
-   - Print: backend (`serena`), hierarchical file path or nested memory name, whether `core.md` or a parent index was updated.
-3. **When using Default (`MEMORY_BACKEND = default`)**:
-   - **If `MEMORY_DIR` does not exist, create the required directory structure** (`short-term/`, `plans/`, `consensus/`, `long-term/`, `archive/`) now.
-   - **Decide destination by content type**:
-     - **Session state / Working notes** → `short-term/<created-stamp>--<branch>--<topic>.md`.
-     - **Task record or role checkpoint** → `tasks/<task-id>/{task,request,plan}.md` or `tasks/<task-id>/roles/<role-id>.md`; follow `references/task-role-records.md` for schema and append-only checkpoint format.
-     - **Atomic feature plan** → `plans/<feature-slug>/plan.md`.
-     - **Vertical slice phase spec** → `plans/<feature-slug>/phases/<##>-<slice-name>.md`.
-     - **Inter-agent consensus board** → `consensus/<topic-slug>.md`.
-     - **Durable fact / decision** → write to `short-term/` first (scored and promoted on Consolidate).
-   - Look up existing entry by glob and update or create with timestamp.
-   - Print: backend (`default`), file path, sections touched, whether Consolidate is pending.
+1. Choose scope and resolve `MEMORY_BACKEND`/`MEMORY_DIR` using Scopes. For a task also bind `TASK_DIR=MEMORY_DIR`.
+2. Select the smallest destination:
+   - Session working state → session `scratchpad.md` or `short-term/<created-stamp>--<branch>--<topic>.md` in the selected external scope.
+   - Task request/plan/role checkpoint → `TASK_DIR/{task,request,plan}.md` or `TASK_DIR/roles/<role-id>.md`; follow [task-role records](task-role-records.md).
+   - Task phases/consensus → `TASK_DIR/phases/` or `TASK_DIR/consensus/`. Do not duplicate role working state in flat short-term notes.
+   - Standalone private feature plans → selected private scope `plans/<feature-slug>/plan.md` with optional phases.
+   - New durable candidate → selected external short-term/role entry first. Promotion into project `knowledge/` or any long-term bucket needs requested Consolidate plus human approval. Existing knowledge moves preserve status/body and do not promote it.
+3. Create only required directories, append the capture with normal frontmatter plus scope identity, and register a scope-local pointer when needed. Keep raw task/private pointers out of the project index.
+4. Print scope, file paths, sections touched and whether consolidation is pending. Do not change accepted/consolidated markers as a side effect.
 
 Never treat Capture as a Consolidate trigger. Consolidate has its own rules in `references/dream-cycle.md`.
 Never dump atomic feature plans, slice phase files, or consensus boards into `docs/` — they must always land in `MEMORY_DIR`.
@@ -380,20 +299,11 @@ Never dump atomic feature plans, slice phase files, or consensus boards into `do
 
 Use when the user asks to restore, resume, load context, or lists prior notes.
 
-1. Resolve `MEMORY_BACKEND` and `MEMORY_DIR`. If `MEMORY_DIR` does not exist, report **"No memory directory found — this workspace has no prior memory. Use Capture mode to start recording."** and return.
-2. **When using Serena (`MEMORY_BACKEND = serena`)**:
-   - Read `core.md` (`mem:core`) to discover available pointers to domain knowledge, tasks, plans, and other entries.
-   - Navigate to the relevant subtree: e.g., `tasks/<task-id>/` for task memory, `knowledge/<topic>` for domain entries, `plans/<feature-slug>/` for feature plans. Do not load the entire store; select only what the query requires.
-   - Nested names are supported: e.g., `mem:tasks/company-roles-20261010/roles/protocol-maintainer` loads the maintainer role entry directly.
-   - When multiple entries are relevant: load the clearly relevant set autonomously when the intent is deterministic (e.g., restore a task's task/plan/role entries when the task-id is known). Ask the user only when the choice depends on genuinely unresolved user intent — for example, two distinct topic areas match and the selection determines which workstream to resume.
-   - Print the matching memory content or summaries.
-3. **When using Default (`MEMORY_BACKEND = default`)**:
-   - Choose search scope: explicit path, current branch (`short-term/*--<branch-slug>--*.md`), task-role entry (`tasks/<task-id>/roles/<role-id>.md` for a known task-role pair), recent work summary, topic query via `long-term/INDEX.md`, or similar-trace query via `references/compaction-and-step-recall.md`.
-   - If `short-term/` and `long-term/` both exist but contain no matching entries, report **"Memory directory exists but no entries match. Use Capture mode to record new knowledge."**
-   - If multiple active short-term entries match, present summaries and ask which to load. Do not silently pick one.
-   - Parse the selected file. Print Goal, Current Status, Key Decisions, Next Steps, Blockers. Long-term reads print the matching rows plus their bucket entries.
-
-4. **Authority**: When using a file-based repo-local system (like Serena) or default `.agents/memories/`, the repo-local files are the source of truth. Do not delegate recall to external ungrounded environment stores.
+1. Choose scope/identities and resolve the root. Missing selected scope means no prior memory there; never search a broader scope automatically.
+2. Read its `core.md`, `README.md` or `long-term/INDEX.md` when present, then select only relevant leaves. Task restoration reads `TASK_DIR/{task,plan}.md` and the bound role before task sources. Session quorum recall uses the originating harness-session pair.
+3. Search only that scope/subdirectory: optional scoped BM25 for text relevance; ordinary file/shell tools are sufficient for reading, names and literal patterns. For similar traces load [compaction and step recall](compaction-and-step-recall.md). Do not union external namespaces or load every file.
+4. Verify matching Markdown sources and provenance, not just ranking. Report no matches explicitly. Load clearly relevant matches autonomously; ask only when unresolved user intent decides between distinct tasks/topics. Print minimal useful summaries (goal/status/decisions/next steps/blockers), not unrelated private context.
+5. Files in the resolved scope are authoritative; external/vendor indexes or model recollection cannot override their facts or approval gates.
 
 ---
 
@@ -423,4 +333,3 @@ Use when the user asks to restore, resume, load context, or lists prior notes.
 - [ ] Stored in file-based, human-traceable, git-committable plain Markdown.
 - [ ] File path + affected sections printed.
 - [ ] Frontmatter valid; `updated` bumped; `consolidated: false` on writes to short-term.
-

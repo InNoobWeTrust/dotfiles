@@ -142,4 +142,4 @@ docs/
 Placed directly inside each code package or subsystem directory (e.g. `src/auth/README.md`, `packages/parser/README.md`) to document module role, mental model, primary usage, exported abstractions, and invariants at the appropriate abstraction level.
 
 ### Agent Coordination Memory (`MEMORY_DIR` — Not `docs/`)
-Atomic execution plans, vertical slice phase files (`phases/01-*.md`), consensus boards, and session checkpoints live under `MEMORY_DIR` (`.agents/memories/`, `.serena/memories/`), preserving clean human documentation while keeping internal agent tracking file-based and git-committable.
+Atomic execution plans, vertical slice phase files (`phases/01-*.md`), consensus boards, and session checkpoints live under the selected external `MEMORY_DIR` resolved per the memory skill, not the project knowledge directory or `docs/`. Internal tracking stays Markdown and human-traceable without leaking raw task context into Git.

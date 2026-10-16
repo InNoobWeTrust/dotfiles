@@ -9,7 +9,8 @@
 | [Global harness instructions](./harness-safety.md) | Shared native instructions, sandbox/container tools, delegation, and resource boundaries | Installing instructions across harnesses or configuring execution and delegation |
 | [Container lifecycle failure case](./container-lifecycle-context-leakage.md) | Observed Podman/MCP lifecycle boundary failure and repair evidence | Diagnosing host lifecycle effects versus isolated workload execution |
 | [Installing skills via npx](./installing-skills.md) | Installing skills via `npx skills add` & pairing with rules | Installing skills in new or existing repos |
-| [Serena MCP setup](./serena-mcp-setup.md) | Setting up `serena-mcp` for semantic code context & LSP search | Boosting agents with symbol indexing & AST context |
+| [LSP MCP](../../mcps/lsp/README.md) | Installed language-server discovery and native LSP tools | Configuring code navigation and diagnostics |
+| [Remote-memory MCP](../../mcps/remote-memory/README.md) | External memory paths and scoped text/CSV BM25 search | Configuring optional external-memory and retrieval capabilities |
 | [Why rules and skills exist](./why-rules-and-skills.md) | Mental model: rules constrain, skills direct | Starting the section |
 | [Essential policies](./essential-rules.md) | The seven always-on policies, plus the methods that moved into skills | Implementing a baseline rule set |
 | [Nice-to-have rules](./nice-to-have-rules.md) | Memory, discovery, routing optional rules | Expanding beyond baseline |

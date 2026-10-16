@@ -45,7 +45,7 @@ export const delegateInputSchema = {
     .min(1)
     .refine(notAnOption, optionSafe("prompt"))
     .describe(
-      "Complete, self-contained instructions for the external AI subagent: the goal, necessary context, allowed actions, exact paths, acceptance criteria, and output format. No parent conversation, follow-up, or resumable session is supplied. Passed literally as one argv element that is not interpreted by a shell; it allows at most 64 KiB of UTF-8 bytes, cannot start with '-', and text that looks like shell syntax is passed through unchanged.",
+      "Complete, self-contained instructions for the external AI subagent: the goal, necessary context, allowed actions, exact paths, acceptance criteria, and output format. For image generation with agy or codex, an explicit absolute output file path is required in the prompt: obtain it from the caller before launching if missing, and require saving the image there and returning the actual path or a failure report. No parent conversation, follow-up, or resumable session is supplied. Passed literally as one argv element that is not interpreted by a shell; it allows at most 64 KiB of UTF-8 bytes, cannot start with '-', and text that looks like shell syntax is passed through unchanged.",
     ),
   workdir: z
     .string()

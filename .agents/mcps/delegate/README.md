@@ -93,6 +93,30 @@ Select `"harness": "agy"` in `delegate_run`. Omit `model` to use AGY's default,
 or choose a native model slug from `agy models`; that catalog is not login proof.
 An empty status `models` list means no verified model allowlist, not no models.
 
+### Image generation with AGY or Codex
+
+`agy` and `codex` can generate images using their native capabilities when
+available for the installed CLI and account. See Google's
+[image-generation tool](https://antigravity.google/docs/sdk/tools/) and OpenAI's
+[Codex image-generation guide](https://developers.openai.com/codex/image-generation.md).
+Readiness inspection does not verify image access or headless image generation.
+
+**Before delegating, obtain an explicit absolute output file path from the caller
+if missing, and include it in the worker's prompt.** Require the worker to save
+the image there and return its actual absolute path, or report a capability/save
+failure without claiming success. For example, after the caller supplies the path:
+
+> Generate the requested image using your native image-generation capability.
+> Save it to `/absolute/output/banner.png` and return the actual absolute file path.
+> If image generation or saving is unavailable, report the failure; do not claim
+> that an image was saved.
+
+Delegate returns text and retained stdout/stderr, not image attachments. Existing
+permission, quota, billing and service-terms constraints still apply; image
+capability is not authorization. In particular, check
+[Antigravity terms §6](https://antigravity.google/terms) before using a third-party
+wrapper; the presence of a native tool does not establish that such use is allowed.
+
 ## First delegation
 ### Headless web research
 

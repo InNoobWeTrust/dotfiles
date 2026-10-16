@@ -59,10 +59,6 @@ alias dot-clean='dotfiles_clean'
 # Runtime checks live in the function, including when tools were installed later.
 alias distrobox-kind-setup='distrobox_kind_setup'
 
-# Forward a remote loopback TCP port onto this machine's network interfaces.
-# usage: ssh-lan-forward SSH_HOST REMOTE_PORT [LOCAL_PORT]
-alias ssh-lan-forward='ssh_lan_forward'
-
 # Batch open links.txt
 usable open && \
     {
@@ -76,9 +72,6 @@ usable git && \
         alias forgit-me-fetch='for d in $(ls -d */); do [ -d $d/.git/ ] && echo "Fetching git repo $d..." && (cd "$d" && git fetch --prune --all); done'
         alias forgit-me-pull='for d in $(ls -d */); do [ -d $d/.git/ ] && echo "Pulling git repo $d..." && (cd "$d" && git stash && git pull --rebase --all && git stash pop); done'
         alias forgit-me-config='forgit_me_config'
-        alias git-web-url="git_web_url"
-        alias gitlab-web-mr-create='gitlab_web_mr_create'
-        alias gitlab-push-mr-create='gitlab_push_mr_create'
     }
 
 # MicroK8s
@@ -93,12 +86,6 @@ usable microk8s && \
 # Docker utilities
 usable docker && \
     {
-        # Web browser in terminal
-        alias browsh-docker='docker run --name browsh --rm -it browsh/browsh'
-        # IDE on browser
-        alias theia-docker='docker run --name theia -it -p 3000:3000 -v "$(pwd):/home/project:cached" theiaide/theia:next'
-        # Full VsCode over browser
-        alias code-server-docker='docker run --name code-server -it -p 127.0.0.1:8080:8080 -v "$PWD:/home/coder/project" codercom/code-server'
         # Postman alike in terminal
         alias atac-docker='docker run --name atac --rm -it -v ${PWD}:/app juliencaposiena/atac'
         # Swagger api documentation generator
@@ -109,8 +96,6 @@ usable docker && \
         alias mysql-docker='docker run --name mysql --rm -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:latest'
         # PySpark notebook
         alias sparkbook-docker='docker run --name pyspark --rm -d -p 8888:8888 -v "$(pwd):/home/jovyan/work" jupyter/pyspark-notebook:latest'
-        # Google's colab runtime
-        alias colab-docker='docker run --name colab --rm -d -p 9000:8080 -v "$(pwd):/content" us-docker.pkg.dev/colab-images/public/runtime'
         # Selenium chromium
         alias selenium-docker='docker run --name selenium --rm -d -p 4444:4444 --shm-size 2g selenium/standalone-chrome:latest'
         # Selenium chromium on ARM
@@ -127,28 +112,18 @@ usable docker && \
 
 usable pkgx && \
     {
-        ## Advance devcontainer
-        ! usable devpod && alias devpod='pkgx devpod'
         ## Datafile transform
         ! usable dasel && alias dasel='pkgx dasel'
         ## SQLite
         ! usable sqlite3 && alias sqlite3='pkgx sqlite3'
-        ## Trash
-        ! usable trash && alias trash='pkgx trash'
-        ## System monitor
-        ! usable btm && alias btm='pkgx btm'
         ## Terraform
         ! usable terraform && alias terraform='pkgx terraform'
         ## Helm
         ! usable helm && alias helm='pkgx helm'
         ## K8s
         ! usable kubectl && alias kubectl='pkgx kubectl'
-        ## K9s
-        ! usable k9s && alias k9s='pkgx k9s'
         ## Lightweight kubernetes
         ! usable kind && alias kind='pkgx kind'
-        ## Jupyter notebook
-        ! usable jupyter && alias jupyter='pkgx jupyter'
         ## yt-dlp
         ! usable yt-dlp && alias yt-dlp='pkgx yt-dlp'
         ## cloudflared
@@ -217,18 +192,10 @@ usable npx && \
         ! usable marp-serve && alias marp-serve='npx --yes @marp-team/marp-cli@latest -s'
         # run commands from markdown files
         ! usable runme && alias runme='npx --yes runme'
-        # Copilot CLI
-        ! usable copilot && alias copilot='npx --yes @github/copilot'
         # OpenAI Codex
         ! usable codex && alias codex='npx --yes @openai/codex'
-        # Kilo code
-        ! usable kilo && alias kilo="npx --yes @kilocode/cli@latest"
         # Opencode
         ! usable opencode && alias opencode="npx --yes @opencode/cli@latest"
-        # Freebuff
-        ! usable frebuff && alias frebuff='npx --yes freebuff'
-        # Command code
-        ! usable cmdc && alias cmdc='npx --yes command-code@latest'
         # Agent skills manager
         ! usable skills && alias skills="npx --yes skills"
         # Tree-sitter CLI
@@ -439,10 +406,6 @@ usable curl && alias install-volta='([ -n $VOLTA_HOME ] && mkdir -p $VOLTA_HOME 
 
 usable curl && alias install-bun='usable bash && usable curl && BUN_INSTALL="$HOME/.local/bun" bash <(curl -fsSL https://bun.sh/install)'
 
-################### PHP ########################
-
-usable curl && alias install-convertio='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/convertio https://api.convertio.co/convertio && chmod +x ~/.local/$USER/bin/convertio'
-
 ################### Editor #####################
 
 # Install code-server
@@ -479,15 +442,15 @@ usable cargo && alias install-evcxr='(usable cargo-binstall && cargo binstall ev
 
 ################ Shell toolings ################
 
+## File converter
+usable curl && alias install-convertio='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/convertio https://api.convertio.co/convertio && chmod +x ~/.local/$USER/bin/convertio'
+
 ## Advanced shell
 alias install-nushell-cargo='cargo install --locked nu'
 alias install-nushell-npm='npm install -g nushell'
 
 ## Smarter cd by using zoxide
 usable curl && alias install-zoxide='curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh'
-
-## Terminal multiplexer
-alias install-zellij-cargo='cargo install --locked zellij'
 
 ################ AI Agent CLI ################
 

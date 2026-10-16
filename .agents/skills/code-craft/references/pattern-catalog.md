@@ -23,7 +23,9 @@ Before writing non-trivial implementation code (Phase 1 & Phase 2 of `code-craft
 
 ### Running the Search Engine
 
-The search engine is a self-executing script with PEP 723 inline metadata and zero dependencies:
+Prefer a configured custom-directory CSV-row BM25 capability when available: target this skill's `scripts/data` directory, explicitly select the relevant domain CSV below, and retrieve a small number of rows with source locators. Inspect the live schema. Generic exact row filters are not equivalent to the CLI's optional stack/model/alias rules; use the retained CLI when those semantics or shortcuts are needed. No memory-scope creation is involved.
+
+Search integrations are optional, not a prerequisite for this skill; ordinary file reads and targeted lookup of the relevant CSV/reference also work. The CLI uses PEP 723 metadata and `rank-bm25`; it is not dependency-free. Use an already available dependency environment or obtain installation approval:
 
 ```bash
 # Self-executing (via uv shebang)

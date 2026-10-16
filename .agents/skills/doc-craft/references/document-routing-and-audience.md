@@ -19,7 +19,7 @@ Frontier agents often conflate documentation intended for human mental models wi
 | Dimension | Human-Facing Documentation | Agent Coordination & Execution Memory |
 |---|---|---|
 | **Primary Audience** | Human engineers, maintainers, users, leadership | Autonomous agents, delegated workers, execution harnesses |
-| **Storage Destination** | `docs/`, `<module>/README.md`, root `README.md` | `MEMORY_DIR` (`.agents/memories/`, `.serena/memories/`) |
+| **Storage Destination** | `docs/`, `<module>/README.md`, root `README.md` | Scoped `MEMORY_DIR`: project knowledge in `.agents/memories/`; private/task/session roots resolved externally per memory skill |
 | **Primary Purpose** | Build shared mental models; explain purpose, usage, architecture | Track execution progress, maintain atomic plans, record consensus |
 | **Content Types** | System architecture, how-to guides, module READMEs, API overviews | Atomic plans (`plan.md`), vertical slice phase specs, consensus boards |
 | **Abstraction Level** | **High / Feature-Level**: Concepts, tradeoffs, usage, pseudocode | **Low / Task-Level**: Concrete file deltas, RED/GREEN steps, logs |

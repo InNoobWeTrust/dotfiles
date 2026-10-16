@@ -177,58 +177,6 @@ gh_codespace() {
     command sh "$helper" "$@"
 }
 
-# --- Network utilities ---
-
-# Forward a remote loopback TCP port onto this machine's network interfaces.
-# usage: ssh_lan_forward SSH_HOST REMOTE_PORT [LOCAL_PORT]
-# example: ssh_lan_forward ascs-slurm 4096
-# LAN clients use <this-machine>.local:LOCAL_PORT; Avahi/mDNS and firewall
-# access must already be configured. This exposes the service on ALL interfaces.
-# Runs in the foreground; Ctrl+C stops it. Each client opens an SSH connection,
-# requiring noninteractive authentication (SSH agent/key or an existing master).
-ssh_lan_forward() (
-    if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
-        printf '%s\n' 'usage: ssh_lan_forward SSH_HOST REMOTE_PORT [LOCAL_PORT]' >&2
-        return 2
-    fi
-
-    host=$1
-    remote_port=$2
-    local_port=${3-$2}
-
-    # socat EXEC parses a command string: accept only plain SSH destinations.
-    case "$host" in
-        ''|-*|*[!a-zA-Z0-9_.@-]*)
-            printf '%s\n' 'ssh_lan_forward: use an SSH alias, hostname, or user@hostname' >&2
-            return 2 ;;
-    esac
-    for port in "$remote_port" "$local_port"; do
-        case "$port" in
-            ''|0*|*[!0-9]*)
-                printf '%s\n' 'ssh_lan_forward: ports must be integers from 1 to 65535 (no leading zeros)' >&2
-                return 2 ;;
-        esac
-        if [ "${#port}" -gt 5 ] || [ "$port" -gt 65535 ]; then
-            printf '%s\n' 'ssh_lan_forward: ports must be integers from 1 to 65535' >&2
-            return 2
-        fi
-    done
-    for tool in socat ssh; do
-        command -v "$tool" >/dev/null 2>&1 || {
-            printf 'ssh_lan_forward: %s is required\n' "$tool" >&2
-            return 127
-        }
-    done
-
-    printf 'Listening on all interfaces, TCP %s -> %s:127.0.0.1:%s; Ctrl+C to stop\n' \
-        "$local_port" "$host" "$remote_port" >&2
-    # Dual-stack wildcard listener; cap concurrent clients to limit SSH fan-out.
-    # Both socat parsing passes must preserve the destination colon (three backslashes).
-    exec socat -d -d \
-        "TCP6-LISTEN:$local_port,ipv6only=0,reuseaddr,fork,max-children=32" \
-        "EXEC:ssh -T -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=10 -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -W 127.0.0.1"'\\\:'"$remote_port $host"
-)
-
 # --- Browser and web utilities ---
 
 #

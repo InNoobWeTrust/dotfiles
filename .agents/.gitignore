@@ -5,15 +5,8 @@
 !/.skill-lock.json
 !/agents/
 !/docs/
-!/instructions/
 !/memories/
 !/mcps/
-/mcps/*
-!/mcps/delegate/
-!/mcps/decisions/
-!/mcps/lsp/
-!/mcps/sandbox/
-!/mcps/shared/
 !/plugins/
 !/rules/
 !/scripts/
@@ -21,5 +14,3 @@
 !/workflows/
 !/AGENTS.md
 !/ai-modernization-services.md
-!/mcp.json
-!/settings.json

@@ -1,7 +1,7 @@
 ---
 audience: Engineers and agents familiar with MCP and native LSP JSON
 purpose: Use and extend a minimal installed-LSP bridge
-scope: WIP stdio wrappers, not an IDE or Serena migration
+scope: WIP stdio wrappers, not an IDE
 ---
 
 # LSP MCP — WIP
@@ -16,7 +16,7 @@ agent → MCP discover/start → installed LSP initialize
       → explicit document sync; events → diagnostics/logs
 ```
 
-OpenCode enables `mcp.servers.lsp` by default; disable it manually when not needed. This bridge has no Serena dependency; other-harness setup is outside this module's scope.
+OpenCode enables `mcp.servers.lsp` by default; disable it manually when not needed. Other-harness setup is outside this module's scope.
 Startup and `discover` have been verified through the running OpenCode service, not only an isolated MCP client.
 Live OpenCode catalog refresh, document symbols and diagnostics have also been verified with the installed Bash language server.
 
@@ -89,13 +89,6 @@ Assumed baseline: MCP familiarity, but no prior LSP-client implementation knowle
 
 Recipe grounding: [nvim-lspconfig configurations](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md), [YAML server](https://github.com/redhat-developer/yaml-language-server), [Marksman](https://github.com/artempyanykh/marksman), [extracted VS Code servers](https://github.com/hrsh7th/vscode-langservers-extracted), [Bash zsh limitation](https://github.com/bash-lsp/bash-language-server/issues/689).
 Most recipes share the lspconfig evidence origin; they are not independent runtime confirmations. No practitioner interview occurred; public incident evidence is limited and recipe research stopped at its bounded source budget.
-
-### Lessons from Serena's core
-
-Source inspection of [SolidLSP file buffers](https://github.com/oraios/serena/blob/main/src/solidlsp/ls.py#L125-L176) reinforces explicit open/change/close ownership and increasing versions: its maintainers note stale-version ambiguity in rust-analyzer and Pyright.
-Its [process layer](https://github.com/oraios/serena/blob/main/src/solidlsp/ls_process.py#L251-L275) bounds graceful shutdown, rejects pending requests on failure and returns `MethodNotFound` for unknown client requests; this bridge keeps those essentials but leaves retries and semantic normalization to the agent.
-Its [initialization builder](https://github.com/oraios/serena/blob/main/src/solidlsp/initialize_params.py#L60-L84) documents server-specific duplicate-indexing risks from workspace roots; this WIP supports one workspace and has not validated every server's root handling.
-These are source observations, not a run of Serena or independent confirmation of every maintainer comment; no Serena code or dependency was copied.
 
 ## Verification and extension
 

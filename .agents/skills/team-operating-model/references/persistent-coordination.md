@@ -28,7 +28,7 @@ Every dispatched session is assigned exactly one `task_id` +
 Before any task-source reads, load applicable mandatory guidance and safety rules,
 then the memory storage protocol and resolve `MEMORY_DIR`. A fresh replacement's
 first task reads (in order):
-1. Own role record (`tasks/<task-id>/roles/<role-id>.md` in resolved `MEMORY_DIR`).
+1. Own role record (`roles/<role-id>.md` in the selected repository-task root, `TASK_DIR=MEMORY_DIR`; use an available external-memory capability or direct external files, without requiring MCP. The selected root is already the task directory, so do not append that hierarchy again).
 2. Task record and role roster.
 3. Current approved plan.
 

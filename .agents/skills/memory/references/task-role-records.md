@@ -1,6 +1,6 @@
 # Task-Role Records
 
-Canonical schema for task records, role records, session-binding contracts, and checkpoint format. Applies beneath `MEMORY_DIR` for every memory backend (Serena, default, custom). All files are plain Markdown with YAML frontmatter; the file-based/human-traceable/Git-committable invariant applies.
+Canonical schema for task records, role records, session-binding contracts, and checkpoint format. Applies beneath the selected `TASK_DIR=MEMORY_DIR` for the repository-task pair, whether supplied by an external-memory capability or direct-file configuration. Historical `tasks/<task-id>/` headings denote this logical subtree, not an extra directory to append. All files are plain Markdown with YAML frontmatter; the file-based/human-traceable/Git-committable invariant applies.
 
 ---
 
@@ -112,14 +112,8 @@ A primary-approved plan change does not silently inherit old scope. The bound ac
 
 ---
 
-## Multi-backend path resolution
+## Scoped task path resolution
 
-The path scheme `tasks/<task-id>/roles/<role-id>.md` applies beneath the resolved `MEMORY_DIR` for all backends:
+Select the repository-task scope through an available external-memory capability or an explicitly selected external directory; no MCP is required. `TASK_DIR=MEMORY_DIR` is already the task directory within that store. Task files are `TASK_DIR/task.md`, `TASK_DIR/request.md`, `TASK_DIR/plan.md`; roles are `TASK_DIR/roles/<role-id>.md`. Do not create a nested `tasks/<task-id>` or put raw task context in project knowledge. Keep role binding/session metadata distinct from the shared scratchpad's originating harness-session identity.
 
-| Backend | Full path | Serena nested name |
-|---|---|---|
-| Serena | `<MEMORY_DIR>/tasks/<task-id>/roles/<role-id>.md` | `tasks/<task-id>/roles/<role-id>` |
-| Default | `<MEMORY_DIR>/tasks/<task-id>/roles/<role-id>.md` | — |
-| Custom | `<MEMORY_DIR>/tasks/<task-id>/roles/<role-id>.md` | — |
-
-See [Hierarchy and storage](hierarchy-and-storage.md) for full Capture/Recall procedures per backend. See [Team operating model](../../team-operating-model/SKILL.md) for onboarding, replacement, shared plans, and accepted-task consolidation routing.
+See [Scopes](scopes.md), [Hierarchy and storage](hierarchy-and-storage.md) and [Team operating model](../../team-operating-model/SKILL.md) for resolution, Capture/Recall, onboarding and accepted-task consolidation. Existing append-only checkpoints survive migration unchanged; new entries carry scope identity.

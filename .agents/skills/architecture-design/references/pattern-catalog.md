@@ -19,6 +19,8 @@ To prevent mixing concerns across the codebase, patterns are partitioned across 
 
 When designing subsystem boundaries, microservices, modular monoliths, or asynchronous communication, query the architecture engine:
 
+An available custom-directory CSV-row BM25 capability is optional: select this skill's `scripts/data` directory and the relevant `architecture.csv`, `architecture-reasoning.csv` or `architecture-traps.csv`, with a small result limit and source locators. Inspect its interface; no memory root is created. The CLI below retains aliases, no-query listings and specialized formatting; ordinary file reads and targeted CSV/reference lookup also work without an integration. Generic BM25 scores need not match existing boosts. CLI dependencies must already be available or separately authorized.
+
 ```bash
 # Self-executing (via uv shebang)
 ./.agents/skills/architecture-design/scripts/search.py "<query>" [--domain <domain>]

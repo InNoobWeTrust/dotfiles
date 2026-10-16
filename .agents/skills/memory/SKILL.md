@@ -1,240 +1,84 @@
 ---
 name: memory
-description: "Use this skill to save, restore, or manage agent memory, execution plans, and consensus across sessions; explicitly remember or recall scoped preferences, accepted/corrected examples, and evidence-backed experience. Handles checkpoints, handoffs, plans, and consensus in memory dirs, leaving docs/ for human-facing documentation. Also runs dream-cycle consolidation and memory eviction. All files remain file-based, human-traceable, and git-committable plain text."
+description: Save, restore and manage scoped agent memory, task plans, role checkpoints and consensus. Use for explicit capture/recall, preferences or sourced lessons, and requested consolidation/eviction. Project knowledge stays in .agents/memories; prefer external memory for short-lived or sensitive context, with direct Markdown management and no MCP dependency.
 ---
 
 # Memory
 
-Working memory, execution tracking, consensus boards, and consolidated long-term memory for agents. Session checkpoints, atomic feature plans, and inter-agent consensus boards are managed here — this skill is the single home for anything agents need to coordinate, remember, recall, consolidate, or track internally.
+Agent working memory, execution tracking, consensus and consolidated knowledge. Human-facing documentation belongs in `docs/`, not here.
 
-Four hard rules:
+## Hard rules
 
-1. **Short-term is unbounded and append-only during a session.** Long-term is size-limited and only grows through a consolidation pass.
-2. **Eviction and long-term writes are proposals, not autonomous actions.** Score and rank; the human approves.
-3. **Agent coordination and execution documents belong in `MEMORY_DIR`, not `docs/`.** Atomic feature plans, vertical slice phase files (`phases/01-*.md`), inter-agent consensus boards, and scratchpads must be stored in memory directories, leaving `docs/` exclusively for feature-level human documentation.
-4. **File-based, human-traceable, and Git-committable formats are mandatory.** Storing agent-focused documents in memory does not permit opaque, binary, or ephemeral stores. All files must remain plain text Markdown with structured YAML frontmatter so humans can inspect, trace, and commit them to Git when version control tracking is desired.
+1. Short-term memory is unbounded and append-only during a session. Long-term is size-limited and grows only through requested consolidation with human approval.
+2. Consolidation, eviction, archive and long-term writes are proposals until explicitly approved. Capturing a task, completion, context pressure, age or size never triggers a dream cycle.
+3. Agent coordination/plans belong in the correctly scoped memory root, never `docs/`. Reusable non-sensitive project knowledge belongs in `<git-root>/.agents/memories/`; sensitive repo information and raw task/session context stay outside the repository.
+4. Markdown with YAML frontmatter is authoritative, human-traceable and directly editable. Disposable search indexes are not memory authority. Text being Git-compatible does **not** authorize committing private memory.
 
-Storage, protocol, and templates live in `references/hierarchy-and-storage.md`. Load it before any read/write.
-
-For recall shaping and context compaction tactics, load `references/compaction-and-step-recall.md` only when Recall or Consolidate needs it.
-
-For explicit preference/example capture or task-relevant personal-context recall, load [Scoped context](references/scoped-context.md). It adds optional entry-body records and relevance/privacy checks, not a new store, automatic loader, or consolidation trigger.
-
----
-
-## When to load this skill
-
-- Save, checkpoint, or restore session state
-- Storing or updating atomic feature plans (`plans/<feature>/plan.md`) or vertical slice phase files (`phases/01-*.md`)
-- Recording inter-agent consensus boards or multi-agent deliberation records (`consensus/<topic>.md`)
-- User says "remember this", "note this", "save context", "resume", "what was I working on"
-- User says "consolidate memory", "dream cycle", "prune memory", "forget X"
-- User explicitly asks to remember or use a collaboration preference, accepted/corrected example, or sourced experience relevant to the task
-
-Do **not** load this skill for:
-
-- Simple typo/format/config edits
-- Writing human-facing documentation, architecture guides, or module READMEs (use `doc-craft`)
-- Trivial one-shot fact captures that do not need consolidation, scoring, or an INDEX entry (a passing note in the current message is enough).
-
----
+Before any read/write load [Hierarchy and storage](references/hierarchy-and-storage.md) and [Scopes](references/scopes.md). Resolve scope first; do not silently fall back to another directory.
 
 ## Modes
 
-Pick one mode per invocation. Modes are separate procedures; do not interleave.
+Name the mode and print scope/resolved `MEMORY_DIR` before file operations.
 
-| Mode | Purpose | Reference |
+| Intent | Mode | Guidance |
 |---|---|---|
-| **Capture** | Write a new entry: session checkpoint (`short-term/`), atomic feature plan (`plans/`), slice phase spec (`phases/`), consensus board (`consensus/`), or working note | `references/hierarchy-and-storage.md` §Capture |
-| **Recall** | Find and load prior short-term, plans, consensus, or long-term entries | `references/hierarchy-and-storage.md` §Recall + `references/compaction-and-step-recall.md` when the query needs a similar prior trace |
-| **Consolidate (Dream Cycle)** | Promote hot short-term entries to long-term, re-score long-term, propose evictions | `references/dream-cycle.md` + `references/compaction-and-step-recall.md` when context needs compaction |
-| **Consolidate via Subagent** | Same as Consolidate, but delegated to a subagent so the main agent only captures the current work and lets a fresh context do the heavy consolidation pass | `references/dream-cycle.md` §Subagent consolidation + `references/compaction-and-step-recall.md` when needed |
-| **Evict** | Standalone pruning of long-term when size limits are exceeded | `references/eviction-scoring.md` |
+| Save/checkpoint/remember a preference, example or sourced lesson; save plan/consensus | Capture | Hierarchy §Capture; [scoped context](references/scoped-context.md) for personal context |
+| Resume/restore/load prior work or relevant knowledge | Recall | Hierarchy §Recall; [compaction and step recall](references/compaction-and-step-recall.md) only for similar-trace/compaction needs |
+| Explicitly consolidate/dream cycle/review notes | Consolidate, preferably via fresh subagent | [Dream cycle](references/dream-cycle.md); report-only until later approval |
+| Explicitly prune/forget/evict | Evict | [Eviction scoring](references/eviction-scoring.md) |
+| Explicitly reorganize/migrate memory | Structure | Scopes §Migration; source imports/references require impact check before moving |
 
-### Mode router
+Capture and Consolidate are separate procedures. When consolidation is requested, capture a self-contained handoff first, then give a fresh dedicated consolidator the selected scope and source paths, not the entire transcript. If delegation is unavailable, report and ask whether to proceed in-agent or defer; never silently substitute.
 
-- User says "save", "checkpoint", "note this", "remember this", "save handoff", "save plan", "record consensus" → **Capture**.
-- User says "resume", "restore", "load context", "what was I working on", "load plan" → **Recall**.
-- User explicitly asks to remember a preference/example/lesson → **Capture**; asks to use an existing one → **Recall**. Apply `references/scoped-context.md` without changing storage or approval gates.
-- User says "consolidate memory", "dream cycle", "run consolidation", "review my notes" → **Consolidate**; prefer **Consolidate via Subagent** when delegation is available; if unavailable, report to the user and ask before switching to in-agent Consolidate.
-- Task has `accepted_by_user: true` and consolidation for that task is requested → recruit a dedicated fresh **Consolidate via Subagent** scoped to that task's role captures; pass is **report-only** until human approves apply/markers/archive/eviction. See `references/dream-cycle.md` §Accepted-task standing consolidation and `references/task-role-records.md`.
-- User says "prune memory", "forget X", "evict Y" → **Evict**.
+An accepted task (`accepted_by_user: true`) plus an explicit consolidation request routes a fresh task-only consolidator to its captures; no global scan, automatic apply, marker flips or archive. See dream-cycle and [task-role records](references/task-role-records.md). Corrections are adds-only unless explicitly authorized; never evict a correction without an explicit request naming its key.
 
-### Capture + Subagent consolidation (recommended path)
+## Scope routing
 
-To keep the main agent focused when consolidation is requested:
+| Content | Destination |
+|---|---|
+| Pure project knowledge intended for source control | Direct `.agents/memories/` |
+| Global learning explicitly shared across harnesses | Shared-global audience in the same external store |
+| Cross-project learning for one harness | Harness-global external memory |
+| Sensitive repo-specific context | Repository-private external memory |
+| Task request/plan/roles/phases/consensus across harnesses | External repo-task pair |
+| Quorum scratchpad/whiteboard | External originating harness-session pair |
 
-1. Main agent performs **Capture**: write a short, self-contained short-term entry covering the current work (goal, decisions, files, next steps). This is the only memory work the main agent does first.
-2. The main agent should invoke a subagent to run **Consolidate** on the newly captured note and any unconsolidated short-term entries.
-3. The subagent does not need prior context — it reads the capture note, scans short-term/long-term, extracts candidates, scores, and proposes evictions.
-4. Main agent surfaces the subagent's report and asks for approval before writing anything to long-term or archiving.
+Prefer an available external-memory capability for short-lived memories and sensitive details. It may supply scoped paths and search, but is optional: ordinary file tools against a known or explicitly selected external directory are sufficient. Discover the available interface rather than requiring MCP or a particular provider. Keep the same scope/privacy rules with either route; missing integration alone does not block the skill. Detail, path selection, metadata and conventions: [Scopes](references/scopes.md).
 
----
+All global/shared memory belongs in that same external store, not `~/.agents/memories/`; that location may overlap a dotfiles project's own knowledge. Preserve separate shared-global and harness-specific audiences rather than treating all global notes as public to every harness.
 
-## Storage & Backend Resolution
+`MEMORY_DIR` is the selected scope root. For a task, `TASK_DIR=MEMORY_DIR` and `roles/` is directly beneath it. Historical `tasks/<task-id>/...` examples denote that logical task subtree, not another directory to append.
 
-Always prefer an **existing repo-local, file-based memory system** to avoid maintaining duplicate stores.
+## Size limits
 
-Resolve `MEMORY_BACKEND` and `MEMORY_DIR` before any read or write:
+Defaults may be overridden in the selected scope's `long-term/INDEX.md` frontmatter:
 
-1. **Existing Repo-Local Memory (Highest Priority)**:
-   - If `<git-root>/.serena/memories/` exists (or Serena MCP is available), select `MEMORY_BACKEND=serena` and `MEMORY_DIR=<git-root>/.serena/memories/`. Memories are stored as Markdown documents in the repository, with `mem:core` (`core.md`) as the root entry point.
-   - If another documented repo-local, file-based memory directory exists (e.g. `.docs/memory/`), select `MEMORY_BACKEND=custom`.
-2. **Default `.agents/memories/` (Fallback)**:
-   - If in a git repository and no existing memory system is present: `MEMORY_BACKEND=default` and `MEMORY_DIR=<git-root>/.agents/memories/`. Created lazily on first Capture.
-3. **Global Fallback**:
-   - If outside a git repository and no repo-local system exists: `MEMORY_BACKEND=default` and `MEMORY_DIR=~/.agents/memories/`.
-
-
-### Layout by Backend
-
-**Serena Backend (`MEMORY_BACKEND=serena`)**:
-```
-<git-root>/.serena/memories/
-├── core.md                         # Graph root; references domain and task pointers
-├── memory_maintenance.md           # Discovery model and style guidelines
-├── knowledge/
-│   └── <topic>.md                  # Domain topic entries (e.g., agent_prompt_crafting.md)
-├── tasks/
-│   └── <task-id>/
-│       ├── task.md                 # Task spec and role roster
-│       ├── request.md              # Original request (immutable)
-│       ├── plan.md                 # Versioned approved plan
-│       ├── roles/
-│       │   └── <role-id>.md        # Role memory — append-only checkpoints
-│       ├── phases/                 # Task-local phase specs (optional)
-│       └── consensus/              # Task-local consensus boards (optional)
-├── plans/
-│   └── <feature-slug>/
-│       ├── plan.md                 # Standalone feature plan
-│       └── phases/
-│           └── <##>-<slice>.md     # Sequential vertical slice phase specs
-├── short-term/                     # Session checkpoints and working notes
-│   └── archive/
-└── long-term/                      # Size-limited, INDEX-gated (approved writes only)
-    ├── INDEX.md
-    └── ...
-```
-*Operations adapt*: Capture/Recall use nested memory names (e.g., `mem:tasks/<task-id>/roles/<role-id>`, `mem:knowledge/<topic>`) or hierarchical file paths within `.serena/memories/`. Discovery starts at `core.md`; load only the relevant subtree, not the entire store.
-
-**Default Backend (`MEMORY_BACKEND=default`)**:
-```
-<MEMORY_DIR>/
-├── README.md                    # directory protocol
-├── short-term/                  # unbounded, append-only per session
-│   └── <created-stamp>--<branch>--<topic>.md  # session checkpoints + working notes
-├── tasks/                       # task records, role checkpoints, task-local phases
-│   └── <task-id>/
-│       ├── task.md, request.md, plan.md
-│       └── roles/
-│           └── <role-id>.md     # append-only role checkpoints
-├── plans/                       # atomic feature plans and execution phase specs
-│   └── <feature-slug>/
-│       ├── plan.md              # atomic plan index (scoped boundaries, locked contracts)
-│       └── phases/              # sequential vertical slice phase files
-│           ├── 01-<slice>.md
-│           └── 02-<slice>.md
-├── consensus/                   # inter-agent consensus boards & deliberation records
-│   └── <topic-slug>.md
-├── long-term/                   # size-limited, INDEX-gated
-│   ├── INDEX.md                 # topic map + entry catalog
-│   ├── project.md               # facts / decisions / constraints
-│   ├── environment.md           # commands / paths / tooling
-│   ├── corrections.md           # user corrections
-│   └── topics/<topic>.md        # topic-scoped long-term entries
-└── archive/                     # evicted long-term entries
-```
-
-Full contract, filename rules, backend adaptation, and templates: `references/hierarchy-and-storage.md`.
-
----
-
-## Size limits (defaults, project-overridable)
-
-Set in `<MEMORY_DIR>/long-term/INDEX.md` frontmatter. Defaults:
-
-| Bucket | Soft limit | Hard limit | When reached |
-|---|---|---|---|
-| `long-term/INDEX.md` entries | 40 | 60 | Report to user; consolidate/evict only on explicit request |
-| Any single `topics/<topic>.md` | 8 KB | 16 KB | Report to user; split/evict only on explicit request |
-| Total `long-term/` size | 128 KB | 256 KB | Report to user; eviction pass only on explicit request |
-| `short-term/` entries older than merged branch | — | — | Report to user; archive only on explicit request |
-
-Size limits are informational. They may be surfaced as part of an already-requested Consolidate or Evict operation, but crossing a limit alone never triggers any automatic action.
-
----
-
-## Progressive disclosure — the meta pattern
-
-Working memory (leaf) ↔ long-term memory (index) is one instance of the same shape used across the repo:
-
-| Layer | Leaf (execution & memory) | Index / entry point (human & router) |
+| Bucket | Soft | Hard |
 |---|---|---|
-| Agent execution | `plans/<feature>/phases/*.md`, `consensus/*.md` | `plans/<feature>/plan.md` |
-| Agent memory | `short-term/<created-stamp>--<branch>--<topic>.md` | `long-term/INDEX.md` |
-| Human documentation | `docs/<section>/details/*.typ` (or required `.md`) | Typst index/entry + PDF; required repository README/index stays Markdown per [format policy](../doc-craft/references/document-formats.md) |
-| Code | Individual functions, private helpers | Module `README.md` & `index.ts` |
-| Governance (outside this skill) | Governance detail file | Governance index |
-| Skills | `skills/<name>/references/*.md` | `SKILL.md` |
+| INDEX entries | 40 | 60 |
+| One topic | 8 KB | 16 KB |
+| All long-term | 128 KB | 256 KB |
 
-**Rule**: the index carries only the smallest key facts + pointers. The leaf carries detail and is loaded on demand. This is exactly the routing pattern the project already uses for skills (`skills/INDEX` → `SKILL.md` → `references/*`).
+Report overruns; do not auto-consolidate, evict or archive. INDEX carries the smallest key facts/pointers; leaves carry details loaded on demand. See [progressive disclosure](references/progressive-disclosure-pattern.md) and [code application](references/pattern-code.md).
 
-Apply it to code: `references/pattern-code.md`.
+## Stops and output
 
----
+- Unresolved scope/identity, missing mount or unwritable selected root: stop only affected persistence; report unsaved context. An unavailable integration is not a blocker when the same authorized files are directly accessible. Do not silently switch stores or put private notes in Git.
+- Opaque authoritative storage, task/private notes in project knowledge or agent plans in `docs/`: stop and reroute.
+- Consolidation would silently rewrite corrections, approve itself, mark accepted/consolidated, or archive/delete: stop and request the required explicit human approval.
+- Move affects imported source files: produce the impact list and obtain confirmation before moving; migration never broadens deletion/Git authority.
+- Ambiguous Recall matches across tasks/scopes: show minimal summaries and ask, rather than widening access.
 
-## Stop conditions
-
-- **Attempting to write atomic plans or consensus boards into `docs/`**: Stop immediately. Route to `MEMORY_DIR/plans/` or `MEMORY_DIR/consensus/`.
-- **Storing agent-focused documents in non-text or opaque formats**: Stop. All artifacts must be file-based plain Markdown with YAML frontmatter.
-- **No `MEMORY_DIR` resolvable and repo not git**: fall back to `~/.agents/memories/`. If the directory does not exist, **create it** (this is the bootstrap case, not an error). If the path exists but is unwritable, stop and report.
-
-- **Eviction proposal has no scored ranking**: do not evict. Return to `references/eviction-scoring.md` and score first.
-- **Consolidation would rewrite `corrections.md` without an explicit correction request**: stop. Corrections are user-owned; only add, never silently rewrite.
-- **Long-term hard limit hit**: do not delete or archive automatically. Report the overrun to the user; consolidation and eviction require explicit user request regardless of context or availability.
-- **Subagent consolidation requested but subagent unavailable**: report the limitation to the user and ask whether to proceed with in-agent consolidation or defer. Do not automatically switch to in-agent Consolidate.
-- **Structure Mode would move or rename source files that are imported elsewhere**: stop and produce an impact list first; do not execute the move until the human confirms.
-
----
-
-## Deliverable
-
-For every invocation:
-
-- [ ] Mode named up front (Capture / Recall / Consolidate / Consolidate via Subagent / Evict / Structure)
-- [ ] `MEMORY_DIR` resolved and printed
-- [ ] Files written listed with paths (stored in `MEMORY_DIR`, never `docs/`)
-- [ ] Stored in file-based, human-traceable, git-committable plain Markdown with YAML frontmatter
-- [ ] If compaction was used: persist the compact state to short-term only if the user also explicitly requested Capture; otherwise include it in the current response only — do not write to memory automatically
-- [ ] If similar-trace recall was used: searched buckets + top matches (or `NONE FOUND`) reported
-- [ ] For Consolidate/Evict: scored ranking + explicit human-approval prompt before any archive/delete
-- [ ] For Consolidate via Subagent: subagent prompt scope and output contract documented
-- [ ] `long-term/INDEX.md` updated last when long-term memory changes (single source of truth for what exists)
-
----
-
-## Anti-patterns
-
-| Temptation | Why wrong | Correct path |
-|---|---|---|
-| Dump atomic task plans, phase files, or consensus boards into `docs/` | Pollutes human documentation with transient or task-level agent execution trivia | Store atomic plans and consensus boards in `MEMORY_DIR` (`plans/`, `consensus/`) |
-| Store agent memory in opaque, binary, or untracked formats | Prevents human developers from auditing, reading, or committing to git | Store in file-based plain Markdown with clean YAML frontmatter |
-| Auto-evict old long-term entries during Consolidate to "stay tidy" | User specified human-approved eviction. Silent deletion breaks trust and audit trail. | Score, rank, propose. Human approves. Archive first, delete only on second pass. |
-| Skip short-term and write directly to long-term for a "clean" workflow | Bypasses working memory, so context under construction has no home; also skips the scoring gate. | Write to short-term first. Long-term only through Consolidate. |
-| Treat every session as a Consolidate trigger | Runs the dream cycle constantly, evictions become noise. | Consolidate only on explicit user request. |
-| Rewrite `corrections.md` during Consolidate because an entry "seems outdated" | Corrections encode the user's authority. Silent edits erase that. | Only append. Only edit on an explicit correction request from the user. |
-| Apply Structure Mode aggressively across a whole repo in one pass | Wide file moves collide with in-flight branches. | Scope Structure Mode to one directory or module per invocation. |
-| Load every reference file at once "to be safe" | Defeats the progressive-disclosure design this skill teaches. | Load `hierarchy-and-storage.md` first. Load others only when the selected mode requires them. |
-| Run Consolidate on every Capture or session event | Conflates two separate operations; causes implicit dream-cycle noise. | Consolidate only on explicit user request; Capture does not trigger Consolidate. |
-| Ask the subagent to read the entire conversation transcript | The subagent only needs the capture note and the memory directories; transcripts are noise. | Pass the capture note path and `MEMORY_DIR` to the subagent. |
-
----
+Return mode, selected scope, resolved paths and changed files/sections; note relevant search buckets/top matches or `NONE FOUND`. Explain unavailable capabilities and unresolved safety gaps. For consolidation/eviction include ranked proposals and ask approval before applying. Update long-term INDEX last after approved writes.
 
 ## References
 
-- `references/hierarchy-and-storage.md` — storage layout, frontmatter, plans & consensus storage, capture/recall procedure, filename rules
-- `references/task-role-records.md` — canonical task/role record schema, session-binding guards, checkpoint format, and replacement contract
-- `references/dream-cycle.md` — consolidation workflow and scoring inputs
-- `references/eviction-scoring.md` — scoring function, ranking, archive-then-delete protocol
-- `references/progressive-disclosure-pattern.md` — the leaf/index abstraction and the four properties an index must have
-- `references/pattern-code.md` — applying the pattern to a code module (public surface vs internals)
+- [Hierarchy and storage](references/hierarchy-and-storage.md): entry templates, filenames, Capture/Recall.
+- [Scopes](references/scopes.md): audience/identity metadata, external resolution, migration and source-backed conventions.
+- [Task-role records](references/task-role-records.md): immutable bindings, checkpoints and restoration.
+- [Dream cycle](references/dream-cycle.md): requested consolidation, scoring and approval boundaries.
+- [Scoped context](references/scoped-context.md): personal preferences/examples and privacy.
+- [Compaction and step recall](references/compaction-and-step-recall.md): compact handoffs and similar traces.
+- [Eviction scoring](references/eviction-scoring.md): ranked proposals, archive-then-delete.
+
+Prototype scope revision: 2026-10-16; inspect the next 1–2 cross-harness uses. No automatic retention-policy changes or backend security guarantees.

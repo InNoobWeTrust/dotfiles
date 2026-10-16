@@ -1,0 +1,9 @@
+# Only reviewed project knowledge belongs in source control.
+# Task/private/session memory is resolved outside this repository through MCP.
+/*
+!/.gitignore
+!/README.md
+!/core.md
+!/memory_maintenance.md
+!/knowledge/
+!/long-term/

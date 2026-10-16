@@ -75,7 +75,8 @@ Wiki docs outside `slides/` are **English-first** (agent-searchable). Slides kee
 |---|---|---|
 | **Agent orchestration** | Orchestrator ≠ reasoning model; structure prompts for model tier; budget rate limits | [skills-and-rules](./skills-and-rules/agent-orchestration-design.md) |
 | **Installing skills** | Quick install via `npx skills add` + pairing with `.agents/rules` | [skills-and-rules](./skills-and-rules/installing-skills.md) |
-| **Serena MCP** | Semantic code indexer & LSP context engine for agents | [skills-and-rules](./skills-and-rules/serena-mcp-setup.md) |
+| **LSP MCP** | Installed language-server tools for code navigation and diagnostics | [LSP guide](../mcps/lsp/README.md) |
+| **Remote-memory MCP** | External memory paths and scoped text/CSV BM25 search | [Remote-memory guide](../mcps/remote-memory/README.md) |
 | **Rules** | Short always-on policies on every task; methods live in skills | [skills-and-rules](./skills-and-rules/why-rules-and-skills.md) |
 | **Skills** | Full workflows loaded on demand | [skills-and-rules](./skills-and-rules/why-rules-and-skills.md) |
 | **AI as junior engineer** | Fast junior who needs explicit guidance | [project-lifecycle](./project-lifecycle/guiding-philosophy.md) |

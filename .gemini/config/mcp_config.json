@@ -1,7 +1,17 @@
 {
   "mcpServers": {
+    "remote-memory": {
+      "command": "mcp-remote-memory",
+      "args": [],
+      "disabled": false
+    },
     "sandbox": {
       "command": "mcp-sandbox",
+      "args": [],
+      "disabled": false
+    },
+    "decisions": {
+      "command": "mcp-decisions",
       "args": [],
       "disabled": false
     },

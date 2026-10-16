@@ -55,6 +55,8 @@ to uncertainty rather than expanding the panel indiscriminately.
 
 ## Persona discovery
 
+An available custom-directory CSV-row BM25 capability is optional: select the skill root and only `personas.csv`; search positive fields `id`, `name`, `group`, `domain`, `use_when`, with at most five candidates. Inspect its interface. Exact `group`/`id` row filters can narrow selection (use the catalog's spelling); read applicability/reference fields before selecting. Generic ranking is not identical to the CLI's boosts. No memory-root creation or MCP is required. The commands below retain group listings and specialized matching when dependencies are available or separately authorized; ordinary file reads and targeted catalog/reference lookup also work.
+
 Commands below are relative to the **team-operating-model skill root**, not this
 reference directory or an arbitrary working directory. Execute through the
 required sandbox. Search bounded candidates rather than browsing every prompt:

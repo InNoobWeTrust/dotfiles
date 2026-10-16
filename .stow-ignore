@@ -9,7 +9,8 @@ bootstrap\.sh
 # Non-dotfile project dirs
 \.innoobwetrust
 \.opencode
-\.serena
+# Versioned project knowledge is not a user-global memory backend.
+^\.agents/memories$
 
 # Application data and state must stay outside the dotfiles checkout.
 ^\.local/share$

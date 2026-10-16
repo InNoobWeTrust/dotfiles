@@ -4,6 +4,8 @@ The dream cycle is the only path from short-term memory to long-term memory. It 
 
 The cycle has four phases. Phases run in order; do not skip.
 
+Resolve the authorized source scope through [Scopes](scopes.md) first; “all entries” below always means that selected scope, never all external namespaces. A task root already contains `roles/` directly. Name any proposed destination scope separately: moving task/private fragments into versioned project knowledge requires an explicit privacy classification and human approval of the exact publication, not just a relevance score. Do not copy private account, request or session context into Git as part of consolidation.
+
 ---
 
 ## Triggers

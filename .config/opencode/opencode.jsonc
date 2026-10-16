@@ -21,6 +21,10 @@
   },
   "mcp": {
     "servers": {
+      "remote-memory": {
+        "type": "local",
+        "command": ["mcp-remote-memory"],
+      },
       "sandbox": {
         "type": "local",
         "command": [
@@ -277,91 +281,6 @@
     },
     {
       "action": "decisions_*",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_open_dashboard",
-      "resource": "*",
-      "effect": "deny"
-    },
-    {
-      "action": "serena_initial_instructions",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_activate_project",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_onboarding",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_list_dir",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_find_file",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_read_file",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_get_diagnostics_for_file",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_search_for_pattern",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_get_symbols_overview",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_find_symbol",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_list_memories",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_get_current_config",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_find_declaration",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_find_implementations",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_find_referencing_symbols",
-      "resource": "*",
-      "effect": "allow"
-    },
-    {
-      "action": "serena_read_memory",
       "resource": "*",
       "effect": "allow"
     },
