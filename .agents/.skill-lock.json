@@ -18,16 +18,6 @@
       "skillFolderHash": "bca89e0fbf822ac255eb95fc78fcd64532f8c86f",
       "installedAt": "2026-10-13T11:37:30.336Z",
       "updatedAt": "2026-10-13T11:37:30.336Z"
-    },
-    "reverse-engineer-anything": {
-      "source": "morluto/rea",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/morluto/rea.git",
-      "ref": "a56f7bb668ab23fec8d33f7af353ac7ed2fe1895",
-      "skillPath": ".agents/skills/reverse-engineer-anything/SKILL.md",
-      "skillFolderHash": "c16f8410ebdafda5fd45812734370f6ef3142661",
-      "installedAt": "2026-10-13T11:37:34.401Z",
-      "updatedAt": "2026-10-13T11:37:34.401Z"
     }
   },
   "dismissed": {

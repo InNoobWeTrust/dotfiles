@@ -15,6 +15,11 @@
       "args": [],
       "disabled": false
     },
+    "delegate": {
+      "command": "mcp-delegate",
+      "args": [],
+      "disabled": false
+    },
     "lsp": {
       "command": "mcp-lsp",
       "args": [],
