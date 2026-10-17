@@ -23,6 +23,22 @@ trigger: always_on
   Ask only if permission is missing or effects would expand. A failure alone never
   authorizes new effects, higher budgets, or bypassing mandatory isolation; do not
   disable security checks or modify host configuration to force success.
+- **Approved Git push routing:** Host SSH configuration, agent sockets and
+  credentials may not work inside a sandbox. A known mismatch means use the
+  native shell directly, not another predictably failing sandbox attempt.
+  An SSH "Bad owner or permissions" error inside a sandbox is not by itself
+  evidence of a host permission defect or missing user authorization. For an
+  approved push, retry the same remote/ref once through the native shell with
+  an explicit workdir and timeout, unless higher-priority policy forbids it.
+  Do not request duplicate approval, change SSH settings, disable checks, force
+  push or touch user processes. If native execution also fails, report that
+  actual failure; do not loop.
+- **Before reporting an approved operation blocked:** Check whether the failure
+  is a sandbox/host-context mismatch and whether the scoped native retry above
+  is permitted. If so, execute it before the final response. Report a blocker
+  only after that retry fails, native execution is unavailable, or a genuine
+  authority/safety restriction prevents it. A sandbox error alone is not the
+  operation's final result.
 - MCP-managed container lifecycle and engine side effects are tool operations,
   not host commands to wrap in another sandbox. Installation/download effects
   still require the applicable authority.

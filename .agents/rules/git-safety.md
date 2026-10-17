@@ -32,6 +32,16 @@ Applies to all git operations: staging, committing, pushing, and any destructive
 - **Inspect commit history first (`git log -n 5 --oneline`)**: Before drafting, check recent commit history to identify and match the repository's established commit style, prefixes, casing, and body formatting. Never invent an ad-hoc or generic external format.
 - Write a meaningful commit message that summarises the change, not just "update".
 
+## Approved push execution
+
+Push approval covers the scoped native-shell route under
+[Execution Safety](execution-safety.md), not only a sandbox attempt. For a known
+sandbox/host SSH mismatch, use native execution directly. If a sandboxed push
+fails because host SSH context is unavailable, perform the permitted bounded
+native retry before reporting failure; do not ask for the same approval again.
+Keep the approved remote/ref and security checks unchanged. Real authorization
+denials and higher-priority isolation requirements still stop execution.
+
 ## Destructive operations
 
 Do not run any of these without explicit user approval in the current session:
