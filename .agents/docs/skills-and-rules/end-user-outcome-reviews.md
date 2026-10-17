@@ -34,7 +34,7 @@ Use only the relevant perspectives. These are review questions, not a requiremen
 | **Body** | Perform the assigned work with explicit behavioral constraints | Worker instructions exist only in the caller-facing description, or depend on invisible metadata |
 | **Configuration** | Let the harness select the model and enforce permissions | Prose invents supported fields, assumes permissions from a model name, or treats task intent as permission |
 
-Keep provider/account budgeting outside routine agent selection; do not make the caller research an imagined budget before dispatch. If a benchmark claim helps selection, identify its task, model, source and date; distinguish usage popularity from measured capability and remove unsupported superlatives rather than guessing scores.
+Keep provider/account budgeting outside routine agent selection. Descriptions contain task suitability and plain labeled benchmark scores, not explanations, provenance links, dates or reading assignments. Maintainers keep benchmark sources and evaluation details in suitable documentation; callers do not need to read it to select an agent.
 
 ## Run a bounded comparison
 

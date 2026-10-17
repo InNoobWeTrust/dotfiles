@@ -227,7 +227,7 @@ interface itself, while Goal Alignment checks connection to the original goal.
 
 Use only relevant journeys and perspectives; this vector adds no mandatory
 panel, execution permission, or approval gate. Follow Reviewer finding and
-independence requirements. See [examples and evidence guidance](../../../../docs/skills-and-rules/end-user-outcome-reviews.md).
+independence requirements. Optional [human-facing maintainer examples](../../../../docs/skills-and-rules/end-user-outcome-reviews.md) are not additional reviewer instructions or a required read.
 
 #### Attack Vector: Scope & Complexity
 

@@ -27,6 +27,7 @@ Apply [Document format selection](references/document-formats.md) before choosin
 - Polishing technical notes or system overviews to eliminate walls of text and unneeded jargon.
 
 Do **not** load for:
+- Compact metadata (agent descriptions, labels, configuration values): do not add documentation scaffolding, rationale, provenance or reading assignments to these fields.
 - Writing code, refactoring modules, or fixing bugs
 - Defining product, technical or behavior requirements: use the domain owner below; compose this skill only for human-facing presentation
 - UI/UX visual mockups or design tokens

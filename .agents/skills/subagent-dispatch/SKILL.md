@@ -9,6 +9,8 @@ Use this router before **every** delegated launch: named workers, model-route fa
 
 ## Allocation principle
 
+Choose workers by task fit and available capability evidence, with selection effort proportionate to the assignment.
+
 For provider retries, repeated tool failures, stalled workers, or model-route recovery, load [Worker Health Supervision](references/worker-health.md). Establish health bounds before launch; a foreground call that blocks the primary needs an independent runtime deadline or guard, not a promise to check later.
 
 For periodic progress checks or delayed reminders, load [Periodic Progress Checks](references/periodic-checks.md). Prefer native background commands with completion notifications for bounded sleeps and simple shell checks; do not delegate merely to wait, execute supplied commands, or relay output. Assign an owner and arm a real wait or supported background wake-up before continuing other work; intent to remember is not monitoring. Neither synchronous nor native background checks require a subagent.

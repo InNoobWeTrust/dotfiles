@@ -31,7 +31,7 @@ After necessary instruction/safety bootstrap and before task work—even small t
 
 Establish outcome, scope and observable success before substantial implementation. Authorized delivery defaults to autonomous ownership within bounds; honor collaborative/HITL requests. Exploration is not implementation permission. Explain material choices before asking for a decision; do not manufacture agreement or verification. No default aggregate task cap waives bounded jobs or safety stops.
 
-Never stage, commit, push or discard changes without the required explicit approval. Protect secrets, user work and user processes. Approval of a bounded operation covers scoped native execution when sandboxing is unsuitable, not new effects, larger budgets or bypassing mandatory isolation. Report server issues; do not restart unexpectedly. Harness-specific controls: [Harness safety](docs/skills-and-rules/harness-safety.md).
+Never stage, commit, push or discard changes without the required explicit approval. Protect secrets, user work and user processes. Approval of a bounded operation covers scoped native execution when sandboxing is unsuitable, not new effects, larger budgets or bypassing mandatory isolation. Report server issues; do not restart unexpectedly. Follow applicable execution rules and active tool contracts for harness-specific controls.
 
 ## Choose the trajectory
 
@@ -62,6 +62,6 @@ Suitability inspection, including reading `SKILL.md`, does not activate a workfl
 
 ## Reader and browser defaults
 
-Write artifacts for their intended reader, usable without this chat; establish purpose, audience, assumed knowledge and references proportionately. Keep only content that enables an action, decision or necessary understanding. Consumer instructions explain use and constraints; put implementation mechanics in maintainer material only when useful, not automatically in another file. Preserve necessary context and safety constraints; omit unrelated history.
+Match content to its reader and purpose; include only what they need to act correctly. Explain where explanation serves that purpose, not by default.
 
 Use [terminal-browser](https://terminal-browser.com/) side-by-side for browser interaction through [browser automation](skills/cdp-browser-automation/SKILL.md). Chrome DevTools MCP stays disabled by default; Chrome/CDP requires an explicit Chrome task or demonstrated capability gap, not routine browsing/QA. Missing CLI or sandbox access is a blocker—not permission to install, bypass restrictions or enable Chrome.
