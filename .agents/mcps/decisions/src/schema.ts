@@ -1,6 +1,8 @@
 import { z } from "zod@4"
 
-export const MODEL = "jev-1.13-free"
+import { MODEL, FALLBACK_MODEL } from "./providers.ts"
+export { MODEL, FALLBACK_MODEL } from "./providers.ts"
+export type DecisionModel = typeof MODEL | typeof FALLBACK_MODEL
 
 const label = z.string().min(1).max(100)
 const instructions = z.string().min(1).max(8000)
@@ -41,7 +43,7 @@ export type EvaluateArgs = z.infer<typeof evaluateSchema>
 const probability = z.number().min(0).max(1)
 const probabilities = z.record(z.string(), probability)
 const responseSchema = z.object({
-  model: z.literal(MODEL),
+  model: z.enum([MODEL, FALLBACK_MODEL]),
   answers: z.record(z.string(), z.discriminatedUnion("type", [
     z.object({ type: z.literal("choice"), choice: z.string(), probabilities, confidence: probability.optional() }),
     z.object({ type: z.literal("score"), score: z.number(), probabilities, confidence: probability.optional() }),
@@ -61,6 +63,10 @@ export function parseEvaluateInput(input: unknown): EvaluateArgs {
 }
 
 /** Parse raw HTTP response body as JSON and validate schema. Throws SyntaxError (invalid JSON) or ZodError (schema mismatch). */
-export function parseResponseBody(rawText: string): ResponsePayload {
-  return responseSchema.parse(JSON.parse(rawText))
+export function parseResponseBody(rawText: string, expectedModel: DecisionModel = MODEL): ResponsePayload {
+  const raw = JSON.parse(rawText)
+  const payload = expectedModel === FALLBACK_MODEL
+    ? z.object({ success: z.literal(true), result: responseSchema }).parse(raw).result
+    : responseSchema.parse(raw)
+  return responseSchema.extend({ model: z.literal(expectedModel) }).parse(payload)
 }

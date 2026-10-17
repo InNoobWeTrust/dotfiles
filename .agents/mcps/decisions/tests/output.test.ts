@@ -43,9 +43,9 @@ function mockValidate(rawText: string): ResponsePayload {
 
 // Mock validator that always throws a ZodError-like error (to simulate schema mismatch).
 function mockValidateZodFail(_rawText: string): ResponsePayload {
-  const err = new Error("ZodError mock") as Error & { constructor: { name: string } }
-  Object.defineProperty(err, "name", { value: "ZodError" })
-  Object.defineProperty(err.constructor, "name", { value: "ZodError" })
+  // Do not rename the global Error constructor: other suites share this runtime.
+  class ZodError extends Error {}
+  const err = new ZodError("ZodError mock")
   throw err
 }
 

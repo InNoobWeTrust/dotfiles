@@ -1,11 +1,48 @@
 import { readFileSync } from "node:fs"
 import type { ZodError } from "zod@4"
-import type { EvaluateArgs, ResponsePayload } from "./schema.ts"
+import type { DecisionModel, EvaluateArgs, ResponsePayload } from "./schema.ts"
 import { INLINE_OUTPUT_BYTES, ResponseCapture } from "./response.ts"
+import { ENDPOINT, MODEL, FALLBACK_MODEL, getCloudflareConfiguration } from "./providers.ts"
 
-export const ENDPOINT = "https://opencode.ai/zen/v1/systemone"
-export const MODEL = "jev-1.13-free"
+export { ENDPOINT, MODEL } from "./providers.ts"
 const MAX_REQUEST_BYTES = 256 * 1024
+const MAX_CLOUDFLARE_BYTES = 20000
+// Account-scoped, process-local cooldown; no timers or background retries.
+const cloudflareCooldowns = new Map<string, number>()
+
+export function getCloudflareCooldown(account: string): number | undefined {
+  const cooldown = cloudflareCooldowns.get(account)
+  if (cooldown !== undefined && cooldown > Date.now()) return cooldown
+  cloudflareCooldowns.delete(account)
+}
+
+function cloudflareRequest(args: EvaluateArgs) {
+  const config = getCloudflareConfiguration(process.env)
+  if (!config || getCloudflareCooldown(config.account)) return
+  // The public Zen contract permits one option; Clef requires at least two.
+  if (Object.values(args.questions).some(question => question.type === "choice" && Object.keys(question.criteria).length < 2)) return
+  const ids = Object.keys(args.questions)
+  const questions = Object.fromEntries(ids.map((id, index) => {
+    const question = args.questions[id]
+    return [`q${index}`, question.type === "boolean" ? { ...question, type: "noul" } : question]
+  }))
+  const body = JSON.stringify({ model: FALLBACK_MODEL, state: args.state, questions })
+  // UTF-8 bytes conservatively bound text tokens, with room for model framing.
+  // Skip rather than allowing Workers AI to truncate the caller's state.
+  if (Buffer.byteLength(body, "utf8") > MAX_CLOUDFLARE_BYTES) return
+  return {
+    ...config, body, ids,
+  }
+}
+
+export function recordCloudflareCooldown(account: string, response: Response) {
+  const retryAfter = response.headers.get("retry-after")
+  const seconds = retryAfter === null ? NaN : Number(retryAfter)
+  const until = Number.isFinite(seconds) && seconds >= 0
+    ? Date.now() + seconds * 1000
+    : Date.parse(retryAfter ?? "")
+  cloudflareCooldowns.set(account, Number.isFinite(until) ? Math.max(Date.now(), until) : Date.now() + 60000)
+}
 
 class ApiFailure extends Error {
   /** Set once ResponseCapture is created; null only when creation itself failed. */
@@ -54,7 +91,7 @@ export function failure(error: unknown) {
     ok: false as const,
     error: {
       code: "CONNECTION_FAILED",
-      message: "System One connection failed. Check network access and the inherited Zen account credential.",
+      message: "Decision connection failed. Check network access and the inherited provider credentials.",
     },
     ...paths,
   }
@@ -83,7 +120,7 @@ async function streamBody(capture: ResponseCapture, response: Response): Promise
 }
 
 /**
- * Evaluate one stateless decision batch using the existing inherited Zen key, with no retries/fallback.
+ * Evaluate on Zen, with one optional Clef-flash attempt only after an HTTP 429.
  *
  * validateResponse parses and validates the raw HTTP body string; it is injected by the server
  * so that api.ts itself carries no runtime zod@4 dependency (enabling direct unit testing).
@@ -91,7 +128,7 @@ async function streamBody(capture: ResponseCapture, response: Response): Promise
 export async function evaluate(
   args: EvaluateArgs,
   callerSignal: AbortSignal,
-  validateResponse: (rawText: string) => ResponsePayload,
+  validateResponse: (rawText: string, expectedModel?: DecisionModel) => ResponsePayload,
 ) {
   // Create cache directory before all other logic so every error path can persist a resultPath.
   let capture: ResponseCapture
@@ -118,7 +155,7 @@ export async function evaluate(
 
     const signal = AbortSignal.any([callerSignal, AbortSignal.timeout(args.timeoutMs)])
     signal.throwIfAborted()
-    const response = await fetch(ENDPOINT, {
+    let response = await fetch(ENDPOINT, {
       method: "POST",
       headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
       body,
@@ -136,19 +173,61 @@ export async function evaluate(
         "Failed to flush response cache. Check XDG_CACHE_HOME and available disk space.")
     }
 
+    let selectedModel: DecisionModel = MODEL
+    let fallbackIds: string[] | undefined
+    if (response.status === 429) {
+      const fallback = cloudflareRequest(args)
+      if (fallback) {
+        signal.throwIfAborted()
+        // Retain the primary raw capture; final paths belong to the selected attempt.
+        try {
+          capture = new ResponseCapture(process.env)
+        } catch {
+          throw new ApiFailure("OUTPUT_CAPTURE_FAILED", "Failed to create fallback response cache.")
+        }
+        selectedModel = FALLBACK_MODEL
+        fallbackIds = fallback.ids
+        response = await fetch(fallback.endpoint, {
+          method: "POST",
+          headers: { authorization: `Bearer ${fallback.key}`, "content-type": "application/json" },
+          body: fallback.body,
+          signal,
+          redirect: "error",
+        })
+        if (response.status === 429) recordCloudflareCooldown(fallback.account, response)
+        await streamBody(capture, response)
+        try {
+          capture.close()
+        } catch {
+          throw new ApiFailure("OUTPUT_CAPTURE_FAILED", "Failed to flush fallback response cache.")
+        }
+      }
+    }
+
     if (!response.ok) {
       throw new ApiFailure("HTTP_ERROR",
-        "Zen rejected the System One request. Check account access, rate limits and endpoint compatibility.",
+        `${selectedModel === MODEL ? "Zen" : "Cloudflare fallback"} rejected the decision request. Check account access, rate limits and endpoint compatibility.`,
         response.status)
     }
 
     // Parse and validate the response body via the injected validator.
     let payload: ResponsePayload
     try {
-      payload = validateResponse(readFileSync(capture.responsePath, "utf-8"))
+      payload = validateResponse(readFileSync(capture.responsePath, "utf-8"), selectedModel)
     } catch (err) {
       if (isZodError(err)) throw new ApiFailure("INVALID_PAYLOAD", "System One response does not match the expected schema.")
       throw new ApiFailure("INVALID_RESPONSE", "System One returned invalid JSON.")
+    }
+
+    if (payload.model !== selectedModel) {
+      throw new ApiFailure("INVALID_RESPONSE", "Decision provider returned an unexpected model.")
+    }
+    if (fallbackIds) {
+      if (Object.keys(payload.answers).length !== fallbackIds.length ||
+          fallbackIds.some((_, index) => !Object.hasOwn(payload.answers, `q${index}`))) {
+        throw new ApiFailure("INVALID_RESPONSE", "Cloudflare returned a different set of questions.")
+      }
+      payload = { ...payload, answers: Object.fromEntries(fallbackIds.map((id, index) => [id, payload.answers[`q${index}`]])) }
     }
 
     if (Object.keys(payload.answers).length !== Object.keys(args.questions).length) {
@@ -227,7 +306,7 @@ export async function evaluate(
       apiErr.responsePath = capture.responsePath
     } else {
       apiErr = new ApiFailure("CONNECTION_FAILED",
-        "System One connection failed. Check network access and the inherited Zen account credential.")
+        "Decision connection failed. Check network access and the inherited provider credentials.")
       apiErr.responsePath = capture.responsePath
     }
 
