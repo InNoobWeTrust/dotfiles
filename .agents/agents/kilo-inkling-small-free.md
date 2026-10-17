@@ -1,5 +1,5 @@
 ---
-description: "Long-context analysis and synthesis across text, images and audio, with emphasis on source comparison, evidence extraction and explanations."
+description: "Long-context text, image and audio analysis for source comparison, evidence extraction and explanations."
 mode: subagent
 model: "kilo/thinkingmachines/inkling-small:free"
 permissions:

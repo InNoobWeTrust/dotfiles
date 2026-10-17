@@ -1,5 +1,5 @@
 ---
-description: "Primary for interactive problem solving, integration and verified delivery. Match workers to throughput, reasoning depth and complementary perspectives rather than defaulting to one provider."
+description: "Primary for interactive problem solving, integration and verified delivery. Select workers by task suitability and the capabilities needed to complete the assignment."
 mode: primary
 permission:
   edit: allow

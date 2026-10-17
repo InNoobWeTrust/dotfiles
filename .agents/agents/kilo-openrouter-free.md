@@ -1,5 +1,5 @@
 ---
-description: "Bulk summaries, draft variants, extraction and low-risk scouting, with emphasis on spot-checkable throughput work and parallel discovery."
+description: "Bulk summaries, draft variants, extraction and low-risk scouting with spot-checkable outputs."
 mode: subagent
 model: "kilo/openrouter/free"
 permission:

@@ -1,5 +1,5 @@
 ---
-description: "Evidence-focused synthesis: reconcile conflicting sources, distinguish facts from assumptions and identify unsupported claims. Use to refine delegated research or independently challenge source-backed explanations."
+description: "Source synthesis, implementation and evidence checking, including conflicting explanations and unsupported claims."
 mode: subagent
 # Temporarily hidden while opencode/deepseek-v4.1-flash-free is available.
 hidden: true

@@ -1,5 +1,5 @@
 ---
-description: "Long-context analysis and synthesis across text and images, with emphasis on bulk extraction, source comparison and repetitive transformations."
+description: "Additional review and adversarial perspectives through long-context text and image analysis, source comparison and contradiction finding; return findings without implementing changes or materializing artifacts."
 mode: subagent
 model: "kilo/dots-studio/dots-3-note-preview:free"
 permissions:

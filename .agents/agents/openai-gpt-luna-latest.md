@@ -1,5 +1,5 @@
 ---
-description: "Software development, source analysis and technical investigation, with emphasis on tracing behavior, call chains and dependency relationships. Handles implementation, refactoring and source-grounded explanations."
+description: "Software development, refactoring and source-grounded investigation across behavior, call chains and dependencies."
 mode: subagent
 model: "kilo/~openai/gpt-luna-latest"
 variant: medium

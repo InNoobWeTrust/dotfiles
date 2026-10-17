@@ -1,5 +1,5 @@
 ---
-description: "Low-latency coding and text-based reasoning across large contexts, including repository analysis, tool-driven implementation and structured extraction."
+description: "Text-based coding, repository analysis and structured extraction across large contexts, including tool-driven implementation."
 mode: subagent
 model: "opencode/beam-free"
 permissions:

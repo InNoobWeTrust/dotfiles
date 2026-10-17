@@ -1,5 +1,5 @@
 ---
-description: "Correctness/reasoning challenger: derive algorithms, test invariants and find counterexamples in proposals or delegated findings. Also handles scoped logic edits with explicit acceptance checks."
+description: "Implementation, debugging and correctness analysis, including algorithms, invariant checks and counterexamples."
 mode: subagent
 # Temporarily hidden while opencode/deepseek-v4.1-flash-free is available.
 hidden: true

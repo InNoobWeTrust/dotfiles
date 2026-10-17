@@ -1,5 +1,5 @@
 ---
-description: "Execution, shell glue and configuration work, with emphasis on explicit action boundaries and observable checks."
+description: "Exploratory implementation, shell glue and configuration work within explicit action boundaries."
 mode: subagent
 model: "opencode/space-bunny-free"
 permission:

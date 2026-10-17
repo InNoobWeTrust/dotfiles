@@ -1,5 +1,5 @@
 ---
-description: "Implementation, debugging and verification, with emphasis on edit-test workflows, interface behavior and edge cases. Supports code changes and independent implementation alternatives."
+description: "Implementation, debugging, verification and source synthesis through automatic routing across Qwen3.8 Max, Flash and 27B."
 mode: subagent
 model: "ckey/forbiddengun/qwen"
 permission:

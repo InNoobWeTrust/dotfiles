@@ -1,5 +1,5 @@
 ---
-description: "Reasoning, architecture analysis and software development, including algorithm derivation, invariant checks and counterexamples."
+description: "General-purpose implementation, multi-file integration, debugging, refactoring and tool-driven edit-test verification, plus architecture, source synthesis, algorithms and invariant checks."
 mode: subagent
 model: "opencode/deepseek-v4.1-flash-free"
 permissions:

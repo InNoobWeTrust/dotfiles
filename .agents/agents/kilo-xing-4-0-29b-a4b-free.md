@@ -1,5 +1,5 @@
 ---
-description: "Coding, reasoning and tool-assisted execution, with emphasis on multi-step planning, terminal tasks and long-context source analysis."
+description: "Coding, terminal tasks and long-context source analysis with tool-assisted execution."
 mode: subagent
 model: "kilo/xingchen-agi/xing4.0-29b-a4b:free"
 permissions:

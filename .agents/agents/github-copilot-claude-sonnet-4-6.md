@@ -1,5 +1,5 @@
 ---
-description: "Coherent multi-file implementation, document revision and source synthesis across interconnected material. Choose for integration or contract refinement after scouting."
+description: "Multi-file implementation, document revision, source synthesis and contract refinement."
 mode: subagent
 model: "github-copilot/claude-sonnet-4.6"
 variant: high

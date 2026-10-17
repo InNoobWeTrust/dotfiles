@@ -1,5 +1,5 @@
 ---
-description: "Coding, debugging and refactoring, with emphasis on small bugfixes, alternative patches, supplied interfaces and behavior checks."
+description: "Small bugfixes, scoped debugging and alternative patches against supplied interfaces and behavior checks."
 mode: subagent
 model: "kilo/cohere/north-mini-code:free"
 permissions:

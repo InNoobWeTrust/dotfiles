@@ -1,5 +1,5 @@
 ---
-description: "Software reasoning, implementation and review, with emphasis on causal diagnosis, debugging and performance analysis. Connects evidence to explanations, repair approaches and verification."
+description: "Software implementation, review, causal debugging and performance analysis with evidence-linked verification."
 mode: subagent
 model: "kilo/~openai/gpt-terra-latest"
 variant: high
