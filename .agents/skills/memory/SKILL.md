@@ -73,6 +73,8 @@ Return mode, selected scope, resolved paths and changed files/sections; note rel
 
 ## References
 
+- [Source maps](references/source-maps.md): optional source-backed architecture/flow capture and freshness checks for cross-agent reuse; no new storage or consolidation authority.
+
 - [Hierarchy and storage](references/hierarchy-and-storage.md): entry templates, filenames, Capture/Recall.
 - [Scopes](references/scopes.md): audience/identity metadata, external resolution, migration and source-backed conventions.
 - [Task-role records](references/task-role-records.md): immutable bindings, checkpoints and restoration.

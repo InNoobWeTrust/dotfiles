@@ -50,6 +50,8 @@ For phased work use the independently usable [Delivery Contract](../team-operati
 
 ## Cumulative requirement conformance
 
+Implementation handoffs also carry the unit's current structural context and source-map freshness requirements under [Implementation payload](references/implementation-payload-and-preflight.md#structural-context--part-of-the-unit-handoff); unchanged boundaries need only a brief rationale. Return actual placement/dependency deltas for aggregate integration checks.
+
 Preserve earlier compatible requirements when adapting to new information. The dedicated [conformance checker](references/worker-contract.md#dedicated-user-requirement-conformance) must cover audience, assumed knowledge, writing style, format, and constraints alongside functional goals. Recheck affected requirements after requirement/artifact revisions and require a current full receipt before final handoff; self-checks or generic quality reviews do not substitute.
 
 ## Host-side synthesis gate (mandatory before user-facing decision)

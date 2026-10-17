@@ -25,6 +25,12 @@ Bound all fields before launch:
 8. Stop conditions.
 9. Approved materialization choices: the unit-relevant capability-to-library/API mapping defined below, or an explicit `N/A` with rationale when no capability choice is affected. Required for both dispatch bases.
 
+## Structural context — part of the unit handoff
+
+For affected responsibilities/boundaries/dependencies, include the relevant slice of the current [structural-integrity map](../../architecture-design/references/structural-integrity.md): owning layer/module and split-or-keep rationale, allowed dependency direction, proposed edge delta, consumer/normal-error flow and source revision/coverage. Link an accessible scoped [source-map record](../../memory/references/source-maps.md) or provide a compact inline map; require freshness checks before reuse. No mandatory full-repo inventory or new memory store. If these surfaces are unchanged, state that briefly instead.
+
+Workers return actual placement and edge changes, relevant source/check evidence, unknowns and invalidated map entries. An architectural defect or needed out-of-scope extraction returns to the primary; do not evade it by growing an allowed file. The primary checks the combined graph and reader-visible flow, not just individual worker PASS labels. Internal helper choices remain flexible within the approved responsibility/contract.
+
 ## Materialization choices — part of the implementation contract
 
 Core logic and interface signatures are not enough: specify which established capabilities must implement them. The primary resolves choices using repository dependencies/conventions, explicit user constraints, and the smallest applicable [code-craft language reference](../../code-craft/references/languages/README.md) or pattern-catalog result. Carry the approved unit-relevant rows from the plan into the dispatch; do not leave a worker to infer selections from a skill name, broad plan link, or remembered coding patterns.

@@ -10,6 +10,8 @@ Modular-first & illustration-first — prefer clear component boundaries and mer
 
 Before designing, read [Architecture working principles](references/working-principles.md#architecture). Ground proposals in existing flows and constraints, and distinguish proposed choices from authorized implementation.
 
+For changed responsibility placement, boundaries or dependencies, apply [Structural integrity](references/structural-integrity.md) before selecting modules and again against the realized design. It owns the shared placement/graph method; builds alone cannot verify architecture.
+
 Progressive disclosure: this file is the workflow router.
 Deep detail lives in `references/`.
 

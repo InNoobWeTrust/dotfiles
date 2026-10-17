@@ -9,6 +9,7 @@ Load before Phase 3. Expansion / Refactor and Hardening complete every item. Pat
 | L — no weakened contracts | ☐ / N/A |
 | I — minimal public surface | ☐ |
 | D — depend on abstractions | ☐ |
+| Placement and affected graph delta checked under [Structural integrity](../../architecture-design/references/structural-integrity.md); split/keep justified, allowed direction and cycle closure verified or unresolved evidence reported | ☐ / N/A |
 | Docstrings on public APIs | ☐ |
 | Deep modules (no shallow 1–3 line helpers) | ☐ |
 | YAGNI | ☐ |

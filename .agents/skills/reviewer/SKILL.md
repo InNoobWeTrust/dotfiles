@@ -48,6 +48,8 @@ Trace the changed contract through affected callers, types, imports, tests and c
 - **Hard Prohibition**: Do not report unrelated, pre-existing legacy defects or smells discovered during tracing.
 - For an explicitly scoped artifact audit rather than a changeset review, the named artifact is the review boundary; do not invent a diff requirement or expand into adjacent legacy cleanup.
 
+For applicable code/architecture changes, including Quick reviews, apply [Structural integrity](../architecture-design/references/structural-integrity.md) within this causal boundary: inspect responsibility placement and relevant module/workspace/external edges independently of supplied maps. Follow changed edges through untouched return paths. If responsibilities/boundaries/dependencies/wiring are unchanged, state that and keep the check local; review depth and line count do not waive an affected boundary check. Missing evidence is scoped UNVERIFIED, not permission for unrelated cleanup.
+
 ## Diff Preparation & Scoping (Preflight, Bundles, Gating)
 
 When reviewing changesets or PRs:

@@ -8,6 +8,8 @@ Give a separate capable reviewer the original outcome/constraints, proposed depe
 
 ## Questions and receipt
 
+The primary owns architecture coherence across assignments, or names a steward while retaining accountability. Before decomposition, establish a bounded source-backed map of existing responsibilities, flows and allowed dependencies using [Structural integrity](../../architecture-design/references/structural-integrity.md), the shared placement/graph method. Keep it in existing task context; pass the relevant slice to workers and update it as integrated changes invalidate evidence. Do not assume disjoint file writes imply architectural independence.
+
 The reviewer challenges the whole flow, not merely whether each module works:
 
 - Which layer owns policy, orchestration and state? Do dependencies point toward reusable capabilities rather than another consumer/application?
@@ -23,7 +25,7 @@ Coordination ownership is not architectural immunity. Any contributor may raise 
 
 ## Integration acceptance
 
-Compare the implemented manifest/import graph and representative caller→adapter→core flow against the reviewed design, including untouched consumers. Use source tracing or existing dependency tooling within authorized execution bounds; record the source/check and result. Runtime tests prove behavior, not dependency independence. Perform relevant runtime checks as well; neither replaces the other. Missing boundary evidence is UNVERIFIED, not a clean architecture claim.
+Apply the shared structural-integrity method to the combined implemented changes, including untouched consumers and cross-worker edges. This section owns team acceptance, not a separate graph-check algorithm. Compare actual placement, manifests/imports and normal/error flows against the reviewed map; check cumulative responsibility drift and whether a new engineer can trace state/effects and explain the component boundaries. Record separate behavior, structural/readability and dependency results. Runtime success is necessary where contracted, never sufficient for architecture or human understandability. Missing required boundary evidence is UNVERIFIED, not a clean architecture claim.
 
 A receipt covers only the question, revision and sources actually examined. A cycle check or a PASS for removing one application dependency cannot approve responsibility placement it did not assess. Report build/runtime results, dependency-boundary results and design acceptance separately; never widen a scoped PASS during synthesis.
 

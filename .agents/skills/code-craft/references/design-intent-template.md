@@ -18,6 +18,7 @@ Constraints     :
 Known compromises: [canonical register references when phased; local deferrals otherwise; or none]
 Unit name       :
 Responsibility  : [one sentence, no "and"]
+Placement       : [owning layer/module; split or keep and why; or unchanged]
 Caller interface: [in → out]
 Domain terms    : [existing glossary respected; critical ambiguity resolved]
 Interface contract: [signature / schema]
@@ -29,6 +30,7 @@ Module README   : yes/no/updated
 Technology choice: [repo-native stack / established package + why]
 Pattern Grounding : [query / pattern-id from pattern-catalog.md / none]
 Dependencies    : [existing first; new packages + maintenance/license/security fit]
+Graph delta     : [relevant module/workspace/external edges; allowed direction; cycle/closure evidence or explicit unknowns; unchanged when justified]
 Vendoring        : no / explicit user opt-in + rationale
 Quality tools   : [repo-native commands first]
 Complexity guard:

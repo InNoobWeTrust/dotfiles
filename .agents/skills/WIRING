@@ -40,6 +40,10 @@ When a durable specification is useful or requested, use its domain owner:
 handles presentation. No PRD → TRD → BDD ladder is required. When delegating,
 `subagent-dispatch` receives the active unit's proportionate scope and contract.
 
+### Structural Integrity Across Agents
+
+Use `architecture-design/references/structural-integrity.md` as the shared placement/dependency method, not duplicated checklists. `codebase-exploration/references/structural-tracing.md` supplies current source/LSP evidence; `memory/references/source-maps.md` supplies optional scoped capture/recall. `code-craft` applies the method before writing and during audit. `subagent-dispatch` carries the relevant map/constraints and returns actual deltas. `team-operating-model` owns cumulative coherence and aggregate acceptance; `reviewer` independently checks the changed structural surface. No mandatory new role, report or persistence store.
+
 ### UI/UX Implementation
 
 1. `ui-ux` — design-driven workflow: discover → journey → layout → states → style → code → verify (writes UX-SPEC.md as design contract)

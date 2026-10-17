@@ -20,6 +20,8 @@ Goal: enough overview to answer or know you need a deep dive.
 Tool recipes: `references/quick-exploration-tools.md`.  
 Direct vs delegate scenarios: `references/quick-vs-delegate-scenarios.md`.
 
+For architecture, dependency or change-placement questions, use [Structural tracing](references/structural-tracing.md). Use available LSP evidence alongside imports/manifests and runtime wiring; fall back explicitly when unsupported. Share a scoped, revision-linked source map, not an unsupported complete-graph claim.
+
 ```
 Can you answer now?
   YES (≤3 files, clear pattern) → continue with a strategy below

@@ -90,6 +90,8 @@ to responsibility/dependency direction, shared contracts, orchestration and stat
 Primary approval or a compromise register alone does not satisfy this gate. Reuse a
 current revision's receipt; mechanical edits with no changed design are exempt.
 
+The primary retains architecture stewardship across workers: maintain the bounded source-backed map, pass relevant structure/flow knowledge in handoffs, and verify combined placement, dependency deltas and human understandability at integration under that design-acceptance reference.
+
 For software work, the primary approves concrete library/tool/API selections using repository constraints and applicable code-craft guidance. Keep the [materialization contract](../subagent-dispatch/references/implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) in the existing plan/phase file (inline for an atomic patch), carry its unit-relevant rows into worker handoffs, and revalidate changed choices on replacement/revision. Acceptance checks actual API use and behavior, not imports alone; workers report missing/incompatible choices rather than silently reverting to learned patterns.
 
 Load [Delivery](references/delivery.md) before authorized build/fix/work-until-done loops.
