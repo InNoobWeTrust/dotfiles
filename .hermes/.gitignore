@@ -1,8 +1,0 @@
-# Ignore by default
-*
-
-# Explicit tracking
-!/plugins/
-!/.env.example
-!/config.yaml
-!/SOUL.md

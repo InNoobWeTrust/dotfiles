@@ -56,16 +56,6 @@
         ],
         "disabled": false,
       },
-      "rea": {
-        "type": "local",
-        "command": [
-          "npx",
-          "-y",
-          "rea-agents@6.4.0",
-          "mcp"
-        ],
-        "disabled": true,
-      },
     },
   },
   "providers": {

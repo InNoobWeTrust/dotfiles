@@ -19,11 +19,6 @@
     "lsp": {
       "command": "mcp-lsp",
       "args": []
-    },
-    "rea": {
-      "command": "npx",
-      "args": ["-y", "rea-agents@6.4.0", "mcp"],
-      "disabled": true
     }
   }
 }
