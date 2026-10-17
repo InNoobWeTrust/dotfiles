@@ -17,6 +17,12 @@ trigger: always_on
   implementation; formal signatures/files only where coordination needs them.
   Numeric style thresholds, one-export files, module headers and README creation
   are contextual techniques, not universal gates. Do not overengineer utilities.
+- **Structure before volume:** Before generating new or changed capabilities or
+  runtime/trust boundaries, settle source homes and allowed dependency direction,
+  then materialize code there. Apply the [source-boundary contract](../skills/architecture-design/references/structural-integrity.md);
+  green tests or an acyclic graph cannot replace actual placement review.
+  Cohesive unchanged-boundary edits need only a brief existing-owner rationale,
+  not new folders or forms.
 - Honor an existing glossary and resolve conflicting critical business meanings;
   routine names need no user approval or unsolicited glossary bootstrap.
 - Select meaningful verification and persistence before writing checks. Without

@@ -25,7 +25,7 @@ After necessary instruction/safety bootstrap and before task work—even small t
 | Before the first shell command, and throughout command/process execution | `rules/execution-safety.md` |
 | Verifying outcomes, reporting completion, side-effect tools or responding to pushback | `rules/evidence.md` |
 | Selecting or following skills | `rules/skill-use.md` |
-| Implementing code, retaining tests or changing domain vocabulary | `rules/code-quality.md` |
+| Generating/implementing code, source ownership/dependency boundaries, retaining tests or changing domain vocabulary | `rules/code-quality.md` |
 | Staging, committing, pushing or destructive Git actions | `rules/git-safety.md` |
 | Creating or substantially revising human-facing documents | `rules/document-formats.md` |
 

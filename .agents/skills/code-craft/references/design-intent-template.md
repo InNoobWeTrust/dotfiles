@@ -18,7 +18,7 @@ Constraints     :
 Known compromises: [canonical register references when phased; local deferrals otherwise; or none]
 Unit name       :
 Responsibility  : [one sentence, no "and"]
-Placement       : [owning layer/module; split or keep and why; or unchanged]
+Placement       : [owning capability → actual source home(s), settled before generation; split or keep and why; or unchanged existing owner]
 Caller interface: [in → out]
 Domain terms    : [existing glossary respected; critical ambiguity resolved]
 Interface contract: [signature / schema]

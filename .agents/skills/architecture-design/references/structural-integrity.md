@@ -1,6 +1,6 @@
 # Structural integrity
 
-Shared method for architecture, implementation and review. Use when maintained code changes responsibility placement, module/public boundaries, dependencies, registration or state ownership. For a local behavior-only patch, record why those surfaces are unchanged and check the local flow; do not demand a whole-repository graph. Research-only work need not adopt delivery gates; do not claim its structure was verified without evidence.
+Shared method for architecture, implementation and review. Use when creating or changing maintained capabilities, runtime/trust or public boundaries, dependencies, registration or state ownership, and when relocating source modules. New systems are included. For a cohesive helper or behavior-only edit within an existing boundary, briefly name the existing owner and why those surfaces are unchanged, then check the local flow; do not demand new folders, forms or a whole-repository graph. Research-only work need not adopt delivery gates; do not claim its structure was verified without evidence.
 
 ## 1. Map before choosing where to edit
 
@@ -23,6 +23,10 @@ Mark unsupported languages, conditional targets, dynamic edges, unavailable reso
 
 State the intended allowed dependency direction, then show proposed edge additions/removals and affected consumers. Distinguish current facts from intended architecture.
 
+**Settle the source-boundary contract before the first affected source write or generator invocation.** In existing intent, identify capability → actual source home(s), consumer-visible surface, allowed dependency direction and state/lifetime owner; name relevant forbidden edges. Use concrete paths where placement matters, not only conceptual layer names or a broad writable directory. Keep internal helpers flexible within that boundary; no separate artifact or per-symbol inventory is required.
+
+**Materialize the boundaries, not a promise to reorganize later.** Generate directly at the settled homes. Group distinct capability/runtime surfaces in maintained multi-capability code so reviewers can navigate ownership from the source tree; keep composition/orchestration explicit. Paths, imports, public surfaces and state ownership must express the same boundaries. Documentation cannot repair a contradictory layout or graph. A cohesive capability may remain one file; do not manufacture empty scaffolding, barrels or wrappers to satisfy a folder quota.
+
 **Split or keep deliberately.** Keep a cohesive capability together when its responsibilities and reasons to change align. Extract into a well-named module at the correct existing hierarchy when new work adds unrelated policy/effects, multiple reasons to change, or hides a reusable capability inside a consumer. Preserve a small explicit public surface and inspectable orchestration. File size is a signal, not a split threshold; moving code behind wrappers without separating responsibility is not modularity. Do not create a package/service or generic shared utility merely to reduce line count. New package boundaries need a real ownership, reuse, lifecycle or dependency-isolation reason.
 
 If appropriate placement exceeds authorized writable scope or changes settled consumer contracts, return the evidence and proposed scope/contract revision to the owner. Do not stuff code into an allowed file to evade the boundary, or silently refactor adjacent code.
@@ -35,7 +39,9 @@ Report an actual cycle as an edge witness, for example `A → B → unchanged C 
 
 ## 4. Verify the realized structure
 
-Before writing, include placement/split-or-keep reasoning and relevant graph delta in design intent; check it during design/SOLID review. After writing, compare actual placement, exports, manifests and wiring against that intent, including untouched consumers and all integrated worker deltas. Investigate discrepancies before acceptance. A reviewer independently checks relevant source edges rather than endorsing an author's map by assertion.
+Check the pre-write source-boundary contract during design/SOLID review. After writing, compare actual homes, exports, manifests and wiring against that contract, including untouched consumers and all integrated worker deltas. Resolve discrepancies before acceptance; revalidate changed boundary decisions before dependent work rather than silently rewriting intent to bless the generated layout. A reviewer independently checks relevant source edges and ownership rather than endorsing an author's map by assertion.
+
+Observed placement/allowed-edge violations are **FAIL**; absent required evidence is **UNVERIFIED**. Either blocks structural acceptance of the affected unit even when behavior passes. Verify physical destinations and removal of old paths after moves. A writable path is permission to edit, not permission to collapse distinct responsibilities into it.
 
 Return separate results for behavior/build checks, responsibility/readability, dependency direction/cycles, and graph coverage. Human understandability requires clear names, cohesive boundaries and a traceable normal/error path, not just passing tests. Record exclusions honestly; missing evidence blocks only the corresponding claim or required acceptance item.
 
@@ -44,6 +50,8 @@ Return separate results for behavior/build checks, responsibility/readability, d
 Inputs: scoped change/question, source identity, consumer constraints and authorized tools. Output: compact source-backed responsibility/flow map, placement decision, graph delta and scoped results/unknowns. No extra report is needed for an unchanged boundary.
 
 Prototype walkthrough cases: (1) cohesive local patch stays local, (2) growing mixed-responsibility file gets a placement decision, (3) new edge closes a path through unchanged code, (4) two safe-looking worker deltas form a combined cycle, (5) unavailable LSP/resolver or stale memory cannot yield a complete-graph claim. Validate routing and overhead in the next 1–2 real uses; instruction compliance is not measured improvement in code quality.
+
+Materialization clarification prototype, 2026-10-18: also check new multi-capability generation at agreed homes and rejection of acyclic forbidden edges or code outside those homes. Review after 1–2 real uses or by 2027-01-18; source walkthroughs alone do not prove future adherence.
 
 ### ACI pass
 

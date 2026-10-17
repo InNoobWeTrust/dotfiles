@@ -2,7 +2,7 @@
 
 ## Trigger and inputs
 
-Use before implementing a material cross-component design: changed responsibility or dependency direction, adapter/core boundaries, shared contracts, orchestration, or state ownership. Applies to primary-authored and delegated designs alike. Mechanical edits and implementation under a still-current reviewed design need no new design review. Use the existing plan/phase or inline atomic-patch context; no extra plan object is required.
+Use before implementing a material cross-component design: creating or changing responsibilities or dependency direction, adapter/core boundaries, shared contracts, orchestration, or state ownership. Applies to primary-authored and delegated designs alike. Mechanical edits and implementation under a still-current reviewed design need no new design review. Use the existing plan/phase or inline atomic-patch context; no extra plan object is required.
 
 Give a separate capable reviewer the original outcome/constraints, proposed dependency and call flow, affected consumer/manifest sources, contract revision and realistic simpler alternative. Use `reviewer` design-rigor/pragmatic-triage; follow `subagent-dispatch` independence/provider-family requirements for design output. The designer cannot supply their own independent receipt. Missing required review blocks affected implementation, not unrelated safe work.
 

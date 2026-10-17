@@ -1,107 +1,135 @@
-# MCP Configuration Synchronization (`mcp-sync`)
+# MCP Configuration Management (`mcp-sync`)
 
-Synchronize the project's canonical Model Context Protocol (MCP) server configuration to the active AI agent harness's configuration file.
+Each AI agent harness maintains its own dedicated MCP configuration file. These files are the authoritative source for their respective harness.
 
-The project maintains a single canonical MCP configuration at `.agents/mcp.json`. When an agent is initialized, or when MCP servers are added or updated, agents read the canonical file and synchronize the entries into their own configuration file, adapting format variations.
+**No shared canonical `.agents/mcp.json` exists — its absence is intentional and not a blocker.** When MCP servers are added or updated, edit the relevant harness config file(s) directly.
 
 ---
 
-## Canonical Configuration Format
+## Known Harness Configurations
 
-Canonical configuration is stored at `.agents/mcp.json` using the standard MCP `mcpServers` schema:
+| Harness | Config Path | Schema |
+|---|---|---|
+| **OpenCode** | `~/.config/opencode/opencode.jsonc` | OpenCode JSONC (`"mcp"` key) |
+| **Claude Code (dotfiles launcher)** | `~/.claude/mcp.json` | MCP JSON projected through `_claude_with_mcp` |
+| **Gemini-family config in this dotfiles setup** | `~/.gemini/config/mcp_config.json` | MCP JSON with `disabled` |
+| **Codex** | `~/.codex/config.toml` | Codex TOML (`[mcp_servers.*]`) |
+
+> [!NOTE]
+> These are this installation's tracked locations, not universal harness defaults. In particular, do not assume Claude auto-discovers `~/.claude/mcp.json` or that Gemini CLI uses this Gemini-family file. Discover the actual consumer and launch adapter first. `XDG_CONFIG_HOME` can change OpenCode's path; `CODEX_HOME` can change Codex's. For other harnesses, consult their official docs and existing launch configuration.
+
+In dotfiles setups, config files are often managed at a source path and symlinked to the live location. Edit the source file and verify the link is active with `ls -la <live-path>` before assuming the edit applies immediately; this is deployment-specific, not universal.
+
+---
+
+## Harness Schemas
+
+> [!IMPORTANT]
+> **Use absolute paths or commands on `$PATH` for all harnesses**: Relative paths break because harnesses execute MCP servers from different working directories. This dotfiles setup deploys executables to `~/.agents/mcps/*/bin`, added to `PATH` by `.sh.d/path.sh`.
+
+### Claude Code
+
+Native MCP entries have no `disabled` field. Use the harness's supported disable control or omit an entry from the config supplied to it. Preserve any deployment-specific disable metadata instead of deleting it blindly.
+
+In this dotfiles setup, [`.sh.d/aliases.sh`](../../../../.sh.d/aliases.sh)'s `_claude_with_mcp` reads `~/.claude/mcp.json`, filters `enabled = false` / `disabled = true`, strips those adapter fields, and passes the result via `--mcp-config`. The wrapper, not automatic discovery, makes this dedicated file effective. Keep that projection and its metadata intact.
 
 ```json
 {
   "mcpServers": {
     "server-name": {
-      "command": "npx",
-      "args": ["-y", "some-mcp-server"],
-      "env": { "API_KEY": "..." }
+      "command": "executable-on-PATH",
+      "args": []
     }
   }
 }
 ```
 
-> [!IMPORTANT]
-> **Use absolute paths or commands on `$PATH`**: Relative paths break because different agent harnesses execute MCP servers from different working directories.
+### Gemini-family config in this dotfiles setup
 
-### Default browser policy
-
-Browser interaction uses [terminal-browser](../../cdp-browser-automation/references/terminal-browser.md), not an always-on MCP. The shared `.agents/mcp.json` intentionally omits `chrome-devtools`, so consumers that do not understand disable flags cannot start it accidentally. Harness-specific Chrome definitions may remain **disabled** for explicit special-case use; synchronization must not re-enable them or add a terminal-browser MCP.
-
-If a canonical entry uses `enabled: false`, preserve that intent using the target's native disable control; omit it when no verified control exists. Do not copy `enabled` blindly into a consumer that ignores it. Existing Kilo and OpenCode-compatible configs use `enabled: false`; native OpenCode V2 uses `mcp.servers.<name>.disabled: true`; this repo's Gemini/Antigravity MCP config uses `disabled: true`.
-
----
-
-## Agent Configuration Matrix
-
-| Agent | Config Path | Merge Strategy |
-|---|---|---|
-| **Claude Code** | `~/.claude.json` | Merge `mcpServers` key, preserve other settings |
-| **Claude Desktop (macOS)** | `~/Library/Application Support/Claude/claude_desktop_config.json` | Merge `mcpServers` key, preserve other settings |
-| **Gemini CLI** | `~/.gemini/settings.json` | Merge `mcpServers` key, preserve other settings |
-| **Antigravity CLI** | `~/.gemini/antigravity-cli/mcp_config.json` | Merge `mcpServers` key, preserve other settings |
-| **GitHub Copilot** | `~/.copilot/mcp-config.json` | Standalone `{ "mcpServers": ... }` file |
-| **Kilo Code (≥v7.3)** | `~/.config/kilo/kilo.jsonc` or project `.kilo/kilo.jsonc` | Merge into `"mcp"` key with schema conversion (see below) |
-| **Cursor** | `~/.cursor/mcp.json` | Standalone `{ "mcpServers": ... }` file |
-
-> [!WARNING]
-> Agent config paths may change across versions. If the active agent's config path is not listed or fails to resolve, ask the user for the preferred target path.
-
----
-
-## Kilo Code Schema Conversion
-
-Kilo Code (≥v7.3) stores MCP configuration inside its main JSONC config file under the `"mcp"` key with specific schema differences:
-
-1. `"type": "local"` is required for each local server.
-2. `"command"` is a **single combined array** (executable + arguments) rather than separate `command` and `args` fields.
-3. `"environment"` replaces `"env"` for environment variables.
-
-### Conversion Example
+Existing entries use optional `"disabled"` per entry. Preserve this deployed format; verify the actual harness's schema before applying it elsewhere.
 
 ```json
-// Canonical (.agents/mcp.json)
 {
   "mcpServers": {
-    "my-server": {
-      "command": "npx",
-      "args": ["-y", "some-mcp-server"],
-      "env": { "API_KEY": "..." }
-    }
-  }
-}
-
-// Kilo Code (kilo.jsonc under "mcp")
-{
-  "mcp": {
-    "my-server": {
-      "type": "local",
-      "command": ["npx", "-y", "some-mcp-server"],
-      "environment": { "API_KEY": "..." },
-      "enabled": true
+    "server-name": {
+      "command": "executable-on-PATH",
+      "args": [],
+      "disabled": false
     }
   }
 }
 ```
 
+### OpenCode
+
+MCP configuration lives under the `"mcp"` key inside the main JSONC config file:
+
+```jsonc
+// Inside opencode.jsonc
+{
+  "mcp": {
+    "servers": {
+      "server-name": {
+        "type": "local",
+        "command": ["executable-on-PATH"],
+        "disabled": false
+      }
+    }
+  }
+}
+```
+
+Differences from the standard MCP schema:
+1. `"type": "local"` is required for each local server.
+2. `"command"` is a **single combined array** (executable + arguments), not separate `command` and `args` fields.
+3. The MCP block is **nested inside the main config file**; preserve all other settings at the top level.
+4. Some entries carry OpenCode-specific optional fields (e.g. `"codemode"`, `"timeout"`); preserve them.
+
+### Codex
+
+Uses TOML with one `[mcp_servers.<name>]` section per server. Codex supports `enabled = false` to retain a disabled definition; do not infer unsupported fields merely from their absence in an existing config.
+
+```toml
+[mcp_servers.server-name]
+command = "executable-on-PATH"
+args = []
+```
+
 ---
 
-## Synchronization Protocol
+## Default Browser Policy
 
-1. **Read Canonical Config**: Read `.agents/mcp.json`. If missing, unparseable, or missing the `mcpServers` object, halt and prompt the user.
-2. **Identify Active Agent**: Determine which harness is currently executing and locate its config file using the matrix above.
-3. **Merge**:
-    - If the agent config file exists, read it and merge the `mcpServers` (or converted `"mcp"`) key, preserving all other existing configurations.
-    - If the file does not exist, create it with the required structure.
-    - Honor disabled/default-excluded servers. Do not turn an existing disabled Chrome definition on as a side effect of merging.
-4. **Write**: Save the updated configuration to disk. If modifying an active file that the host process flushes on exit, avoid clobbering or race conditions.
-5. **Report**: Confirm specific changes to the user (servers added, updated, or removed).
-6. **Restart Reminder**: Inform the user that restarting the agent or reloading the IDE window is required for changes to take effect.
+Browser interaction defaults to [terminal-browser](../../cdp-browser-automation/references/terminal-browser.md), not an always-on MCP. Do not add browser MCPs as a configuration-sync side effect. Chrome/CDP requires the browser skill's explicit-task or demonstrated-capability-gap exception and the necessary authorization. If a harness config already has a disabled Chrome definition, preserve that state unless its change is separately authorized.
+
+Each harness uses its own native disable control:
+
+| Harness | Disable control |
+|---|---|
+| OpenCode | `"disabled": true` on the server entry |
+| Claude Code | Native supported disable control; this dotfiles launcher also filters `disabled: true` / `enabled: false` before passing entries |
+| Gemini-family config shown above | Preserve the existing `"disabled": true` format; verify other consumers separately |
+| Codex | `enabled = false` in `[mcp_servers.<name>]` |
+
+---
+
+## Edit Protocol
+
+1. **Identify target harness(es)**: By default, edit only the active harness config. When the user explicitly requests all tracked harnesses, update each relevant file.
+2. **Read the target file**: Inspect its current structure, schema, and existing server entries.
+3. **Merge the change**: Add or update the server entry using the harness's native schema. Preserve all unrelated settings, env references, `disabled` flags, and other configuration.
+4. **Write**: Save the updated file. If the config path is a symlink, the edit applies to the live location immediately — verify with `ls -la <path>` before assuming this, as it is deployment-specific.
+5. **Report**: State each change made (server added, updated, or removed) per file.
+6. **Restart Reminder**: Inform the user that restarting the harness or reloading the IDE window is required for new or changed servers to register.
 
 ---
 
 ## Operational Rules
 
-- **Sync Only Active Agent**: Only update the configuration of the current agent harness unless the user explicitly requests syncing all harnesses.
-- **Edit Source First**: When adding, editing, or removing an MCP server, modify `.agents/mcp.json` first, then run synchronization.
+- **No canonical source file**: Do not create `.agents/mcp.json`; its absence is intentional.
+- **Harness authority**: Manage each harness's definitions in its own configuration, respecting native global/project precedence and launch adapters. Do not derive one harness's config from another's.
+- **Default to active harness**: Update the requesting harness's config unless the user explicitly asks for all tracked harnesses.
+- **No auto restart**: Do not start, stop, or restart harness processes; remind the user to reload instead.
+- **Preserve disabled state**: When a server entry has a disabled flag, preserve the intent using the target harness's native control; do not silently re-enable it.
+- **Preserve server-specific options**: Fields like `"codemode"`, `"timeout"` blocks, or other harness-specific entries are not standard MCP; preserve them when present.
+
+Schema reference for Codex's `enabled` control: [official configuration schema](https://github.com/openai/codex/blob/main/codex-rs/core/config.schema.json), `RawMcpServerConfig`. Check the installed harness version when adapting examples.

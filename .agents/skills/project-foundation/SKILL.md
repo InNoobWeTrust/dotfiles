@@ -1,6 +1,6 @@
 ---
 name: project-foundation
-description: "Use this skill to bootstrap, audit, or evolve a project's AI-augmented foundation — AGENTS.md, GLOSSARY.md, rules, skills core pack, Makefile, architecture docs, quality gates, and canonical MCP synchronization (.agents/mcp.json). Activate for new project setup, foundation drift detection, syncing .agents from global, syncing MCP configurations, or when INDEX.md points at missing skills. Skip when editing a single existing rule or skill body with no pack-level change."
+description: "Use this skill to bootstrap, audit, or evolve a project's AI-augmented foundation — AGENTS.md, GLOSSARY.md, rules, skills core pack, Makefile, architecture docs, quality gates, and harness-specific MCP configuration management. Activate for new project setup, foundation drift detection, syncing .agents from global, syncing MCP configurations, or when INDEX.md points at missing skills. Skip when editing a single existing rule or skill body with no pack-level change."
 ---
 
 # Project Foundation
@@ -11,7 +11,7 @@ Progressive disclosure: this file is the workflow. Pack membership and checklist
 
 - `references/core-pack.md` — what must be on disk
 - `references/drift-checks.md` — audit checklist + auto-trigger signals
-- `references/mcp-sync.md` — synchronize canonical `.agents/mcp.json` to agent harness configs
+- `references/mcp-sync.md` — manage MCP server entries in harness-specific config files (no shared canonical source)
 - `references/FOUNDATION.template.md` — stamp written to `.agents/FOUNDATION.md`
 
 ---
@@ -139,10 +139,10 @@ Standalone fix for "bootstrap left stubs / missing companion skills":
 
 ## MCP Synchronization
 
-Synchronize canonical `.agents/mcp.json` to the current agent harness configuration file:
+Edit the target harness's dedicated MCP config file directly — no shared canonical `.agents/mcp.json` exists; its absence is not a blocker:
 
-1. Follow [`references/mcp-sync.md`](references/mcp-sync.md) for target paths and schema conversions (e.g. Kilo Code).
-2. Merge into the active agent's config preserving other options.
+1. Follow [`references/mcp-sync.md`](references/mcp-sync.md) for tracked harness config paths, schema differences (e.g. OpenCode vs. standard MCP format), and the edit protocol.
+2. Preserve all unrelated settings, env references, and disabled flags.
 3. Remind user to restart the agent harness or reload the window for new servers to register.
 
 ---
