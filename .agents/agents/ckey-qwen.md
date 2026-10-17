@@ -1,5 +1,5 @@
 ---
-description: "Implementation, debugging, verification and source synthesis through automatic routing across Qwen3.8 Max, Flash and 27B."
+description: "Alternative for: implementation, debugging, verification and source synthesis."
 mode: subagent
 model: "ckey/forbiddengun/qwen"
 permission:

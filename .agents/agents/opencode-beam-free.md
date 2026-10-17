@@ -1,5 +1,5 @@
 ---
-description: "Text-based coding, repository analysis and structured extraction across large contexts, including tool-driven implementation."
+description: "Coding, repository analysis and structured extraction across large contexts."
 mode: subagent
 model: "opencode/beam-free"
 permissions:
