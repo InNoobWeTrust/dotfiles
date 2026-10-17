@@ -196,6 +196,8 @@ usable npx && \
         ! usable codex && alias codex='npx --yes @openai/codex'
         # Opencode
         ! usable opencode && alias opencode="npx --yes @opencode/cli@latest"
+        # DeepSeek harness
+        ! usable dsh && alias dsh="npx --yes @deepseek-ai/dsh web"
         # Agent skills manager
         ! usable skills && alias skills="npx --yes skills"
         # Tree-sitter CLI
@@ -203,7 +205,7 @@ usable npx && \
     }
 
 # Claude Code: project MCPs still merge; the symlink is not auto-discovered.
-# Project the canonical config at launch so disabled entries cannot leak through.
+# Project Claude's dedicated config at launch so disabled entries cannot leak through.
 # A subshell keeps configuration/launcher variables out of the calling shell.
 _claude_with_mcp() (
     claude_launcher=$1
@@ -384,7 +386,6 @@ elif usable wget; then
     alias install-pixi='wget -qO- https://pixi.sh/install.sh | sh'
 fi
 
-
 ################### NodeJs #####################
 
 # install nvm
@@ -458,8 +459,10 @@ usable curl && usable bash && alias install-hermes='curl -fsSL https://hermes-ag
 
 if usable bun; then
     alias install-opencode='bun i -g --trust @opencode/cli'
+    alias install-dsh='bun i -g --trust @deepseek-ai/dsh'
 elif usable npm; then
     alias install-opencode='npm i -g --allow-scripts @opencode/cli'
+    alias install-dsh='npm i -g --allow-scripts @deepseek-ai/dsh'
 fi
 
 usable curl && usable bash && alias install-agy='curl -fsSL https://antigravity.google/cli/install.sh | bash'
