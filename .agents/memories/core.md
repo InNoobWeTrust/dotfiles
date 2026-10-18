@@ -13,6 +13,7 @@ Open only the topic relevant to the current task:
 | Reusable agent engineering guidance | [Engineering learnings](knowledge/agentic_engineering_learnings.md) |
 | MCP implementation conventions | [MCP delivery patterns](knowledge/mcp_delivery_patterns.md) |
 | Repository governance | [Project governance](knowledge/project_governance.md) |
+| Agent computer utility (Webtop browser-automation desktop) | [agent_computer utility notes](knowledge/agent_computer_util.md) |
 
 These entries retain their original provenance and historical claims; migration is not fresh verification or consolidation. For storage and privacy rules, read [memory_maintenance.md](memory_maintenance.md).
 
