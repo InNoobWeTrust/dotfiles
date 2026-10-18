@@ -6,7 +6,7 @@
   },
   "session": {
     "scrollbar": true,
-    "thinking": "show",
+    "thinking": "hide",
     "markdown": "rendered",
     "grouping": "none",
     "image_preview": true,
@@ -47,5 +47,8 @@
     "image_preview": true,
     "paste": "full"
   },
-  "animations": true
+  "animations": true,
+  "experimental": {
+    "new-designs": false
+  }
 }
