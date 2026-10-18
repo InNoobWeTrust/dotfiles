@@ -51,6 +51,14 @@ Use `architecture-design/references/structural-integrity.md` as the shared place
 3. `reviewer` (security lens) — input validation, auth on visual interfaces
 4. `web-qa-audit` — optional Phase 7 browser-based verification for Deep track
 
+**Generative UI is a branch within `ui-ux`, not a separate skill.** Load
+`ui-ux/references/generative-ui.md` when model responses compose live components;
+also load `ui-ux/references/openui.md` for OpenUI Lang / `@openuidev/*` integration.
+The branch adds catalog, prompt, streaming, provenance and action contracts to the
+same UX-SPEC and Phases 1–7. `code-craft` still owns implementation methodology;
+`reviewer` checks trust/action boundaries and `web-qa-audit` supplies executable
+browser evidence when required. Ordinary UI keeps its existing path.
+
 ### Data Story → Visual → Illustration
 
 1. `data-storytelling` — derive the answer-first narrative, evidence, and supporting chart needs

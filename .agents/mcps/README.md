@@ -9,7 +9,7 @@ These MCPs run directly from source with **Bun-resolved, versioned imports**. Th
 
 ## Run
 
-Configure the harness to invoke the server's executable, such as `mcp-lsp` or `mcp-remote-memory`. The shell setup in [`.sh.d/path.sh`](../../.sh.d/path.sh) adds deployed `~/.agents/mcps/*/bin` directories to `PATH`; a new directory needs a fresh shell environment before launching the harness.
+Configure the harness to invoke the server's executable, such as `mcp-lsp` or `mcp-ui-studio`. The shell setup in [`.sh.d/path.sh`](../../.sh.d/path.sh) adds deployed `~/.agents/mcps/*/bin` directories to `PATH`; a new directory needs a fresh shell environment before launching the harness.
 
 Each launcher uses this pattern:
 
@@ -23,7 +23,7 @@ Bun must be installed and reachable through `PATH`. Check each server's README f
 
 ## Startup coordination
 
-Bun 1.4.2 can fail to resolve packages when several MCPs populate the same empty cache simultaneously. All five launchers coordinate dependency loading through [a shared native lock](shared/startup.ts); the servers run concurrently once loaded, and LSP also guards its later JSON-RPC import. Use the executable or `bun run start`; invoking `src/server.ts` directly bypasses the startup guard.
+Bun 1.4.2 can fail to resolve packages when several MCPs populate the same empty cache simultaneously. All six launchers coordinate dependency loading through [a shared native lock](shared/startup.ts); the servers run concurrently once loaded, and LSP also guards its later JSON-RPC import. Use the executable or `bun run start`; invoking `src/server.ts` directly bypasses the startup guard.
 
 The guard uses Bun's built-in `bun:ffi` and the system `flock` API on **macOS or glibc Linux**, without another package. All coordinated launchers must share the same `XDG_CACHE_HOME` (or home directory when unset), with a writable local filesystem: the lock is `$XDG_CACHE_HOME/agent-mcps/startup.lock`, defaulting to `~/.cache/agent-mcps/startup.lock`. This coordinates repository MCPs, not unrelated Bun processes or different user-cache namespaces.
 
@@ -56,15 +56,15 @@ bun --no-env-file tests/e2e.ts
 
 Verify startup without a local dependency tree and exercise the actual MCP stdio interface. Report cold-cache/network failures separately from functional failures; an unresolved import is not a successful test, and an offline cache miss is not a reason to introduce a local install step.
 
-From this directory, run the shared lock checks and all-five executable regression:
+From this directory, run the shared lock checks and discovered-launcher regression:
 
 ```sh
 bun test shared/tests/startup-lock.test.ts
 bun --no-env-file shared/tests/startup.ts
 ```
 
-The executable regression requires network access and uses its own temporary Bun cache, never clearing the user's cache. It starts all five MCPs concurrently with cold and warm caches, plus a second LSP instance to exercise concurrent lazy JSON-RPC loading; it does not call paid models or real delegated workers.
+The executable regression requires network access and uses its own temporary Bun cache, never clearing the user's cache. It discovers sibling directories containing `bin/mcp-<directory-name>` and starts them concurrently with cold and warm caches. When LSP is available, a second instance exercises concurrent lazy JSON-RPC loading. No discovered launchers is an error; the regression does not call paid models or real delegated workers.
 
 ## Server guides
 
-[LSP](lsp/README.md) · [Remote memory](remote-memory/README.md) · [Decisions](decisions/README.md) · [Delegation](delegate/README.md) · [Sandbox](sandbox/README.md)
+[LSP](lsp/README.md) · [Remote memory](remote-memory/README.md) · [Decisions](decisions/README.md) · [Delegation](delegate/README.md) · [Sandbox](sandbox/README.md) · [UI Studio](ui-studio/README.md)

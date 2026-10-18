@@ -50,7 +50,8 @@ Prefer a bounded wait for an expected visible selector, text, URL, or applicatio
 | Stale ref or changed selector | Take a fresh snapshot; use semantic attributes or stable test IDs |
 | Layout moved | Re-screenshot and re-derive coordinates; never persist them as durable selectors |
 | Wrong browser/tab or missing terminal context | Stop ambiguous actions; obtain the intended selectors/context |
-| Sandbox, pane, or socket denial | Report the boundary; do not bypass it or enable Chrome silently |
+| Browser startup needs host pane/socket access | Request bounded native-execution permission before startup unless already approved; do not attempt a known-incompatible sandbox launch |
+| Genuine permission denial, or approved native execution fails | Stop and report the actual boundary; no silent permission expansion, installs, or Chrome fallback |
 | Required viewport/engine/artifact unavailable | Mark affected claims blocked/unverified; authorize a specialist path if needed |
 | CAPTCHA/anti-bot wall | Stop and report; no solving, bypassing, or challenge-retry tactics |
 | Secrets in capture/logs | Restrict/redact before sharing; remove agent-created ephemeral captures after use |
@@ -60,4 +61,4 @@ Keep page state concise. Saved screenshots can be read with image-capable tools;
 
 ## HTTP without a browser
 
-Use an existing HTTP/fetch capability for static content and known APIs when rendered interaction is unnecessary. Respect rate limits and target authorization. Do not substitute API checks for a user journey that specifically requires browser evidence. Any temporary scripts stay outside the repo and run through the sandbox; there is no default custom browser/HTTP framework to build.
+Use an existing HTTP/fetch capability for static content and known APIs when rendered interaction is unnecessary. Respect rate limits and target authorization. Do not substitute API checks for a user journey that specifically requires browser evidence. Temporary scripts stay outside the repo and use a suitable sandbox unless their bounded host-context operation has explicit native-execution approval; there is no default custom browser/HTTP framework to build.

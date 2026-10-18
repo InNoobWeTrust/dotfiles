@@ -42,5 +42,5 @@ Every action: **observe → act → verify → (recover)**. Never skip verify. F
 - Do not log or screenshot secrets; redaction required.
 - Prefer concise page state over dumping full HTML into context.
 - Respect tab/process ownership: do not replace user tabs or run `terminal-browser shutdown` as cleanup.
-- Run shell commands through the available sandbox; stop and report missing CLI, terminal access, or permissions rather than bypassing them.
+- Browser startup and terminal-pane/socket control need host execution. Before invoking them, explicitly request permission for bounded native execution unless that scope is already approved; do not try a known-incompatible sandbox first. Keep unrelated commands sandboxed where suitable. Missing CLI, permission, or terminal context remains a blocker—not permission to install software or enable Chrome.
 - Prefer site knowledge files over re-discovering selectors every run (`knowledge-system.md`).

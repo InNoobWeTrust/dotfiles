@@ -5,12 +5,12 @@ Use for ordinary browser interaction, live repros, forms, screenshots, and QA. [
 ## Preflight and ownership
 
 1. Establish the sanctioned URL, allowed actions, auth source, and evidence needs before browsing. Production access, credentials, installs, and destructive actions require their own authorization.
-2. Check `terminal-browser --version` and `terminal-browser action --help`. If unavailable, report the prerequisite; do not install, run `setup`/`upgrade`, or enable Chrome automatically.
-3. Run every shell command through the available sandbox with an explicit working directory. If terminal-pane or socket access is denied, report the exact boundary; do not retry unsandboxed or escalate permissions to make it work.
+2. Browser startup and terminal-pane/socket control require host context and cannot run in the command sandbox. **Ask for explicit permission for bounded native execution before invoking them**, unless the user has already approved that scope. Describe the target URL, task-owned tab/pane, interactions, captures, timeout/cleanup, and any temporary local server. Do not attempt a known-incompatible sandbox launch just to obtain a failure; approval does not waive mandatory isolation for other work.
+3. Through the approved native path, with an explicit working directory and timeout, check `terminal-browser --version` and `terminal-browser action --help`. If the CLI is absent, check its documented install location or ask for the executable path; distinguish native executable absence from sandbox access failure. Do not install, run `setup`/`upgrade`, or enable Chrome automatically. Keep unrelated commands in a suitable sandbox. A genuine permission denial remains a stop; an approved host-context operation does not need duplicate approval for the same scope.
 4. Reuse the intended side-by-side browser. Inventory only the current terminal tab with `terminal-browser ls --json`; use `--all` only when broader discovery is authorized.
 5. Select the browser key and tab id from that inventory. Pin **both** on every action: the no-selector default follows the active tab and can drift when a human or another agent switches tabs.
 
-Version 0.13.4 can auto-wire installed skill links on normal commands (help/version return before setup). Treat those filesystem effects as setup, respect sandbox write boundaries, and do not commit install-specific absolute symlinks. Do not edit the Homebrew-installed skill to change repository policy.
+Version 0.13.4 can auto-wire installed skill links on normal commands (help/version return before setup). Treat those filesystem effects as setup: disclose and obtain any missing setup authorization before normal commands; approval for browser interaction alone does not authorize unrelated configuration changes. Do not commit install-specific absolute symlinks or edit an installed vendor skill to change repository policy.
 
 When starting a task-owned pane is authorized:
 
@@ -91,7 +91,8 @@ For supported extra commands, consult the installed CLI and [agent-browser comma
 
 - **ACI result:** source interface checked; installed v0.13.4 `open`, `ls`, and `action` help verified. Live pane/control behavior remains unverified by this guidance update.
 - **Main risks:** active-tab drift, stale refs, secrets in captures, viewport/engine substitution, unavailable evidence, and shared-daemon teardown.
-- **Interface upgrades:** explicit selectors, observable verification, capability-specific exceptions, sandbox stops, and ownership-aware cleanup.
+- **Interface upgrades:** explicit selectors, observable verification, capability-specific exceptions, permission-first native browser startup/control, genuine-denial stops, and ownership-aware cleanup.
+- **2026-10-18 correction:** request bounded host-execution permission before browser startup instead of predictably failing in a sandbox. Source guidance is updated; live browser behavior still needs actual execution evidence.
 - **Prototype:** default routing updated 2026-10-09; audit after the first 1–2 real browser uses. Record actual successes/failures, not inferred reliability.
 
 Sources: [terminal-browser README](https://github.com/zenbu-labs/terminal-browser), [v0.13.4 action implementation](https://github.com/zenbu-labs/terminal-browser/blob/v0.13.4/cli/src/action.ts), [bundled agent-browser v0.38.1 commands](https://github.com/vercel-labs/agent-browser/blob/v0.38.1/README.md).

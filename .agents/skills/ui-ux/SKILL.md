@@ -1,6 +1,6 @@
 ---
 name: ui-ux
-description: "Use this skill when building or polishing user interfaces — user journey mapping, interaction design, layout planning, visual design, DESIGN.md systems, and frontend implementation with design-code drift prevention. Activate when designing a UI feature, building a multi-screen experience, creating a design system, polishing visual quality, or doing any frontend work where UX methodology matters. Enforces design-before-code: written UX specs must exist before implementation begins. Uses UX-SPEC.md as the design contract, 10-State UI Matrix for state exhaustion, and DESIGN.md tokens for visual consistency."
+description: "Use this skill when building or polishing user interfaces, including generative UI: model responses rendered as live components, agent interfaces, adaptive dashboards, OpenUI Lang and @openuidev packages. Covers journeys, layout, states, visual design, DESIGN.md tokens and frontend implementation with design-code drift prevention. Enforces design-before-code using UX-SPEC.md and the 10-State UI Matrix. Generative UI is a branch of this workflow, not a replacement for UX design; ordinary static UI does not need its runtime-generation references."
 ---
 
 # UI-UX Design Skill
@@ -18,12 +18,21 @@ Progressive disclosure — load refs only when the phase needs them:
 | Creating UX-SPEC.md | `references/ux-spec-template.md` |
 | Choosing track or composing skills | `references/scaling-and-composition.md` |
 | Phase 5 (DESIGN.md work) | `references/design-md-spec.md` |
+| Phase 5, no existing design system | `references/carbon.md` |
+| Model output becomes live UI at runtime | `references/generative-ui.md` |
+| Using OpenUI Lang or `@openuidev/*` | `references/openui.md` |
 
 ---
 
 ## Phase 0 — Route & Scale
 
 Before starting, determine the track. Load `references/scaling-and-composition.md` if unsure.
+
+Also select the rendering branch: **traditional UI** (developer-authored screens)
+or **generative UI** (a model composes registered components at runtime). Code
+generation during development alone is not generative UI. For the latter, load
+`references/generative-ui.md`; for OpenUI also load `references/openui.md`.
+The branch augments Phases 1–7 and their written-design gates; it does not bypass them.
 
 | Track | When | Phases |
 |---|---|---|
@@ -32,6 +41,8 @@ Before starting, determine the track. Load `references/scaling-and-composition.m
 | **Deep** | Product redesign, design system creation, multi-persona | All 1–7 + extra gates |
 
 **Default to Standard.** Scale down to Quick only when ALL Quick criteria are met (see reference).
+
+**Design system default**: For projects without an established design system or committed DESIGN.md tokens, IBM Carbon (White theme, `@carbon/react`) is the ready-made starting default — no framework/library comparison tournament unless dedicated brand, platform, or styling requirements exist. Load `references/carbon.md` at Phase 5 to apply. Carbon is React-primary; verify framework and peer-dependency compatibility before adopting.
 
 For redesigns or polish of existing UI, perform a brief visual audit as part of Phase 3 context gathering — check for generic colors, poor spacing, token violations, and a11y failures.
 
@@ -108,10 +119,13 @@ For redesigns: audit existing UI here — identify token violations, spacing iss
 | `DESIGN.md` exists and passes lint | Extract tokens; use as source of truth |
 | `DESIGN.md` exists but incomplete | Run `npx @google/design.md lint DESIGN.md`, fix, proceed |
 | No `DESIGN.md` and project has UI | Offer to scaffold per `references/design-md-spec.md` |
+| No `DESIGN.md`, no existing design system, compatible framework | Default to Carbon White (load `references/carbon.md`); verify framework/peer compatibility first; offer DESIGN.md scaffold on top |
 
 ### 5b. Taste Sliders (1–10)
 
-Calibrate creative direction. Explain what each slider controls and its consequences before asking, or infer from Discovery context:
+For a stock design system (including Carbon White), record the selected preset and retain its typography, colors, density and motion defaults. Do not run a bespoke taste/palette exercise unless dedicated requirements call for customization. The sliders below apply to that custom-design branch, not as overrides to the stock preset.
+
+Calibrate creative direction when needed. Explain what each slider controls and its consequences before asking, or infer from Discovery context:
 
 - **DESIGN_VARIANCE** — 1–3: standard layouts, system fonts. 4–7: curated pairings, considered asymmetry. 8–10: experimental, boutique.
 - **MOTION_INTENSITY** — 1–3: subtle 200ms transitions. 4–7: entrance animations, scroll-reveal. 8–10: parallax, 3D transforms.
@@ -204,6 +218,9 @@ For Deep track: delegate browser verification to `web-qa-audit` skill.
 | Skip responsive planning | Desktop-only UI that breaks on mobile | Specify breakpoint behavior in Layout |
 | Treat accessibility as post-hoc | Retrofitting ARIA and contrast is 5× harder than building in | Semantic HTML + WCAG AA from Phase 6 start |
 | Default to Quick track to save time | Skips journey/states, produces shallow UI | Standard is default; Quick requires ALL criteria met |
+| Run a design-system comparison tournament for a project with no dedicated requirements | Wastes time without adding value when no brand/platform/style constraint exists | Carbon White is the ready-made default; tournament only when actual dedicated requirements apply |
+| Handcraft Carbon-look widgets or recolor incompatible catalog entries | Defeats the token system, creates drift and extra maintenance | Use official Carbon components and tokens from the catalog only |
+| Use `@carbon/react` in a non-React project | Package mismatch, wrong peer deps, broken imports | Verify an actual compatible binding and its support tier, or choose a project-compatible alternative |
 | Use ASCII art for complex multi-region layouts | Ambiguous spatial relationships, no breakpoint semantics, hard to review | Create an SVG wireframe per `references/ux-spec-template.md` § Layout covering desktop, tablet, and mobile breakpoints; save in `UX-SPEC.md` § Layout |
 
 ---
@@ -215,4 +232,7 @@ For Deep track: delegate browser verification to `web-qa-audit` skill.
 - `references/ux-spec-template.md` — UX-SPEC.md template with section completion rules
 - `references/scaling-and-composition.md` — Quick/Standard/Deep tracks and skill composition
 - `references/design-md-spec.md` — Full DESIGN.md format specification (Google Labs)
+- `references/generative-ui.md` — Runtime-generated UI contracts, streaming, actions and verification
+- `references/openui.md` — OpenUI integration, source discovery and package boundaries
+- `references/carbon.md` — IBM Carbon default: White theme, packages, compatibility gating, phase routing
 - Compose with: `code-craft` (Phase 6 methodology), `reviewer` (design audit), `web-qa-audit` (Phase 7 browser verification), `project-foundation` (DESIGN.md bootstrap), `illustration-craft` (empty state graphics)

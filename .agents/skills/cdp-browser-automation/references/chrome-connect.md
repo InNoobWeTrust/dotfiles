@@ -11,9 +11,9 @@
 
 ## MCP defaults and opt-in
 
-- Shared `.agents/mcp.json` (also linked by `.claude/mcp.json`) intentionally has **no** Chrome server entry. A generic `enabled: false` is not portable across all MCP consumers.
-- This repo's Kilo and OpenCode-compatible definitions retain `mcp.chrome-devtools.enabled: false`; Gemini/Antigravity retains `mcpServers.chrome-devtools.disabled: true`. Native OpenCode V2 uses `mcp.servers.chrome-devtools.disabled: true`.
-- For an authorized temporary exception, change only the appropriate native control, or add a **scoped** definition when absent. Leave shared defaults alone; record the change and restore the prior disabled/absent state afterward. Ask the user to reload/restart when needed rather than doing so unexpectedly.
+- Harness configs do not include a Chrome DevTools MCP entry by default. A generic `enabled: false` is not portable across all MCP consumers; use each harness's native control.
+- Known native controls: OpenCode V2 uses `mcp.servers.chrome-devtools.disabled: true`; Gemini CLI uses `mcpServers.chrome-devtools.disabled: true`; Claude Code and Codex have no disable field (remove the entry to disable). Discover the active harness's native control before editing.
+- For an authorized temporary exception, change only the matching harness's native control, or add a **scoped** definition when absent. Leave harness defaults alone; record the change and restore the prior disabled/absent state afterward. Ask the user to reload/restart when needed rather than doing so unexpectedly.
 
 An optional local MCP definition, only for an approved exception:
 

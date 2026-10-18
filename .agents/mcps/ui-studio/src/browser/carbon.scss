@@ -1,0 +1,45 @@
+@use '@carbon/styles/scss/config' with ($css--font-face: false);
+@use '@carbon/styles' as carbon;
+
+:root { @include carbon.theme(carbon.$white); }
+body { background: var(--cds-background); color: var(--cds-text-primary); }
+
+// Arrangement and typography only; widget states remain official Carbon styles.
+.studio-page {
+  padding: carbon.$spacing-05;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: carbon.$spacing-06;
+}
+.studio-stack { display: flex; gap: carbon.$spacing-05; min-width: 0; }
+.studio-stack--vertical { flex-direction: column; }
+.studio-stack--horizontal { flex-direction: row; flex-wrap: wrap; align-items: center; }
+.studio-stack > * { min-width: 0; }
+.studio-text { @include carbon.type-style('body-01'); overflow-wrap: anywhere; }
+.studio-table-scroll { max-width: 100%; overflow-x: auto; }
+
+// The iframe has no studio marker and keeps the stock White theme above.
+html[data-studio] {
+  @include carbon.theme(carbon.$white);
+  --cds-spacing-02: #{carbon.$spacing-02};
+  --cds-spacing-03: #{carbon.$spacing-03};
+  --cds-spacing-05: #{carbon.$spacing-05};
+  --cds-spacing-06: #{carbon.$spacing-06};
+  --cds-spacing-07: #{carbon.$spacing-07};
+  --cds-spacing-09: #{carbon.$spacing-09};
+
+  body { @include carbon.type-style('body-01'); }
+  #title, #history-heading { @include carbon.type-style('heading-compact-01'); }
+  #visible, .session-meta, .history-note, #report-status {
+    @include carbon.type-style('body-compact-01');
+  }
+  .eyebrow { @include carbon.type-style('label-01'); }
+  .empty-title { @include carbon.type-style('heading-03'); }
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-studio][data-theme='system'] { @include carbon.theme(carbon.$g100); }
+}
+html[data-studio][data-theme='light'] { @include carbon.theme(carbon.$white); }
+html[data-studio][data-theme='dark'] { @include carbon.theme(carbon.$g100); }

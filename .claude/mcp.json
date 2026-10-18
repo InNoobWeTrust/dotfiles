@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "ui-studio": {
+      "command": "mcp-ui-studio",
+      "args": []
+    },
     "remote-memory": {
       "command": "mcp-remote-memory",
       "args": []

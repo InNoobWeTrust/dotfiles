@@ -1,23 +1,29 @@
 import assert from "node:assert/strict"
 import { existsSync } from "node:fs"
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises"
+import { mkdir, mkdtemp, readdir, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 import { Client } from "@modelcontextprotocol/sdk@1/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk@1/client/stdio.js"
 
-// Keep the driver on its normal cache; only the five child MCPs share the empty one.
+// Keep the driver on its normal cache; only the child MCPs share the empty one.
 const root = resolve(import.meta.dir, "../..")
+const servers = (await readdir(root))
+  .filter((name) => existsSync(join(root, name, "bin", `mcp-${name}`)))
+  .sort()
+assert(servers.length > 0, "no MCP launchers discovered")
+const hasLSP = servers.includes("lsp")
 const scratch = await mkdtemp(join(tmpdir(), "mcp-startup-"))
 const cache = join(scratch, "cache")
 const memory = join(scratch, "memory")
-const servers = ["decisions", "delegate", "lsp", "remote-memory", "sandbox"]
 await mkdir(cache)
 await mkdir(memory)
-await mkdir(join(scratch, ".venv/bin"), { recursive: true })
-await writeFile(join(scratch, ".venv/bin/pyright-langserver"),
-  `#!${process.execPath}\nawait import(${JSON.stringify(join(root, "lsp/tests/fake-lsp.ts"))});\n`,
-  { mode: 0o755 })
+if (hasLSP) {
+  await mkdir(join(scratch, ".venv/bin"), { recursive: true })
+  await writeFile(join(scratch, ".venv/bin/pyright-langserver"),
+    `#!${process.execPath}\nawait import(${JSON.stringify(join(root, "lsp/tests/fake-lsp.ts"))});\n`,
+    { mode: 0o755 })
+}
 const env = Object.fromEntries(Object.entries({
   ...process.env,
   BUN_INSTALL_CACHE_DIR: cache,
@@ -66,8 +72,9 @@ async function check(name: string, round: string) {
 
 try {
   for (const round of ["cold-cache", "warm-cache"]) {
-    // Two LSP instances also contend for the first lazy JSON-RPC dependency load.
-    const results = await Promise.allSettled([...servers, "lsp"].map((name) => check(name, round)))
+    // When available, two LSP instances also contend for lazy JSON-RPC loading.
+    const concurrentServers = hasLSP ? [...servers, "lsp"] : servers
+    const results = await Promise.allSettled(concurrentServers.map((name) => check(name, round)))
     const failures = results.filter((result) => result.status === "rejected")
     assert.equal(failures.length, 0, failures.map((failure) => String(failure.reason)).join("\n"))
     assert(!existsSync(join(scratch, "node_modules")), "startup must not create local dependencies")

@@ -21,6 +21,11 @@
   },
   "mcp": {
     "servers": {
+      "ui-studio": {
+        "type": "local",
+        "command": ["mcp-ui-studio"],
+        "timeout": { "startup": 120000 },
+      },
       "remote-memory": {
         "type": "local",
         "command": ["mcp-remote-memory"],

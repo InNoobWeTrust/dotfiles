@@ -1,0 +1,121 @@
+/* Workspace arrangement only. Carbon owns component typography and all widget states. */
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+h1, h2, h3, p, ol { overflow-wrap: anywhere; }
+.studio-header {
+  flex: none;
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
+  gap: var(--cds-spacing-03);
+  padding: var(--cds-spacing-02) var(--cds-spacing-03);
+  background: var(--cds-layer);
+  border-bottom: 1px solid var(--cds-border-subtle);
+}
+.studio-identity { min-width: 0; flex: 1; }
+.title-line, .session-meta {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 var(--cds-spacing-03);
+}
+.title-line { flex-wrap: nowrap; }
+#title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#visible { flex: none; }
+#visible, .session-meta, .history-note, .eyebrow, .empty-copy { color: var(--cds-text-secondary); }
+.theme-picker.cds--form-item { flex: none; }
+#history-toggle, #history-close { flex: none; }
+main {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  gap: var(--cds-spacing-03);
+  padding: var(--cds-spacing-03);
+}
+.stage, #revision-sidebar {
+  min-width: 0;
+  background: var(--cds-layer);
+  border: 1px solid var(--cds-border-subtle);
+}
+.stage { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+#revision-sidebar { flex: 0 0 16rem; width: 16rem; overflow: auto; padding: var(--cds-spacing-03); }
+.history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cds-spacing-03);
+  margin-bottom: var(--cds-spacing-03);
+}
+.revision-picker { min-width: 0; }
+#revision-notes { margin-block: var(--cds-spacing-05); }
+#revision-notes .cds--btn { width: 100%; max-width: 100%; overflow-wrap: anywhere; }
+#revision-notes li + li { margin-top: var(--cds-spacing-03); }
+.history-note { margin-top: var(--cds-spacing-05); }
+#report-status { flex: none; padding: var(--cds-spacing-03); border-bottom: 1px solid var(--cds-border-subtle); }
+.stage-body {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  background: var(--cds-background);
+}
+/* Bound the frame to the remaining canvas; its own document handles draft scrolling. */
+#preview { display: grid; grid-template-rows: minmax(0, 1fr); min-width: 0; min-height: 0; }
+#preview[data-state="waiting"] { position: absolute; inset: 0; pointer-events: none; }
+#preview[data-state="unavailable"], #preview[data-state="ended"],
+#preview[data-state="catalog-error"], #preview[data-state="disconnected"] {
+  display: grid;
+  place-content: center;
+  padding: var(--cds-spacing-07);
+  color: var(--cds-text-secondary);
+  text-align: center;
+}
+iframe { display: block; width: 100%; height: 100%; min-height: 0; border: 0; }
+/* Keep the catalog bootstrap alive, but never present it as a published draft. */
+iframe.catalog-frame { position: absolute; visibility: hidden; width: 1px; height: 1px; min-height: 0; border: 0; }
+#empty-state {
+  align-self: center;
+  justify-self: center;
+  width: 100%;
+  max-width: 28rem;
+  padding: var(--cds-spacing-07) var(--cds-spacing-05);
+  text-align: center;
+}
+.empty-icon { width: var(--cds-spacing-09); height: var(--cds-spacing-09); color: var(--cds-icon-primary); margin-bottom: var(--cds-spacing-06); }
+.empty-title { margin-block: var(--cds-spacing-03) var(--cds-spacing-05); }
+[data-error="true"] { color: var(--cds-support-error); }
+@media (max-width: 767px) {
+  #revision-sidebar {
+    position: absolute;
+    z-index: 1;
+    inset: var(--cds-spacing-03) auto var(--cds-spacing-03) var(--cds-spacing-03);
+    width: min(16rem, calc(100vw - 3rem));
+  }
+  .title-line { flex-wrap: wrap; }
+  #visible { flex-shrink: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* Dashboard geometry only; stock Carbon tiles, typography, buttons and System theme. */
+body.dashboard { height: auto; min-height: 100dvh; overflow: auto; }
+.dashboard-main { display: block; flex: none; width: 100%; max-width: 64rem; margin-inline: auto; padding: var(--cds-spacing-05); }
+.dashboard-heading, .dashboard-board { display: flex; align-items: center; justify-content: space-between; gap: var(--cds-spacing-05); }
+.dashboard-heading { margin-bottom: var(--cds-spacing-06); }
+.dashboard-list { display: grid; gap: var(--cds-spacing-05); }
+.dashboard-details { min-width: 0; }
+.dashboard-heading .cds--btn, .dashboard-board .cds--btn { flex: none; }
+@media (max-width: 767px) {
+  .dashboard-heading, .dashboard-board { align-items: flex-start; flex-direction: column; }
+}

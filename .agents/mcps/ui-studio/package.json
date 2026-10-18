@@ -1,0 +1,8 @@
+{
+  "name": "mcp-ui-studio",
+  "private": true,
+  "scripts": {
+    "start": "bun --no-env-file bin/mcp-ui-studio",
+    "test": "bun --no-env-file tests/e2e.ts"
+  }
+}

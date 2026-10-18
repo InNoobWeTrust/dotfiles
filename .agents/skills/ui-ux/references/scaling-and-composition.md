@@ -4,6 +4,16 @@ This reference defines when to use Quick, Standard, or Deep tracks, and how the 
 
 ## Scaling Tracks
 
+### Rendering branch (independent of track)
+
+Traditional UI uses developer-authored screens. Generative UI lets a model compose
+registered components at runtime; load [generative-ui.md](generative-ui.md), and
+[openui.md](openui.md) when using OpenUI. Select Quick/Standard/Deep separately.
+A new generative surface normally needs Standard: catalogs, streaming states and
+action boundaries are new behavior, not a shortcut around written design.
+An isolated change inside an already specified generative component can be Quick
+only when all Quick criteria below hold. Preserve the existing phase gates.
+
 ### Quick Track
 **When**: Single component within an existing design system, requirements are unambiguous, no new screens or user flows.
 
