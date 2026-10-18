@@ -1049,6 +1049,16 @@ dev_tunnel() {
     bash "$helper" "$@"
 }
 
+# Bring up and manage the agent computer used by browser-driving tools and agents; return the wrapper status without exiting this shell.
+agent_computer() {
+    local helper="${CONF_SH_DIR:-$HOME/.sh.d}/utils/agent_computer/agent_computer.sh"
+    if [ ! -r "$helper" ]; then
+        printf '%s\n' 'agent_computer: helper missing or unreadable; check your shell configuration path.' >&2
+        return 1
+    fi
+    bash "$helper" "$@"
+}
+
 # Custom functions
 # shellcheck source=/dev/null
 if [ -n "${CONF_SH_DIR:-}" ] && [ -r "$CONF_SH_DIR/func.user.sh" ]; then

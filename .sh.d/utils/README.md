@@ -12,6 +12,7 @@ and explicitly chosen external repositories, then shows review and progress.
 | Foreground VS Code tunnel here | `dev_tunnel` | Bash, standalone `code` CLI |
 | Container lifecycle and remote sessions | `dev_workspace` | Bun, Podman or Docker; Git for implicit REPO |
 | Allocate/submit/manage cluster sessions | `dev_slurm` | Bash, Slurm; service binaries on compute nodes |
+| Bring up and manage the agent computer used by browser-driving tools and agents | `agent_computer` | Podman or Docker; `curl` on the host (`jq` optional) |
 
 ## Already inside an allocation? Start here
 
