@@ -544,12 +544,16 @@ require("lazy").setup({
                     },
                 })
                 vim.notify = notify.make_notify()
+                vim.keymap.set("n", "<leader>nh", notify.show_history, { desc = "Notifications: history" })
             end,
         },
         -- Intercept unhandled errors and messages to floating notifications
         {
             "folke/noice.nvim",
             event = "VeryLazy",
+            keys = {
+                { "<leader>nm", "<cmd>Noice history<cr>", desc = "Messages: Noice history" },
+            },
             dependencies = {
                 "MunifTanjim/nui.nvim",
             },
@@ -615,13 +619,10 @@ require("lazy").setup({
                         "eslint",
                         "html",
                         "jsonls",
-                        "stylelint_lsp",
                         "ts_ls",
                         "tailwindcss",
                         "vue_ls",
-                        "vuels",
                         --- Python
-                        "pyrefly",
                         "ty",
                         -- Typst
                         "tinymist",
