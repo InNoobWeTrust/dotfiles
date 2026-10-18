@@ -1,5 +1,5 @@
 // Module: fb — Facebook profile/post reporting via WebDriver.
-// Owns FB-specific selectors and the report click flow. Does NOT own login/cookies.
+// Owns FB-specific selectors and the report click flow. Does NOT own authentication.
 use core::time::Duration;
 use fantoccini::{elements::Element, error::CmdError, Client, Locator};
 use rand::prelude::*;
@@ -38,7 +38,7 @@ async fn check_availability(client: &Client) -> Result<Element, CmdError> {
 
 /// Profile "⋯" / "See options" menu trigger.
 ///
-/// Live (2026-07, headful Firefox): `aria-label="Profile settings see more options"`
+/// Live (2026-07, desktop browser): `aria-label="Profile settings see more options"`
 /// with `role="button"` + `aria-haspopup="menu"`. Older exact labels kept for regression.
 async fn get_account_report_btn(client: &Client) -> Result<Element, CmdError> {
     // WHY: Prefer exact current label first so we do not match unrelated "More" chrome.
@@ -138,7 +138,7 @@ async fn get_posts_report_btns(client: &Client) -> Result<Vec<Element>, CmdError
     client.mouse_scroll(0, -720 * 3).await?;
 
     // WHY: FB renamed post ⋯ control from exact "Actions for this post" to
-    // "Actions for this post by {Name}" (observed 2026-07 headful probe).
+    // "Actions for this post by {Name}" (observed 2026-07 desktop probe).
     // Prefer prefix / contains selectors; keep legacy exact match for reverts.
     let selectors = [
         r#"[role="button"][aria-haspopup="menu"][aria-label^="Actions for this post"]"#,

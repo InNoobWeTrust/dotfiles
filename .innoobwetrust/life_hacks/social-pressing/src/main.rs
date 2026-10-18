@@ -10,14 +10,12 @@ use core::error::Error;
 use core::fmt::Debug;
 use core::future::Future;
 use core::time::Duration;
-use fantoccini::cookies::Cookie;
 use fantoccini::error::CmdError;
 use rand::seq::SliceRandom;
 
 use std::collections::HashSet;
 use std::fs;
 use std::io::IsTerminal;
-use std::path::Path;
 use std::str::FromStr;
 use std::string::ToString;
 use std::time::Instant;
@@ -28,7 +26,7 @@ use tracing_futures::Instrument;
 use tracing_subscriber::{filter::targets::Targets, fmt, prelude::*, Registry};
 use url::Url;
 
-use crate::driver::{ClientActionExt, GeckoDriver, WebDriver};
+use crate::driver::connect;
 use crate::utils::delay;
 
 #[instrument]
@@ -102,18 +100,28 @@ where
     Ok(false)
 }
 
-async fn report(report_args: &ReportArgs<'_>) -> Result<(), Box<dyn Error + Send + Sync>> {
+/// Map a target URL to its social domain for reporting dispatch.
+/// Returns `None` for unsupported targets.
+fn domain_for_target(target: &str) -> Option<constants::Domain> {
+    if target.starts_with("https://www.facebook.com/") {
+        Some(constants::Domain::Facebook)
+    } else if target.starts_with("https://www.instagram.com/") {
+        Some(constants::Domain::Instagram)
+    } else if target.starts_with("https://www.tiktok.com/") {
+        Some(constants::Domain::TikTok)
+    } else {
+        None
+    }
+}
+
+async fn report(report_args: &ReportArgs) -> Result<(), Box<dyn Error + Send + Sync>> {
     let links = &report_args.links;
-    let cookies = &report_args.cookies;
     let wait = report_args.wait;
     let time_limit = report_args.time_limit;
     info!("Getting webdriver...");
-    let driver = GeckoDriver::default_with_log(Path::new("geckodriver.log"))?;
-    // Access the inner fantoccini client from the driver for navigation and reporting.
-    let client = driver.create_client(report_args.headful).await?;
+    let client = connect(&report_args.webdriver_url).await?;
     info!("Starting...");
     let start = Instant::now();
-    let mut login_status = HashSet::<constants::Domain>::new();
     let mut limitation_status = HashSet::<constants::Domain>::new();
     let mut success_lst = Vec::new();
     let mut failure_lst = Vec::new();
@@ -124,23 +132,10 @@ async fn report(report_args: &ReportArgs<'_>) -> Result<(), Box<dyn Error + Send
         let comment = parts.collect::<Vec<_>>().join(" ");
         let comment = comment.as_str();
 
-        let domain: constants::Domain;
-        match client.login(&cookies, &target, &mut login_status).await {
-            Ok(None) => continue,
-            Ok(Some(d)) => {
-                domain = d;
-            }
-            Err(e) => {
-                error!(%target, %comment, error = %e, "Login failed before pressing");
-                failure_lst.push((
-                    target.to_string(),
-                    comment.to_string(),
-                    "Login failed with error".to_string(),
-                    e.to_string(),
-                ));
-                continue;
-            }
-        }
+        let domain = match domain_for_target(&target) {
+            Some(domain) => domain,
+            None => continue,
+        };
 
         match client.goto(&target).await {
             Ok(_) => {
@@ -238,90 +233,10 @@ async fn report(report_args: &ReportArgs<'_>) -> Result<(), Box<dyn Error + Send
     let total = humantime::format_duration(start.elapsed());
     info!(total_elapsed = %total);
 
-    // The driver will be dropped here; explicit close of the inner client is not performed
-    // because the GeckoDriver wrapper manages the client lifecycle.
+    // The client persists its session so dropping it does not close the user's browser.
+    // The WebDriver server is managed externally.
 
     Ok(())
-}
-
-#[derive(Debug, ::serde::Deserialize)]
-struct CookieJson {
-    name: String,
-    value: String,
-    domain: String,
-    path: Option<String>,
-    secure: Option<bool>,
-    #[serde(rename = "httpOnly")]
-    http_only: Option<bool>,
-    #[serde(rename = "sameSite")]
-    same_site: Option<String>, // e.g. "lax", "strict", "no_restriction" or null
-    /// Unix epoch seconds (float from browser exports). Optional session cookies omit it.
-    #[serde(rename = "expirationDate", default)]
-    expiration_date: Option<f64>,
-}
-
-/// True when WebDriver will treat this cookie as SameSite=None.
-///
-/// WHY: fantoccini maps *missing* same_site to the string `"None"` when talking
-/// to WebDriver (see fantoccini `WebDriverCookie::from`). Browsers then require
-/// the Secure flag. Firefox/Chrome exports often leave sameSite null with
-/// secure:false (e.g. Instagram `th_eu_pref`), which would otherwise abort login.
-fn webdriver_same_site_is_none(same_site: Option<&str>) -> bool {
-    match same_site {
-        None => true,
-        Some(ss) => {
-            ss.eq_ignore_ascii_case("none") || ss.eq_ignore_ascii_case("no_restriction")
-        }
-    }
-}
-
-fn map_cookie(c: &CookieJson) -> Cookie<'_> {
-    // Construct a fantoccini Cookie and map supported fields from the browser export.
-    let mut cookie = Cookie::new(c.name.clone(), c.value.clone());
-
-    cookie.set_domain(c.domain.clone());
-
-    if let Some(ref p) = c.path {
-        cookie.set_path(p.clone());
-    }
-
-    // Secure: honor export when possible, but never emit SameSite=None without Secure.
-    let secure = c.secure.unwrap_or(false)
-        || webdriver_same_site_is_none(c.same_site.as_deref());
-    cookie.set_secure(secure);
-
-    if let Some(h) = c.http_only {
-        cookie.set_http_only(h);
-    }
-
-    // WHY: Expiry is optional; session cookies work without it. We primarily use
-    // expirationDate for dedupe (freshest auth cookies), not for WebDriver set.
-
-    cookie
-}
-
-/// Browser exports often list the same cookie name twice (multi-profile / re-export).
-/// Keep the entry with the latest expirationDate per (name, domain); session cookies last-win.
-fn dedupe_cookies_prefer_freshest(cookies: Vec<CookieJson>) -> Vec<CookieJson> {
-    use std::collections::HashMap;
-    let mut best: HashMap<(String, String), CookieJson> = HashMap::new();
-    for c in cookies {
-        let key = (c.name.clone(), c.domain.clone());
-        match best.get(&key) {
-            None => {
-                best.insert(key, c);
-            }
-            Some(prev) => {
-                let prev_exp = prev.expiration_date.unwrap_or(0.0);
-                let next_exp = c.expiration_date.unwrap_or(0.0);
-                // WHY: fresher auth cookies (xs/c_user) must win over stale duplicates.
-                if next_exp >= prev_exp {
-                    best.insert(key, c);
-                }
-            }
-        }
-    }
-    best.into_values().collect()
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -373,9 +288,9 @@ struct CliArgs {
     #[arg(short, long, env)]
     file: std::path::PathBuf,
 
-    /// Cookie json file
-    #[arg(short, long, env)]
-    cookies: std::path::PathBuf,
+    /// WebDriver URL, normally the agent computer's published WebDriver port
+    #[arg(long, value_name = "URL", default_value = "http://127.0.0.1:4444")]
+    webdriver_url: String,
 
     /// Report timeout
     #[arg(short, long, default_value = "10m")]
@@ -392,23 +307,12 @@ struct CliArgs {
     /// Log level
     #[arg(long, env, default_value_t = LogLevel::DEBUG)]
     log_level: LogLevel,
-
-    /// Use standalone driver
-    #[arg(long, env, default_value = "true")]
-    standalone: bool,
-
-    /// Headful
-    #[arg(long, env, default_value = "false")]
-    headful: bool,
 }
 
 #[derive(Debug)]
-struct ReportArgs<'a> {
+struct ReportArgs {
     /// File contains links to report
     links: Vec<String>,
-
-    /// Cookies
-    cookies: Vec<Cookie<'a>>,
 
     /// Report timeout
     wait: Duration,
@@ -416,8 +320,8 @@ struct ReportArgs<'a> {
     /// Time limit
     time_limit: Option<Duration>,
 
-    /// Headful
-    headful: bool,
+    /// URL of the already-running WebDriver endpoint
+    webdriver_url: String,
 }
 
 #[tokio::main]
@@ -436,7 +340,6 @@ async fn run(report_args: &ReportArgs) -> Result<(), Box<dyn Error + Send + Sync
 fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     let args = CliArgs::parse();
     let link_file = args.file;
-    let cookie_file = args.cookies;
     let wait = humantime::parse_duration(&args.wait)?;
     let time_limit = args
         .time_limit
@@ -450,19 +353,7 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         .collect::<Vec<_>>();
     links.shuffle(&mut rand::rng());
 
-    let cookies_raw_json = fs::read_to_string(&cookie_file)
-        .map_err(|e| format!("failed to read cookie file '{}': {}", cookie_file.display(), e))?;
-    let cookies: Vec<CookieJson> = serde_json::from_str(&cookies_raw_json)
-        .map_err(|e| format!("failed to parse cookie file '{}': {}", cookie_file.display(), e))?;
-    // WHY: Cookie exports often contain duplicate names (re-export / multi-profile);
-    // keep the freshest by expirationDate so stale xs/c_user do not overwrite.
-    let cookies = dedupe_cookies_prefer_freshest(cookies);
-    tracing::info!(count = cookies.len(), "Loaded unique cookies after dedupe");
-    // Map JSON cookie objects into fantoccini Cookie objects as faithfully as possible.
-    let cookies = cookies
-        .iter()
-        .map(|c| map_cookie(c))
-        .collect::<Vec<Cookie>>();
+    // The tool relies entirely on the container browser's persistent profile.
 
     let is_tty = std::io::stdin().is_terminal();
 
@@ -518,77 +409,10 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
     let report_args = ReportArgs {
         links,
-        cookies,
         wait,
         time_limit,
-        headful: args.headful,
+        webdriver_url: args.webdriver_url,
     };
 
     run(&report_args)
-}
-
-#[cfg(test)]
-mod cookie_mapping_tests {
-    use super::*;
-
-    fn sample(
-        name: &str,
-        domain: &str,
-        secure: Option<bool>,
-        same_site: Option<&str>,
-    ) -> CookieJson {
-        CookieJson {
-            name: name.to_string(),
-            value: "v".to_string(),
-            domain: domain.to_string(),
-            path: Some("/".to_string()),
-            secure,
-            http_only: Some(false),
-            same_site: same_site.map(str::to_string),
-            expiration_date: Some(1_800_000_000.0),
-        }
-    }
-
-    #[test]
-    fn forces_secure_when_same_site_null_and_export_says_insecure() {
-        // WHY: fantoccini will send SameSite=None for unset same_site.
-        let json = sample("th_eu_pref", ".instagram.com", Some(false), None);
-        let c = map_cookie(&json);
-        assert_eq!(c.secure(), Some(true));
-    }
-
-    #[test]
-    fn forces_secure_for_no_restriction_even_if_export_says_insecure() {
-        let json = sample(
-            "sessionid",
-            ".instagram.com",
-            Some(false),
-            Some("no_restriction"),
-        );
-        let c = map_cookie(&json);
-        assert_eq!(c.secure(), Some(true));
-    }
-
-    #[test]
-    fn keeps_insecure_for_lax_when_export_says_insecure() {
-        let json = sample("csrftoken", ".instagram.com", Some(false), Some("lax"));
-        let c = map_cookie(&json);
-        assert_eq!(c.secure(), Some(false));
-    }
-
-    #[test]
-    fn honors_secure_true_for_lax() {
-        let json = sample("sessionid", ".instagram.com", Some(true), Some("lax"));
-        let c = map_cookie(&json);
-        assert_eq!(c.secure(), Some(true));
-    }
-
-    #[test]
-    fn webdriver_none_helper_matches_fantoccini_default() {
-        assert!(webdriver_same_site_is_none(None));
-        assert!(webdriver_same_site_is_none(Some("None")));
-        assert!(webdriver_same_site_is_none(Some("no_restriction")));
-        assert!(!webdriver_same_site_is_none(Some("lax")));
-        assert!(!webdriver_same_site_is_none(Some("strict")));
-    }
 }

@@ -1,11 +1,11 @@
+# Example local task: connect to the WebDriver endpoint at http://127.0.0.1:4444.
+# See README.md for requirements.
 [tasks.test-pressing]
 env = { "LOG_LEVEL" = "debug" }
 command = "cargo"
 args = [
   "run",
   "--",
-  "-c",
-  "pressing.cookies.json",
   "-f",
   "test.txt",
   "--logfile",
@@ -14,5 +14,4 @@ args = [
   "5m",
   "-t",
   "15m",
-  "--headful",
 ]
