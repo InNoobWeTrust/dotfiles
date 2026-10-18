@@ -30,8 +30,10 @@ Commands:
             [--desktop-port N] [--webdriver-port N]
             [--rebuild] [--pull] [--no-browser]
                           Build the image if needed, create or start the
-                          container, wait until the desktop answers, and launch
-                          the automation browser. NAME defaults to
+                          container, wait until the desktop answers, then start
+                          the automation browser and its WebDriver server on the
+                          published WebDriver port. --no-browser skips both (start
+                          them yourself inside the container). NAME defaults to
                           agent-computer. The first detected GPU render node
                           (/dev/dri/renderD*) is attached automatically when
                           available; --gpu-device picks a specific device.
@@ -226,6 +228,23 @@ ensure_browser() {
   fi
 }
 
+ensure_webdriver() {
+  local engine="$1" name="$2"
+  if "$engine" exec "$name" sh -c 'pgrep -f "[c]hromedriver --port=" >/dev/null' 2>/dev/null; then
+    note "WebDriver server already running."
+    return 0
+  fi
+  note "Starting the WebDriver server ..."
+  "$engine" exec -d -u abc -e HOME=/config "$name" \
+    /bin/bash /usr/local/bin/start-webdriver.sh
+  sleep 2
+  if "$engine" exec "$name" sh -c 'pgrep -f "[c]hromedriver --port=" >/dev/null' 2>/dev/null; then
+    note "WebDriver server started."
+  else
+    note "Warning: the WebDriver server is not detected yet; check the container logs."
+  fi
+}
+
 cmd_up() {
   local name="$DEFAULT_NAME" gpu_device="" tz="" puid="" pgid=""
   local desktop_port="$DEFAULT_DESKTOP_PORT" webdriver_port="$DEFAULT_WEBDRIVER_PORT"
@@ -321,14 +340,15 @@ cmd_up() {
   wait_ready "$engine" "$name" "$desktop_port"
   if [ "$launch_browser" -eq 1 ]; then
     ensure_browser "$engine" "$name"
+    ensure_webdriver "$engine" "$name"
   fi
 
   note ""
   note "Desktop:    http://127.0.0.1:${desktop_port}"
   note "WebDriver:  127.0.0.1:${webdriver_port} (loopback only)"
   note "Container:  ${name}"
-  note "Attach from a driving tool by container name; log into sites once in the"
-  note "desktop UI. Sessions persist in volume ${name}-config."
+  note "Attach from a driving tool by connecting to http://127.0.0.1:${webdriver_port};"
+  note "log into sites once in the desktop UI. Sessions persist in volume ${name}-config."
 }
 
 cmd_stop() {
@@ -389,9 +409,11 @@ cmd_status() {
   note "Desktop:    http://127.0.0.1:${dp:-6080}/"
   note "WebDriver:  127.0.0.1:${wp:-?} (loopback only)"
   if container_running "$engine" "$name"; then
-    local driver running http
+    local driver running http webdriver_up
     driver=$("$engine" exec "$name" chromedriver --version 2>/dev/null || true)
     note "Driver:     ${driver:-(not found)}"
+    webdriver_up=$("$engine" exec "$name" sh -c 'pgrep -f "[c]hromedriver --port=" | wc -l' 2>/dev/null | tr -d ' ' || echo 0)
+    note "Server:     ${webdriver_up:-0} chromedriver server process(es)"
     running=$("$engine" exec "$name" sh -c 'pgrep -f "[r]emote-debugging-port=9222" | wc -l' 2>/dev/null | tr -d ' ' || echo 0)
     note "Browser:    ${running:-0} automation-browser process(es)"
     http=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://127.0.0.1:${dp:-6080}/" 2>/dev/null || true)

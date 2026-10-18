@@ -1,5 +1,6 @@
 # Self-contained agent computer image: the LSIO webtop base plus a chromedriver
-# matched to the base image's Chromium and the browser launcher baked in.
+# matched to the base image's Chromium and the browser and WebDriver launchers
+# baked in.
 # A builder stage (same base image, which already ships curl, jq and unzip)
 # resolves and downloads the driver; the final stage only receives the
 # finished binary, so no build residue ends up in the image. Build it directly
@@ -20,9 +21,10 @@ RUN chmod 0755 /usr/local/bin/fetch-chromedriver \
 FROM ${BASE_IMAGE}
 
 LABEL org.opencontainers.image.title="agent-computer" \
-      org.opencontainers.image.description="Webtop desktop with Chromium remote debugging and a matching chromedriver"
+      org.opencontainers.image.description="Webtop desktop with Chromium remote debugging and a matching chromedriver WebDriver server"
 
 COPY --from=driver-builder /out/chromedriver /usr/local/bin/chromedriver
 COPY --from=driver-builder /out/build-info /usr/local/share/agent-computer/build-info
 COPY start-chromium-automation.sh /usr/local/bin/start-chromium-automation.sh
-RUN chmod 0755 /usr/local/bin/chromedriver /usr/local/bin/start-chromium-automation.sh
+COPY start-webdriver.sh /usr/local/bin/start-webdriver.sh
+RUN chmod 0755 /usr/local/bin/chromedriver /usr/local/bin/start-chromium-automation.sh /usr/local/bin/start-webdriver.sh
