@@ -166,7 +166,64 @@ usable curl && \
     {
         # Get random proxy
         alias http-proxy='curl --location "https://api.proxyscrape.com/v4/free-proxy-list/get?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=all&skip=0&limit=1"'
+        ## PATH management
+        alias install-pathman='curl -s https://webinstall.dev/pathman | bash'
+        ## x-cmd
+        alias install-x='eval "$(curl https://get.x-cmd.com)"'
+        ## pkgx
+        alias install-pkgx='curl -fsS https://pkgx.sh | sh'
+        ## Brew
+        alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+        ## Cheat sheet
+        alias install-cheat-sh='mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/:cht.sh > $HOME/.local/$USER/bin/cht.sh && chmod +x $HOME/.local/$USER/bin/cht.sh'
+        ## pixi
+        alias install-pixi='curl -fsSL https://pixi.sh/install.sh | sh'
+        ## nvm
+        alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash -s -- --no-use'
+        ## volta
+        alias install-volta='([ -n $VOLTA_HOME ] && mkdir -p $VOLTA_HOME || true) && curl https://get.volta.sh | bash -s -- --skip-setup'
+        ## bun
+        alias install-bun='usable bash && usable curl && BUN_INSTALL="$HOME/.local/bun" bash <(curl -fsSL https://bun.sh/install)'
+        ## vscode
+        alias install-vscode-cli='vscode_cli_install && reload-shell'
+        ## rustup
+        alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal -v'
+        ## File converter
+        alias install-convertio='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/convertio https://api.convertio.co/convertio && chmod +x ~/.local/$USER/bin/convertio'
+        ## zoxide
+        alias install-zoxide='curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh'
+        ## antigravity CLI
+        usable bash && alias install-agy='curl -fsSL https://antigravity.google/cli/install.sh | bash'
+        ## Terminal Web Browser
+        usable bash && alias install-terminal-browser='curl -fsSL https://terminal-browser.sh/install | bash'
+        ## Garden
+        alias install-garden='curl -sL https://get.garden.io/install.sh | bash'
+        ## K3s
+        alias install-k3s='curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.24.10+k3s1" sh -s - server --cluster-init'
+        case "$(uname -s):$(uname -m)" in
+            Linux:x86_64)
+                # Command palette for Linux
+                alias install-vicinae='curl -fsSL https://vicinae.com/install | bash'
+                # Cleaner for Linux
+                alias install-tuxcleaner='curl -LsSf https://raw.githubusercontent.com/debba/tuxcleaner/main/install.sh | sh'
+                ;;
+        esac
     }
+
+usable wget && ! usable curl && \
+    {
+        alias install-pixi='wget -qO- https://pixi.sh/install.sh | sh'
+    }
+
+if usable bun; then
+    alias install-devcontainer='bun i -g --trust @devcontainers/cli'
+    alias install-opencode='bun i -g --trust @opencode/cli'
+    alias install-dsh='bun i -g --trust @deepseek-ai/dsh'
+elif usable npm; then
+    alias install-devcontainer='npm i -g --allow-scripts @devcontainers/cli'
+    alias install-opencode='npm i -g --allow-scripts @opencode/cli'
+    alias install-dsh='npm i -g --allow-scripts @deepseek-ai/dsh'
+fi
 
 # Node utilities
 usable npx && \
@@ -293,12 +350,6 @@ usable neovide && \
 # Browser debug
 alias browser-debug='browser_debug'
 
-############################### PATH management ###############################
-
-usable curl && alias install-pathman='curl -s https://webinstall.dev/pathman | bash'
-
-alias install-pathman-npm='npm install -g pathman'
-
 ############################ Platform management ##############################
 
 usable pacman && \
@@ -351,45 +402,11 @@ usable pkg && \
 
 ################################ Tooling ######################################
 
-#################### X ########################
-
-usable curl && alias install-x='eval "$(curl https://get.x-cmd.com)"'
-
-#################### Pkgx ######################
-
-usable curl && alias install-pkgx='curl -fsS https://pkgx.sh | sh'
-
-#################### Brew ######################
-
-usable curl && alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+################### Brew #####################
 
 usable brew && alias brew-update='brew update && brew upgrade -y && brew cleanup -s && brew autoremove'
 
-#################### devcontainer ######################
-
-if usable bun; then
-    alias install-devcontainer='bun i -g --trust @devcontainers/cli'
-elif usable npm; then
-    alias install-devcontainer='npm i -g --allow-scripts @devcontainers/cli'
-fi
-
-################# Cheat sheet ##################
-
-usable curl && alias install-cheat-sh='mkdir -p $HOME/.local/$USER/bin/ && curl https://cht.sh/:cht.sh > $HOME/.local/$USER/bin/cht.sh && chmod +x $HOME/.local/$USER/bin/cht.sh'
-
-################### Python #####################
-
-# install pixi
-if usable curl; then
-    alias install-pixi='curl -fsSL https://pixi.sh/install.sh | sh'
-elif usable wget; then
-    alias install-pixi='wget -qO- https://pixi.sh/install.sh | sh'
-fi
-
 ################### NodeJs #####################
-
-# install nvm
-usable curl && alias install-nvm='mkdir -p $NVM_DIR && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash -s -- --no-use'
 
 usable nvm &&  {
     # install node
@@ -402,18 +419,7 @@ usable nvm &&  {
     alias nvm-cleanup='nvm ls --no-colors | grep -o "^[[:blank:]]*v[0-9]*.[0-9]*.[0-9]*" | tr -d "[[:blank:]]v" | xargs -I % $SHELL -c ". $NVM_DIR/nvm.sh && nvm uninstall %"'
 }
 
-# install volta, create $VOLTA_HOME if $VOLTA_HOME is set and directory does not exist
-usable curl && alias install-volta='([ -n $VOLTA_HOME ] && mkdir -p $VOLTA_HOME || true) && curl https://get.volta.sh | bash -s -- --skip-setup'
-
-usable curl && alias install-bun='usable bash && usable curl && BUN_INSTALL="$HOME/.local/bun" bash <(curl -fsSL https://bun.sh/install)'
-
 ################### Editor #####################
-
-# Install code-server
-usable curl && alias install-code-server='mkdir -p ~/.local/$USER/bin && curl -s https://api.github.com/repos/cdr/code-server/releases/latest | grep "browser_download_url.*linux-x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \\\" | xargs -n 1 curl -LJs | tar xvz -C ~/.local/$USER/bin/ --wildcards "**/code-server" --strip-components 1'
-
-# Install vscode CLI
-usable curl && alias install-vscode-cli='vscode_cli_install && reload-shell'
 # Start vscode CLI tunnel with accepted license terms
 usable code && alias code-tunnel='VSCODE_CLI_USE_FILE_KEYCHAIN=1 code tunnel --accept-server-license-terms'
 usable code-tunnel && alias code-tunnel-service='code-tunnel service'
@@ -423,11 +429,6 @@ usable code-tunnel-service && alias code-tunnel-service-uninstall='code-tunnel-s
 usable code-tunnel-service && alias code-tunnel-service-log='code-tunnel-service log'
 
 ################### Rust #######################
-
-# install rustup
-usable curl && alias install-rustup='curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path --profile minimal -v'
-
-alias install-rustup-noprompt='install-rustup -y'
 
 # automate rustup update
 usable rustup && alias rustup-update='rustup update'
@@ -443,38 +444,14 @@ usable cargo && alias install-evcxr='(usable cargo-binstall && cargo binstall ev
 
 ################ Shell toolings ################
 
-## File converter
-usable curl && alias install-convertio='mkdir -p ~/.local/$USER/bin && curl -LJo ~/.local/$USER/bin/convertio https://api.convertio.co/convertio && chmod +x ~/.local/$USER/bin/convertio'
-
-## Advanced shell
-alias install-nushell-cargo='cargo install --locked nu'
-alias install-nushell-npm='npm install -g nushell'
-
-## Smarter cd by using zoxide
-usable curl && alias install-zoxide='curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh'
+# Port forwarding via socat
+usable socat && {
+    alias socat-bind='socat_bind'
+}
 
 ################ AI Agent CLI ################
 
-usable curl && usable bash && alias install-hermes='curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash'
-
-if usable bun; then
-    alias install-opencode='bun i -g --trust @opencode/cli'
-    alias install-dsh='bun i -g --trust @deepseek-ai/dsh'
-elif usable npm; then
-    alias install-opencode='npm i -g --allow-scripts @opencode/cli'
-    alias install-dsh='npm i -g --allow-scripts @deepseek-ai/dsh'
-fi
-
-usable curl && usable bash && alias install-agy='curl -fsSL https://antigravity.google/cli/install.sh | bash'
 usable agy && alias agyolo='agy --dangerously-skip-permissions'
-
-usable curl && usable bash && alias install-terminal-browser='curl -fsSL https://terminal-browser.sh/install | bash'
-
-################ DevSecMLOps ###################
-
-! usable pkgx && usable curl && alias install-k3s='curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.24.10+k3s1" sh -s - server --cluster-init'
-usable pkgx && alias install-k3s='pkgx k3sup install --local --k3s-version v1.24.10+k3s1'
-usable curl && alias install-garden='curl -sL https://get.garden.io/install.sh | bash'
 
 ################ Sandboxing (sandbox-* aliases) ################
 # One interface: Bubblewrap when available, otherwise macOS sandbox-exec.
@@ -540,11 +517,6 @@ fi
 ############################# Custom ##########################################
 # Remote user provisioning utility
 alias setup-user='setup_remote_user'
-
-# Port forwarding via socat
-usable socat && {
-    alias socat-bind='socat_bind'
-}
 
 # Import custom alias
 # shellcheck source=/dev/null
