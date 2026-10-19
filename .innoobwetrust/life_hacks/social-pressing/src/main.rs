@@ -2,6 +2,7 @@ mod constants;
 mod driver;
 mod fb;
 mod instagram;
+mod lock;
 mod tiktok;
 mod utils;
 
@@ -300,6 +301,10 @@ struct CliArgs {
     #[arg(short, long)]
     time_limit: Option<String>,
 
+    /// How long to wait for another run of this tool before skipping; 0s waits not at all
+    #[arg(long, value_name = "DURATION", default_value = "1h")]
+    lock_wait: String,
+
     /// Log file
     #[arg(long, env)]
     logfile: Option<std::path::PathBuf>,
@@ -341,6 +346,7 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     let args = CliArgs::parse();
     let link_file = args.file;
     let wait = humantime::parse_duration(&args.wait)?;
+    let lock_wait = humantime::parse_duration(&args.lock_wait)?;
     let time_limit = args
         .time_limit
         .map(|s| humantime::parse_duration(&s).ok())
@@ -406,6 +412,14 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
             ));
         tracing::subscriber::set_global_default(subscriber).unwrap();
     }
+
+    let _run_lock = match lock::RunLock::acquire(lock_wait)? {
+        lock::LockOutcome::Acquired(guard) => guard,
+        lock::LockOutcome::Busy => {
+            warn!("Another run is active; skipping this run");
+            return Ok(());
+        }
+    };
 
     let report_args = ReportArgs {
         links,

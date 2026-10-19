@@ -96,11 +96,19 @@ cargo run -- -f links.txt --webdriver-url http://127.0.0.1:4444
 | `LOGFILE` / `--logfile` | | Also append logs to this file |
 | `-w` / `--wait` | `10m` | Per-target report timeout |
 | `-t` / `--time-limit` | | Optional overall time limit |
+| `--lock-wait <DURATION>` | `1h` | Wait for another run before skipping; `0s` makes one immediate attempt |
 
 ## Caveats
 
-- **Concurrency:** Use one WebDriver client at a time per browser; do not run
-  this tool and other automation against the same browser simultaneously.
+- **Concurrency:** One browser supports only one active WebDriver client at a
+  time. The tool takes its own exclusive advisory run lock before connecting,
+  using `$XDG_RUNTIME_DIR/social-pressing.lock` (the system temporary directory
+  is the fallback when `XDG_RUNTIME_DIR` is unset or empty). No external `flock`
+  wrapper is needed. `--lock-wait` defaults to `1h`; use `--lock-wait 0s` to
+  skip immediately when busy. If another run still holds the lock after the wait,
+  this run logs a warning and exits successfully (code 0), without creating a
+  WebDriver session or reporting anything. The lock is released when the run
+  ends. Other automation must still avoid using the same browser simultaneously.
 - **Attach mode:** Browser preferences cannot be changed after attachment, and
   window resizing is best-effort only; configure the profile yourself.
 - **Connection errors:** Check the supplied URL and the externally managed
