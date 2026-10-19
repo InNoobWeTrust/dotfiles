@@ -38,6 +38,10 @@ Choose a return shape that lets the parent make its next decision. The default [
 
 For execution/verification, the receipt should identify the actual command or script, working directory and input/revision identity when relevant, exit status, passed/failed/skipped checks, material failure excerpts, and unverified criteria. Identify an approved log/artifact location if needed; do not create or upload full logs by default, expose secrets, or report a tool's exit code as proof of checks it did not run.
 
+**Scope and provenance:** at consequential handoffs, distinguish source-backed observations from interpretations and unresolved/conflicting evidence. Keep the target, revision, conditions and sampled times relevant to the claim; do not broaden a replica check to the primary or samples to an entire interval. Preserve constraints, failed attempts and the next permitted action. Repeated summaries are not independent corroboration; link the underlying evidence instead of forwarding hidden reasoning or a full transcript.
+
+If a supporting reference is a prerequisite, name its path in the assignment and require loading it before dependent work. A skill invocation is not evidence that its supporting references were loaded.
+
 Keep the supplied checks unchanged during an execution-only assignment. A failure authorizes reporting and only the explicitly assigned diagnostic work—not rewriting assertions, changing dependencies, or silently repairing the application. Report missing capabilities and incomplete evidence instead of manufacturing a pass.
 
 **Example handoff:** the primary writes a structural validator and defines what its checks establish; a worker runs that exact script in the approved environment and returns a receipt. The primary assesses acceptance without automatically rerunning it or rereading all output. If a check fails, request the relevant diagnostic slice or a separately bounded investigation. This is not an independent review of the validator's intentions and does not prove real-world model behavior.

@@ -78,6 +78,10 @@ Append after each completed or interrupted slice. Never rewrite prior bytes.
 
 **Capture failure:** if capture fails mid-slice, record `CHECKPOINT_PENDING` with the exact payload and target path. Do not invent a confirmation. Do not resume substantive work or authorize a replacement until the capture is confirmed and recovery is authorized by primary.
 
+### Checkpoint evidence
+
+When a checkpoint supports a consequential decision or transfers investigative state, keep observations (source, target/revision and relevant conditions or sampled times), inferences and unknowns/conflicts distinguishable in the existing sections. Preserve failed checks, active constraints/permissions and the next safe action. A copied claim or repeated summary is not an independent observation; retain a reference to the underlying evidence. Capture a compact evidence summary, not hidden reasoning or a record of every thought/tool call.
+
 ---
 
 ## Session-binding contract
