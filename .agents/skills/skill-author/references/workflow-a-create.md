@@ -55,6 +55,8 @@ Design each phase before writing prose:
 4. **Anti-patterns**: 5-10 shortcuts the AI will try, with why wrong + correct path.
 5. **ACI pass**: if the skill/command/tool exposes an interface another agent must use, run `references/aci-checklist.md`, note any guardrails or examples that belong in the interface contract, and leave the `ACI Pass` evidence block in the workflow/design outline or in the short-term handoff/checkpoint entry if work pauses.
 
+For choice comparisons, apply [searchable choice catalogs](portability-and-reader-contract.md#searchable-choice-catalogs): put capability-based alternatives in an existing suitable CSV catalog, and keep only the retrieval instructions and essential constraints in the workflow.
+
 **Format**:
 ```
 WORKFLOW OUTLINE

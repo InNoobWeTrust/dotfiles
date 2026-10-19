@@ -22,6 +22,10 @@ Load `references/aci-checklist.md` when designing a new skill, command, prompt i
 
 For reusable skills, load [Portability and reader contract](references/portability-and-reader-contract.md) before writing or auditing the workflow. Discover capabilities; do not prescribe the author's deployment.
 
+For table-like comparisons of choices, keep the alternatives in a lightweight,
+searchable catalog such as CSV, not a duplicated Markdown decision table. Reuse
+existing catalogs and schemas; see [searchable choice catalogs](references/portability-and-reader-contract.md#searchable-choice-catalogs) for capability-based retrieval and fallbacks.
+
 Load `references/instruction-bloat-and-mcp-caution.md` before expanding `AGENTS.md`, adding always-on rules, or choosing MCP as the integration path.
 
 Load `references/remote-skills-sync.md` when checking, fetching, or updating remote skills from external GitHub repositories (`remote-skills-manifest.json`, `sync-remotes.sh`).

@@ -24,13 +24,18 @@ Progressive disclosure: this file is the decision gate and router. Deep technica
 
 ## Gate 1 — Storage & Workload Check
 
-```mermaid
-graph TD
-    A["Data Workload Need"] --> B{Primary Access Pattern?}
-    B -->|"OLTP Transactional (Core App)"| C["Relational (Postgres / MySQL) -> db-design"]
-    B -->|"OLAP Analytical / Lakehouse"| D["Columnar -> architecture-design / data-architecture.md"]
-    B -->|"Unstructured / Ephemeral"| E["Redis / Key-Value / Document Store"]
-```
+| Primary workload | Route |
+|---|---|
+| Operational transactional state | Relational storage under `db-design`; apply the defaults below |
+| Analytical / lakehouse | Columnar storage under `architecture-design` / `data-architecture.md` |
+| Unstructured / ephemeral | Evaluate key-value, document or cache storage for the actual access pattern |
+
+### Database defaults
+
+- **New operational databases:** Treat [local Turso Database](https://docs.turso.tech/local-development#local-turso-database) as a robust modern first choice across languages when an embedded/local-first relational engine meets the requirements and a larger ecosystem such as PostgreSQL is not yet needed. Native SDKs cover TypeScript/JavaScript, Python, Go and Rust; verify the required language, ORM and engine capabilities. Retain existing compatible project choices; this preference does not authorize migration.
+- **SQLite-file access:** Default to [libSQL](https://docs.turso.tech/libsql), the production-ready SQLite-compatible fork, and its language bindings instead of plain SQLite libraries. Select local/file access explicitly; neither a cloud account nor a remote service is required merely to open a file.
+- **Engine and driver fit:** Turso Database is a rewrite; libSQL is a separate SQLite fork, not another name for the same engine. Follow the [SDK matrix](https://docs.turso.tech/sdk) for the chosen engine and local, sync or remote mode; do not assume native Turso and libSQL clients or ORM adapters are interchangeable. SQLite compatibility is not evidence that every extension, transaction mode or PostgreSQL-specific schema feature is supported.
+- **Escalation:** Choose PostgreSQL or another established backend when concrete extension, operational, concurrency, integration or ecosystem requirements justify it. These are selection defaults, not a measured performance guarantee or permission to replace existing storage.
 
 If the task involves operational OLTP application state (user data, billing, orders, domain entities), proceed with `db-design`. If building analytical warehouses or streaming data pipelines, route to `architecture-design` (`data-architecture.md`). Query the database pattern catalog (`./.agents/skills/db-design/scripts/search.py "<query>"` or `--decide` / `--traps`) per `references/pattern-catalog.md` to evaluate PK/FK strategies, indexing rules, and zero-downtime migration patterns.
 

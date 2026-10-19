@@ -55,7 +55,7 @@ python3 .agents/skills/code-craft/scripts/search.py "<query>" [--stack <stack>]
 | **Concurrency & Resilience** | `concurrency` / `resilience` | In-process execution safety, retries, rate limits, worker pools, structured concurrency (TaskGroup), and deadline propagation. |
 | **Stacks** | `stacks` / `stack` | Pulling concrete, idiomatic syntax blueprints for Go, Rust, Python, TypeScript, C#, Java. |
 | **Model Traps** | `traps` | Checking generated code for observable defects such as over-abstraction, lost error context, and class bloat, regardless of model family. |
-| **Decisions** | `reasoning` / `decide` | Evaluating micro-level trade-offs (e.g. exceptions vs Result, typestate vs boolean flags, closures vs ABCs). |
+| **Decisions** | `reasoning` / `decide` | Evaluating concrete trade-offs (e.g. exceptions vs Result, typestate vs boolean flags, closures vs ABCs, Rust persistence adapters). Retrieve conditional candidates, then verify the actual requirements and backend capabilities. |
 
 ---
 

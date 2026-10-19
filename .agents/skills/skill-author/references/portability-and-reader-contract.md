@@ -43,3 +43,31 @@ Verify referenced files exist and are reachable from their documented root.
 Read without the chat: remove irrelevant history and add missing necessary context.
 Walkthroughs establish source-level usability only; report executed evidence
 separately and do not claim that editing instructions proves agent compliance.
+
+## Searchable choice catalogs
+
+For comparisons used to select among tools, libraries, patterns or other alternatives,
+store the conditional choices in a lightweight structured catalog such as CSV.
+Reuse a suitable existing catalog and its schema before creating another file or
+search mechanism; workflow steps and checklists need not become database records.
+
+- **Model the decision:** Use stable IDs and fields that capture capabilities,
+  requirements/use conditions, alternatives, limitations and rationale or sources.
+  Adapt to the existing schema rather than forcing a new universal format. Quote
+  commas, quotes and multiline values correctly; keep one authoritative record.
+- **Keep the router small:** Link the catalog and explain how to query it from an
+  explicit skill-relative root. Do not repeat its comparison matrix in Markdown;
+  a requested human-facing table can be a view of the records, not a second source.
+- **Search by need:** Query actual required capabilities, not only product names.
+  Where supported, select positive capability/use-condition fields for ranking;
+  inspect exclusions and constraints in returned rows before choosing. Retrieve a
+  few candidates with stable IDs or source locators; a top score is not approval.
+- **Discover available search:** Use native CSV-aware tools, an existing skill CLI,
+  or an authorized external integration. Inspect its schema and scope to the exact
+  catalog; resolve absolute tool paths only at invocation. Do not require a specific
+  MCP server, create a memory store, install dependencies or replace an engine just
+  to search. If search is unavailable, use bounded ordinary reads and state the gap.
+- **Verify proportionately:** Check CSV parsing and representative capability
+  queries with available tools, plus the no-search fallback. Distinguish executed
+  retrieval from source walkthroughs; do not claim equivalent ranking across tools
+  or improved agent decisions merely because the catalog is searchable.

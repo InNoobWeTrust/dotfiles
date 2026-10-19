@@ -29,6 +29,8 @@ Progressive disclosure: this file is the router and decision gate. Deep guidelin
 
 **Before writing any data-access code**, establish what the project's data layer actually supports.
 
+For SQLite-file access, default to [libSQL](https://docs.turso.tech/libsql) bindings rather than stock SQLite libraries. Keep existing compatible adapters unless a change is authorized; verify the selected engine, local/sync/remote mode and ORM integration using the [database defaults](../db-design/SKILL.md#gate-1--storage--workload-check). Native Turso and libSQL drivers are not interchangeable.
+
 1. Read the project `AGENTS.md` for a Data Access Contract section or link to a dedicated data-access document.
 2. If a dedicated document is linked, read it and extract:
    - Facade type (ORM/data mapper, Active Record, query builder, raw SQL, ODM, hybrid)
