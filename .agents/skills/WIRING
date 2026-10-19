@@ -17,8 +17,9 @@ When debugging or fixing a problem:
 
 1. `codebase-exploration` — if the codebase is unfamiliar, navigate first
 2. `systematic-investigation` — root cause analysis
-3. `code-craft` — disciplined implementation of the fix
-4. `reviewer` (design-rigor lens) — verify the fix was disciplined
+3. `code-craft` — simplest working fix with relevant behavior evidence
+4. `code-maintainability` — separate-agent report of worthwhile later refinements; no automatic cleanup
+5. `reviewer` — independently check correctness or safety when warranted, not mandatory style polish
 
 ### Feature Implementation
 
@@ -28,10 +29,36 @@ packet as the contract passed between steps.
 1. Shallow research (`codebase-exploration` only for unfamiliar areas) — stop
    when the active decision, slice boundary, and non-deferrable boundaries are clear
 2. Roadmap — only for multi-milestone work; otherwise select the active milestone
-3. Active-milestone architecture calibration → phase and vertical-slice planning
+3. Settle consequential behavior/trust/state/consumer boundaries; add architecture or phase planning only when needed
 4. `code-craft` — implement and verify one active slice at a time
-5. `reviewer` — phase-aware review of the active contract, evidence, and compromises
-6. Record evidence and feedback; select the feedback decision in `team-operating-model/references/phased-delivery.md`
+5. `code-maintainability` — dispatch a separate assessor after working verification and record suggestions for later
+6. `reviewer` — check active correctness/safety contracts when warranted; maintainability suggestions alone are non-blocking
+7. Record evidence and feedback; use phased-delivery feedback decisions only for phased work
+
+### Working First → Assess Now → Refine Later
+
+`code-craft` owns the smallest verified working implementation, not upfront SOLID
+ceremony. Its primary dispatches a separate `code-maintainability` assessor with
+the outcome, changed files/revision, checks, known shortcuts, and authorized record
+destination. The assessor is report-only: record concrete suggestions or leave it
+alone. The primary persists the report if the assessor lacks record-write scope.
+Missing delegation/recording is reported as pending, never simulated completion.
+
+Apply selected suggestions only after the solution is proven useful and the user
+explicitly approves a bounded refinement. Revalidate stale reports and recheck
+behavior after approved changes. Safety, correctness, integrity, isolation, and
+required compatibility remain non-deferrable; do not classify defects as polish.
+Approved bounded refinements close with checks and a record update, not automatic
+reassessment. Reassess only on request or evidence invalidating the prior assessment;
+new boundaries or broader scope require returning to the primary before proceeding.
+Specification-only and mechanical edits do not trigger this assessment workflow.
+
+**Library ownership:** `code-craft` owns implementation essentials, execution-flow
+techniques, testing, file navigation, language/tooling and pattern lookup.
+`code-maintainability` owns its local SOLID cost questions, readability assessment
+and flow-assessment record methods. Do not send an implementer through that
+assessment library before the solution works, or send an assessor to an old
+implementation checklist.
 
 Use `working-principles/references/planning.md` for lightweight clarification.
 When a durable specification is useful or requested, use its domain owner:
@@ -42,12 +69,12 @@ handles presentation. No PRD → TRD → BDD ladder is required. When delegating
 
 ### Structural Integrity Across Agents
 
-Use `architecture-design/references/structural-integrity.md` as the shared placement/dependency method, not duplicated checklists. `codebase-exploration/references/structural-tracing.md` supplies current source/LSP evidence; `memory/references/source-maps.md` supplies optional scoped capture/recall. `code-craft` applies the method before writing and during audit. `subagent-dispatch` carries the relevant map/constraints and returns actual deltas. `team-operating-model` owns cumulative coherence and aggregate acceptance; `reviewer` independently checks the changed structural surface. No mandatory new role, report or persistence store.
+Use `architecture-design/references/structural-integrity.md` for consequential placement/dependency changes, not routine style cleanup. `codebase-exploration/references/structural-tracing.md` supplies current source/LSP evidence; `memory/references/source-maps.md` supplies optional scoped capture/recall. `code-craft` respects source ownership and changed trust/state/consumer boundaries; `code-maintainability` assesses optional structural refinement afterward. `subagent-dispatch` carries relevant constraints and actual deltas. `team-operating-model` owns aggregate acceptance; `reviewer` checks warranted correctness/safety boundaries. No mandatory extra map or persistence store.
 
 ### UI/UX Implementation
 
 1. `ui-ux` — design-driven workflow: discover → journey → layout → states → style → code → verify (writes UX-SPEC.md as design contract)
-2. `code-craft` — Phase 6 implementation methodology (SOLID/modularity on component logic)
+2. `code-craft` — Phase 6 working implementation and verification; separate maintainability assessment afterward
 3. `reviewer` (security lens) — input validation, auth on visual interfaces
 4. `web-qa-audit` — optional Phase 7 browser-based verification for Deep track
 
@@ -187,7 +214,7 @@ When schema design is complete and the access layer must be implemented:
 
 1. `db-design` — schema modeling, migrations, typed DTO mapping design
 2. `database-access` — implement repositories/adapters, session lifecycle, write contracts, test strategy
-3. `code-craft` — disciplined implementation of non-trivial adapter code (SOLID, modularity)
+3. `code-craft` — simplest verified adapter implementation; defer optional maintainability refinement
 4. `reviewer` (security lens) — verify parameterization, entity boundary, injection risks
 
 When data-access boundaries or capabilities must be decided at an architectural level first:
@@ -292,6 +319,8 @@ Natural transitions between skills:
 | `domain-curation` | `research-ideation` | "Grounded domain map is ready; next task is scientific hypothesis generation or experiments" |
 | `codebase-exploration` | `systematic-investigation` | "I understand the codebase, now I need to debug" |
 | `codebase-exploration` | `code-craft` | "I understand the codebase, now I need to implement" |
+| `code-craft` | `code-maintainability` | "Working behavior verified; separate agent records suggestions, without applying them; approved bounded refinements do not automatically retrigger assessment" |
+| `code-maintainability` | `code-craft` | "Usefulness established and user approved selected refinements; implement bounded change, reverify, update record, and close" |
 | Feature planning | Domain owner (`brainstorming`, `architecture-design`, `code-craft` or `ui-ux`) | "Product, technical, behavior or UX meaning needs clarification or a durable specification" |
 | `code-craft` | `reviewer` | "Active slice complete; review its contract, evidence, and compromises" |
 | `reviewer` | Feature planning | "Select or revisit the canonical phased-delivery feedback decision" |
@@ -363,10 +392,11 @@ Natural transitions between skills:
 | `data-storytelling` | `mermaid-validation` | "Mermaid visual created, validating syntax before embedding" |
 | `db-design` | `database-access` | Schema finalized — implement the access layer (repositories, session lifecycle, write contracts) |
 | `architecture-design` | `database-access` | Data-access boundaries and capability contract decided — implement them |
-| `database-access` | `code-craft` | Non-trivial adapter implementation needs SOLID/modularity discipline |
+| `database-access` | `code-craft` | Non-trivial adapter implementation needs working behavior and verification |
 | `database-access` | `reviewer` | Access layer complete — security lens (injection, entity exposure) or design-rigor lens (boundary discipline) |
 | `db-design` | `mermaid-validation` | "ER diagram generated, validating syntax before embedding" |
 | `architecture-design` | `code-craft` | Analytical architecture decided — implement pipeline with Ibis + DuckDB |
+| `architecture-design` | `code-craft` | MCP/tool-server structure decided (bootstrap, router, endpoints, middleware, contracts) — implement and verify |
 | `data-storytelling` | `code-craft` | Data profiling/signal mining requires programmatic extraction via Ibis + DuckDB |
 | `code-craft` | `reviewer` | Analytical pipeline complete — verify out-of-core memory safety and query pushdown |
 

@@ -15,8 +15,14 @@ trigger: always_on
 - Favor clear responsibilities, small useful interfaces, visible effects and
   idiomatic code. Settle affected consumer behavior/contracts before independent
   implementation; formal signatures/files only where coordination needs them.
-  Numeric style thresholds, one-export files, module headers and README creation
+  Numeric style thresholds, one-export files and README creation
   are contextual techniques, not universal gates. Do not overengineer utilities.
+- Keep compact [file navigation](../skills/code-craft/references/file-navigation.md)
+  in native docstrings/comments: purpose for new hand-maintained files; grouped
+  symbols and consequential edges where needed. Refresh affected navigation when
+  responsibilities, dependencies or consumer flows change. Tiny files need only
+  one line; no unrelated retrofit or generated-file edits. Verify source/callers
+  before trusting the map; a header does not establish codebase integrity.
 - **Structure before volume:** Before generating new or changed capabilities or
   runtime/trust boundaries, settle source homes and allowed dependency direction,
   then materialize code there. Apply the [source-boundary contract](../skills/architecture-design/references/structural-integrity.md);
@@ -36,5 +42,5 @@ trigger: always_on
 - Scientific ideation is exempt from production roadmaps, TDD, modularity and
   terminology bureaucracy, not data integrity, safety or resource bounds.
 
-Methods: [Code quality](../skills/code-craft/references/code-quality-guidance.md),
+Methods: [Implementation essentials](../skills/code-craft/references/implementation-essentials.md),
 [Testing](../skills/code-craft/references/testing.md).

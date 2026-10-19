@@ -22,13 +22,13 @@
 
 #### B3. Skill Workflow Skipping
 
-**Symptom:** The AI says "I'll use code-craft for this" and then writes code without going through the 5-phase workflow (design intent → SOLID check → write with standards → readability audit → tech debt inventory).
+**Symptom:** The AI claims to use `code-craft` but skips relevant working verification or the separate report-only maintainability handoff, concealing missing evidence as completion.
 
-**What happens:** The code passes basic review but accumulates structural problems: mixed responsibilities, no error contracts, undocumented design decisions. Over 10 tasks, the module becomes unmaintainable.
+**What happens:** Caller-visible defects may go unchecked, or worthwhile follow-up is lost rather than recorded. The former five-phase/SOLID checklist is not the current implementation workflow.
 
 **Defending rule:** Skill Use (`rules/skill-use.md` §2) — an activated skill's workflow steps and stops are binding.
 
-**Escalation:** Add a checkpoint requirement — the AI must post its Design Intent block and SOLID checklist before writing code. If it doesn't, it's a rule violation.
+**Escalation:** Complete the relevant checks, then have a separate assessor record concrete suggestions at an authorized destination. Report unavailable assessment/recording as pending; do not substitute upfront ceremony or automatically apply the suggestions.
 
 #### B4. Horizontal Building
 

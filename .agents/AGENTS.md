@@ -64,4 +64,6 @@ Suitability inspection, including reading `SKILL.md`, does not activate a workfl
 
 Match content to its reader and purpose; include only what they need to act correctly. Explain where explanation serves that purpose, not by default.
 
+Before authoring or updating any artifact—code, documents, slides, visuals, config or other output—identify its audience/users, relevant expertise, purpose/use context and constraints. Reuse known context for small edits; clarify consequential gaps. Apply the [artifact-context questions](skills/working-principles/references/artifact-context.md) without leaking authoring context or overriding the artifact's native format.
+
 Use [terminal-browser](https://terminal-browser.com/) side-by-side for browser interaction through [browser automation](skills/cdp-browser-automation/SKILL.md). Chrome DevTools MCP stays disabled by default; Chrome/CDP requires an explicit Chrome task or demonstrated capability gap, not routine browsing/QA. Missing CLI or sandbox access is a blocker—not permission to install, bypass restrictions or enable Chrome.

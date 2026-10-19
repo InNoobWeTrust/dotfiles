@@ -2,7 +2,8 @@
 
 ## Design Decision Anti-Patterns
 
-These are the most common agent lazy-path shortcuts. Recognize and refuse them:
+Use when a concrete implementation decision risks one of these failures; not as
+a pre-write checklist or an assessment library. Keep the simplest working path.
 
 | Temptation | Why It's Wrong | Correct Path |
 |---|---|---|
@@ -15,6 +16,6 @@ These are the most common agent lazy-path shortcuts. Recognize and refuse them:
 | "I'll put the business rule in the controller/handler" | Entangling decisions with framework or I/O behavior makes both harder to inspect and test | Separate decision logic from effects using existing functions/modules; add a service class only when it earns its complexity |
 | "I'll return `[]` / `null` / `false` here so callers don't break" | Hides contract ambiguity and turns real failure into fake success | Surface a typed/domain error; report the contract gap to the authorized primary rather than inventing a fallback |
 | "I'll tweak this interface signature or invent a new DTO during coding" | Violates locked contract gate; introduces unapproved drift and breaks callers | Adhere strictly to locked contracts; report `INCOMPLETE: CONTRACT_DEFECT` if flawed |
-| "I'll dump the whole repo tree in the plan, touch files outside scope, or create an extra helper file/scratch script" | Full repo trees cause noise; touching out-of-scope files breaks boundaries; extra files cause bloat | Lock scoped tree within affected boundary, explicitly state in-scope vs out-of-scope boundaries, create only declared files, and clean up all scratch artifacts |
-| "I'll execute all phases at once from the monolithic plan instead of following separate phase files" | Leads to context exhaustion, hallucination, missed edge cases, and verification failures | Execute one referenced phase file at a time, completing verification before advancing |
-| "I'll invent a custom locking strategy, write directly in-place, or reach for Redis/ZooKeeper to sync local files or CLI workers" | In-place writes cause corrupted files on crash; check-then-create has TOCTOU races; distributed locks add massive unnecessary infrastructure | Use Git's atomic lockfile pattern (`O_CREAT\|O_EXCL` -> write `.lock` -> atomic `rename(2)` -> `atexit`/signal cleanup; see `references/lock-patterns.md`) |
+| "I'll dump the whole repo tree in the plan or touch unrelated files" | Noise hides affected consumers; adjacent edits exceed authorized scope | Trace the relevant source/callers, keep writes bounded, return scope changes to the primary and clean up owned scratch |
+| "I'll keep adding changes without checking the current outcome" | Failures and contract drift compound | Implement a coherent working change and verify it; separate phase files are not required |
+| "I'll invent custom locks or reach for distributed infrastructure for local files" | Unsafe writes and check-then-create races risk corruption; extra infrastructure may add no value | Choose a compatible strategy for the actual state owner; see [lock implementation](lock-patterns.md) |

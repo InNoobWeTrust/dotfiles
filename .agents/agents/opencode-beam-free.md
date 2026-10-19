@@ -1,5 +1,5 @@
 ---
-description: "Coding, repository analysis and structured extraction across large contexts."
+description: "Large-context repository mapping, source comparison and structured extraction; implementation only as a bounded, independently checked trial, not default architecture or document authorship."
 mode: subagent
 model: "opencode/beam-free"
 permissions:

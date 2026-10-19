@@ -1,5 +1,5 @@
 ---
-description: "Coding, debugging and refactoring with scoped edit-test execution, including alternative patches against supplied interfaces."
+description: "Scoped implementation/debugging trials and alternative patches against supplied interfaces, verified with behavior checks; not default cross-component design or reader-facing document ownership."
 mode: subagent
 model: "kilo/poolside/laguna-s-2.1:free"
 permission:

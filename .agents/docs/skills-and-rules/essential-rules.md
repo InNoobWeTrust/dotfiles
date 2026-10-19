@@ -21,7 +21,8 @@ Keep an `INDEX`-first map (`rules/INDEX`) rather than loading all seven bodies; 
 | Method | Where it lives now | Load when |
 |---|---|---|
 | Testing strategy, TDD loop, context isolation | `skills/code-craft/references/testing.md` | Writing or reviewing tests |
-| Detailed quality guidance, patterns, smells | `skills/code-craft/references/code-quality-guidance.md` | Design review or refactor |
+| Implementation contracts, errors, types and verification | `skills/code-craft/references/implementation-essentials.md` | Concrete implementation question |
+| Working-code maintainability assessment | `skills/code-maintainability/SKILL.md` and its local `references/` | Separate assessment; later useful-and-approved refinement |
 | Discovery and lightweight planning | `skills/working-principles/references/planning.md` | Consequential unknowns or planning needs |
 | Product intent and outcomes | `skills/brainstorming/SKILL.md` | Product exploration or a brief for settled direction |
 | Technical constraints and trade-offs | `skills/architecture-design/SKILL.md` | Architecture decisions or optional technical specification |

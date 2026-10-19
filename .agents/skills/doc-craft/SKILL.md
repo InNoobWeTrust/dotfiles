@@ -45,6 +45,7 @@ Preserve decision-relevant constraints, testable contracts, uncertainties and ne
 
 ### Phase 1 — Audience Routing & Information Layering
 1. **Audience & Destination Gate**:
+   - Apply the shared [artifact-context questions](../working-principles/references/artifact-context.md) before authoring or updating. This precheck adds no new metadata schema; retain the document reader contract below.
    - **Human-Facing**: General architecture, guides, API references → `docs/`. Module role, public surface, usage → `<module>/README.md`.
    - **Agent-Facing / Internal**: Atomic implementation plans (`plan.md`), sequential vertical slice phase files (`phases/01-*.md`), inter-agent consensus boards, or execution checkpoints → **STOP and route to `memory`** (`MEMORY_DIR`). Do NOT dump execution tracking into `docs/`.
    - Reference: [`references/document-routing-and-audience.md`](references/document-routing-and-audience.md).

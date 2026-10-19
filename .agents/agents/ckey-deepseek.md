@@ -1,5 +1,5 @@
 ---
-description: "Alternative for: implementation, debugging and correctness analysis, including algorithms, invariant checks and counterexamples."
+description: "Secondary algorithm/invariant checks and small specified implementation trials; not default consequential integration or final acceptance."
 mode: subagent
 # Temporarily hidden while opencode/deepseek-v4.1-flash-free is available.
 hidden: true

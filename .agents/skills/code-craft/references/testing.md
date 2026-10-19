@@ -36,10 +36,12 @@ never establish coverage or readiness to commit.
 
 ## Optional test-first loop
 
-Use RED → GREEN → REFACTOR when a failing check clarifies the contract or guards
-a regression. Observe the intended failure first, implement the smallest correct
-change, then improve clarity with checks intact. It is a technique, not a
-mandatory sequence for documentation, trivial edits or exploratory research.
+Use a failing check first when it clarifies the contract or guards a regression.
+Observe the intended failure, then implement the smallest correct change. Adjust
+structure as needed for that authorized behavior, keeping checks intact; green
+tests do not authorize discretionary cleanup. Later maintainability refinement
+requires usefulness and explicit approval. Test-first is not mandatory for
+documentation, trivial edits or exploratory research.
 
 ## Optional clean-room verification
 

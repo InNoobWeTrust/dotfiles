@@ -13,7 +13,8 @@
 | `.agents/rules/code-quality.md` | Reuse-first baseline, design principles, test persistence boundary, ubiquitous language | Engineering lead |
 | `.agents/rules/document-formats.md` | Typst/PDF default, Markdown exceptions | Engineering lead |
 | `.agents/skills/code-craft/references/testing.md` | Acceptance behavior (including spec-only examples), evidence, testing strategies, context isolation | Engineering lead |
-| `.agents/skills/code-craft/references/code-quality-guidance.md` | Detailed quality guidance, patterns, smells | Engineering lead |
+| `.agents/skills/code-craft/references/implementation-essentials.md` | Implementation contracts, errors, types and verification | Implementer |
+| `.agents/skills/code-maintainability/SKILL.md` and local `references/` | Report-only assessment; later approved refinement | Separate assessor or approved refiner |
 | `.agents/skills/working-principles/references/planning.md` | Lightweight discovery, primary planning and tactical planning | Engineering lead |
 | `.agents/skills/brainstorming/SKILL.md` | Product intent, outcomes and product briefs, including settled direction | Engineering lead |
 | `.agents/skills/architecture-design/SKILL.md` | Technical constraints, trade-offs and optional technical specification | Engineering lead |

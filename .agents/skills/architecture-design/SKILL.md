@@ -1,6 +1,6 @@
 ---
 name: architecture-design
-description: "Use this skill for software architecture and technical specifications (including spec-only TRDs), system design, architecture documentation, pattern selection (Modular Monolith default), modular component design (C4 L1-L3), DDD bounded contexts, ADR writing, architecture audits, API/data/security architecture, parallel/distributed compute selection (workers, Hadoop, HPC), storage/sync/ledger integrity, and fitness functions. Composes with db-design and code-craft."
+description: "Use this skill for software architecture and technical specifications (including spec-only TRDs), system design, architecture documentation, pattern selection (Modular Monolith default), modular component design (C4 L1-L3), DDD bounded contexts, ADR writing, architecture audits, API/data/security architecture, MCP/tool-server architecture, parallel/distributed compute selection (workers, Hadoop, HPC), storage/sync/ledger integrity, and fitness functions. Composes with db-design and code-craft."
 ---
 
 # Architecture Design
@@ -28,6 +28,7 @@ Deep detail lives in `references/`.
 | Drawing C4 diagrams | `references/visualization/c4-mermaid-templates.md` |
 | Writing an ADR | `references/adr-templates.md` |
 | Analyzing tradeoffs or fitness | `references/analysis/fitness-functions.md` |
+| Designing an MCP/JSON-RPC tool server | `references/mcp-server-architecture.md` |
 
 ---
 
@@ -137,6 +138,7 @@ When choosing an architecture pattern:
 - **Mandatory Component Breakdown (C4 L3)**: Canonical architecture documentation must not present a single service as a black box without specifying its internal component boundaries.
 - **Illustration-first for canonical docs**: Every canonical architecture section MUST have at least one mermaid diagram. Milestone notes follow their lighter diagram rule below.
 - **Explicit types over tuples**: Inter-component interfaces must use explicit DTO types.
+- **Server-shaped interfaces follow server layering**: keep bootstrap/transport, routing, endpoints, middleware, contracts and streaming channels separate — including MCP tool servers. Protocol ceremony belongs at the boundary, not in handlers.
 - **Evidence over aspiration**: Document what IS, mark aspirational targets as "Target State".
 - **Locked Plan Core Parts**: When architecture transitions to implementation or migration plans, keep scope and approved behavior always clear; settle concrete code interfaces and file boundaries only where real consumer or handoff coordination needs them, and use separate phase files only for independently delegated or resumable units.
 - **Informed alignment for decisions**: Before asking non-trivial choices, use [Planning and shared understanding](../working-principles/references/planning.md) — current understanding, evidence, options with consequences — and define C4/DDD/ports-adapters and other jargon only insofar as it affects the decision. Ask only unresolved questions.
@@ -201,4 +203,5 @@ Use one focused interaction, sequence, data-flow, or boundary diagram only when 
 - `references/patterns/modular-architecture.md` — Modular Monoliths, Bounded Contexts, Ports & Adapters
 - `references/visualization/c4-mermaid-templates.md` — C4 L1-L3 templates
 - `references/adr-templates.md` — ADR templates
+- `references/mcp-server-architecture.md` — MCP/JSON-RPC tool servers as ordinary servers: bootstrap, router, endpoints, middleware, contracts and streaming
 - Compose with: `db-design` (operational DB engineering), `code-craft` (implementation), `reviewer` (design-rigor lens)

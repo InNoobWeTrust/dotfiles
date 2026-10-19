@@ -94,3 +94,4 @@ Lifecycle: **Prototype**, created **2026-10-08**. Review selection and source ac
 - [Planning and shared understanding](references/planning.md) — lightweight discovery, bounded plans and consumer transitions; usable without formal specifications
 - [Research](references/research.md)
 - [Delegation setup and authority](../subagent-dispatch/references/worker-contract.md)
+- [Artifact context](references/artifact-context.md) — settle audience, purpose and constraints before authoring or updating any artifact

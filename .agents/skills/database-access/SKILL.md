@@ -155,7 +155,7 @@ If an existing local convention conflicts with the confirmed decisions in this s
 |---|---|
 | `db-design` | Schema and migration design — hands off to `database-access` for implementation |
 | `architecture-design` | Data-access boundary, capability decisions, and OLAP vs OLTP separation — hands off to `database-access` for OLTP implementation |
-| `code-craft` | Implementation discipline (SOLID, modularity) — load alongside for non-trivial adapter code; handles analytical pipelines via Ibis + DuckDB |
+| `code-craft` | Simplest working implementation and verification for non-trivial adapter code; separate maintainability assessment afterward; handles analytical pipelines via Ibis + DuckDB |
 | `reviewer` | Post-implementation review — load for security lens (injection, exposure) or design-rigor lens |
 
 ---

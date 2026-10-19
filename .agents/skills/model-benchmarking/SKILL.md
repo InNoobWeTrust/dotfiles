@@ -1,11 +1,13 @@
 ---
 name: model-benchmarking
-description: "Use this skill to analyze and optimize agent model configurations — benchmark comparisons, pricing analysis, ELO rankings, and provider selection. Activate when optimizing model assignments, comparing LLM cost-performance tradeoffs, selecting model tiers for delegated workers, or validating agent configs against schemas."
+description: "Use this skill to select agent models by task fit, practitioner experience, checked outcomes, benchmarks, pricing, and provider access. Activate when optimizing model assignments, writing caller-facing agent descriptions, comparing LLM cost-performance tradeoffs, selecting delegated-worker tiers, or validating agent configs against schemas. Not for general non-LLM pricing or permission changes."
 ---
 
 # Agent Model Benchmarking & Optimization
 
 Compare model routes across quality, speed, context, cost, and access evidence within the user's permitted scope. Separate execution capability from working-principle identity; a model is not a fixed specialist persona.
+
+Inputs are the requested tasks, permitted changes, available routes and accessible evidence. Use native tools or authorized integrations; if evidence/access is unavailable, report the gap without installing, probing or reconfiguring a replacement. Output only the requested comparison, recommendation or description edit; selection guidance never grants execution or final-approval authority.
 
 ---
 
@@ -20,7 +22,7 @@ Before analyzing models, establish the boundary constraints of the environment.
    - **Target Mode**: Quality-first, balanced cost/quality, or cost-minimization.
 2. **Agent Class Map**:
    - **Orchestrator**: High frequency, high criticality. Needs high-quality reasoning and tool calls, wide context, and high uptime.
-   - **Execution/Code Maker**: Medium frequency, high criticality. Needs specialized SWE/coding benchmark strength.
+   - **Execution/Code Maker**: Medium frequency, high criticality. Needs task-specific implementation evidence, supported by relevant SWE/coding benchmarks.
    - **Support/Utility (e.g. Ingest)**: High volume, low criticality. Can leverage fast, cost-efficient, or free tiers.
 
 ---
@@ -31,7 +33,7 @@ Gather live pricing, features, and reliability metrics.
 
 ### 1. Catalog & leaderboards
 - **General Reasoning**: ArtificialAnalysis.ai, LMSYS Chatbot Arena (ELO ranks).
-- **Coding Specifics**: SWE-Bench Verified (SWE-Pro), Terminal Bench, HumanEval+, MBPP+.
+- **Coding Specifics**: SWE-bench Verified, SWE-bench Pro, Terminal Bench, HumanEval+, MBPP+; keep distinct benchmarks separate.
 - **Price/Token Comparisons**: OpenRouter model catalog, Together AI, Groq, deepinfra, fireworks.ai.
 
 ### 2. Free Tier Vetting
@@ -41,12 +43,30 @@ Gather live pricing, features, and reliability metrics.
 ### 3. Model ID Verification
 - Verify exact provider/model IDs and supported variants against the configured provider registry and current provider catalog. Registration does not prove authentication, quota, reachability, or current account access.
 - A JSON schema, such as `https://models.dev/model-schema.json#/$defs/Model`, validates metadata shape, not membership in a provider's available model list. Keep these checks separate; do not invent versions or substitute a newer model silently.
+- **Operator-curated rolling family aliases**: When the operator maintains recent family models for price/performance, use recent family-level evidence for qualitative typical-current-family task fit. A pinned checkpoint is not a prerequisite for selection. Keep individual benchmark identities in the evidence record; never present a checkpoint score as a measured alias average.
 
 ---
 
 ## Phase 3: Deep Per-Model Benchmark Research
 
 Analyze candidates' task-relevant capabilities, not fixed personalities. Record the exact model/checkpoint, benchmark version, effort, harness, source date, and whether evidence is vendor-reported, independent, family-level, or locally measured. Do not rank unlike benchmark versions as comparable; mark missing metrics unknown rather than inventing scores, uptime, or zero cost.
+
+### Evidence beyond leaderboards
+- Supplement scores with first-person practitioner accounts and checked local outcomes. Record task, scope, harness/version, effort/settings and what was actually checked; distinguish operator experience from controlled measurement.
+- Separate vendor claims, independent benchmarks, firsthand accounts and repeated summaries. Mark search snippets as snippets, not full-body review; votes and copied reports are not independent confirmation.
+- Retain contradictory results and relevant failures. Explain differences in task, context, harness or effort where supported; do not invent aggregate rankings, averages or acceptance rates. Local preference is conditional evidence, not a portable named-model winner.
+- Keep provenance, exact score sources and research limitations in a maintainer evidence record, not caller-facing descriptions. Reuse an existing record where sufficient; a description-only task does not require a full research report.
+
+### Task-fit distinctions
+Do not collapse these into “good coding”; compare evidence for the actual assignment:
+
+| Task | Selection evidence and actionable boundary |
+|---|---|
+| Architecture | Responsibility, data ownership, consumer contracts and trade-off reasoning; not just patch success. |
+| Skeptical acceptance / code-quality review | Relevant, evidenced defects and disconfirming checks; distinguish useful findings from false positives, not criticism volume. |
+| Consequential implementation | Integration effects, compatibility, failure paths and checked behavior; a plausible patch alone is insufficient. |
+| Documentation authorship | Audience fit, source fidelity and exclusion of internal context; coding or multimodal scores do not establish writing competence. Bound reader, outline, sources and writable scope; separate drafting from final approval. |
+| Extraction / utility | Accurate bounded retrieval, comparison or transformation; success does not establish architecture, implementation or whole-document ownership. |
 
 | Metric | Focus | Description |
 | :--- | :--- | :--- |
@@ -55,6 +75,8 @@ Analyze candidates' task-relevant capabilities, not fixed personalities. Record 
 | **GDPval-AA** | Orchestrator | Evaluates logical reasoning, data synthesis, and complex planning. |
 
 ### Specialization Profiles
+Use these as screening signals, not substitutes for checked task-specific outcomes.
+
 - **Agentic Workflow**: Strong SWE-Pro, Terminal Bench, and tool-use recall.
 - **Reasoning / Context**: Wide window (e.g., 128K+), needle-in-a-haystack recall, high GDPval-AA scores.
 - **Fast Iteration**: High token-per-second (tok/s) throughput and minimal time-to-first-token (TTFT).
@@ -79,7 +101,15 @@ Evaluate complete agent portfolios rather than isolated individual model swaps.
 
 ## Phase 5: Recommendation & Report Format
 
-Produce a comparison report mapping the migration path:
+Match the deliverable to the request; use the report below for portfolio/migration work, not as mandatory overhead for description-only edits.
+
+### Caller-facing descriptions
+- State useful task fit and actionable limits compactly: what to delegate, the necessary scope, and when to choose another route. Preserve existing permission/read-only boundaries; descriptions do not replace them.
+- Optional scores must name the benchmark/version and remain traceable in maintainer evidence. Do not imply that model-level scores measure a configured effort variant or rolling alias.
+- Exclude research caveats, provenance/history, checkpoint-verification residue and reading assignments. Translate uncertainty into an actionable task boundary only when it affects allocation.
+- Example: “Use for bounded implementation against settled interfaces and source-faithful edits for a specified reader. Reserve architecture ownership and final document approval for separately qualified review.” Adapt to evidence, not a fixed family stereotype.
+
+Stop before changes outside the authorized scope, paid probes, stress tests, restarts, or model/permission changes without explicit authorization. Before handoff, check task fit, description brevity, score traceability and preserved access/permission safeguards; source inspection is not proof of better routing or runtime compliance.
 
 ```markdown
 # Agent Model Benchmarking Report
@@ -107,3 +137,8 @@ Produce a comparison report mapping the migration path:
 
 ## 4. Execution Plan (Diffs)
 ```
+
+## ACI check
+- **Source interface:** scoped inputs/outputs, task-fit example and stop boundaries are explicit; runtime routing improvement is unverified.
+- **Risks addressed:** benchmark overreach, research leakage and alias-score confusion; retain actionable descriptions with separate evidence.
+- **First use:** check the next 1–2 routing/description updates against actual outcomes before treating this guidance as validated.

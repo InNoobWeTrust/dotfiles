@@ -66,7 +66,7 @@ The file MUST begin with a YAML frontmatter block delimited by `---`. Two fields
 ```
 ---
 name: code-craft
-description: "Code design discipline enforcing SOLID, KISS, DRY, modularity, separation of concerns, and human-readability during implementation. Load for any non-trivial code write, feature addition, refactor, or restructuring. Activate on \"refactor\", \"restructure\", \"design this module\", \"clean up this code\", or any implementation touching more than one file. Skip for typos, formatting, config value changes, or renaming without logic changes."
+description: "Use for non-trivial implementation, fixes, approved refactoring, and behavior/acceptance specifications. Prioritize the simplest verified working solution and fast feedback; defer maintainability assessment to a separate agent after it works. Not for formatting, config-only changes, or maintainability-only assessment."
 ---
 ```
 
@@ -79,20 +79,18 @@ description: "Code design discipline enforcing SOLID, KISS, DRY, modularity, sep
 
 #### Section 2: Workflow Phases
 
-Each phase has a name, a purpose, and a set of artifacts it must produce. Mark mandatory phases explicitly:
+Name meaningful steps, their purpose and their outputs. Make required steps explicit without imposing phase files or formal documents where inline intent is sufficient; the current Code Craft example is:
 
 ```
 
 ## Skill Workflow
 
-This skill has five phases. All five must be completed.
-
-### Phase 1 — Design Intent & Resilience Plan
-### Phase 2 — SOLID & Clean Architecture Check
-### Phase 3 — Write with High-Quality Standards
-### Phase 4 — Readability & Robustness Audit
-### Phase 5 — Tech Debt Inventory
+### 1. Establish the smallest useful outcome
+### 2. Implement and verify
+### 3. Hand off for separate, report-only maintainability assessment
 ```
+
+The assessment records suggestions now; applying them later requires demonstrated usefulness and explicit approval. If an assessor or authorized record destination is unavailable, report the assessment or recording as pending rather than simulating completion.
 
 #### Section 3: Stop Conditions (Gates)
 
@@ -100,10 +98,12 @@ Define conditions where the skill workflow must HALT. A stop condition means: "d
 
 Example from code-craft:
 ```
-STOP CONDITION: Isolation test = "no"
-→ Redesign the dependency structure. A unit that cannot be isolated
-  has too many implicit couplings — extract them.
+STOP CONDITION: Required behavior, consumer compatibility or safe execution is unresolved.
+→ Stop affected work; return the evidence and proposed clarification.
+  Do not invent fallback semantics or broaden the task into a redesign.
 ```
+
+A legacy isolation limitation alone is not permission to redesign dependencies; state the verification limitation and preserve the authorized scope.
 
 #### Section 4: Deliverable Checklist
 
@@ -113,12 +113,10 @@ What must be true for the task to be considered complete:
 
 ## Deliverable
 
-The skill's output is working code that satisfies:
-- [ ] Design Intent & Resilience Plan block was produced
-- [ ] SOLID & Clean Architecture check passed or debt documented
-- [ ] Code follows naming, structure, and traceability rules
-- [ ] Tests written and run where warranted, per the testing reference
-- [ ] Tech Debt Inventory produced
+The implementation handoff includes:
+- [ ] Requested behavior, relevant checks and verification limitations
+- [ ] Preserved safety, integrity and required consumer compatibility
+- [ ] Separate report-only assessment and record, or explicit pending status and reason
 ```
 
 #### Section 5: Anti-Pattern Table
@@ -127,8 +125,8 @@ The most important section. List the shortcuts the AI will try to take, and what
 
 | Temptation | Why It's Wrong | Correct Path |
 |---|---|---|
-| "I'll add this method to the existing class" | Violates Single Responsibility | Create a separate module/service |
-| "I'll use a dict here — it's flexible" | Hides structure; readers can't see fields | Use typed struct, dataclass, or interface |
+| "I'll add this method to the existing class" | May mix unrelated responsibilities | Keep it when cohesive; introduce a boundary only for a concrete responsibility or consumer need |
+| "I'll use a dict here — it's flexible" | May hide a required boundary contract | Validate and expose required fields at domain boundaries; native maps remain valid for local lookups and simple scripts |
 | "I'll return [] so callers don't break" | Hides contract ambiguity | Surface a typed/domain error |
 
 #### Section 6: References
@@ -139,7 +137,7 @@ Point to deep-dive documents that should only be loaded when needed:
 
 ## References
 
-- `references/code-quality-guidance.md` — Detailed code quality checklist
+- `references/implementation-essentials.md` — Situational implementation guidance
 - `references/templates/prd.md` — PRD output template
 ```
 

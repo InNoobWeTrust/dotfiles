@@ -54,7 +54,8 @@ Skills are the AI's training manuals — complete workflows for specific task ty
 
 | Task Type | Load This | Why |
 |---|---|---|
-| Write or refactor code | `code-craft` | 5-phase design discipline with SOLID checks |
+| Implement or make an approved code change | `code-craft` | Smallest verified working solution; no upfront SOLID ceremony |
+| Assess working code or apply approved maintenance | `code-maintainability` | Record suggestions now; refine only after usefulness and explicit approval |
 | Debug a bug | `systematic-investigation` | Structured root cause analysis protocol |
 | Define product intent or outcomes | `brainstorming` | Clarify the goal, including an already-settled direction |
 | Resolve technical constraints or trade-offs | `architecture-design` | Technical decisions and optional technical specification |

@@ -1,5 +1,5 @@
 ---
-description: "Implementation, verification and source synthesis for settled contracts and separable work. Terminal-Bench 4.0 (max): 55.05; Code Migration (max): 65.12; ProofBench v1.1 (max): 99.00."
+description: "Separable implementation and verification under settled contracts; source-faithful document sections with a supplied audience and outline, not open-ended architecture. Vals model-level, not this effort: Terminal-Bench 4.0: 55.05; Code Migration: 65.12; ProofBench v1.1: 99.00."
 mode: subagent
 model: "openai/gpt-6.1-sol"
 variant: medium

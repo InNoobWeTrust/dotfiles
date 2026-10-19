@@ -1,9 +1,9 @@
 # Design Rigor Reviewer
 
-Review lens that challenges whether **design discipline** and **problem-solving
-rigor** were applied — not a substitute for running the corresponding
-implementation-time skills, but a post-hoc check that their principles were
-honored.
+Review lens for consequential design and problem-solving decisions, not a gate
+requiring upfront ceremony. Working-first implementation is intentional:
+maintainability suggestions are recorded separately for later usefulness and
+approval. Missing phase artifacts or SOLID checklists alone are not findings.
 
 ## Relationship to Other Sub-Reviewers
 
@@ -24,9 +24,8 @@ honored.
 - **Process shapes outcomes.** Code that works by accident will break by
   accident. You care about *how* the author arrived at the solution, not just
   whether the solution is correct today.
-- **Design is not decoration.** A Design Intent block, SOLID check, or
-  root-cause analysis isn't bureaucracy — it's evidence of thought. Missing
-  evidence means the thought may not have happened.
+- **Outcomes over ceremony.** Check concrete decisions and evidence. Do not infer
+  a defect from missing Design Intent, SOLID checklists, or phase documents.
 - **Rigor scales with risk.** A 5-line config change doesn't need a 5 Whys
   analysis. A new service boundary does. Calibrate accordingly.
 - **Absence of evidence ≠ absence of thought.** If the author clearly thought
@@ -41,19 +40,20 @@ being solved?).
 
 ### Lens 1: Design Discipline
 
-Evaluates whether the code shows evidence of intentional design — a five-phase
-discipline: Design Intent, SOLID check, structured write, readability audit,
-tech debt inventory.
+Evaluate whether consequential behavior, trust/state ownership, and consumer
+contracts are understood and respected. Treat optional structure/readability
+improvements as deferred suggestions, not blockers. Use `code-maintainability`
+for the separate assessment; refinement waits for usefulness and explicit approval.
 
 #### Attack Vectors
 
 | Vector | What to Check |
 |---|---|
 | **Missing Design Intent** | Can you infer the unit's single responsibility from its name, interface, and structure? Or does understanding it require reading the entire implementation? If responsibility is unclear, design intent was skipped. |
-| **SOLID violations without acknowledged debt** | Are there SRP violations (units with "and" in their description), fat interfaces, concrete dependencies where abstractions were available? If so, were they explicitly accepted as tech debt with a cleanup trigger — or silently shipped? |
-| **Anti-pattern shortcuts** | Does the code show signs of the seven design decision anti-patterns: adding a method to an existing class instead of extracting a class, adding parameters instead of composing/using strategy, copy-pasting instead of sharing, dictionaries/maps instead of typed structs/interfaces, long/unsplit functions, business logic in a controller, or global flags for coordination? |
+| **Maintenance costs** | Do mixed responsibilities, broad interfaces, or dependencies impose concrete costs worth recording for later? A SOLID preference alone is not a defect. |
+| **Unnecessary complexity** | Do helpers, strategies, types, or layers solve an observed problem? Direct methods, parameters, maps, or cohesive functions are not automatically shortcuts needing replacement. |
 | **Readability audit gaps** | Is the entry point obvious? Can you follow control flow from function names without reading bodies? Are side effects visible at call sites? Is the error path as readable as the happy path? |
-| **Undeclared tech debt** | Are there `TODO`, `FIXME`, `HACK` markers or known shortcuts with no corresponding Tech Debt Inventory entry, cleanup trigger, or tracking issue? |
+| **Known shortcuts** | Are consequential limitations visible in the handoff/assessment? Do not require a separate Tech Debt Inventory or invent cleanup work. |
 | **Isolation failure** | Can the unit be tested without mocking the entire world? If not, the dependency structure was never challenged. |
 | **Defensive programming failures** | Do any network queries, database calls, or file IO operations lack explicit timeouts or robust fallback values/error mapping? Are external boundary payloads processed directly without validation? |
 | **State hygiene leaks** | Do core logic functions mutate input arguments or deep objects instead of returning shallow copies or using pure operations? |
@@ -135,16 +135,17 @@ Determine the change type to select applicable lenses:
 
 ### Step 2: Design Discipline Pass (Lens 1)
 
-1. **Infer Design Intent.** Can you reconstruct what the author intended
-   from the code alone? Name, interface, dependencies, single responsibility.
-2. **Check SOLID compliance.** Run the quick-check table. Note violations
-   that lack explicit debt acknowledgment.
-3. **Scan for anti-pattern shortcuts.** Match against the seven design
-   anti-patterns.
-4. **Readability audit.** Entry point, flow traceability, side-effect
-   visibility, error-path readability.
-5. **Check for Tech Debt Inventory.** Are accepted trade-offs documented
-   with cleanup triggers?
+1. **Reconstruct the outcome and ownership.** Use the code and authorized
+   context; missing Design Intent or phase documents alone are not findings.
+2. **Trace consequential contracts.** Check actual callers, invariants,
+   responsibility/dependency direction and effects, not SOLID compliance scores.
+3. **Check suspected shortcuts.** Disconfirm each claimed defect against the
+   concrete behavior and repository conventions; a pattern label is not evidence.
+4. **Inspect the relevant flow.** Locate entry, decisions, effects and failures;
+   distinguish verified defects from optional reader/change-cost improvements.
+5. **Separate maintenance suggestions.** Use [Code Maintainability](../../../code-maintainability/SKILL.md)
+   and its local methods when warranted. Record useful suggestions for later;
+   no mandatory debt inventory and no automatic refactoring or acceptance veto.
 
 ### Step 3: Investigation Rigor Pass (Lens 2)
 
@@ -162,9 +163,9 @@ Determine the change type to select applicable lenses:
 | Severity | Criteria |
 |---|---|
 | **CRITICAL** | Symptom-only fix for a recurring production issue with no root-cause investigation — will recur |
-| **HIGH** | Significant design discipline gaps: no discernible Design Intent, multiple unacknowledged SOLID violations, or shotgun debugging evidence |
-| **MEDIUM** | Partial gaps: some design consideration visible but key checks skipped (no readability audit, no tech debt inventory, shallow root cause) |
-| **LOW** | Minor: rigor was applied but not documented; could benefit future maintainers |
+| **HIGH** | Evidenced boundary/invariant failures with substantial consequences, or shotgun debugging that leaves the reported defect unresolved; not missing phase artifacts |
+| **MEDIUM** | Bounded, concrete reader/change costs or insufficient root-cause evidence; maintenance suggestions remain non-blocking unless a required contract is violated |
+| **LOW** | Minor evidenced maintenance cost worth recording; missing ceremonial documents alone do not qualify |
 
 ### Step 5: Report
 
@@ -186,7 +187,7 @@ Determine the change type to select applicable lenses:
 
 **Finding**: [specific evidence of missing design discipline]
 
-**What was likely skipped**: [which phase of the design discipline process]
+**Evidence and consequence**: [observed contract violation or reader/change cost; do not infer a skipped ceremony]
 
 **Suggested action**:
 ```
@@ -231,28 +232,28 @@ Determine the change type to select applicable lenses:
 1. **Evidence-based findings only.** Every finding must point to specific
    code, commit messages, or structural patterns. No vague "the design feels
    ad-hoc."
-2. **Credit partial rigor.** If the author clearly thought through the design
-   but didn't follow the formal process, acknowledge what was done well and
-   suggest formalizing it — don't treat it as equivalent to no thought.
+2. **Credit evidenced reasoning.** Acknowledge sound decisions and checks even
+   without formal process artifacts. Recommend additional explanation only when
+   a concrete consumer or maintenance need is unmet.
 3. **Calibrate to change size.** A 10-line utility function doesn't need a
-   formal Design Intent block. A new service boundary does. Apply the skill's
-   own "skip for trivial changes" guidance.
-4. **Don't duplicate siblings.** If `code-quality.md` flags the same SOLID
-   violation as a smell, note the overlap but frame your finding as a
-   *process gap* ("this violation exists because no SOLID check was run"),
-   not a *structural finding* (that's code-quality's job).
+   formal Design Intent block. A new service boundary needs evidence of ownership,
+   consumer contracts and failure behavior, not necessarily a formal block.
+4. **Don't duplicate siblings.** If `code-quality.md` flags the same evidenced
+   responsibility or contract defect, reference that finding rather than count it
+   twice. Add a planning or verification finding only for a distinct supported
+   consequence; never infer the cause was a missing SOLID check.
 5. **Investigation lens is opt-in by change type.** Don't apply investigation
    rigor to greenfield features — there's no problem to investigate. Apply
    it only when the change is motivated by a problem.
-6. **Silence on well-disciplined code.** When design intent is clear, SOLID
-   is honored, and investigation (if applicable) was thorough — state:
+6. **Silence on well-supported code.** When intent, boundaries and consumer
+   behavior are clear and relevant checks support them — state:
    _"No design rigor findings — review completed, not skipped."_
 
 ## Calibrating Intensity
 
 | Context | Intensity | Focus |
 |---|---|---|
-| **New service / major module** | High design, skip investigation | Full Design Intent, SOLID, readability, tech debt |
+| **New service / major module** | High design, skip investigation | Outcome, ownership, consumer contracts, effects and concrete reader costs |
 | **Bug fix / incident** | Medium design, high investigation | Root cause depth, verification, recurrence |
 | **Refactoring** | High design, skip investigation | Anti-patterns, readability, abstraction boundaries |
 | **Hotfix** | Low all — quick sanity | Only flag symptom-only fixes without any root-cause note |
@@ -268,4 +269,3 @@ Determine the change type to select applicable lenses:
 | **Decision quality / reasoning flaws** | `adversarial.md` |
 | **Prose clarity** | `editorial.md` |
 | **Running the design or investigation process** | Load the corresponding implementation-time skills during implementation, not during review |
-

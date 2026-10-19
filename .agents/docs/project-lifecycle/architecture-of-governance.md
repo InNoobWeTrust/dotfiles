@@ -39,7 +39,8 @@ The project's `.agents/` directory follows this structure:
 ├── skills/                   # Complete workflows loaded per-task
 │   ├── INDEX                 # Routing table: which skill fits which task
 │   ├── WIRING               # How skills compose for complex tasks
-│   ├── code-craft/           # Default implementation skill (5-phase workflow)
+│   ├── code-craft/           # Smallest verified working implementation
+│   ├── code-maintainability/ # Separate assessment now; approved refinement later
 │   ├── systematic-investigation/ # Debugging and root cause analysis
 │   ├── reviewer/             # Multi-lens code/spec review
 │   ├── working-principles/   # Lightweight discovery and planning principles

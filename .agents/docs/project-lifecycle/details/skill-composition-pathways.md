@@ -22,7 +22,7 @@ Under a minimal harness, the `description` field in each skill's YAML frontmatte
 ```
 ---
 name: code-craft
-description: "Code design discipline enforcing SOLID, KISS, modularity, separation of concerns, and human-readability. Load for any non-trivial code write, feature addition, refactor, or restructuring. Activate on \"refactor\", \"restructure\", \"design this module\", \"clean up this code\", \"make this maintainable\", or any implementation touching more than one file. Skip for typos, formatting, config value changes, or renaming without logic changes."
+description: "Use for non-trivial implementation, fixes, approved refactoring, and behavior specifications. Make the simplest solution work and verify it; hand off maintainability assessment afterward. Not for formatting, config-only edits, or maintainability-only assessment."
 ---
 ```
 

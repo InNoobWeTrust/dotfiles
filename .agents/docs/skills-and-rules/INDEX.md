@@ -6,6 +6,7 @@
 |---|---|---|
 | [Autonomous delivery](./autonomous-delivery.md) | Delegate decisions, get an inspectable result, and retain final acceptance | Requesting end-to-end ownership or tuning iteration/approval behavior |
 | [Agent orchestration design](./agent-orchestration-design.md) | Orchestrator selection, prompt engineering for model tiers, rate limit budgeting | Configuring multi-agent orchestration layers |
+| [Agent routing evidence](./agent-routing-evidence.md) | Local task preferences, practitioner reports, benchmark sources and limits | Maintaining agent descriptions without treating scores as universal competence |
 | [Global harness instructions](./harness-safety.md) | Shared native instructions, sandbox/container tools, delegation, and resource boundaries | Installing instructions across harnesses or configuring execution and delegation |
 | [Container lifecycle failure case](./container-lifecycle-context-leakage.md) | Observed Podman/MCP lifecycle boundary failure and repair evidence | Diagnosing host lifecycle effects versus isolated workload execution |
 | [Installing skills via npx](./installing-skills.md) | Installing skills via `npx skills add` & pairing with rules | Installing skills in new or existing repos |

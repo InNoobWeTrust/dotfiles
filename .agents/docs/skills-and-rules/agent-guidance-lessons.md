@@ -82,5 +82,5 @@ Commits `65f7e7ee` (inspectable code and context-aware delegation) and `c68ba619
 
 - **Failure catalog:** [Naming and context failures](details/category-c.md) and [agreement bias in self-review](details/category-b.md#b5-agreement-bias-in-self-review).
 - **Operational guidance:** [Context stewardship](../../skills/subagent-dispatch/references/context-stewardship.md), [portable worker contract](../../skills/subagent-dispatch/references/worker-contract.md), and [working-principle discovery](../../skills/working-principles/SKILL.md).
-- **Code and analytical choices:** [Inspectable code](../../skills/code-craft/references/inspectable-code.md) and [dataflow stack selection](../../skills/architecture-design/references/dataflow-stack-selection.md).
+- **Code and analytical choices:** [Execution-flow implementation](../../skills/code-craft/references/execution-flow.md) and [dataflow stack selection](../../skills/architecture-design/references/dataflow-stack-selection.md). Post-working [flow assessment](../../skills/code-maintainability/references/flow-assessment.md) is a separate report-only method.
 - **Maintaining the lessons:** [Failure → rule evolution](failure-pattern-evolution.md). Keep execution checkpoints in memory and reader-facing explanations here.

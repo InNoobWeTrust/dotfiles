@@ -22,6 +22,8 @@ Direct vs delegate scenarios: `references/quick-vs-delegate-scenarios.md`.
 
 For architecture, dependency or change-placement questions, use [Structural tracing](references/structural-tracing.md). Use available LSP evidence alongside imports/manifests and runtime wiring; fall back explicitly when unsupported. Share a scoped, revision-linked source map, not an unsupported complete-graph claim.
 
+Use existing [file navigation](../code-craft/references/file-navigation.md) to locate responsibilities and symbols quickly, then verify actual source, imports/wiring and relevant callers before relying on it for a conclusion. Read-only exploration does not authorize adding headers; report stale or missing navigation only where it affects the question.
+
 ```
 Can you answer now?
   YES (≤3 files, clear pattern) → continue with a strategy below

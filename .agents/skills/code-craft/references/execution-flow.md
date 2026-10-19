@@ -1,13 +1,13 @@
-# Inspectable, Flow-Oriented Code
+# Implementing Explicit Execution Flow
 
-Use when implementing non-trivial orchestration, branching, stateful or effectful behavior, or responding to requests such as "readable rather than cryptic," "less messy code," "flow-based programming," "inspect and audit," or "make the execution flow visible."
+Use for a concrete implementation problem involving orchestration, branching, state or effects. Assessment questions and walkthrough records belong to Code Maintainability, not this implementation guide.
 
-This extends Code Craft, not its delivery phases. For small linear patches or utility scripts, apply the readability preference without loading a framework or creating extra artifacts. Analytical stack selection remains in the [dataflow guide](../../architecture-design/references/dataflow-stack-selection.md).
+For small linear patches or utility scripts, keep ordinary explicit code without loading a framework or creating extra artifacts. Analytical stack selection remains in the [dataflow guide](../../architecture-design/references/dataflow-stack-selection.md).
 
 ## Scope and contract
 
 - **Inputs:** approved behavior and failure contracts, repository conventions, the entry point and relevant implementation, and applicable safety/performance constraints.
-- **Output:** readable implementation plus proportionate, source-linked inspection evidence in the existing change summary or module README.
+- **Output:** working implementation with visible consequential decisions and effects, plus actual check results in the existing handoff. [File navigation](file-navigation.md) supplies local symbol/flow orientation, not task evidence or a replacement module entry point.
 - **Exclusions:** no mandatory DAG, new runtime, tracing system, diagram, class hierarchy, or rewrite of adjacent code. Research-only requests stop at findings and suggestions.
 - **Stops:** clarify ambiguous caller-visible behavior; obtain informed agreement before changing stack or execution semantics; follow Code Craft's rewrite/consumer gates before replacing existing interfaces. This guide does not grant refactoring authority.
 
@@ -57,24 +57,7 @@ For retry/resume, inspect which work may repeat and how effects remain safe; a c
 
 Keep inspection artifacts and traces local by default. Do not collect sensitive payloads or upload source, inputs, checkpoints or telemetry without authorization.
 
-## 4. Demonstrate inspectability before delivery
-
-Use the Phase 4 audit in [write standards](write-standards.md). For a non-trivial behavior change, provide a compact walkthrough in the existing change summary or module README, using repository-relative source references. Do not create a second documentation system.
-
-Copyable shape; omit inapplicable items rather than inventing behavior:
-
-```text
-Flow: <entry file:symbol> -> <important decisions/stages> -> <result>
-Effects/state: <read/write boundaries; state and resource owners>
-Failure path: <rejection/error/cancellation/partial result; cleanup or retry if relevant>
-Evidence: <tests or observed outputs for these paths; what remains unverified>
-```
-
-- **Small script or linear patch:** understandable code plus a brief change explanation; no separate flow artifact required.
-- **Non-trivial branching or stateful behavior:** the compact walkthrough above; add a small flow/state view only when text and source do not make it clear.
-- **Complex concurrency or replay:** document consequential execution contracts and use targeted runtime evidence where needed. Preserve required tests and safety gates; do not add tracing merely for ceremony.
-
-A structural clarity failure requires a structural fix: comments can explain rationale, but cannot make hidden flow, surprising effects or excessive indirection pass the audit. Leave unrelated code untouched and report material limitations rather than broadening the task.
+Use [testing guidance](testing.md) for authorized verification. Explain relevant limitations in the ordinary handoff, not a mandatory inspection report. Comments do not repair incorrect ordering, hidden writes or violated contracts; fix in-scope defects and return broader scope questions to the primary. Discretionary readability refinement is not an extra implementation phase.
 
 ## Anti-patterns
 
@@ -95,10 +78,10 @@ A structural clarity failure requires a structural fix: comments can explain rat
 - [LangGraph graph API](https://docs.langchain.com/oss/python/langgraph/graph-api) and [persistence](https://docs.langchain.com/oss/python/langgraph/persistence): graph execution and checkpoint semantics.
 - [OpenTelemetry sensitive-data guidance](https://opentelemetry.io/docs/security/handling-sensitive-data/): minimize collection and protect telemetry.
 
-**Prototype (2026-10-07):** routing and scenario checks are not proof of faster auditing. On the first representative implementation, check whether a reader can locate decisions, effects and failure behavior with fewer file jumps and less explanation; record observed results before claiming improvement.
+**Prototype:** on representative use, check whether a reader can locate decisions, effects and failure behavior with fewer file jumps and less explanation; source checks alone do not establish improvement.
 
 ## ACI Pass
 
-- Result: PASS for the guidance interface; audit-speed benefit remains unverified pending a representative pilot.
+- Result: PASS for the guidance interface; real-use benefit remains unverified pending a representative pilot.
 - Main risks: framework over-adoption, helper/documentation proliferation, graphs mistaken for execution evidence, hidden replay effects.
-- Interface upgrades applied: bounded inputs/output, explicit stops, conditional tool selection, proportional evidence, source-linked example and failure path.
+- Interface upgrades applied: implementer-only scope, bounded inputs/output, explicit stops, conditional tool selection and example failure path; assessment record shape is owned separately.

@@ -19,7 +19,10 @@ To prevent mixing concerns across the codebase, patterns are partitioned across 
 
 ## 2. Query Contract for `code-craft`
 
-Before writing non-trivial implementation code (Phase 1 & Phase 2 of `code-craft`), query the pattern engine for canonical blueprints, trade-offs, and model traps.
+For a concrete implementation problem, optionally query for relevant blueprints,
+trade-offs or known traps. Do not search before every change or introduce a
+pattern just because it appears in the catalogue. The simplest suitable direct
+implementation remains valid; this engine is not a maintainability audit.
 
 ### Running the Search Engine
 
@@ -34,7 +37,7 @@ Search integrations are optional, not a prerequisite for this skill; ordinary fi
 # uv runner
 uv run .agents/skills/code-craft/scripts/search.py "<query>" [--stack <stack>]
 
-# Python 3 standard library
+# Python 3 with rank-bm25 already available
 python3 .agents/skills/code-craft/scripts/search.py "<query>" [--stack <stack>]
 
 # Specialized queries
@@ -58,7 +61,10 @@ python3 .agents/skills/code-craft/scripts/search.py "<query>" [--stack <stack>]
 
 ## 4. Offline Quick Reference for `code-craft`
 
-If command execution is restricted, reference the canonical IDs below:
+If command execution or dependencies are unavailable, use targeted reads of the
+relevant CSV or the IDs below; do not install or bypass restrictions. Resolve
+`scripts/data` against the discovered code-craft skill directory, not a presumed
+working directory. These are conditional techniques, not a required architecture:
 
 ### Modern Code Patterns
 - `pat-result`: **Result / Railway Pattern** — Return `Result<T, E>` values for expected domain errors; avoid throwing exceptions for control flow.
@@ -75,7 +81,7 @@ If command execution is restricted, reference the canonical IDs below:
 ### In-Process Concurrency & Resilience
 - `concur-worker-pool`: **Bounded Worker Pool** — Fixed worker goroutines/threads reading from a bounded queue with graceful drain.
 - `concur-task-group`: **Structured Concurrency (TaskGroup)** — Lexical scoping for concurrent child tasks; cancels siblings on failure.
-- `concur-git-lockfile`: **Git Atomic Lockfile** — Mutual exclusion and atomic file updates via `O_CREAT|O_EXCL`, temporary `.lock` write, atomic `rename(2)` swap, and signal/`atexit` crash cleanup. Non-blocking readers, zero external dependencies (see `references/lock-patterns.md`).
+- `concur-git-lockfile`: **Git Atomic Lockfile** — Mutual exclusion and atomic file updates via `O_CREAT|O_EXCL`, temporary `.lock` write, atomic `rename(2)` swap, and signal/`atexit` cleanup where available. See [lock implementation](lock-patterns.md), including stale-lock limitations.
 - `concur-exponential-backoff`: **Backoff + Full Jitter** — Prevent thundering herds: `sleep = min(max_delay, base * 2^attempt) * rand()`.
 - `concur-circuit-breaker`: **In-Process Circuit Breaker** — 3-state machine failing fast during downstream degradation.
 - `concur-deadline-propagation`: **Context Cancellation** — Propagate deadlines through all RPC/DB calls; check `ctx.Done()`.
@@ -84,4 +90,4 @@ If command execution is restricted, reference the canonical IDs below:
 - **Abstraction and errors:** Avoid generic ABCs/monads for simple functions. Don't catch broad exceptions and return `None` silently.
 - **Language idioms:** Prefer interfaces and functions over redundant TypeScript class hierarchies. Avoid mutable defaults in Python.
 - **Boundaries and context:** Validate data at external boundaries with the project's chosen tooling. Wrap Go errors with `%w` context instead of returning naked errors.
-- **Concurrency and ownership:** Don't overuse Go channels for basic mutex needs. Don't call `.clone()` in Rust just to escape borrow checker without understanding ownership. Don't invent distributed locks (Redis/ZooKeeper) or in-place writes for local CLI/state files—use Git lockfile (`references/lock-patterns.md`).
+- **Concurrency and ownership:** Don't overuse Go channels for basic mutex needs. Don't call `.clone()` in Rust just to escape borrow checker without understanding ownership. For local CLI/state files, consult [lock implementation](lock-patterns.md) rather than inventing distributed infrastructure or unsafe in-place writes.

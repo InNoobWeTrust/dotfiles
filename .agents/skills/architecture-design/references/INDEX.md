@@ -21,6 +21,10 @@ Master index for all reference material. Load only what the current workflow nee
 | API design | `workflows/api-design.md` | Contract-first, versioning |
 | Data architecture | `workflows/data-architecture.md` | Modeling, pipelines, governance |
 
+## Server & Protocol Guidance
+
+- [MCP server architecture](mcp-server-architecture.md) — apply ordinary server layering (bootstrap, router, endpoints, middleware, contracts, streaming) to MCP/JSON-RPC tool servers; task-shaped endpoints, not protocol ceremony.
+
 ## Focused Stack Selection
 
 - `dataflow-stack-selection.md` — inspectable analytical/scientific dataflows; plain Python/Ibis/marimo vs Hamilton vs dbt; graph and run-provenance contracts. Use without the full enterprise workflow for a narrow stack recommendation.
