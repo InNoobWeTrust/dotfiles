@@ -1,8 +1,8 @@
 import { z } from "zod@4"
 
-import { MODEL, FALLBACK_MODEL } from "./providers.ts"
+import { MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_RESPONSE_MODELS } from "./providers.ts"
 export { MODEL, FALLBACK_MODEL } from "./providers.ts"
-export type DecisionModel = typeof MODEL | typeof FALLBACK_MODEL
+export type DecisionModel = typeof MODEL | typeof FALLBACK_MODEL | typeof MERCURY_MODEL | typeof GPT_MODEL
 
 const label = z.string().min(1).max(100)
 const instructions = z.string().min(1).max(8000)
@@ -43,10 +43,10 @@ export type EvaluateArgs = z.infer<typeof evaluateSchema>
 const probability = z.number().min(0).max(1)
 const probabilities = z.record(z.string(), probability)
 const responseSchema = z.object({
-  model: z.enum([MODEL, FALLBACK_MODEL]),
+  model: z.enum([MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL]),
   answers: z.record(z.string(), z.discriminatedUnion("type", [
-    z.object({ type: z.literal("choice"), choice: z.string(), probabilities, confidence: probability.optional() }),
-    z.object({ type: z.literal("score"), score: z.number(), probabilities, confidence: probability.optional() }),
+    z.object({ type: z.literal("choice"), choice: z.string(), probabilities: probabilities.optional(), confidence: probability.optional() }),
+    z.object({ type: z.literal("score"), score: z.number(), probabilities: probabilities.optional(), confidence: probability.optional() }),
     z.object({ type: z.literal("noul"), noul: probability }),
   ])),
   usage: z.object({
@@ -65,8 +65,16 @@ export function parseEvaluateInput(input: unknown): EvaluateArgs {
 /** Parse raw HTTP response body as JSON and validate schema. Throws SyntaxError (invalid JSON) or ZodError (schema mismatch). */
 export function parseResponseBody(rawText: string, expectedModel: DecisionModel = MODEL): ResponsePayload {
   const raw = JSON.parse(rawText)
-  const payload = expectedModel === FALLBACK_MODEL
-    ? z.object({ success: z.literal(true), result: responseSchema }).parse(raw).result
-    : responseSchema.parse(raw)
-  return responseSchema.extend({ model: z.literal(expectedModel) }).parse(payload)
+  if (expectedModel !== MODEL) {
+    const payload = responseSchema.extend({ model: z.string().refine(
+      value => OPENROUTER_RESPONSE_MODELS[expectedModel].some(model => model === value),
+      "Unexpected OpenRouter decision model",
+    ) }).parse(raw)
+    // Keep the exact upstream identity in response.json; expose the requested route.
+    return { ...payload, model: expectedModel }
+  }
+  return responseSchema.extend({ model: z.literal(expectedModel) }).refine(
+    value => Object.values(value.answers).every(answer => answer.type === "noul" || answer.probabilities !== undefined),
+    "Native decision answers require probabilities",
+  ).parse(raw)
 }

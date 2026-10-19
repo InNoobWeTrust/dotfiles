@@ -30,7 +30,7 @@ globalThis.fetch = async (url, init) => {
   const status = !probe && control.evalStatus ? control.evalStatus : control[provider];
   const result = {model:body.model,answers:{q0:{type:"choice",choice:"a",probabilities:{a:0.5,b:0.5}}}};
   log("end");
-  return new Response(JSON.stringify(status === 200 ? (provider === "cf" ? {success:true,result} : result) : {error:"fake HTTP failure"}), {status});
+  return new Response(JSON.stringify(status === 200 ? result : {error:"fake HTTP failure"}), {status});
 };
 `
 type Control = { zen: number; cf: number; delayMs?: number; evalStatus?: number; evalHang?: boolean }
@@ -62,8 +62,7 @@ async function withServer(config: Control, credentials: "none" | "zen" | "both",
   }
   if (credentials !== "none") env.OPENCODE_API_KEY = "fake-zen-test-key"
   if (credentials === "both") {
-    env.CLOUDFLARE_ACCOUNT_ID = "cafecafecafecafecafecafecafecafe"
-    env.CLOUDFLARE_API_TOKEN = "fake-cf-test-key"
+    env.OPENROUTER_API_KEY = "fake-openrouter-test-key"
   }
   // The launcher is a POSIX sh shim (it selects the per-MCP Bun cache), so run
   // it directly and pass Bun flags through BUN_OPTIONS instead of the CLI.
@@ -140,19 +139,19 @@ test("real launcher without credentials exposes discover only and makes no HTTP 
 })
 for (const scenario of [
   { label: "healthy Zen", zen: 200, available: true, status: "available" },
-  { label: "Zen 429 and healthy Cloudflare", zen: 429, available: true, status: "rate_limited" },
-  { label: "Zen 401 cannot use healthy Cloudflare", zen: 401, available: false, status: "unauthorized" },
+  { label: "Zen 429 and healthy OpenRouter Clef", zen: 429, available: true, status: "rate_limited" },
+  { label: "Zen 401 cannot use healthy OpenRouter Clef", zen: 401, available: false, status: "unauthorized" },
 ]) {
   test(`real startup gate: ${scenario.label}; probes complete before initialize`, async () => {
     await withServer({ zen: scenario.zen, cf: 200, delayMs: 100 }, "both", async client => {
       const events = client.events()
-      expect(events.filter(event => event.phase === "start")).toHaveLength(2)
-      expect(events.filter(event => event.phase === "end")).toHaveLength(2)
+      expect(events.filter(event => event.phase === "start")).toHaveLength(4)
+      expect(events.filter(event => event.phase === "end")).toHaveLength(4)
       for (const event of events) {
         expect(event.probe).toBe(true)
         expect(event.method).toBe("POST")
         expect(event.redirect).toBe("error")
-        expect(event.authorization).toBe(event.provider === "zen" ? "Bearer fake-zen-test-key" : "Bearer fake-cf-test-key")
+        expect(event.authorization).toBe(event.provider === "zen" ? "Bearer fake-zen-test-key" : "Bearer fake-openrouter-test-key")
       }
       expect(await names(client)).toEqual(scenario.available ? ["discover", "evaluate"] : ["discover"])
       const discovered = await call(client, "discover")

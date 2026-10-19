@@ -1,14 +1,12 @@
-import { getCloudflareCooldown, recordCloudflareCooldown } from "./api.ts"
-import { ENDPOINT, MODEL, FALLBACK_MODEL, getCloudflareConfiguration } from "./providers.ts"
+import { ENDPOINT, MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "./providers.ts"
 import type { DecisionModel, ResponsePayload } from "./schema.ts"
 
-type Status = "unconfigured" | "configuration_invalid" | "available" | "rate_limited" | "unauthorized" | "unreachable" | "invalid_response" | "http_error"
+type Status = "unconfigured" | "available" | "rate_limited" | "unauthorized" | "unreachable" | "invalid_response" | "http_error"
 export interface ProviderAvailability {
   model: DecisionModel
   available: boolean
   status: Status
   httpStatus?: number
-  retryAt?: string
 }
 type Validator = (text: string, model?: DecisionModel) => ResponsePayload
 const PROBE_TIMEOUT_MS = 4000
@@ -37,7 +35,7 @@ async function probeBody(response: Response) {
 
 async function probe(
   model: DecisionModel, endpoint: string, key: string, validate: Validator,
-  callerSignal: AbortSignal, account?: string,
+  callerSignal: AbortSignal,
 ): Promise<ProviderAvailability> {
   const unavailable = (status: Status, httpStatus?: number): ProviderAvailability => ({ model, available: false, status, httpStatus })
   const signal = AbortSignal.any([callerSignal, AbortSignal.timeout(PROBE_TIMEOUT_MS)])
@@ -54,7 +52,6 @@ async function probe(
       redirect: "error",
     })
     if (response.status === 429) {
-      if (account) recordCloudflareCooldown(account, response)
       return unavailable("rate_limited", 429)
     }
     if (response.status === 401 || response.status === 403) return unavailable("unauthorized", response.status)
@@ -78,26 +75,28 @@ async function probe(
   }
 }
 
-/** At most two parallel, tiny inference requests. No retries, environment-file reads or background polling. */
+/** At most four parallel, tiny inference requests, including paid Clef/GPT when configured. No retries or credential-file reads. */
 export async function discoverProviders(
   validate: Validator,
   env: Record<string, string | undefined> = process.env,
   signal: AbortSignal = new AbortController().signal,
 ) {
-  const cloudflare = getCloudflareConfiguration(env)
-  const cooldown = cloudflare && getCloudflareCooldown(cloudflare.account)
-  const [zen, cf] = await Promise.all([
+  const [zen, cf, mercury, gpt] = await Promise.all([
     env.OPENCODE_API_KEY
       ? probe(MODEL, ENDPOINT, env.OPENCODE_API_KEY, validate, signal)
       : Promise.resolve<ProviderAvailability>({ model: MODEL, available: false, status: "unconfigured" }),
-    cloudflare
-      ? cooldown
-        ? Promise.resolve<ProviderAvailability>({ model: FALLBACK_MODEL, available: false, status: "rate_limited", retryAt: new Date(cooldown).toISOString() })
-        : probe(FALLBACK_MODEL, cloudflare.endpoint, cloudflare.key, validate, signal, cloudflare.account)
-      : Promise.resolve<ProviderAvailability>({ model: FALLBACK_MODEL, available: false,
-        status: env.CLOUDFLARE_ACCOUNT_ID && env.CLOUDFLARE_API_TOKEN ? "configuration_invalid" : "unconfigured" }),
+    ...[FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL].map(model => env.OPENROUTER_API_KEY
+      ? probe(model, OPENROUTER_ENDPOINT, env.OPENROUTER_API_KEY, validate, signal)
+      : Promise.resolve<ProviderAvailability>({ model, available: false, status: "unconfigured" })),
   ])
-  // CF is not an auth/network fallback: only a verified Zen 429 can reach it.
-  const evaluateAvailable = zen.available || (zen.status === "rate_limited" && cf.available)
-  return { checkedAt: new Date().toISOString(), evaluateAvailable, providers: { zen, cloudflare: cf } }
+  // Match runtime order: a real non-429 failure cannot be bypassed to enable paid routing.
+  let evaluateAvailable = zen.available
+  if (zen.status === "rate_limited") {
+    for (const fallback of [cf, mercury, gpt]) {
+      if (fallback.available) { evaluateAvailable = true; break }
+      if (!["unconfigured", "rate_limited"].includes(fallback.status)) break
+    }
+  }
+  return { checkedAt: new Date().toISOString(), evaluateAvailable,
+    providers: { zen, cloudflare: cf, mercury, gpt } }
 }

@@ -2,46 +2,35 @@ import { readFileSync } from "node:fs"
 import type { ZodError } from "zod@4"
 import type { DecisionModel, EvaluateArgs, ResponsePayload } from "./schema.ts"
 import { INLINE_OUTPUT_BYTES, ResponseCapture } from "./response.ts"
-import { ENDPOINT, MODEL, FALLBACK_MODEL, getCloudflareConfiguration } from "./providers.ts"
+import { ENDPOINT, MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "./providers.ts"
 
 export { ENDPOINT, MODEL } from "./providers.ts"
 const MAX_REQUEST_BYTES = 256 * 1024
-const MAX_CLOUDFLARE_BYTES = 20000
-// Account-scoped, process-local cooldown; no timers or background retries.
-const cloudflareCooldowns = new Map<string, number>()
+// Conservative headroom for Clef's smallest listed OpenRouter backend (16K tokens).
+// This is a byte guard, not an exact tokenizer measurement; never truncate context.
+const MAX_CLEF_BYTES = 12000
 
-export function getCloudflareCooldown(account: string): number | undefined {
-  const cooldown = cloudflareCooldowns.get(account)
-  if (cooldown !== undefined && cooldown > Date.now()) return cooldown
-  cloudflareCooldowns.delete(account)
-}
-
-function cloudflareRequest(args: EvaluateArgs) {
-  const config = getCloudflareConfiguration(process.env)
-  if (!config || getCloudflareCooldown(config.account)) return
-  // The public Zen contract permits one option; Clef requires at least two.
-  if (Object.values(args.questions).some(question => question.type === "choice" && Object.keys(question.criteria).length < 2)) return
-  const ids = Object.keys(args.questions)
-  const questions = Object.fromEntries(ids.map((id, index) => {
-    const question = args.questions[id]
-    return [`q${index}`, question.type === "boolean" ? { ...question, type: "noul" } : question]
+/** Adapt nullable/partial criteria to OpenRouter's documented Decisions schema. */
+function openRouterRequest(args: EvaluateArgs, model: typeof FALLBACK_MODEL | typeof MERCURY_MODEL | typeof GPT_MODEL) {
+  const key = process.env.OPENROUTER_API_KEY
+  if (!key) return
+  if (model === FALLBACK_MODEL && Object.values(args.questions).some(
+    question => question.type === "choice" && Object.keys(question.criteria).length < 2,
+  )) return
+  const questions = Object.fromEntries(Object.entries(args.questions).map(([id, question]) => {
+    if (question.type === "boolean") {
+      return [id, { ...question, type: "noul", ...(question.criteria ? {
+        criteria: { true: question.criteria.true ?? "true", false: question.criteria.false ?? "false" },
+      } : {}) }]
+    }
+    if (question.type === "score") {
+      return [id, { ...question, criteria: question.criteria.map((value, index) => value ?? String(index)) }]
+    }
+    return [id, question]
   }))
-  const body = JSON.stringify({ model: FALLBACK_MODEL, state: args.state, questions })
-  // UTF-8 bytes conservatively bound text tokens, with room for model framing.
-  // Skip rather than allowing Workers AI to truncate the caller's state.
-  if (Buffer.byteLength(body, "utf8") > MAX_CLOUDFLARE_BYTES) return
-  return {
-    ...config, body, ids,
-  }
-}
-
-export function recordCloudflareCooldown(account: string, response: Response) {
-  const retryAfter = response.headers.get("retry-after")
-  const seconds = retryAfter === null ? NaN : Number(retryAfter)
-  const until = Number.isFinite(seconds) && seconds >= 0
-    ? Date.now() + seconds * 1000
-    : Date.parse(retryAfter ?? "")
-  cloudflareCooldowns.set(account, Number.isFinite(until) ? Math.max(Date.now(), until) : Date.now() + 60000)
+  const body = JSON.stringify({ model, state: args.state, questions })
+  if (Buffer.byteLength(body, "utf8") > (model === FALLBACK_MODEL ? MAX_CLEF_BYTES : MAX_REQUEST_BYTES)) return
+  return { endpoint: OPENROUTER_ENDPOINT, key, body }
 }
 
 class ApiFailure extends Error {
@@ -120,7 +109,7 @@ async function streamBody(capture: ResponseCapture, response: Response): Promise
 }
 
 /**
- * Evaluate on Zen, with one optional Clef-flash attempt only after an HTTP 429.
+ * Evaluate on Zen; advance through Clef, Mercury Free, then GPT only on HTTP 429.
  *
  * validateResponse parses and validates the raw HTTP body string; it is injected by the server
  * so that api.ts itself carries no runtime zod@4 dependency (enabling direct unit testing).
@@ -174,9 +163,10 @@ export async function evaluate(
     }
 
     let selectedModel: DecisionModel = MODEL
-    let fallbackIds: string[] | undefined
-    if (response.status === 429) {
-      const fallback = cloudflareRequest(args)
+    const fallbacks = [FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL] as const
+    for (const model of fallbacks) {
+      if (response.status !== 429) break
+      const fallback = openRouterRequest(args, model)
       if (fallback) {
         signal.throwIfAborted()
         // Retain the primary raw capture; final paths belong to the selected attempt.
@@ -185,8 +175,7 @@ export async function evaluate(
         } catch {
           throw new ApiFailure("OUTPUT_CAPTURE_FAILED", "Failed to create fallback response cache.")
         }
-        selectedModel = FALLBACK_MODEL
-        fallbackIds = fallback.ids
+        selectedModel = model
         response = await fetch(fallback.endpoint, {
           method: "POST",
           headers: { authorization: `Bearer ${fallback.key}`, "content-type": "application/json" },
@@ -194,7 +183,6 @@ export async function evaluate(
           signal,
           redirect: "error",
         })
-        if (response.status === 429) recordCloudflareCooldown(fallback.account, response)
         await streamBody(capture, response)
         try {
           capture.close()
@@ -206,7 +194,7 @@ export async function evaluate(
 
     if (!response.ok) {
       throw new ApiFailure("HTTP_ERROR",
-        `${selectedModel === MODEL ? "Zen" : "Cloudflare fallback"} rejected the decision request. Check account access, rate limits and endpoint compatibility.`,
+        `${selectedModel === MODEL ? "Zen" : `OpenRouter ${selectedModel}`} rejected the decision request. Check account access, rate limits and endpoint compatibility.`,
         response.status)
     }
 
@@ -222,14 +210,6 @@ export async function evaluate(
     if (payload.model !== selectedModel) {
       throw new ApiFailure("INVALID_RESPONSE", "Decision provider returned an unexpected model.")
     }
-    if (fallbackIds) {
-      if (Object.keys(payload.answers).length !== fallbackIds.length ||
-          fallbackIds.some((_, index) => !Object.hasOwn(payload.answers, `q${index}`))) {
-        throw new ApiFailure("INVALID_RESPONSE", "Cloudflare returned a different set of questions.")
-      }
-      payload = { ...payload, answers: Object.fromEntries(fallbackIds.map((id, index) => [id, payload.answers[`q${index}`]])) }
-    }
-
     if (Object.keys(payload.answers).length !== Object.keys(args.questions).length) {
       throw new ApiFailure("INVALID_RESPONSE", "System One returned a different set of questions.")
     }
