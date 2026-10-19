@@ -1,7 +1,6 @@
 import { z } from "zod@4"
 import { type ChildProcess, spawn } from "node:child_process"
-import { lstat, realpath } from "node:fs/promises"
-import { isAbsolute, join, relative, resolve, sep } from "node:path"
+import { resolveWorkspacePath } from "./paths.ts"
 
 const offsets = z.object({
   start: z.number().int().nonnegative(),
@@ -33,7 +32,7 @@ export const astGrepInput = {
     .array(z.string().min(1))
     .min(1)
     .describe(
-      "Explicit workspace-relative files/directories; no symlink components, traversal or .git.",
+      "Explicit workspace-relative paths (absolute paths inside the workspace are also accepted); no symlink components, traversal or .git.",
     ),
   pattern: z
     .string()
@@ -168,39 +167,12 @@ export class AstGrep {
     }
   }
 
-  /** Reports only the fixed trusted PATH executable; version probing executes that CLI. */
-  discover() {
-    return this.exclusive(() => this.installed())
-  }
-
   private async paths(inputs: string[]): Promise<string[]> {
-    const root = await realpath(this.cwd)
     const paths: string[] = []
-    for (const input of inputs) {
-      const components = input.split(/[\\/]/)
-      if (
-        isAbsolute(input) ||
-        components.includes("..") ||
-        components.includes(".git") ||
-        input.includes("\0")
-      ) {
-        throw new Error(`Unsafe workspace-relative path: ${input}`)
-      }
-      let current = root
-      for (const component of components.filter((part) => part && part !== ".")) {
-        current = join(current, component)
-        if ((await lstat(current)).isSymbolicLink())
-          throw new Error(`Symlink path component refused: ${input}`)
-      }
-      const target = await realpath(current)
-      const within = relative(root, target)
-      if (within === ".." || within.startsWith(`..${sep}`) || isAbsolute(within))
-        throw new Error(`Path escapes workspace: ${input}`)
-      const info = await lstat(target)
-      if (!info.isFile() && !info.isDirectory())
-        throw new Error(`Not a regular file/directory: ${input}`)
+    for (const entry of inputs) {
+      const resolved = await resolveWorkspacePath(this.cwd, entry, { directory: true })
       // Absolute validated operands avoid option ambiguity, including leading-dash file names.
-      paths.push(resolve(target))
+      paths.push(resolved.path)
     }
     return paths
   }

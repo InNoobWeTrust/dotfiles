@@ -1,6 +1,8 @@
+import { extname } from "node:path"
 import type { Recipe } from "./discovery.ts"
 
 // Fixed, documentation-grounded launch recipes, not an installer or runtime scan.
+// Array order is the preference order used when several installed recipes accept a file.
 export const recipes: Recipe[] = [
   {
     id: "typescript",
@@ -9,6 +11,12 @@ export const recipes: Recipe[] = [
     args: ["--stdio"],
     languageIds: ["javascript", "typescript", "javascriptreact", "typescriptreact"],
     extensions: [".js", ".jsx", ".ts", ".tsx"],
+    languages: {
+      ".js": "javascript",
+      ".jsx": "javascriptreact",
+      ".ts": "typescript",
+      ".tsx": "typescriptreact",
+    },
     caveat:
       "Requires TypeScript/tsserver. Vue scripts need an explicitly configured @vue/typescript-plugin.",
   },
@@ -20,6 +28,7 @@ export const recipes: Recipe[] = [
     args: ["server"],
     languageIds: ["python"],
     extensions: [".py", ".pyi"],
+    languages: { ".py": "python", ".pyi": "python" },
   },
   {
     id: "pyrefly",
@@ -28,6 +37,7 @@ export const recipes: Recipe[] = [
     args: ["lsp"],
     languageIds: ["python"],
     extensions: [".py", ".pyi"],
+    languages: { ".py": "python", ".pyi": "python" },
   },
   {
     id: "pyright",
@@ -36,6 +46,7 @@ export const recipes: Recipe[] = [
     args: ["--stdio"],
     languageIds: ["python"],
     extensions: [".py", ".pyi"],
+    languages: { ".py": "python", ".pyi": "python" },
     caveat: "Interpreter/environment resolution may require settings.",
   },
   {
@@ -45,6 +56,7 @@ export const recipes: Recipe[] = [
     args: ["--stdio"],
     languageIds: ["python"],
     extensions: [".py", ".pyi"],
+    languages: { ".py": "python", ".pyi": "python" },
   },
   {
     id: "rust",
@@ -53,6 +65,7 @@ export const recipes: Recipe[] = [
     args: [],
     languageIds: ["rust"],
     extensions: [".rs"],
+    languages: { ".rs": "rust" },
     caveat: "Non-Cargo projects need rust-project.json or linkedProjects.",
   },
   {
@@ -62,6 +75,7 @@ export const recipes: Recipe[] = [
     args: [],
     languageIds: ["go", "gomod", "gowork"],
     extensions: [".go", "go.mod", "go.work"],
+    languages: { ".go": "go", "go.mod": "gomod", "go.work": "gowork" },
   },
   {
     id: "bash",
@@ -70,6 +84,7 @@ export const recipes: Recipe[] = [
     args: ["start"],
     languageIds: ["shellscript", "bash", "sh"],
     extensions: [".sh", ".bash"],
+    languages: { ".sh": "shellscript", ".bash": "bash" },
     caveat: "Not zsh. shellcheck/shfmt are optional external tools.",
   },
   {
@@ -79,6 +94,7 @@ export const recipes: Recipe[] = [
     args: ["--stdio"],
     languageIds: ["dockerfile"],
     extensions: ["Dockerfile", ".dockerfile"],
+    languages: { Dockerfile: "dockerfile", ".dockerfile": "dockerfile" },
   },
   {
     id: "markdown",
@@ -87,6 +103,7 @@ export const recipes: Recipe[] = [
     args: ["server"],
     languageIds: ["markdown"],
     extensions: [".md"],
+    languages: { ".md": "markdown" },
     caveat: "Cross-file features need git workspace or .marksman.toml.",
   },
   {
@@ -96,6 +113,7 @@ export const recipes: Recipe[] = [
     args: [],
     languageIds: ["typst"],
     extensions: [".typ"],
+    languages: { ".typ": "typst" },
   },
   {
     id: "makefile",
@@ -104,6 +122,7 @@ export const recipes: Recipe[] = [
     args: [],
     languageIds: ["make", "automake"],
     extensions: ["Makefile", ".mk"],
+    languages: { Makefile: "make", ".mk": "make" },
     caveat: "Bare stdio launch documented by nvim-lspconfig; not locally runtime-verified.",
   },
   {
@@ -113,6 +132,7 @@ export const recipes: Recipe[] = [
     args: ["--stdio"],
     languageIds: ["yaml"],
     extensions: [".yaml", ".yml"],
+    languages: { ".yaml": "yaml", ".yml": "yaml" },
     caveat: "Kubernetes schemas require configuration; schema stores can fetch network resources.",
   },
   {
@@ -122,6 +142,7 @@ export const recipes: Recipe[] = [
     args: ["--stdio"],
     languageIds: ["json", "jsonc"],
     extensions: [".json", ".jsonc"],
+    languages: { ".json": "json", ".jsonc": "jsonc" },
   },
   {
     id: "html",
@@ -130,6 +151,7 @@ export const recipes: Recipe[] = [
     args: ["--stdio"],
     languageIds: ["html"],
     extensions: [".html"],
+    languages: { ".html": "html" },
   },
   {
     id: "css",
@@ -138,6 +160,7 @@ export const recipes: Recipe[] = [
     args: ["--stdio"],
     languageIds: ["css", "scss", "less"],
     extensions: [".css", ".scss", ".less"],
+    languages: { ".css": "css", ".scss": "scss", ".less": "less" },
   },
   {
     id: "vue",
@@ -146,6 +169,7 @@ export const recipes: Recipe[] = [
     args: ["--stdio"],
     languageIds: ["vue"],
     extensions: [".vue"],
+    languages: { ".vue": "vue" },
     caveat:
       "Modern Vue hybrid TS features need companion TS server/plugin; no automatic cross-server routing.",
   },
@@ -156,12 +180,29 @@ export const recipes: Recipe[] = [
     args: ["--stdio"],
     languageIds: ["html", "css", "javascriptreact", "typescriptreact", "vue"],
     extensions: [".html", ".css", ".jsx", ".tsx", ".vue"],
-    caveat: "Requires recognizable Tailwind workspace/configuration; v4 differs from v3.",
+    languages: {
+      ".html": "html",
+      ".css": "css",
+      ".jsx": "javascriptreact",
+      ".tsx": "typescriptreact",
+      ".vue": "vue",
+    },
+    caveat:
+      "Requires recognizable Tailwind workspace/configuration; v4 differs from v3. Shadowed by earlier recipes for its extensions.",
   },
 ]
 
-// Mason package identity, not a Neovim alias or executable name. Session IDs stay separate.
-export function wrapperName(serverName: string, method: string): string {
-  const normalize = (value: string) => value.replace(/[^A-Za-z0-9]/g, "_")
-  return `lsp_${normalize(serverName)}_${normalize(method)}`
+/**
+ * Candidate recipes for a basename in preference order, with the languageId to send on didOpen.
+ * Basename entries (Dockerfile, Makefile, go.mod, go.work) win over the extension lookup.
+ */
+export function recipeLanguages(basename: string): { recipe: Recipe; languageId: string }[] {
+  const extension = extname(basename)
+  const matches: { recipe: Recipe; languageId: string }[] = []
+  for (const recipe of recipes) {
+    const languageId =
+      recipe.languages[basename] ?? (extension ? recipe.languages[extension] : undefined)
+    if (languageId) matches.push({ recipe, languageId })
+  }
+  return matches
 }

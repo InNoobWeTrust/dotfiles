@@ -184,7 +184,17 @@ export class LspClient {
       case "workspace/workspaceFolders":
         return [this.workspace]
       case "workspace/applyEdit":
-        return { applied: false, failureReason: "This bridge never applies filesystem edits" }
+        // Server -> client reverse request, not an MCP tool. The initialize
+        // capabilities omit workspace.applyEdit, so conforming servers must not
+        // send this; the explicit refusal covers servers that do anyway. Edits
+        // must flow through the bridge tools (rename/format) so they are
+        // validated, applied, and reported. This response goes back to the
+        // language server, never to the MCP agent, and costs no agent context.
+        return {
+          applied: false,
+          failureReason:
+            "Server-initiated workspace edits are refused; use the bridge's rename/format tools",
+        }
       case "window/showMessageRequest":
       case "window/workDoneProgress/create":
         return null

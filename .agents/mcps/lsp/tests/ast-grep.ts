@@ -1,10 +1,9 @@
 import assert from "node:assert/strict"
-import { chmod, mkdir, mkdtemp, readFile, rename, rm, symlink, writeFile } from "node:fs/promises"
+import { chmod, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { delimiter, dirname, join, resolve } from "node:path"
 import { Client } from "@modelcontextprotocol/sdk@1/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk@1/client/stdio.js"
-import { ToolListChangedNotificationSchema } from "@modelcontextprotocol/sdk@1/types.js"
 
 const workspace = await mkdtemp(join(tmpdir(), "ast-grep-mcp-e2e-"))
 const bin = join(workspace, "bin")
@@ -48,23 +47,19 @@ function decode<T>(response: unknown): T {
   return JSON.parse(value.content[0].text) as T
 }
 
-const baseTools = ["discover", "events", "start", "stop"]
-const astTools = ["ast_grep_discover", "ast_grep_search"]
-async function catalog(client: Client, available: boolean) {
-  const tools = (await client.listTools()).tools
-  assert.deepEqual(
-    tools
-      .filter((tool) => !tool.name.startsWith("lsp_"))
-      .map((tool) => tool.name)
-      .sort(),
-    [...baseTools, ...(available ? astTools : [])].sort(),
-  )
-  for (const name of available ? astTools : []) {
-    assert.equal(tools.find((tool) => tool.name === name)?.annotations?.readOnlyHint, true)
-  }
-}
-
-async function connect(path: string, available = true) {
+const staticTools = [
+  "ast_grep_search",
+  "definition",
+  "diagnostics",
+  "format",
+  "hover",
+  "references",
+  "rename",
+  "request",
+  "symbols",
+  "workspace_symbols",
+]
+async function connect(path: string) {
   const transport = new StdioClientTransport({
     command: entrypoint,
     args: [],
@@ -80,8 +75,12 @@ async function connect(path: string, available = true) {
   transport.stderr?.on("data", (chunk) => process.stderr.write(chunk))
   const client = new Client({ name: "ast-grep-e2e", version: "1" })
   await client.connect(transport)
-  assert(!(await client.listTools()).tools.some((tool) => tool.name.startsWith("lsp_")))
-  await catalog(client, available)
+  const tools = (await client.listTools()).tools
+  assert.deepEqual(tools.map((tool) => tool.name).sort(), staticTools)
+  assert.equal(
+    tools.find((tool) => tool.name === "ast_grep_search")?.annotations?.readOnlyHint,
+    true,
+  )
   return { client, transport }
 }
 
@@ -109,35 +108,8 @@ interface SearchResult {
   warnings: string
 }
 
-interface Availability {
-  available: boolean
-  executable: string | null
-  version: string | null
-  supported: boolean
-  minimumVersion: string
-  error?: string
-}
-
-async function refresh(client: Client) {
-  const response = await client.callTool({ name: "discover", arguments: {} })
-  assert(!response.isError, JSON.stringify(response))
-  const discovered = decode<{ installed: { id: string }[]; astGrep: Availability }>(response)
-  assert(Array.isArray(discovered.installed), "AST failure must not hide LSP discovery")
-  return discovered.astGrep
-}
-
 async function realCli(executable: string) {
   const { client } = await connect(dirname(executable))
-  const discovered = decode<{
-    available: boolean
-    supported: boolean
-    executable: string
-    version: string
-  }>(await client.callTool({ name: "ast_grep_discover", arguments: {} }))
-  assert.equal(discovered.available, true)
-  assert.equal(discovered.supported, true)
-  assert.equal(discovered.executable, executable)
-  assert.match(discovered.version, /^\d+\.\d+\.\d+$/)
   const original = await readFile(join(workspace, "sample.js"), "utf8")
   const response = await search(client, { ...query, rewrite: "logger($A)", maxMatches: 1 })
   assert(!response.isError, JSON.stringify(response))
@@ -199,7 +171,7 @@ async function realCli(executable: string) {
   assert.equal(await readFile(join(workspace, "sample.js"), "utf8"), original)
   await client.close()
   console.log(
-    `PASS real CLI ${discovered.version}: JavaScript/Python, native byte ranges/metavariables/replacements, no mutation/no LSP, hostile custom-parser config, hidden/dash paths, ignore defaults/no-follow, kind/selector, empty rewrite, truncation, no-match`,
+    "PASS real CLI: JavaScript/Python, native byte ranges/metavariables/replacements, no mutation/no LSP, hostile custom-parser config, hidden/dash paths, ignore defaults/no-follow, kind/selector, empty rewrite, truncation, no-match",
   )
 }
 
@@ -210,22 +182,8 @@ async function fixtures() {
     `#!${process.execPath}\nthrow new Error("sg must not execute")\n`,
   )
   await chmod(join(bin, "sg"), 0o755)
-  const { client: missing } = await connect(bin, false)
-  assert.deepEqual(await refresh(missing), {
-    available: false,
-    executable: null,
-    version: null,
-    supported: false,
-    minimumVersion: "0.51.0",
-  })
-  for (const name of astTools) {
-    const response = await missing.callTool({
-      name,
-      arguments: name.endsWith("search") ? query : {},
-    })
-    assert.equal(response.isError, true)
-    assert.match((response.content as { text: string }[])[0]?.text ?? "", /Tool .* not found/)
-  }
+  const { client: missing } = await connect(bin)
+  await expectError(missing, query, /ast-grep not found on PATH/)
   await missing.close()
 
   const fixture = join(bin, "ast-grep")
@@ -258,108 +216,32 @@ if (process.argv[2] === "--version") {
   )
   await chmod(fixture, 0o755)
   const mode = (value: string) => writeFile(join(workspace, "mode"), value)
-
-  for (const value of ["old", "version", "probe-error"]) {
-    await mode(value)
-    const { client } = await connect(bin, false)
-    const discovered = await refresh(client)
-    assert.equal(discovered.supported, false)
-    if (value === "old") {
-      assert.equal(discovered.available, true)
-      assert.equal(discovered.version, "0.50.0")
-    } else {
-      assert.equal(discovered.available, false)
-      assert.match(discovered.error ?? "", /Invalid ast-grep|exited 2: fixture version failure/)
-    }
-    await catalog(client, false)
-    await client.close()
-  }
-
-  await mode("normal")
   const { client, transport } = await connect(bin)
-  let notifications = 0
-  client.setNotificationHandler(ToolListChangedNotificationSchema, () => {
-    notifications++
-  })
-  const changed = async (previous: number) => {
-    for (let attempt = 0; attempt < 100 && notifications === previous; attempt++)
-      await Bun.sleep(20)
-    assert(notifications > previous, "SDK catalog change notification missing")
-  }
-  for (const value of ["old", "normal", "version", "normal", "probe-error", "normal"]) {
+
+  // Availability is reported by the search call itself; the old discover tool is folded away.
+  for (const [value, message] of [
+    ["old", /0.51.0 required/],
+    ["version", /Invalid ast-grep --version/],
+    ["probe-error", /exited 2: fixture version failure/],
+  ] as const) {
     await mode(value)
-    const previous = notifications
-    const discovered = await refresh(client)
-    assert.equal(discovered.supported, value === "normal")
-    await catalog(client, value === "normal")
-    await changed(previous)
+    await expectError(client, query, message)
   }
-  await rename(fixture, `${fixture}.disabled`)
-  const removed = notifications
-  assert.equal((await refresh(client)).available, false)
-  await catalog(client, false)
-  await changed(removed)
-  await rename(`${fixture}.disabled`, fixture)
-  await mode("slow")
-  const restored = notifications
-  const concurrent = await Promise.all(Array.from({ length: 8 }, () => refresh(client)))
-  assert(concurrent.every((entry) => entry.available && entry.supported))
-  await catalog(client, true)
-  await changed(restored)
 
-  // Probe failure must not end an already running LSP or remove its wrappers.
-  const lsp = join(bin, "pyright-langserver")
-  await writeFile(
-    lsp,
-    `#!${process.execPath}\nawait import(${JSON.stringify(resolve(import.meta.dir, "fake-lsp.ts"))});\n`,
-  )
-  await chmod(lsp, 0o755)
-  const started = await client.callTool({ name: "start", arguments: { id: "pyright" } })
-  assert(!started.isError)
-  await mode("probe-error")
-  assert.match((await refresh(client)).error ?? "", /fixture version failure/)
-  await catalog(client, false)
-  const native = { label: "still running" }
-  const survived = await client.callTool({
-    name: "lsp_pyright_completionItem_resolve",
-    arguments: { params: native },
-  })
-  assert(!survived.isError)
-  assert.deepEqual(decode(survived), native)
-  const stopped = await client.callTool({
-    name: "stop",
-    arguments: { session: decode<{ session: string }>(started).session },
-  })
-  assert(!stopped.isError)
-  await mode("normal")
-  assert.equal((await refresh(client)).supported, true)
-  await catalog(client, true)
-  console.log(
-    "PASS SDK registration: missing/unsupported/broken/supported startup, discover add/remove/recovery, catalog notifications, concurrent refresh, LSP survives probe failure",
-  )
-
-  await mode("old")
-  assert.equal(
-    decode<{ supported: boolean }>(
-      await client.callTool({ name: "ast_grep_discover", arguments: {} }),
-    ).supported,
-    false,
-  )
-  await expectError(client, query, /0.51.0 required/)
-  await mode("version")
-  await expectError(client, query, /Invalid ast-grep --version/)
   await mode("normal")
   for (const path of [
     "../outside.js",
-    join(workspace, "sample.js"),
     ".git/config",
     "link.js",
     "link-dir/sample.js",
     "sample.js/../sample.js",
   ]) {
-    await expectError(client, { ...query, paths: [path] }, /Unsafe|Symlink/)
+    await expectError(client, { ...query, paths: [path] }, /Unsafe|Symlink|Refused/)
   }
-  await expectError(client, { ...query, paths: ["absent.js"] }, /ENOENT/)
+  await expectError(client, { ...query, paths: ["absent.js"] }, /Path does not exist/)
+  // Absolute paths inside the workspace became valid with the shared path policy.
+  const absolute = await search(client, { ...query, paths: [join(workspace, "sample.js")] })
+  assert(!absolute.isError, JSON.stringify(absolute))
   await expectError(client, { ...query, kind: "identifier" }, /exactly one/)
   const { pattern: _, ...withoutPattern } = query
   await expectError(client, withoutPattern, /exactly one/)
@@ -398,19 +280,11 @@ if (process.argv[2] === "--version") {
   const pending = search(client)
   const pid = await waitForPid()
   await expectError(client, query, /already active/)
-  const busyDiscover = await client.callTool({ name: "ast_grep_discover", arguments: {} })
-  assert.equal(busyDiscover.isError, true)
-  const busyRefresh = await refresh(client)
-  assert.equal(busyRefresh.available, false)
-  assert.match(busyRefresh.error ?? "", /already active/)
-  await catalog(client, false)
   const timeout = await pending
   assert.equal(timeout.isError, true)
   assert.match(decode<{ error: string }>(timeout).error, /timed out after 30000ms/)
   assert.throws(() => process.kill(pid, 0), { code: "ESRCH" })
   await mode("normal")
-  assert.equal((await refresh(client)).supported, true)
-  await catalog(client, true)
   assert(!(await search(client)).isError)
 
   await mode("hang")
@@ -427,11 +301,11 @@ if (process.argv[2] === "--version") {
   const { client: closing, transport: closingTransport } = await connect(bin)
   await mode("probe-hang")
   await rm(join(workspace, "ast-child.pid"))
-  const closingRefresh = refresh(closing).catch(() => null)
+  const closingSearch = search(closing).catch(() => null)
   const probePid = await waitForPid()
   assert(closingTransport.pid)
   process.kill(closingTransport.pid, "SIGTERM")
-  await closingRefresh
+  await closingSearch
   await waitForExit(probePid)
   await closing.close()
   console.log(

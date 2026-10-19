@@ -18,6 +18,18 @@ const env = Object.fromEntries(
       .join(delimiter),
   }).filter((entry): entry is [string, string] => entry[1] !== undefined),
 )
+const staticTools = [
+  "ast_grep_search",
+  "definition",
+  "diagnostics",
+  "format",
+  "hover",
+  "references",
+  "rename",
+  "request",
+  "symbols",
+  "workspace_symbols",
+]
 const transport = new StdioClientTransport({ command, args: [], cwd, env, stderr: "pipe" })
 transport.stderr?.on("data", (chunk) => process.stderr.write(chunk))
 const client = new Client({ name: "lsp-startup", version: "1" })
@@ -28,21 +40,8 @@ const deadline = setTimeout(() => {
 try {
   await client.connect(transport)
   const initialTools = (await client.listTools()).tools.map((tool) => tool.name).sort()
-  const result = await client.callTool({ name: "discover", arguments: {} })
-  assert.notEqual(result.isError, true)
-  const discovered = JSON.parse((result.content as { text: string }[])[0]?.text ?? "null") as {
-    astGrep: { available: boolean; supported: boolean }
-  }
-  assert.deepEqual(initialTools, [
-    ...(discovered.astGrep.available && discovered.astGrep.supported
-      ? ["ast_grep_discover", "ast_grep_search"]
-      : []),
-    "discover",
-    "events",
-    "start",
-    "stop",
-  ])
-  console.log(`PASS executable startup, initialize, tools/list and discover: ${command}`)
+  assert.deepEqual(initialTools, staticTools)
+  console.log(`PASS executable startup, initialize and static tools/list: ${command}`)
 
   // Simulate an unavailable client dependency without touching the user's Bun cache.
   const isolatedRoot = join(cwd, "mcps/lsp")
@@ -50,11 +49,15 @@ try {
   await cp(join(import.meta.dir, "../../shared/startup.ts"), join(cwd, "mcps/shared/startup.ts"))
   await cp(join(import.meta.dir, "../src"), join(isolatedRoot, "src"), { recursive: true })
   const failure = "LSP client dependency unavailable (startup fixture)"
-  await writeFile(join(isolatedRoot, "src/client.ts"), `throw new Error(${JSON.stringify(failure)});\n`)
+  await writeFile(
+    join(isolatedRoot, "src/client.ts"),
+    `throw new Error(${JSON.stringify(failure)});\n`,
+  )
   await mkdir(join(cwd, ".venv/bin"), { recursive: true })
   await writeFile(join(cwd, ".venv/bin/pyright-langserver"), "#!/bin/sh\nexit 99\n", {
     mode: 0o755,
   })
+  await writeFile(join(cwd, "scratch.py"), "value = 1\n")
   const isolatedTransport = new StdioClientTransport({
     command: process.execPath,
     args: ["--no-env-file", join(isolatedRoot, "src/server.ts")],
@@ -66,22 +69,19 @@ try {
   const isolatedClient = new Client({ name: "lsp-startup-isolation", version: "1" })
   try {
     await isolatedClient.connect(isolatedTransport)
-    assert((await isolatedClient.listTools()).tools.some((tool) => tool.name === "discover"))
-    assert.notEqual(
-      (await isolatedClient.callTool({ name: "discover", arguments: {} })).isError,
-      true,
-    )
+    const isolatedTools = (await isolatedClient.listTools()).tools.map((tool) => tool.name).sort()
+    assert.deepEqual(isolatedTools, staticTools)
     for (let attempt = 0; attempt < 2; attempt++) {
-      const failed = await isolatedClient.callTool({ name: "start", arguments: { id: "pyright" } })
+      const failed = await isolatedClient.callTool({
+        name: "hover",
+        arguments: { file: "scratch.py", line: 1, character: 1 },
+      })
       assert.equal(failed.isError, true)
       const content = failed.content as { text: string }[]
       assert.equal(JSON.parse(content[0]?.text ?? "null").error, failure)
     }
-    assert.notEqual(
-      (await isolatedClient.callTool({ name: "discover", arguments: {} })).isError,
-      true,
-    )
-    console.log("PASS startup/discovery without client dependency, start errors and slot recovery")
+    assert((await isolatedClient.listTools()).tools.some((tool) => tool.name === "ast_grep_search"))
+    console.log("PASS static tools without client dependency, semantic errors and slot recovery")
   } finally {
     await isolatedTransport.close()
   }

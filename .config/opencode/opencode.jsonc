@@ -279,6 +279,21 @@
       "resource": "*",
       "effect": "allow"
     },
+    {
+      "action": "lsp_*",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "remote_memory_*",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "ui_studio_*",
+      "resource": "*",
+      "effect": "allow"
+    },
   ],
   "plugins": [
     "{env:OPENCODE_LOCAL_PLUGINS}/subagent-health",

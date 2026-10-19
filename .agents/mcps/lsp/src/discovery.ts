@@ -10,6 +10,8 @@ export interface Recipe {
   args: string[]
   languageIds: string[]
   extensions: string[]
+  /** Basename or extension -> languageId sent on didOpen. */
+  languages: Record<string, string>
   caveat?: string
 }
 
