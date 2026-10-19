@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "bun --no-env-file bin/mcp-remote-memory",
+    "start": "./bin/mcp-remote-memory",
     "test": "bun --no-env-file tests/e2e.ts",
     "format": "bunx --bun --package @biomejs/biome@2.5.15 biome format --write .",
     "check": "bunx --bun --package @biomejs/biome@2.5.15 biome check ."

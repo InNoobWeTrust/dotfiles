@@ -195,7 +195,7 @@ server.registerTool(
       const recipe = (await discover(cwd)).find((recipe) => recipe.id === id)
       if (!recipe) throw new Error("Recipe not installed; run discover")
       // Discovery and AST tools do not need the JSON-RPC runtime dependency.
-      const { LspClient } = await withStartupLock(() => import("./client.ts"))
+      const { LspClient } = await withStartupLock(() => import("./client.ts"), { name: "lsp" })
       if (closing) throw new Error("Server is closing")
       const session = {
         id: `s${++nextId}`,

@@ -47,8 +47,8 @@ async function connect(env: Record<string, string>) {
   // reuse the same directory for a subsequent warm-cache offline suite run.
   const cache = process.env.REMOTE_MEMORY_E2E_SERVER_CACHE_DIR ?? process.env.BUN_INSTALL_CACHE_DIR
   const transport = new StdioClientTransport({
-    command: process.execPath,
-    args: ["--no-env-file", entrypoint],
+    command: entrypoint,
+    args: [],
     cwd: workspace,
     env: {
       PATH: process.env.PATH ?? "",
@@ -677,8 +677,15 @@ async function integrationSafetyCheck() {
   await gitClient.close()
 
   // The engine is in-process: MCP search must serve with no python3 anywhere on PATH.
+  // The launcher is a POSIX sh shim over Bun, so expose only the executables it
+  // needs (dirname, env, bun) - and deliberately nothing else.
   const noPythonBin = join(workspace, "no-python-bin")
   await mkdir(noPythonBin)
+  for (const name of ["dirname", "env", "bun"]) {
+    const resolved = Bun.which(name)
+    assert(resolved, `${name} must be resolvable for the launcher shim`)
+    await symlink(resolved, join(noPythonBin, name))
+  }
   const withoutPython = await connect({ HOME: home, XDG_DATA_HOME: xdg, PATH: noPythonBin })
   const served = decode<SearchResult>(
     await call(withoutPython, "search", {

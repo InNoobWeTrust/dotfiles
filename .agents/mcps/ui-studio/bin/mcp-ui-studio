@@ -1,3 +1,11 @@
-#!/usr/bin/env -S bun --no-env-file
-import { withStartupLock } from "../../shared/startup.ts"
-await withStartupLock(() => import("../src/server.ts"))
+#!/bin/sh
+# Launches the ui-studio MCP server with its own Bun auto-install cache.
+# Bun selects the package cache before any code runs, so the cache root must be
+# set here; per-MCP caches keep parallel cold starts from racing on one shared
+# cache (see ../../README.md, "Startup coordination"). A pre-set
+# BUN_INSTALL_CACHE_DIR is honored.
+set -eu
+bin=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+: "${XDG_CACHE_HOME:=$HOME/.cache}"
+: "${BUN_INSTALL_CACHE_DIR:=$XDG_CACHE_HOME/agent-mcps/install/ui-studio}"
+exec env "BUN_INSTALL_CACHE_DIR=$BUN_INSTALL_CACHE_DIR" bun --no-env-file "$bin/launch.ts" "$@"

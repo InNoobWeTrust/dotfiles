@@ -41,7 +41,7 @@ function prepareHTTP(): Promise<StudioHTTP> {
     const assets = await buildAssets()
     requireOpen()
     return (http = new StudioHTTP(store, assets))
-  }))
+  }, { name: "ui-studio" }))
   return preparing
 }
 const id = { session_id: z.uuid() }

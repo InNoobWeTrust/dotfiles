@@ -23,12 +23,12 @@ Live OpenCode catalog refresh, document symbols and diagnostics have also been v
 
 ## Use
 
-Run `bun run start` here, or execute `bin/mcp-lsp` directly; its shebang needs Bun on PATH.
+Run `bun run start` here, or execute `bin/mcp-lsp` directly; the executable is a POSIX shim that needs `sh` and Bun on PATH and selects this server's private Bun package cache.
 OpenCode currently launches `mcp-lsp` from PATH. If a running service predates that PATH entry, use `{env:HOME}/.agents/mcps/lsp/bin/mcp-lsp` as the explicit command instead.
 The package must first be deployed under `~/.agents/mcps/lsp` using the repository's dotfile links; adding files in this checkout alone does not deploy them.
 The process working directory is its workspace; it starts no language servers until asked.
 Bun may fetch the three protocol libraries on a cold cache, following the neighboring MCP packages' versioned-import convention; it does not install language servers.
-The executable and `bun run start` use the [shared startup guard](../README.md#startup-coordination) for initial dependencies and the later JSON-RPC import. Concurrent cold-cache executable startup and LSP sessions pass on Linux with Bun 1.4.2; macOS runtime verification is still outstanding.
+The executable and `bun run start` use the [shared startup guard](../README.md#startup-coordination): a warm-marker fast path over a per-MCP lock for initial dependencies, and the per-MCP lock for the later JSON-RPC import. Concurrent cold-cache executable startup and LSP sessions pass on Linux with Bun 1.4.2; macOS runtime verification is still outstanding.
 
 1. **Discover:** call `discover`; choose an installed recipe ID. It searches nearest project `node_modules/.bin`, `.venv/bin`, `venv/bin`, `.pixi/envs/default/bin`, then inherited PATH, stopping at `.git`, filesystem root or 12 ancestors. It also returns `astGrep` availability/version/errors and refreshes the AST tool registrations.
 2. **Start:** call `start` with `{"id":"ty"}` and optional native `initializationOptions` / `settings`. Starting executes installed code with inherited permissions; only use trusted workspace executables.

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import { chmod, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises"
+import { chmod, mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 import { Client } from "@modelcontextprotocol/sdk@1/client/index.js"
@@ -33,6 +33,13 @@ for (const directory of [projectBin, globalBin]) {
     await chmod(launcher, 0o755)
   }
 }
+// The launcher is a POSIX sh shim over Bun: keep the hermetic PATH functional
+// by adding exactly the executables the shim needs before it execs the server.
+for (const name of ["dirname", "env", "bun"]) {
+  const resolved = Bun.which(name)
+  assert(resolved, `${name} must be resolvable for the launcher shim`)
+  await symlink(resolved, join(globalBin, name))
+}
 const transports: StdioClientTransport[] = []
 async function cleanup() {
   await Promise.allSettled(transports.map((transport) => transport.close()))
@@ -48,8 +55,8 @@ function decode<T>(response: unknown): T {
 
 async function connect() {
   const transport = new StdioClientTransport({
-    command: process.execPath,
-    args: ["--no-env-file", entrypoint],
+    command: entrypoint,
+    args: [],
     cwd: workspace,
     env: Object.fromEntries(
       Object.entries({ ...process.env, PATH: globalBin }).filter(

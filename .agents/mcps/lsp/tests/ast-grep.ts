@@ -1,7 +1,7 @@
 import assert from "node:assert/strict"
 import { chmod, mkdir, mkdtemp, readFile, rename, rm, symlink, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
-import { dirname, join, resolve } from "node:path"
+import { delimiter, dirname, join, resolve } from "node:path"
 import { Client } from "@modelcontextprotocol/sdk@1/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk@1/client/stdio.js"
 import { ToolListChangedNotificationSchema } from "@modelcontextprotocol/sdk@1/types.js"
@@ -11,6 +11,15 @@ const bin = join(workspace, "bin")
 const entrypoint = resolve(import.meta.dir, "../bin/mcp-lsp")
 const transports: StdioClientTransport[] = []
 await mkdir(bin)
+// The launcher is a POSIX sh shim over Bun: the restricted PATHs below gain a
+// separate directory holding only the executables that shim depends on.
+const externalBin = join(workspace, "external-bin")
+await mkdir(externalBin)
+for (const name of ["dirname", "env", "bun"]) {
+  const resolved = Bun.which(name)
+  assert(resolved, `${name} must be resolvable for the launcher shim`)
+  await symlink(resolved, join(externalBin, name))
+}
 await writeFile(join(workspace, "sample.js"), 'console.log("é");\nconsole.log("two");\n')
 await writeFile(join(workspace, "sample.py"), 'print("hello")\n')
 await writeFile(join(workspace, ".hidden.js"), 'console.log("hidden");\n')
@@ -57,11 +66,11 @@ async function catalog(client: Client, available: boolean) {
 
 async function connect(path: string, available = true) {
   const transport = new StdioClientTransport({
-    command: process.execPath,
-    args: ["--no-env-file", entrypoint],
+    command: entrypoint,
+    args: [],
     cwd: workspace,
     env: Object.fromEntries(
-      Object.entries({ ...process.env, PATH: path }).filter(
+      Object.entries({ ...process.env, PATH: [path, externalBin].join(delimiter) }).filter(
         (entry): entry is [string, string] => entry[1] !== undefined,
       ),
     ),

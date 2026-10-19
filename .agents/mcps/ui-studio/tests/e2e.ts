@@ -12,7 +12,7 @@ const fixtureTitle = "E2E <script>alert(1)</script> & draft"
 const fixtureChatLabel = 'Chat <img src=x onerror="alert(2)"> & review'
 const client = new Client({ name: "ui-studio-e2e", version: "1" })
 const launchOptions = {
-  command: process.execPath, args: ["--no-env-file", resolve(import.meta.dir, "../bin/mcp-ui-studio")],
+  command: resolve(import.meta.dir, "../bin/mcp-ui-studio"), args: [],
   cwd: import.meta.dir, stderr: "pipe" as const,
   env: Object.fromEntries(Object.entries({
     PATH: process.env.PATH ?? "", HOME: process.env.HOME, TMPDIR: process.env.TMPDIR,

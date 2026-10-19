@@ -11,23 +11,34 @@ These MCPs run directly from source with **Bun-resolved, versioned imports**. Th
 
 Configure the harness to invoke the server's executable, such as `mcp-lsp` or `mcp-ui-studio`. The shell setup in [`.sh.d/path.sh`](../../.sh.d/path.sh) adds deployed `~/.agents/mcps/*/bin` directories to `PATH`; a new directory needs a fresh shell environment before launching the harness.
 
-Each launcher uses this pattern:
+Each launcher is a small POSIX shim that selects the server's private Bun package cache, then executes `bin/launch.ts` through Bun:
+
+```sh
+#!/bin/sh
+set -eu
+bin=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+: "${XDG_CACHE_HOME:=$HOME/.cache}"
+: "${BUN_INSTALL_CACHE_DIR:=$XDG_CACHE_HOME/agent-mcps/install/<name>}"
+exec env "BUN_INSTALL_CACHE_DIR=$BUN_INSTALL_CACHE_DIR" bun --no-env-file "$bin/launch.ts" "$@"
+```
 
 ```ts
-#!/usr/bin/env -S bun --no-env-file
-import { withStartupLock } from "../../shared/startup.ts"
-await withStartupLock(() => import("../src/server.ts"))
+// bin/launch.ts
+import { withWarmCache } from "../../shared/startup.ts"
+await withWarmCache("<name>", () => import("../src/server.ts"), { sourceDir: join(import.meta.dir, "..") })
 ```
 
 Bun must be installed and reachable through `PATH`. Check each server's README for other required executables or configuration; Bun resolving JavaScript libraries does not install language servers, container engines or external CLI tools.
 
 ## Startup coordination
 
-Bun 1.4.2 can fail to resolve packages when several MCPs populate the same empty cache simultaneously. All six launchers coordinate dependency loading through [a shared native lock](shared/startup.ts); the servers run concurrently once loaded, and LSP also guards its later JSON-RPC import. Use the executable or `bun run start`; invoking `src/server.ts` directly bypasses the startup guard.
+**Private package caches.** Each launcher sets `BUN_INSTALL_CACHE_DIR` to `$XDG_CACHE_HOME/agent-mcps/install/<name>` (`~/.cache/...` when `XDG_CACHE_HOME` is unset) before Bun starts, because Bun selects its auto-install cache at process start. Servers therefore never populate the same cache concurrently — the setup under which Bun 1.4.2 failed to resolve packages (`Unexpected while resolving package 'ajv-formats'` and similar, followed by connect timeouts). An explicit `BUN_INSTALL_CACHE_DIR` already present in the environment is respected and wins.
 
-The guard uses Bun's built-in `bun:ffi` and the system `flock` API on **macOS or glibc Linux**, without another package. All coordinated launchers must share the same `XDG_CACHE_HOME` (or home directory when unset), with a writable local filesystem: the lock is `$XDG_CACHE_HOME/agent-mcps/startup.lock`, defaulting to `~/.cache/agent-mcps/startup.lock`. This coordinates repository MCPs, not unrelated Bun processes or different user-cache namespaces.
+**Warm-start fast path.** `withWarmCache(name, load, { sourceDir })` in [shared/startup.ts](shared/startup.ts) records a warm marker under `.../agent-mcps/warm/<name>` after a successful locked load: the Bun version plus a fingerprint (path, mtime, size) of the server's TypeScript sources. While the marker is current, later starts import lockless, so parallel MCP starts never queue behind each other. Cold starts, source edits and cleared caches fall back to a per-MCP lock; a failed warm load drops the marker and retries under the lock.
 
-The persistent lock file is normal: the OS releases the lock on exit, including forced termination; **do not delete it while MCPs may be running**. Acquisition waits up to 60 seconds; set `MCP_STARTUP_TIMEOUT_MS` to a larger positive millisecond value for slow downloads. Cold starts still require network access; no per-project installation is needed.
+**Locks.** The guard uses Bun's built-in `bun:ffi` and the system `flock` API on **macOS or glibc Linux**, without another package. Each MCP locks its own `startup-<name>.lock` in the shared `agent-mcps` directory, so distinct servers never serialize; all coordinated launchers must share the same `XDG_CACHE_HOME` (or home directory when unset) on a writable local filesystem. Lock files are persistent by design: the OS releases them on exit, including forced termination, and **deleting one while an MCP starts can split ownership**, so leave them alone. Acquisition waits up to 60 seconds; set `MCP_STARTUP_TIMEOUT_MS` to a larger positive millisecond value for slow downloads. Cold starts still require network access; no per-project installation is needed.
+
+Servers that import more modules after startup (LSP's JSON-RPC client, UI Studio's asset build) guard those loads with the same per-MCP lock. Use the executable or `bun run start`; invoking `src/server.ts` directly bypasses the caches and guards.
 
 ## Dependencies: import, do not install
 
@@ -63,7 +74,7 @@ bun test shared/tests/startup-lock.test.ts
 bun --no-env-file shared/tests/startup.ts
 ```
 
-The executable regression requires network access and uses its own temporary Bun cache, never clearing the user's cache. It discovers sibling directories containing `bin/mcp-<directory-name>` and starts them concurrently with cold and warm caches. When LSP is available, a second instance exercises concurrent lazy JSON-RPC loading. No discovered launchers is an error; the regression does not call paid models or real delegated workers.
+The executable regression requires network access and isolates itself: child MCPs receive private package caches and warm markers under a scratch `XDG_CACHE_HOME`, never touching the user's cache. It discovers sibling directories containing `bin/mcp-<directory-name>`, starts them concurrently, and asserts each server populated its private install cache and left a warm marker. When LSP is available, a second instance exercises concurrent lazy JSON-RPC loading. No discovered launchers is an error; the regression does not call paid models or real delegated workers.
 
 ## Server guides
 

@@ -65,13 +65,13 @@ The top bar identifies the displayed revision, pinned/following state and connec
 
 ## Maintain and verify
 
-Flow: [launcher](bin/mcp-ui-studio) → shared startup lock → [MCP tools/lifecycle](src/server.ts) → [Hono HTTP router/security](src/http/server.ts) → [JSX documents](src/http/documents.tsx) → [browser shell](src/browser/shell.js) / [isolated renderer](src/browser/frame.js).
+Flow: [launcher](bin/mcp-ui-studio) → shared warm-cache guard → [MCP tools/lifecycle](src/server.ts) → [Hono HTTP router/security](src/http/server.ts) → [JSX documents](src/http/documents.tsx) → [browser shell](src/browser/shell.js) / [isolated renderer](src/browser/frame.js).
 
 Hono **4.13.13** supplies the actual app, middleware, route handlers, context responses, error/not-found policy and request-time JSX document rendering through direct versioned Bun imports. The classic JSX pragma imports Hono's `jsx`, not React. This SSR renders the host/frame **document envelopes**, with fresh CSP nonces and escaped session titles/configuration. OpenUI/Carbon still render the draft client-side inside the opaque iframe; the server does not execute agent HTML, JSX or JavaScript. Only trusted static frame code and `<`-escaped JSON enter its inline script.
 
 | Source owner | Responsibility and allowed local dependencies |
 |---|---|
-| [server.ts](src/server.ts) | Composes five tools, lazy memoized asset/HTTP preparation and process lifetime; imports build/session/HTTP modules and the shared startup-lock helper |
+| [server.ts](src/server.ts) | Composes five tools, lazy memoized asset/HTTP preparation and process lifetime; imports build/session/HTTP modules and the shared per-MCP startup lock (asset preparation) |
 | [assets/build.ts](src/assets/build.ts) | Compiles trusted browser sources using native Bun cache resolution and Sass; imports only catalog identity locally, never executes the Carbon CJS root |
 | [catalog/identity.ts](src/catalog/identity.ts) | Import-free catalog ID and exact direct dependency versions shared by server and browser |
 | [catalog/layout.tsx](src/catalog/layout.tsx), [inputs.tsx](src/catalog/inputs.tsx), [data.tsx](src/catalog/data.tsx) | Grouped native Carbon/OpenUI adapters; external approved dependencies only, no cross-group imports |

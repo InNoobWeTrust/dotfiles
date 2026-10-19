@@ -4,6 +4,10 @@ import { join } from "node:path"
 import { spawn } from "node:child_process"
 import { createInterface } from "node:readline"
 
+// One isolated package cache for the whole suite, reused across runs: the first
+// child pays the cold download, later cases and runs reuse the populated packages.
+const suiteCache = process.env.BUN_INSTALL_CACHE_DIR ?? join(process.env.TMPDIR ?? "/tmp/opencode", "decisions-test-cache")
+
 // Only HTTP is mocked: actual launcher, SDK, schemas, registration and handlers.
 const preload = `
 import { readFileSync, appendFileSync } from "node:fs";
@@ -52,7 +56,7 @@ async function withServer(config: Control, credentials: "none" | "zen" | "both",
   // No inherited provider keys, NODE_OPTIONS or Bun preloads.
   const env: Record<string, string | undefined> = {
     PATH: process.env.PATH, HOME: process.env.HOME,
-    BUN_INSTALL_CACHE_DIR: process.env.BUN_INSTALL_CACHE_DIR,
+    BUN_INSTALL_CACHE_DIR: suiteCache,
     XDG_CACHE_HOME: scratch, TMPDIR: scratch, MCP_STARTUP_TIMEOUT_MS: "5000",
     TEST_CONTROL: controlPath, TEST_EVENTS: eventsPath,
   }
@@ -61,8 +65,10 @@ async function withServer(config: Control, credentials: "none" | "zen" | "both",
     env.CLOUDFLARE_ACCOUNT_ID = "cafecafecafecafecafecafecafecafe"
     env.CLOUDFLARE_API_TOKEN = "fake-cf-test-key"
   }
-  const child = spawn(process.execPath, ["--no-env-file", "--prefer-offline", "--preload", fixturePath,
-    new URL("../bin/mcp-decisions", import.meta.url).pathname], { env, stdio: "pipe" })
+  // The launcher is a POSIX sh shim (it selects the per-MCP Bun cache), so run
+  // it directly and pass Bun flags through BUN_OPTIONS instead of the CLI.
+  env.BUN_OPTIONS = `--prefer-offline --preload ${fixturePath}`
+  const child = spawn(new URL("../bin/mcp-decisions", import.meta.url).pathname, [], { env, stdio: "pipe" })
   const exited = new Promise<void>(resolve => child.once("exit", () => resolve()))
   const watchdog = setTimeout(() => child.kill("SIGKILL"), 12000)
   const lines = createInterface({ input: child.stdout })

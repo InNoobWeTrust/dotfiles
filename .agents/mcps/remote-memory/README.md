@@ -20,7 +20,8 @@ agent → index/search(target) → in-process MiniSearch BM25+ ranking + csv-par
 ## Run and verify
 
 `bin/mcp-remote-memory` needs Bun only — the engine runs in-process, so no Python, SQLite or
-other child process is involved. Bun resolves the pinned libraries directly from versioned imports;
+other child process is involved. Bun resolves the pinned libraries directly from versioned imports
+into the launcher's private cache (see [startup coordination](../README.md#startup-coordination));
 there is no subproject installation step or local dependency tree:
 
 ```sh
@@ -33,8 +34,9 @@ runtime; `--no-install` is deliberately absent so Bun can resolve versioned impo
 A first run needs network access if the libraries are not yet
 in Bun's cache; subsequent cached runs can be offline. No `bun install` is required. Strict typechecking
 needs the available Node declarations and versioned-import mappings appropriate to the environment.
-The E2E suite forwards `BUN_INSTALL_CACHE_DIR` to its SDK-spawned server, so a writable scratch cache
-can be used without changing the checkout. It also searches the five real skill CSV catalogs.
+The E2E suite launches `bin/mcp-remote-memory` directly and forwards `BUN_INSTALL_CACHE_DIR`, which
+the launcher respects, so a writable scratch cache can be used without changing the checkout. It also
+searches the five real skill CSV catalogs.
 For a genuinely cold server check, set `REMOTE_MEMORY_E2E_SERVER_CACHE_DIR` to a different empty
 writable cache directory; otherwise the client's imports may have warmed the server's dependencies.
 Reuse both cache directories for a subsequent offline run.
