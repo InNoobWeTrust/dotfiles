@@ -38,8 +38,9 @@ Deliberation is optional **within the real team**; it never grants implementatio
 
 ## 2. Establish roles and a proportionate contract
 
-Keep live user dialogue, material decisions, integration, and acceptance with the
-primary. Choose complementary jobs from actual uncertainty, not a fixed cast or
+Keep live user dialogue, integration, execution, and acceptance with the primary;
+consequential direction follows the active eligibility gate and is recorded, not
+self-ratified. Choose complementary jobs from actual uncertainty, not a fixed cast or
 worker quota. Distinguish runtime main/worker capability from permanent job roles.
 
 Before every launch, load `subagent-dispatch` and its worker contract. Supply the
@@ -68,31 +69,34 @@ Keep concise evidence summaries, not raw transcripts or internal reasoning.
 Preserve meaningful disagreement; load [Branch-graft synthesis](references/branch-graft-synthesis.md)
 when multiple viable branches conflict. A vote is not proof.
 
-The primary resolves in-scope choices and owns the final synthesis. Distinguish
+The primary owns the final synthesis and records choices settled through the
+eligible proposal/validation/authority path; it does not resolve consequential direction. Distinguish
 facts, inferences, and unknowns; return unresolved user-owned decisions with plain
 context and consequences. Required independent challenge gates still apply.
 
-For meaningful in-scope choices, recommendations before asking the user, or
-worker continue/return uncertainty, use [Decision Support](../decision-support/SKILL.md)
-with an existing decision-support capability when available and authorized. Estimates advise the responsible
-agent; they neither supply a real worker nor waive authority, evidence or stop gates.
+After eligible proposal/validation, use [Decision Support](../decision-support/SKILL.md)
+for meaningful in-scope alternatives, recommendations before asking the user, or
+worker continue/return uncertainty, when available and authorized. Consultation
+informs the applicable authority; estimates neither supply a real worker nor
+waive authority, evidence or stop gates. Deterministic steps need no consultation.
 
 ## 4. Approve the plan and execute only authorized work
 
-For execution, use a jointly crafted, primary-approved plan proportionate to the
-task. Bound-role execution pins its revision and unit; read and revalidate a new
+For execution, use a jointly crafted plan with direction settled through the
+eligibility gate, proportionate to the task; the primary records its revision.
+Bound-role execution pins its revision and unit; read and revalidate a new
 approved revision before continuing. Never silently change scope or contracts.
 Decision-only deliberation does not authorize implementation.
 
 Before affected implementation, independently challenge **material cross-component
 designs**, whether authored by the primary or a worker. Apply [Design acceptance](references/design-acceptance.md)
 to responsibility/dependency direction, shared contracts, orchestration and state ownership.
-Primary approval or a compromise register alone does not satisfy this gate. Reuse a
+Primary recording or a compromise register alone does not satisfy this gate. Reuse a
 current revision's receipt; mechanical edits with no changed design are exempt.
 
-The primary retains architecture stewardship across workers: maintain the bounded source-backed map, pass relevant structure/flow knowledge in handoffs, and verify combined placement, dependency deltas and human understandability at integration under that design-acceptance reference.
+The primary retains architecture stewardship across workers: maintain the bounded source-backed map, pass relevant structure/flow knowledge in handoffs, and verify combined placement, dependency deltas and human understandability at integration under that design-acceptance reference. Consequential architecture direction follows the eligibility gate.
 
-For software work, the primary approves concrete library/tool/API selections using repository constraints and applicable code-craft guidance. Keep the [materialization contract](../subagent-dispatch/references/implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) in the existing plan/phase file (inline for an atomic patch), carry its unit-relevant rows into worker handoffs, and revalidate changed choices on replacement/revision. Acceptance checks actual API use and behavior, not imports alone; workers report missing/incompatible choices rather than silently reverting to learned patterns.
+For software work, consequential library/tool/API selections are settled through the eligibility gate using repository constraints and applicable code-craft guidance; local mechanics within the settled stack remain with the implementer. Keep the [materialization contract](../subagent-dispatch/references/implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) in the existing plan/phase file (inline for an atomic patch), carry its unit-relevant rows into worker handoffs, and revalidate changed choices on replacement/revision. Acceptance checks actual API use and behavior, not imports alone; workers report missing/incompatible choices rather than silently reverting to learned patterns.
 
 Load [Delivery](references/delivery.md) before authorized build/fix/work-until-done loops.
 It governs autonomous/collaborative/HITL mode, bounded jobs, criteria, correction, and release.
@@ -119,6 +123,7 @@ the consolidator with the primary silently.
 
 ## Stop conditions
 
+- Missing required eligible direction proposal, original-source validation or applicable authority → block affected work; primary status is not a fallback.
 - Missing authority, unsafe/unbounded execution, or unavailable mandatory evidence → stop affected work; never broaden permissions.
 - No permitted real worker or missing current required worker contribution → block affected work; no solo/simulated fallback.
 - A required independent review cannot run → report UNVERIFIED/blocker, not simulated PASS.
@@ -142,6 +147,7 @@ the consolidator with the primary silently.
 
 ## Deliverable check
 
+- [ ] Consequential direction has an eligible proposal, current original-source validation receipt and applicable authority; the primary only recorded and executed the settled choice.
 - [ ] Real team formed and current worker contribution recorded; launch permission verified.
 - [ ] Assignments, ownership, limits, dependencies, and evidence are explicit.
 - [ ] Dedicated conformance subagent checked original-source baseline completeness and every active user requirement against the current revision, including earlier audience/style constraints after adaptation; no FAIL/UNVERIFIED rows hidden by technical success.

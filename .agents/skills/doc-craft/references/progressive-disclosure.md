@@ -2,7 +2,7 @@
 
 Documentation becomes unreadable when too much information is loaded at once. The **Index → Entry → Leaf** pattern bounds reader cognitive load and agent context windows by enforcing strict information layering.
 
-Apply [Document format selection](document-formats.md) before choosing extensions. Layers describe information structure: Typst is the default, required repository/Markdown consumers retain Markdown, and agent memory remains in its native protocol.
+Apply [Document format selection](document-formats.md) before choosing extensions. Repository indexes, entries and concise summaries stay Markdown; substantial human-facing detail is assembled from Typst chapters into a single PDF. Agent memory and required native consumers retain their protocols.
 
 Before splitting files, establish the [main reading path and supporting layers](reader-path.md). Index → Entry → Leaf organizes the document collection; contents, notes, and appendices organize attention within a document, without hiding essential qualifications.
 
@@ -21,9 +21,9 @@ INDEX (Always loaded / Top-level overview)
 
 | Layer | Responsibility | Typical Size | Example |
 |---|---|---|---|
-| **Index** | Maps the domain; routes reader to topics based on intent | < 40 rows | `docs/index.typ`; required `README.md` / `INDEX.md` |
-| **Entry** | Core workflow, high-level architecture, decision router | < 8 KB source | `docs/<section>/<topic>.typ`; required `.md` or module `README.md` |
-| **Leaf** | Deep dive, edge cases, schema tables, parameter reference | < 16 KB source | `docs/<section>/details/<leaf>.typ`; required `.md` |
+| **Index** | Maps the domain; routes reader to topics based on intent | < 40 rows | `docs/README.md`, `<section>/INDEX.md` |
+| **Entry** | Main points, core workflow, caveats and link to comprehensive PDF | < 8 KB source | `<topic>.md`, `<topic>/README.md`, module `README.md` |
+| **Leaf** | Deep dive, edge cases, schema tables, parameter reference | < 16 KB source | `<topic>/details/<leaf>.typ`, included in `<topic>/main.pdf`; required native formats preserved |
 
 
 ---
@@ -42,7 +42,9 @@ A file qualifies as an Index only when it satisfies all four:
 
 When document source exceeds **12 KB** or addresses multiple distinct audiences / concerns, extract appropriate leaves. This is not a PDF-file-size limit; apply the Markdown recipes below only when Markdown is selected.
 
-For Typst, keep one main `.typ` entry and compose chapters/leaves with native includes, such as `#include "details/leaf.typ"`. Preserve valid markup/code boundaries rather than splitting on Markdown headings, and include necessary detail in the distributed PDF so navigation does not depend on the author's checkout.
+For substantial human-facing detail, keep the Markdown entry concise and use `main.typ` to compose chapters with native includes, such as `#include "details/leaf.typ"`, into one `main.pdf`. Preserve valid markup/code boundaries rather than splitting on Markdown headings; the delivered book includes the chapters, contents and appendices so navigation does not depend on the author's checkout.
+
+Patterns A/B below apply to existing or explicitly required Markdown detail, not the default for new comprehensive books. They do not authorize a bulk format migration.
 
 ### Pattern A: Leaf Extraction (`details/<leaf-name>.md`)
 Use for modular guides where deep sections are moved out of the primary reading path.
@@ -123,19 +125,21 @@ Use when a documentation folder needs an organized table of contents, a quick LL
 
 ## Directory Layout Standards
 
-### Human-Facing Repository Documentation (`docs/`, Typst default)
+### Human-Facing Repository Documentation (`docs/`, Markdown entry + Typst book)
 ```
 docs/
-├── README.md                     # Only when a Markdown repository entry point is required
-├── index.typ                     # Document index / reader journeys
+├── README.md                     # GitHub-readable map / reader journeys
 ├── <section>/
-│   ├── index.typ                 # Section index (when section has 3+ entries)
-│   ├── <topic-1>.typ             # Topic entry; compile PDF for distribution
-│   ├── <topic-2>.typ
-│   └── details/
-│       ├── <leaf-a>.typ          # Deep details; include when needed by the reader
-│       └── <leaf-b>.typ
-└── glossary.typ                  # Optional; preserve a required GLOSSARY.md contract
+│   ├── INDEX.md                  # Section router
+│   ├── <short-topic>.md          # Main points; no book needed
+│   └── <comprehensive-topic>/
+│       ├── README.md             # Summary, caveats, link to main.pdf
+│       ├── main.typ              # Layout, contents and chapter includes
+│       ├── main.pdf              # Whole readable book, beside source
+│       └── details/
+│           ├── foundations.typ
+│           └── applications.typ
+└── GLOSSARY.md                   # Optional repository glossary
 ```
 
 ### Human-Facing Code Module Documentation (`<module>/README.md`)

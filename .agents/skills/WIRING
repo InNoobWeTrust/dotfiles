@@ -156,12 +156,46 @@ Do **not** run branch steps B1–B2 for eng-only spot checks or eng-only audits.
 
 ### Authorized Delivery (Intra-Skill Path)
 
-1. `team-operating-model` delivery path — form the mandatory real primary-plus-worker team; establish authorized autonomous ownership or honor collaborative/HITL mode. No default aggregate turn/time cap; no solo/simulated fallback. Its phased-delivery reference is independently usable and does not itself activate the team workflow.
-2. Matching domain skills — research/design consequential choices and inspect unfamiliar code before implementation; the primary approves in-scope contracts
+1. `team-operating-model` delivery path — form the mandatory real primary-plus-worker team; establish authorized autonomous execution within settled direction or honor collaborative/HITL mode. No default aggregate turn/time cap; no solo/simulated fallback. Its phased-delivery reference is independently usable and does not itself activate the team workflow.
+2. Matching domain skills — research/design consequential choices and inspect unfamiliar code before implementation; settle direction through the eligibility gate and record the in-scope contract
 3. `subagent-dispatch` — permitted bounded workers for useful research, implementation, and checks; deliberation only when selected/warranted, with persistent coordination guards for multiple contributors
 4. Machine/integration/E2E checks + `reviewer` — current positive proof and independent user-perspective release rubric; add warranted safety/operations lenses
 5. `systematic-investigation` — diagnose repetitions or broken verification, then resume only with a supported changed approach
 6. Deliver guides/evidence for final human user acceptance; feedback begins another scoped loop. AFK still requires verified isolation, state, job bounds, and cleanup.
+
+### Direction Settlement (Cross-Cutting)
+
+Use before consequential interpretation, direction or internal trade-off choice
+in any workflow. This is bounded decision validation, not team activation.
+
+1. **Eligible proposer** — follow the active direction-eligibility policy. State
+   the objective and hard invariants separately from the proposed mechanism, with
+   source-checked facts, alternatives, a recommendation and uncertainty.
+2. **Separate validator** — reconcile the proposal with the original sources,
+   including earlier compatible constraints, source/version applicability and a
+   disconfirming check. The validator receives the originals and the proposal,
+   not the primary's summary alone. The deciding architect or user may perform
+   this validation itself when it did not author the proposal; a decision-support
+   tool cannot.
+3. **Applicable authority** — decision-support for meaningful in-scope
+   alternatives, an explicitly delegated architect-level decision job, or the
+   user for reserved decisions. The architect job is bounded and read-only: it
+   receives the original sources, proposal, any validation receipt, authority
+   boundary and decision question, and returns the decision, source
+   reconciliation, conditions/invariants, uncertainty, what would change it, or
+   `INCOMPLETE`.
+4. **Primary** — record the confirmed choice and validation evidence in existing
+   task context, then implement. Primary status never confers decision authority;
+   a disagreement returns evidence to the authority and cannot override it.
+   Missing roles block affected work.
+
+Mechanical steps whose goal, behavior and acceptance are already settled by an
+explicit source need no separate direction round. Do not select a validator or
+authority to obtain a preferred answer. Safety, user-reserved authority and hard
+constraints still stop execution; recording a decision is not permission to
+execute an unsafe or unauthorized action. This gate is additional to, not a
+substitute for, the existing cross-family plan/design/audit challenge gate. It is
+decision ownership, not permission or delivery approval.
 
 ### Decision Consultation (Cross-Cutting)
 
@@ -250,7 +284,7 @@ also apply its persistent coordination reference before role task-source reads:
 1. `team-operating-model` — form the real team and establish role identity, session binding, onboarding, approved scope, and checkpoint contract
 2. `memory` — resolve role/task records and approved plan under `tasks/<task-id>/` in `MEMORY_DIR`; restore before task sources
 3. `subagent-dispatch` + `worker-contract.md` — bounded handoff with task-role identity, discovery access, and continuation guards
-4. `team-operating-model` deliberation path — joint plan challenge when useful; primary versions and approves a revision before its execution
+4. `team-operating-model` deliberation path — joint plan challenge when useful; primary versions and records a direction-settled revision before its execution
 5. `team-operating-model` delivery path — authorized iteration and release evaluation within the approved plan scope and per-slice bounds
 6. `memory` (Capture) — append role checkpoints after every completed/interrupted slice
 7. `memory` (Consolidate via Subagent, report-only) — accepted-task consolidation after recorded user acceptance; apply/markers/archive/eviction require subsequent explicit human approval
@@ -282,6 +316,10 @@ When a delegated architect, planner, or design agent produces a plan or
 architecture proposal, route it through a challenger before presenting to
 the user. This prevents over-engineering and hallucinated complexity from
 reaching the decision-maker unchallenged.
+
+For consequential design the producer must be direction-eligible under the active
+policy; the challenger remains a separate provider family. This challenge is
+additional to the direction gate, not a substitute for it.
 
 1. Delegated agent (architect, planner) produces the plan
 2. `reviewer` (pragmatic-triage lens) — independent agent challenges every proposed complexity against probability × impact
@@ -342,7 +380,7 @@ Natural transitions between skills:
 | `web-qa-audit` | `reviewer` | "Executable QA produced findings or a plan that needs critical judgment" |
 | Domain specification owner | `doc-craft` | "Domain meaning is established; prepare a usable stakeholder document" |
 | Domain specification owner | `reviewer` | "Specification needs independent semantic or editorial challenge" |
-| `team-operating-model` (deliberation) | `code-craft` | "Deliberation complete, starting authorized implementation of the approved design" |
+| `team-operating-model` (deliberation) | `code-craft` | "Deliberation complete, starting authorized implementation of the direction-settled design" |
 | `team-operating-model` (deliberation) | `model-benchmarking` | "Deliberation complete, optimizing model assignments for the selected architecture" |
 | `model-benchmarking` | `team-operating-model` (deliberation) | "Models selected, ready for multi-agent deliberation" |
 | `model-benchmarking` | `architecture-design` | "Verified token costs and model limits inform technical constraints and tradeoffs" |

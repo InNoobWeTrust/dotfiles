@@ -8,10 +8,19 @@ This directory is organized with **progressive disclosure**:
 docs/README.md          ← you are here (always-loaded map)
   └─ <section>/INDEX.md ← section router
       └─ <entry>.md     ← topic entry (load on demand)
-          └─ details/*  ← deep leaves (load only when linked)
+          └─ main.pdf   ← comprehensive book, when needed
+              └─ main.typ + details/*.typ ← editable book source
 ```
 
 Wiki docs outside `slides/` are **English-first** (agent-searchable). Slides keep EN/VI pairs for delivery.
+
+## Reading and authoring formats
+
+Keep indexes, topic entries and concise main points in **Markdown** for GitHub web reading. For comprehensive human-facing detail, keep **Typst chapters assembled into one PDF**, alongside their editable source; the Markdown entry links to the PDF and retains the key conclusions and caveats.
+
+Use a topic's `main.typ` to include `details/*.typ`, with a contents page, chapters and appendices rendered together as `main.pdf`; do not make readers assemble separate files or maintain a full Markdown mirror. A short topic can remain Markdown-only, and native agent/parser/site formats remain unchanged.
+
+The [chirality research source](./research/chirality_agent_guardrails/main.typ) and [rendered PDF](./research/chirality_agent_guardrails/main.pdf) demonstrate the assembled-book layout. This is the pattern for new comprehensive material, not authorization to bulk-convert existing documents.
 
 ---
 

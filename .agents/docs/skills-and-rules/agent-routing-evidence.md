@@ -4,8 +4,8 @@
 |---|---|
 | **Audience** | Maintainers of the [agent profiles](../../agents/) |
 | **Purpose** | Keep task-selection descriptions grounded in local outcomes, practitioner experience and benchmark evidence |
-| **Boundary** | Routing guidance, not universal rankings, model-access verification or permission enforcement |
-| **Reviewed** | 2026-10-20; revisit after meaningful local outcomes or checkpoint changes |
+| **Boundary** | Routing guidance and local direction-eligibility policy, not universal rankings, model-access verification or permission enforcement |
+| **Reviewed** | 2026-10-21; revisit after meaningful local outcomes or checkpoint changes |
 
 ## Selection decisions
 
@@ -15,14 +15,59 @@
 |---|---|---|
 | Named DeepSeek route | Architecture/quality preference; consumer-aware implementation | Local experience; public reports are mixed, not proof of universal superiority |
 | Sonnet 4.6 | Settled-interface execution; source-faithful edits for a specified reader | Local failures and execution/planning anecdote; not inability to design |
-| GPT routes | Checked implementation; document materialization from explicit audience/outline/sources | Existing roles and coding evidence, not demonstrated writing superiority |
+| GPT routes | Checked implementation of settled work; document materialization from explicit audience/outline/sources; current local direction assessment: ineligible | Existing roles and local direction outcomes; a current operator assessment, not a family-wide capability verdict or permanent rule; re-assess the specific route by the AGENTS capability criteria |
 | MiMo / GLM Flash | MiMo discovery and implementation trials; GLM bounded screenshot-led implementation | One practitioner account and divergent benchmarks, not unconditional endorsement |
 | Less-evidenced routes | Extraction, comparisons, small checked trials | Conservative allocation, not evidence of inability; no comprehensive per-model survey |
 | Curated `ckey/*` family aliases | Family-level task fit; secondary bounded work under the current local preferences | Operator selects recent models within each corresponding family for price/performance; assess typical current-family behavior rather than require a fixed checkpoint. Individual-model scores are not measured alias averages |
 
 **Documentation is a separate competence.** No located report measures technical-document audience fidelity or context leakage across these routes. Extraction, summarization and coding scores do not qualify whole-document ownership; stronger implementation routes also need an explicit reader, outline and source boundary.
 
-Descriptions guide selection, not permissions or assignment scope. Existing read-only review/perception boundaries remain unchanged, as do model IDs, variants, permissions and primary-agent settings.
+Descriptions guide selection; the direction-eligibility policy separately bounds who may propose or decide consequential direction. Neither changes native permissions, model IDs, variants or primary-agent settings; existing read-only review/perception boundaries remain unchanged.
+
+## Local direction-eligibility policy (2026-10-21)
+
+The operator requires consequential direction to be proposed and validated by
+routes suited to careful interpretation, not by the orchestrating/implementing
+route. This is an operating policy and local experience report, not a benchmark
+ranking or a claim that other routes cannot reason.
+
+| Route | Current local assessment | Basis and limit |
+|---|---|---|
+| GPT routes | Orchestration, implementation, verification and evidence review of settled work; direction-ineligible | Operator requirement after local direction failures; not evidence that GPT cannot implement or review |
+| DeepSeek V4.1 Flash | Eligible proposer, validator and architect-decision route | Local architecture/review preference and the benchmark context above; not proof of correctness |
+| Claude Sonnet | Eligible proposer, validator and architect-decision route | Local execution/planning evidence; use the current exposed route |
+| Claude Opus | Eligible only when actual access is verified | Access is not assumed from configuration; unverified access is a blocker, not a fallback |
+| Decision-support capability | Advisory decision input for meaningful in-scope alternatives | Advice is not permission or proof; estimates remain advisory |
+
+These rows record current local application of the [AGENTS.md](../../AGENTS.md)
+capability criteria and the evidence behind it; they are not a universal
+whitelist. A route absent from them is not automatically eligible or ineligible.
+Assess the specific direction role, record unknown or conflicting evidence as a
+gap, and leave the role unfilled when the evidence does not support it. The GPT
+row records a current operator assessment after local direction failures, not a
+permanent family rule; a specific route may qualify on new task-relevant
+evidence. The main may apply these criteria to an assignment and record the
+evidence in task context without editing this register. Configuration is not
+access: require a usable execution path and record the limitation. Required
+sequence: eligible proposal → separate validation reconciled to the original
+sources (the deciding architect or user may validate itself when it did not
+author the proposal; a decision-support tool cannot) → applicable authority →
+primary records and executes. Cross-family independence remains mandatory where
+the plan/design/audit challenge gate applies. For direction validation, a
+different eligible family is the default when available; a separate eligible
+instance from the same family is the permitted fallback only when no other
+eligible family is actually available, with the limitation recorded. Mechanical
+steps already settled by an explicit source need no direction round. Missing
+eligible roles block affected work; do not substitute ineligible judgment.
+
+This policy changes assignment eligibility, not native permissions, model IDs,
+variants, or the advisory nature of decision support. A decision-support
+capability's internal provider mix does not create an agent direction role or
+eligibility; its advice cannot substitute for the required direction proposal or
+validation. When it is the applicable authority, apply its documented output
+mechanically within the supplied alternatives. Review or challenge from any route
+may be evidence, but cannot substitute for the required proposal, validation or
+authority.
 
 ## Practitioner evidence
 

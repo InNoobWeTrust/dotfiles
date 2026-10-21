@@ -1,5 +1,5 @@
 ---
-description: "Typst/PDF defaults with native-consumer and existing-contract exceptions."
+description: "Markdown repository entries and summaries; Typst/PDF depth with native-consumer and existing-contract exceptions."
 globs: "*"
 alwaysApply: false
 trigger: model_decision
@@ -10,6 +10,9 @@ trigger: model_decision
 - New human-facing reports, proposals, guides and specifications default to Typst
   source and a compiled PDF. Deliver a readable PDF, not only source requiring
   the recipient to install tooling.
+- Keep repository entry pages, indexes and concise main points in Markdown for
+  GitHub reading. Assemble comprehensive detail/expansions as Typst chapters in
+  one book-like PDF beside its source, linked from the Markdown entry.
 - Preserve existing document contracts and identified consumer formats: repository
   READMEs, Markdown sites/reviews, issues/PRs, agent instructions, memory/plans,
   parser inputs such as UX-SPEC/DESIGN/BDD, notebooks and native data/application

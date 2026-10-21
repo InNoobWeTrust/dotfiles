@@ -2,14 +2,14 @@
 
 Standard scannable templates designed to prevent AI-generated discursive prose and walls of text.
 
-**Choose format first:** [Document format selection](document-formats.md) governs saved output. For Typst, start with [the native starter](typst-workflow.md#2-author-once-compile-directly) and translate the information structures below into native headings/tables/callouts; the Markdown examples and `.md` paths are only for required Markdown consumers.
+**Choose format first:** [Document format selection](document-formats.md) governs saved output. Repository entries and concise main points use Markdown; for comprehensive detail, use the [assembled-book layout](typst-workflow.md#repository-entry-and-assembled-book) and translate the structures below into Typst headings/tables/callouts. Do not expand the entry into a full Markdown mirror of the book.
 
 | Document structure | Default source | Key sections |
 |---|---|---|
-| Technical guide / how-to | `docs/guides/<topic>.typ` | Reader contract, quick start, procedure, verification, failures, references |
-| System overview | `docs/architecture/<system>.typ` | Boundary, topology image, components, trade-offs, invariants |
-| Section index | `docs/<section>/index.typ` | Topic catalog and reader journeys; required repository README/index stays Markdown |
-| Deep detail | `docs/<section>/details/<leaf>.typ` | Scope, parent context, mechanism, full schema; include in the distributed PDF when needed |
+| Technical guide / how-to | `docs/guides/<topic>/README.md` + `main.typ`/`main.pdf` when substantial | Entry: purpose, quick start, caveats, PDF link; book: procedure, verification, failures, references |
+| System overview | `docs/architecture/<system>/README.md` + `main.typ`/`main.pdf` when substantial | Entry: boundary and mental model; book: topology, components, trade-offs, invariants |
+| Section index | `docs/<section>/INDEX.md` | Topic catalog and reader journeys |
+| Deep detail | `docs/<section>/<topic>/details/<leaf>.typ` | Scope, context, mechanism, full schema; included in `main.pdf`, not a separate reading assignment |
 | Code module README | `<module>/README.md` | Required repository-rendered entry point: purpose, flow, usage, public surface, invariants |
 
 ---
@@ -64,7 +64,7 @@ Standard scannable templates designed to prevent AI-generated discursive prose a
 ---
 
 ## 4. Deep Details & References
-- For production clustering and failover configuration: [`details/clustering.md`](details/clustering.md)
+- **Complete guide:** [Read the PDF](./<topic>/main.pdf), including clustering and failover chapters.
 - Related specifications: [`../architecture/auth-system.md`](../architecture/auth-system.md)
 ```
 
@@ -140,13 +140,13 @@ This directory documents the `<Section Name>` subsystem. Load entries based on t
 ---
 
 ## Maintenance Rules
-- Entries exceeding 12 KB must be sharded to `details/<leaf>.md`.
+- Keep entries concise; put comprehensive expansions in Typst chapters included in the linked PDF, or preserve explicitly required Markdown detail.
 - Keep this index table strictly under 40 rows.
 ```
 
 ---
 
-## Template 4: Deep Leaf Detail (`docs/<section>/details/<leaf>.md`)
+## Template 4: Deep Leaf Detail (structure for `details/<leaf>.typ`; Markdown only for a required consumer)
 
 ```markdown
 # Deep Detail: <Topic / Edge Case Name>

@@ -8,9 +8,11 @@ trigger: always_on
 # Authority
 
 - Exploration does not authorize implementation. For authorized delivery,
-  default to autonomous in-scope ownership; honor collaborative or approval-gated
+  default to autonomous in-scope execution within settled direction; honor collaborative or approval-gated
   mode. State mode/bounds briefly, without ritual confirmation. The primary
-  researches and approves in-scope choices; workers return contract defects.
+  researches facts, records the settled direction and owns integration and execution;
+  workers return contract defects. Local implementation mechanics within a settled
+  contract remain with the implementer.
 - User acceptance, reserved approvals, new scope, external access, secret
   exposure, public compatibility breaks and material hard-to-reverse/shared-system
   effects remain human-owned. Ask promptly with scoped consequences. Credible
@@ -24,6 +26,34 @@ trigger: always_on
   it, explain facts versus inferences/unknowns, necessary terms, a concrete example
   and practical alternatives. Ask only unresolved questions; restate the agreed
   model and uncertainty. Revalidate answers given without adequate context.
+- **Direction gate.** Consequential interpretation, direction and internal
+  trade-off choices need an eligible proposal, a separate validation reconciled
+  to the original sources (separate from the proposer; the deciding architect or
+  user may perform it when it did not author the proposal; a decision-support
+  tool cannot), then the applicable authority: a decision-support capability for
+  meaningful in-scope alternatives, an explicitly delegated architect-level
+  decision job, or the user for reserved decisions. *Consequential* means the
+  choice can change the requested outcome, behavior, acceptance, consumer
+  contract, architecture boundary, cost/risk or governing requirement (for
+  example ambiguous intent, competing approaches, acceptance changes or
+  consequential materialization choices). The primary records and executes the
+  confirmed choice; primary status, capability or implementation ownership never
+  confers decision authority, and the primary cannot self-ratify or override it.
+  A general instruction to use judgment does not make an ineligible route
+  eligible. The architect route cannot absorb new scope, public compatibility
+  breaks or other human-reserved decisions. Apply the [planning source
+  walkthrough](../skills/working-principles/references/planning.md#validate-understanding-before-action-source-walkthrough);
+  the receipt may be inline and scaled to consequence. This gate allocates
+  decision ownership; it adds no human approval step inside authorized scope.
+- A step is mechanical and exempt only when its semantic goal, target, behavior
+  and acceptance are already settled by an explicit source or confirmed contract,
+  with no unresolved material inference or trade-off and bounded effects. The
+  primary records that source; a disputed or inference-bearing classification is
+  consequential. Changing material acceptance criteria is consequential. Missing
+  proposal, validation or authority blocks affected work as `INCOMPLETE`;
+  consultation failure never enables ineligible ordinary judgment. Advice or
+  estimates do not confer permission. Deterministic facts and operations need no
+  consultation.
 - Keep active exploratory dialogue in the main thread and address one layer at
   a time. Do not replace Q&A with a monolithic commitment brief. Clear authorized
   work needs no extra approval ceremony.

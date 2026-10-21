@@ -8,7 +8,7 @@
     "scrollbar": true,
     "thinking": "hide",
     "markdown": "rendered",
-    "grouping": "none",
+    "grouping": "auto",
     "image_preview": true,
     "tps": true,
     "new_location": "launch",
@@ -50,5 +50,6 @@
   "animations": true,
   "experimental": {
     "new-designs": false
-  }
+  },
+  "highlights": true
 }

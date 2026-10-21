@@ -16,6 +16,7 @@ The headings define content structure. Saved human-readable proposals follow [Do
 ## 2. Mechanistic Hypothesis & Biological/Physical Grounding
 - **Input Entities & Modalities:** Exact coordinate systems, sequence representations, or measurement vectors.
 - **Causal Mechanism:** The proposed biophysical/biochemical chain of events.
+- **Transfer Link:** Source principle → intervention → causal mechanism → user-relevant outcome → falsifier; distinguish inspected facts from assumptions. For non-biological research use its actual entities and outcomes, not forced assay language.
 - **Literature Anchors:** Real published studies supporting the biological plausibility.
 
 ## 3. In Silico / Experimental Protocol
@@ -31,3 +32,4 @@ The headings define content structure. Saved human-readable proposals follow [Do
 ## 5. Negative Controls & Kill Criteria
 - **Disconfirming Observations:** What specific observation proves this proposal WRONG?
 - **Kill-Switches:** Quantitative thresholds for abandoning or pivoting the project.
+- **Relevance Check:** Would success address the original question rather than merely improve a leaf mechanism/proxy? Explain the necessity of any dominant implementation detail and test a simpler alternative where plausible.

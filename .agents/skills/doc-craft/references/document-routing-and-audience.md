@@ -2,7 +2,7 @@
 
 This reference establishes the boundary between **Human-Facing Documentation** (routed to `docs/` or module `README.md`) and **Agent-Facing Coordination Memory** (routed to `MEMORY_DIR`).
 
-Destination and format are separate decisions. Apply [Document format selection](document-formats.md): human documents default to Typst source + PDF, while required READMEs, instruction references, and memory protocols stay Markdown; use [Typst workflow](typst-workflow.md) for build and delivery.
+Destination and format are separate decisions. Apply [Document format selection](document-formats.md): repository entries and main points stay Markdown for GitHub reading; comprehensive human-facing detail becomes an assembled Typst/PDF book. Instruction references, memory and other native-consumer contracts remain unchanged; use [Typst workflow](typst-workflow.md) for build and delivery.
 
 ---
 
@@ -25,7 +25,7 @@ Frontier agents often conflate documentation intended for human mental models wi
 | **Abstraction Level** | **High / Feature-Level**: Concepts, tradeoffs, usage, pseudocode | **Low / Task-Level**: Concrete file deltas, RED/GREEN steps, logs |
 | **Tone & Style** | Plain language, jargon-free, concise, visual rhythm, scannable | Dense invariants, exact paths, machine-verifiable gates, strict DTOs |
 | **Persistence & Git** | Long-term repository documentation, versioned in git | File-based Markdown + YAML, human-traceable, git-committable |
-| **Format** | `.typ` + PDF by default; required consumer format takes precedence | Required Markdown + YAML; never a PDF-only replacement |
+| **Format** | Markdown entry/summary; substantial detail in `.typ` chapters → one PDF; required native consumer takes precedence | Required Markdown + YAML; never a PDF-only replacement |
 
 ---
 
@@ -43,7 +43,7 @@ Does the document represent atomic task execution, phase breakdown, or inter-age
     │   └── YES ──► `<module>/README.md` (Code Module Abstraction Level)
     │
     └── Is it a system architecture, guide, or high-level feature documentation?
-        └── YES ──► `docs/` (Typst + PDF unless a required consumer prevents it)
+        └── YES ──► `docs/` (Markdown entry; Typst/PDF book for comprehensive detail)
 ```
 
 ---

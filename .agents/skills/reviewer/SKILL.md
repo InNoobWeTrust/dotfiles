@@ -21,6 +21,8 @@ Any in-context review must state its criteria and run a disconfirming check **be
 
 In research terms, Reviewer is the repo's **evaluator** half of an evaluator–optimizer loop. It must score against declared criteria, not vibe-check or rewrite the rubric after seeing the artifact.
 
+Apply [source-first, two-way review](references/core-review.md) within the existing review: judge requirements and source evidence before the author's explanation, check both unsupported outcomes and unjustified changes, then reconcile. Spend optional checks where a missed failure would matter most; never omit mandatory gates. Record the brief provisional verdict in the existing review response/checkpoint, not a new ledger. If the explanation was already seen, disclose that source-first isolation was unavailable rather than simulate it.
+
 ## Gate 3 — Contract-Bounded Phase Review
 
 When the artifact belongs to phased delivery, obtain the populated Delivery

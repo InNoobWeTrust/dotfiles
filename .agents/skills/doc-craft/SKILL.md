@@ -1,6 +1,6 @@
 ---
 name: doc-craft
-description: "Use this skill when designing, writing, restructuring, or auditing human-facing technical documentation, including presentation of domain-owned specifications — Typst-first guides and architecture overviews with PDF delivery, required Markdown READMEs and documentation sites, topic entries, and docs directories. Enforces audience/format routing, progressive disclosure, visual rhythm, and appropriate abstraction levels. Not the owner of product/technical/behavior requirements, code implementation, UI wireframing, or internal agent tracking (use memory)."
+description: "Use this skill when designing, writing, restructuring, or auditing human-facing technical documentation, including presentation of domain-owned specifications — Markdown entry pages and concise GitHub summaries, with comprehensive Typst chapters assembled into readable PDFs. Enforces audience/format routing, progressive disclosure, visual rhythm, and appropriate abstraction levels. Not the owner of product/technical/behavior requirements, code implementation, UI wireframing, or internal agent tracking (use memory)."
 ---
 
 # Document Craftsmanship (`doc-craft`)
@@ -17,7 +17,9 @@ This skill enforces four primary disciplines:
 
 Before editing, read [Editorial working principles](references/working-principles.md#editing). The principles are reusable for non-technical writing or governance without imposing this technical-document workflow; keep the task's owning skill and audience contract.
 
-Apply [Document format selection](references/document-formats.md) before choosing a filename or template. Use [Typst workflow](references/typst-workflow.md) for the default `.typ` → PDF path; retain Markdown only for an identified required consumer.
+Apply [Document format selection](references/document-formats.md) before choosing a filename or template. Keep repository entry pages and concise main points in Markdown for GitHub reading; use [Typst workflow](references/typst-workflow.md) to assemble substantial explanations and expansions into a single book-like PDF alongside its source.
+
+Prefer `.bib` for bibliographic source records and generated citations/reference lists. Use Typst for source-reference information only when `.bib` is unsuitable or cannot represent it adequately; do not hand-maintain a parallel catalog.
 
 ## When to Load This Skill
 
@@ -51,9 +53,9 @@ Preserve decision-relevant constraints, testable contracts, uncertainties and ne
    - Reference: [`references/document-routing-and-audience.md`](references/document-routing-and-audience.md).
     - **Reader contract**: Record `audience` (who uses it), `purpose` (what it enables), and `scope` (coverage/exclusions). In Typst, use a short visible summary plus supported document metadata, not YAML frontmatter. In Markdown, use concise YAML frontmatter where supported; preserve existing metadata and verify permitted fields for tool-consumed files such as `SKILL.md`. Do not bulk-retrofit unrelated files.
 2. **Determine the Document Layer**:
-    - **Index**: Router/catalog or document outline; use `.typ` by default, `README.md`/`INDEX.md` where repository navigation requires Markdown. Must stay under 40 rows.
-    - **Entry**: Primary guide/topic overview (`<topic>.typ`, `.md` for a required consumer) or module `README.md`. Focuses on core flow and common paths (< 8 KB of source).
-    - **Leaf**: Deep details, edge cases, full parameter schemas (`details/<leaf>.typ`, or required `.md`); include relevant Typst leaves in a self-contained PDF.
+    - **Index**: Repository router/catalog in `README.md`/`INDEX.md`; keep under 40 rows. A book's internal outline belongs in Typst.
+    - **Entry**: Markdown topic overview (`<topic>.md` or `README.md`): main points, key caveats and a descriptive link to the full PDF when present (< 8 KB of source). A short topic can end here.
+    - **Leaf**: Substantial human-facing details, expansions and appendices in `details/<leaf>.typ`, included by `main.typ` and rendered together as `main.pdf`. Preserve genuinely required native formats for agent/parser references and documentation sites.
 3. **Establish the Reading Path**: Before visual formatting, follow [Reader path and supporting layers](references/reader-path.md): classify material as essential, optional, or unnecessary for the declared audience/task. Keep prerequisites and consequential caveats near their use; give optional support named, navigable destinations and remove material that serves no reader need.
 4. **Apply Size Limits & Progressive Splitting**: If an existing document exceeds **12 KB**, shard it into leaves (Pattern A) or ordered sequential files (Pattern B). For directory indexing ("index docs") or document sharding ("shard doc"), follow [`references/progressive-disclosure.md`](references/progressive-disclosure.md).
 
@@ -69,7 +71,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 1. Select the matching template from [`references/templates.md`](references/templates.md):
     - Technical Guide / How-To (`docs/guides/<topic>.typ`)
     - System Architecture Overview (`docs/architecture/<system>.typ`)
-    - Section Index (`docs/<section>/index.typ`; required `INDEX.md` for Markdown navigation)
+     - Repository Index / Topic Entry (`docs/<section>/INDEX.md`, `<topic>.md` or `README.md`)
     - Deep Leaf Detail (`docs/<section>/details/<leaf>.typ`)
    - Code Module README (`<module>/README.md`)
 2. **Enforce the 3-Sentence Rule**: Keep all prose paragraphs to a maximum of 3 sentences.
@@ -82,7 +84,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 2. **Abstraction & Jargon Audit**: Confirm no low-level agent execution noise, raw task checklists, or unexplained jargon leaked into the document.
    - Compare the prose against the declared audience, purpose, and scope: flag both unnecessary context and missing explanation. Check the declaration itself against the requested document; metadata is not proof that the content belongs.
 3. **Link Verification**: Verify source references and distributed links. A detached PDF must not depend on the author's checkout; use internal labels/references, accessible URLs, or an explicitly tested distribution bundle.
-4. **No Orphan Leaves**: Ensure every leaf in `details/` is referenced from its parent entry.
+4. **No Orphan Leaves**: Link the PDF from its Markdown entry; include every intended Typst chapter in the book and its contents. Link required standalone leaves from their parent; readers need not browse source chapters to read the PDF.
 5. **Typst Delivery Check**: Compile and inspect the final PDF per [Typst workflow](references/typst-workflow.md); report blockers and invalidate the check after later source/asset edits.
 
 ---
@@ -102,7 +104,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 ## Deliverables Checklist
 
 - [ ] Audience verified as human; agent task/phase/consensus artifacts routed to `memory`.
-- [ ] Typst selected by default; any other format tied to a concrete consumer requirement or explicit request.
+- [ ] Markdown entries/main points remain readable on GitHub; substantial detail is assembled in Typst/PDF, with native-consumer exceptions preserved.
 - [ ] Reader contract recorded in frontmatter where supported, otherwise in the body; content checked against it.
 - [ ] Appropriate abstraction level maintained (concise, jargon-free, high-level choices with pseudocode).
 - [ ] Clear layer established (Index, Entry, or Leaf; or module README).

@@ -122,6 +122,8 @@ Review request received
 
 ## Delegation Prompt Patterns
 
+For each pattern, apply [source-first, two-way review](../core-review.md): first send the original requirements, authorized artifacts and necessary raw observations; obtain a brief provisional verdict before sending the author's explanation for reconciliation. Keep both stages in the same reviewer session where supported. Otherwise carry the provisional verdict explicitly to the continuation and disclose any fresh-context limitation; if separation is impossible or the narrative was already exposed, report that limitation rather than claiming blinding. Never defer essential requirements, safety constraints or raw evidence.
+
 ### Pattern 1: Audit Review
 
 ```

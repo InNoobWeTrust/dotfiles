@@ -41,10 +41,18 @@ secrets, unnecessary personal data or raw private transcripts.
 
 ## 3. Decide within authority
 
+Consultation never substitutes for the eligible proposal, original-source
+validation or applicable authority under the active direction-eligibility policy.
+
 - Inspect the documented success/error result and any returned advice or estimates. Check the suggested option
   against evidence and constraints; reject unsupported or disallowed suggestions.
-- **Autonomous primary:** choose within authorized scope and record consequential
-  rationale in the existing task/product artifact, not a new decision log by default.
+- **Autonomous primary:** apply the active direction policy and applicable
+  authority; consultation informs but does not make an ineligible primary the
+  decision-maker. When decision-support is the authority, apply its documented
+  output mechanically within the supplied alternatives; do not reinterpret the
+  question after seeing the answer. Reject hard-constraint violations and return
+  to the proposer/validator rather than substitute another option. Record the
+  confirmed choice and rationale in existing task context, not a new decision log.
 - **Before asking the user:** explain the practical trade-off and recommend an
   option with evidence and remaining uncertainty. Do not present probabilities
   as calibrated risk, proof or pressure to agree.
@@ -54,8 +62,9 @@ secrets, unnecessary personal data or raw private transcripts.
   requires return/stop; no score can waive it. Include the chosen next action and
   relevant uncertainty in the normal receipt, not raw model output.
 
-If unavailable or failed, state that limitation and use evidence-based judgment
-only where the active workflow permits. Preserve mandatory stops; do not loop,
+If unavailable or failed, state that limitation and use another authorized route
+or block affected consequential work; ineligible ordinary judgment is not a fallback.
+Preserve mandatory stops; do not loop,
 install, reconfigure, escalate permissions or silently select another provider.
 
 ## Output
@@ -70,7 +79,7 @@ the advisory estimate. No separate file or raw consultation transcript is needed
 |---|---|
 | Harness exposes a native decision tool | Use its documented contract; no external integration is required |
 | Harness exposes an authorized decision integration | Use that interface without assuming its schema applies elsewhere |
-| Two compatible rollout approaches differ in rollback cost | Consult, then choose within the approved rollout boundary |
+| Two compatible rollout approaches differ in rollback cost | After eligible proposal/validation, consult; the applicable authority decides and the primary records and executes within the settled boundary |
 | User must choose latency versus budget | Consult to sharpen a recommendation; explain and ask the user |
 | Worker can run one safe targeted check or return partial findings | Consult if the trade-off is unresolved; primary retains scope ownership |
 | Test deterministically identifies a missing required argument | Fix within scope without consulting |

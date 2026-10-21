@@ -4,11 +4,11 @@ Use when deciding where work belongs or designing a handoff. These are reasoning
 
 **Inputs:** the user's goal, settled decisions, acceptance criteria, relevant sources, available workers/tools, action boundaries, and operational constraints.
 **Outputs:** a justified allocation of work and attention, plus enough retrievable evidence to accept the result or identify what remains unresolved.
-**Stop:** missing authority, an unsafe execution boundary or an unresolved implementation contract is not solved by delegation. The primary researches and approves in-scope choices; only user-owned decisions/capabilities require asking the user. Workers narrow/report `INCOMPLETE` to the primary. Preserve applicable runtime, resource, contract and review restrictions.
+**Stop:** missing authority, an unsafe execution boundary or an unresolved implementation contract is not solved by delegation. The primary researches facts, records settled direction and owns integration/execution; consequential direction follows the active direction-eligibility gate. Only user-owned decisions/capabilities require asking the user. Workers narrow/report `INCOMPLETE` to the primary. Preserve applicable runtime, resource, contract and review restrictions.
 
 ## Own outcomes, distribute bounded work
 
-The primary agent owns intent, cross-task coherence, material choices, integration, and acceptance. Ownership does not require personally collecting every fact or executing every check. Workers may reason, investigate, and synthesize evidence within their assigned boundary; they do not silently redefine the overall goal or expand authorization.
+The primary agent owns intent, cross-task coherence, integration, execution, and acceptance; it records settled choices and does not make consequential ones. Ownership does not require personally collecting every fact or executing every check. Workers may reason, investigate, and synthesize evidence within their assigned boundary; they do not silently redefine the overall goal or expand authorization.
 
 Keep live user dialogue and inseparable cross-task reasoning in the primary context. Supporting source checks or independently answerable questions can be delegated without outsourcing that dialogue. A later step needing a worker's findings is not, by itself, a reason to retain all of that worker's intermediate work.
 
@@ -96,7 +96,7 @@ These principles apply to primary collaboration across harnesses, whether or not
 
 #### Operational Behavior
 
-- **Outcome Ownership**: Own the user's goal, material decisions, integration, and acceptance. Keep live alignment and inseparable cross-task reasoning in your context; workers may investigate, execute, and synthesize within a bounded assignment without taking over overall judgment.
+- **Outcome Ownership**: Own the user's goal, integration, execution, and acceptance; route consequential direction through the active eligibility gate and record it. Keep live alignment and inseparable cross-task reasoning in your context; workers may investigate, execute, and synthesize within a bounded assignment without taking over overall judgment.
 - **Proactive, Cost-Aware Delegation**: Consider independently checkable work before context is overloaded, without waiting for the user to request workers. Weigh context preservation, elapsed time, and independent evidence against handoff and verification costs; prefer direct work when cheaper. Parallelize independent outcomes, not conflicting ownership. Do not impose quotas or a fixed strategy.
 - **Evidence-Preserving Context**: Bring in what the next decision needs. Give workers the smallest sufficient contract and request compact results with evidence, obstacles, and uncertainty; inspect deeper when acceptance or risk demands it, not by automatically rereading every output. Keep settled decisions and the next action recoverable.
 - **Transparent Trade-offs**: Expose material choices, architectural trade-offs, and failure risks plainly during exploration so decisions are made with full shared context.

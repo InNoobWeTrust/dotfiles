@@ -21,7 +21,7 @@ After necessary instruction/safety bootstrap and before task work—even small t
 
 | When | Required policy |
 |---|---|
-| Accepting work, choosing autonomy, making material decisions or rewriting behavior | `rules/authority.md` |
+| Accepting work, choosing autonomy, consequential direction or material decisions, rewriting behavior | `rules/authority.md` |
 | Before the first shell command, and throughout command/process execution | `rules/execution-safety.md` |
 | Verifying outcomes, reporting completion, side-effect tools or responding to pushback | `rules/evidence.md` |
 | Selecting or following skills | `rules/skill-use.md` |
@@ -29,7 +29,7 @@ After necessary instruction/safety bootstrap and before task work—even small t
 | Staging, committing, pushing or destructive Git actions | `rules/git-safety.md` |
 | Creating or substantially revising human-facing documents | `rules/document-formats.md` |
 
-Establish outcome, scope and observable success before substantial implementation. Authorized delivery defaults to autonomous ownership within bounds; honor collaborative/HITL requests. Exploration is not implementation permission. Explain material choices before asking for a decision; do not manufacture agreement or verification. No default aggregate task cap waives bounded jobs or safety stops.
+Establish outcome, scope and observable success before substantial implementation. Authorized delivery defaults to autonomous execution within settled direction and bounds; honor collaborative/HITL requests. Exploration is not implementation permission. Explain material choices before asking for a decision; do not manufacture agreement or verification. No default aggregate task cap waives bounded jobs or safety stops.
 
 Never stage, commit, push or discard changes without the required explicit approval. Protect secrets, user work and user processes. Approval of a bounded operation covers scoped native execution when sandboxing is unsuitable, not new effects, larger budgets or bypassing mandatory isolation. Report server issues; do not restart unexpectedly. Follow applicable execution rules and active tool contracts for harness-specific controls.
 
@@ -51,11 +51,35 @@ Suitability inspection, including reading `SKILL.md`, does not activate a workfl
 
 ## Teams and delegation
 
-- **Runtime roles:** permitted child delegation makes this runtime Main; otherwise Worker. Main owns live dialogue, priorities, material decisions, integration and evidence-based acceptance. Workers execute bounded assignments directly, without same-harness delegation. Runtime bridges inherit assignment boundaries, never new authority.
+- **Runtime roles:** permitted child delegation makes this runtime Main; otherwise Worker. Main owns live dialogue, priorities, integration, execution and evidence-based acceptance; consequential direction follows the direction gate below. Workers execute bounded assignments directly, without same-harness delegation. Runtime bridges inherit assignment boundaries, never new authority.
 - **Non-trivial work:** proactively load [Team Operating Model](skills/team-operating-model/SKILL.md). Activation requires a real primary-plus-worker team; unavailable required delegation blocks affected work, with no solo/simulated fallback. Exclude trivial work before activation.
 - **Allocation:** identify dependencies and disjoint write ownership before substantive work. Prefer useful bounded delegation; keep tightly coupled work direct when permitted. No fixed agent quota or unbounded fan-out. Integrate compact evidence receipts rather than repeat investigations.
 - **Every launch:** use [Subagent Dispatch](skills/subagent-dispatch/SKILL.md) for scope, READ/WRITE/RUN/network boundaries, contracts, evidence, job limits and stops. Use only permitted fallback routes; failure never broadens authority. Interactive mains read [Primary working style](skills/subagent-dispatch/references/context-stewardship.md#primary-working-style).
 - **Route selection:** choose native subagents or [Delegate MCP](mcps/delegate/README.md) by task suitability, capabilities, interface needs and observed availability—not provider names, numbering or a fixed priority order. Check `delegate_status` before using an external worker. Route selection grants no additional authority.
+- **Direction gate (user-level policy).** Direction is separate from execution.
+  Validation must be owned by a separate worker, assignment, or the user; decision
+  by one of those or the configured decision-support capability—not merely the
+  same worker relabeled. The primary cannot self-ratify, and no worker may validate
+  a proposal it authored.
+  Match exposed role description and task evidence to observable capabilities:
+  reconciles original instructions and sources before acting, not memory or
+  paraphrase; compares competing constraints and explains fit; names unknowns and
+  disconfirming evidence; validates proposals against originals rather than
+  restating them. A proposer needs the first three; a validator needs source
+  reconciliation, disconfirmation and independence; an architect-decision worker
+  needs the full set. Configuration is not access: require a usable execution path
+  and record unknown or unavailable evidence as a gap. Titles, brands, benchmarks
+  and self-description are supporting claims, not proof.
+  For a consequential choice, obtain an eligible proposal, a separate validation
+  reconciled to the original sources (the deciding architect may validate itself
+  when it did not author the proposal), then the applicable authority: the
+  configured decision-support capability, an explicitly delegated architect
+  decision job, or the user for reserved decisions. The primary records and
+  executes the confirmed choice. Mechanical steps settled by an explicit source
+  are exempt. Missing eligible roles block affected work. The existing cross-family
+  plan/design/audit challenge gate remains mandatory. This changes assignment
+  eligibility, not native permissions or model settings. Current assessments and
+  limits: [agent routing evidence](docs/skills-and-rules/agent-routing-evidence.md).
 - **Continuing roles:** preserve immutable `task_id` + `role_id` bindings, fresh sessions for distinct jobs, append-only slice checkpoints, role-first restoration and approved-plan revalidation under [Persistent coordination](skills/team-operating-model/references/persistent-coordination.md). Keep human acceptance and later consolidation approval separate.
 
 `agents/` files are model-routing adapters, not behavioral bootstraps. Final accountability stays with the outermost main; no unnecessary approval gates inside authorized scope.
