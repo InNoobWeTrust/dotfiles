@@ -28,6 +28,8 @@ Use when choosing tools for analytical/scientific pipelines, untangling notebook
 
 Retain existing execution tools unless there is a measured problem. A graph framework does not remove sequential decompression bottlenecks or automatically justify more workers.
 
+For an extensible Rust/Arrow embedded query-engine requirement, consult [Apache DataFusion fit and safeguards](../../code-craft/references/languages/python-data-stack.md#conditional-engine-apache-datafusion). It belongs to the execution layer, not the workflow/provenance layer; its core is in-process, while Ballista and Comet require separate distributed/Spark justification. This does not change the DuckDB default.
+
 ## Decision table
 
 | Option | Prefer when | What becomes inspectable | Costs / reject when |

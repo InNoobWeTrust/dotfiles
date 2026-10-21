@@ -42,6 +42,8 @@ The modern Python data stack favors the **Composable Data Stack** (`ibis-framewo
 
 For in-depth architecture, code patterns, memory tuning, and migration recipes, see [Composable Data Stack (Ibis + DuckDB)](python-data-stack.md).
 
+For a custom Rust/Arrow query-engine requirement, consider [Apache DataFusion](python-data-stack.md#conditional-engine-apache-datafusion), directly from Python or through its optional Ibis backend. Retain the DuckDB default unless a verified workload need justifies change; backend compatibility and resource controls require separate checks.
+
 | Use case | Suggestion | Why |
 | --- | --- | --- |
 | Local data transformation, ETL, exploratory analysis, analytical scripts | **Ibis + DuckDB (default)** | Decoupled portable DataFrame API with out-of-core vectorized execution; queries Parquet/CSV/Arrow directly without OOM. |

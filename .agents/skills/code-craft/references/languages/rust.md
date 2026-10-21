@@ -18,6 +18,10 @@ Retrieve conditional choices and backend/migration caveats from the [decision CS
 
 Search results are candidates, not rankings or implementation approval. Verify required engine/mode, query and migration capabilities before selecting; note the decisive fit in the existing handoff, not a new comparison document. Return consequential capability gaps rather than silently changing engines or adapters.
 
+## Embedded analytics lookup
+
+For Rust/Arrow-native analytical SQL requiring custom table providers, functions or query planning/execution, retrieve `reason-datafusion-embedded-analytics` from the [decision CSV](../../scripts/data/code-reasoning.csv). See [Apache DataFusion fit and safeguards](python-data-stack.md#conditional-engine-apache-datafusion) for the engine boundary, optional Python/Ibis consumers, security limits and trial criteria. This is an analytics option, not a replacement for the persistence defaults above or a universal DuckDB/Polars speed claim.
+
 ## Sources
 
 - https://doc.rust-lang.org/cargo/
