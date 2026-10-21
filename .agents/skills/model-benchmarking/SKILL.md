@@ -1,6 +1,6 @@
 ---
 name: model-benchmarking
-description: "Use this skill to select agent models by task fit, practitioner experience, checked outcomes, benchmarks, pricing, and provider access. Activate when optimizing model assignments, writing caller-facing agent descriptions, comparing LLM cost-performance tradeoffs, selecting delegated-worker tiers, or validating agent configs against schemas. Not for general non-LLM pricing or permission changes."
+description: "Use this skill to select agent models by task fit, practitioner experience, checked outcomes, benchmarks, pricing, and provider access. Activate when optimizing model assignments, writing caller-facing agent descriptions, comparing LLM cost-performance tradeoffs, selecting delegated-worker tiers, or validating agent configs against schemas. Fleet configuration and periodic review, not a per-delegation step: agent descriptions carry the routing boundary, so dispatching a task requires no benchmark lookup. Not for general non-LLM pricing or permission changes."
 ---
 
 # Agent Model Benchmarking & Optimization
@@ -35,6 +35,8 @@ Gather live pricing, features, and reliability metrics.
 - **General Reasoning**: ArtificialAnalysis.ai, LMSYS Chatbot Arena (ELO ranks).
 - **Coding Specifics**: SWE-bench Verified, SWE-bench Pro, Terminal Bench, HumanEval+, MBPP+; keep distinct benchmarks separate.
 - **Price/Token Comparisons**: OpenRouter model catalog, Together AI, Groq, deepinfra, fireworks.ai.
+- **Post-launch Regression / Drift**: BridgeBench Nerf Bench (30 models, power % since launch day), Marginlab Degradation Tracker (daily SWE-Bench-Pro CI bands for Codex and Claude Code families), AI Stupid Level (24 models/6 providers, continuous multi-suite monitoring with Page-Hinkley change-point detection, cost-per-correct-result).
+- **Subscription Limit Tracking**: BridgeBench Usage Bench (% of day-one plan allowance retained; tracks silent cuts to 5-hour and weekly windows independently).
 
 ### 2. Free Tier Vetting
 - **Free tiers**: Check current price, lifecycle, data-use policy, limits, and observed reliability. Free access does not establish uptime, privacy, or suitability for unattended work; report unmeasured reliability as unknown.
@@ -55,7 +57,7 @@ Analyze candidates' task-relevant capabilities, not fixed personalities. Record 
 - Supplement scores with first-person practitioner accounts and checked local outcomes. Record task, scope, harness/version, effort/settings and what was actually checked; distinguish operator experience from controlled measurement.
 - Separate vendor claims, independent benchmarks, firsthand accounts and repeated summaries. Mark search snippets as snippets, not full-body review; votes and copied reports are not independent confirmation.
 - Retain contradictory results and relevant failures. Explain differences in task, context, harness or effort where supported; do not invent aggregate rankings, averages or acceptance rates. Local preference is conditional evidence, not a portable named-model winner.
-- Keep provenance, exact score sources and research limitations in a maintainer evidence record, not caller-facing descriptions. Reuse an existing record where sufficient; a description-only task does not require a full research report.
+- Keep provenance, exact score sources and research limitations in a maintainer evidence record, not caller-facing descriptions. Store that record outside the skill, in scoped project or private storage, so the skill stays portable and self-contained; a description-only task does not require a full research report.
 
 ### Task-fit distinctions
 Do not collapse these into “good coding”; compare evidence for the actual assignment:
@@ -73,6 +75,9 @@ Do not collapse these into “good coding”; compare evidence for the actual as
 | **SWE-Pro** | Code Agent | Evaluates performance on complex real-world GitHub issues. |
 | **Terminal Bench** | CLI / Agentic | Evaluates tool calling, command line execution, and path traversal. |
 | **GDPval-AA** | Orchestrator | Evaluates logical reasoning, data synthesis, and complex planning. |
+| **Nerf Bench Power %** | Post-launch stability | BridgeBench: % of launch-day power retained (score × 0.6, token efficiency × 0.2, cost × 0.2). 90–110% = normal variance; <90% = lost power. Two consecutive out-of-range results = detected change. |
+| **Cost/Correct Fix** | Value efficiency | AI Stupid Level: total API spend ÷ passing attempts on real repo tasks. Exposes cases where a cheaper model costs less per correct result despite lower raw quality. |
+| **Usage Bench %** | Subscription value | BridgeBench: % of day-one plan allowance still provided. 5-hour and weekly windows tracked separately; a drop flags a silent limit cut. |
 
 ### Specialization Profiles
 Use these as screening signals, not substitutes for checked task-specific outcomes.
@@ -80,6 +85,7 @@ Use these as screening signals, not substitutes for checked task-specific outcom
 - **Agentic Workflow**: Strong SWE-Pro, Terminal Bench, and tool-use recall.
 - **Reasoning / Context**: Wide window (e.g., 128K+), needle-in-a-haystack recall, high GDPval-AA scores.
 - **Fast Iteration**: High token-per-second (tok/s) throughput and minimal time-to-first-token (TTFT).
+- **Deployment Stability**: Nerf Bench power sustained 90–110% over time; Marginlab daily CI within expected band; no open AI Stupid Level drift alerts.
 
 ---
 
@@ -105,8 +111,8 @@ Match the deliverable to the request; use the report below for portfolio/migrati
 
 ### Caller-facing descriptions
 - State useful task fit and actionable limits compactly: what to delegate, the necessary scope, and when to choose another route. Preserve existing permission/read-only boundaries; descriptions do not replace them.
-- Optional scores must name the benchmark/version and remain traceable in maintainer evidence. Do not imply that model-level scores measure a configured effort variant or rolling alias.
-- Exclude research caveats, provenance/history, checkpoint-verification residue and reading assignments. Translate uncertainty into an actionable task boundary only when it affects allocation.
+- A caller must be able to route a task from the description alone: state the role boundary, not score dumps. Keep benchmark values, versions and provenance in the maintainer evidence catalog; dispatching a task must not require a benchmark lookup. Do not imply that model-level scores measure a configured effort variant or rolling alias.
+- Exclude research caveats, provenance/history, checkpoint-verification residue, reading assignments and subscription or plan commentary. Translate uncertainty into an actionable task boundary only when it affects allocation.
 - Example: “Use for bounded implementation against settled interfaces and source-faithful edits for a specified reader. Reserve architecture ownership and final document approval for separately qualified review.” Adapt to evidence, not a fixed family stereotype.
 
 Stop before changes outside the authorized scope, paid probes, stress tests, restarts, or model/permission changes without explicit authorization. Before handoff, check task fit, description brevity, score traceability and preserved access/permission safeguards; source inspection is not proof of better routing or runtime compliance.

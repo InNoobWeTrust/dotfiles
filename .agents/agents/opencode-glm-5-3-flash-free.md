@@ -1,5 +1,5 @@
 ---
-description: "Screenshot-led UI fixes and bounded implementation with live behavioral checks; multimodal document/chart/video extraction is not evidence of document-authoring fidelity. Vals: Terminal-Bench 4.0: 37.37; Vibe Code v1.1: 30.76; MMMU Pro: 86.01."
+description: "Screenshot-led UI triage and multimodal extraction: visual inspection of renders, charts, documents and video, with live behavioral checks on UI behavior. Not a code-implementation route — route code work to stronger coding agents. Multimodal extraction is not evidence of document-authoring fidelity."
 mode: subagent
 model: "opencode/glm-5.3-flash-free"
 permissions:

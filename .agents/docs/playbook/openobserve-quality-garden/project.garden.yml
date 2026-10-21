@@ -1,8 +1,0 @@
-apiVersion: garden.io/v1
-kind: Project
-name: openobserve-quality-garden
-defaultEnvironment: local
-disableCloudLogs: true
-dotIgnoreFile: .gitignore
-environments:
-  - name: local

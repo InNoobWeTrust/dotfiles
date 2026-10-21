@@ -23,6 +23,7 @@
 | `.agents/skills/INDEX` | Skill routing table with cost and applicability columns | Engineering lead |
 | `.agents/skills/WIRING` | Skill composition pathways and skill-to-skill transitions | Engineering lead |
 | `.agents/skills/memory/` | Two-tier memory skill: short-term entries, long-term consolidation, dream cycle, eviction protocol, progressive-disclosure structuring | Engineering lead |
+| `.agents/docs/quality-tooling/fleet-benchmarks.csv` | Per-agent model evidence behind fleet routing: scores, prices, provenance, retirement reasons | Engineering lead |
 | `docs/architecture.md` | System design, responsibility split, data ownership model | Engineering lead |
 | `docs/engineering/quality-gates.md` | Quality thresholds, command matrix, escalation rules | Engineering lead |
 | `docs/skills-and-rules/INDEX.md` | How to design skills and rules, failure pattern catalog | Engineering lead |

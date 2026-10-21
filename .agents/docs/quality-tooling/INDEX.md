@@ -16,5 +16,6 @@
 | [Comparison matrix](./comparison-matrix.md) | Category-level tradeoffs | Fast tool comparison |
 | [Agent feedback sensors](./agent-feedback-sensors.md) | Wire quality gates into the coding-agent session | Harness design / Part 2 “leash” |
 | [Extended evidence tools](./extended-evidence-tools.md) | Mutation, a11y, fuzz, behavioral hotspots | Filling gaps beyond lint/coverage |
+| [Fleet benchmark evidence](./fleet-benchmarks.md) | Per-agent model scores, prices and provenance behind fleet routing | Reviewing or changing the agent fleet |
 
 **Related sections:** [project-lifecycle](../project-lifecycle/INDEX.md) · [agentic-qa](../agentic-qa/INDEX.md) · [slides](../slides/INDEX.md) · [Radar Vol 34 research](../research/thoughtworks-radar-vol34/thoughtworks-radar-vol34.md)

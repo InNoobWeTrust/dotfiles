@@ -1,6 +1,6 @@
 # OpenObserve Quality Garden: MVP Playbook
 
-> **For one hypothetical monorepo.** Copy and adapt the standalone [Garden example](./openobserve-quality-garden/) for an application with `backend/` and `frontend/` directories. The example is a template, not a claim that this repository contains that application.
+> **For one hypothetical monorepo.** This playbook defines the contract to implement in a target application with `backend/` and `frontend/` directories. It is a specification, not a claim that this repository contains that application or ships a ready-to-copy implementation.
 
 ## Outcome and boundary
 
@@ -8,7 +8,7 @@ Garden local `Run`/`exec` actions own the reproducible workflow. No GitLab, GitH
 
 This is an MVP for local quality telemetry. It does not define release policy, remote raw-report storage, dashboards, retention, scaling, or security operations. Use the [canonical OpenObserve + MegaLinter guide](../quality-tooling/openobserve-megalinter.md) for those decisions and the broader metadata contract.
 
-## What the example contains
+## What the target monorepo must contain
 
 - **Hypothetical repository:** `backend/` and `frontend/`; adapt commands and pinned tool versions to the target monorepo.
 - **MegaLinter producer:** writes `quality-reports/megalinter/report.json`.
@@ -18,7 +18,7 @@ This is an MVP for local quality telemetry. It does not define release policy, r
 - **Producer metadata:** each producer writes `quality-reports/<producer>/producer.env` beside its report.
 - **Publisher:** depends on all four producers and runs the `openobserve-quality` package.
 
-Read the [example README](./openobserve-quality-garden/README.md), [project.garden.yml](./openobserve-quality-garden/project.garden.yml), and [garden.yml](./openobserve-quality-garden/garden.yml) for the concrete action graph and path contract. The [uploader package README](./openobserve-quality-garden/src/openobserve_quality/README.md) documents the module boundaries.
+This section is the authoritative path contract: keep the four report directories, filenames, and producer metadata fields unless the contract is deliberately versioned. For the general Garden action-graph and configuration patterns, see the [consolidated quality pipeline playbook](../quality-tooling/consolidated-quality-pipeline-playbook.md).
 
 ## Producer metadata contract
 
@@ -47,14 +47,14 @@ The publisher emits flat records containing `event_type`, `status`, `schema_vers
 
 Garden dependencies keep `publish-quality` behind the four producer actions. If it is invoked with partial outputs, the normalizer reports missing, malformed, or producer-failed inputs explicitly rather than inventing success.
 
-See the [uploader tests](./openobserve-quality-garden/tests/test_quality_publisher.py) and [CLI tests](./openobserve-quality-garden/tests/test_cli.py) for the executable contract.
+The target monorepo's own tests are the executable contract: keep publisher and CLI tests beside the implementation, covering the missing, malformed, and producer-failed input paths plus the dry-run no-I/O path.
 
 ## Use the workflow
 
-1. Copy or adapt `openobserve-quality-garden/` into the target monorepo. Keep the four report directories, filenames, metadata fields, and publisher dependency boundary unless the contract is deliberately versioned.
+1. Create the Garden project in the target monorepo (`garden.yml`, `project.garden.yml`, and the publisher package). Keep the four report directories, filenames, metadata fields, and publisher dependency boundary unless the contract is deliberately versioned.
 2. Install Garden, Docker for MegaLinter, `uv`, Lizard, and the target application's backend/frontend dependencies. Pin tool and image versions for repeatability.
 3. Configure these values in the host environment, outside version control: `OPENOBSERVE_INGEST_URL` (credential-free HTTPS `/_json` URL), `OPENOBSERVE_INGEST_USER`, and `OPENOBSERVE_INGEST_TOKEN`. Use least-privilege ingest credentials; do not place values in Garden files or print them.
-4. From the adapted example directory, run the complete local graph:
+4. From the target monorepo's Garden project directory, run the complete local graph:
 
    ```bash
    garden run publish-quality
@@ -67,7 +67,7 @@ See the [uploader tests](./openobserve-quality-garden/tests/test_quality_publish
    ```
 
    Dry run returns before reading reports, credentials, or network resources.
-6. Run the example tests with `uv run pytest` before relying on an adaptation.
+6. Run the target project's own tests with `uv run pytest` before relying on the setup.
 
 Only `publish-quality` receives the three OpenObserve settings through Garden's `${local.env.*}` references. The transport accepts only a credential-free HTTPS `/_json` endpoint, strips query and fragment components, uses a 15-second timeout, and never logs credentials.
 

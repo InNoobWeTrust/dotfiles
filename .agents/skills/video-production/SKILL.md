@@ -60,10 +60,7 @@ Follow this sequence strictly. Each step is a mandatory "Review Gate."
 - **Validation**: Before resuming, verify that `characters.json` contains valid URLs/paths, not just IDs.
 
 ## Data Augmentation
-This skill is enhanced by curated prompts and style seeds synced via:
-```bash
-../../scripts/sync-remotes.sh --apply
-```
+This skill is self-contained: the pipeline, output policy and references bundled in this directory are the whole contract. Optional external prompt and style-seed packs may already sit in a local cache and can be consulted when present.
 
 ### Cache Location
 - `VIDEO_PROD_CACHE` or `~/.cache/video-production-skill`.
@@ -72,7 +69,7 @@ This skill is enhanced by curated prompts and style seeds synced via:
 
 ## Editframe Integration
 
-When the rendering engine is Editframe (HTML web components or React compositions), load the relevant reference below. These are external-synced references — run the sync script to pull the latest versions from editframe.com/skills.
+When the rendering engine is Editframe (HTML web components or React compositions), load the relevant reference below. These are bundled snapshots of the upstream Editframe skill docs; refresh them from editframe.com/skills by hand when upstream has moved.
 
 | When | Load |
 |---|---|

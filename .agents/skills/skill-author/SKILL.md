@@ -1,6 +1,6 @@
 ---
 name: skill-author
-description: "Use this skill whenever creating, modifying, editing, auditing, syncing remote skills, or maintaining skills, rules, or governance files in .agents/. Mandatory whenever editing files in .agents/skills or .agents/rules. Follows official specs from https://agentskills.io and https://agents.md."
+description: "Use this skill whenever creating, modifying, editing, auditing, or maintaining skills, rules, or governance files in .agents/. Mandatory whenever editing files in .agents/skills or .agents/rules. Follows official specs from https://agentskills.io and https://agents.md."
 ---
 
 # Skill Author
@@ -27,8 +27,6 @@ searchable catalog such as CSV, not a duplicated Markdown decision table. Reuse
 existing catalogs and schemas; see [searchable choice catalogs](references/portability-and-reader-contract.md#searchable-choice-catalogs) for capability-based retrieval and fallbacks.
 
 Load `references/instruction-bloat-and-mcp-caution.md` before expanding `AGENTS.md`, adding always-on rules, or choosing MCP as the integration path.
-
-Load `references/remote-skills-sync.md` when checking, fetching, or updating remote skills from external GitHub repositories (`remote-skills-manifest.json`, `sync-remotes.sh`).
 
 Stop / deliverable / anti-patterns: `references/stop-deliverable-antipatterns.md`.
 
