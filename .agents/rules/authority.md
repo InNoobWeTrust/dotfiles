@@ -57,10 +57,17 @@ trigger: always_on
 - Keep active exploratory dialogue in the main thread and address one layer at
   a time. Do not replace Q&A with a monolithic commitment brief. Clear authorized
   work needs no extra approval ceremony.
-- Rewrites classify affected semantics/interfaces as delete or preserve; settle
-  affected consumer contracts and compatibility explicitly. Do not silently add
-  shims or break public promises. Stop the affected unit on a defective contract
-  and revise through its authorized owner.
+- Rewrites classify affected semantics/interfaces as delete or preserve.
+  Backward compatibility protects retained contracts relied on by consumers
+  outside the scoped change, not files or paths by default. Honor approved removal
+  of obsolete code, documents and interfaces; update/remove in-scope imports,
+  links and indexes, and actually delete the obsolete files. Do not substitute
+  pointer-only files, redirects, shims or grace periods solely to retain old paths.
+  A path can itself be a retained consumer contract; do not silently break that
+  promise or invent hypothetical consumers to veto approved deletion. Check
+  affected consumers proportionately and report unresolved impact rather than
+  assuming none. Explicit audit/data-retention duties still apply. Stop the
+  affected unit on a genuine contract defect and revise through its authorized owner.
 - Scientific ideation bypasses engineering roadmaps, TDD, slicing and terminology
   freezes, never authority, safety, data integrity or resource controls.
 

@@ -104,7 +104,7 @@ stateDiagram-v2
 |---|---|
 | Proposed | Draft submitted for review (PR) |
 | Accepted | Reviewed, agreed, merged |
-| Rejected | Evaluated but not adopted (kept for history) |
+| Rejected | Evaluated but not adopted (retain when decision history is needed) |
 | Superseded | Replaced by a newer ADR (link to successor) |
 | Deprecated | No longer valid or applicable |
 
@@ -113,7 +113,7 @@ stateDiagram-v2
 - Location: `docs/architecture/decisions/` or `docs/adr/`
 - Naming: `NNNN-short-kebab-title.md` (e.g., `0001-use-postgresql.md`)
 - Index: Maintain `INDEX.md` or auto-generate with `adr-tools` when an ADR collection is used
-- Never delete: Mark superseded/deprecated, don't remove
+- Retain substantive decision history when needed, not obsolete paths for compatibility. Honor approved ADR deletion and update live indexes/references instead of leaving pointer-only files. Explicit audit/retention requirements still apply; mark superseded/deprecated when the record is retained.
 
 ## Tooling
 

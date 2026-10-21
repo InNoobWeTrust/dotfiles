@@ -73,7 +73,7 @@ Resolve guidance paths against the worker's accessible instruction root and conf
 - Upgrades: capability/API mapping, compatibility and accessible sources, explicit exception owner, scoped dependency edits, and call-site/behavior evidence.
 - Prototype: 2026-10-14; inspect the next 1–2 real implementation handoffs for choice retention and actual reuse before claiming effectiveness.
 
-For a rewrite, overhaul, or delete-and-rebuild unit, classify each old semantic/interface as **delete** or **preserve**. If a public API or consumer app is affected, require approved consumer-facing contract/stubs and sign-off before launch.
+For a rewrite, overhaul, or delete-and-rebuild unit, classify each old semantic/interface as **delete** or **preserve** according to the approved scope. Settle contracts retained for consumers outside the unit, or obtain explicit authorization for their change/removal; do not presume compatibility stubs are required. Include approved obsolete-file deletion and in-scope reference cleanup, not pointer-only replacements for paths approved for removal. Report unresolved outside-consumer impact rather than assuming no consumers.
 
 ## Stop-before-dispatch conditions
 
@@ -90,7 +90,7 @@ Do not dispatch without one coherent approved unit, scope, acceptance evidence, 
 - [ ] Required consumer signatures/schema/errors are settled; no invented business semantics or unapproved public contract changes.
 - [ ] Writable scope, disjoint ownership and cleanup are explicit; exact file deltas are conditional on coordination needs.
 - [ ] Rewrite semantics/interfaces are classified delete or preserve.
-- [ ] Affected public APIs or consumer apps have approved contract/stubs and sign-off.
+- [ ] Remaining outside consumers have settled retained contracts, or their change/removal is explicitly authorized; no automatic compatibility stubs.
 - [ ] The declared writable surface, allowed actions, out-of-scope boundary, and stop conditions agree.
 - [ ] The phased Delivery Contract is included only when its trigger applies, with delegation-specific scope, adjacent-finding, action, and continuation instructions.
 - [ ] The five-section output contract and surgical context are present.

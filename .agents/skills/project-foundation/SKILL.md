@@ -87,7 +87,7 @@ If the project has non-trivial onboarding (more than three setup steps, multiple
 
 ### A6 — Makefile
 
-Thin targets: `help`, `fix`, `lint`, `quality`, `test`, `dev`, `dev-up`, `build`. Adapt to stack; never delete existing targets.
+Thin targets: `help`, `fix`, `lint`, `quality`, `test`, `dev`, `dev-up`, `build`. Adapt to stack; preserve targets required by retained consumers, but honor approved removal of obsolete targets and update affected in-scope callers/docs.
 
 ### A7 — Architecture, quality gates + visual design system (DESIGN.md)
 

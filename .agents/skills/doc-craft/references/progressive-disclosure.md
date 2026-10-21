@@ -83,7 +83,7 @@ Use when decomposing a long linear document (architecture note, system specifica
      | 01 | Problem Definition | 45 | Requirements and constraints |
      | 02 | Architecture Overview | 120 | System design and components |
      ```
-  5. **Prompt User About Original**: Ask whether to keep, archive, or delete the source document.
+   5. **Honor Source Disposition**: Carry out an already-approved keep/archive/delete decision. For approved replacement and deletion, verify the replacement, update/remove in-scope references and remove the original; do not leave a pointer-only stub instead of deleting it. Ask about disposition only when it remains unresolved.
   6. **Overwrite Check**: If destination already contains numbered section files, warn and ask before replacing.
 
 ---

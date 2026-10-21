@@ -25,7 +25,10 @@ limitations, and a small handoff for separate maintainability assessment.
   [MCP server architecture](../architecture-design/references/mcp-server-architecture.md)
   for the MCP mapping.
 - For rewrites, classify affected behavior/interfaces as **delete** or **preserve**
-  and settle caller-visible compatibility before changing them.
+  and settle contracts retained for consumers outside the scoped change.
+  Compatibility does not preserve obsolete files by default: carry out approved
+  code/document/interface deletion and update in-scope references, without
+  pointer-only remnants or unrequested shims in place of the approved removal.
 - For **specification-only** requests, use [Behavior and acceptance](references/testing.md#behavior-and-acceptance)
   and stop at the specification. Do not implement, run checks, or dispatch a
   post-implementation assessment for code that was not written.

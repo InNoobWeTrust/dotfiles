@@ -90,7 +90,7 @@ stateDiagram-v2
 |---|---|
 | Writing ADRs post-facto to justify past hacks | Write ADRs *during* the decision process, before implementation |
 | Omitting negative consequences | Every architectural choice has trade-offs — document them honestly |
-| Deleting obsolete ADRs | Mark as `Superseded by ADR-XXXX` or `Deprecated`; retain history |
+| Treating obsolete ADR paths as compatibility contracts | Retain substantive history when needed, but honor approved deletion and update live references without pointer-only remnants; explicit audit/retention requirements still apply |
 
 ## Approvers
 

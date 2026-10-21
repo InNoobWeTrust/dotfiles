@@ -32,7 +32,7 @@ Rules for editing agent prompts, system instructions, documentation, and configu
 - **No cargo-culting**: Never copy keys (e.g. `variant: high`) onto providers (e.g. CKey) that do not define or support reasoning variants.
 - **Strict naming & signature invariants**: Never alter, rephrase, or invent names for test suites, functions, or interfaces when defined in specs or sibling conventions.
 - **Derived artifacts ship a rebuild path**: Any checked-in generated file (e.g. `personas.csv`) keeps its generator script plus a one-line regen note in-repo. Deleting a one-off generator orphans the artifact from its source on the next edit.
-- **No deletion without a live-reference check**: Every skill file must have a live consumer. Before removing, grep `SKILL.md` links plus repo-wide consumers (shared entrypoints like `discover-personas.sh` break several references at once). No orphans = no auto-delete.
+- **Check consumers, not file longevity**: Before scoped deletion, check live `SKILL.md` links and other consumers, identify retained contracts outside the change, and update/remove affected in-scope references. Honor approved obsolete-file/interface removal; do not retain a file or pointer-only stub solely for legacy compatibility. Report unresolved consumer impact rather than assuming none.
 
 ## 4. Tiered Agent Complexity Pattern
 
