@@ -6,6 +6,7 @@ Use for human-facing documents selected by [Document format selection](document-
 
 - **Reader contract:** State audience, purpose, scope, and assumed knowledge visibly. Set document title/author metadata where appropriate and the correct text language; do not add Markdown YAML frontmatter to `.typ`.
 - **Dependencies:** Prefer built-in Typst features and local assets. Record the compiler version, required fonts, asset paths, and exact package versions when used; pinning a package does not make it available offline.
+- **Template fit:** Preserve an existing suitable template or required publisher/company format. Otherwise use [Template selection](template-selection.md); inspect dependencies before importing, and keep content structure separate from page styling.
 - **Local and bounded:** Follow execution safety practices. Typst defaults its input root to the main file's parent; widen `--root` only to the smallest necessary, secret-free input tree. Root containment is a compiler restriction, not an OS sandbox or protection for secrets inside that tree.
 - **Acquisition and privacy:** Uncached published packages download on demand; use approved network access and scratch/cache locations. Do not install tools or send content to the hosted editor without authorization. A missing compiler/package is a build blocker, not a reason to revert to Markdown.
 
@@ -56,6 +57,8 @@ Describe the symptom, cause, and safe next action.
 ```
 
 This is a content/layout starter, not evidence that a particular environment compiled it. For long documents, use native headings, an outline, and included `.typ` sections; judge source size separately from PDF size.
+
+**Spacing is not guesswork:** Use [Typography and spacing](typography.md) for scoped style settings and a rendered test specimen. Typst's `par.leading` is an edge-to-edge gap, not a baseline multiplier; changing fonts can invalidate previous wrapping and spacing checks.
 
 ### Repository entry and assembled book
 
@@ -112,6 +115,7 @@ Audience, purpose, scope, and key limitations go here.
 | Check | Required observation |
 |---|---|
 | Fresh build | Compilation succeeds from final source/assets; no older output is passed off after failure |
+| Fonts and typography | Review compiler warnings; confirm intended fonts/glyphs, consistent line/paragraph/list/section spacing and wrapping per [Typography and spacing](typography.md#verify-and-correct) |
 | Layout and content | Pages open; no clipping, missing glyphs, broken tables, absent diagrams, or misplaced caveats |
 | Reader workflow | Primary task, code copyability, navigation, and links work in the intended distribution context |
 | Accessibility | Correct language, semantic headings/tables, figure alternatives, contrast, and reading order reviewed |

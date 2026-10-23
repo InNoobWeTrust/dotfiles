@@ -4,6 +4,8 @@ Standard scannable templates designed to prevent AI-generated discursive prose a
 
 **Choose format first:** [Document format selection](document-formats.md) governs saved output. Repository entries and concise main points use Markdown; for comprehensive detail, use the [assembled-book layout](typst-workflow.md#repository-entry-and-assembled-book) and translate the structures below into Typst headings/tables/callouts. Do not expand the entry into a full Markdown mirror of the book.
 
+**Other document families:** Use [Template selection](template-selection.md) and its searchable catalog for technical reports, product documents, scientific papers, CVs, books, slides and letters. These external candidates complement the structures below; a content outline is not a typography theme or permission to redefine domain requirements.
+
 | Document structure | Default source | Key sections |
 |---|---|---|
 | Technical guide / how-to | `docs/guides/<topic>/README.md` + `main.typ`/`main.pdf` when substantial | Entry: purpose, quick start, caveats, PDF link; book: procedure, verification, failures, references |

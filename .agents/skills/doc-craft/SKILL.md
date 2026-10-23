@@ -19,6 +19,8 @@ Before editing, read [Editorial working principles](references/working-principle
 
 Apply [Document format selection](references/document-formats.md) before choosing a filename or template. Keep repository entry pages and concise main points in Markdown for GitHub reading; use [Typst workflow](references/typst-workflow.md) to assemble substantial explanations and expansions into a single book-like PDF alongside its source.
 
+For typography or templates across document types, use [Typography and spacing](references/typography.md) and [Template selection](references/template-selection.md). Apply these methods to CVs, product documents, scientific papers and other native formats without imposing this technical-guide workflow, metadata tables, bold bullet prefixes or a book layout; preserve the document's own reader and submission requirements.
+
 Prefer `.bib` for bibliographic source records and generated citations/reference lists. Use Typst for source-reference information only when `.bib` is unsuitable or cannot represent it adequately; do not hand-maintain a parallel catalog.
 
 ## When to Load This Skill
@@ -65,7 +67,8 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 2. **Top Metadata Block**: Anchor the document with a concise summary table (Objective/Goal, Prerequisites, Boundaries).
 3. **Diagram Anchor**: If explaining multi-component interaction or state flow, draft a diagram first. Validate Mermaid sources and render them to SVG/PNG for Typst; include a caption and text alternative.
 4. **Table Allocation**: Convert parameter lists, configuration matrices, status listings, and trade-off comparisons into native tables (`#table` in Typst; Markdown tables only for Markdown output).
-5. Reference: [`references/visual-rhythm-and-scannability.md`](references/visual-rhythm-and-scannability.md).
+5. **Typography**: For paginated output, follow [Typography and spacing](references/typography.md) before tuning density: select the font and measure, distinguish spacing controls, and inspect rendered pages after changes.
+6. Reference: [`references/visual-rhythm-and-scannability.md`](references/visual-rhythm-and-scannability.md).
 
 ### Phase 3 — Drafting with Canonical Templates
 1. Select the matching template from [`references/templates.md`](references/templates.md):
