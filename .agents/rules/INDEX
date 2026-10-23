@@ -1,39 +1,17 @@
-# Rules Map (Index-First Routing)
+# Rules Index
 
-**Do not load every file in this directory into context.**  
-`../AGENTS.md` is the universal always-on entry point for all harnesses. It **points** at rules. Load a rule body only when its trigger fires or you must enforce a gate.
+Read this map first; load each rule body only when its trigger fires, before the affected action. Do not bulk-load the directory. `../AGENTS.md` supplies the always-on entry point, not an instruction to preload every rule.
 
-## Always-Active (Pointers in AGENTS.md / Instructions)
+| Rule | Trigger |
+|---|---|
+| `authority.md` | Decision ownership, operating mode, elevated autonomy, material decisions, process/resource safety |
+| `evidence.md` | Verification/self-review, completion claims, side-effect tools, skepticism or pushback |
+| `skill-use.md` | Skill discovery/selection and binding workflow commitments |
+| `execution-safety.md` | Before the first shell command and throughout execution; sandbox routing, secrets, long-running processes |
+| `git-safety.md` | Staging, committing, pushing, destructive Git operations |
+| `code-quality.md` | Code implementation, capability reuse, test persistence, existing domain vocabulary |
+| `document-formats.md` | Creating/saving/substantially revising/sharing human-facing documents or choosing report/spec formats |
 
-These rules are referenced from the always-loaded instruction files. Load the rule body when you encounter the trigger condition.
+**Layering:** instructions → triggered rules; skill discovery → `../skills/INDEX` → selected `SKILL.md` → requested references. Rules may point to skills; skills must never link back to or depend on rule files. Do not duplicate rule text into skills.
 
-| Rule | Trigger | Size |
-|---|---|---|
-| `authority.md` | Decision ownership, operating mode selection, elevated autonomy, process/resource safety, material decisions | small |
-| `evidence.md` | Verification, self-review, "done" claims, side-effect tool calls, user skepticism or pushback | small |
-| `skill-use.md` | Discovering a skill (index-first) or after selecting a skill (binding workflow commitment) | small |
-| `execution-safety.md` | Before the first shell command in every session; every command thereafter, sandbox routing, secrets, long-running processes | small |
-| `git-safety.md` | Git staging, committing, pushing, or destructive git operations | small |
-| `code-quality.md` | Code implementation, capability reuse, test persistence and existing domain vocabulary | small |
-
-## On-Demand (Load When Trigger Fires)
-
-| Rule | Trigger | Size |
-|---|---|---|
-| `document-formats.md` | Creating, saving, substantially revising, or sharing human-facing documents; choosing report/specification formats | small |
-
-## Layering & One-Way Boundary
-
-```
-AGENTS.md / instructions (always) → rule pointer → rule body (on fire)
-                                  → skills/INDEX → SKILL.md → references/*
-```
-
-**One-way boundary:** Rules may reference skills and skill references for domain workflows. Skills must **never** depend on or link back to rule files.
-
-## Anti-patterns
-
-- Bulk-reading `rules/*.md` at session start — load only when triggered
-- Modifying `.agents/`, skills, or rules without loading `skill-author` and checking https://agentskills.io + https://agents.md
-- Duplicating rule text into skills or creating rule dependencies inside skills
-- Loading skills without checking `skills/INDEX` first
+**Maintenance:** load `skill-author` before editing `.agents/` governance and check https://agentskills.io and https://agents.md. Check the skill index before loading skill bodies.

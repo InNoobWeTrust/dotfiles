@@ -12,7 +12,7 @@ from pathlib import Path
 
 from rank_bm25 import BM25Plus
 
-CATALOG = Path(__file__).resolve().parents[1] / "catalog.csv"
+CATALOG = Path(__file__).resolve().parents[1] / "assets/catalog.csv"
 POSITIVE_FIELDS = ("id", "use_when", "perspective")
 STOP_WORDS = frozenset("a an and are as at be by for from in is it of on or the this to with".split())
 

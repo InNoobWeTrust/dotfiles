@@ -51,6 +51,12 @@ store the conditional choices in a lightweight structured catalog such as CSV.
 Reuse a suitable existing catalog and its schema before creating another file or
 search mechanism; workflow steps and checklists need not become database records.
 
+Keep static lookup catalogs in the skill's `assets/` directory; `scripts/` holds
+executable code and `references/` explanatory documentation. These are AgentSkills
+recommended conventions, not a prohibition on additional files or directories.
+State the reference-resolution root explicitly; moving a catalog into `assets/`
+does not change skill-root-relative reference values.
+
 - **Model the decision:** Use stable IDs and fields that capture capabilities,
   requirements/use conditions, alternatives, limitations and rationale or sources.
   Adapt to the existing schema rather than forcing a new universal format. Quote

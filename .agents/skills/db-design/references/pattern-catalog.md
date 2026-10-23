@@ -19,7 +19,7 @@ To prevent mixing concerns across the codebase, patterns are partitioned across 
 
 When designing relational schemas, indexing strategies, or production migrations, query the database pattern engine:
 
-An available custom-directory CSV-row BM25 capability is optional: select this skill's `scripts/data` directory and `schema.csv`, `indexing.csv`, `migrations.csv`, `db-reasoning.csv` or `db-traps.csv` for the required domain. Inspect its interface and request a small number of row-level matches with source locators; no memory-store creation is needed. The CLI below retains aliases, empty-query listings and formatting; ordinary file reads and targeted CSV/reference lookup also work without an integration. Generic ranking need not reproduce its boosts. CLI packages must already be available or separately authorized.
+An available custom-directory CSV-row BM25 capability is optional: select this skill's `assets` directory and `schema.csv`, `indexing.csv`, `migrations.csv`, `db-reasoning.csv` or `db-traps.csv` for the required domain. Inspect its interface and request a small number of row-level matches with source locators; no memory-store creation is needed. The CLI below retains aliases, empty-query listings and formatting; ordinary file reads and targeted CSV/reference lookup also work without an integration. Generic ranking need not reproduce its boosts. CLI packages must already be available or separately authorized.
 
 ```bash
 # Self-executing (via uv shebang)

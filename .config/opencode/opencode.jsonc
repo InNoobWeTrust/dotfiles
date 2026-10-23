@@ -11,6 +11,9 @@
       "tokens": 15000,
     },
   },
+  "experimental": {
+    "location_idle_timeout": false,
+  },
   "agent": {
     "title": {
       "model": "opencode/mimo-v2.6-flash-free",

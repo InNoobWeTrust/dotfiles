@@ -32,7 +32,12 @@ For delegated work, the primary establishes discovery and the action/evidence co
 - **Test Behavior Over Implementation**: Assert observable outcomes, contract boundaries, and state transitions. Avoid brittle tests tightly coupled to private internal mechanics that break on innocent refactoring.
 - **Proportional Verification**: Protect meaningful behavior and critical invariants rather than every helper. Direct execution and temporary checks can establish evidence without a maintained suite. Apply [test selection and persistence](testing.md) before retaining test code; verification authority does not automatically authorize new repository tests.
 - **Uncompromising Integrity**: Never weaken assertions, skip failing checks, or mask errors to manufacture passing runs. Real failures are valuable signals that demand honest reporting.
-- **Hermetic Determinism**: Keep tests isolated, reproducible, and independent of external state or timing artifacts.
+- **Hermetic Determinism**: Keep tests isolated, reproducible, and independent of
+  uncontrolled external state or timing artifacts. Prefer disposable real
+  resources (temporary directory, local process or available test database) where
+  authorized; isolation does not justify replacing a boundary we own with a fake.
+  A contract-derived double for an external service verifies only that contract,
+  and any substituted boundary leaves real provider behavior UNVERIFIED.
 
 ### Operational Behavior
 

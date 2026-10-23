@@ -65,6 +65,8 @@ Once a volume of ideas is generated, organize and prioritize them:
 
 Subject the top ideas to diverse role-based lenses:
 
+When adoption or resistance depends on people or institutions, use [Game Theory](../../game-theory/SKILL.md) to explore incentives, strategic reactions and changes to the rules, then bring options and distributed benefits/harms back to ideation without treating convention as proof or novelty as justification.
+
 - **Product Owner**: Does this solve a real user problem? Is the value proposition clear?
 - **Architect / Developer**: Is this technically feasible? Does it align with code-craft standards?
 - **Security**: What are the attack vectors, input vulnerabilities, or privacy concerns?

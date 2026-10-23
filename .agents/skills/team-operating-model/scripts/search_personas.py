@@ -38,7 +38,7 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
 if sys.stderr.encoding and sys.stderr.encoding.lower() != "utf-8":
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
 
-CATALOG = Path(__file__).resolve().parents[1] / "personas.csv"
+CATALOG = Path(__file__).resolve().parents[1] / "assets/personas.csv"
 POSITIVE_FIELDS = ("id", "name", "group", "domain", "use_when")
 STOP_WORDS = frozenset("a an and are as at be by for from in is it of on or the this to with".split())
 

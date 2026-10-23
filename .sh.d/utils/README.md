@@ -14,6 +14,20 @@ and explicitly chosen external repositories, then shows review and progress.
 | Allocate/submit/manage cluster sessions | `dev_slurm` | Bash, Slurm; service binaries on compute nodes |
 | Bring up and manage the agent computer used by browser-driving tools and agents | `agent_computer` | Podman or Docker; `curl` on the host (`jq` optional) |
 
+## Obsolete Stow links
+
+Preview with `sh .sh.d/utils/stow-prune.sh --source "$PWD" --target "$HOME"`;
+add `--apply` to remove matching dangling links. Bootstrap runs this before Stow.
+Host Perl is required even if Stow runs in an isolated Pixi environment.
+Only absent-source links with the exact repository-to-target dotfile mapping are
+eligible. Valid/foreign links, files, directory symlinks and Stow-ignored paths
+stay untouched. Traversal stays within current managed top-level roots, including
+their orphaned nested directories; `--root NAME` adds a former top-level root.
+Preview filenames are escaped. Do not run concurrently with Stow, checkout or
+path renames: checks are conservative, not atomic protection against hostile
+filesystem changes. An error stops bootstrap before Stow; earlier removals are
+reported and are not rolled back. No directories are removed.
+
 ## Already inside an allocation? Start here
 
 From the repository directory on the compute node, without ending or replacing your allocation:

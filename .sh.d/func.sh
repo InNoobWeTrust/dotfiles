@@ -366,7 +366,7 @@ dotfiles_clean() {
             --help|-h)
                 printf 'usage: dotfiles_clean [--dry-run] [--mac-cleanup]\n'
                 printf 'Clean known tool caches (uv, bun, npm, pnpm, go, gh, Podman or Docker builds), temporary files, and platform junk.\n'
-                printf 'Podman cleanup removes dangling images and persistent build cache, not containers or volumes.\n'
+                printf 'Podman cleanup removes dangling images and, when supported, persistent build cache; not containers or volumes.\n'
                 return 0
                 ;;
             *)
@@ -442,11 +442,18 @@ dotfiles_clean() {
     fi
 
     # 9. Prefer Podman image/build-cache pruning; never system-prune Distroboxes.
-    # --build-cache clears --mount=type=cache data (supported by Podman 5.8).
+    # Probe the installed CLI: older Podman versions lack --build-cache.
     if command -v podman >/dev/null 2>&1; then
-        printf "Pruning Podman dangling images and persistent build cache (keeping containers and volumes)...\n"
+        set -- image prune --force
+        if command podman image prune --help 2>/dev/null | grep -q -- '--build-cache'; then
+            set -- "$@" --build-cache
+            printf "Pruning Podman dangling images and persistent build cache (keeping containers and volumes)...\n"
+        else
+            printf "Pruning Podman dangling images (keeping containers and volumes)...\n"
+            printf 'Skipping persistent build cache: --build-cache is unavailable in podman image prune --help.\n'
+        fi
         if [ "$dry_run" -eq 0 ]; then
-            if ! command podman image prune --force --build-cache; then
+            if ! command podman "$@"; then
                 printf 'Warning: Podman cache cleanup failed; check the error above.\n' >&2
             fi
         fi

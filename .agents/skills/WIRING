@@ -1,471 +1,155 @@
 # Skill Wiring
 
-Central registry for skill composition. Individual skills are self-contained
-modules — they describe what THEY do, not what other skills do. This file is
-the single source of truth for how skills relate, compose, and hand off.
+Composition registry: select the domain owner through [INDEX](INDEX), then read only the relevant route below. Skill bodies own methods; this map owns composition. When adding/renaming/removing a skill, update its route and handoffs here. A route never grants launch, spending, signing, disclosure or implementation authority.
 
-> **Maintenance rule**: When adding, renaming, or removing a skill, update
-> this file. Composition policy lives here; individual skills may still mention operational handoff triggers when another skill boundary materially affects execution.
+## Default Composition Rules
 
----
+- Code-logic work defaults to `code-craft` unless a narrower skill owns the design dimension; it can support another primary as a design lens. Simple formatting/config/rename edits need no skill; otherwise prefer the narrowest owner.
+- Non-trivial work requires `team-operating-model` alongside the domain owner before substantive execution; activation means a real primary plus separate worker with current evidence. Exclude trivial tasks first; unavailable permission/capability/evidence blocks affected work, never solo/simulated fallback.
+- Specifications use only the needed owner: `brainstorming` product, `architecture-design` technical, `code-craft` behavior, `ui-ux` journeys/states; `doc-craft` presents established meaning. Start with [lightweight planning](working-principles/references/planning.md) when useful, not a PRD→TRD→BDD ladder. Research/specification does not authorize implementation.
+- Preserve domain ownership on every handoff. Deep references are on demand; paths resolve from this skills directory. Project indexes retain core + used skills only. Management reporting uses `../docs/ai-augmented-project-setup-and-evolution.md` §9 for topics and an audience-appropriate ad-hoc template, not a dedicated skill.
+
+## Cross-Cutting Contracts
+
+### Direction Settlement (Cross-Cutting)
+
+Consequential interpretation/design/trade-offs require an eligible proposal (objective/invariants, source facts, alternatives, recommendation, uncertainty) → **separate original-source validation**, including compatible earlier constraints and a disconfirmer → applicable authority (configured decision-support for in-scope choices, explicitly delegated architect decision, or user for reserved decisions). A decision tool cannot perform the independent validation. The deciding architect/user may validate only if not the proposer.
+
+The architect decision job is bounded/read-only and receives originals, proposal, validation, authority boundary and question; returns the decision, reconciliation, conditions, uncertainty, change conditions or `INCOMPLETE`. The primary records the confirmed choice in existing task context and executes; it cannot self-ratify or override. Do not select a validator or authority to obtain a preferred answer. Missing roles block. Mechanically source-settled steps need no separate round. Safety/reserved approvals remain; this is decision ownership, not permission, team activation or a substitute for cross-family challenge.
+
+### Decision Consultation (Cross-Cutting)
+
+Use `decision-support` for meaningful autonomous next steps, recommendations before asking or worker continue/return uncertainty: gather evidence, consult an existing authorized capability through its actual harness contract, then return through the applicable authority. Skip trivial deterministic choices. Consultation is not fact gathering, delegation, independent review or hard-stop bypass; absence does not waive gates.
+
+### Authorized Delivery and Persistent Work
+
+`team-operating-model` owns delivery, deliberation and aggregate acceptance; matching domain skills own substance. Honor collaborative/HITL requests; authorized autonomous iteration stays within settled direction, resources and per-job bounds, with no default aggregate task cap. Machine/E2E checks and warranted independent review supply current proof; final acceptance stays human-owned. Diagnose repeated/broken verification through `systematic-investigation` before resuming with a changed, supported approach. AFK requires verified isolation, resumable state, bounds, cancellation and cleanup.
+
+For multiple contributors/sessions, restore [persistent coordination](team-operating-model/references/persistent-coordination.md) before role task sources: immutable task/role + session binding → scoped `memory` records/approved plan → bounded `subagent-dispatch` → direction-settled joint plan/authorized execution → append checkpoints after every completed/interrupted slice. Deliberation is optional within a real team; never simulated. [Phased delivery](team-operating-model/references/phased-delivery.md) is independently usable without team activation; use its milestone packet/feedback decisions only for phased work. Roadmaps are for multiple milestones, not every task.
+
+### Delegated Execution
+
+Every named/fallback/dynamic worker or external-node launch uses `subagent-dispatch` and its [worker contract](subagent-dispatch/references/worker-contract.md): scope, output/evidence, READ/WRITE/RUN/network limits, stops and accessible guidance discovery. Workers use `working-principles` themselves; optional hints/references are not inherited parent guidance. Main agents use the same style router; mechanical tasks may use baseline only. When warranted, team deliberation uses separately executed complementary workers (`/swarm`/`/party-mode` only where available); missing permitted workers blocks.
+
+### Plan / Architecture Challenge (Deliberation-Based)
+
+Direction-eligible delegated planner/architect → **separate different-provider-family** reviewer `pragmatic-triage` (justify complexity by probability × impact) → `adversarial` challenge of surviving assumptions → primary's Material Decision Brief. The producer must not simulate its own challenger. This check is additional to direction settlement.
+
+### Review / Audit Cross-Validation
+
+Delegated reviewer/auditor/scanner findings are claims, not facts: independent different-provider-family reviewer `findings-skeptic` checks evidence/context/severity; `pragmatic-triage` challenges defensive complexity when proposed. Present only verified findings at calibrated severity; filter false positives before acting.
+
+### Strategic Human Interaction (Cross-Cutting)
+
+`systematic-investigation`, `brainstorming` or any domain owner → `game-theory` **only when interdependent human responses materially affect the outcome**. Supply observations/rival causes or candidate changes; use its short path before optional deep patterns. It owns choice/information/incentive reconstruction, response traces and rule comparisons; return evidence-labelled hypotheses, options, distributional effects, disconfirmers and unknowns **to the same owner**, which retains workflow, values, evidence gates and authority. No automatic panel, recursion, outreach or implementation. Decision consultation is not strategic analysis. `working-principles` selects this method via its catalog; its incentives-and-constraints reference remains the physical/contingent/value-context bridge, not a competing operational method.
 
 ## Composition Patterns
 
 ### Investigation → Fix → Review
 
-When debugging or fixing a problem:
-
-1. `codebase-exploration` — if the codebase is unfamiliar, navigate first
-2. `systematic-investigation` — root cause analysis
-3. `code-craft` — simplest working fix with relevant behavior evidence
-4. `code-maintainability` — separate-agent report of worthwhile later refinements; no automatic cleanup
-5. `reviewer` — independently check correctness or safety when warranted, not mandatory style polish
+Unfamiliar area → `codebase-exploration`; observed failure → `systematic-investigation`; supported root cause → `code-craft` working fix → separate `code-maintainability` report → warranted correctness/safety `reviewer`, not mandatory style polish. Investigation may instead hand root-cause findings to `brainstorming` for options or `skill-author` for recurring governance failures.
 
 ### Feature Implementation
 
-Use `team-operating-model/references/phased-delivery.md` for phased work. Keep the active milestone
-packet as the contract passed between steps.
-
-1. Shallow research (`codebase-exploration` only for unfamiliar areas) — stop
-   when the active decision, slice boundary, and non-deferrable boundaries are clear
-2. Roadmap — only for multi-milestone work; otherwise select the active milestone
-3. Settle consequential behavior/trust/state/consumer boundaries; add architecture or phase planning only when needed
-4. `code-craft` — implement and verify one active slice at a time
-5. `code-maintainability` — dispatch a separate assessor after working verification and record suggestions for later
-6. `reviewer` — check active correctness/safety contracts when warranted; maintainability suggestions alone are non-blocking
-7. Record evidence and feedback; use phased-delivery feedback decisions only for phased work
+Shallow research until active decision/slice/non-deferrable boundaries are clear → settle consequential behavior/trust/state/consumer contracts (architecture/planning only as needed) → `code-craft` verifies one active slice → separate maintainability assessment → warranted contract review → evidence/feedback. Use milestone packets and canonical feedback decisions only for phased delivery; reviewer feedback can return to feature planning.
 
 ### Working First → Assess Now → Refine Later
 
-`code-craft` owns the smallest verified working implementation, not upfront SOLID
-ceremony. Its primary dispatches a separate `code-maintainability` assessor with
-the outcome, changed files/revision, checks, known shortcuts, and authorized record
-destination. The assessor is report-only: record concrete suggestions or leave it
-alone. The primary persists the report if the assessor lacks record-write scope.
-Missing delegation/recording is reported as pending, never simulated completion.
-
-Apply selected suggestions only after the solution is proven useful and the user
-explicitly approves a bounded refinement. Revalidate stale reports and recheck
-behavior after approved changes. Safety, correctness, integrity, isolation, and
-required compatibility remain non-deferrable; do not classify defects as polish.
-Approved bounded refinements close with checks and a record update, not automatic
-reassessment. Reassess only on request or evidence invalidating the prior assessment;
-new boundaries or broader scope require returning to the primary before proceeding.
-Specification-only and mechanical edits do not trigger this assessment workflow.
-
-**Library ownership:** `code-craft` owns implementation essentials, execution-flow
-techniques, testing, file navigation, language/tooling and pattern lookup.
-`code-maintainability` owns its local SOLID cost questions, readability assessment
-and flow-assessment record methods. Do not send an implementer through that
-assessment library before the solution works, or send an assessor to an old
-implementation checklist.
-
-Use `working-principles/references/planning.md` for lightweight clarification.
-When a durable specification is useful or requested, use its domain owner:
-`brainstorming` for product intent, `architecture-design` for technical constraints,
-`code-craft` for behavior/acceptance, and `ui-ux` for journeys/states. `doc-craft`
-handles presentation. No PRD → TRD → BDD ladder is required. When delegating,
-`subagent-dispatch` receives the active unit's proportionate scope and contract.
+After working verification, the primary dispatches `code-maintainability` with outcome, revision/files, checks, shortcuts and authorized record destination. Assessment is report-only (primary persists if assessor cannot); missing delegation/recording is pending, never simulated. Apply selected suggestions only after usefulness and explicit bounded user approval; revalidate stale reports, recheck behavior and update the record, then close. No automatic reassessment except request/new invalidating evidence; changed boundaries/scope return to primary. Safety/correctness/integrity/isolation/required compatibility are defects, not deferrable polish. Specs/mechanical edits do not trigger assessment. `code-craft` owns implementation/testing/navigation/language/pattern libraries; assessors own local SOLID/readability/flow-cost methods, not an upfront implementation gate.
 
 ### Structural Integrity Across Agents
 
-Use `architecture-design/references/structural-integrity.md` for consequential placement/dependency changes, not routine style cleanup. `codebase-exploration/references/structural-tracing.md` supplies current source/LSP evidence; `memory/references/source-maps.md` supplies optional scoped capture/recall. `code-craft` respects source ownership and changed trust/state/consumer boundaries; `code-maintainability` assesses optional structural refinement afterward. `subagent-dispatch` carries relevant constraints and actual deltas. `team-operating-model` owns aggregate acceptance; `reviewer` checks warranted correctness/safety boundaries. No mandatory extra map or persistence store.
+[Architecture structural integrity](architecture-design/references/structural-integrity.md) governs consequential placement/dependency changes; [source tracing](codebase-exploration/references/structural-tracing.md) supplies current source/LSP evidence; [memory source maps](memory/references/source-maps.md) optionally capture it. Implementers respect ownership/trust/state/consumer boundaries; dispatch carries constraints/actual deltas; team owns aggregate acceptance, reviewer warranted correctness/safety, maintainability optional later refinement. No mandatory extra map/store.
 
 ### UI/UX Implementation
 
-1. `ui-ux` — design-driven workflow: discover → journey → layout → states → style → code → verify (writes UX-SPEC.md as design contract)
-2. `code-craft` — Phase 6 working implementation and verification; separate maintainability assessment afterward
-3. `reviewer` (security lens) — input validation, auth on visual interfaces
-4. `web-qa-audit` — optional Phase 7 browser-based verification for Deep track
-
-**Generative UI is a branch within `ui-ux`, not a separate skill.** Load
-`ui-ux/references/generative-ui.md` when model responses compose live components;
-also load `ui-ux/references/openui.md` for OpenUI Lang / `@openuidev/*` integration.
-The branch adds catalog, prompt, streaming, provenance and action contracts to the
-same UX-SPEC and Phases 1–7. `code-craft` still owns implementation methodology;
-`reviewer` checks trust/action boundaries and `web-qa-audit` supplies executable
-browser evidence when required. Ordinary UI keeps its existing path.
+`ui-ux` discovery→journeys→layout→states→style→code→verify under UX-SPEC → `code-craft` Phase 6 implementation/verification and later separate assessment → reviewer security for input/auth/action boundaries → optional Deep-track Phase 7 `web-qa-audit`. Generative UI stays within this owner: load [generative UI](ui-ux/references/generative-ui.md) and [OpenUI](ui-ux/references/openui.md) only when model-composed interfaces need catalog/prompt/streaming/provenance/action contracts. Ordinary UI does not take that branch.
 
 ### Data Story → Visual → Illustration
 
-1. `data-storytelling` — derive the answer-first narrative, evidence, and supporting chart needs
-2. `illustration-craft` — only when Mermaid or standard charts are insufficient and bespoke composition is required
-3. `reviewer` (editorial or design-rigor lens) — optional polish pass for high-stakes deliverables
-
-### Architecture → Story → Illustration
-
-1. `architecture-design` — map the system, tradeoffs, and current/target state
-2. `data-storytelling` — shape the architecture findings into an audience-aware narrative when the audience is non-technical or decision-oriented
-3. `illustration-craft` — produce the final bespoke explainer only if Mermaid/C4 alone cannot carry the message
+`data-storytelling` derives evidence, answer-first narrative and chart needs → `illustration-craft` only beyond standard charts/Mermaid → optional high-stakes editorial/design-rigor review. For architecture, `architecture-design` maps systems/trade-offs first; add storytelling for nontechnical/decision audiences and bespoke illustration only beyond Mermaid/C4. Finished illustrations can hand to editorial review.
 
 ### Scientific Research & Ideation
 
-1. `research-ideation` — Phase 1–2: First-principles modality audit + Idea Tournament (3 competing hypothesis angles)
-2. `research-ideation` — Phase 3: Adversarial critique matrix & literature grounding (replaces software TDD/slicing)
-3. `research-ideation` — Phase 4: Falsifiable proposal & experimental notebook blueprint (Colab/Marimo)
-4. `reviewer` (scientific lens) — verify negative controls, statistical tests, and falsifiability before laboratory commitment
+`research-ideation` owns modality audit + three-angle hypothesis tournament → adversarial critique/literature → falsifiable proposal and Colab/Marimo notebook blueprint, replacing production TDD/slicing. Warranted scientific review checks controls/statistics/falsifiability before laboratory commitment; ideation grants no compute/lab authority.
 
 ### ML Experiment Execution and Recovery
 
-1. `research-ideation` — when needed, establish hypotheses/falsifiable claims; ideation alone does not authorize compute.
-2. `ml-training` — before configuring or launching training, establish split provenance, update/event schedules, preflight and retention. For existing runs use recovery mode; no rerun by default.
-3. `systematic-investigation` — trace failed evaluation, callbacks, serialization or logging before repair.
-4. `code-craft` — for non-trivial training-pipeline code changes, not ceremony for scientific ideation.
-5. `data-storytelling` — present measured results with split/checkpoint identities and missing coverage; snapshots are not trajectories.
+Hypotheses from `research-ideation` when needed → `ml-training` split provenance, update/event schedules, preflight/retention before launch (existing runs: recovery, not automatic rerun) → investigate evaluation/callback/serialization/logging failures before repair → `code-craft` for non-trivial pipeline changes → `data-storytelling` measured split/checkpoint/coverage-aware results. Snapshots are not trajectories.
 
 ### Distributed Runtime and State Integration
 
-When a compute, storage/sync or consensus platform is already chosen:
-
-1. `distributed-systems-operations` — inspect the actual target/version; establish work/invariant, data placement, resource, commit/retry and recovery contracts; integrate a bounded path and verify before scaling.
-2. `code-craft` — non-trivial application/adapter implementation; `database-access` when transactional sink/deduplication behavior is involved.
-3. `ml-training` — for model-specific splits, update schedules, metrics and training-checkpoint correctness; runtime operations do not replace those contracts.
-4. `systematic-investigation` — diagnose stalled/failed work before repair; `reviewer` for warranted resource/security/correctness checks.
-
-Keep `architecture-design` selection guides for undecided stacks. For AI agent delegation use `subagent-dispatch`, not the distributed code-task workflow. Skill activation grants no compute launch, cluster mutation, public data transfer, spending or signing authority.
+Already-chosen compute/storage/sync/consensus platform → `distributed-systems-operations` actual target/version, invariants, placement/resources, commit/retry/recovery and verified bounded integration before scale → `code-craft` adapters (`database-access` for transactional sink/deduplication). `ml-training` retains model split/schedule/metric/checkpoint contracts. Investigate stalls/failures; review warranted resource/security/correctness boundaries. Undecided stack → architecture selection; AI-agent delegation → `subagent-dispatch`, not distributed code-task operations. No implicit launch/mutation/transfer/spend/sign authority.
 
 ### Documentation Craftsmanship
 
-1. `doc-craft` — audience routing, [document format selection](doc-craft/references/document-formats.md) (Typst source + PDF by default; required Markdown consumers preserved), information layering (Index → Entry → Leaf), abstraction levels, and visual rhythm
-2. `mermaid-validation` — validate Mermaid sources; render to SVG/PNG for Typst rather than embedding diagram code as the visual
-3. `reviewer` (editorial lens) — grammar, tone, clarity, and scannability review
-
+Domain specification owner → `doc-craft` audience/format/layering/abstraction/visual rhythm → `mermaid-validation` for diagrams (render SVG/PNG for Typst, not diagram source as the visual) → warranted editorial review. Preserve native Markdown consumers; comprehensive human-facing detail uses Typst/PDF. Specs can hand directly to independent semantic/editorial review; internal plans/phase specs/consensus tracking go to `memory`, not document publishing.
 
 ### Browser Automation
 
-1. `codebase-exploration` — map unfamiliar site structure before writing domain skills
-2. `cdp-browser-automation` — terminal-browser-first interaction, quick live repros, and mechanical page verification; Chrome/CDP only for explicit tasks or demonstrated gaps
-3. `reviewer` (security lens) — for auth flows, cookies, sensitive data
+Explore unfamiliar site structure before authoring domain skills → `cdp-browser-automation` terminal-browser-first live interaction/repro/verification; Chrome/CDP only when explicitly requested or a demonstrated gap requires it. Reviewer security for auth/cookies/sensitive data.
 
 ### Web QA Audit
 
-**Default (eng-only audience):**
-
-1. `reviewer` (black-box-qa lens) — decide whether executable QA is required
-2. `web-qa-audit` — audit scope, scenario shape, evidence contract, materialization plan
-3. `cdp-browser-automation` — terminal-browser CLI mechanics for live interaction and evidence capture; preserve requested browser/trace coverage rather than silently substituting
-4. `reviewer` — judge findings or review the resulting QA plan when needed
-
-**Branch — non-dev / business / release-owner audience (after machine evidence exists):**
-
-- B1. `web-qa-audit` (stakeholder-report path) — *(intra-skill path switch)* project YAML/MD into Excel / PDF / static HTML under projection gates
-- B2. `data-storytelling` — optional polish for high-stakes executive narrative **after** projection gates pass
-- B3. `reviewer` — judge findings or review the pack when needed
-
-Do **not** run branch steps B1–B2 for eng-only spot checks or eng-only audits.
-
-### Authorized Delivery (Intra-Skill Path)
-
-1. `team-operating-model` delivery path — form the mandatory real primary-plus-worker team; establish authorized autonomous execution within settled direction or honor collaborative/HITL mode. No default aggregate turn/time cap; no solo/simulated fallback. Its phased-delivery reference is independently usable and does not itself activate the team workflow.
-2. Matching domain skills — research/design consequential choices and inspect unfamiliar code before implementation; settle direction through the eligibility gate and record the in-scope contract
-3. `subagent-dispatch` — permitted bounded workers for useful research, implementation, and checks; deliberation only when selected/warranted, with persistent coordination guards for multiple contributors
-4. Machine/integration/E2E checks + `reviewer` — current positive proof and independent user-perspective release rubric; add warranted safety/operations lenses
-5. `systematic-investigation` — diagnose repetitions or broken verification, then resume only with a supported changed approach
-6. Deliver guides/evidence for final human user acceptance; feedback begins another scoped loop. AFK still requires verified isolation, state, job bounds, and cleanup.
-
-### Direction Settlement (Cross-Cutting)
-
-Use before consequential interpretation, direction or internal trade-off choice
-in any workflow. This is bounded decision validation, not team activation.
-
-1. **Eligible proposer** — follow the active direction-eligibility policy. State
-   the objective and hard invariants separately from the proposed mechanism, with
-   source-checked facts, alternatives, a recommendation and uncertainty.
-2. **Separate validator** — reconcile the proposal with the original sources,
-   including earlier compatible constraints, source/version applicability and a
-   disconfirming check. The validator receives the originals and the proposal,
-   not the primary's summary alone. The deciding architect or user may perform
-   this validation itself when it did not author the proposal; a decision-support
-   tool cannot.
-3. **Applicable authority** — decision-support for meaningful in-scope
-   alternatives, an explicitly delegated architect-level decision job, or the
-   user for reserved decisions. The architect job is bounded and read-only: it
-   receives the original sources, proposal, any validation receipt, authority
-   boundary and decision question, and returns the decision, source
-   reconciliation, conditions/invariants, uncertainty, what would change it, or
-   `INCOMPLETE`.
-4. **Primary** — record the confirmed choice and validation evidence in existing
-   task context, then implement. Primary status never confers decision authority;
-   a disagreement returns evidence to the authority and cannot override it.
-   Missing roles block affected work.
-
-Mechanical steps whose goal, behavior and acceptance are already settled by an
-explicit source need no separate direction round. Do not select a validator or
-authority to obtain a preferred answer. Safety, user-reserved authority and hard
-constraints still stop execution; recording a decision is not permission to
-execute an unsafe or unauthorized action. This gate is additional to, not a
-substitute for, the existing cross-family plan/design/audit challenge gate. It is
-decision ownership, not permission or delivery approval.
-
-### Decision Consultation (Cross-Cutting)
-
-Use `decision-support` alongside the matching domain workflow when a meaningful
-choice remains: autonomous next action, recommendation before a user decision,
-or worker continue/return triage. Gather evidence first, consult an existing
-decision-support capability available and authorized in that harness, then own the recommendation. This is
-not delegation, independent review or permission to bypass a hard stop. Skip
-trivial deterministic choices; unavailable consultation does not waive gates.
-
-### Delegated Execution
-
-Any time a background worker, delegated agent, or external node is launched:
-
-1. `subagent-dispatch` — for named, fallback, and dynamically defined workers, load `subagent-dispatch/references/worker-contract.md`; provide scope, output contract, allowed actions, stop conditions, and usable guidance discovery. Style references or short hints are optional; do not assume parent skills or routing-profile bodies are inherited.
-2. `working-principles` — the worker interprets its assignment, reads the catalog where useful, and loads relevant reference sections itself. Main agents can use the same router without delegation; mechanical tasks may stay with the baseline.
-3. **`team-operating-model` deliberation path** when crowd thinking is needed — separately executed permitted workers with complementary lenses; `/swarm` or `/party-mode` can select it when those commands exist. Denied/unavailable workers block; no simulated dialogue fallback.
+Heuristic `reviewer` black-box QA identifies live-evidence need → `web-qa-audit` scope/scenarios/evidence/materialization (grooming/run-card approval before browser-audit path) → `cdp-browser-automation` mechanics → review findings/plans as warranted. Preserve requested browser/trace coverage, not silent substitution. **Only after machine evidence and for non-dev/business/release-owner readers**, switch within QA to stakeholder-report projection (YAML/MD→Excel/PDF/static HTML); only after projection gates, optionally use high-stakes `data-storytelling`. Do not take these reporting branches for engineering-only checks/audits.
 
 ### Project Foundation (Bootstrap, Materialize, Audit/Evolve)
 
-When setting up or keeping a project's AI-augmented foundation honest:
-
-1. `project-foundation` — Mode A Bootstrap | Mode B Audit/Evolve | Mode C Materialize core pack (full skill trees, not INDEX stubs)
-2. `codebase-exploration` — if glossary/architecture need a domain map of an unfamiliar repo
-3. `architecture-design` — deep architecture doc, system design, or ADR writing when system architecture is complex
-4. `devsecops` — CI/CD pipeline + integrated security scanning for the specific platform
-5. `reviewer` — review generated governance files after bootstrap or major evolve
+`project-foundation` Bootstrap / Audit-Evolve / Materialize **full resolvable skill trees, not index stubs** → exploration if domain/glossary mapping needed → architecture when complex → platform-specific `devsecops` → review generated governance after bootstrap/major evolution. Missing skills/FOUNDATION.md or stale architecture/glossary → Audit/Evolve; core pack materialized → drift audit. Architecture mapping can update GLOSSARY through foundation; frontend foundation can hand to `ui-ux` DESIGN.md setup. Written architecture documents → `reviewer` design-rigor lens for design discipline.
 
 ### DevSecOps Hardening
 
-When hardening an existing project's pipeline and security posture:
-
-1. `devsecops` — CI/CD design + full security audit (secrets, deps, SAST, IaC, audit trails) + scanner integration
-2. `code-craft` — implement remediations for security findings
-3. `reviewer` (security lens) — verify fixes address root vulnerabilities
+Existing pipeline/security posture → `devsecops` CI/CD, secrets/dependencies/SAST/IaC/audit scanning and integration → `code-craft` remediation → reviewer security verification. Project bootstrap precedes hardening, not the reverse.
 
 ### Strategic Positioning via OSINT
 
-When public signals should shape outreach, direction, or decision-making:
-
-1. `strategic-osint` — gather and translate public evidence into priorities, positioning, and next actions
-2. Use `strategic-osint` for researching the target organization, decision-maker, or market to shape outreach; use `talent-screening` for evaluating people as candidates or hiring prospects
-3. `brainstorming` — expand options after the signal map is clear
-4. The relevant domain owner — clarify product intent with `brainstorming`, technical constraints with `architecture-design`, or behavior/acceptance with `code-craft`, only as needed
-5. `reviewer` (editorial or adversarial lens) — stress-test the resulting narrative or recommendation
+`strategic-osint` translates public target/organization/market signals to priorities and actions, not candidate screening (`talent-screening`) → `brainstorming` options or settled product intent → needed technical/behavior owner → editorial/adversarial narrative challenge. Signals/options ready for capital allocation/diligence → `investment-assessment`.
 
 ### Database Design → Database Access Implementation
 
-When schema design is complete and the access layer must be implemented:
-
-1. `db-design` — schema modeling, migrations, typed DTO mapping design
-2. `database-access` — implement repositories/adapters, session lifecycle, write contracts, test strategy
-3. `code-craft` — simplest verified adapter implementation; defer optional maintainability refinement
-4. `reviewer` (security lens) — verify parameterization, entity boundary, injection risks
-
-When data-access boundaries or capabilities must be decided at an architectural level first:
-
-1. `architecture-design` — decide data-access boundaries, facade selection, capability declaration
-2. `database-access` — implement the declared boundaries and capability contract
-3. `code-craft` — disciplined adapter implementation
-4. `reviewer` (design-rigor lens) — verify boundary discipline
+`db-design` schema/migrations/typed mapping → `database-access` repositories/adapters, session lifecycle, write/test contracts → `code-craft` verified implementation → reviewer security (parameterization/injection/entity exposure). If access boundaries/facade/capabilities are undecided, `architecture-design` settles them first → access implementation → reviewer design-rigor boundary check. DB design ER diagrams → `mermaid-validation`.
 
 ### Analytical Data Processing & Pipelines (Composable Data Stack)
 
-When designing or implementing data pipelines, analytical querying, feature engineering, or ETL/ELT:
-
-1. `architecture-design` (data-architecture workflow) — design data topology, evaluate embedded in-process OLAP (DuckDB) vs cloud warehouses, decouple query layer via Ibis
-2. `code-craft` — implement pipelines and transformations using the Ibis + DuckDB standard (`python-data-stack.md`)
-3. `data-storytelling` — profile raw files and mine signals using out-of-core Ibis + DuckDB scans
-4. `reviewer` (Python performance / resource lens) — audit data code to eliminate memory-ballooning Pandas loops and isolated Polars lock-in in favor of lazy streaming Ibis expressions
-
-### Unified Delivery, Team Escalation, and Persistent Work
-
-On non-trivial requests or authorized team delivery, load `team-operating-model`
-alongside the domain skill before substantive work and form a real team: primary
-plus at least one separate worker with current criterion-linked contribution.
-Exclude trivial tasks before activation; once loaded, never continue solo or
-simulate workers. Missing capability, permission, or required worker evidence
-blocks affected execution; skill selection never changes those limits.
-
-For authorized build/fix loops, use its delivery reference; research-only discussion
-does not authorize implementation. For decision challenge, use its deliberation reference and persona library.
-Across multiple sessions or contributors (including one-off delegated panels),
-also apply its persistent coordination reference before role task-source reads:
-
-1. `team-operating-model` — form the real team and establish role identity, session binding, onboarding, approved scope, and checkpoint contract
-2. `memory` — resolve role/task records and approved plan under `tasks/<task-id>/` in `MEMORY_DIR`; restore before task sources
-3. `subagent-dispatch` + `worker-contract.md` — bounded handoff with task-role identity, discovery access, and continuation guards
-4. `team-operating-model` deliberation path — joint plan challenge when useful; primary versions and records a direction-settled revision before its execution
-5. `team-operating-model` delivery path — authorized iteration and release evaluation within the approved plan scope and per-slice bounds
-6. `memory` (Capture) — append role checkpoints after every completed/interrupted slice
-7. `memory` (Consolidate via Subagent, report-only) — accepted-task consolidation after recorded user acceptance; apply/markers/archive/eviction require subsequent explicit human approval
+`architecture-design` data topology, embedded DuckDB vs warehouse and Ibis query boundary → `code-craft` Ibis+DuckDB pipeline (`python-data-stack.md`) → `data-storytelling` out-of-core profiling/signals → reviewer memory safety, pushdown/lazy streaming rather than ballooning Pandas or isolated Polars lock-in. Storytelling can return programmatic extraction to code-craft; architecture MCP/tool-server bootstrap/router/endpoints/middleware/contracts likewise hands settled implementation to code-craft.
 
 ### Domain Knowledge Curation
 
-When unfamiliar-domain knowledge or veterans' experience must become usable guidance:
-
-1. `domain-curation` — concrete learning task → credible source map → conditional practitioner judgment → representative/boundary checks → brief/checklist
-2. Load just in time: `systematic-investigation` for observed failures; `decision-support` for meaningful uncertain choices; `reviewer` for evidence/guidance challenge
-3. `research-ideation` only when the next outcome is scientific hypotheses or experiments, not general domain learning
-4. `doc-craft` for reader-ready documents; `memory` for requested retention/recall
-5. `skill-author` only when recurring use and appropriately scoped evidence justify packaging; otherwise keep the brief
+`domain-curation` concrete task→credible lineage→conditional practitioner judgment→representative/boundary checks→brief. Add investigation for failures, consultation for choices, review for evidence; scientific next outcomes use `research-ideation`, reader-ready material `doc-craft`, requested retention `memory`. Package via `skill-author` only when recurring workflow, critical evidence and real task-attempt limits justify it; otherwise retain the brief. Already-grounded authoring skips acquisition.
 
 ### Skill Authoring & Maintenance
 
-When creating or maintaining the .agents/ governance layer:
+`skill-author` Workflow A create/modify or B audit/failure review → foundation for missing foundational files, exploration for unknown code, domain-curation for ungrounded practitioner/domain advice → independent adversarial review. Audit gaps can return B→A; new registered skills go A→B maintenance rotation, not deferred initial discovery. Audit conclusions also need challenge.
 
-1. `skill-author` — Workflow A (create new skill) or Workflow B (quarterly audit + failure review)
-2. `project-foundation` — if the audit reveals missing foundational files
-3. `reviewer` (adversarial lens) — challenge the new skill or audit conclusions
-4. `codebase-exploration` — if the new skill needs domain knowledge of the codebase
+## Handoff Matrix
 
-If the gap is unfamiliar-domain knowledge or practitioner judgment rather than code location, acquire it through `domain-curation` before authoring domain advice; skip acquisition when already grounded.
+The composition patterns above are the canonical domain handoffs; this matrix covers cross-domain transitions not repeated there. Triggers, not a mandatory pipeline, select each edge.
 
-### Plan / Architecture Challenge (Deliberation-Based)
-
-When a delegated architect, planner, or design agent produces a plan or
-architecture proposal, route it through a challenger before presenting to
-the user. This prevents over-engineering and hallucinated complexity from
-reaching the decision-maker unchallenged.
-
-For consequential design the producer must be direction-eligible under the active
-policy; the challenger remains a separate provider family. This challenge is
-additional to the direction gate, not a substitute for it.
-
-1. Delegated agent (architect, planner) produces the plan
-2. `reviewer` (pragmatic-triage lens) — independent agent challenges every proposed complexity against probability × impact
-3. `reviewer` (adversarial lens) — challenge reasoning and assumptions on the surviving design
-4. Host synthesizes the plan + challenge into a Material Decision Brief for the user
-
-**Key principle:** The producer agent does NOT load pragmatic-triage — a
-*separate* agent loads it to challenge the producer's output. This is
-independent-challenger correction, not self-discipline.
-
-### Review / Audit Cross-Validation
-
-When a delegated reviewer, security auditor, or scanner produces findings,
-route those findings through a skeptical second pass before acting on them.
-
-1. Delegated reviewer/auditor produces findings
-2. `reviewer` (findings-skeptic lens) — independent agent cross-validates each finding for evidence, context, and severity calibration
-3. `reviewer` (pragmatic-triage lens) — for any findings that recommend defensive measures, verify the complexity is justified
-4. Host presents only VERIFIED findings at their calibrated severity
-
-**Key principle:** Auditor output is treated as claims, not facts. A
-second agent challenges those claims. False positives are filtered before
-reaching the user.
-
----
-
-## Handoff Points
-
-Natural transitions between skills:
-
-| From | To | Trigger |
+| From | To | Trigger / retained boundary |
 |---|---|---|
-| `skill-author` | `domain-curation` | "Domain knowledge or practitioners' judgment is not grounded enough to encode" |
-| `domain-curation` | `skill-author` | "Recurring workflow, critical evidence and real task-attempt limits justify authorized packaging" |
-| `domain-curation` | `research-ideation` | "Grounded domain map is ready; next task is scientific hypothesis generation or experiments" |
-| `codebase-exploration` | `systematic-investigation` | "I understand the codebase, now I need to debug" |
-| `codebase-exploration` | `code-craft` | "I understand the codebase, now I need to implement" |
-| `code-craft` | `code-maintainability` | "Working behavior verified; separate agent records suggestions, without applying them; approved bounded refinements do not automatically retrigger assessment" |
-| `code-maintainability` | `code-craft` | "Usefulness established and user approved selected refinements; implement bounded change, reverify, update record, and close" |
-| Feature planning | Domain owner (`brainstorming`, `architecture-design`, `code-craft` or `ui-ux`) | "Product, technical, behavior or UX meaning needs clarification or a durable specification" |
-| `code-craft` | `reviewer` | "Active slice complete; review its contract, evidence, and compromises" |
-| `reviewer` | Feature planning | "Select or revisit the canonical phased-delivery feedback decision" |
-| `systematic-investigation` | `brainstorming` | "Root cause analyzed, now brainstorming potential solutions" |
-| `systematic-investigation` | `code-craft` | "Root cause found, now implementing the fix" |
-| `systematic-investigation` | `skill-author` | "Failure pattern discovered, cataloging for governance review" |
-| `brainstorming` | `architecture-design` or `code-craft` | "Product direction settled; technical boundaries or behavior examples need detail" |
-| `brainstorming` | `code-craft` | "Concepts finalized, ready to prototype/implement" |
-| `code-craft` | `reviewer` | "Implementation complete, ready for review" |
-| `reviewer` (black-box-qa lens) | `web-qa-audit` | "Heuristic review says live browser evidence or structured QA is required" |
-| `web-qa-audit` (grooming path) | `web-qa-audit` (browser-audit path) | "Audit-request/run-card is now explicit and QA has approved the scope" |
-| `web-qa-audit` | `cdp-browser-automation` | "Audit scope is set; use terminal-browser for interaction and evidence; escalate only demonstrated capability gaps" |
-| `web-qa-audit` | `web-qa-audit` (stakeholder-report path) | "Machine evidence ready **and** audience is non-dev/business/release-owner — *(intra-skill path switch)*" |
-| `web-qa-audit` (stakeholder-report path) | `data-storytelling` | "Projection gates passed; high-stakes executive narrative polish requested" |
-| `data-storytelling` | `illustration-craft` | "The story is clear, but Mermaid or standard charts cannot carry the message cleanly" |
-| `architecture-design` | `illustration-craft` | "The architecture is documented, but the final artifact needs a bespoke explainer, infographic, or presentation-grade visual beyond Mermaid" |
-| `architecture-design` | `data-storytelling` | "Architecture is mapped, but the audience needs an answer-first narrative or decision framing" |
-| `illustration-craft` | `reviewer` (editorial lens) | "Illustration drafted, ready for critical readability / communication review" |
-| `web-qa-audit` | `reviewer` | "Executable QA produced findings or a plan that needs critical judgment" |
-| Domain specification owner | `doc-craft` | "Domain meaning is established; prepare a usable stakeholder document" |
-| Domain specification owner | `reviewer` | "Specification needs independent semantic or editorial challenge" |
-| `team-operating-model` (deliberation) | `code-craft` | "Deliberation complete, starting authorized implementation of the direction-settled design" |
-| `team-operating-model` (deliberation) | `model-benchmarking` | "Deliberation complete, optimizing model assignments for the selected architecture" |
-| `model-benchmarking` | `team-operating-model` (deliberation) | "Models selected, ready for multi-agent deliberation" |
-| `model-benchmarking` | `architecture-design` | "Verified token costs and model limits inform technical constraints and tradeoffs" |
-| `talent-screening` | `reviewer` (editorial lens) | "Evaluation reports completed, ready for peer review" |
-| `strategic-osint` | `brainstorming` | "The public-signal map is clear; now generate options or paths" |
-| `strategic-osint` | `brainstorming` | "OSINT clarified priorities; document product intent and outcomes for the chosen direction" |
-| `strategic-osint` | `reviewer` (editorial lens) | "Positioning draft is ready; now polish or challenge the narrative" |
-| `strategic-osint` | `investment-assessment` | "Public signals gathered; now size/allocate or diligence a product" |
-| `brainstorming` | `investment-assessment` | "Options framed; now diligence or allocate capital" |
-| `investment-assessment` | `team-operating-model` (deliberation) | "Draft memo ready; finance cast challenge" |
-| `investment-assessment` | `reviewer` (investment-memo lens) | "Memo complete; independent suitability/regime review" |
-| `investment-assessment` | `team-operating-model` (finance cast) | "High-stakes allocation; finance persona challenge" |
-| `reviewer` (investment-memo lens) | `investment-assessment` | "Review failed gates; revise size/allocation" |
-| Any skill | `memory` (Capture) | "Handoff requested, serializing context and saving progress" |
-| `doc-craft` | `memory` (Capture) | "Content is an atomic feature plan, phase spec, or consensus board — route to memory" |
-| `memory` (Recall) | Any skill | "Session restored, resuming active work" |
-| `team-operating-model` | `subagent-dispatch` | "Dispatching a fresh or replacement worker to an existing task-role pair" |
-| `team-operating-model` | `memory` (Capture) | "Checkpointing a completed or interrupted slice to the role record" |
-| Any domain skill | `team-operating-model` (delivery) | "Authorized outcome needs a real-team implement/evaluate/correct loop; solo work stays outside activation" |
-
-| Any skill | `memory` (Consolidate via Subagent) | "Explicit consolidation request — user says 'consolidate memory', 'dream cycle', 'run consolidation', or 'review my notes'" |
-| `memory` (Consolidate via Subagent) | `memory` (Consolidate) | "Approval received or delegation unavailable; applying approved memory writes" |
-| `memory` (Consolidate) | `memory` (Evict) | "Long-term size limits passed, running eviction pass" |
-| Any skill | `memory` (Structure) | "Applying progressive-disclosure pattern to a docs directory or code module" |
-| Any implementation skill | `reviewer` | "Review my work" |
-| `subagent-dispatch` | `team-operating-model` (deliberation) | "Need crowd thinking: separately executed permitted workers; unavailable delegation blocks, never simulated dialogue" |
-| `project-foundation` | `architecture-design` | "Project scaffolded, now writing detailed architecture doc or selecting patterns" |
-| `project-foundation` | `ui-ux` | "Project scaffolded with UI/frontend components; initializing DESIGN.md visual system" |
-| `project-foundation` | `devsecops` | "Project scaffolded, now designing CI/CD with integrated security" |
-| `project-foundation` | `reviewer` | "Governance files created, ready for review" |
-| Any skill | `project-foundation` (Mode B) | "INDEX routes to missing skill, FOUNDATION.md missing, or architecture/glossary clearly stale vs repo" |
-| `project-foundation` (Mode C) | `project-foundation` (Mode B) | "Core pack materialized; run full drift audit" |
-| `devsecops` | `code-craft` | "Vulnerabilities found, now implementing remediations" |
-| `devsecops` | `reviewer` (security lens) | "Pipeline and security config complete, verifying" |
-| `architecture-design` | `project-foundation` | "Architecture mapped, updating GLOSSARY.md with discovered terms" |
-| `architecture-design` | `reviewer` (design-rigor lens) | "Architecture doc written, now reviewing for design discipline" |
-| `skill-author` (Workflow B) | `skill-author` (Workflow A) | "Audit reveals skill gap — creating new skill to fill it" |
-| `skill-author` (Workflow B) | `project-foundation` | "Audit reveals missing foundational files — bootstrapping them" |
-| `skill-author` (Workflow B) | `reviewer` | "Audit complete, challenging conclusions" |
-| `skill-author` (Workflow A) | `reviewer` | "New skill written, ready for adversarial review" |
-| `skill-author` (Workflow A) | `skill-author` (Workflow B) | "New skill registered, queued for next quarterly audit" |
-| Delegated architect/planner | `reviewer` (pragmatic-triage lens) | "Plan/architecture produced by delegated agent — challenge complexity before presenting to user" |
-| `reviewer` (pragmatic-triage lens) | `reviewer` (adversarial lens) | "Unjustified complexity filtered — challenge reasoning on surviving design" |
-| Delegated reviewer/auditor/scanner | `reviewer` (findings-skeptic lens) | "Findings produced by delegated reviewer — cross-validate before acting" |
-| `reviewer` (findings-skeptic lens) | `reviewer` (pragmatic-triage lens) | "Findings verified — challenge any recommended defensive complexity" |
-| `architecture-design` | `mermaid-validation` | "Mermaid diagram generated, validating syntax before embedding" |
-| `data-storytelling` | `mermaid-validation` | "Mermaid visual created, validating syntax before embedding" |
-| `db-design` | `database-access` | Schema finalized — implement the access layer (repositories, session lifecycle, write contracts) |
-| `architecture-design` | `database-access` | Data-access boundaries and capability contract decided — implement them |
-| `database-access` | `code-craft` | Non-trivial adapter implementation needs working behavior and verification |
-| `database-access` | `reviewer` | Access layer complete — security lens (injection, entity exposure) or design-rigor lens (boundary discipline) |
-| `db-design` | `mermaid-validation` | "ER diagram generated, validating syntax before embedding" |
-| `architecture-design` | `code-craft` | Analytical architecture decided — implement pipeline with Ibis + DuckDB |
-| `architecture-design` | `code-craft` | MCP/tool-server structure decided (bootstrap, router, endpoints, middleware, contracts) — implement and verify |
-| `data-storytelling` | `code-craft` | Data profiling/signal mining requires programmatic extraction via Ibis + DuckDB |
-| `code-craft` | `reviewer` | Analytical pipeline complete — verify out-of-core memory safety and query pushdown |
-
----
+| Team deliberation | `code-craft` | Direction settled and implementation authorized |
+| Team deliberation ↔ `model-benchmarking` | Model selection ↔ team deliberation | Optimize architecture-specific assignments; return selected models for deliberation |
+| `model-benchmarking` | `architecture-design` | Verified token costs/limits inform technical trade-offs |
+| `talent-screening` | `reviewer` editorial | Candidate evaluation report ready for peer review |
+| `brainstorming` | `investment-assessment` | Options framed; diligence/allocation needed |
+| `investment-assessment` | Team finance deliberation / reviewer `investment-memo` | Draft memo, high-stakes allocation or independent suitability/regime challenge; finance personas in `team-operating-model/references/personas/finance/` via `discover-personas.sh` |
+| Reviewer `investment-memo` | `investment-assessment` | Failed gates require revised size/allocation; credit/bonds remain a module, not another default owner |
+| Any skill / team / document work | `memory` Capture | Requested handoff/context save or team slice checkpoint; internal execution plans/phase specs/consensus belong here |
+| `memory` Recall | Requesting skill | Restore session/task progress before resuming |
+| Any skill | `memory` Structure | Authorized progressive-disclosure reorganization of docs/modules |
+| Any skill | `memory` Consolidate via fresh subagent | Explicit memory consolidation/dream-cycle/notes-review request; accepted-task pass requires recorded user acceptance and remains report-only |
+| Memory consolidation report | Approved memory application / Evict | Subsequent explicit approval before long-term writes, markers, archive or eviction; unavailable delegation does not silently authorize substitution; size limits flag an approval-gated eviction proposal |
+| Team / subagent dispatch | Each other as needed | Fresh/replacement bounded task-role dispatch; separately executed team deliberation when warranted, never simulated fallback |
+| Any implementation skill | `reviewer` | Requested or warranted independent review, not automatic optional refinement |
+| Any domain skill | Team delivery | Authorized outcome needs a real-team implement/evaluate/correct loop; never use activation to continue solo |
 
 ## Provenance
 
-Some reviewer sub-lenses are derived from implementation skills. The sub-lens
-reviews whether the skill's principles were followed — it does not re-run the
-skill.
+Review lenses check the source principles; they do not rerun the originating workflow.
 
-| Reviewer Sub-Lens | Derived From | Relationship |
-|---|---|---|
-| `reviewer/references/sub-reviewers/design-rigor.md` | `code-craft`, `systematic-investigation` | Reviews whether design discipline and investigation rigor were applied |
-| `reviewer/references/sub-reviewers/investment-memo.md` | `investment-assessment`, multi-perspective finance personas | Reviews rails, regime, role discipline, class-fit, sizing vs pain |
-| `reviewer/references/sub-reviewers/pragmatic-triage.md` | Ostrich algorithm, YAGNI, probability × impact triage | Challenges whether proposed complexity is justified; filters before adversarial/design-rigor drill in |
-| `reviewer/references/sub-reviewers/findings-skeptic.md` | Requirement-derived criteria, disconfirming checks and agreement-bias research | Cross-validates review/audit/scanner findings for false positives and severity inflation |
-
----
-
-## Default Composition Rules
-
-- **Default for implementation**: load `code-craft`. Any task that writes or
-  modifies code logic should use `code-craft` as the primary skill unless a
-  narrower skill already covers the design dimension.
-- `code-craft` can be composed with any other primary skill as a design lens —
-  e.g. `systematic-investigation` (primary) + `code-craft` (design lens).
-- Prefer no skill for simple edits (formatting, config values, renaming only).
-- Prefer the narrowest skill that matches the user intent.
-- **Project setup**: `project-foundation` → `devsecops` (foundation first, then secure the pipeline).
-- **Security hardening**: `devsecops` → `code-craft` → `reviewer` (security lens).
-- **Governance maintenance**: `skill-author` is the entry point; it routes to `project-foundation` or back to itself (Workflow A) as gaps are found.
-- **Personal/portfolio investing (multi-asset)**: `investment-assessment` (author) → optional `team-operating-model` deliberation/finance cast or `reviewer` investment-memo lens for high-stakes challenge. Personas under `team-operating-model/references/personas/finance/` via `discover-personas.sh`.
-- **Management reporting**: Not a skill — refer to `docs/ai-augmented-project-setup-and-evolution.md` §9 for what to report. Define your org's reporting template and generate ad-hoc using `data-storytelling` for data interpretation.
+| Reviewer lens | Source |
+|---|---|
+| `design-rigor` | `code-craft`, `systematic-investigation` — design discipline and investigation rigor |
+| `investment-memo` | `investment-assessment`, finance perspectives — rails/regime/role/class-fit/sizing |
+| `pragmatic-triage` | Ostrich algorithm, YAGNI, probability × impact — filter unjustified complexity before deeper challenge |
+| `findings-skeptic` | Requirement-derived criteria, disconfirmers, agreement-bias research — false positives and severity calibration |

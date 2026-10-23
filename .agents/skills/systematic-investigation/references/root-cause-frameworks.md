@@ -76,4 +76,6 @@ Break free from assumptions. Use when you're stuck because "that's just how it w
 
 Example: Instead of "this library is slow, find a faster one," ask "what computation do we actually need? Can we avoid it entirely?"
 
+When the disputed constraint involves interdependent human choices, use [Game Theory](../../game-theory/SKILL.md) to reconstruct incentives, information and reactions, test competing strategic explanations, then return the evidence and unknowns to this investigation.
+
 ---

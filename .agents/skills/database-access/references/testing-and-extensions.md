@@ -6,30 +6,31 @@
 
 | Layer | Test type | What to verify |
 |---|---|---|
-| Repository / adapter unit | Unit test with test double | Query construction, DTO mapping, error translation |
+| Repository / adapter | Real DB test on the target engine | Query construction, DTO mapping, error translation, exercised constraints |
 | Multi-step write path | Integration test against real DB | UoW boundary, rollback on error, constraint enforcement |
 | Full service + adapter | Integration or contract test | End-to-end correctness, idempotency, concurrency behavior |
 
 ### Unit Testing Repositories
 
-Use a test double for the DB session when testing query logic and mapping in isolation. Avoid mocking the ORM session object directly — it is large and fragile. Prefer:
+Default to the real adapter against a real DB on the target engine, using
+authorized isolated data and cleanup. Stock SQLite in-memory can verify exercised
+constraints, rollback and adapter behavior for compatible SQLite-targeted code.
+It does not establish libSQL/Turso, file-backed durability/locking/WAL, or
+PostgreSQL/MySQL coverage; those claims require the actual engine/version and
+relevant configuration/mode, otherwise report UNVERIFIED.
 
-1. **In-process real DB** (SQLite in-memory, PostgreSQL via Docker / testcontainers) — most reliable.
-2. **Fake repository** implementing the same interface — for service-layer unit tests that should not touch the DB.
-3. **Mock/stub session** — only when a real DB is unavailable and the query logic is simple enough.
-
-```python
-# Fake repository for service-layer unit tests
-class FakeOrderRepository:
-    def __init__(self):
-        self._store: dict[UUID, OrderDTO] = {}
-
-    def add(self, order: Order) -> None:
-        self._store[order.id] = OrderDTO.from_domain(order)
-
-    def find_by_id(self, order_id: UUID) -> Optional[OrderDTO]:
-        return self._store.get(order_id)
-```
+Follow [real-first execution](../../code-craft/references/testing.md#real-first-execution).
+The schema, queries and adapter code that the current system defines and controls
+are owned regardless of where the engine runs; transport, hosting or deployment
+topology alone does not decide ownership. Do not replace them with a repository fake
+or a mocked ORM session; neither can verify query, constraint, rollback, concurrency
+or engine behavior, and the DB boundary stays UNVERIFIED. Test pure mapping or
+transformation helpers directly with deterministic fixtures. If the target engine
+cannot run within authorization or safety limits, report the DB coverage UNVERIFIED.
+A genuinely externally governed data service — one whose contract is defined and
+controlled outside the current system — may apply the external mock-first gate to
+its own service-contract boundary; that mock does not verify real engine behavior
+or persistence.
 
 ```python
 # Integration test with real DB (pytest + SQLAlchemy)
@@ -88,17 +89,20 @@ async def test_optimistic_lock_conflict_raises_domain_error(engine):
 ### Test-Double Decision Tree
 
 ```
-Does the test need real constraint enforcement (FK, UNIQUE, CHECK)?
-  YES → use a real DB (in-memory or containerized)
-  NO → use a fake repository or in-memory store
+For current-system-owned data-access boundaries and real engine/persistence claims
+(external service-contract mocks follow the gate above):
 
-Does the test verify ORM lifecycle behavior (flush, lazy load, expire)?
-  YES → must use a real DB session (no mock substitutes session internals reliably)
-  NO → fake repository is fine
+Can the real path run within authorization and safety limits?
+  YES → use the real adapter and target-engine DB, including service-layer paths
+  NO → state the concrete blocker or safety limit; DB coverage UNVERIFIED
 
-Is this a service-layer test focusing on business logic?
-  YES → fake repository (fast, isolated, no DB setup)
-  NO → integration test with real DB
+Is the target the actual engine required by the claim?
+  YES → real DB evidence may establish engine behavior
+  NO → report which engine was exercised and what remains UNVERIFIED
+
+Does the claim involve constraints, ORM lifecycle, rollback or concurrency?
+  YES → only a real target-engine DB can establish that behavior
+  NO → still use real execution; an ORM/session double is not a substitute
 ```
 
 ---
@@ -153,7 +157,10 @@ When declared:
 
 ## testcontainers — Portable Real-DB Tests
 
-For projects that need portable integration tests without a running DB service:
+For projects that need portable integration tests without a running DB service,
+use testcontainers only where the dependencies, container runtime and image are
+already available or their acquisition/execution is authorized. These examples
+grant no installation, network or container-execution authority:
 
 ```python
 # Python — testcontainers-python

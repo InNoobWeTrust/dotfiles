@@ -26,7 +26,7 @@ implementation remains valid; this engine is not a maintainability audit.
 
 ### Running the Search Engine
 
-Prefer a configured custom-directory CSV-row BM25 capability when available: target this skill's `scripts/data` directory, explicitly select the relevant domain CSV below, and retrieve a small number of rows with source locators. Inspect the live schema. Generic exact row filters are not equivalent to the CLI's optional stack/model/alias rules; use the retained CLI when those semantics or shortcuts are needed. No memory-scope creation is involved.
+Prefer a configured custom-directory CSV-row BM25 capability when available: target this skill's `assets` directory, explicitly select the relevant domain CSV below, and retrieve a small number of rows with source locators. Inspect the live schema. Generic exact row filters are not equivalent to the CLI's optional stack/model/alias rules; use the retained CLI when those semantics or shortcuts are needed. No memory-scope creation is involved.
 
 Search integrations are optional, not a prerequisite for this skill; ordinary file reads and targeted lookup of the relevant CSV/reference also work. The CLI uses PEP 723 metadata and `rank-bm25`; it is not dependency-free. Use an already available dependency environment or obtain installation approval:
 
@@ -63,7 +63,7 @@ python3 .agents/skills/code-craft/scripts/search.py "<query>" [--stack <stack>]
 
 If command execution or dependencies are unavailable, use targeted reads of the
 relevant CSV or the IDs below; do not install or bypass restrictions. Resolve
-`scripts/data` against the discovered code-craft skill directory, not a presumed
+`assets` against the discovered code-craft skill directory, not a presumed
 working directory. These are conditional techniques, not a required architecture:
 
 ### Modern Code Patterns

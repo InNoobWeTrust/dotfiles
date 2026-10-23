@@ -85,7 +85,7 @@ For a skill catalog, call `search` with an absolute directory and an exact file,
 Replace `/home/agent/.agents` with your actual shared skill location:
 
 ```json
-{"target":{"kind":"directory","path":"/home/agent/.agents/skills/working-principles","files":["catalog.csv"]},"query":"surgical","fields":["id","use_when","perspective"],"limit":3}
+{"target":{"kind":"directory","path":"/home/agent/.agents/skills/working-principles","files":["assets/catalog.csv"]},"query":"surgical","fields":["id","use_when","perspective"],"limit":3}
 ```
 
 The matching `implementation` row includes its record number and full row (including `reference`);

@@ -25,7 +25,7 @@ uv run --script scripts/search.py "diagnosis unexpected behavior causal explanat
 uv run --script scripts/search.py --id verification
 ```
 
-An available **custom-directory CSV-row BM25** capability can retrieve candidates: select this skill directory and only `catalog.csv`, search positive fields `id`, `use_when`, `perspective`, limit three. Inspect its interface; keep `avoid_when` for judging candidates, not positive ranking. Use an exact `id` row filter for a known ID, or load its explicit reference. This is optional and protocol-independent: no MCP, resolver or memory creation is needed. The CLI above is another route when its dependency is available or separately authorized; ordinary file reads and targeted lookup also suffice. Retrieve at most three candidates with applicability, exclusions and reference paths; generic ranking need not match the CLI's boosts. Mechanical tasks can use the baseline without searching.
+An available **custom-directory CSV-row BM25** capability can retrieve candidates: select this skill directory and only `assets/catalog.csv`, search positive fields `id`, `use_when`, `perspective`, limit three. Inspect its interface; keep `avoid_when` for judging candidates, not positive ranking. Use an exact `id` row filter for a known ID, or load its explicit reference. This is optional and protocol-independent: no MCP, resolver or memory creation is needed. The CLI above is another route when its dependency is available or separately authorized; ordinary file reads and targeted lookup also suffice. Retrieve at most three candidates with applicability, exclusions and reference paths; generic ranking need not match the CLI's boosts. Mechanical tasks can use the baseline without searching.
 
 Candidates are suggestions, not a decision. Check their applicability and exclusions against the assignment before loading a reference. If none fits, refine the query or use the baseline and applicable domain guidance. If search is unavailable, use an accessible explicit reference or targeted lookup; do not dump the CSV into context as a fallback.
 
@@ -77,7 +77,7 @@ Adapt emphasis when evidence changes, without silently changing scope or authori
 
 ## Collection maintenance and prototype
 
-Add a descriptive row to `catalog.csv` and a reference only when an existing source cannot cover a recurring need. Columns are `id,use_when,avoid_when,perspective,reference`; IDs are unique lowercase kebab-case, references are portable file paths with optional heading anchors. Prefer linking an existing authoritative section over copying its text. Quoted CSV fields may contain commas; use CSV-aware tooling when parsing rather than splitting on commas.
+Add a descriptive row to `assets/catalog.csv` and a reference only when an existing source cannot cover a recurring need. Columns are `id,use_when,avoid_when,perspective,reference`; IDs are unique lowercase kebab-case, references are portable file paths with optional heading anchors. Prefer linking an existing authoritative section over copying its text. Quoted CSV fields may contain commas; use CSV-aware tooling when parsing rather than splitting on commas.
 
 Lifecycle: **Prototype**, created **2026-10-08**. Review selection and source access after the first 1–2 real uses, or at the next quarterly skill audit. Mechanical catalog checks do not demonstrate Antigravity or any other harness's loading/compliance.
 
@@ -89,7 +89,7 @@ Lifecycle: **Prototype**, created **2026-10-08**. Review selection and source ac
 
 ## References
 
-- [Catalog](catalog.csv)
+- [Catalog](assets/catalog.csv)
 - [Baseline](references/baseline.md)
 - [Planning and shared understanding](references/planning.md) — lightweight discovery, bounded plans and consumer transitions; usable without formal specifications
 - [Research](references/research.md)

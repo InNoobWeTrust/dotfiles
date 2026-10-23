@@ -64,6 +64,12 @@ for runtime_dir in "$HOME/.local" "$HOME/.local/share" "$HOME/.local/state"; do
     fi
 done
 
+# Remove only obsolete, repository-owned links; never follow directory symlinks.
+sh "$SCRIPT_DIR/.sh.d/utils/stow-prune.sh" --source "$SCRIPT_DIR" --target "$HOME" --apply || {
+    echo "Error: obsolete-link cleanup failed; Stow was not run. Review the cleanup output before retrying." >&2
+    exit 1
+}
+
 # Link individual files so application writes don't enter the dotfiles repo.
 printf '\n%s\n' "Symlinking dotfiles..."
 eval "$STOW_COMMAND -d '$SCRIPT_DIR' . -t ~ --dotfiles --no-folding $STOW_IGNORE_ARGS" || {

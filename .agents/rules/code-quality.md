@@ -36,6 +36,19 @@ trigger: always_on
   for critical authorization, financial, integrity or state-transition logic.
   Other checks stay in approved external scratch and are cleaned up before
   handoff. Build/commit approval is not permission to retain extra tests.
+- **Ownership decides test doubles:** Exercise standalone code and interfaces
+  owned by the current system with actual execution and real dependencies.
+  Use a mock, stub, fake or contract fixture first only for an external service
+  we do not control whose contract is established outside this system; cite that
+  external contract rather than inventing it. HTTP, process or repository
+  boundaries do not make an interface external. If an owned component is
+  unavailable or unsafe, report that coverage UNVERIFIED instead of inventing a
+  substitute; an unknown or missing contract is not permission to mock. Derive
+  expected results from requirements, specifications or independently verified
+  facts, never from the code's output or a model guess. Direct pure-function
+  calls with deterministic fixtures are real testing. Report substituted
+  boundaries as UNVERIFIED, never as real provider integration. See
+  [Testing](../skills/code-craft/references/testing.md#real-first-execution).
 - Honor existing suites and quality gates: never delete, weaken or bypass them
   without explicit user approval. TDD and clean-room testing are optional methods,
   not exemptions from outcome verification or test-retention boundaries.
