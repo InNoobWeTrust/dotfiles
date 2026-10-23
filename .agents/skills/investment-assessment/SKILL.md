@@ -25,8 +25,8 @@ Deep playbooks: `references/phases.md`, `references/regime-and-cycle.md`, `refer
 | Does this fit the cycle / my macro view? | Yes |
 | Compare A vs B (deposit vs fund vs gold vs credit) | Yes |
 | Review my portfolio risk | Yes |
-| Pure company PR OSINT, no money decision | No → `strategic-osint` |
-| Code / security review | No → `reviewer` software lenses |
+| Pure company PR OSINT, no money decision | No → public-signal intelligence workflow |
+| Code / security review | No → software quality or security evaluation |
 
 Credit/bond diligence is one **asset-class module** under `references/asset-classes/`, not a separate skill.
 
@@ -43,14 +43,16 @@ Credit/bond diligence is one **asset-class module** under `references/asset-clas
 
 | Need | Load / hand off |
 |---|---|
-| Open option space before numbers | `brainstorming` |
-| Issuer / company / country public signals | `strategic-osint` |
-| Challenge a draft memo | `team-operating-model` deliberation + finance cast |
-| Independent review of memo | `reviewer` → `investment-memo` lens |
-| High-stakes crowd challenge | `team-operating-model` deliberation/finance cast |
-| Delegation contracts | `subagent-dispatch` |
+| Open option space before numbers | Creative ideation / product brief workflow |
+| Issuer / company / country public signals | Public-signal intelligence workflow |
+| Challenge a draft memo | Multi-perspective deliberation with finance roles |
+| Independent review of memo | Independent investment-memo evaluation of suitability, assumptions, risks and disclosures |
+| High-stakes crowd challenge | Multi-perspective deliberation / finance cast |
+| Delegation contracts | Safe delegation workflow |
 
-### Finance cast (`discover-personas.sh prompt "Name"`)
+### Finance cast
+
+Use each named persona as an analytical role and perspective. Apply each as an explicit reasoning lens. Persona system prompt bodies may be available from a deliberation skill's persona library if that capability is present in your installed pack; otherwise use the role names below as analytical perspectives.
 
 | Persona | When |
 |---|---|
@@ -161,4 +163,4 @@ Full table: `references/anti-patterns.md`.
 - `references/portfolio-construction.md`  
 - `references/asset-classes/*`  
 - `references/anti-patterns.md`  
-- Related: `strategic-osint`, `brainstorming`, `reviewer` (`investment-memo`), `team-operating-model` finance personas
+- Related: public-signal intelligence workflow, ideation workflow, independent review (investment-memo lens), multi-perspective deliberation with finance personas

@@ -2,6 +2,8 @@
 
 Composition registry: select the domain owner through [INDEX](INDEX), then read only the relevant route below. Skill bodies own methods; this map owns composition. When adding/renaming/removing a skill, update its route and handoffs here. A route never grants launch, spending, signing, disclosure or implementation authority.
 
+Installation boundary: this map intentionally binds capabilities to concrete skill identities. Individual bundles must remain usable without this map or sibling trees: describe required inputs, output/evidence, authority and absent-capability stops locally. A skill rename changes discovery/installation mappings, not unrelated operational workflows.
+
 ## Default Composition Rules
 
 - Code-logic work defaults to `code-craft` unless a narrower skill owns the design dimension; it can support another primary as a design lens. Simple formatting/config/rename edits need no skill; otherwise prefer the narrowest owner.
@@ -25,7 +27,7 @@ Use `decision-support` for meaningful autonomous next steps, recommendations bef
 
 `team-operating-model` owns delivery, deliberation and aggregate acceptance; matching domain skills own substance. Honor collaborative/HITL requests; authorized autonomous iteration stays within settled direction, resources and per-job bounds, with no default aggregate task cap. Machine/E2E checks and warranted independent review supply current proof; final acceptance stays human-owned. Diagnose repeated/broken verification through `systematic-investigation` before resuming with a changed, supported approach. AFK requires verified isolation, resumable state, bounds, cancellation and cleanup.
 
-For multiple contributors/sessions, restore [persistent coordination](team-operating-model/references/persistent-coordination.md) before role task sources: immutable task/role + session binding → scoped `memory` records/approved plan → bounded `subagent-dispatch` → direction-settled joint plan/authorized execution → append checkpoints after every completed/interrupted slice. Deliberation is optional within a real team; never simulated. [Phased delivery](team-operating-model/references/phased-delivery.md) is independently usable without team activation; use its milestone packet/feedback decisions only for phased work. Roadmaps are for multiple milestones, not every task.
+For multiple contributors/sessions, restore [persistent coordination](team-operating-model/references/persistent-coordination.md) before role task sources: immutable task/role + session binding → scoped `memory-techniques` records/approved plan → bounded `subagent-dispatch` → direction-settled joint plan/authorized execution → append checkpoints after every completed/interrupted slice. Deliberation is optional within a real team; never simulated. [Phased delivery](team-operating-model/references/phased-delivery.md) is independently usable without team activation; use its milestone packet/feedback decisions only for phased work. Roadmaps are for multiple milestones, not every task.
 
 ### Delegated Execution
 
@@ -59,11 +61,15 @@ After working verification, the primary dispatches `code-maintainability` with o
 
 ### Structural Integrity Across Agents
 
-[Architecture structural integrity](architecture-design/references/structural-integrity.md) governs consequential placement/dependency changes; [source tracing](codebase-exploration/references/structural-tracing.md) supplies current source/LSP evidence; [memory source maps](memory/references/source-maps.md) optionally capture it. Implementers respect ownership/trust/state/consumer boundaries; dispatch carries constraints/actual deltas; team owns aggregate acceptance, reviewer warranted correctness/safety, maintainability optional later refinement. No mandatory extra map/store.
+[Architecture structural integrity](architecture-design/references/structural-integrity.md) governs consequential placement/dependency changes; [source tracing](codebase-exploration/references/structural-tracing.md) supplies current source/LSP evidence; [memory source maps](memory-techniques/references/source-maps.md) optionally capture it. Implementers respect ownership/trust/state/consumer boundaries; dispatch carries constraints/actual deltas; team owns aggregate acceptance, reviewer warranted correctness/safety, maintainability optional later refinement. No mandatory extra map/store.
 
 ### UI/UX Implementation
 
 `ui-ux` discovery→journeys→layout→states→style→code→verify under UX-SPEC → `code-craft` Phase 6 implementation/verification and later separate assessment → reviewer security for input/auth/action boundaries → optional Deep-track Phase 7 `web-qa-audit`. Generative UI stays within this owner: load [generative UI](ui-ux/references/generative-ui.md) and [OpenUI](ui-ux/references/openui.md) only when model-composed interfaces need catalog/prompt/streaming/provenance/action contracts. Ordinary UI does not take that branch.
+
+### Developer Experience
+
+`developer-experience` owns developer-task friction, scoped coverage and discoverability across configuration, invocation, project/module views, optional diagnostics, replay/recovery and conventions. `codebase-exploration` owns source tracing; `architecture-design` owns structural interpretation and changed responsibility/dependency contracts; DX selects and labels useful views, not a second C4 method. `systematic-investigation` owns root causes; `code-craft` implements settled changes; `code-maintainability` assesses working-code refinements without automatic cleanup. `project-foundation` owns foundation/pack bootstrap, not every task entry point. Replay specialization goes to `ml-training`, `distributed-systems-operations` or `database-access` as warranted; `doc-craft` presents substantial human-facing material. No required DX-SPEC, task runner, graph platform or telemetry deployment; missing evidence limits the affected claim, never implies install/export/refactor authority.
 
 ### Data Story → Visual → Illustration
 
@@ -83,7 +89,7 @@ Already-chosen compute/storage/sync/consensus platform → `distributed-systems-
 
 ### Documentation Craftsmanship
 
-Domain specification owner → `doc-craft` audience/format/layering/abstraction/visual rhythm → `mermaid-validation` for diagrams (render SVG/PNG for Typst, not diagram source as the visual) → warranted editorial review. Preserve native Markdown consumers; comprehensive human-facing detail uses Typst/PDF. Specs can hand directly to independent semantic/editorial review; internal plans/phase specs/consensus tracking go to `memory`, not document publishing.
+Domain specification owner → `doc-craft` audience/format/layering/abstraction/visual rhythm → `mermaid-validation` for diagrams (render SVG/PNG for Typst, not diagram source as the visual) → warranted editorial review. Preserve native Markdown consumers; comprehensive human-facing detail uses Typst/PDF. Specs can hand directly to independent semantic/editorial review; internal plans/phase specs/consensus tracking go to `memory-techniques`, not document publishing.
 
 ### Browser Automation
 
@@ -115,7 +121,7 @@ Existing pipeline/security posture → `devsecops` CI/CD, secrets/dependencies/S
 
 ### Domain Knowledge Curation
 
-`domain-curation` concrete task→credible lineage→conditional practitioner judgment→representative/boundary checks→brief. Add investigation for failures, consultation for choices, review for evidence; scientific next outcomes use `research-ideation`, reader-ready material `doc-craft`, requested retention `memory`. Package via `skill-author` only when recurring workflow, critical evidence and real task-attempt limits justify it; otherwise retain the brief. Already-grounded authoring skips acquisition.
+`domain-curation` concrete task→credible lineage→conditional practitioner judgment→representative/boundary checks→brief. Add investigation for failures, consultation for choices, review for evidence; scientific next outcomes use `research-ideation`, reader-ready material `doc-craft`, requested retention `memory-techniques`. Package via `skill-author` only when recurring workflow, critical evidence and real task-attempt limits justify it; otherwise retain the brief. Already-grounded authoring skips acquisition.
 
 ### Skill Authoring & Maintenance
 
@@ -134,10 +140,10 @@ The composition patterns above are the canonical domain handoffs; this matrix co
 | `brainstorming` | `investment-assessment` | Options framed; diligence/allocation needed |
 | `investment-assessment` | Team finance deliberation / reviewer `investment-memo` | Draft memo, high-stakes allocation or independent suitability/regime challenge; finance personas in `team-operating-model/references/personas/finance/` via `discover-personas.sh` |
 | Reviewer `investment-memo` | `investment-assessment` | Failed gates require revised size/allocation; credit/bonds remain a module, not another default owner |
-| Any skill / team / document work | `memory` Capture | Requested handoff/context save or team slice checkpoint; internal execution plans/phase specs/consensus belong here |
-| `memory` Recall | Requesting skill | Restore session/task progress before resuming |
-| Any skill | `memory` Structure | Authorized progressive-disclosure reorganization of docs/modules |
-| Any skill | `memory` Consolidate via fresh subagent | Explicit memory consolidation/dream-cycle/notes-review request; accepted-task pass requires recorded user acceptance and remains report-only |
+| Any skill / team / document work | `memory-techniques` Capture | Requested handoff/context save or team slice checkpoint; internal execution plans/phase specs/consensus belong here |
+| `memory-techniques` Recall | Requesting skill | Restore session/task progress before resuming |
+| Any skill | `memory-techniques` Structure | Authorized progressive-disclosure reorganization of docs/modules |
+| Any skill | `memory-techniques` Consolidate via fresh subagent | Explicit memory consolidation/dream-cycle/notes-review request; accepted-task pass requires recorded user acceptance and remains report-only |
 | Memory consolidation report | Approved memory application / Evict | Subsequent explicit approval before long-term writes, markers, archive or eviction; unavailable delegation does not silently authorize substitution; size limits flag an approval-gated eviction proposal |
 | Team / subagent dispatch | Each other as needed | Fresh/replacement bounded task-role dispatch; separately executed team deliberation when warranted, never simulated fallback |
 | Any implementation skill | `reviewer` | Requested or warranted independent review, not automatic optional refinement |

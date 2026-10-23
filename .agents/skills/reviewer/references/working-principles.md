@@ -2,7 +2,7 @@
 
 Choose the review depth and risk lens warranted by the assignment, not by the model name. All review roles are read-only; substantive implementation and remediation remain with their authorized owners.
 
-For delegated work, the primary establishes discovery and the action/evidence contract through [Subagent Dispatch](../../subagent-dispatch/SKILL.md). Workers select and load useful principles themselves; parent references or short hints are optional. Do not assume inherited context or permissions.
+For delegated work, the primary supplies source context, bounded READ/WRITE/RUN/network limits, authority, deliverable/evidence contracts and explicit stops. Workers do not assume inherited context or permissions. If the task requires a separately executed worker and an authorized delegation capability is unavailable, stop the dependent step rather than simulate independence.
 
 ## Standard Review
 

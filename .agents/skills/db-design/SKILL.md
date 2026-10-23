@@ -1,6 +1,6 @@
 ---
 name: db-design
-description: "Use this skill for operational database design — OLTP schema modeling, 1NF-3NF normalization, PK/FK strategies (UUIDv7/ULID), indexing optimization, structural constraints, state auditing, concurrency/locking, zero-downtime migrations, strongly-typed repository DTO mapping, and ORM-safe enum storage patterns that preserve backward-compatible rollouts. Composes with architecture-design and code-craft."
+description: "Use this skill for operational database design — OLTP schema modeling, 1NF-3NF normalization, PK/FK strategies (UUIDv7/ULID), indexing optimization, structural constraints, state auditing, concurrency/locking, zero-downtime migrations, strongly-typed repository DTO mapping, and ORM-safe enum storage patterns that preserve backward-compatible rollouts. It produces schema and migration contracts; implementation and broad system architecture are separate responsibilities."
 ---
 
 # Database Design (`db-design`)
@@ -27,7 +27,7 @@ Progressive disclosure: this file is the decision gate and router. Deep technica
 | Primary workload | Route |
 |---|---|
 | Operational transactional state | Relational storage under `db-design`; apply the defaults below |
-| Analytical / lakehouse | Columnar storage under `architecture-design` / `data-architecture.md` |
+| Analytical / lakehouse | Require a separately settled dataflow/engine design with workload, formats, scale, quality, privacy and operational constraints; if unavailable, do not apply OLTP defaults |
 | Unstructured / ephemeral | Evaluate key-value, document or cache storage for the actual access pattern |
 
 ### Database defaults
@@ -37,7 +37,7 @@ Progressive disclosure: this file is the decision gate and router. Deep technica
 - **Engine and driver fit:** Turso Database is a rewrite; libSQL is a separate SQLite fork, not another name for the same engine. Follow the [SDK matrix](https://docs.turso.tech/sdk) for the chosen engine and local, sync or remote mode; do not assume native Turso and libSQL clients or ORM adapters are interchangeable. SQLite compatibility is not evidence that every extension, transaction mode or PostgreSQL-specific schema feature is supported.
 - **Escalation:** Choose PostgreSQL or another established backend when concrete extension, operational, concurrency, integration or ecosystem requirements justify it. These are selection defaults, not a measured performance guarantee or permission to replace existing storage.
 
-If the task involves operational OLTP application state (user data, billing, orders, domain entities), proceed with `db-design`. If building analytical warehouses or streaming data pipelines, route to `architecture-design` (`data-architecture.md`). Query the database pattern catalog (`./.agents/skills/db-design/scripts/search.py "<query>"` or `--decide` / `--traps`) per `references/pattern-catalog.md` to evaluate PK/FK strategies, indexing rules, and zero-downtime migration patterns.
+If the task involves operational OLTP application state (user data, billing, orders, domain entities), proceed with this workflow. If building analytical warehouses or streaming data pipelines, obtain a separate workload/dataflow/engine contract first. Query the database CSV catalog with an available BM25 search or CSV-aware query capability per `references/pattern-catalog.md`; resolve catalog paths from the loaded bundle and retrieve bounded candidates rather than loading entire CSV files into context.
 
 ---
 

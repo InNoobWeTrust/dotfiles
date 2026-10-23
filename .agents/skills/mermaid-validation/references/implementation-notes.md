@@ -48,13 +48,19 @@ All mermaid diagram types are supported (validated against mermaid v11.16):
 | Tabs instead of spaces | `\tA --> B` | Use spaces for indentation |
 | Unescaped quotes inside labels | `A["say "hello""]` | `A["say 'hello'"]` or escape |
 
-## Bun Auto-Install
+## Bun Dependency Resolution
 
-Bun automatically installs `mermaid` and `@happy-dom/global-registrator` from
-npm on first run — no explicit `bun add` or `npm install` step needed. The
-packages are cached in `~/.bun/install/cache/` and reused across runs.
+Bun may resolve `mermaid` and `@happy-dom/global-registrator` from the configured
+package source on first run; the project does not need a manifest or local
+`bun add`/`npm install`. Resolution can access a registry and write to Bun's
+configured cache, so it is not an authorization-free or offline guarantee. Run
+only when the required packages are already available or dependency resolution is
+explicitly authorized. Do not install or enable network access to make validation
+work. If resolution is unavailable or unauthorized, use only the permitted manual
+syntax review and report that parse validation was not executed. Cache location is
+runtime-configured; this skill does not require a host-specific cache path.
 
 ## Performance
 
-First run includes dependency download (~2-5s). Subsequent runs complete
-in under 1 second for typical diagrams.
+First run may include dependency resolution/download. Later runs depend on the
+runtime cache and diagram size; no timing guarantee is part of this skill.

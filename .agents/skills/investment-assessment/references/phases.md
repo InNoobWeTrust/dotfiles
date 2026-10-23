@@ -129,7 +129,7 @@ Produce: target size or weight band + hard ceiling + what to cut if capital-cons
 ## Phase 9 — Optional challenge
 
 - Finance cast deliberation, or  
-- `reviewer` → `investment-memo` lens, or  
+- Independent investment-memo evaluation of suitability, assumptions, risks and disclosures, or
 - Swarm finance domain  
 
 ---

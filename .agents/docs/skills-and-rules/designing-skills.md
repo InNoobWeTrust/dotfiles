@@ -40,17 +40,27 @@ current environment provides; it does not mean require a particular integration.
 - **Keep the workflow self-contained:** Include the inputs, decision process,
   outputs, safety boundaries and unavailable-capability behavior needed to act
   without the author's chat or local setup. Do not require a machine-specific adapter.
+- **Hand off by capability:** State the required work, inputs, output/evidence,
+  authority and absence behavior, not another skill's identity or path. Preserve
+  essential method details locally or as an actionable required-input contract;
+  generic wording must not remove the original safety stops.
 - **Separate deployment details:** Named servers, providers, credentials, local
   paths and exact API payloads belong in the relevant integration's documentation,
   not as prerequisites in a reusable skill or its routing pointers.
 - **Check portability:** Walk through a harness with a native capability, one
   with a configured integration, and one without the capability. The workflow
   should remain usable or state its limitation without installing a replacement.
+  Check the complete directory copied alone, including scripts/templates/catalogs,
+  and confirm a sibling rename needs no operational edit to another skill.
 
 For example, say “consult an available decision-support capability using its
 documented interface,” not “load our decision-server adapter and call `evaluate`.”
 A genuinely product-specific skill may name its required product, but declare
 that scope explicitly rather than narrowing a generic request implicitly.
+
+Concrete identities belong in installation/discovery maps, not reusable method
+dependencies. See [Portable skill bundles](skill-portability.md) for the boundary,
+semantic-preservation check and rename checklist.
 
 ### Writing the SKILL.md
 

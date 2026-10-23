@@ -13,7 +13,7 @@ Use this skill when the user wants more than a descriptive summary, including:
 - Iterative storytelling with human corrections.
 - Choosing and crafting supporting charts when a visual clarifies the message better than text alone.
 
-Do not use it as a replacement for data plumbing, dashboard implementation, formal econometric modeling, or bespoke infographic / poster illustration work better handled by `illustration-craft`.
+Do not use it as a replacement for data plumbing, dashboard implementation, formal econometric modeling, or bespoke infographic/poster composition. For the latter, hand off approved findings, audience, claim ceiling and export requirements to an authorized visual-composition capability; if unavailable, keep the supported narrative/simple chart or mark bespoke output blocked.
 
 ## Invocation
 
@@ -40,7 +40,7 @@ Accepted arguments:
 - `audience` (optional): `exec`, `analyst`, `ops`, `customer`, or freeform.
 - `threshold` (optional): causal threshold `1` to `6`.
 - `mode` (optional): `adaptive`, `exhaustive`, or `user-specified`.
-- `template` (optional): explicit report-structure override; serialization is a separate consumer decision under [Document format selection](../../doc-craft/references/document-formats.md).
+- `template` (optional): explicit report-structure override; select serialization separately for its consumer. Saved human reports use Typst source plus a compiled, inspected PDF by default; preserve required native formats and canonical machine evidence. If compilation is unavailable, mark PDF blocked rather than installing, uploading or substituting another format.
 - `hitl_mode` (optional): `continuous-feedback`, `checkpoint`, or `review-and-revise`.
 - `include_lenses` (optional): array of lenses to force include.
 - `exclude_lenses` (optional): array of lenses to remove.
@@ -161,7 +161,7 @@ When a visual materially improves comprehension:
 - Use `visuals/mermaid-craft.md` when Mermaid is sufficient.
 - Run `visuals/visual-qa-checklist.md` before finalizing any chart.
 - Respect `visuals/audience-visual-budget.md` so the number and density of visuals match the audience.
-- Escalate to `illustration-craft` when Mermaid or standard charts cannot carry the message cleanly.
+- When Mermaid or standard charts cannot carry the message cleanly, use an authorized visual-composition capability with the approved findings, source evidence, audience, claim ceiling and output requirements. Require editable source, export, alt text and preserved caveats; if unavailable, mark the requested bespoke output blocked.
 
 ### 9. Human-In-The-Loop Revision
 
@@ -194,7 +194,7 @@ Correction routing:
 | 5 | Causal (guarded) | "Backlog growth may have contributed to churn." |
 | 6 | Causal (strong) | "Backlog growth likely drove churn." |
 
-Levels 5 and 6 require the causal evidence gate from `../../SKILL.md` (`Causal Evidence Gate For Levels 5-6`).
+Levels 5 and 6 require the causal evidence gate from `../SKILL.md` (`Causal Evidence Gate For Levels 5-6`).
 
 Accepted evidence classes for levels 5 and 6:
 
@@ -358,9 +358,9 @@ Summarize the architecture migration tradeoffs for an `exec` audience and includ
 
 Expected output:
 
-- Start in `data-storytelling` for the answer-first narrative and evidence-backed chart choices.
+- Start with an answer-first narrative and evidence-backed chart choice using this workflow.
 - Stay with Mermaid if one or two simple visuals are enough.
-- Route to `illustration-craft` only when the final artifact needs bespoke layout, multiple coordinated panels, or annotation-heavy explanation.
+- Use a visual-composition capability only when the final artifact needs bespoke layout, multiple coordinated panels, or annotation-heavy explanation; supply the approved narrative and evidence contract, and mark output blocked if that capability is unavailable.
 
 ## Implementation Notes
 

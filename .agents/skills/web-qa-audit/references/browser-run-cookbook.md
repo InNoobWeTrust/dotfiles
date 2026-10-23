@@ -13,7 +13,7 @@ Standardize:
 - artifact capture
 - teardown expectations
 
-Use [cdp-browser-automation](../../cdp-browser-automation/SKILL.md) for **terminal-browser-first** control. Ordinary QA needs no Chrome DevTools MCP or custom browser runner.
+Use the actual **terminal-browser** interface for ordinary control; no Chrome DevTools MCP or custom browser runner is required. The operator needs a sanctioned target, explicit browser/tab selectors, access fixtures, and an artifact root. If the interface is unavailable, stop or mark execution blocked/unverified; do not install it or enable Chrome without meeting the exception and authorization.
 
 ---
 
@@ -46,7 +46,7 @@ terminal-browser action --browser "$BROWSER_KEY" --tab "$TAB_ID" -- eval 'JSON.s
 terminal-browser action --browser "$BROWSER_KEY" --tab "$TAB_ID" -- screenshot "$ARTIFACT_ROOT/screenshots/current-page.png"
 ```
 
-Set `ARTIFACT_ROOT` to the declared access-controlled run directory and ensure its screenshot directory exists before capture. Inspect images with an image-capable tool, refresh element refs after page changes, and verify the expected UI after each action. See [terminal-browser mechanics](../../cdp-browser-automation/references/terminal-browser.md) for exact targeting, waits, viewport checks, and cleanup.
+Set `ARTIFACT_ROOT` to the declared access-controlled run directory and ensure its screenshot directory exists before capture. Inspect images with an image-capable tool, refresh element refs after page changes, and verify the expected UI after each action. The capability's actual interface supplies targeting, waits, viewport checks, and cleanup; preserve the observe → act → verify loop and never clean up shared browser processes.
 
 Record tool/version, engine, and observed viewport with the evidence. If a required trace, full a11y check, device profile, or non-Chromium engine cannot be established, mark that coverage blocked/unverified or use an authorized specialist runner; never silently enable Chrome or rename an incompatible artifact.
 

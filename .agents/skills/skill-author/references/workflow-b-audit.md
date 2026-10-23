@@ -40,7 +40,7 @@ For each skill in the declared audit scope, answer:
 3. **Completeness**: Is the workflow still correct given codebase changes? New frameworks, tools, patterns?
 4. **Length**: Has the skill grown? Justified growth → keep. Bloat → trim. Over 500 lines → move to references/.
 5. **Lifecycle stage**: Prototype → Hardening → Team Adoption → Maintenance → Deprecation candidate. What's the next transition?
-6. **Reader outcome and portability**: Can the intended user/agent complete the original task without hidden chat or deployment assumptions? Compare before/after first use and a relevant missing-capability/error path; do not confuse source presence with observed effectiveness.
+6. **Reader outcome and portability**: Can the intended user/agent complete the original task without hidden chat, deployment or sibling-skill assumptions? Inspect the complete bundle, including templates/scripts/catalogs, copied outside the pack; check local closure, capability handoffs and a sibling rename. Preserve original authority/stops/evidence when removing dependencies. Compare before/after first use and a relevant missing-capability/error path; do not confuse source presence with observed effectiveness.
 
 **Format**:
 ```markdown
@@ -48,7 +48,7 @@ For each skill in the declared audit scope, answer:
 
 | Skill | Stage | Still Active? | Health | Current? | Length | Action |
 |---|---|---|---|---|---|---|
-| code-craft | Maintenance | Yes | Good | Yes | OK | Keep |
+| implementation-guide | Maintenance | Yes | Good | Yes | OK | Keep |
 | new-skill | Prototype | 2 invocations | N/A | Yes | OK | Move to Hardening |
 ```
 
@@ -57,9 +57,9 @@ For each skill in the declared audit scope, answer:
 Review AI output that needed significant human correction:
 
 Start with completed feedback entries instead of re-investigating each incident.
-The [feedback flywheel](../../project-foundation/references/feedback-flywheel.md)
-is a human-maintainer checklist: reuse its evidence, or present it to the maintainer
-when needed; do not fabricate a maintainer assessment. Aggregate the first detection
+Use available human-maintainer feedback: the original task, observed outcome,
+correction and evidence still missing. Ask the maintainer for absent assessments;
+do not fabricate them. Aggregate the first detection
 source, gap type (routing/workflow/rule/context/tool), smallest correction and
 evidence still needed. Keep execution records in memory, not consumer docs.
 
@@ -98,6 +98,8 @@ For a targeted audit, a compact source → gap → change → evidence table is 
 mark uninspected rule/lifecycle metrics as out of scope or unknown. State source
 checks separately from executed journeys. Trial methods remain prototypes until
 scoped promotion is justified; new wording alone proves neither adoption nor
-effectiveness. See the [outcome-review trial](../../../docs/skills-and-rules/end-user-outcome-reviews.md).
+effectiveness. A paired outcome check uses the same task, inputs, authority and
+available capabilities before and after; include a failure path, record confounders
+and distinguish observed behavior from a source walkthrough.
 
 ---

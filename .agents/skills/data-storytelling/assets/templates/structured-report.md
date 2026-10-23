@@ -8,7 +8,7 @@
 
 ## Required Sections
 
-This outline specifies sections and evidence fields, not serialization. Saved human reports follow [Document format selection](../../../doc-craft/references/document-formats.md): Typst + PDF by default; use required Markdown/other syntax for an identified downstream consumer.
+This outline specifies sections and evidence fields, not serialization. Saved human reports use Typst source plus a compiled, inspected PDF by default; preserve required Markdown/other native syntax for an identified downstream consumer and keep machine evidence canonical. If compiler access is unavailable, mark PDF delivery blocked and do not install, upload or silently substitute another format.
 
 ```markdown
 # Data Story: <topic>

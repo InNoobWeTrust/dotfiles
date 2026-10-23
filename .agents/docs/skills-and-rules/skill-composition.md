@@ -1,8 +1,14 @@
-# Skill Composition: WIRING.md
+# Skill Composition: WIRING
 
-### What WIRING.md Does
+### What WIRING Does
 
-When a complex task needs multiple skills, the AI must know what order to load them in and when to hand off. WIRING.md defines these pathways.
+When a complex task needs multiple skills, the installation needs a discoverable map of capability owners and handoffs. `WIRING` defines these pathways.
+
+This page describes the installed pack's composition map, so concrete skill names
+below are intentional. Individual reusable bundles must instead describe capability
+contracts and remain usable without this map or sibling skills. Keep methods and
+essential safeguards in their bundles; renames update discovery/selection records,
+not unrelated workflows. See [Portable skill bundles](skill-portability.md).
 
 ### Structural Format
 

@@ -33,10 +33,10 @@ Structural breaks: pandemic shifts, financial crisis regime changes, tech disrup
 ## PORTFOLIO × MACRO OVERLAY
 
 - State **base regime + stress flip** (growth, inflation, rates/liquidity, FX, risk appetite, credit cycle).
-- Map which **sleeves** are favored/hurt (see `investment-assessment/references/regime-and-cycle.md`).
+- Map which **sleeves** are favored/hurt using an available investment-analysis regime/cycle capability or the supplied regime evidence.
 - Real yield / FX lens for local nominal assets; gold as hedge role not guaranteed IRR.
 - **Coupling traps:** gold-fear regimes often stress HY/credit; crypto often couples with risk-on equity.
-- Stay on regime and transmission; hand product diligence and sizing to skill `investment-assessment`.
+- Stay on regime and transmission; hand product diligence and sizing to an available investment-analysis capability (or mark them UNVERIFIED).
 
 ## ANALYSIS FRAMEWORK
 1. Regime identification: map growth-inflation matrix (overheating/goldilocks/stagflation/recession) using composite indicators (Chicago Fed National Activity Index, PMIs).

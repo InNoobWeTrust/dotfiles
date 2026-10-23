@@ -1,6 +1,6 @@
 ---
 name: doc-craft
-description: "Use this skill when designing, writing, restructuring, or auditing human-facing technical documentation, including presentation of domain-owned specifications — Markdown entry pages and concise GitHub summaries, with comprehensive Typst chapters assembled into readable PDFs. Enforces audience/format routing, progressive disclosure, visual rhythm, and appropriate abstraction levels. Not the owner of product/technical/behavior requirements, code implementation, UI wireframing, or internal agent tracking (use memory)."
+description: "Use this skill when designing, writing, restructuring, or auditing human-facing technical documentation, including presentation of domain-owned specifications — Markdown entry pages and concise GitHub summaries, with comprehensive Typst chapters assembled into readable PDFs. Enforces audience/format routing, progressive disclosure, visual rhythm, and appropriate abstraction levels. Not the owner of product/technical/behavior requirements, code implementation, UI wireframing, or internal agent tracking; use an authorized scoped coordination-memory capability for the latter."
 ---
 
 # Document Craftsmanship (`doc-craft`)
@@ -8,7 +8,7 @@ description: "Use this skill when designing, writing, restructuring, or auditing
 Technical documentation exists to build shared mental models, communicate decisions, and enable immediate action. Unstructured walls of text, discursive essays, nested bullet points, and confusing low-level execution minutiae undermine human readability.
 
 This skill enforces four primary disciplines:
-1. **Audience & Destination Routing**: Route human-facing mental models to `docs/` and `<module>/README.md`; route internal agent task tracking, atomic plans, and consensus boards to `memory` (`MEMORY_DIR`).
+1. **Audience & Destination Routing**: Route human-facing mental models to `docs/` and `<module>/README.md`; route internal task tracking, atomic plans, and consensus boards only to an authorized scoped coordination-memory capability. Supply the artifact type and explicit privacy scope; require a resolved destination and Markdown/YAML output. If scope or write access cannot be established, stop and report the gap rather than placing internal tracking in `docs/`.
 2. **Abstraction Level & Plain Language**: Keep human docs concise, to-the-point, and jargon-free. Provide high-level architecture, mental models, and conceptual pseudocode rather than bombarding readers with low-level execution trivia.
 3. **Reader Path & Supporting Layers**: Keep a coherent main reading path visible; make worthwhile optional depth findable through contents, notes, appendices, or linked reference sections appropriate to the medium.
 4. **Visual Rhythm & Scannability**: Replace verbose prose with structured tables, 3-sentence paragraph limits, bold lead-in lists, diagram anchors, and progressive disclosure (**Index → Entry → Leaf**). Formatting supports information flow; it does not establish it.
@@ -33,13 +33,13 @@ Do **not** load for:
 - Writing code, refactoring modules, or fixing bugs
 - Defining product, technical or behavior requirements: use the domain owner below; compose this skill only for human-facing presentation
 - UI/UX visual mockups or design tokens
-- Internal agent execution tracking, atomic feature plans, vertical slice phase specs, or inter-agent consensus boards (route directly to `memory`)
+- Internal agent execution tracking, atomic feature plans, vertical slice phase specs, or inter-agent consensus boards (use the scoped coordination-memory contract above; do not create human documentation)
 
 ---
 
 ## Domain-owned specifications
 
-[brainstorming](../brainstorming/SKILL.md) owns product briefs/PRDs, [architecture-design](../architecture-design/SKILL.md) owns technical design/TRDs, and [code-craft](../code-craft/SKILL.md) owns behavior/acceptance specifications and BDD examples. This skill can structure, format and polish those outputs without redefining their semantics or imposing a document ladder. Select the domain method by content, not by the label “spec.”
+Product-intent, technical-design, and behavior/acceptance artifacts remain owned by the corresponding authoritative domain capability. This skill can structure, format and polish an approved artifact without redefining its semantics or imposing a document ladder. The handoff input is the source artifact plus its scope, constraints, evidence and unresolved questions; the output is a reader-ready presentation preserving those facts. If the authoritative source or its owner is unavailable, do not invent or silently settle domain meaning—mark the affected content unresolved and ask the owner.
 
 Preserve decision-relevant constraints, testable contracts, uncertainties and necessary technical detail for the intended reader. Do not abstract them away merely to fit a guide template; executable specs retain their native consumer format per [Document format selection](references/document-formats.md).
 
@@ -47,9 +47,9 @@ Preserve decision-relevant constraints, testable contracts, uncertainties and ne
 
 ### Phase 1 — Audience Routing & Information Layering
 1. **Audience & Destination Gate**:
-   - Apply the shared [artifact-context questions](../working-principles/references/artifact-context.md) before authoring or updating. This precheck adds no new metadata schema; retain the document reader contract below.
+   - Before authoring or updating, establish the audience/users, relevant expertise, purpose, medium/access constraints and governing exclusions. This precheck adds no new metadata schema; retain the document reader contract below. Stop on unresolved high-impact context or conflicting requirements.
    - **Human-Facing**: General architecture, guides, API references → `docs/`. Module role, public surface, usage → `<module>/README.md`.
-   - **Agent-Facing / Internal**: Atomic implementation plans (`plan.md`), sequential vertical slice phase files (`phases/01-*.md`), inter-agent consensus boards, or execution checkpoints → **STOP and route to `memory`** (`MEMORY_DIR`). Do NOT dump execution tracking into `docs/`.
+    - **Agent-Facing / Internal**: Atomic implementation plans (`plan.md`), sequential vertical slice phase files (`phases/01-*.md`), inter-agent consensus boards, or execution checkpoints → **STOP** and use an authorized scoped coordination-memory capability. Give it the record type and explicit privacy scope; require a resolved Markdown/YAML destination. If the scope, destination, or write permission is unavailable, report the blocker; never guess a path or put the record in `docs/`.
    - Reference: [`references/document-routing-and-audience.md`](references/document-routing-and-audience.md).
     - **Reader contract**: Record `audience` (who uses it), `purpose` (what it enables), and `scope` (coverage/exclusions). In Typst, use a short visible summary plus supported document metadata, not YAML frontmatter. In Markdown, use concise YAML frontmatter where supported; preserve existing metadata and verify permitted fields for tool-consumed files such as `SKILL.md`. Do not bulk-retrofit unrelated files.
 2. **Determine the Document Layer**:
@@ -91,7 +91,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 
 ## Stop Conditions
 
-- **Agent Execution Artifacts in `docs/`**: If the document being created is an atomic feature plan, phase breakdown, or inter-agent consensus board, halt immediately and route to `memory` (`MEMORY_DIR`).
+- **Agent Execution Artifacts in `docs/`**: If the document is an atomic feature plan, phase breakdown, consensus board, or execution checkpoint, halt human-doc authoring and use an authorized scoped coordination-memory capability. If its explicit scope, destination, or write permission cannot be resolved, stop and report; do not redirect the record into `docs/`.
 - **Uncalibrated Abstraction Level**: If the document bombards human readers with low-level execution minutiae, commit logs, or heavy internal jargon instead of high-level architecture and clear usage, halt and recalibrate.
 - **Hidden Essentials**: If understanding a claim or acting correctly requires an optional note, appendix, or disclosure, restore the essential information to the main path before proceeding.
 - **Unclear Audience or Goal**: If the target reader (beginner vs maintainer) or primary objective is ambiguous, stop and clarify.
@@ -103,7 +103,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 
 ## Deliverables Checklist
 
-- [ ] Audience verified as human; agent task/phase/consensus artifacts routed to `memory`.
+- [ ] Audience verified as human; internal task/phase/consensus artifacts routed only through an authorized scoped coordination-memory capability with explicit scope, destination, format, and write access.
 - [ ] Markdown entries/main points remain readable on GitHub; substantial detail is assembled in Typst/PDF, with native-consumer exceptions preserved.
 - [ ] Reader contract recorded in frontmatter where supported, otherwise in the body; content checked against it.
 - [ ] Appropriate abstraction level maintained (concise, jargon-free, high-level choices with pseudocode).
@@ -123,7 +123,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 
 | Temptation | Why Wrong | Correct Path |
 |---|---|---|
-| Dump atomic task plans, phase files, or consensus boards into `docs/` | Pollutes human documentation with transient or task-level agent execution trivia | Route atomic plans, phase files, and consensus boards to `MEMORY_DIR` via `memory` skill |
+| Dump atomic task plans, phase files, or consensus boards into `docs/` | Pollutes human documentation with transient or task-level agent execution trivia | Supply the record type and explicit privacy scope to an authorized coordination-memory capability; require its resolved Markdown/YAML destination and write access, otherwise stop and report |
 | Write discursive essays with background history | Readers need actionable information immediately | Open with a metadata summary table; move background to a 1–2 sentence note |
 | Bombard human readers with low-level code trivia or heavy jargon | Obscures purpose and usage; creates cognitive fatigue | Stick to high-level architecture, mental models, and concise pseudocode |
 | Write module READMEs as internal task checklists or change logs | Fails to teach engineers how or why to consume the module | Document purpose, mental model, quick-start usage, exported surface, and invariants |
@@ -142,7 +142,7 @@ Before drafting sentences, calibrate abstraction and build the visual skeleton:
 
 - [Document format selection](references/document-formats.md) — Shared default, consumer exceptions, and source/delivery contract.
 - [Typst workflow](references/typst-workflow.md) — Local build, starter, diagrams, safety, and PDF verification.
-- [`references/document-routing-and-audience.md`](references/document-routing-and-audience.md) — Boundary between human docs (`docs/`, module READMEs) and agent memory (`MEMORY_DIR`), abstraction rules, and routing tree.
+- [`references/document-routing-and-audience.md`](references/document-routing-and-audience.md) — Boundary between human docs (`docs/`, module READMEs) and explicitly scoped coordination memory, abstraction rules, and routing tree.
 - [`references/progressive-disclosure.md`](references/progressive-disclosure.md) — The Index → Entry → Leaf architecture, sizing thresholds, and sharding workflow.
 - [Reader path and supporting layers](references/reader-path.md) — Main text versus optional support, contents, notes, appendices, medium choices, and validation.
 - [`references/visual-rhythm-and-scannability.md`](references/visual-rhythm-and-scannability.md) — Anti-wall-of-text guidelines, table transformations, and typography.

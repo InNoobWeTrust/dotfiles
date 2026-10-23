@@ -93,7 +93,7 @@ _"This is wrong because X."_
 #### When NOT to Challenge Proactively
 
 - The user explicitly says "just do it" or signals they want execution, not debate
-- During brainstorming's divergent phase — let ideas flow, challenge when
+- During an ideation phase before convergence — let ideas flow, challenge when
   ideas are being committed to, not when they're being explored
 - For trivially low-stakes decisions where challenge adds friction without value
 - When the same concern has already been raised and addressed
@@ -226,8 +226,16 @@ interface itself, while Goal Alignment checks connection to the original goal.
   is UNVERIFIED, not proof of regression or a passed runtime test.
 
 Use only relevant journeys and perspectives; this vector adds no mandatory
-panel, execution permission, or approval gate. Follow Reviewer finding and
-independence requirements. Optional [human-facing maintainer examples](../../../../docs/skills-and-rules/end-user-outcome-reviews.md) are not additional reviewer instructions or a required read.
+panel, execution permission, or approval gate. Check two views when applicable:
+can the end user start, complete, and recover from the task with understandable
+defaults/errors/approvals, and can the executor find the guidance, identify its
+authority, follow evidence requirements, and stop/resume within permission? Give
+any independent evaluator the original request, before/after artifacts, scope,
+permissions, acceptance evidence and a concrete disconfirming scenario. Findings
+must identify changed text, scenario, user/executor consequence and evidence grade;
+missing baseline or runtime observation is UNVERIFIED, not a claimed regression
+or pass. Follow Reviewer finding and independence requirements; examples are
+illustrative, not a separate required source.
 
 #### Attack Vector: Scope & Complexity
 

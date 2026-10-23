@@ -1,6 +1,6 @@
 ---
 name: data-storytelling
-description: "Use this skill to transform raw data into decision-ready narratives — metric summaries, trend interpretation, insight extraction, stakeholder reports, and evidence-backed visuals. Activate when the user has data and wants to understand what it means, write a report, present findings, turn numbers into actionable recommendations, or choose/design supporting charts, even if they don't frame it as \"data analysis.\" Skip for graphic-rich infographics, posters, or bespoke SVG illustration work — use `illustration-craft` when Mermaid or standard charts are insufficient."
+description: "Use this skill to transform raw data into decision-ready narratives — metric summaries, trend interpretation, insight extraction, stakeholder reports, and evidence-backed visuals. Activate when the user has data and wants to understand what it means, write a report, present findings, turn numbers into actionable recommendations, or choose/design supporting charts, even if they don't frame it as \"data analysis.\" Skip graphic-rich infographics, posters, and bespoke compositions that need a visual-design capability beyond standard charts or Mermaid."
 ---
 
 # Data Storytelling
@@ -11,7 +11,7 @@ Turn data into **decision-ready** narratives: goal-aligned, multi-lens, evidence
 
 **Succeeds when:** answers the decision first; mandatory `## Lenses Used`; confidence + caveats + counter-signals; audience-adapted; provenance preserved; visuals clarify material evidence without overstating certainty.
 
-**Not:** autonomous ETL; free-form causal claims past threshold; hidden CoT dumps; domain packs beyond built-in lenses; graphic-rich infographics or bespoke illustrations better handled by `illustration-craft`.
+**Not:** autonomous ETL; free-form causal claims past threshold; hidden CoT dumps; domain packs beyond built-in lenses; graphic-rich infographics or bespoke compositions requiring an authorized visual-composition capability beyond standard charts/Mermaid.
 
 ## Operating flow (load detail as needed)
 
@@ -31,8 +31,10 @@ Turn data into **decision-ready** narratives: goal-aligned, multi-lens, evidence
 - Output must include `## Lenses Used` with signal + baseline per lens.
 - This skill guides narrative structure and evidence interpretation; it does not perform ETL, database queries, or statistical computation on its own.
 - Visuals must not exceed the approved `claim_ceiling`; if certainty is weak, show caveats in text/caption.
-- Escalation order: choose the simplest effective chart first, use Mermaid when it can carry the message cleanly, then route to `illustration-craft` only when bespoke composition is required.
-- When Mermaid is not sufficient, stop escalating inside this skill and route to `illustration-craft`.
+- Before rendering, check each quantitative claim against its source values, including period, direction, denominator, and any derived ratio. Check each material narrative sentence against its recorded `claim_ceiling`; hedges, labels, or disclaimers do not lower the language level. Rewrite unsupported explanations as observations or questions, and correct/remove any mismatched calculation.
+- At descriptive/temporal ceilings, naming a possible driver as an account of the observed pattern remains an explanatory claim even when hedged or listed among alternatives; retain it only as an evidence-seeking question that asks what observation or comparison would distinguish it, without asserting that it explains the pattern (for example, “may reflect X” versus “what evidence would distinguish X from Y?”).
+- Escalation order: choose the simplest effective chart first, use Mermaid when it can carry the message cleanly, then use an authorized bespoke-visual capability only when custom composition is necessary. Supply the approved insight, source evidence, audience, claim ceiling and output format; require editable source, export, alt text and retained caveats. If unavailable, keep the supported simpler visual or mark bespoke output blocked—do not expand this workflow into an ungrounded illustration.
+- When Mermaid is not sufficient, stop escalating inside this skill. Use the visual-composition handoff above; if its required source, evidence or authorized capability is missing, preserve the claim in text and mark the requested visual unresolved.
 
 ## Visual generation gate
 

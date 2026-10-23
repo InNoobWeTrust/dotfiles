@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "Use this skill for creative ideation, product design, conceptual exploration, and product briefs or PRDs. Activate to generate ideas, explore options, break creative blocks, or specify product intent for a settled direction without implementation. Use code-craft for behavior/acceptance specs and architecture-design for technical design."
+description: "Use this skill for creative ideation, product design, conceptual exploration, and product briefs or PRDs. Activate to generate ideas, explore options, break creative blocks, or specify product intent for a settled direction without implementation. Use a behavior/acceptance specification workflow for specs, and a technical design workflow for architecture."
 ---
 
 # Brainstorming
@@ -24,7 +24,7 @@ Problem statement; captured ideas; prioritized shortlist with rationale; next ex
 
 ## Settled-direction product brief / PRD path
 
-Use when the user asks for product requirements, a PRD, or a brief for an already chosen direction. Inputs are the request, available user evidence, existing product decisions and constraints. Follow [Planning and shared understanding](../working-principles/references/planning.md) for unresolved discovery; skip divergence and ranking unless a real product choice remains open.
+Use when the user asks for product requirements, a PRD, or a brief for an already chosen direction. Inputs are the request, available user evidence, existing product decisions and constraints. Apply planning and shared-understanding principles for unresolved discovery: frame problems before solutions, expose gaps to their owners, and stop the affected specification on conflicting scope rather than silently choosing a direction. Skip divergence and ranking unless a real product choice remains open.
 
 1. **Ground the problem**: who is affected, their current workflow or pain, why it matters, and what evidence supports it. Label hypotheses; do not invent research or personas.
 2. **Define the outcome**: desired user benefit and observable success. Prefer a measurable target with a baseline and measurement window when known; otherwise state what must be learned. For example, “reduce median onboarding time from 5 to 2 minutes within 30 days,” not “improve UX.”
@@ -36,10 +36,10 @@ The output must let a reader identify the problem, audience, outcome, scope/non-
 
 ### Domain handoffs
 
-- [code-craft](../code-craft/SKILL.md) owns observable behavior, acceptance criteria and BDD examples, including spec-only requests.
-- [architecture-design](../architecture-design/SKILL.md) owns technical constraints, boundaries and trade-offs; [ui-ux](../ui-ux/SKILL.md) owns interaction and visual design.
-- [doc-craft](../doc-craft/SKILL.md) owns presentation and format for a saved human-facing brief, not its product decisions. No mandatory PRD → technical spec → BDD ladder follows from this path.
+- A behavior/acceptance specification capability owns observable behavior, acceptance criteria and BDD examples, including spec-only requests. If unavailable, capture outstanding acceptance criteria as explicit open items in the brief.
+- A technical design capability owns technical constraints, boundaries and trade-offs; an interaction and visual design capability owns interaction and visual design. If unavailable, record the technical or design boundary as an open decision requiring the relevant capability.
+- A document format and presentation capability owns presentation and format for a saved human-facing brief, not its product decisions. No mandatory PRD → technical spec → BDD ladder follows from this path. If unavailable, deliver the brief in plain Markdown and note any format requirements for later.
 
 ## Investment handoff
 
-When ideation is about **allocation, what to own, or how much**, frame goals/rails here, then hand off to `investment-assessment` for regime fit, class diligence, and sizing. Do not end with enthusiasm and no left-tail or role-of-money path.
+When ideation is about **allocation, what to own, or how much**, frame goals/rails here, then hand off to an investment assessment workflow for regime fit, class diligence, and sizing. Do not end with enthusiasm and no left-tail or role-of-money path.

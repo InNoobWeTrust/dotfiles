@@ -45,7 +45,7 @@ contract decision remains open; no plan file is required for that exception.]
 6. Explicit out-of-scope list: [...]
 7. Acceptance criteria and required evidence: [...]
 8. Stop conditions: [see below]
-9. Approved materialization choices: [unit-relevant capability → selected library/tool/API; compatibility; rationale and accessible code-craft/API sources; authorized dependency-file changes; approved exceptions/prohibited substitutions; actual reuse evidence. Use implementation-payload-and-preflight.md's materialization contract, or explicit N/A + rationale. Confirm required sources before coding; missing choices → INCOMPLETE; incompatible choices → INCOMPLETE: CONTRACT_DEFECT, never silent fallback.]
+9. Approved materialization choices: [unit-relevant capability → selected library/tool/API; compatibility; rationale and accessible language/API reference sources; authorized dependency-file changes; approved exceptions/prohibited substitutions; actual reuse evidence. Use implementation-payload-and-preflight.md's materialization contract, or explicit N/A + rationale. Confirm required sources before coding; missing choices → INCOMPLETE; incompatible choices → INCOMPLETE: CONTRACT_DEFECT, never silent fallback.]
 
 If you find zero or multiple units, missing acceptance criteria/evidence, an
 unresolved design or contract decision, or a request that expands scope: do
@@ -55,9 +55,8 @@ current location, remaining steps, evidence so far, blockers, next safe
 action) so the main orchestrator can replan.
 
 ## Delivery Contract (for phased delivery)
-[Populate the proportionate template from `../../team-operating-model/references/phased-delivery.md`.
-Do not duplicate or alter its classifications, budgets, compromise schema, or
-trajectory protocol here.]
+[Populate the proportionate template from an available team-delivery contract, or use an inline phase contract with outcome, independently useful units, writable scope, evidence, stops and continuation state.
+Do not duplicate or alter its classifications, budgets, compromise schema, or trajectory protocol here.]
 
 ## Delegation-specific execution behavior
 - Scope expansion: [STOP and report; do not absorb without approval]
@@ -65,8 +64,7 @@ trajectory protocol here.]
 - Continuation / resumption state: [completed work, current location, remaining steps, evidence, blockers, and next safe action if incomplete]
 
 If incomplete, distinguish a true Never Defer blocker from Must Ship work
-remaining, May Defer items, and Out of Scope items. Follow
-`../../team-operating-model/references/phased-delivery.md` for contract semantics. Omit both sections
+remaining, May Defer items, and Out of Scope items. Follow the same delivery-contract semantics if one is available. Omit both sections
 when that rule's trigger does not apply.
 
 ## Allowed Actions
@@ -104,7 +102,7 @@ For an execution-only assignment, provide the exact script/check and authoritati
 
 ### Investment research variant
 
-When delegating research for skill `investment-assessment`:
+When delegating research for an authorized investment-analysis task (the investment decision and suitability remain with its owner):
 
 ```
 You are acting as an investment research analyst (read-only).
@@ -178,14 +176,14 @@ When the delegated worker returns:
 3. **Check evidence and uncertainty**. Judge the return against acceptance criteria; inspect relevant underlying evidence when risk, contradictions, or missing diagnostics require it. Do not automatically reread every transcript or rerun every check. Low-confidence claims must be verified before acting on them.
    For implementation, compare actual dependency changes and call sites with the approved materialization choices and behavior evidence. Installed or imported-but-unused libraries do not satisfy reuse; unapproved substitutions/reimplementations fail acceptance even when tests pass. Missing reuse evidence remains UNVERIFIED.
 4. **Challenge gate — route through independent reviewer before synthesis.**
-   The host produced nothing, so agreement bias is the primary risk: you are primed to accept what the delegated worker returned. Before synthesizing for the user, route the output through a **separate** challenger agent using the `reviewer` skill with the appropriate lens. Do not self-review — delegate the challenge.
+   The host produced nothing, so agreement bias is the primary risk: you are primed to accept what the delegated worker returned. Before synthesizing for the user, route the output through a **separate** challenger agent using an available independent review capability with the appropriate lens. Do not self-review — delegate the challenge.
 
    | Delegated output type | Challenge lens (loaded by separate agent) | Purpose |
    |---|---|---|
    | Plan, architecture, design proposal, threat model | `pragmatic-triage` → then `adversarial` | Filter unjustified complexity; challenge reasoning on surviving design |
    | Review findings, audit report, security assessment, scanner output | `findings-skeptic` → then `pragmatic-triage` | Cross-validate findings for false positives and severity inflation; challenge any recommended defensive complexity |
    | Factual research, exploration, data collection | Skip — proportional summary suffices | Low-risk read-only output; no design or severity claims to challenge |
-   | Implementation (code) | Existing review gates in `code-craft` / `reviewer` apply | Code review is already wired; this gate adds nothing new for code |
+   | Implementation (code) | Apply the implementation's existing code-review gates | Code review is already wired; this gate adds nothing new for code |
 
    The challenger receives the delegated output as its artifact and the original task context. Its findings feed into step 6 synthesis. If the challenger identifies CRITICAL issues (false findings presented as blockers, or HIGH×HIGH complexity that is actually LOW×LOW), reject and re-scope the delegated work before synthesizing.
 
@@ -215,7 +213,7 @@ When the delegated worker returns:
 | Sending a whole multi-unit plan to code implementer | Worker absorbs adjacent units, expands scope, and returns partial work that cannot be verified against any single acceptance criterion | Dispatch exactly ONE functional unit per code implementer call (approved-plan basis or explicit atomic-patch exception); paste the plan as context only |
 | Treating "You are a Python expert" as proof of expertise | A short hint cannot establish credentials, evidence, or authority | Allow hints, but have the worker discover useful guidance and obey the bounded task |
 | Assuming parent skills or old profile bodies reach the worker | Dynamic/fallback worker may lack a usable discovery entry point | Establish accessible guidance discovery once per worker context; do not require copied personalities |
-| Passing only core logic or “follow code-craft” | Worker reconstructs library/API choices from training memory | Pass the approved capability/provider contract and accessible sources; verify real API use, not just imports |
+| Passing only core logic or “follow an unnamed domain method” | Worker reconstructs library/API choices from training memory | Pass the approved capability/provider contract and accessible sources; verify real API use, not just imports |
 | Requiring a full personality for every request | Adds prompt bulk and mixes working style with task content | Reference, short hint, or no style direction; workers infer and load useful principles |
 | Changing models changes task authority | Fallback loses the original task's safety and evidence obligations | Retain the assignment and constraints; reassess route limits and discovery access |
 | Handoff of inseparable cross-task reasoning | Essential interpretations or unresolved contracts get lost | Keep integrated judgment in the primary; a bounded worker result may still supply prerequisites |

@@ -152,5 +152,4 @@ Transactional facades (SQLAlchemy ORM, Django ORM, Prisma, Mongoose) are built f
 For analytical queries, metric marts, and file-based data transformations:
 1. **Engine**: Use **DuckDB** for in-process vectorized columnar execution with out-of-core streaming.
 2. **Query Abstraction**: Use **Ibis** (`ibis-framework`) to write portable, chainable DataFrame expressions that push computation into DuckDB or remote warehouses (Snowflake, BigQuery, ClickHouse).
-3. **Reference**: Delegate implementation to [Composable Data Stack (Ibis + DuckDB)](../../code-craft/references/languages/python-data-stack.md) under `code-craft` and architecture planning to `architecture-design` (`data-architecture.md`).
-
+3. **Handoff**: Settle an analytical dataflow design and implementation contract separately, including source formats, transformations, target engine, memory/runtime bounds and verification. Ibis + DuckDB is one possible stack, not an implied selection; if the required contract is unavailable, keep the analytical path unresolved.

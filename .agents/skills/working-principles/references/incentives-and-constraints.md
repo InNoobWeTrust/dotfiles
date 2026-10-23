@@ -5,8 +5,7 @@ as “impossible,” “obviously right,” or “just how things work.” It su
 owning investigation or ideation workflow; it is not another approval process.
 Skip it for mechanical tasks and purely technical questions without relevant actors.
 
-This guide supplies first-principles and value context. For the operational method
-for interdependent choices, use [Game Theory](../../game-theory/SKILL.md); the incentive
+This guide supplies first-principles and value context. For explicit actor/response modelling of interdependent choices, use an available game-theory capability; absent it, apply the compact actor/response questions below. The incentive
 discussion below is explanatory, not a second strategic-analysis workflow.
 
 **Inputs:** the outcome to understand or improve, available observations, affected
@@ -52,8 +51,9 @@ measurement, and a current constraint need not be a permanent one.
 
 ## Explain incentives through a mechanism, not a motive story
 
-Use [Game Theory](../../game-theory/SKILL.md) when this explanation needs an explicit
-actor/response model, conditional mechanism selection or proposed changes to the rules.
+Use an available game-theory capability when this explanation needs an explicit
+actor/response model, conditional mechanism selection or proposed changes to the rules;
+otherwise the compact actor/response questions in this section are the minimum.
 
 Game theory is useful when my best action depends on what others do. Identify the
 relevant actors, their feasible choices, rewards and losses, information, timing,

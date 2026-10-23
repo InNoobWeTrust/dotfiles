@@ -10,7 +10,7 @@ metadata:
 # Decision Support
 
 Use an existing decision-support capability to sharpen a bounded choice, not to outsource
-responsibility. This is a cross-domain consultation, not brainstorming, evidence
+responsibility. This is a cross-domain consultation, not ideation, evidence
 collection, a worker launch, or a substitute for a real team or independent review.
 
 ## 1. Frame the choice

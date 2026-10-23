@@ -2,7 +2,7 @@
 
 Use for a concrete implementation problem involving orchestration, branching, state or effects. Assessment questions and walkthrough records belong to Code Maintainability, not this implementation guide.
 
-For small linear patches or utility scripts, keep ordinary explicit code without loading a framework or creating extra artifacts. Analytical stack selection remains in the [dataflow guide](../../architecture-design/references/dataflow-stack-selection.md).
+For small linear patches or utility scripts, keep ordinary explicit code without loading a framework or creating extra artifacts. For analytical stacks, first settle workload, input formats, transformations, scale, quality, privacy and operational constraints; choose an engine through an architecture/dataflow capability and keep missing compatibility evidence explicit. Do not use OLTP defaults for analytical work.
 
 ## Scope and contract
 

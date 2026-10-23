@@ -26,6 +26,7 @@ Run this checklist when creating or materially changing any agent-facing interfa
 - [ ] **Progressive disclosure respected** — is deep detail moved to `references/` instead of bloating the router surface?
 - [ ] **Portable capability contract** — can native tooling or an authorized integration satisfy the need, and is absence handled without assuming an install? Declare product-specific scope explicitly.
 - [ ] **Reader independence** — can a reader use the workflow and its existing explicit resources without the author's chat? Do body, references and routing avoid deployment/account residue?
+- [ ] **Bundle independence** — does the entire copied directory work without siblings or pack docs? Check scripts/catalogs/templates too; handoffs retain inputs, evidence, authority and absence stops. A sibling rename must affect only explicit installation/discovery mappings, not operational instructions.
 
 ## Common ACI upgrades
 

@@ -1,6 +1,6 @@
 # Source-backed structural tracing
 
-For architecture, dependency or change-placement questions, apply the shared [structural integrity method](../../architecture-design/references/structural-integrity.md). Start with the affected slice; follow relevant edges through untouched code, not a repository dump.
+For architecture, dependency or change-placement questions, start with the affected slice and follow relevant edges through untouched code, not a repository dump. Record source revision/worktree and dirty state, examined paths, unknowns, responsibility/ownership, allowed edge direction, and proposed additions/removals with affected consumers. Trace module/import, workspace/package, external dependency and runtime-wiring graphs separately; include representative entry-to-effect/result and failure paths plus state lifetime. Check reverse reachability through unchanged nodes for cycles and forbidden direction. An actual cycle needs an edge witness; missing evidence is UNVERIFIED, not acyclic. After changes, compare actual homes, exports, manifests and wiring with the agreed boundary. Builds alone do not establish complete structure.
 
 ## Evidence path
 
@@ -14,4 +14,4 @@ For architecture, dependency or change-placement questions, apply the shared [st
 
 Return source identity, question/scope, responsibilities/placement, representative normal/error flow and state/effects, relevant graph edges with path:symbol or current line evidence, searched exclusions and unresolved edges. For an architecture report, populate the existing report template rather than creating a parallel format. Label facts, proposals and unknowns distinctly.
 
-For cross-agent reuse, use [source-map capture/recall](../../memory/references/source-maps.md) within authorized scope, or carry the compact map inline when persistence is unavailable/not authorized. The recipient must validate freshness and inspect source edges relevant to its assignment; a remembered map is a navigation aid, not architectural authority.
+For reuse by another authorized reader, carry this compact map inline or in an explicitly authorized existing record. The recipient must validate freshness and inspect source edges relevant to its assignment; a remembered map is a navigation aid, not architectural authority. If no durable record is authorized, report the persistence limitation.

@@ -27,7 +27,7 @@
 Before writing YAML, design on paper:
 
 1. **Define stages**:
-   - For complete quality pipelines: use the **Consolidated Quality Architecture** (see `docs/quality-tooling/consolidated-quality-pipeline-playbook.md`):
+   - For complete quality pipelines, use this consolidated quality architecture, adapted to the confirmed platform and existing quality commands:
      `env-setup` → `megalinter` (all static/SAST/SCA) + `runtime-tests` (unit tests + coverage in parallel) → `quality` (telemetry aggregation & gate enforcement).
      Keep container image builds (`kind: Build`) separate from quality verification.
    - Traditional: test → build → deploy → release.
@@ -62,7 +62,7 @@ Use idiomatic patterns: GitHub Actions `.github/workflows/` with `on.push.paths`
 
 ### Phase 4 — Run Security Posture Audit
 
-Run the full security scan against the repository. If scanner tools are not installed and the project has no `Makefile` quality commands, halt and route to `project-foundation` skill first — do not proceed with incomplete scans.
+Run the authorized security scans against the agreed repository scope. If scanner tools or quality commands are unavailable, halt affected scan claims and report the exact missing capability and coverage; request authorized setup from the project owner before proceeding. Do not present an incomplete scan as full coverage.
 
 **A. Secret Detection**:
 - Run `trufflehog git file://. --only-verified`, `gitleaks detect --source .`, or `git secrets --scan`.

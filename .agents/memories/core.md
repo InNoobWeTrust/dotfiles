@@ -11,6 +11,7 @@ Open only the topic relevant to the current task:
 |---|---|
 | Agent prompt composition | [Prompt crafting](knowledge/agent_prompt_crafting.md) |
 | Reusable agent engineering guidance | [Engineering learnings](knowledge/agentic_engineering_learnings.md) |
+| Capability-based standalone skill bundles | [Skill portability lesson](knowledge/skill_portability.md) |
 | MCP implementation conventions | [MCP delivery patterns](knowledge/mcp_delivery_patterns.md) |
 | Repository governance | [Project governance](knowledge/project_governance.md) |
 | Agent computer utility (Webtop browser-automation desktop) | [agent_computer utility notes](knowledge/agent_computer_util.md) |

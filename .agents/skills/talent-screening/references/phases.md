@@ -9,7 +9,7 @@ Define the ideal target profile before looking at individual applications.
    - LinkedIn turnover signals (how long do employees stay in similar roles?).
    - Legal filings, labor disputes, or regulatory issues.
    - Leadership stability and team growth context (expanding vs. backfilling attrition).
-3. **Produce Candidate Profile**: Save a structured profile containing must-have traits, strong-signal traits, bonus traits, candidate red flags, and 2-3 persona sketches of ideal candidates. Apply [Document format selection](../../doc-craft/references/document-formats.md): Typst + PDF for human readers; preserve an identified ATS/parser's required format.
+3. **Produce Candidate Profile**: Save a structured profile containing must-have traits, strong-signal traits, bonus traits, candidate red flags, and 2-3 persona sketches of ideal candidates. Apply a document format and presentation capability: Typst + PDF for human readers; if unavailable, use plain structured Markdown. Preserve an identified ATS/parser's required format.
 
 ---
 
@@ -20,6 +20,7 @@ Audit resumes methodically against the Candidate Profile created in Phase 1.
 1. **Claim Extraction**: Parse employment history, education, skills, key achievements, certifications, and project descriptions.
 2. **Trait Matching**: Rate the candidate on each must-have and strong-signal trait (Strong Match, Partial Match, Missing, or Unverifiable).
 3. **Inconsistency Flagging**: Spot gaps in timelines, vague employment claims, inflated titles, or skills listed without corresponding hands-on experience.
+   Do not assign an unattributed duration to a period before/after a listed role unless the CV dates establish that chronology; state the gap neutrally and ask which projects or periods support it.
 
 ---
 
@@ -38,6 +39,7 @@ Validate professional credentials and trace digital footprint to confirm claims 
 ### Verification Principles
 - **No speculation**: Absence of online evidence is not proof of misrepresentation. Note what was unverifiable; do not guess.
 - **Traceability**: Every claim made in the evaluation must link directly to a source or cite a specific quote.
+- **Legal applicability**: Do not state jurisdiction-specific legal coverage from a jurisdiction-neutral packet. If legal applicability matters, identify the jurisdiction and cite an authoritative source; otherwise state the role-relevance/privacy boundary without asserting a legal rule.
 - **Privacy Boundaries**: Confine checks strictly to professional and public footprints. Avoid personal or private spaces unless directly relevant to professional risk.
 
 ---

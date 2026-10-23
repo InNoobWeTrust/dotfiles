@@ -32,7 +32,7 @@ Stop / deliverable / anti-patterns: `references/stop-deliverable-antipatterns.md
 
 ## Workflow A (summary)
 
-If unfamiliar-domain knowledge or practitioners' judgment is still missing, use [domain-curation](../domain-curation/SKILL.md) before encoding domain advice. Receive its sources, conditional judgments, task-attempt evidence and unresolved limits; a brief without sufficient reuse/evidence need not become a skill. Skip this handoff when the authoring contract is already grounded.
+If unfamiliar-domain knowledge or practitioners' judgment is still missing, obtain domain grounding before encoding advice: inspected sources, conditional judgments, task-attempt evidence and unresolved limits. A capable researcher or the author may supply it within authorized access; if essential evidence is unavailable, stop the affected advice rather than inventing it. A brief without sufficient reuse/evidence need not become a skill. Skip this handoff when the authoring contract is already grounded.
 
 1. Validate need (extend existing skill first; not one-offs).
 2. Define scope and reader contract (name, description, exclusions, I/O, phases, capability requirements).
@@ -56,4 +56,5 @@ If unfamiliar-domain knowledge or practitioners' judgment is still missing, use 
 - Do not invent skills for single-use tasks.
 - Do not bulk-load every rule/skill during audits — sample by evidence.
 - Reusable skills and their references must be portable and usable without the author's chat or setup. “Existing solution” includes native tools and authorized integrations; neither implies MCP. Declare genuinely product-specific scope explicitly.
+- Describe cross-domain work by capability, inputs, evidence and absence behavior, not another skill's identity/path. Keep essential safeguards local; isolate concrete installation mappings from reusable methods. Check whole-bundle closure and sibling-absent use, not just links in the installed pack.
 - Progressive disclosure is mandatory for skills (router SKILL + refs; see `references/agentskills-spec.md`).

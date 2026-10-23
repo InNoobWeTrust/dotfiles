@@ -34,9 +34,9 @@ Do not prebuild future milestones' infrastructure.
 
 | Artifact | Positive reason to use it |
 |---|---|
-| PRD ([product intent](../../brainstorming/SKILL.md)) | Contested product outcome, scope or stakeholder priorities need durable agreement. |
-| TRD ([technical constraints](../../architecture-design/SKILL.md)) | Cross-system technical or operational coordination needs durable contracts. |
-| BDD ([behavior and acceptance](../../code-craft/references/testing.md#behavior-and-acceptance)) | Ambiguous, public or safety-relevant behavior benefits from explicit executable examples. |
+| PRD (durable product-intent artifact from an available product-owner capability, or an inline product brief) | Contested product outcome, scope or stakeholder priorities need durable agreement. |
+| TRD (durable technical-constraint artifact from an available architecture capability, or an inline technical contract) | Cross-system technical or operational coordination needs durable contracts. |
+| BDD (executable behavior/acceptance examples from an available behavior-spec capability, or inline examples) | Ambiguous, public or safety-relevant behavior benefits from explicit executable examples. |
 | ADR | A consequential, hard-to-reverse architecture choice has competing viable options. |
 
 One artifact does not automatically require the others. Use repository-required

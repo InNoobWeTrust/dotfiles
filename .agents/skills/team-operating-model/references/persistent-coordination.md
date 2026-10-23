@@ -70,7 +70,7 @@ On acceptance, a dedicated fresh consolidator may be recruited for that task.
 Its pass is **report-only**: reads role captures and request/plan context; returns
 scored candidates. No long-term/knowledge writes, `consolidated` marker flips,
 archive, eviction, Git, or external effects during the report pass. Applying
-proposals requires subsequent explicit human approval via `memory` approval gates.
+proposals requires subsequent explicit human approval via the selected memory capability's approval gate.
 Do not silently replace the dedicated consolidator with the main.
 
 Replacement consolidators restore their own role checkpoint before running.
@@ -79,12 +79,16 @@ Replacement consolidators restore their own role checkpoint before running.
 
 | Concern | Owner |
 |---|---|
-| Permitted launch/replacement, bounded handoff | `subagent-dispatch` + worker contract; never solo/simulated fallback |
-| Record schema, Capture/Recall, checkpoint storage | `memory` + task-role records |
+| Permitted launch/replacement, bounded handoff | Available dispatch capability + worker contract, or the main skill's inline §2 contract; never solo/simulated fallback |
+| Record schema, Capture/Recall, checkpoint storage | Selected scoped-memory capability + this file's task-role records |
 | Delivery loop, evaluation, release gate | This skill's [delivery path](delivery.md) |
 | Joint plan deliberation, design challenge | This skill's deliberation path |
 
-Use [Task-role records](../../memory/references/task-role-records.md) for schema,
-checkpoint format, and binding/retirement procedures; [Memory](../../memory/SKILL.md)
-for backend resolution; [Worker contract](../../subagent-dispatch/references/worker-contract.md)
-for bounded handoffs. Existing native permissions remain unchanged.
+Use this file's task-role record schema: immutable `task_id` + `role_id`, single
+active ownership, role-first restoration, append-only checkpoints (approved plan
+revision/unit, restored sources, changed outputs with PASS/FAIL/UNVERIFIED,
+blockers and next safe action) and retirement rules. Resolve the selected memory
+scope before reads/writes; directly accessible files are sufficient, and an
+unwritable required scope blocks only affected persistence. Bounded handoffs
+follow the main skill's §2 contract or an available dispatch capability. Existing
+native permissions remain unchanged.

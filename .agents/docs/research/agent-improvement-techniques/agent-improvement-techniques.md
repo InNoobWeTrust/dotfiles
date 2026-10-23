@@ -40,7 +40,7 @@ The coverage verdicts are a point-in-time assessment. "Repo home today" paths ha
 | Evaluator–optimizer loop | Anthropic workflows | `team-operating-model` delivery path, `reviewer` + `rules/evidence.md`, testing reference in code-craft | **Partial** | Separate *generate* from *score against criteria*; loop only when criteria are objective. |
 | Just-in-time context | Anthropic context eng. | `codebase-exploration` progressive load; skill progressive disclosure | **Strong** | Hold identifiers (paths, queries); load detail on demand; hybrid: small always-on index + JIT leaves. |
 | Context compaction | Anthropic context eng. | Memory dream cycle; subagent return summaries | **Partial** | Summarize high-fidelity before window rot; clear stale tool results; keep decisions + open bugs. |
-| Structured note-taking | Anthropic agentic memory | `memory` skill (short-term / long-term) | **Strong** | Persist NOTES outside the window; re-read after compaction/session reset. |
+| Structured note-taking | Anthropic agentic memory | `memory-techniques` skill (short-term / long-term) | **Strong** | Persist NOTES outside the window; re-read after compaction/session reset. |
 | Trajectory awareness (STAPO analog) | STAPO arXiv:2607.04963 | Implicit in long sessions; no explicit mid-trajectory restatement | **Gap** | Re-anchor goal + history at uncertain steps; penalize “forgetting the thread.” |
 | Retrieval-augmented policy (RAPO analog) | RAPO arXiv:2603.03078 | Memory recall; clone-and-mutate exploration | **Partial** | Retrieve *step-level* prior traces (similar bug/fix), not only full sessions; condition next action on them. |
 | Thought grafting (T-STAR analog) | T-STAR arXiv:2604.07165 | Multi-agent branch compare; no formal graft | **Gap** | At divergence, contrast success vs fail branches; graft the successful reasoning into the failing path. |
@@ -62,7 +62,7 @@ The coverage verdicts are a point-in-time assessment. "Repo home today" paths ha
 2. **Evaluator–optimizer** — Generator produces; evaluator scores with explicit criteria and may request revision. Fits translation, search completeness, and code against tests/acceptance.
 3. **Just-in-time context** — Don’t preload the haystack; keep pointers and fetch.
 4. **Compaction** — When long-horizon: summarize (architecture decisions, open issues, last files) and restart context; clear obsolete tool payloads.
-5. **Structured notes** — External memory files with re-injection protocol (this repo’s memory skill).
+5. **Structured notes** — External memory files with re-injection protocol (this repo’s memory-techniques skill).
 
 ### Recent paradigms → prompt analogs only
 
@@ -80,12 +80,12 @@ The coverage verdicts are a point-in-time assessment. "Repo home today" paths ha
 | ID | Gap | Why it hurts | Candidate later home |
 |---|---|---|---|
 | G1 | No explicit **trajectory checkpoint** protocol | Long sessions drift from goal (trajectory neglect) | `code-craft` Phase 3/4 note, or always-on light rule pointer |
-| G2 | No **compaction checklist** for operators | Context rot → wrong edits | `memory` Structure/Capture + session ops doc |
+| G2 | No **compaction checklist** for operators | Context rot → wrong edits | `memory-techniques` Structure/Capture + session ops doc |
 | G3 | ACI not named in skill/tool authoring | Skill authors under-document tools | `skill-author` + `subagent-dispatch` refs |
 | G4 | Evaluator–optimizer not a first-class *named* loop outside tests | Subjective “looks good” reviews | Link `team-operating-model` delivery + `reviewer` criteria-first |
 | G5 | Thought-graft / branch contrast not templated | Parallel agents waste successful reasoning | `team-operating-model` deliberation synthesis template |
 | G6 | Wiring-diagram artifact optional | Agents dump files instead of maps | `codebase-exploration` report templates (already partial) |
-| G7 | RAPO-style **step-level** retrieval weak | Session digests too coarse | `memory` recall templates: “similar incident steps” |
+| G7 | RAPO-style **step-level** retrieval weak | Session digests too coarse | `memory-techniques` recall templates: “similar incident steps” |
 
 Non-goals for skill work:
 
@@ -148,4 +148,4 @@ Implementation order shipped: **code-craft** → **bounded-iteration/reviewer** 
 - [Failure patterns catalog (battle-tested)](../../skills-and-rules/failure-patterns-catalog.md)
 - [Working with AI agents (battle-tested)](../../project-lifecycle/working-with-ai-agents.md)
 - [Research INDEX (not battle-tested)](../INDEX.md)
-- Primary skills: `code-craft`, `memory`, `working-principles`, `team-operating-model`, `subagent-dispatch`, `reviewer`
+- Primary skills: `code-craft`, `memory-techniques`, `working-principles`, `team-operating-model`, `subagent-dispatch`, `reviewer`

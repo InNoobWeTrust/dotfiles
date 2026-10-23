@@ -144,5 +144,4 @@ flowchart TD
 | **Skip when** | Read-only access, immutable append-only event streams, or when atomic DB transactions (`UPDATE ... WHERE version = x`) suffice. |
 | **Tradeoffs** | ✅ Prevents data corruption & race conditions · ❌ Premature distributed locks (e.g. Redis Redlock) add massive operational and network failure complexity. |
 | **Key decision** | Choose the lowest sufficient tier: Git Lockfile (filesystem) → DB Advisory Lock (RDBMS) → Distributed Lease (multi-node with no shared DB/disk). |
-| **Composes with** | Outbox Pattern, Saga Orchestrator, Optimistic/Pessimistic DB Locking (`db-design`), [Code Craft Lock Patterns](../../../code-craft/references/lock-patterns.md). |
-
+| **Related patterns** | Outbox Pattern, Saga Orchestrator, optimistic/pessimistic database locking, local atomic lockfiles and distributed leases. Select the applicable pattern from the system's ownership, consistency and failure constraints. |

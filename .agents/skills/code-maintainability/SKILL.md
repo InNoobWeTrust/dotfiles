@@ -74,11 +74,11 @@ scope. Neither green tests, assessment dispatch, silence, nor recorded suggestio
 satisfies these gates. If either is absent, stop at the record.
 
 Revalidate the current source against the assessed revision; stale suggestions
-need a fresh scoped assessment, not blind application. Use
-[Code Craft](../code-craft/SKILL.md) for the approved bounded change. Preserve
-observable behavior and consumer contracts, run relevant checks again, and record
-what changed and what remains deferred. Request separate authorization for any
-behavior change or broader redesign; do not turn refinement into a rewrite.
+need a fresh scoped assessment, not blind application. Use an implementation
+capability with the explicit approved change, writable scope, observable behavior
+and consumer contracts. Preserve those contracts, run relevant checks again, and
+record what changed and what remains deferred. Request separate authorization for
+any behavior change or broader redesign; do not turn refinement into a rewrite.
 
 Close a bounded refinement with fresh checks and the record update; do not trigger
 another assessment automatically. Reassess only when requested or new evidence

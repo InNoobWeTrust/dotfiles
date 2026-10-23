@@ -5,17 +5,17 @@ Run these checks without rewriting healthy files. Produce a **gap report**, then
 ## A. Presence
 
 - [ ] `AGENTS.md` has mandatory sections (source-of-truth, tooling, agent ops, verify commands, security)
-- [ ] `GLOSSARY.md` exists with ≥10 domain terms (or justified fewer for tiny repos)
+- [ ] A `GLOSSARY.md` exists when requested or recurring business ambiguity justifies one; otherwise absence is not a gap. No term-count quota.
 - [ ] `.agents/FOUNDATION.md` exists (source, mode, revision, date)
 - [ ] Every **required** rule from `core-pack.md` is present and non-empty
 - [ ] Every **required** skill tree from `core-pack.md` is present with `SKILL.md`
-- [ ] `reviewer/references/sub-reviewers/` has at least: code-quality, security, adversarial, design-rigor, edge-case-hunter, editorial
-- [ ] `working-principles/references/planning.md` exists; enabled domain routes and required cross-skill targets are materialized, not INDEX-only stubs
+- [ ] Selected review guidance covers code quality, security, adversarial, design-rigor, edge-case and editorial evaluation; verify the resource locations declared by the installation manifest rather than assuming a sibling directory
+- [ ] Selected planning and domain guidance is materialized with its declared resources, not INDEX-only stubs; report missing required capabilities instead of inventing policy bodies
 - [ ] `skills/INDEX` lists all required skills with Use When / Do Not Use When
 - [ ] `skills/WIRING` exists
 - [ ] `Makefile` has help/fix/lint/quality/test/dev/build (or documented equivalents)
 - [ ] `docs/architecture.md` and `docs/engineering/quality-gates.md` exist
-- [ ] `DESIGN.md` exists for UI/frontend projects (verified via `ui-ux` skill)
+- [ ] `DESIGN.md` exists for UI/frontend projects (verified via UI/UX design capability)
 
 ## B. Wiring integrity
 
@@ -44,7 +44,7 @@ Run these checks without rewriting healthy files. Produce a **gap report**, then
 - [ ] Project INDEX does not list unused mega-skills (video, talent, etc.) unless the team uses them
 - [ ] No full duplicate of global docs/ under project `.agents/docs/` unless intentional
 - [ ] Rules that are global baselines are not re-expanded into multi-hundred-line project forks without reason
-- [ ] `AGENTS.md` length stays within the anti-bloat heuristic; if it exceeds ~150 lines or 8 KB, load `.agents/skills/skill-author/references/instruction-bloat-and-mcp-caution.md` and refactor into references or rules
+- [ ] `AGENTS.md` length stays within the anti-bloat heuristic; if it exceeds ~150 lines or 8 KB, load the governance skill authoring capability's instruction-bloat guidance and refactor into references or rules
 
 ## Gap report format
 

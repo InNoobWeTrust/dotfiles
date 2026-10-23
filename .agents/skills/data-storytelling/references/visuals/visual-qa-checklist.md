@@ -24,4 +24,4 @@ Run this checklist after creating any chart.
 - [ ] The title or caption states the takeaway.
 - [ ] The visual is placed near the claim it supports.
 - [ ] If the visual adds little beyond text, remove it.
-- [ ] If the message is conceptual rather than chart-shaped, escalate to `illustration-craft`.
+- [ ] If the message is conceptual rather than chart-shaped, hand off the approved message, source evidence, audience, claim ceiling and output format to an authorized visual-composition capability; require editable source, export, alt text and preserved caveats. If unavailable, mark the requested bespoke visual unresolved rather than forcing a chart or claiming completion.

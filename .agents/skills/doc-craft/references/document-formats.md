@@ -16,7 +16,7 @@ Load before creating, saving, substantially revising, or sharing a document. Ide
 | Bibliographic source records and citation metadata | Prefer `.bib`; generate the reference list in Typst. Use `.typ` only where `.bib` is unsuitable or cannot represent the information adequately |
 | Documentation site/parser or mandated rendered-review workflow requiring Markdown detail | Its required native format; record the specific consumer |
 | Agent instructions and skill/governance references (`AGENTS.md`, `SKILL.md`, etc.) | Required Markdown and supported metadata |
-| Agent memory, execution plans, phase files, consensus records | Required Markdown/YAML per `memory` and planning contracts |
+| Agent memory, execution plans, phase files, consensus records | Required Markdown/YAML in an explicitly resolved, authorized scope; provide record type and privacy scope to a coordination-memory capability, and stop if destination or write access is unavailable |
 | Parsed specs, `UX-SPEC.md`, linted `DESIGN.md`, canonical QA records | Preserve the declared consumer contract |
 | Notebook cells, JSON/YAML, spreadsheets, HTML applications, executable BDD | Their native formats, not a typeset replacement |
 

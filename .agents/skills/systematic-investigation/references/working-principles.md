@@ -2,7 +2,7 @@
 
 Diagnose before proposing changes. A diagnosis-only assignment does not authorize repairs; distinguish a proposed remediation from one actually verified within the allowed actions.
 
-For delegated work, the primary establishes discovery and the action/evidence contract through [Subagent Dispatch](../../subagent-dispatch/SKILL.md). Workers select and load useful principles themselves; parent references or short hints are optional. Do not assume inherited context or permissions.
+For delegated work, the assigning owner supplies the bounded question, source context, authorized actions, evidence standard and stop conditions. Workers use only their own accessible guidance; do not assume inherited context or permissions or expand scope.
 
 ## Diagnosis
 

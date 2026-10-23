@@ -2,7 +2,7 @@
 
 Use for grounded, bounded design. These principles supplement the selected architecture workflow; they do not authorize implementation or force canonical architecture documents for a narrow design question.
 
-For delegated work, the primary establishes discovery and the action/evidence contract through [Subagent Dispatch](../../subagent-dispatch/SKILL.md). Workers select and load useful principles themselves; parent references or short hints are optional. Do not assume inherited context or permissions.
+For delegated work, the assigning owner supplies the bounded goal, source context, allowed actions, required evidence and stop conditions. A worker uses only its own accessible guidance; do not assume inherited context or permissions. Delegation does not authorize scope expansion or implementation beyond the assignment.
 
 ## Architecture
 

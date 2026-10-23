@@ -29,12 +29,12 @@ Fallback: if no upstream investigation was run, or if any required field is miss
 - **Insight Scorer**: rank signals by magnitude, novelty, confidence, and goal alignment.
 - **Narrative Planner**: convert ranked signals into answer-first story structure.
 - **Skeptic/QA Layer**: downgrade or block unsupported claims and missing baselines.
-- **Execution Standard**: Use the Composable Data Stack (**Ibis + DuckDB**) for computational profiling, signal extraction, and aggregations on tabular data, ensuring out-of-core memory safety without loading raw files into RAM.
+- **Computation capability**: Use an available authorized analytical runtime to profile, extract signals and aggregate tabular data without loading oversized raw files into memory. Existing Ibis + DuckDB support may supply this capability when available; this skill does not require new installs. Inputs are the approved data source/schema, grain, metrics, dimensions, time coverage and access scope; outputs are reproducible aggregates with method parameters and baseline/comparator. If no suitable compute capability or data access is authorized, stop computational claims and return the exact blocker rather than estimating from unobserved data.
 
 ### Output Engine
 
 - Recommend a template when the user does not specify one.
-- Build the approved narrative using one of the defined content templates; select saved output via [Document format selection](../../doc-craft/references/document-formats.md) (Typst + PDF by default).
+- Build the approved narrative using one of the defined content templates. For a saved human-facing report, use Typst source plus the compiled, inspected PDF by default; retain required downstream/native consumer formats and keep the YAML/Markdown machine record canonical. If compiler access is unavailable, label the source uncompiled and report the missing PDF; do not install, upload or silently substitute another format.
 - Adapt tone, density, and action framing for exec, analyst, ops, or customer audiences.
 
 ### Human-In-The-Loop Layer

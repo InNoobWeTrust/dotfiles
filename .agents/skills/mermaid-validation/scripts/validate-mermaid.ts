@@ -1,12 +1,12 @@
 /**
  * Mermaid syntax validator — runs under Bun with happy-dom preload.
  *
- * Usage:
- *   bun --preload ./path/to/happy-dom-preload.ts \
- *       ./path/to/validate-mermaid.ts [file.mmd ...]
+ * Usage (resolve SKILL_ROOT from the actual loaded skill location):
+ *   bun --preload "$SKILL_ROOT/scripts/happy-dom-preload.ts" \
+ *       "$SKILL_ROOT/scripts/validate-mermaid.ts" [project-relative-file.mmd ...]
  *
- *   echo '<mermaid code>' | bun --preload ./path/to/happy-dom-preload.ts \
- *       ./path/to/validate-mermaid.ts
+ *   echo '<mermaid code>' | bun --preload "$SKILL_ROOT/scripts/happy-dom-preload.ts" \
+ *       "$SKILL_ROOT/scripts/validate-mermaid.ts"
  *
  * Exit codes:
  *   0 — all inputs valid
@@ -51,12 +51,12 @@ if (files.length > 0) {
   const code = stdin.trim();
   if (!code) {
     console.error(
-      "Usage: bun --preload <path/to/happy-dom-preload.ts> " +
-        "<path/to/validate-mermaid.ts> [file.mmd ...]",
+      'Usage: bun --preload "$SKILL_ROOT/scripts/happy-dom-preload.ts" ' +
+        '"$SKILL_ROOT/scripts/validate-mermaid.ts" [project-relative-file.mmd ...]',
     );
     console.error(
-      "       echo '<mermaid>' | bun --preload <path/to/happy-dom-preload.ts> " +
-        "<path/to/validate-mermaid.ts>",
+      '       echo \'<mermaid>\' | bun --preload "$SKILL_ROOT/scripts/happy-dom-preload.ts" ' +
+        '"$SKILL_ROOT/scripts/validate-mermaid.ts"',
     );
     process.exit(2);
   }

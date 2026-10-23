@@ -2,7 +2,7 @@
 
 When this investigation uncovers a pattern that warrants governance attention (recurring failure, rule/skill gap), capture findings for future audits. This is advisory — it does not prescribe a specific tool or protocol. The organization's audit system determines how findings are preserved.
 
-1. **Record the failure pattern**: After root cause is found, document as a short-term memory entry (see `memory` skill, Capture mode):
+1. **Record the failure pattern**: After root cause is found, use an authorized scoped-memory capability or writable task record. Include source evidence and scope; if no authorized destination is known, return the capture proposal without inventing a store:
    - What was the AI's mistake (if an AI-authored change is the source)?
    - Was there a rule that should have prevented this? If yes, why didn't it work?
    - Was there no rule covering this pattern? Should there be?
@@ -10,7 +10,7 @@ When this investigation uncovers a pattern that warrants governance attention (r
 
 2. **Propose rule/skill evolution**: If a gap was found, propose a concrete rule or skill change. The proposal goes in the Problem-Solving Report under a new "Governance Gap" section.
 
-3. **Route for audit**: Make findings discoverable through short-term memory entries (tag with `governance-gap` or equivalent org convention). During the next Consolidate pass (see `memory` skill, Dream Cycle), the finding can graduate to long-term so quarterly audits (see `skill-author` skill, Workflow B) surface them.
+3. **Route for audit**: Tag the scoped record with `governance-gap` or an equivalent organization convention. Provide the failure evidence, affected guidance and proposed correction to the authorized maintenance/audit owner. Long-term promotion is a separate proposal requiring the applicable human approval; do not silently consolidate, invent an audit result or broaden storage access.
 
 ---
 
@@ -76,6 +76,6 @@ Break free from assumptions. Use when you're stuck because "that's just how it w
 
 Example: Instead of "this library is slow, find a faster one," ask "what computation do we actually need? Can we avoid it entirely?"
 
-When the disputed constraint involves interdependent human choices, use [Game Theory](../../game-theory/SKILL.md) to reconstruct incentives, information and reactions, test competing strategic explanations, then return the evidence and unknowns to this investigation.
+When the disputed constraint involves interdependent human choices, reconstruct each actor's incentives, information, options, constraints and plausible reactions. Compare competing strategic explanations against observed choices and disconfirming evidence; treat motives as hypotheses, not facts. Return evidence, unknowns and discriminating checks to this investigation. If specialist strategic analysis is unavailable, do not infer hidden motives or present a single explanation as established.
 
 ---

@@ -17,7 +17,7 @@ Before analyzing models, establish the boundary constraints of the environment.
 
 1. **Stated User Constraints**:
    - **Primary Agent Focus**: Identify which agent runs the most (usually the orchestrator) and the permitted changes. Prioritize its stability when optimization includes it; do not change built-in modes or primary model selection when the task excludes them.
-   - **Quality Floors**: Identify any agent with a hard quality boundary (e.g., code-craft must use a frontier coding model).
+   - **Quality Floors**: Identify any agent with a hard quality boundary (e.g., implementation agents must use a frontier coding model).
    - **Accessible Plans**: Direct vendor subscriptions, bundled packages (e.g., Kilo bundle), free tiers, or local offline models (Ollama).
    - **Target Mode**: Quality-first, balanced cost/quality, or cost-minimization.
 2. **Agent Class Map**:

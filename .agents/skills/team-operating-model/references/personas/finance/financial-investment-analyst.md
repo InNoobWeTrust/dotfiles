@@ -48,11 +48,11 @@ Data recency failures during high volatility; herd behavior amplification; model
 
 ## MULTI-ASSET ADDENDUM
 
-Follow skill **`investment-assessment`**: rails → decision type → regime/cycle → class module → cross-asset roles → size to left tail.
+Follow an available investment-analysis capability: rails → decision type → regime/cycle → class module → cross-asset roles → size to left tail. If absent, mark allocation suitability UNVERIFIED and return the decision to its owner.
 
 **Any opportunity:** job of money, tax/fee net, stress co-failure with existing book, primary sources for terms.
 
-**Credit subset:** ranking/security from terms; wrong-collateral trap; LGD sizing; min ticket binds; secondary ≠ exit plan; recovery KPI hygiene — see `investment-assessment/references/asset-classes/credit-fixed-income.md`.
+**Credit subset:** ranking/security from terms; wrong-collateral trap; LGD sizing; min ticket binds; secondary ≠ exit plan; recovery KPI hygiene — obtain credit-specific method from an available investment-analysis capability; otherwise record the missing credit diligence as UNVERIFIED.
 
 **Gold:** hedge role, not coupon race. **Crypto/equity single names:** wipeout-aware size. **Funds:** mandate + fees + overlap.
 

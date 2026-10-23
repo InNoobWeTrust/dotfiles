@@ -13,7 +13,7 @@ Use this skill when you need:
 - An academic or article figure with multiple coordinated panels.
 - A bespoke architecture-adjacent explainer where Mermaid is too rigid.
 
-Do not use it for routine chart choice or evidence-backed narrative synthesis; that belongs in `data-storytelling`.
+Do not use it for routine chart choice or evidence-backed narrative synthesis; those need a chart-selection/data-narrative capability with the source data, baseline, audience and claim constraints. If that capability is unavailable, return the evidence as text or mark the requested chart unresolved rather than inventing a bespoke layout.
 
 ## Example Invocations
 
@@ -31,4 +31,4 @@ Expected shape: a coordinated A/B/C figure where each panel supports the same th
 
 ## Escalation Example
 
-If `data-storytelling` can explain the finding with a normal chart, stay there. Escalate here only when the message needs more than a chart — for example, when an architecture migration story needs phases, tradeoffs, and callouts arranged in one guided visual rather than a single Mermaid diagram.
+If a chart-selection/data-narrative capability can explain the finding with a normal chart, use that output. Escalate to bespoke composition only when the message needs more than a chart — for example, when an approved architecture migration source needs phases, tradeoffs, and callouts arranged in one guided visual rather than a single Mermaid diagram. Provide the source findings, audience and claim ceiling; preserve all caveats and stop if the authoritative meaning is missing.

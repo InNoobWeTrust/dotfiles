@@ -4,7 +4,7 @@ Shared method for architecture, implementation and review. Use when creating or 
 
 ## 1. Map before choosing where to edit
 
-Use existing task/design context, not a new mandatory artifact. Record the question, source revision/worktree (including relevant dirty state), examined paths and unknowns. Use [structural tracing](../../codebase-exploration/references/structural-tracing.md) to obtain evidence.
+Use existing task/design context, not a new mandatory artifact. Record the question, source revision/worktree (including relevant dirty state), examined paths and unknowns. Trace a bounded affected slice through actual source and consumers: entrypoints, imports/re-exports, manifests/resolution, registration/runtime wiring, state ownership, and representative normal/error flow. Use available semantic tools only for supported methods; complement them with source, manifests and runtime wiring. Mark unsupported languages, dynamic edges, unavailable resolver data and unexamined transitive paths explicitly; symbols/builds alone do not establish full graph coverage.
 
 - Describe each affected component's responsibility and owning layer. Locate the existing home for policy, orchestration, state and effects before choosing files.
 - Trace a representative entry → orchestration → capability → effect/result path, including failure propagation and registration. Identify state reads/writes and who controls lifetime. A reader should be able to follow this without reconstructing hidden global behavior.

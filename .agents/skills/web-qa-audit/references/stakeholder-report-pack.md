@@ -366,7 +366,7 @@ When audience is decision-only and must not receive the full matrix:
 
 ## PDF Executive Summary Contract
 
-Author the stakeholder narrative directly in `.typ`, applying [Document format selection](../../doc-craft/references/document-formats.md) and [Typst workflow](../../doc-craft/references/typst-workflow.md). Derive facts/counts from the approved projection, keep the existing YAML/Markdown engineering record, and compile/inspect the final revision before claiming PDF delivery; no manually maintained Markdown mirror is needed.
+Author the stakeholder narrative directly in `.typ`. Derive facts/counts only from the approved projection and keep the existing YAML/Markdown engineering record as canonical. Compile and inspect the final Typst revision (layout, links, caveats, and accessibility) before claiming PDF delivery; no manually maintained Markdown mirror is needed. If compiler access is missing, label the source uncompiled and the PDF blocked; do not install tooling, upload data, substitute Markdown, or pass off an old PDF.
 
 ### File name
 
@@ -579,7 +579,7 @@ If a check fails: do not deliver the pack; fix or fall back to eng MD + blocker 
 
 ## Collaboration Notes
 
-- Narrative polish for high-stakes exec wording may use a data-storytelling / editorial pass **after** projection gates pass.
+- Narrative polish for high-stakes executive wording may use an authorized evidence-based editorial capability **only after** projection gates pass; it receives the approved claim set and audience constraints and may not alter counts, evidence grades, or verdicts.
 - Browser mechanics and raw captures stay in the browser-control / audit execution path.
 - This reference owns **report shape, audience adaptation, and projection trust gates**, not screenshot capture or per-org localization.
 

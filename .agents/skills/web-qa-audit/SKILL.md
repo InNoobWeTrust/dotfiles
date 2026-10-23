@@ -48,17 +48,17 @@ Start with `references/INDEX.md`, then load only the path matching the request.
 
 ## Rules
 
-- Use **terminal-browser by default**, side-by-side with the agent; [browser automation](../cdp-browser-automation/SKILL.md) owns CLI mechanics. Ordinary QA does not require Chrome DevTools MCP.
+- Use **terminal-browser by default**, side-by-side with the agent. Pin browser and tab; observe a fresh compact snapshot, use fresh element references for actions, inspect a screenshot when appearance matters, and verify the expected state after each action. Ordinary QA does not require Chrome DevTools MCP.
 - Chrome/CDP is reserved for explicit Chrome tasks or demonstrated capability gaps (e.g. Chrome performance traces or heap snapshots). Do not silently enable MCP or change setup.
 - Preserve the requested browser, viewport, accessibility, and trace evidence contract. Missing capabilities are blocked/unverified or need an authorized specialist path, not downgraded passes; durable Playwright/Selenium suites remain separate.
 - Prefer this skill for QA orchestration, evidence contracts, scenario lifecycle, audit reporting, stakeholder pack projection, and pre-run grooming of auditable input files.
 - Start from `references/INDEX.md`; do not load the whole reference tree by default.
 - If the request is runnable-QA oriented but no audit-request/run-card/scenario input file exists yet, enter **Grooming / input composition** mode before any browser execution.
-- If this skill was not delegated from `reviewer` and the incoming request is still fuzzy, treat that as a routing signal to groom scope first rather than jumping straight into browser mechanics.
+- If QA is invoked directly and the request is still fuzzy, groom scope first rather than jumping into browser mechanics. A risk note from an evaluator is not executable scope until a QA owner supplies an approved run input.
 - Do not escalate a small spot check into a full materialization workflow unless the user or risk profile justifies it.
 - Keep success evidence explicit: pass/fail/unverified (and evidence_grade) with browser, viewport, and artifact context.
 - Keep YAML/Markdown as the canonical machine + engineering record; derive Excel/PDF/HTML for business audiences — never reverse that relationship.
-- Author stakeholder PDF narratives in Typst via [Document format selection](../doc-craft/references/document-formats.md); this does not change canonical QA YAML/Markdown or native spreadsheet/HTML contracts.
+- Author stakeholder PDF narratives in Typst source and compile/inspect the final PDF; keep canonical QA YAML/Markdown and native spreadsheet/HTML contracts unchanged. Missing compiler or required output blocks PDF delivery—do not install, upload, substitute Markdown, or present a stale PDF.
 - Audience-branch reporting: eng-only runs omit Stakeholder Pack section and do not load `stakeholder-report-pack.md`.
 - Stakeholder projection must pass sanitization, sensitive-artifact exclusion, provenance, and count-consistency gates; never map unverified/blocked to pass.
 - Never normalize unsafe auth/session/test-endpoint behavior; require sanctioned target and environment assumptions first.

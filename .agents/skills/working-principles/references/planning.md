@@ -70,9 +70,7 @@ user.
 - Make integration risks and reversible assumptions visible. Leave local details
   to implementers within agreed scope and contracts; avoid speculative features
   and abstractions. A handoff should cost less than the independent work it enables.
-- Use [Phased delivery](../../team-operating-model/references/phased-delivery.md)
-  and [Slicing](../../team-operating-model/references/slicing.md) when milestones
-  and dependencies need that detail. Both references are usable without team activation.
+- For milestones and dependencies that need that detail, use an available phased-delivery capability or an inline phase/slice contract: outcome, independently useful units, writable ownership, observable acceptance, dependency order, stops and continuation state. Both routes are usable without team activation.
 
 ## Discovery and consumer boundaries
 

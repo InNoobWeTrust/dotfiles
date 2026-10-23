@@ -2,6 +2,8 @@
 
 Match intent below, then load only the selected `<skill>/SKILL.md` and references it requests. Prefer one narrow domain owner; add review/safety lenses only when needed. Simple formatting, renames and config-value edits need no skill.
 
+This is an installation discovery map. Concrete skill names belong here and in WIRING; reusable skill bundles describe capability handoffs without depending on sibling identities or paths.
+
 For non-trivial work, load `team-operating-model` before substantive work: activation requires a real primary-plus-worker team; unavailable permitted delegation blocks affected work, never solo/simulated fallback. Exclude trivial work before activation. `subagent-dispatch` governs every worker launch; skill selection grants no launch or implementation authority.
 
 | Skill | Cost | Use When | Do Not Use When |
@@ -18,6 +20,7 @@ For non-trivial work, load `team-operating-model` before substantive work: activ
 | `codebase-exploration` | medium | Locate unfamiliar behavior, trace call chains/dependencies, map repositories | Relevant files already known |
 | `reviewer` | varies | Review any artifact: code, docs, config, infrastructure, designs, compliance; select warranted sub-lenses | Implementation-only requests without a review need |
 | `ui-ux` | medium | Traditional/generative UI journeys, states, tokens and frontend under UX-SPEC; OpenUI/model-composed interfaces when applicable | Backend-only work; static UI does not need generative references |
+| `developer-experience` | medium | DX/DevX friction: typed configs/templates/defaults, task entry points, project/module dependency and dataflow views, optional diagnostics, reproducible runs/checkpoints, contribution conventions | Root-cause diagnosis only; architecture decisions; UI design; automatic refactoring; foundation/platform bootstrap |
 | `cdp-browser-automation` | medium | Real browser interaction: terminal-browser by default; Chrome/CDP only for explicit tasks or demonstrated gaps | Static source/HTTP inspection suffices |
 | `web-qa-audit` | medium | Executable terminal-browser-first QA: grooming, spot checks/audits, release scenarios, durable E2E/a11y/regressions, stakeholder packs | Heuristic-only review with no executable QA need |
 | `data-storytelling` | medium | Evidence-backed data narratives, metric interpretation, chart selection and Mermaid support | No dataset or narrative goal |
@@ -29,7 +32,7 @@ For non-trivial work, load `team-operating-model` before substantive work: activ
 | `ml-training` | medium | Classical/tabular or neural/multimodal training, HF where appropriate, edge/ONNX targets, splits/CV, preflight, metrics, recovery | Hypotheses only; inference packaging only; agent-model benchmarks |
 | `model-benchmarking` | low | Task-fit agent-model assignments/descriptions using practitioner, outcome, benchmark, cost and access evidence | Non-LLM pricing; permission changes |
 | `doc-craft` | low | Human-facing technical docs and presentation of domain-owned specs; Markdown entries, comprehensive Typst/PDF, progressive disclosure | Owning product/technical/behavior meaning; code-only work; internal tracking |
-| `memory` | low–medium | Scoped capture/recall/plans/checkpoints; project knowledge vs external global/private/task stores; requested consolidation/eviction | Trivial one-shot edits; human-facing docs; automatic profiling/consolidation; no global notes in `~/.agents/memories/` |
+| `memory-techniques` | low–medium | Scoped capture/recall/plans/checkpoints; project knowledge vs external global/private/task stores; requested consolidation/eviction | Trivial one-shot edits; human-facing docs; automatic profiling/consolidation; no global notes in `~/.agents/memories/` |
 | `team-operating-model` | low–high | Non-trivial delivery/planning/architecture/diagnosis, high-stakes decisions, independent checks, deliberation and continuing roles; real team mandatory | Trivial work (exclude before activation); no solo/simulated fallback or authority expansion |
 | `working-principles` | low | Infer/discover task-appropriate reasoning styles for primary/workers; optional hint/reference, bounded catalog lookup | Mechanical tasks need baseline only; not domain workflow, authority or safety replacement |
 | `subagent-dispatch` | low | Every worker launch, periodic check or delayed reminder; bounded actions/evidence/stops, native waits where suitable | No delegation/monitoring needed; replacing live dialogue or inseparable primary judgment |

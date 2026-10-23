@@ -3,8 +3,7 @@
 Apply before authoring or updating any artifact: document, code, slide, visual,
 config, or other output. Resolve who the artifact is for, why they need it, and
 what constraints apply — before producing content. This is a crosscutting
-pre-check, not a domain workflow or schema; it does not activate doc-craft or
-any other medium-specific skill.
+pre-check, not a domain workflow or schema; it does not activate a documentation-domain or other medium-specific workflow.
 
 **Scope:** every authoring or update task. Small edits (typos, formatting,
 rewording within a settled context) reuse known context without ceremony;
@@ -65,9 +64,7 @@ and re-evaluate affected assumptions when usage, audience or constraints change.
   ask before writing the affected section; do not fill in with alternatives or
   session history.
 - **Conflicting requirements:** surface the conflict; do not silently resolve it.
-- Medium-specific requirements: link to the owning skill rather than duplicating
-  (e.g., [doc-craft](../../doc-craft/SKILL.md) for human-facing technical
-  documents, [ui-ux](../../ui-ux/SKILL.md) for UI artifacts).
+- Medium-specific requirements: use an available medium or domain authoring capability, or state the constraints inline; e.g. human-facing technical documents need audience-appropriate structure, progressive disclosure and citations, while UI artifacts need journey, state and accessibility criteria. Do not duplicate that owner's full method here.
 - No tool installs, network access, or environment assumptions required for this
   check.
 

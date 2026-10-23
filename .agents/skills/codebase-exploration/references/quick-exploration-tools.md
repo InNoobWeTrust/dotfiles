@@ -18,7 +18,7 @@ For LSP definitions/references, bridge lifecycle and fallback, use [Structural t
 | Which modules depend on this? | Imports/re-exports plus alias/config resolution; do not equate text matches with resolved edges |
 | Which workspace/external packages enter the slice? | Existing manifests, lockfiles and authorized installed resolver output for relevant targets/features |
 | How is runtime behavior wired? | Composition roots, routes, callbacks/registration, state ownership and normal/error flows |
-| Is a new edge safe? | Shared [structural integrity method](../../architecture-design/references/structural-integrity.md); follow reverse reachability through unchanged nodes |
+| Is a new edge safe? | State intended direction, inspect affected imports/workspace/runtime edges and consumers, and follow reverse reachability through unchanged nodes; missing evidence is UNVERIFIED |
 
 Package metadata/resolver commands can execute project code, write caches or access the network. Inspect their effects and applicable execution policy before running; read manifests/lockfiles when command execution is unsuitable. A shallow dependency listing is not a transitive or module graph.
 

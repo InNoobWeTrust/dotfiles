@@ -43,7 +43,7 @@ Legend: **Strong** / **Partial** / **Gap** relative to this dotfiles agent stack
 
 | Blip | Ring | Repo alignment | Action |
 |---|---|---|---|
-| Context engineering | Adopt | `memory`, progressive disclosure, skill index | Keep; name “context engineering” in docs |
+| Context engineering | Adopt | `memory-techniques`, progressive disclosure, skill index | Keep; name “context engineering” in docs |
 | Curated shared instructions | Adopt | `AGENTS.md`, rules, project templates | Strong — template distribution is the product |
 | Structured output from LLMs | Adopt | skill output contracts, subagent-dispatch | Partial — formalize more JSON/schema contracts |
 | Zero trust for agents | Adopt | autonomy/execution/git safety | Partial — SPIFFE/identity out of scope for personal stack |

@@ -6,7 +6,7 @@ description: "Use proactively for non-trivial delivery, ambiguous planning, arch
 # Team Operating Model
 
 Activation requires a real team. Own authorized delivery with complementary workers and preserve continuity.
-Domain skills govern work; `subagent-dispatch` governs launches and `memory` governs storage.
+Domain skills govern work. Permitted delegation interfaces govern launches; the selected scoped-memory store governs storage. This bundle's contracts remain usable without those capabilities; a mandatory absent capability blocks only its affected step and is reported, never simulated.
 
 **Inputs:** outcome, uncertainty, sources, authority/resource boundaries, mode, permitted workers, bindings, plans, and state.
 **Outputs:** real team, scoped assignments, evidence/dissent synthesis, plans/checkpoints, current proof, and acceptance handoff.
@@ -20,7 +20,8 @@ assignment and observed task-relevant contribution. Personas in one context, a
 tool call, a reserved slot, or an uncompleted launch alone are not a team.
 
 Check actual capability **and permission**, establish records, and dispatch through
-`subagent-dispatch` before substantive work. Preparatory guidance, role/plan setup,
+an available permitted delegation interface under the bounded handoff contract in §2
+before substantive work. Preparatory guidance, role/plan setup,
 and bounded capability checks are allowed; implementation is not preflight.
 If delegation is unavailable/denied or cannot produce required worker evidence,
 stop with a blocker. Never continue solo, simulate workers, or broaden authority.
@@ -43,9 +44,11 @@ consequential direction follows the active eligibility gate and is recorded, not
 self-ratified. Choose complementary jobs from actual uncertainty, not a fixed cast or
 worker quota. Distinguish runtime main/worker capability from permanent job roles.
 
-Before every launch, load `subagent-dispatch` and its worker contract. Supply the
-goal, sources, scope, READ/WRITE/RUN/network boundaries, evidence/output contract,
-job/resource limits, stop behavior, and accessible guidance. Parallelize only
+Before every launch, apply an available dispatch/worker-contract capability, or this
+inline contract: supply the goal, sources, scope, READ/WRITE/RUN/network boundaries,
+evidence/output contract, job/resource limits, stop behavior, and accessible guidance.
+An absent dispatch capability blocks the affected launch; do not emulate a worker
+in the primary context. Parallelize only
 independent work with disjoint write ownership; sequence dependencies.
 
 Work across multiple sessions or contributors requires immutable `task_id` +
@@ -55,7 +58,7 @@ and session, not re-scoping a bound coder. Apply the persistent reference in ful
 An assigned worker joins the existing primary/worker team; it must not recursively
 spawn another team unless its bounded handoff separately authorizes delegation.
 
-Assign a **dedicated user-requirement conformance subagent**, separate from the primary and artifact authors. Follow [the conformance contract](../subagent-dispatch/references/worker-contract.md#dedicated-user-requirement-conformance): independently reconcile original user instructions with a cumulative baseline and check every active point, including audience, assumed knowledge, writing style, format, and constraints. One stable checker job covers all points; an existing goal-alignment reviewer qualifies only with this contract. Preserve its role/binding across repeated checks under the persistent rules.
+Assign a **dedicated user-requirement conformance subagent**, separate from the primary and artifact authors. Follow this conformance contract: independently reconcile original user instructions with a cumulative baseline and check every active point, including audience, assumed knowledge, writing style, format, and constraints. One stable checker job covers all points; an existing goal-alignment reviewer qualifies only with this contract. Preserve its role/binding across repeated checks under the persistent rules.
 
 ## 3. Deliberate and synthesize when needed
 
@@ -74,11 +77,14 @@ eligible proposal/validation/authority path; it does not resolve consequential d
 facts, inferences, and unknowns; return unresolved user-owned decisions with plain
 context and consequences. Required independent challenge gates still apply.
 
-After eligible proposal/validation, use [Decision Support](../decision-support/SKILL.md)
-for meaningful in-scope alternatives, recommendations before asking the user, or
-worker continue/return uncertainty, when available and authorized. Consultation
-informs the applicable authority; estimates neither supply a real worker nor
-waive authority, evidence or stop gates. Deterministic steps need no consultation.
+After eligible proposal/validation, use an available decision-support capability
+(a configured evaluation service or an explicitly delegated decision role) for
+meaningful in-scope alternatives, recommendations before asking the user, or
+worker continue/return uncertainty, when available and authorized. If none is
+available, decide only mechanics and return the consequential choice to its
+authority. Consultation informs the applicable authority; estimates neither supply
+a real worker nor waive authority, evidence or stop gates. Deterministic steps need
+no consultation.
 
 ## 4. Approve the plan and execute only authorized work
 
@@ -96,7 +102,8 @@ current revision's receipt; mechanical edits with no changed design are exempt.
 
 The primary retains architecture stewardship across workers: maintain the bounded source-backed map, pass relevant structure/flow knowledge in handoffs, and verify combined placement, dependency deltas and human understandability at integration under that design-acceptance reference. Consequential architecture direction follows the eligibility gate.
 
-For software work, consequential library/tool/API selections are settled through the eligibility gate using repository constraints and applicable code-craft guidance; local mechanics within the settled stack remain with the implementer. Keep the [materialization contract](../subagent-dispatch/references/implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) in the existing plan/phase file (inline for an atomic patch), carry its unit-relevant rows into worker handoffs, and revalidate changed choices on replacement/revision. Acceptance checks actual API use and behavior, not imports alone; workers report missing/incompatible choices rather than silently reverting to learned patterns.
+For software work, consequential library/tool/API selections are settled through
+the eligibility gate using repository constraints and applicable code guidance; local mechanics within the settled stack remain with the implementer. Keep the materialization contract in the existing plan/phase file (inline for an atomic patch): for each affected capability, record the selected library/tool/API, compatibility, accessible reference source, dependency-edit scope, justified exceptions, prohibited substitutions and actual reuse evidence. Carry its unit-relevant rows into worker handoffs, and revalidate changed choices on replacement/revision. Acceptance checks actual API use and behavior, not imports alone; workers report missing/incompatible choices rather than silently reverting to learned patterns.
 
 Load [Delivery](references/delivery.md) before authorized build/fix/work-until-done loops.
 It governs autonomous/collaborative/HITL mode, bounded jobs, criteria, correction, and release.
@@ -109,7 +116,7 @@ Load [Procedure](references/delivery/procedure.md) before a verifier/controller/
 
 When new information or revised artifacts arrive, preserve earlier compatible requirements; record only source-supported supersessions. Recheck affected rows and regressions, especially audience/style, and require the dedicated checker's current whole-baseline receipt before final handoff. Primary self-review, general quality review, or technical PASS cannot substitute; unresolved requirements remain visible blockers.
 
-When periodic monitoring is requested, assign one owner and record the target, interval, endpoint, last observation, outstanding timer identifier, and next check due in the existing task checkpoint. Load [Periodic Progress Checks](../subagent-dispatch/references/periodic-checks.md); arm the wait or supported background timer **before** returning to other work, consume each result, and rearm while monitoring remains in scope. Do not assume another teammate is checking, or claim monitoring continues after losing its wake-up mechanism.
+When periodic monitoring is requested, assign one owner and record the target, interval, endpoint, last observation, outstanding timer identifier, and next check due in the existing task checkpoint. Apply this periodic-check contract: arm the wait or supported background timer **before** returning to other work, consume each result, and rearm while monitoring remains in scope. Bounded sleeps/simple shell checks use native background execution with completion notifications; substantive check reasoning may use a permitted worker, but waiting stays in a command. Do not assume another teammate is checking, or claim monitoring continues after losing its wake-up mechanism.
 
 Persistent contributors append a checkpoint after every completed/interrupted
 slice under the persistent reference; do not rewrite earlier captures. Missing or
@@ -118,7 +125,7 @@ failed capture blocks substantive continuation pending authorized recovery.
 Only **recorded user acceptance** enables accepted-task consolidation: a fresh
 dedicated consolidator's pass is report-only. It cannot write long-term knowledge,
 flip markers, archive/evict, run Git, or cause external effects. Apply proposals
-only after subsequent explicit human approval through `memory`; do not replace
+only after subsequent explicit human approval through the selected memory capability's approval gate; do not replace
 the consolidator with the primary silently.
 
 ## Stop conditions
@@ -181,6 +188,6 @@ the consolidator with the primary silently.
 - [Deliberation](references/deliberation.md) — panel method, finance cast, persona discovery
 - [Persistent coordination](references/persistent-coordination.md) — binding, restoration, replacement, checkpoints, plans, consolidation
 - [Branch-graft synthesis](references/branch-graft-synthesis.md) — preserve competing branches
-- [Subagent dispatch](../subagent-dispatch/SKILL.md) — permitted launches and bounded handoffs
-- [Memory](../memory/SKILL.md) — storage and task-role record schema
+- [Subagent dispatch capability] — permitted launches and bounded handoffs; use an available dispatch interface or the inline §2 contract, and block the launch if neither exists
+- [Scoped memory/checkpoint capability] — storage and task-role record schema; use the selected store or this bundle's persistent-coordination records, and report an unwritable required scope
 - [Delivery](references/delivery.md) — ownership, evaluator–optimizer loop, release gates, and stops

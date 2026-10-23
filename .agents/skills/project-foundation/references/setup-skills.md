@@ -232,7 +232,7 @@ Run these only when the project expects local services, credentials, ports, or e
 
 ## Detect
 
-Run `scripts/detect_env.sh` or inline:
+Use the inline check below, or a detection script actually bundled with the generated setup skill after verifying its path:
 
 ```bash
 OS=$(uname -s)
@@ -285,7 +285,7 @@ When `project-foundation` detects a complex stack, it should:
 | Temptation | Why wrong |
 |---|---|
 | Put setup steps only in README | Agents and CI cannot run README prose consistently. |
-| Install global packages silently | Violates `execution-safety` script-sandboxing constraint. |
+| Install global packages silently | Exceeds setup authority; use the available compatible sandbox and obtain permission for package acquisition or expanded writable/network boundaries. |
 | Make setup interactive | Agents cannot answer interactive prompts reliably; use flags or env vars. |
 | Skip verification | A "set up" environment that cannot run tests is not set up. |
 
@@ -293,10 +293,10 @@ When `project-foundation` detects a complex stack, it should:
 
 ## Related
 
-- `.agents/skills/project-foundation/SKILL.md` — bootstrap mode
+- [Bootstrap mode](../SKILL.md) — this bundle's foundation workflow
 - Script execution: use the available compatible sandbox, declared dependencies and authorized writable/network boundaries; report missing capability rather than installing or retrying unrestricted.
-- `.agents/skills/devsecops/SKILL.md` — CI pipeline setup
-- Research: `.agents/docs/research/thoughtworks-radar-vol34/` — "Skills as executable onboarding" blip
+- CI/CD pipeline setup capability — for CI pipeline integration
+- Optional background: <https://www.thoughtworks.com/radar> — inspect relevant onboarding practices directly; no local research archive is required.
 
 ### Background examples (verify site policy — not authoritative)
 

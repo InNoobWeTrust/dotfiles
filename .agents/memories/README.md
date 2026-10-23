@@ -18,6 +18,6 @@ This directory contains non-sensitive, reusable dotfiles knowledge intended for 
 | Cross-project harness learnings | External harness-global scope |
 | Explicitly cross-harness global learnings | Shared-global audience in the same external store, never `~/.agents/memories/` |
 
-Use the [memory skill](../skills/memory/SKILL.md) and its [scope conventions](../skills/memory/references/scopes.md) before persistence. The stable repository ID is `dotfiles`; prefer an available external-memory capability for short-lived or sensitive context, or manage the same scoped external files directly. No MCP is required.
+Before persistence, select the intended audience and scope explicitly. The stable repository ID is `dotfiles`; prefer an available external-memory capability for short-lived or sensitive context, or manage the same explicitly selected scoped files directly. Do not invent a store, silently broaden scope or publish private/task/session content here. Durable capture, consolidation and eviction retain their applicable human-approval boundaries; missing storage capability is not permission to install one. No particular skill or MCP is required. Read [memory_maintenance.md](memory_maintenance.md) for this repository's storage boundaries.
 
 Private/task/session contents and their inventories do not belong in this directory. Ignore rules help with new files but cannot remove copies already tracked, staged or present in Git history.

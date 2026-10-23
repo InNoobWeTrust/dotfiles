@@ -28,7 +28,7 @@ Do not run against production or third-party hosts without explicit authorizatio
 
 ## Default Execution Surface
 
-Use **terminal-browser**, side-by-side with the agent, for ordinary interaction and screenshot/snapshot evidence. Follow [CLI mechanics](../../cdp-browser-automation/references/terminal-browser.md); pin the browser and tab rather than following the active tab. Chrome DevTools MCP is not a prerequisite.
+Use **terminal-browser**, side-by-side with the agent, for ordinary interaction and screenshot/snapshot evidence. Pin the browser and tab rather than following the active tab; take a compact snapshot, capture a screenshot when appearance matters, refresh element references after page changes, and verify each expected state. Chrome DevTools MCP is not a prerequisite.
 
 Before executing, check the agreed evidence against actual capabilities:
 - Record the tool/version, actual engine, and observed viewport; a terminal Chromium page cannot prove Firefox/WebKit or real-device coverage.
@@ -69,7 +69,7 @@ Every meaningful action follows:
 3. **Verify** — prove the action worked
 4. **Recover / Escalate** — bounded retry or stop
 
-Use `cdp-browser-automation` for terminal-browser-first mechanics. A generic successful CLI action is not evidence that the scenario's expected user-visible state occurred.
+Use the documented interface of the available `terminal-browser` capability for interaction mechanics. A generic successful CLI action is not evidence that the scenario's expected user-visible state occurred. If the capability is unavailable, report browser evidence as blocked/unverified; do not enable Chrome/CDP unless the explicit-task or demonstrated-gap exception is met and authorized.
 
 ---
 

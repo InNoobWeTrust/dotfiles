@@ -1,6 +1,6 @@
 # Document Routing and Audience Classification
 
-This reference establishes the boundary between **Human-Facing Documentation** (routed to `docs/` or module `README.md`) and **Agent-Facing Coordination Memory** (routed to `MEMORY_DIR`).
+This reference establishes the boundary between **Human-Facing Documentation** (routed to `docs/` or module `README.md`) and **Agent-Facing Coordination Memory** (stored only through an authorized, explicitly scoped coordination-memory capability).
 
 Destination and format are separate decisions. Apply [Document format selection](document-formats.md): repository entries and main points stay Markdown for GitHub reading; comprehensive human-facing detail becomes an assembled Typst/PDF book. Instruction references, memory and other native-consumer contracts remain unchanged; use [Typst workflow](typst-workflow.md) for build and delivery.
 
@@ -19,7 +19,7 @@ Frontier agents often conflate documentation intended for human mental models wi
 | Dimension | Human-Facing Documentation | Agent Coordination & Execution Memory |
 |---|---|---|
 | **Primary Audience** | Human engineers, maintainers, users, leadership | Autonomous agents, delegated workers, execution harnesses |
-| **Storage Destination** | `docs/`, `<module>/README.md`, root `README.md` | Scoped `MEMORY_DIR`: project knowledge in `.agents/memories/`; private/task/session roots resolved externally per memory skill |
+| **Storage Destination** | `docs/`, `<module>/README.md`, root `README.md` | The explicitly resolved project-knowledge or private/task/session scope supplied by an authorized coordination-memory capability; never infer a private root |
 | **Primary Purpose** | Build shared mental models; explain purpose, usage, architecture | Track execution progress, maintain atomic plans, record consensus |
 | **Content Types** | System architecture, how-to guides, module READMEs, API overviews | Atomic plans (`plan.md`), vertical slice phase specs, consensus boards |
 | **Abstraction Level** | **High / Feature-Level**: Concepts, tradeoffs, usage, pseudocode | **Low / Task-Level**: Concrete file deltas, RED/GREEN steps, logs |
@@ -33,10 +33,10 @@ Frontier agents often conflate documentation intended for human mental models wi
 
 ```
 Does the document represent atomic task execution, phase breakdown, or inter-agent coordination?
-├── YES ────────► ROUTE TO MEMORY SKILL (`MEMORY_DIR`)
-│                 ├── Atomic feature implementation plan ──► `MEMORY_DIR/plans/<feature>/plan.md`
-│                 ├── Detailed vertical slice phase ──────► `MEMORY_DIR/plans/<feature>/phases/<##>-<slice>.md`
-│                 └── Inter-agent consensus board ────────► `MEMORY_DIR/consensus/<topic>.md`
+├── YES ────────► STOP human-doc authoring; use an authorized scoped coordination-memory capability
+│                 ├── Atomic feature implementation plan ──► <resolved-scope>/plans/<feature>/plan.md
+│                 ├── Detailed vertical slice phase ──────► <resolved-scope>/plans/<feature>/phases/<##>-<slice>.md
+│                 └── Inter-agent consensus board ────────► <resolved-scope>/consensus/<topic>.md
 │
 └── NO (Human-Facing Content)
     ├── Is it explaining a code package/module's purpose & usage?
@@ -68,7 +68,7 @@ A code module `README.md` must enable an engineer to understand the module in un
 
 ## 5. Agent-Facing Memory Invariants (File-Based & Traceable)
 
-Routing internal agent documents to `MEMORY_DIR` does **not** permit opaque, unreadable, or transient data:
+Routing internal agent documents to a scoped coordination-memory capability does **not** permit opaque, unreadable, or transient data. Supply record type and privacy scope; require a resolved destination, Markdown/YAML output, and explicit write access. If any are missing, stop and report rather than guessing a location or writing into `docs/`:
 1. **File-Based & Text-Based**: All plans, phases, and consensus records must be stored as plain Markdown (`.md`) files with structured YAML frontmatter.
 2. **Human-Traceable**: Files must use clear headings, markdown tables, and unambiguous paths. Any human developer must be able to open and audit them immediately.
 3. **Git-Committable**: Content must be clean, deterministic text suitable for Git version control and diff inspection when the project tracks plans in version control.

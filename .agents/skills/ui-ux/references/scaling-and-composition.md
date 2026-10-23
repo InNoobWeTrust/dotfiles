@@ -63,56 +63,57 @@ only when all Quick criteria below hold. Preserve the existing phase gates.
 - Phase 2 deep: Multiple persona journey maps, edge-case scenarios
 - Phase 3 deep: SVG wireframes for every non-trivial screen at all breakpoints (mobile / tablet / desktop), saved in `UX-SPEC.md` § Layout
 - Phase 5 deep: Formal DESIGN.md creation with full token specification
-- Phase 7 deep: Delegate to `web-qa-audit` for browser-based verification
+- Phase 7 deep: Use a browser-QA executor with the approved UX-SPEC, journeys/states, sanctioned target, browser/viewport matrix and evidence contract; if none is authorized or capable, mark live verification blocked/unverified rather than claiming completion.
 
 ## Skill Composition
 
-How ui-ux interacts with other skills:
+The workflow may consume or hand off to these capabilities; no named skill or
+particular deployment is required:
 
-| Composing Skill | Direction | Handoff Point | What's Exchanged |
+| Capability | Required input | Output/evidence | Absence behavior |
 |---|---|---|---|
-| `brainstorming` | → ui-ux | Ideas or settled-direction product brief feed Phase 1 context | Product goals, scope, users, use cases and evidence |
-| `code-craft` | → ui-ux | Behavior/acceptance specification informs Phase 1 and state design | Observable outcomes, acceptance examples and failure behavior |
-| [Planning and shared understanding](../../working-principles/references/planning.md) | ↔ ui-ux | Phase 1 applies shared discovery to UX decisions | Evidence, unresolved questions, consumer boundaries and design alignment |
-| `code-craft` | ← ui-ux | Phase 6 follows code-craft methodology | UX-SPEC.md as implementation contract |
-| `reviewer` | ↔ ui-ux | Can review UX-SPEC.md before Phase 6, or review code after | Design review feedback, code quality assessment |
-| `web-qa-audit` | ← ui-ux | Phase 7 can delegate browser verification | Verification checklist, expected states |
-| `illustration-craft` | ↔ ui-ux | Empty state illustrations, onboarding graphics | SVG/image assets for UI states |
-| `project-foundation` | → ui-ux | DESIGN.md setup during project bootstrap | Initial design tokens |
+| Product-intent owner | Goals, users, scope, use cases, source evidence | Settled product intent or clearly marked open decisions | Ask the owner or mark reversible assumptions; stop on unresolved consequential choices |
+| Behavior/acceptance owner | Observable outcomes, examples, failure behavior | Acceptance criteria usable in discovery and the state matrix | Do not invent product behavior; request the missing contract |
+| Technical-constraint owner | Existing stack, APIs/data, performance, privacy and compatibility constraints | Source-backed constraints and known unknowns | Preserve the existing stack; stop affected design/implementation when required constraints cannot be verified |
+| Implementation capability | Approved UX-SPEC Phases 1–5, source scope, acceptance criteria, write permissions | Production changes and pass/fail/unverified checks | No code before written design or without explicit authority/source access |
+| Independent design evaluator | Original intent, current UX-SPEC, changed artifact and acceptance evidence | Evidence-linked findings and unresolved risks | If required for author-independent review and unavailable, do not simulate independence; report review pending |
+| Browser-QA executor | Sanctioned target, journeys/states, browser/viewport matrix and evidence contract | Observed scenario results and requested screenshots/traces | Mark live checks blocked/unverified; do not substitute a different browser or artifact silently |
+| Visual-asset capability (optional) | Approved storyboard/state, destination, formats and accessibility needs | Editable source, embeddable asset, alt text and usage note | Keep a simpler permitted treatment or mark the asset blocked; do not invent a production export |
+| Design-system bootstrap capability (optional) | Existing brand/platform constraints and requested token scope | Existing or initial `DESIGN.md` tokens and compatibility evidence | Follow the in-skill Carbon/default and compatibility rules, or stop if a required owner decision is missing |
 
 ## Composition Patterns
 
 ### Pattern 1: Full Product Design (Most Common)
 ```
-brainstorming (product intent, if needed) → ui-ux (all phases) → code-craft (authorized implementation)
+settled product intent (if needed) → ui-ux (all phases) → authorized implementation capability
 ```
 
-A formal product brief/PRD is optional, not a prerequisite for UX discovery. Reuse existing intent and acceptance criteria; route technical constraints to architecture-design rather than adding a separate specification chain.
+A formal product brief/PRD is optional, not a prerequisite for UX discovery. Reuse existing intent and acceptance criteria. Obtain technical constraints from an authoritative source when needed; do not create a specification chain solely to satisfy process.
 
 ### Pattern 2: Feature Addition
 ```
-ui-ux (Standard track) → code-craft (Phase 6 implementation)
+ui-ux (Standard track) → authorized implementation capability (Phase 6)
 ```
 
 ### Pattern 3: Design System Bootstrap
 ```
-project-foundation → ui-ux (Deep track, DESIGN.md focus) → code-craft (component library)
+available design-system tokens or an authorized initial token owner → ui-ux (Deep track) → authorized implementation capability
 ```
 
 ### Pattern 4: Quick Polish
 ```
-ui-ux (Quick track) → code-craft (Phase 6 implementation)
+ui-ux (Quick track) → authorized implementation capability (Phase 6)
 ```
 
 ### Pattern 5: Design Review
 ```
-ui-ux (Phases 1-5 only) → reviewer (design audit) → ui-ux (revise) → code-craft
+ui-ux (Phases 1–5) → independent evaluator (design findings) → ui-ux (revise) → authorized implementation capability
 ```
 
 ## AFK / Non-Interactive Mode
 
 When the user is not available for the Discovery interview:
-1. Follow [Planning and shared understanding](../../working-principles/references/planning.md): research first, distinguish evidence from assumptions, and preserve owner decisions; user absence grants no new authority
+1. Review the available sources first, distinguish observed evidence from assumptions, and preserve owner decisions; user absence grants no new authority
 2. Analyze codebase for existing design patterns, component library, DESIGN.md
 3. Infer discovery answers from requirements/PRD/existing code
 4. Mark all inferred answers with `⚠️ Assumed:` in UX-SPEC.md

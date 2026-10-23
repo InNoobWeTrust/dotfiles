@@ -2,7 +2,7 @@
 
 Load this index first after activating `web-qa-audit`. It keeps the skill compact while giving a clear path through the executable QA stack.
 
-Live interaction defaults to terminal-browser via [browser mechanics](../../cdp-browser-automation/references/terminal-browser.md). Chrome/CDP is a capability-specific exception, not a preflight dependency; requested browser/artifact coverage must still be satisfied or marked blocked/unverified.
+Live interaction defaults to the actual `terminal-browser` capability. Pin the intended browser/tab; inspect a current snapshot and screenshot as needed; act with fresh references; verify each expected visible state. Chrome/CDP is a capability-specific exception, not a preflight dependency; requested browser/artifact coverage must still be satisfied or marked blocked/unverified.
 
 ---
 
@@ -29,7 +29,7 @@ Load in order:
 2. `audit-request-grooming.md`
 3. `scenario-schema.md` only if the request should become a reusable scenario artifact rather than a one-off run card
 
-Use when the operator has a PR, bug, or test request but **does not yet have** an auditable input file (`audit-request`, run card, or scenario file). This is also the default path when the skill was invoked directly by QA rather than delegated from `reviewer`, and the request is still fuzzy.
+Use when the operator has a PR, bug, or test request but **does not yet have** an auditable input file (`audit-request`, run card, or scenario file). This is also the default path when QA is invoked directly and the request is still fuzzy. An evaluator's risk note is not approved run scope; obtain it from the QA owner before execution.
 
 ### 2. QA-scoped spot check
 Load in order:

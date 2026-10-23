@@ -5,7 +5,7 @@
 **Load when:** Artifact is an investment memo, portfolio plan, bond/credit note, gold/crypto/equity sizing, or “should I buy/allocate” decision.  
 **Do not load for:** Code PRs, pure prose unrelated to capital decisions.
 
-**Author via:** skill `investment-assessment`. This lens **reviews** that output. Credit-specific checks are subsection C2 when the memo includes bonds/credit.
+**Input contract:** Review the supplied authoritative investment-analysis memo, including its stated goals/horizon, liquidity and drawdown budget, portfolio context, position or opportunity, assumptions, sources and relevant tax/fee/FX constraints. **Output:** evidence-linked suitability and analytical-integrity findings under this checklist; this lens does not author the assessment, choose an allocation, or provide approval to transact. Missing evidence is assessed as unverified or failed against the checklist, not filled by assumption. Credit-specific checks are subsection C2 when the memo includes bonds/credit.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: mermaid-validation
-description: "Use this skill to validate mermaid diagram syntax before embedding in artifacts, docs, or architecture deliverables. Activate when producing mermaid diagrams, when a previous mermaid block caused a render error, or when batch-validating existing .mmd files. Provides a self-executing Bun script — no npm install required."
+description: "Use this skill to validate Mermaid diagram syntax before embedding in artifacts, docs, or architecture deliverables. Activate when producing diagrams, diagnosing a parse/render failure, or batch-checking project `.mmd` files. A bundled Bun validator avoids a project install when Bun and authorized package resolution are available; first-run resolution may access a registry, so do not run it without that authorization."
 ---
 
 # Mermaid Validation
@@ -16,29 +16,41 @@ Catches parse errors that would produce broken diagrams in viewers.
 
 ## Quick Start
 
-All commands run from the **repository root** (`$GIT_ROOT`).
-Bun auto-installs `mermaid` and `@happy-dom/global-registrator` on first run.
+Resolve `SKILL_ROOT` from the actual loaded skill location—the directory containing
+this `SKILL.md`—and use its absolute path for both bundled scripts. Do not infer it
+from the current working directory or a repository checkout. Keep diagram inputs
+relative to the project directory (or pass their explicit project paths).
+
+The bundled scripts use Bun's package resolution for `mermaid` and
+`@happy-dom/global-registrator`. First-run resolution may access a package registry
+and populate Bun's cache. No project manifest/install is needed, but this is still
+dependency acquisition: run only when it is already available or explicitly
+authorized; otherwise stop and use the permitted manual syntax review, noting its
+limitation.
 
 ### Validate a file
 
 ```bash
-bun --preload ./.agents/skills/mermaid-validation/scripts/happy-dom-preload.ts \
-    .agents/skills/mermaid-validation/scripts/validate-mermaid.ts diagram.mmd
+SKILL_ROOT='<absolute directory containing the loaded SKILL.md>'
+bun --preload "$SKILL_ROOT/scripts/happy-dom-preload.ts" \
+    "$SKILL_ROOT/scripts/validate-mermaid.ts" diagram.mmd
 ```
 
 ### Validate from stdin
 
 ```bash
+SKILL_ROOT='<absolute directory containing the loaded SKILL.md>'
 echo 'graph TD
-    A --> B' | bun --preload ./.agents/skills/mermaid-validation/scripts/happy-dom-preload.ts \
-                  .agents/skills/mermaid-validation/scripts/validate-mermaid.ts
+    A --> B' | bun --preload "$SKILL_ROOT/scripts/happy-dom-preload.ts" \
+                  "$SKILL_ROOT/scripts/validate-mermaid.ts"
 ```
 
 ### Validate multiple files
 
 ```bash
-bun --preload ./.agents/skills/mermaid-validation/scripts/happy-dom-preload.ts \
-    .agents/skills/mermaid-validation/scripts/validate-mermaid.ts a.mmd b.mmd c.mmd
+SKILL_ROOT='<absolute directory containing the loaded SKILL.md>'
+bun --preload "$SKILL_ROOT/scripts/happy-dom-preload.ts" \
+    "$SKILL_ROOT/scripts/validate-mermaid.ts" a.mmd b.mmd c.mmd
 ```
 
 ## Write-then-Validate Pattern
@@ -46,7 +58,9 @@ bun --preload ./.agents/skills/mermaid-validation/scripts/happy-dom-preload.ts \
 When generating diagrams inline, write to a temp file, validate, then embed:
 
 ```bash
-cat > /tmp/diagram.mmd << 'MERMAID'
+SKILL_ROOT='<absolute directory containing the loaded SKILL.md>'
+DIAGRAM_FILE='diagrams/diagram.mmd' # project-relative input path
+cat > "$DIAGRAM_FILE" << 'MERMAID'
 graph TD
     A["Service A"] --> B["Service B"]
     subgraph SG["Backend"]
@@ -54,8 +68,8 @@ graph TD
     end
 MERMAID
 
-bun --preload ./.agents/skills/mermaid-validation/scripts/happy-dom-preload.ts \
-    .agents/skills/mermaid-validation/scripts/validate-mermaid.ts /tmp/diagram.mmd
+bun --preload "$SKILL_ROOT/scripts/happy-dom-preload.ts" \
+    "$SKILL_ROOT/scripts/validate-mermaid.ts" "$DIAGRAM_FILE"
 # Exit code 0 → safe to embed
 ```
 
@@ -88,8 +102,8 @@ Details: `references/implementation-notes.md`
 | Temptation | Why Wrong | Correct Path |
 |---|---|---|
 | Skip validation because "the syntax looks right" | LLMs frequently produce subtle syntax errors (unmatched quotes, wrong arrow types, missing `end`) | Always validate before embedding |
-| Run without `--preload` flag | DOMPurify errors will cause false negatives on many diagram types | Always use `--preload ./.agents/skills/mermaid-validation/scripts/happy-dom-preload.ts` |
-| Use relative path without `./` prefix for preload | Bun requires `./` prefix for relative preload paths | Always prefix with `./` |
+| Run without `--preload` flag | DOMPurify errors will cause false negatives on many diagram types | Use the absolute `$SKILL_ROOT/scripts/happy-dom-preload.ts` path |
+| Guess script paths from the project root | A standalone skill may be loaded from elsewhere | Resolve the loaded skill root once and pass absolute script paths; if unavailable, stop rather than guess |
 | Validate only simple diagrams, skip complex ones | Complex diagrams (subgraphs, HTML labels, class diagrams) are most error-prone | Validate everything |
 | Ignore exit code and embed anyway | Broken diagrams degrade deliverable quality | Check exit code; fix before proceeding |
 

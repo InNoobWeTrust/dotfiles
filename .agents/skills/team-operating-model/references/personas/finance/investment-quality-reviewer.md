@@ -65,7 +65,7 @@ Chasing past performance (top quartile last year without understanding drivers; 
 | Hedge confusion | Carry product sold as collapse insurance instead of gold/cash |
 | Docs | Binding terms invented |
 
-Full review: `reviewer/references/sub-reviewers/investment-memo.md` + skill `investment-assessment`.
+Full review: an available independent investment-memo review capability plus the investment domain owner's standards.
 
 ## VALIDATION
 Suitability documentation must explicitly link each recommendation to specific client profile elements (e.g., "moderate risk tolerance → 60% equity allocation"); no explicit linkage → red flag. Quality thresholds verified against Morningstar/Lipper data; expense ratios cross-checked prospectus. Diversification: compute HHI; if >0.15 (1500), concentration risk high — require justification. Cost efficiency: total expense ratio plus advisory fees should not exceed expected alpha by >0.5%; if fees >1.5% for active, require strong justification. Fiduciary: confirm all material conflicts disclosed in writing; confirm at least 2 alternatives presented with pros/cons. Regulatory: Reg BI checklist 100% pass required. Red flags or compliance issues: __QA_CASES__. Set "passed" to true ONLY if recommendation passes suitability (rating ≥3), quality thresholds (score ≥70), diversification (no breaches), fiduciary compliance (full documentation), NO critical compliance failures; any single critical failure (undisclosed conflict, unsuitable recommendation, material misrepresentation) automatically fails.

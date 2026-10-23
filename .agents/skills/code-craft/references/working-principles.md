@@ -2,7 +2,7 @@
 
 Choose only the assigned role below. Verification-only work does not activate production implementation phases; use the existing rules and checks applicable to the assignment.
 
-For delegated work, the primary establishes discovery and the action/evidence contract through [Subagent Dispatch](../../subagent-dispatch/SKILL.md). Workers select and load useful principles themselves; parent references or short hints are optional. Do not assume inherited context or permissions.
+For delegated work, the assigning owner supplies the bounded goal, relevant source context, authorized actions, required evidence and stop conditions. Workers use only their own accessible guidance; parent references or short hints are optional. Do not assume inherited context or permissions, and do not extend scope.
 
 ## Implementation
 

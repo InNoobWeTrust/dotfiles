@@ -19,6 +19,9 @@ environment's documented capability; do not require the author's transport,
 provider, machine path or local adapter. Declare any product-specific scope.]
 [If a capability is unavailable, state the limitation and preserve mandatory stops;
 absence is not authorization to install or reconfigure.]
+[Cross-domain handoffs state the capability, required inputs, output/evidence,
+authority and absence behavior; never require a sibling skill name/path. Keep
+essential methods and safeguards here or in bundled resources.]
 
 ---
 
@@ -66,3 +69,10 @@ This skill has [N] phases. All must be completed.
 
 - `references/[file].md` — [existing reusable resource, loaded on demand; remove placeholder before delivery]
 ```
+
+Before delivery, check the complete directory copied outside the pack, including
+templates/scripts/catalogs. Required resources must not escape to sibling skills
+or pack docs. Resolve command paths from the loaded bundle root. A sibling rename
+must affect only explicit installation/discovery mappings. Reconcile the semantic
+diff so no original approval, evidence or safety stop disappears. See
+[Portable skill bundles](skill-portability.md).

@@ -62,7 +62,7 @@ Use optimistic locking for any entity that:
 
 ### Implementation Patterns
 
-Assume the version or expected-state field already exists on the entity — adding it to the schema is a `db-design` concern (see [`../../db-design/references/concurrency-locking.md`](../../db-design/references/concurrency-locking.md)). The data-access layer's job is to read the current value, include it in the `WHERE` predicate, check that rows were actually affected, and translate a mismatch into a domain-level conflict error.
+Assume the version or expected-state field already exists on the entity; changing schema is outside this access workflow and requires an approved schema contract. The data-access layer's job is to read the current value, include it in the `WHERE` predicate, check that rows were actually affected, and translate a mismatch into a domain-level conflict error. Optimistic locking detects lost updates without holding a row lock; high-contention cases may need a transaction-scoped pessimistic row lock, selected against the engine's actual isolation/locking semantics.
 
 **Tracked ORM — map the existing version field and let the ORM enforce the predicate:**
 

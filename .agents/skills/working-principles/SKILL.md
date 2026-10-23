@@ -18,18 +18,13 @@ Distinguish working style from domain method. A diagnostic perspective does not 
 
 ## 2. Discover relevant guidance
 
-Read [Baseline](references/baseline.md) once in the current context. For substantive specialist judgment, retrieve bounded catalog candidates through the configured directory-search capability described below, or the CLI fallback, rather than reading the entire CSV into context. Paths shown are relative to this skill directory; resolve them against the accessible skill location, not an assumed current directory.
+Read [Baseline](references/baseline.md) once in the current context. For substantive specialist judgment, retrieve bounded candidates from `assets/catalog.csv` rather than reading the entire CSV into context. Resolve paths against this loaded skill directory, not an assumed current directory.
 
-```sh
-uv run --script scripts/search.py "diagnosis unexpected behavior causal explanation" --max-results 3
-uv run --script scripts/search.py --id verification
-```
-
-An available **custom-directory CSV-row BM25** capability can retrieve candidates: select this skill directory and only `assets/catalog.csv`, search positive fields `id`, `use_when`, `perspective`, limit three. Inspect its interface; keep `avoid_when` for judging candidates, not positive ranking. Use an exact `id` row filter for a known ID, or load its explicit reference. This is optional and protocol-independent: no MCP, resolver or memory creation is needed. The CLI above is another route when its dependency is available or separately authorized; ordinary file reads and targeted lookup also suffice. Retrieve at most three candidates with applicability, exclusions and reference paths; generic ranking need not match the CLI's boosts. Mechanical tasks can use the baseline without searching.
+Use any available authorized search/query capability. Prefer **BM25 row retrieval** for natural-language needs, or efficient CSV queries through SQLite (`sqlite3`, importing into a temporary database), DuckDB, Nushell, a BM25 CLI, or a configured MCP capability. Inspect its interface and the CSV header; these are alternatives, not mandatory dependencies. Search positive fields `id`, `use_when`, `perspective`, limiting results to three; keep `avoid_when` for judging candidates, not positive ranking. Use an exact `id` filter for a known ID, or load its explicit reference. Return applicability, exclusions and reference paths with each candidate. No MCP, resolver or memory creation is needed; do not install tools or upload catalogs without authorization, and keep any database/index temporary. Mechanical tasks can use the baseline without searching.
 
 Candidates are suggestions, not a decision. Check their applicability and exclusions against the assignment before loading a reference. If none fits, refine the query or use the baseline and applicable domain guidance. If search is unavailable, use an accessible explicit reference or targeted lookup; do not dump the CSV into context as a fallback.
 
-Resolve catalog `reference` values relative to this skill directory. Shared guidance resolves against the actual shared `.agents` root; a project overlay must be explicit, not inferred from the working directory. Use exposed skill metadata or the shared/project skill index to discover domain guidance when the catalog has no suitable entry. Do not invent a reference or claim to have loaded unavailable guidance.
+Resolve catalog `reference` values relative to this skill directory. Shared guidance resolves against the actual accessible shared-guidance root; a project overlay must be explicit, not inferred from the working directory. Use exposed skill metadata or the shared/project skill index to discover domain guidance when the catalog has no suitable entry. Do not invent a reference or claim to have loaded unavailable guidance.
 
 Choose the smallest useful set of perspectives. Do not impose a persona quota or assemble an expert panel automatically. Explicit task-relevant references can be loaded directly without scanning the whole catalog. No specialist match is a valid outcome: use the baseline and any applicable domain guidance.
 
@@ -37,7 +32,7 @@ Choose the smallest useful set of perspectives. Do not impose a persona quota or
 
 Read the selected reference section, then apply its useful principles to the actual assignment. Do not load all profiles or their entire parent skills merely to obtain a working style. Follow required domain workflows only when their own triggers apply; working-style selection is supporting guidance, not a second primary delivery workflow.
 
-Workers discover and load their own guidance; they must not assume the parent's loaded skills, conversation, or profile bodies were inherited. For workers without a usable discovery entry point, [delegation setup](../subagent-dispatch/references/worker-contract.md#discovery-access) supplies a short accessible pointer, not a full personality payload.
+Workers discover and load their own guidance; they must not assume the parent's loaded skills, conversation, or profile bodies were inherited. For workers without a usable discovery entry point, supply a short accessible pointer to this baseline or the selected guidance plus the assignment's authority/evidence boundaries; do not send a full personality payload.
 
 Adapt emphasis when evidence changes, without silently changing scope or authority. Report a real capability or contract gap rather than using role-play to conceal it.
 
@@ -93,5 +88,5 @@ Lifecycle: **Prototype**, created **2026-10-08**. Review selection and source ac
 - [Baseline](references/baseline.md)
 - [Planning and shared understanding](references/planning.md) — lightweight discovery, bounded plans and consumer transitions; usable without formal specifications
 - [Research](references/research.md)
-- [Delegation setup and authority](../subagent-dispatch/references/worker-contract.md)
+- [Delegation setup](references/domain-principles.md#primary-collaboration) — keep outcome ownership and synthesis with the primary; a worker receives a short accessible guidance pointer and the assignment's authority/evidence boundaries
 - [Artifact context](references/artifact-context.md) — settle audience, purpose and constraints before authoring or updating any artifact

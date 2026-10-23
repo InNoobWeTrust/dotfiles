@@ -15,7 +15,7 @@ AI agent projects use two layers of configuration, kept strictly separate:
 
 - Rules that apply to every task in this project
 - Skills with workflows tailored to this project's stack and domain
-- Memory: short-term session checkpoints + long-term consolidated memory (see `memory` skill)
+- Memory: short-term session checkpoints + long-term consolidated memory (see `memory-techniques` skill)
 - Project-specific infrastructure templates
 
 **Why separate them:** A new team member who clones the repo must get the full project configuration without any dependency on the lead's personal tooling. Conversely, the lead's personal configuration should never leak into the team's shared contract.
@@ -46,11 +46,11 @@ The project's `.agents/` directory follows this structure:
 │   ├── working-principles/   # Lightweight discovery and planning principles
 │   ├── architecture-design/ # Technical constraints, trade-offs, optional specification
 │   ├── codebase-exploration/ # Navigating unfamiliar codebases
-│   ├── memory/               # Short-term + long-term memory with dream-cycle
+│   ├── memory-techniques/    # Short-term + long-term memory with dream-cycle
 │   ├── brainstorming/        # Creative ideation and problem framing
 │   └── <project-specific>/   # Skills unique to this project's stack
 │
-└── memory/                   # short-term/, long-term/, archive/ — see skills/memory
+└── memory/                   # short-term/, long-term/, archive/ — see skills/memory-techniques
 ```
 
 Keep policies short and load them through `rules/INDEX`. Detailed methods (testing loops, discovery interviews, phased delivery, slicing, document formats) live in the skills listed above and load only when a workflow needs them. Skills never link back to `rules/` — that one-way boundary is what keeps a skill portable outside a governed harness.

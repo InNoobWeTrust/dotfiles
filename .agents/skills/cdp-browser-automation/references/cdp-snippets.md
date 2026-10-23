@@ -4,18 +4,22 @@
 
 Minimal, copy-paste-ready implementations for that exception. Reuse an approved tool before adding custom helpers.
 
-> **Execution safety:** Write CDP scripts to an
-> approved `$TMPDIR` scratch outside the repo, then run with
-> `uv run --with websockets --with httpx python "$TMPDIR/agent-cdp-script.py"`.
-> Do not pipe large inline scripts. Do not `pip install` dependencies.
+> **Execution safety:** Write CDP scripts to a caller-approved scratch location
+> outside the repository. This snippet requires `websockets` and the optional HTTP
+> examples require `httpx`; `uv run --with` may resolve packages from a registry.
+> Run only when dependencies are already available or package resolution is
+> explicitly authorized. Do not install packages or access a registry otherwise,
+> do not pipe large inline scripts, and do not `pip install` dependencies.
 
 ---
 
 ## Minimal CDP Client
 
-Requires only `websockets`. Write the script to a temp file and run it with
-`uv run --with websockets python "$TMPDIR/agent-cdp-script.py"` so the dependency is
-resolved on demand; everything else is stdlib. Supply the explicit loopback port
+Requires `websockets`; everything else is stdlib. Write the script under a
+caller-approved scratch root. Run the existing `uv run --with websockets` example
+only when the package is already available or its resolution is authorized; if
+neither is true, stop and report the missing dependency rather than installing it.
+Supply the explicit loopback port
 of the approved isolated Chrome instance. For a dynamic port, read
 `DevToolsActivePort` only from that task-owned profile; never fall back to a personal profile.
 
@@ -70,7 +74,7 @@ class CDP:
 
     # ── Visual ────────────────────────────────────────────────────────────────
 
-    async def screenshot(self, path: str = "/tmp/shot.png", full_page: bool = False) -> str:
+    async def screenshot(self, path: str, full_page: bool = False) -> str:
         r = await self.send("Page.captureScreenshot", format="png",
                             captureBeyondViewport=full_page)
         Path(path).write_bytes(base64.b64decode(r["data"]))
@@ -156,7 +160,9 @@ class CDP:
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-async def main():
+# Caller supplies `screenshot_path` under an authorized artifact root; do not
+# assume or create a host-specific output directory.
+async def main(screenshot_path: str):
     ws_url = await get_ws_url(port=19222)  # match the approved instance, not an arbitrary default
     async with websockets.connect(ws_url) as ws:
         cdp = CDP(ws)
@@ -164,7 +170,7 @@ async def main():
         # Never use asyncio.sleep(N) — use wait_for_selector or wait_for_load
         await wait_for_selector(cdp, "h1")
         print(await cdp.page_info())
-        await cdp.screenshot("/tmp/shot.png")  # inspect with an image-capable tool
+        await cdp.screenshot(screenshot_path)  # caller supplies the authorized artifact output path
 ```
 
 ---
@@ -358,10 +364,12 @@ Never hardcode credentials. Accept session file paths from the caller.
 
 ---
 
-Requires `httpx`. Write the script to a temp file and run it with
-`uv run --with httpx python /tmp/http_script.py` so the dependency is
-resolved on demand. Use `urllib.request` only if `httpx` is unavailable — it
-does not follow POST redirects by default.
+The optional HTTP examples require `httpx`. Write the script to a caller-approved
+scratch location and use the existing package only when available or its
+resolution is explicitly authorized; `uv run --with httpx` may contact a package
+registry. Otherwise stop or use stdlib `urllib.request` if its redirect behavior
+fits the task; it does not follow POST redirects by default. Do not install or
+enable network access to make the example work.
 
 ```python
 from concurrent.futures import ThreadPoolExecutor

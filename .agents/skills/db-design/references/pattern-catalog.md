@@ -8,48 +8,32 @@ To prevent mixing concerns across the codebase, patterns are partitioned across 
 
 | Concern Level | Governing Skill | Scope & Patterns Owned |
 |---|---|---|
-| **Macro / System Topology** (C4 L1–L3) | `architecture-design` | Hexagonal / Ports & Adapters, Modular Monolith, Microservices, CQRS, Event Sourcing, Transactional Outbox, Sagas, Strangler Fig, API Gateway, BFF, Anti-Corruption Layer. |
-| **Storage & Schema Design** | `db-design` | UUIDv7/ULID PK strategies, 1NF–3NF, composite B-tree/GIN indexing, structural constraints, string enum storage, zero-downtime expand-contract migrations, append-only audit tables. |
-| **Data Access & Session Lifecycle** | `database-access` | Unit of work boundaries, repository vs active record, query builders, parameterized raw SQL, document ODM boundaries, aggregate synchronization, write idempotency. |
-| **Code Craftsmanship (C4 L4)** | `code-craft` | Function/class/struct patterns, type-driven design, local concurrency/cancellation, language idioms, and model-specific code generation traps. |
+| **Macro / System Topology** (C4 L1–L3) | Architecture-design capability | Hexagonal / Ports & Adapters, Modular Monolith, Microservices, CQRS, Event Sourcing, Outbox, Sagas, API Gateway, Anti-Corruption Layer. |
+| **Storage & Schema Design** | `db-design` | UUIDv7/ULID keys, normalization, indexes, constraints, compatibility-safe migrations, audit tables. |
+| **Data Access & Session Lifecycle** | Data-access capability | Unit of work, repository/session lifecycle, query builders, parameterized SQL, document boundaries, sync and idempotency. |
+| **Code Craftsmanship (C4 L4)** | Implementation capability | Function/class/struct patterns, type-driven design, local concurrency/cancellation, language idioms, and code-generation risks. |
 
 ---
 
 ## 2. Query Contract
 
-When designing relational schemas, indexing strategies, or production migrations, query the database pattern engine:
+When designing relational schemas, indexing strategies, or production migrations, query the relevant catalog under this loaded skill's `assets/` directory.
 
-An available custom-directory CSV-row BM25 capability is optional: select this skill's `assets` directory and `schema.csv`, `indexing.csv`, `migrations.csv`, `db-reasoning.csv` or `db-traps.csv` for the required domain. Inspect its interface and request a small number of row-level matches with source locators; no memory-store creation is needed. The CLI below retains aliases, empty-query listings and formatting; ordinary file reads and targeted CSV/reference lookup also work without an integration. Generic ranking need not reproduce its boosts. CLI packages must already be available or separately authorized.
+Use any available authorized search/query capability. Prefer BM25 row retrieval for natural-language requirements, or an efficient CSV-aware query tool for exact IDs and field filters: SQLite (`sqlite3`, importing CSV into a temporary database), DuckDB SQL over CSV, Nushell CSV queries, an available BM25 CLI, or a configured MCP capability. These are alternatives, not required dependencies; inspect the actual interface and CSV header rather than assuming a command schema.
 
-```bash
-# Self-executing (via uv shebang)
-./.agents/skills/db-design/scripts/search.py "<query>" [--domain <domain>]
-
-# uv runner
-uv run .agents/skills/db-design/scripts/search.py "<query>"
-
-# Python 3 standard library
-python3 .agents/skills/db-design/scripts/search.py "<query>"
-
-# Database decision evaluation
-./.agents/skills/db-design/scripts/search.py --decide
-./.agents/skills/db-design/scripts/search.py "primary key" --decide
-
-# Database traps / anti-patterns
-./.agents/skills/db-design/scripts/search.py --traps
-```
+Select only the relevant CSV below and retrieve a few matching rows with IDs and source locators. Inspect applicability, exclusions, engine/version constraints and migration caveats before choosing; a high relevance score is not approval. Do not read entire CSV files into context. If querying is unavailable, use bounded header/known-ID lookup or the quick reference below and state the limitation. Do not install tools, create a memory store, or upload catalogs without authorization; keep any database/index temporary and leave source CSVs unchanged.
 
 ---
 
 ## 3. Core Domains
 
-| Domain | CLI `--domain` | Purpose |
+| Domain | CSV under `assets/` | Purpose |
 |---|---|---|
-| **Schema** | `schema` / `modeling` | Primary key strategies (UUIDv7/ULID vs BigInt), 3NF normalization, string enum storage, invariant checks, optimistic locking, audit tables. |
-| **Indexing** | `indexing` / `indexes` | Composite B-tree leftmost prefix rules, covering indexes (INCLUDE), partial indexes, GIN for JSONB, expression indexes, foreign key index mandates. |
-| **Migrations** | `migrations` / `evolution` | Expand-contract zero-downtime rollouts, concurrent index creation, avoiding table rewrite locks, batched historical backfills. |
-| **Decisions** | `reasoning` / `decide` | Decision heuristics mapping operational constraints to database architecture. |
-| **Traps** | `traps` | Database anti-patterns to avoid (random UUIDv4 fragmentation, naive soft deletes, native DB enum lock traps, unindexed foreign keys). |
+| **Schema** | `schema.csv` | Primary key strategies (UUIDv7/ULID vs BigInt), 3NF normalization, string enum storage, invariant checks, optimistic locking, audit tables. |
+| **Indexing** | `indexing.csv` | Composite B-tree leftmost prefix rules, covering indexes (INCLUDE), partial indexes, GIN for JSONB, expression indexes, foreign key index mandates. |
+| **Migrations** | `migrations.csv` | Expand-contract zero-downtime rollouts, concurrent index creation, avoiding table rewrite locks, batched historical backfills. |
+| **Decisions** | `db-reasoning.csv` | Decision heuristics mapping operational constraints to database architecture. |
+| **Traps** | `db-traps.csv` | Database anti-patterns to avoid (random UUIDv4 fragmentation, naive soft deletes, native DB enum lock traps, unindexed foreign keys). |
 
 ---
 

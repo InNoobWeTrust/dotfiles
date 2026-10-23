@@ -2,7 +2,7 @@
 
 Use for clear communication across technical and non-technical writing. These principles do not impose the full technical-document workflow on marketing copy, comments, or governance files; retain the owning skill and audience-specific contract.
 
-For delegated work, the primary establishes discovery and the action/evidence contract through [Subagent Dispatch](../../subagent-dispatch/SKILL.md). Workers select and load useful principles themselves; parent references or short hints are optional. Do not assume inherited context or permissions.
+For delegated work, the primary supplies the worker with necessary source context, bounded action/write scope, authority limits, required output and evidence, and stop conditions. Workers do not assume inherited context or permissions. If the task requires a separately executed worker and no authorized delegation capability is available, stop that dependent work rather than simulating independence.
 
 ## Editing
 

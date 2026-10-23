@@ -15,4 +15,4 @@ Match the amount and density of visuals to the audience.
 1. One visual should support one material claim.
 2. More visuals do not mean more insight.
 3. When the visual budget is exhausted, summarize secondary evidence in text or tables.
-4. If a richer multi-panel composition would communicate better, route to `illustration-craft`.
+4. If a richer multi-panel composition would communicate better, use an authorized visual-composition capability with approved findings, audience, claim ceiling and export requirements; if unavailable, retain a simpler supported chart or mark the bespoke visual blocked.

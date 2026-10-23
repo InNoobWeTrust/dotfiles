@@ -13,7 +13,7 @@ Classify the work:
 - Partitioned arrays/tables: operations need chunking, joins or reductions.
 - Stateful services/tasks: workers retain state between calls.
 - Tightly coupled numerical work: ranks exchange data frequently.
-- Model training: distinguish independent runs from one distributed training run; use [ml-training](../../ml-training/SKILL.md).
+- Model training: distinguish independent runs from one distributed training run. Require a training contract covering dataset/splits, model and evaluation state, resource bounds, durable metrics/artifacts and recovery; if it is unavailable, keep training-specific topology and performance claims unresolved.
 
 ## 2. Choose the smallest fitting layer
 

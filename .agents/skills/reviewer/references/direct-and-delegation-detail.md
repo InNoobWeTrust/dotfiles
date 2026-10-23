@@ -70,7 +70,7 @@ Quick orientation before loading full references:
 | `references/sub-reviewers/edge-case-hunter.md` | Control-flow paths, boundary conditions | Unhandled branches, off-by-one, null handling |
 | `references/sub-reviewers/editorial.md` | Prose clarity, document structure | Ambiguous writing, poor organization |
 | `references/sub-reviewers/doc-attack-vectors.md` | Documentation threats, compliance gaps | Docs that mislead, omit, or contradict governance rules |
-| `references/sub-reviewers/investment-memo.md` | Multi-asset suitability, regime, roles, sizing vs pain | Pairs with skill `investment-assessment` |
+| `references/sub-reviewers/investment-memo.md` | Multi-asset suitability, regime, roles, sizing vs pain | Reviews a supplied authoritative investment-analysis memo and its stated evidence/assumptions; does not author the analysis or decide allocation |
 
 ---
 

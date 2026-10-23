@@ -1,9 +1,9 @@
 ---
-name: memory
+name: memory-techniques
 description: Save, restore and manage scoped agent memory, task plans, role checkpoints and consensus. Use for explicit capture/recall, preferences or sourced lessons, and requested consolidation/eviction. Project knowledge stays in .agents/memories; prefer external memory for short-lived or sensitive context, with direct Markdown management and no MCP dependency.
 ---
 
-# Memory
+# Memory Techniques
 
 Agent working memory, execution tracking, consensus and consolidated knowledge. Human-facing documentation belongs in `docs/`, not here.
 

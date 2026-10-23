@@ -103,7 +103,7 @@ Smell Detection (micro anti-patterns).
 Inspect module-level and component-level structure. Treat the codebase as a
 system of interacting parts, not a collection of individual files.
 
-Use the shared [structural-integrity method](../../../architecture-design/references/structural-integrity.md) for applicable placement/graph checks, including combined deltas and unchanged return paths. Treat file length and counts below as investigation signals, not automatic severity or extraction mandates; demonstrate incohesive responsibility or concrete reader/dependency impact.
+For applicable placement/graph checks, inspect responsibility ownership, actual imports/package and runtime-wiring edges, and changed paths through untouched consumers/return paths. Check combined edge deltas and allowed direction where structure changes; absent source/reachability evidence is UNVERIFIED, not proof of acyclicity. Treat file length and counts below as investigation signals, not automatic severity or extraction mandates; demonstrate incohesive responsibility or concrete reader/dependency impact.
 
 #### Attack Vectors
 

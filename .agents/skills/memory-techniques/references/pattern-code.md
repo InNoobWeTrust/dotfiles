@@ -114,7 +114,7 @@ Growth past these limits is the split signal.
 ## Stop conditions
 
 - Moving a symbol would break an external package consumer → stop and produce a deprecation plan (re-export from the old path for one release).
-- A split breaks an established check or leaves a consequential behavior unverified → investigate before finishing. A coverage-number drop alone does not justify new maintained tests; apply [test persistence boundaries](../../code-craft/references/testing.md) and use temporary verification where appropriate (retain tests for critical logic; internal verification checks remain temporary unless explicitly approved).
+- A split breaks an established check or leaves a consequential behavior unverified → investigate before finishing. A coverage-number drop alone does not justify new maintained tests; apply the assignment's test-persistence boundaries (retain tests for critical logic; internal verification checks remain temporary unless explicitly approved).
 - The public surface still exceeds the soft limit after extraction → this module owns too many capabilities. Split at the module level, not the file level.
 
 ---

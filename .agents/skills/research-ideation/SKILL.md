@@ -10,7 +10,7 @@ Scientific discovery, literature synthesis, hypothesis generation, and research 
 **Inputs:** research question, source material, observed entities/data, constraints and available baselines. **Output:** competing source-grounded hypotheses and a discriminating experiment, with uncertainties and negative controls. Use the actual domain's units; biological assays are examples, not prerequisites. Missing sources or execution capabilities limit the claims/protocol, not permission to invent evidence or install tools.
 
 > **Mindset: First-Principles & "What-If" Exploration**
-> Do not let software engineering bureaucracy (TDD, slicing, code-craft, premature glossary freezing) paralyze research ideation. In the proposal and hypothesis phase, explore boldly, challenge assumptions, and break conventional silos. Anchor ideas in mechanistic reality, not administrative red tape.
+> Do not let software engineering bureaucracy (TDD, slicing, implementation workflow gatekeeping, premature glossary freezing) paralyze research ideation. In the proposal and hypothesis phase, explore boldly, challenge assumptions, and break conventional silos. Anchor ideas in mechanistic reality, not administrative red tape.
 
 ## The 4-Phase Scientific Discovery Pipeline
 
@@ -62,6 +62,7 @@ Test all 3 hypotheses against the **4 Scientific Rigor Axes** (acting as your ow
 1. **Modality Integrity:** Does the mathematics/architecture match the physical input? (e.g., An MLM needs sequence; does it have sequence or just gene counts?).
 2. **Mechanistic Plausibility:** Is there a plausible biochemical, biophysical, or causal mechanism supporting the claim? Verify citations against real literature.
 3. **Falsifiability & Negative Controls:** What observation would definitively **disprove** the hypothesis? A hypothesis without a disconfirming test is unscientific.
+   Name what each control can and cannot establish. A known tracer/spike is ordinarily a recovery/process control; it does not by itself show absence of target contamination. For contamination claims, specify an appropriate blank or other negative comparison and its readout; adapt controls to the assay.
 4. **Feasibility & Compute:** Can this be executed on available hardware (e.g. Marimo MoLab B200, Colab, local GPUs) within a sensible timeframe?
 
 **Drift check, before selecting or continuing an experiment:** Does it still test the original outcome and a source-backed principle? If a leaf detail dominates, explain why it is causally necessary and compare a simpler mechanism without it; otherwise drop or park that detail. A convenient measurable proxy is not success unless its link to the desired outcome is tested. After null results, revisit the causal hypothesis rather than escalating bookkeeping, prompts or infrastructure until something passes. Preserve negative results and keep scientifically necessary resolution/modality details.

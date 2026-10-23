@@ -27,13 +27,13 @@ Bound all fields before launch:
 
 ## Structural context — part of the unit handoff
 
-For new or changed responsibilities/boundaries/dependencies, include the relevant slice of the current [source-boundary contract and map](../../architecture-design/references/structural-integrity.md): settled capability home paths and public boundary, split-or-keep rationale, allowed dependency direction, proposed edge delta, state/lifetime and consumer/normal-error flow, and source revision/coverage. Settle this before the worker's first affected source write or generator invocation; a broad writable directory is not a placement decision. Link an accessible scoped [source-map record](../../memory/references/source-maps.md) or provide a compact inline map; require freshness checks before reuse. No mandatory full-repo inventory or new memory store. If these surfaces are unchanged, briefly name the existing owner instead.
+For new or changed responsibilities/boundaries/dependencies, include the relevant slice of the current source-boundary contract and map: settled capability home paths and public boundary, split-or-keep rationale, allowed dependency direction, proposed edge delta, state/lifetime and consumer/normal-error flow, and source revision/coverage. Settle this before the worker's first affected source write or generator invocation; a broad writable directory is not a placement decision. Link an accessible scoped source-map record or provide a compact inline map; require freshness checks before reuse. No mandatory full-repo inventory or new memory store. If these surfaces are unchanged, briefly name the existing owner instead.
 
 Workers return actual placement and edge changes, relevant source/check evidence, unknowns and invalidated map entries. An architectural defect or needed out-of-scope extraction returns to the primary; do not evade it by growing an allowed file. The primary checks the combined graph and reader-visible flow, not just individual worker PASS labels. Internal helper choices remain flexible within the approved responsibility/contract.
 
 ## Materialization choices — part of the implementation contract
 
-Core logic and interface signatures are not enough: specify which established capabilities must implement them. The primary resolves choices using repository dependencies/conventions, explicit user constraints, and the smallest applicable [code-craft language reference](../../code-craft/references/languages/README.md) or pattern-catalog result. Carry the approved unit-relevant rows from the plan into the dispatch; do not leave a worker to infer selections from a skill name, broad plan link, or remembered coding patterns.
+Core logic and interface signatures are not enough: specify which established capabilities must implement them. The primary resolves choices using repository dependencies/conventions, explicit user constraints, and the smallest applicable approved language/API reference or pattern-catalog result. Carry the approved unit-relevant rows from the plan into the dispatch; do not leave a worker to infer selections from a skill name, broad plan link, or remembered coding patterns.
 
 Record these fields in the existing plan/phase file (inline for an atomic patch); no separate registry is required:
 
@@ -41,12 +41,12 @@ Record these fields in the existing plan/phase file (inline for an atomic patch)
 |---|---|
 | Capability → selected provider | Concrete package/tool/platform and required API/entry point; select one, not an unresolved list of alternatives. |
 | Compatibility | Repository-resolved version or supported range/runtime constraints; consult current API documentation, not guessed signatures. |
-| Basis and guidance | Brief rationale, repository evidence, applicable code-craft reference/section, and authoritative API docs or a repository usage example. |
+| Basis and guidance | Brief rationale, repository evidence, applicable approved language/pattern reference section, and authoritative API docs or a repository usage example. |
 | Dependency surface | Existing dependency or approved addition; name allowed manifest/lockfile changes within the locked writable surface. Selection is not permission to install packages or use network. |
 | Exceptions and prohibitions | Approved deviations and rationale, or `NONE`; identify substitutions/custom reimplementations that are forbidden. |
 | Acceptance evidence | Actual call sites using the selected APIs plus relevant behavior checks; an installed or unused import alone is not evidence. |
 
-For new or substantially changed structured CLIs, prefer the established parser recommended for the stack (see [CLI & TUI Stacks](../../code-craft/references/languages/cli-tui-stacks.md)), rather than defaulting to hand parsing or a lower-level built-in interface from training memory. Preserve compatible repository choices; a small-utility standard-library choice or another deviation must be explicit and primary-approved with its suitability rationale, not invented by the implementer. This does not require new dependencies for unrelated patches or override repository/user constraints. Library recommendations stay in code-craft; this contract carries the researched selection, not a duplicated library catalog.
+For new or substantially changed structured CLIs, prefer the established parser recommended by accessible stack guidance or repository convention, rather than defaulting to hand parsing or a lower-level built-in interface from training memory. Preserve compatible repository choices; a small-utility standard-library choice or another deviation must be explicit and primary-approved with its suitability rationale, not invented by the implementer. This does not require new dependencies for unrelated patches or override repository/user constraints. Library recommendations stay with the applicable approved reference; this contract carries the researched selection, not a duplicated library catalog.
 
 Supply worker-accessible guidance/doc paths or scoped excerpts and permit their reads. Before coding, the worker confirms the selected API and compatibility against those sources. Missing choices or inaccessible required sources → `INCOMPLETE`; an unavailable/incompatible selected library/API → `INCOMPLETE: CONTRACT_DEFECT` with evidence and a proposed adjustment for the primary. Never silently substitute, vendor, or reimplement the capability. Approval follows Delivery Ownership; reapprove and propagate a changed choice before dependent work resumes.
 
@@ -55,8 +55,8 @@ Supply worker-accessible guidance/doc paths or scoped excerpts and permit their 
 ```text
 Capability: command/option parsing → typer; use typer.Typer and @app.command.
 Compatibility: retain the typer version resolved in the project's lockfile.
-Basis: code-craft/references/languages/python.md, CLI and TUI;
-       code-craft/references/languages/cli-tui-stacks.md, Python.
+Basis: accessible language/CLI reference (e.g. Python + CLI/TUI stack guidance)
+       or repository convention, plus current library documentation.
 API source: https://typer.tiangolo.com/tutorial/commands/ (permitted READ).
 Dependency surface: existing dependency; no manifest/lockfile edits or installs.
 Exceptions: NONE. No argparse substitution or handwritten argv parser.
@@ -84,7 +84,7 @@ Do not dispatch without one coherent approved unit, scope, acceptance evidence, 
 - [ ] The decision gate permits delegation.
 - [ ] One approved functional unit is selected; a broad plan is context only.
 - [ ] Exactly one accepted dispatch basis is declared.
-- [ ] Material cross-component design has the current independent challenge receipt required by [Design acceptance](../../team-operating-model/references/design-acceptance.md), regardless of author; or no material design is changed. Primary approval alone is insufficient.
+- [ ] Material cross-component design has the current independent challenge receipt (responsibility/dependency direction, consumers and simpler alternative examined by a separate instance), regardless of author; or no material design is changed. Primary approval alone is insufficient.
 - [ ] Every required unit-payload field is bounded.
 - [ ] Materialization choices are resolved and primary-approved (or explicitly N/A); the dispatch carries the unit-relevant rows, accessible guidance/API sources, dependency-edit scope, and reuse evidence. Missing/incompatible choices block implementation, including atomic patches.
 - [ ] Required consumer signatures/schema/errors are settled; no invented business semantics or unapproved public contract changes.

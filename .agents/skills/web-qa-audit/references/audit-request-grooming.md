@@ -25,7 +25,7 @@ This is a **grooming mode**, not an execution mode.
 Enter this path first when any of these are true:
 
 1. the user wants executable QA, but no audit-request, run-card, or scenario input file exists yet
-2. the skill was invoked directly by QA rather than delegated from `reviewer`, and the request is still broad or ambiguous
+2. QA was invoked directly with a broad or ambiguous request and no approved run input
 3. the user has a PR / bug / ticket but has not locked environment, auth, fixtures, top scenarios, or grading rules
 4. a live browser run would require guessing the scope
 
@@ -198,7 +198,7 @@ Stop grooming and report back when:
 - scope is too large to fit one bounded request
 - the user is actually asking for heuristic review only, not executable QA
 
-In the last case, route back to `reviewer` rather than forcing orchestration.
+In the last case, return the scope question to the requesting evaluator/owner rather than forcing QA orchestration.
 
 ---
 

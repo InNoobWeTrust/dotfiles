@@ -6,7 +6,8 @@ the host owns synthesis. Deliberation does not itself authorize implementation.
 ## Execution mode
 
 - **Delegated only:** use separately scoped real workers when the runtime
-  supports and permits them. Launch every worker through `subagent-dispatch`,
+  supports and permits them. Launch every worker under the host skill's bounded
+  handoff contract (or an available dispatch capability),
   with allowed actions, output contract, bounds, and stop behavior. Exchange
   concise positions so workers can challenge each other's claims. Follow its
   provider-diversity and independent-challenge requirements.
@@ -33,8 +34,9 @@ same search adds little. One worker instance supplies one perspective.
 
 ### Finance/investment lenses
 
-Author allocation/opportunity memos with `investment-assessment` first; this path
-challenges a draft. Select lenses for the actual asset, cycle, or position decision:
+Author allocation/opportunity memos with an available investment-analysis capability first (asset, portfolio, risk and evidence scope); this path
+challenges a draft. If no investment capability is available, mark suitability
+UNVERIFIED and return the investment decision to its owner. Select lenses for the actual asset, cycle, or position decision:
 
 | Persona | Lens |
 |---|---|
@@ -55,16 +57,14 @@ to uncertainty rather than expanding the panel indiscriminately.
 
 ## Persona discovery
 
-An available custom-directory CSV-row BM25 capability is optional: select the skill root and only `assets/personas.csv`; search positive fields `id`, `name`, `group`, `domain`, `use_when`, with at most five candidates. Inspect its interface. Exact `group`/`id` row filters can narrow selection (use the catalog's spelling); read applicability/reference fields before selecting. Generic ranking is not identical to the CLI's boosts. No memory-root creation or MCP is required. The commands below retain group listings and specialized matching when dependencies are available or separately authorized; ordinary file reads and targeted catalog/reference lookup also work.
+Use any available authorized search/query capability against this loaded skill's `assets/personas.csv`. Prefer BM25 row retrieval for natural-language needs, or efficient CSV queries through SQLite (`sqlite3`, importing into a temporary database), DuckDB, Nushell, a BM25 CLI, or a configured MCP capability. These are alternatives, not required dependencies; inspect the actual interface and CSV header. Search positive fields `id`, `name`, `group`, `domain`, `use_when`, returning at most five candidates with source locators. Exact `group`/`id` filters can narrow selection (use the catalog's spelling); inspect applicability and reference fields before selecting. Do not read the whole CSV into context. No memory-root creation or MCP is required; do not install tools or upload catalogs without authorization, and keep any database/index temporary.
 
 Commands below are relative to the **team-operating-model skill root**, not this
 reference directory or an arbitrary working directory. Execute through the
-required sandbox. Search bounded candidates rather than browsing every prompt:
+required sandbox. After selecting a candidate, the existing Bash loader can load
+its prompt by name without a search dependency:
 
 ```sh
-uv run --script scripts/search_personas.py "<topic or lens needed>" --max-results 3
-uv run --script scripts/search_personas.py "<allocation question>" --group Finance
-uv run --script scripts/search_personas.py --id <persona-id>
 bash references/discover-personas.sh prompt "Financial Investment Analyst"
 ```
 
@@ -87,9 +87,10 @@ versions and approves it. Execute only the current approved revision/unit.
 
 ## Output shape
 
-Chat summaries need no file. Saved human-facing reports follow
-[Document format selection](../../doc-craft/references/document-formats.md); execution
-consensus/checkpoints use `memory`, not consumer documentation.
+Chat summaries need no file. Saved human-facing reports follow the receiving
+environment's applicable document-format guidance or an explicitly selected format
+contract; if none is available, state the chosen format and its constraints. Execution
+consensus/checkpoints use the selected scoped-memory capability, not consumer documentation.
 
 ```markdown
 # Deliberation: [Topic]

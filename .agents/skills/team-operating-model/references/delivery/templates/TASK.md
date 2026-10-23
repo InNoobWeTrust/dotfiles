@@ -38,7 +38,7 @@
 - Candidate failure classification: <known product failures vs broken infrastructure>
 - E2E/integration journeys: <primary use + important failure/recovery cases>
 - Release rubric: <criterion → evidence → evaluator; include first-use/docs UX and goal-alignment/original-intent (compare against original request/feedback)>
-- Independent perspectives: <distinct relevant reviewers (different agent/subagent instances than primary and implementers; one instance=one perspective; no simulated panels). For substantial work, include goal-alignment reviewer with original request/feedback. Bounded actions; if ambiguous, list candidates and consult independent generalist reviewer by default via subagent-dispatch/reviewer; only STOP_INPUT_AMBIGUOUS if specialized judgment materially required and no qualified reviewer identifiable>
+- Independent perspectives: <distinct relevant reviewers (different agent/subagent instances than primary and implementers; one instance=one perspective; no simulated panels). For substantial work, include goal-alignment reviewer with original request/feedback. Bounded actions; if ambiguous, list candidates and consult an independent generalist reviewer by default via an available delegation/review capability; only STOP_INPUT_AMBIGUOUS if specialized judgment materially required and no qualified reviewer identifiable>
 - Freshness: <invalidate affected checks/reviews on artifact/contract change>
 - Success streak: 1 (increase for known flakiness; does not replace release gate)
 

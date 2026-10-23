@@ -92,7 +92,7 @@ Never invent complex locking schemes or reach for heavy distributed lock manager
 flowchart TD
     Start["Need Mutual Exclusion?"] --> Scope{"What is the shared resource?"}
     
-    Scope -->|"Local File / CLI / Single-Host State"| GitLock["Git Atomic Lockfile Pattern\n(O_CREAT|O_EXCL + temp .lock + rename + signal trap)\n-> See code-craft/references/lock-patterns.md"]
+    Scope -->|"Local File / CLI / Single-Host State"| GitLock["Git Atomic Lockfile Pattern\n(O_CREAT|O_EXCL + temp .lock + rename + signal trap)\nVerify exclusive acquisition, atomic publication and cleanup"]
     
     Scope -->|"RDBMS Table Row"| Contention{"Contention & Scope?"}
     Contention -->|"Low / Web Request / Think Time"| Opt["Optimistic Lock (version INT column)"]
@@ -105,9 +105,8 @@ flowchart TD
 
 | Context | Recommended Pattern | Reference |
 |---|---|---|
-| **Local file, CLI, daemon, single-host worker** | **Git Atomic Lockfile** (`.lock` + rename + `atexit`/signals) | [Lock Patterns (`code-craft`)](../../code-craft/references/lock-patterns.md) |
+| **Local file, CLI, daemon, single-host worker** | Atomic lockfile: exclusive create (`O_CREAT|O_EXCL`), write a temporary `.lock`, atomically rename, and clean up on exit/signals where supported; stale-lock recovery limits must be explicit | This summary |
 | **Relational DB entity (general web app)** | **Optimistic Locking** (`version` column) | Section 1 above |
 | **Relational DB entity (high-contention row)** | **Pessimistic Row Lock** (`FOR UPDATE`) | Section 2 above |
 | **Cross-worker task / singleton job (DB present)** | **Database Advisory Lock** (`pg_advisory_lock`) | Section 4 above |
-| **Multi-node distributed (NO shared DB/disk)** | **Distributed Lease with TTL** (Redis / etcd) | [Code Craft Lock Patterns](../../code-craft/references/lock-patterns.md) |
-
+| **Multi-node distributed (NO shared DB/disk)** | Distributed lease with TTL plus fencing token (e.g. Redis `SET NX PX` or etcd); first verify there is no usable shared RDBMS or disk | This summary |

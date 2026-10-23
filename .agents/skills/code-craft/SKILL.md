@@ -20,10 +20,9 @@ limitations, and a small handoff for separate maintainability assessment.
 - Inspect the relevant existing path and reuse platform/repository capabilities.
   Keep established source ownership and dependency direction; settle new trust,
   state, or consumer boundaries when they actually change.
-- For server-shaped programs, keep bootstrap/transport, routing, endpoints and
-  shared middleware/contracts separate; see
-  [MCP server architecture](../architecture-design/references/mcp-server-architecture.md)
-  for the MCP mapping.
+- For server-shaped programs, including MCP servers, keep bootstrap/transport,
+  routing, endpoints, middleware, contracts and streaming channels separate;
+  protocol ceremony belongs at the boundary, not inside handlers.
 - For rewrites, classify affected behavior/interfaces as **delete** or **preserve**
   and settle contracts retained for consumers outside the scoped change.
   Compatibility does not preserve obsolete files by default: carry out approved
@@ -54,7 +53,9 @@ limitations, and a small handoff for separate maintainability assessment.
 ## 3. Hand off without polishing
 
 After the solution works and relevant checks pass, have the primary dispatch a
-**separate agent** using [Code Maintainability](../code-maintainability/SKILL.md).
+**separate assessor** for a report-only maintainability review. It must be
+independent of the implementer; if no separate assessor is available, report the
+assessment as pending rather than simulating independence.
 Provide only: what works, changed files/revision, verification evidence, known
 shortcuts, and an authorized record destination. A worker implementer returns this
 handoff to the primary; it does not recursively dispatch.

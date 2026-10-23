@@ -21,7 +21,7 @@ Design CI/CD with integrated security. Phases are mandatory for pipeline design 
 5. **Integrate scanners** into pipeline stages with fail policies.
 6. **Validate & document** — quality-gates linkage, runbooks.
 
-Compose with `project-foundation` (bootstrap first) and `reviewer` (security lens) after changes.
+If foundation/quality-gate setup is in scope, obtain the project's current state and an authorized foundation owner before changing it. After changes, an independent security reviewer should receive the changed pipeline, threat/acceptance criteria, scan evidence and unverified coverage; author self-review is not independent. If either capability is unavailable, report the affected work pending rather than implying completion.
 
 ## Hard rules
 

@@ -8,7 +8,7 @@ Use before launching a named worker, a fallback route, or a worker defined on th
 
 ## Working-style selection belongs to the worker
 
-Workers use [Working Principles](../../working-principles/SKILL.md) to interpret the request, inspect its lightweight catalog where useful, and load appropriate reference sections themselves. The [common baseline](../../working-principles/references/baseline.md) applies even when no specialist style is selected.
+Workers use available working-style guidance to interpret the request, inspect any accessible bounded catalog where useful, and load appropriate reference sections themselves. The common baseline applies even when no specialist style is selected: understand the assignment, preserve scope/authority, ground claims in evidence, and report gaps rather than inventing guidance.
 
 The main agent may provide a reference, a short direction such as “skeptical and evidence-first,” or no personality direction. All three are valid. Do not require copied baseline or specialist paragraphs in every request, turn a title into claimed expertise, or conflate personality with authority. Domain workflows and safety gates retain their own triggers.
 
@@ -16,11 +16,11 @@ Select a currently exposed model route for capability and effort, independently 
 
 ## Discovery access
 
-Establish a usable entry point once per worker context: exposed skill metadata/discovery, a verified shared/project instruction entry point, or a short accessible pointer to the working-principles router. Do not assume a worker inherits the parent's loaded skills, conversation, system prompt, or filesystem access. Configuration being present does not prove it reached the worker.
+Establish a usable entry point once per worker context: exposed skill metadata/discovery, a verified shared/project instruction entry point, or a short accessible pointer to available working-style guidance. Do not assume a worker inherits the parent's loaded skills, conversation, system prompt, or filesystem access. Configuration being present does not prove it reached the worker.
 
 When a worker lacks native discovery, the worker definition or setup can say:
 
-> Before acting, read <resolved working-principles/SKILL.md path> and select useful guidance for this assignment.
+> Before acting, read <resolved working-style guidance path> and select useful guidance for this assignment.
 
 Replace the placeholder with the actual accessible shared/project path. Catalog paths resolve relative to that skill directory, not an arbitrary current working directory. Establish access using the capabilities the harness actually exposes; a claimed or inaccessible path is not a usable bootstrap. Permit the necessary guidance reads when READ access would otherwise be limited to task files; access to guidance is not authority for unrelated repository scouting.
 
@@ -32,18 +32,20 @@ This is a discovery instruction, not a personality setting. Do not repeat it in 
    State whether this is settled execution or direction judgment: propose/validate direction only when the active direction-eligibility policy permits the route and the handoff assigns that role; capability, title or primary approval confers no authority, and missing required proposal/validation/authority receipts make direction-dependent execution `INCOMPLETE`—return the choice to the primary for eligible routing.
 2. Supply precise sources and boundaries, acceptance evidence, action/resource limits, a proportionate return shape, and stop behavior. Retain applicable [implementation/planning gates](../SKILL.md#dispatch-routing-and-gates). These are task obligations, not optional personality settings.
 3. Check discovery access. A working-style reference or short hint is optional; omit it when the assignment already gives the worker enough to infer a useful approach. Do not dump full skills or make the parent compose a complete personality.
-4. For planning/implementation, carry settled [materialization choices](implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) and accessible task-relevant code-craft/API sources. Library/API choices are mandatory task constraints, not optional working-style hints. Implementers confirm sources before coding and report incompatible selections rather than silently substituting. Keep the same choices and exceptions on route fallback; re-resolve source access, not the architecture.
+4. For planning/implementation, carry settled [materialization choices](implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) and accessible task-relevant language/API reference sources. Library/API choices are mandatory task constraints, not optional working-style hints. Implementers confirm sources before coding and report incompatible selections rather than silently substituting. Keep the same choices and exceptions on route fallback; re-resolve source access, not the architecture.
 5. Carry the applicable cumulative user requirements with source identifiers, including audience, assumed knowledge, tone/writing style, format, exclusions, and prohibitions. These are deliverable constraints, not the worker's optional working-style direction. Apply the dedicated conformance gate below; forwarding only the latest steering is insufficient.
 
-For authoring/updating assignments, resolve the relevant [artifact context](../../working-principles/references/artifact-context.md) before writing and carry only the audience/use constraints needed for this unit in item 5. Workers reuse that context and clarify consequential gaps; neither side adds a second form or copies research/task chatter into the artifact. Existing domain metadata and format contracts still apply.
+For authoring/updating assignments, resolve the relevant artifact context—audience/users, expertise, purpose/use context, medium and constraints—before writing and carry only the audience/use constraints needed for this unit in item 5. Workers reuse that context and clarify consequential gaps; neither side adds a second form or copies research/task chatter into the artifact. Existing domain metadata and format contracts still apply.
 
-A locked or primary-approved contract does not require implementing an evidenced architectural defect. Any worker may stop the affected unit with `INCOMPLETE: CONTRACT_DEFECT`, citing the responsibility/dependency/contract conflict and a proposed correction. Preserve unaffected safe work and write bounds; do not silently redesign. The primary must resolve the objection under [Design acceptance](../../team-operating-model/references/design-acceptance.md) before resuming affected implementation, not return the same contract solely because it was already approved.
+A locked or primary-approved contract does not require implementing an evidenced architectural defect. Any worker may stop the affected unit with `INCOMPLETE: CONTRACT_DEFECT`, citing the responsibility/dependency/contract conflict and a proposed correction. Preserve unaffected safe work and write bounds; do not silently redesign. The primary must resolve the objection under the design-acceptance gate—independent challenge of responsibility/dependency/contract direction, with primary approval alone insufficient—before resuming affected implementation, not return the same contract solely because it was already approved.
 
 For genuine next-action or continue/return uncertainty, point workers to
-[Decision Support](../../decision-support/SKILL.md) and allow an existing decision-support
-capability only if available and authorized in their harness. Do not assume they inherit
+an available decision-support capability (configured evaluation service or explicitly
+delegated decision role) and allow it only if available and authorized in their harness. Do not assume they inherit
 the primary's tools. Consultation is advisory, not nested delegation or review;
-hard stops and missing authority still require return to the primary.
+hard stops and missing authority still require return to the primary. If no
+decision-support capability exists, return the consequential uncertainty instead
+of inventing a decision.
 
 When selecting a fallback after an invocation failure, preserve the assignment and constraints. The replacement worker selects useful guidance for the same task; change only the execution route and necessary capability details. Reassess access and route limits, not just the agent name. [Named fallbacks are preferences](context-stewardship.md#treat-named-fallbacks-as-preferences), not a mandatory retry chain.
 
@@ -158,13 +160,13 @@ When a session is assigned to a permanent `task_id` + `role_id` pair, first load
 
 **Block substantive work** if any of the following holds: identity mismatch, retired session binding, missing or stale checkpoint that conflicts with approved scope, duplicate active ownership, or unproven prior-worker quiescence.
 
-Session-binding guards (full contract: [Task-role records](../../memory/references/task-role-records.md)):
+Session-binding guards (this contract's own schema):
 - Same-pair only: exact task-role match + non-retired roster binding.
 - Single active: at most one in-flight/assigned actor per role.
 - Stable job only: a new/refined unit within the same stable job is allowed only under the current primary-approved plan and handoff bounds. A distinct review/test/consolidation job requires a new role + fresh session; task-role identity, role contract and native permissions remain unchanged.
 - No cross-task reuse.
 
-After each completed or interrupted slice, append to the role record following the [checkpoint format](../../memory/references/task-role-records.md#checkpoint-format). A primary-approved plan change requires reading and revalidating the new approved scope before continuing — silently inheriting old scope is not permitted.
+After each completed or interrupted slice, append to the role record: approved plan revision + unit; restored sources confirmed; changed outputs with PASS/FAIL/UNVERIFIED evidence; blockers and next safe action. Preserve prior bytes and never rewrite earlier checkpoints. A primary-approved plan change requires reading and revalidating the new approved scope before continuing — silently inheriting old scope is not permitted.
 
 Native permission boundaries are unchanged: a read-only assignment does not become writable because of a role binding; preserve configured deny rules and supported native restrictions.
 

@@ -50,7 +50,7 @@ Overly optimistic assumptions (terminal growth > GDP perpetuity, revenue growth 
 
 ## INVESTMENT MEMO AUDIT ADDENDUM
 
-Require: disclaimer; Observed/Inferred/Recommended; rails + regime; role-of-money; fees/tax net; left-tail ≤ pain; stress co-failure; class-appropriate diligence (credit waterline if credit; custody if crypto/gold; fees if funds). Align with `reviewer/references/sub-reviewers/investment-memo.md` and skill `investment-assessment`.
+Require: disclaimer; Observed/Inferred/Recommended; rails + regime; role-of-money; fees/tax net; left-tail ≤ pain; stress co-failure; class-appropriate diligence (credit waterline if credit; custody if crypto/gold; fees if funds). Align with an available independent investment-memo review capability and the investment domain owner's standards.
 
 ## VALIDATION
 Independent 100% calculation replication required. Assumptions benchmarked against reliable sources. Risk disclosure checklist — every material risk identified and quantified. Regulatory matrix mapped with evidence. Cross-formula consistency (no contradictions). Sensitivity key drivers tested ±20-50% impact. Stress tests plausible (historical events replicated). Data source verification via checksum/hash. Version control and audit trail intact. Critical gaps or errors: __QA_CASES__. Set "passed" to true ONLY if NO critical failures, accuracy 100%, all material risks disclosed with quantification, regulatory compliance complete, assumptions justified/benchmarked, audit trail preserves full reproducibility; major findings must be addressed before acceptance.

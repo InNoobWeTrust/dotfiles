@@ -12,7 +12,7 @@ Checks: <authorized repository commands or observable evidence; known limits>
 ```
 
 For consequential work, validate Outcome/Scope against original sources with the
-[planning source walkthrough](../../working-principles/references/planning.md#validate-understanding-before-action-source-walkthrough)
+source walkthrough: reconcile the original request with current source/interfaces, separate the desired outcome from the proposed mechanism, state invariants and observable success/failure, check affected consumers, and identify unknown or disconfirming evidence before implementation.
 before locking them. Record the settled direction and validation receipt in the
 existing intent; implementers must not infer or change it. A mechanically settled
 change needs only its explicit source reference.
@@ -49,10 +49,10 @@ When choosing a greenfield language/framework stack or adding a substantial plat
 ## Stop conditions
 
 - **Existing isolation limits:** preserve required behavior, state ownership and checks. Do not redesign a legacy layer merely because it is hard to isolate; return a necessary boundary change to the primary, or record an optional improvement for later assessment.
-- **Required consumer contract or approval missing:** use [Planning and shared understanding](../../working-principles/references/planning.md) to clarify caller-visible behavior and consequences before affected implementation.
+- **Required consumer contract or approval missing:** clarify caller-visible behavior and consequences with the authorized owner before affected implementation; absent approval blocks only the dependent change.
 - **Contract defect:** if an approved contract is defective or unworkable, STOP immediately and report `INCOMPLETE: CONTRACT_DEFECT` with proposed adjustment; do not invent ad-hoc interfaces or alter signatures.
 - **Scope violation:** modifying out-of-scope paths, violating an explicitly fixed file delta or leaving scratch artifacts; revise through the authorized owner and clean up.
 - **Edge-case semantics unspecified:** stop the affected implementer; the primary routes the unresolved contract through the eligible direction/authority path. Ask the user only for user-only outcome or authority/safety decisions; AFK never invents a fallback while coding.
 - **Proposed vendoring/reimplementation lacks explicit opt-in or documented repository policy:** choose the platform/established dependency or clarify.
 
-For rewrite, overhaul, or delete-and-rebuild work, use [Planning and shared understanding](../../working-principles/references/planning.md). Record affected old semantics/interfaces as **delete** or **preserve**. Settle affected consumer contracts with the authorized owner using caller-visible examples and consequences; do not preserve behavior by reflex or patch code intended for deletion.
+For rewrite, overhaul, or delete-and-rebuild work, reconcile existing source and consumers first. Record affected old semantics/interfaces as **delete** or **preserve**. Settle affected consumer contracts with the authorized owner using caller-visible examples and consequences; do not preserve behavior by reflex or patch code intended for deletion.

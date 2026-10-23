@@ -30,7 +30,7 @@ Write the contract before the body:
 5. **Inputs**: What does the skill need to start?
 6. **Outputs**: What does the skill produce?
 7. **Estimated phases**: 3-10 is typical.
-8. **Reader and capability contract**: Who acts, what context/resources can they access, and what happens if a capability is missing? Apply `portability-and-reader-contract.md`; declare product-specific requirements rather than assuming a local setup.
+8. **Reader and capability contract**: Who acts, what context/resources can they access, and what happens if a capability is missing? Apply `portability-and-reader-contract.md`; declare product-specific requirements rather than assuming a local setup. Cross-domain handoffs name capabilities, inputs, evidence and stops, never a sibling skill dependency.
 
 **Deliverable**:
 ```
@@ -93,9 +93,15 @@ into the body or an explicit reachable resource; do not leave it only in a desig
 
 7. **ACI details when applicable**: examples, explicit path roots/file shapes, failure modes, and misuse-resistant wording. Resolve absolute tool paths at runtime; do not publish host-specific paths as reusable prerequisites.
 
-8. **References section**: Related docs, skills, or reference files that exist and resolve from an explicit root. A planned reference is unfinished work, not a usable resource. Deployment records do not become reusable methodology merely by moving them to `references/`.
+8. **References section**: Bundled resources and upstream sources that exist and resolve from an explicit root. Required methods may not escape into sibling skills or pack docs. A planned reference is unfinished work, not a usable resource. Deployment records do not become reusable methodology merely by moving them to `references/`.
 
 **Length guideline**: Aim for a router under ~150 lines; 500 lines is the upper guideline, not a target. Move relevant deep methods and variants to `references/`, not unrelated deployment details. Before delivery, check the native-capability, configured-integration and unavailable-capability scenarios and read the workflow without its author chat. Report walkthroughs separately from executed behavior.
+
+Check the entire directory copied alone: Markdown, templates, scripts and catalog
+paths must close inside it unless they are explicit runtime inputs or upstream
+products. Test a sibling rename in scratch; it must not require operational edits
+in other skills. Inspect the semantic diff so removing a link preserves the
+required input/output, authority, evidence and absence contract.
 
 ### Phase A5 — Register the Skill
 
@@ -106,6 +112,10 @@ into the body or an explicit reachable resource; do not leave it only in a desig
    Cost: low (simple), medium (multi-phase with tooling), high (multi-agent/external).
 
 2. **Add to WIRING**: If the skill composes with others, add composition patterns and handoff points.
+
+   INDEX/WIRING are installation-layer targets in the destination pack, not
+   resources every standalone skill must ship or read. Discover the destination's
+   equivalent registry; absence does not justify creating an unrelated framework.
 
 3. **Create directory**: `skills/<skill-name>/` with `SKILL.md`, optionally `references/` and `assets/`.
 

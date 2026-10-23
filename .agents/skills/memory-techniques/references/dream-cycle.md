@@ -68,7 +68,7 @@ To avoid main-agent context bloat, the main agent should **Capture** the current
 You are a memory-consolidation subagent. You have no prior conversation context.
 Read this capture note: <path>
 Resolve MEMORY_DIR = <path>
-Run the report-only form of `skills/memory/SKILL.md` Consolidate mode on all unconsolidated short-term entries.
+Run the report-only form of this skill's Consolidate mode on all unconsolidated short-term entries.
 Do not write anything to long-term, do not archive anything, and do not flip any short-term file to `consolidated: true` before returning a full report first.
 Return:
 - Summary of each short-term entry

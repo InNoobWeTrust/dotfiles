@@ -23,7 +23,7 @@ is missing, report that installation gap; do not invent its policies.
 | `codebase-exploration` | Yes | Unfamiliar navigation |
 | `reviewer` (+ `references/`) | Yes | Explicit review; needs sub-reviewers |
 | `working-principles` (+ `references/` and catalog) | Yes | Lightweight planning, shared understanding and task perspectives |
-| `memory` | Yes | Two-tier memory + dream cycle + progressive-disclosure structuring |
+| `memory-techniques` | Yes | Two-tier memory + dream cycle + progressive-disclosure structuring |
 | `subagent-dispatch` | Yes | Safe delegation prompts |
 | `project-foundation` | Yes | Re-audit / evolve this pack |
 | `skill-author` | Recommended | Governance maintenance |

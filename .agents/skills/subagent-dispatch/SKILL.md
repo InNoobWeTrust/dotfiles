@@ -5,7 +5,7 @@ description: "Use this skill before launching any delegated agent, background wo
 
 # Subagent Dispatch
 
-Use this router before **every** delegated launch: named workers, model-route fallbacks, and workers defined on the fly. Routing profiles do not supply working principles. Read [Portable Worker Contract](references/worker-contract.md) to bound the assignment and establish usable guidance discovery. Workers select and load their own principles through [Working Principles](../working-principles/SKILL.md); a reference or short hint is optional, and no personality direction is valid. Do not assume inherited skills, conversation, or system prompts.
+Use this router before **every** delegated launch: named workers, model-route fallbacks, and workers defined on the fly. Routing profiles do not supply working principles. Read [Portable Worker Contract](references/worker-contract.md) to bound the assignment and establish usable guidance discovery. Workers select and load their own available working-style guidance; a reference or short hint is optional, and no personality direction is valid. Do not assume inherited skills, conversation, or system prompts.
 
 ## Allocation principle
 
@@ -36,7 +36,7 @@ Discover the current environment's available delegation interfaces and follow it
 
 The primary may accept and version a plan/contract only after the active direction gate has settled consequential choices; it records that direction and may not substitute its own. Workers cannot assume approval or invent changes. Direction-affecting contract defects return through the primary to the eligible authority, not automatically to the user. Human-reserved authority/safety gates remain with the user.
 
-An assignment whose execution depends on settled direction must name the eligible proposal/validation/authority receipt, or the explicit source or confirmed contract that mechanically settles it; without one, return `INCOMPLETE`. Apply the [planning source walkthrough](../working-principles/references/planning.md#validate-understanding-before-action-source-walkthrough) before consequential implementation or dispatch.
+An assignment whose execution depends on settled direction must name the eligible proposal/validation/authority receipt, or the explicit source or confirmed contract that mechanically settles it; without one, return `INCOMPLETE`. Apply the planning source walkthrough before consequential implementation or dispatch: restate the original outcome and constraints, verify the factual claims, source versions and affected consumers from current sources, run a disconfirming check, and correct the contract before acting.
 
 | Target | Mandatory gate | Read before launch |
 |---|---|---|
@@ -50,7 +50,7 @@ Planning and implementation must carry settled **materialization choices**—whi
 
 For implementation, cite an approved plan/packet unit or an explicit inline atomic contract. Separate phase files are useful for independently resumable handoffs, not mandatory for every multi-file change. Respect approved behavior, consumer contracts and writable scope; return defects rather than inventing new business semantics or scope. Use exact signatures/schema where consumers need them and exact file deltas where ownership needs them. Classify rewrite semantics as **delete** or **preserve** and settle affected public consumer contracts before launch.
 
-For phased work use the independently usable [Delivery Contract](../team-operating-model/references/phased-delivery.md). Add delegation-specific writable scope, adjacent-finding handling, allowed actions and continuation state; do not duplicate the lifecycle.
+For phased work, use an available team-delivery contract or supply an inline phase contract with outcome, independently useful units, writable scope, evidence, stops and continuation state. Add delegation-specific writable scope, adjacent-finding handling, allowed actions and continuation state; do not duplicate the lifecycle.
 
 ## Cumulative requirement conformance
 
@@ -62,9 +62,9 @@ Preserve earlier compatible requirements when adapting to new information. The d
 
 Delegated results are internal evidence, not shared context. Before synthesizing:
 
-1. **Challenge gate (mandatory for plan/architecture/audit output).** Route delegated output through a **separate** challenger agent before synthesis. Select a capable listed model route from a **different provider family than the producer** (compare the provider prefix and the model family; same-prefix or same family challenger is a contract violation). `standard-review` is the working-principle identity, not an agent name. Plan/architecture/threat model → `reviewer` skill with `pragmatic-triage` lens. Review/audit/scanner output → `reviewer` skill with `findings-skeptic` lens. Skip for factual research. Full routing table and procedure in `references/prompt-template-and-anti-patterns.md` step 4. When fanning parallel workers, span at least two provider families unless task constraints forbid it; never default all workers to the primary's own family.
+1. **Challenge gate (mandatory for plan/architecture/audit output).** Route delegated output through a **separate** challenger agent before synthesis. Select a capable listed model route from a **different provider family than the producer** (compare the provider prefix and the model family; same-prefix or same family challenger is a contract violation). `standard-review` is the working-principle identity, not an agent name. Plan/architecture/threat model → independent challenge with a pragmatic-triage lens (contract boundaries, realistic failure modes, evidenced blockers separate from optional refinements). Review/audit/scanner output → independent findings-skeptic challenge (independently verify cited defects against current source; expose false positives with evidence). Skip for factual research. Full routing table and procedure in `references/prompt-template-and-anti-patterns.md` step 4. When fanning parallel workers, span at least two provider families unless task constraints forbid it; never default all workers to the primary's own family.
 
-2. **Synthesize.** Before requesting a material user decision grounded in delegated work, apply [Planning and shared understanding](../working-principles/references/planning.md) and the `Material decision brief` in `references/pillars-and-templates.md`. Use that brief for commitment gates, not active exploratory Q&A. Include challenge results and downgraded findings. Do not forward transcripts, expose chain-of-thought or ask questions dependent on unseen evidence. Verify unsupported claims or report gaps. Restate the chosen model and uncertainty after answers. Low-risk factual work needs only a proportional summary. Apply the receiving procedure in `references/prompt-template-and-anti-patterns.md`.
+2. **Synthesize.** Before requesting a material user decision grounded in delegated work, apply the planning source walkthrough above and the `Material decision brief` in `references/pillars-and-templates.md`. Use that brief for commitment gates, not active exploratory Q&A. Include challenge results and downgraded findings. Do not forward transcripts, expose chain-of-thought or ask questions dependent on unseen evidence. Verify unsupported claims or report gaps. Restate the chosen model and uncertainty after answers. Low-risk factual work needs only a proportional summary. Apply the receiving procedure in `references/prompt-template-and-anti-patterns.md`.
 
 ## Essential stop conditions
 

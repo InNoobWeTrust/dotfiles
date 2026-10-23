@@ -6,14 +6,14 @@ Agent skill for governing database access correctness and state lifecycle across
 
 This skill guides agents through implementing and reviewing database access code that is correct, boundary-respecting, and safe — covering tracked ORM/data mapper, Active Record, query builders, parameterized raw SQL, document DB/ODM, and bulk/native operations.
 
-It is **not** a schema design skill. For schema modeling, normalization, migrations, and indexing strategy, use `db-design`.
+It is **not** a schema design skill. Obtain schema modeling, normalization, migration, and indexing decisions as an explicit usable input contract; without that contract, do not infer schema requirements.
 
 ## Scope
 
 | In scope | Out of scope |
 |---|---|
-| ORM/data mapper session lifecycle and state | Schema design, DDL, migrations → `db-design` |
-| Active Record pattern risks | Analytical/OLAP pipelines → `architecture-design` |
+| ORM/data mapper session lifecycle and state | Schema design, DDL, migrations require a separate schema-design contract |
+| Active Record pattern risks | Analytical/OLAP pipelines require a separately settled dataflow/stack contract |
 | Query builder and parameterized raw SQL | Tenancy/authorization (optional extension only) |
 | Document DB / ODM access correctness | Soft deletion / auditing (optional extension only) |
 | Unit-of-work boundaries and ownership | Replica routing / read scaling (optional extension only) |
@@ -47,7 +47,7 @@ database-access/
 | Stage | Stage 1: Prototype |
 | Created | 2026-08-06 |
 | Next review | Quarterly governance audit (Q4 2026) |
-| Owner | Governance / skill-author workflow |
+| Owner | Governance / reusable-guidance maintenance |
 
 ## Design Decisions
 
@@ -63,10 +63,9 @@ database-access/
 
 ## Composition
 
-- Triggered after `db-design` (schema finalized → implement access layer)
-- Triggered after `architecture-design` (data-access boundaries decided → implement)
-- Composes with `code-craft` for non-trivial adapter implementation
-- Feeds into `reviewer` (security lens for injection/exposure; design-rigor lens for boundary discipline)
+- Begin only when schema changes have an approved schema/migration contract and data-access boundaries are settled; missing inputs block dependent work.
+- Non-trivial adapter changes require an implementation capability and observable verification; after working behavior, an independent maintainability assessment remains separate.
+- Independent review requires the changed source, acceptance contract and relevant security/boundary evidence; authors do not self-validate.
 
 ## Maintenance Notes
 

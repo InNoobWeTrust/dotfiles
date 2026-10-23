@@ -8,8 +8,8 @@ Before generating ideas, ensure the opportunity or challenge is well-defined.
 4. **Identify assumptions** — what are we taking for granted that could be wrong?
 
 > [!TIP]
-> - If the problem involves a tricky bug, complex debugging, or deep root-cause analysis, load the `systematic-investigation` skill instead to apply analytical diagnostic frameworks.
-> - If the problem requires understanding unfamiliar code or architecture, use the `codebase-exploration` skill first.
+> - If the problem involves a tricky bug, complex debugging, or deep root-cause analysis, load a structured root-cause investigation capability instead to apply analytical diagnostic frameworks (5 Whys, Fishbone, OODA).
+> - If the problem requires understanding unfamiliar code or architecture, use a codebase navigation capability first.
 
 ---
 
@@ -65,10 +65,10 @@ Once a volume of ideas is generated, organize and prioritize them:
 
 Subject the top ideas to diverse role-based lenses:
 
-When adoption or resistance depends on people or institutions, use [Game Theory](../../game-theory/SKILL.md) to explore incentives, strategic reactions and changes to the rules, then bring options and distributed benefits/harms back to ideation without treating convention as proof or novelty as justification.
+When adoption or resistance depends on people or institutions, apply strategic interdependence and incentive analysis (game theory) to explore incentives, strategic reactions and changes to the rules, then bring options and distributed benefits/harms back to ideation without treating convention as proof or novelty as justification.
 
 - **Product Owner**: Does this solve a real user problem? Is the value proposition clear?
-- **Architect / Developer**: Is this technically feasible? Does it align with code-craft standards?
+- **Architect / Developer**: Is this technically feasible? Does it align with implementation quality standards?
 - **Security**: What are the attack vectors, input vulnerabilities, or privacy concerns?
 - **Devil's Advocate**: Why will this fail? What are the blind spots?
 
@@ -76,7 +76,7 @@ When adoption or resistance depends on people or institutions, use [Game Theory]
 
 ## Phase 6: Action Plan & Output
 
-For a saved human-facing session report, apply [Document format selection](../../doc-craft/references/document-formats.md): Typst source + PDF by default. The outline below specifies content, not output syntax; chat and internal coordination retain their required formats.
+For a saved human-facing session report, apply a document format and presentation capability: default to Typst source + PDF for archival output. The outline below specifies content, not output syntax; chat and internal coordination retain their required formats. If the document format capability is unavailable, deliver the output in plain Markdown.
 
 ```markdown
 # Brainstorming Session: [Topic]

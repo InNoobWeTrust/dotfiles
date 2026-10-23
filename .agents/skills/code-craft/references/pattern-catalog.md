@@ -10,9 +10,9 @@ To prevent mixing concerns across the codebase, patterns are partitioned across 
 
 | Concern Level | Governing Skill | Scope & Patterns Owned |
 |---|---|---|
-| **Macro / System Topology** (C4 L1–L3) | `architecture-design` | Hexagonal / Ports & Adapters, Modular Monolith, Microservices, CQRS, Event Sourcing, Transactional Outbox, Sagas, Strangler Fig, API Gateway, BFF, Anti-Corruption Layer. |
-| **Storage & Schema Design** | `db-design` | UUIDv7/ULID PK strategies, 1NF–3NF, composite B-tree/GIN indexing, structural constraints, string enum storage, zero-downtime expand-contract migrations, append-only audit tables. |
-| **Data Access & Session Lifecycle** | `database-access` | Unit of work boundaries, repository vs active record, query builders, parameterized raw SQL, document ODM boundaries, aggregate synchronization, write idempotency. |
+| **Macro / System Topology** (C4 L1–L3) | Architecture-design capability | Hexagonal / Ports & Adapters, Modular Monolith, Microservices, CQRS, Event Sourcing, Outbox, Sagas, API Gateway, Anti-Corruption Layer. |
+| **Storage & Schema Design** | Schema-design capability | Key strategies, normalization, indexing, constraints, compatibility-safe migrations, audit tables. |
+| **Data Access & Session Lifecycle** | Data-access capability | Unit of work, repository/session lifecycle, query builders, parameterized SQL, document boundaries, sync and idempotency. |
 | **Code Craftsmanship (C4 L4)** | `code-craft` | Function/class/struct patterns, type-driven design, local concurrency/cancellation, language idioms, and code generation traps. |
 
 ---
@@ -22,49 +22,35 @@ To prevent mixing concerns across the codebase, patterns are partitioned across 
 For a concrete implementation problem, optionally query for relevant blueprints,
 trade-offs or known traps. Do not search before every change or introduce a
 pattern just because it appears in the catalogue. The simplest suitable direct
-implementation remains valid; this engine is not a maintainability audit.
+implementation remains valid; catalog lookup is not a maintainability audit.
 
-### Running the Search Engine
+### Querying the Catalog
 
-Prefer a configured custom-directory CSV-row BM25 capability when available: target this skill's `assets` directory, explicitly select the relevant domain CSV below, and retrieve a small number of rows with source locators. Inspect the live schema. Generic exact row filters are not equivalent to the CLI's optional stack/model/alias rules; use the retained CLI when those semantics or shortcuts are needed. No memory-scope creation is involved.
+Use any available authorized search/query capability against the relevant CSV under this loaded skill's `assets/` directory. Prefer BM25 row retrieval for natural-language requirements, or an efficient CSV-aware query tool for exact IDs and field filters: SQLite (`sqlite3`, importing CSV into a temporary database), DuckDB SQL over CSV, Nushell CSV queries, an available BM25 CLI, or a configured MCP capability. These are alternatives, not required dependencies; inspect the actual interface and CSV header rather than assuming a command schema.
 
-Search integrations are optional, not a prerequisite for this skill; ordinary file reads and targeted lookup of the relevant CSV/reference also work. The CLI uses PEP 723 metadata and `rank-bm25`; it is not dependency-free. Use an already available dependency environment or obtain installation approval:
-
-```bash
-# Self-executing (via uv shebang)
-./.agents/skills/code-craft/scripts/search.py "<query>" [--stack <stack>] [--domain <domain>]
-
-# uv runner
-uv run .agents/skills/code-craft/scripts/search.py "<query>" [--stack <stack>]
-
-# Python 3 with rank-bm25 already available
-python3 .agents/skills/code-craft/scripts/search.py "<query>" [--stack <stack>]
-
-# Specialized queries
-./.agents/skills/code-craft/scripts/search.py "<requirements>" --decide
-./.agents/skills/code-craft/scripts/search.py --traps --stack typescript
-```
+Retrieve a few matching rows with IDs and source locators. Apply stack, language, model or other constraints only where the actual catalog schema supports them; inspect applicability and exclusions rather than treating relevance as approval. Do not read entire CSV files into context. No particular MCP server or memory store is required. Do not install tools or upload catalogs without authorization; keep any database/index temporary and leave source CSVs unchanged.
 
 ---
 
 ## 3. Code-Craft Domains
 
-| Domain | CLI `--domain` | Use When |
+| Domain | CSV under `assets/` | Use When |
 |---|---|---|
-| **Code Patterns** | `patterns` / `pattern` | Structuring classes, functions, and modules (Result, Typestate, Functional Options, Builder, Strategy, Specification, Value Object, Discriminated Union, Constructor DI). |
-| **Concurrency & Resilience** | `concurrency` / `resilience` | In-process execution safety, retries, rate limits, worker pools, structured concurrency (TaskGroup), and deadline propagation. |
-| **Stacks** | `stacks` / `stack` | Pulling concrete, idiomatic syntax blueprints for Go, Rust, Python, TypeScript, C#, Java. |
-| **Model Traps** | `traps` | Checking generated code for observable defects such as over-abstraction, lost error context, and class bloat, regardless of model family. |
-| **Decisions** | `reasoning` / `decide` | Evaluating concrete trade-offs (e.g. exceptions vs Result, typestate vs boolean flags, closures vs ABCs, Rust persistence adapters). Retrieve conditional candidates, then verify the actual requirements and backend capabilities. |
+| **Code Patterns** | `design-patterns.csv` | Structuring classes, functions, and modules (Result, Typestate, Functional Options, Builder, Strategy, Specification, Value Object, Discriminated Union, Constructor DI). |
+| **Concurrency & Resilience** | `resilience.csv` | In-process execution safety, retries, rate limits, worker pools, structured concurrency (TaskGroup), and deadline propagation. |
+| **Stacks** | `stacks.csv` | Pulling concrete, idiomatic syntax blueprints for Go, Rust, Python, TypeScript, C#, Java. |
+| **Model Traps** | `model-traps.csv` | Checking generated code for observable defects such as over-abstraction, lost error context, and class bloat, regardless of model family. |
+| **Decisions** | `code-reasoning.csv` | Evaluating concrete trade-offs (e.g. exceptions vs Result, typestate vs boolean flags, closures vs ABCs, Rust persistence adapters). Retrieve conditional candidates, then verify the actual requirements and backend capabilities. |
 
 ---
 
 ## 4. Offline Quick Reference for `code-craft`
 
-If command execution or dependencies are unavailable, use targeted reads of the
-relevant CSV or the IDs below; do not install or bypass restrictions. Resolve
-`assets` against the discovered code-craft skill directory, not a presumed
-working directory. These are conditional techniques, not a required architecture:
+If querying is unavailable, use bounded header/known-ID lookup or the quick
+reference below and state the retrieval limitation; do not load entire CSV files,
+install tools or bypass restrictions. Resolve `assets` against the loaded skill
+directory, not a presumed working directory. These are conditional techniques,
+not a required architecture:
 
 ### Modern Code Patterns
 - `pat-result`: **Result / Railway Pattern** — Return `Result<T, E>` values for expected domain errors; avoid throwing exceptions for control flow.

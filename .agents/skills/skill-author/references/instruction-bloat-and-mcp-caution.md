@@ -73,7 +73,7 @@ If any are true, reconsider whether a script or skill reference is enough.
 
 ## Related
 
-- `.agents/skills/skill-author/references/aci-checklist.md` — interface design for any agent-facing surface
-- `.agents/skills/skill-author/SKILL.md` — workflow for creating skills
+- [ACI checklist](aci-checklist.md) — interface design for any agent-facing surface
+- [Authoring workflow](../SKILL.md) — workflow for creating skills
 - Script execution: use available compatible sandboxes, declared dependencies and authorized writable/network boundaries; a missing capability is not permission to install or bypass restrictions.
-- Research: `.agents/docs/research/thoughtworks-radar-vol34/` — "MCP by default" caution blip
+- Upstream context: [Thoughtworks Technology Radar](https://www.thoughtworks.com/radar) — evaluate protocol adoption against demonstrated need, not a local research-directory prerequisite

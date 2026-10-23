@@ -28,7 +28,7 @@ Use when choosing tools for analytical/scientific pipelines, untangling notebook
 
 Retain existing execution tools unless there is a measured problem. A graph framework does not remove sequential decompression bottlenecks or automatically justify more workers.
 
-For an extensible Rust/Arrow embedded query-engine requirement, consult [Apache DataFusion fit and safeguards](../../code-craft/references/languages/python-data-stack.md#conditional-engine-apache-datafusion). It belongs to the execution layer, not the workflow/provenance layer; its core is in-process, while Ballista and Comet require separate distributed/Spark justification. This does not change the DuckDB default.
+For an extensible Rust/Arrow embedded query-engine requirement, Apache DataFusion is a conditional candidate when custom table providers, functions, optimizer rules or execution operators are required. It is an in-process query engine, not a distributed runtime, transactional database, workflow orchestrator or provenance system; Ballista and Comet are separate platforms requiring their own justification. Keep DuckDB as the general local-analytics default and retain an existing compatible engine. Verify required operations, types, connectors and versions; for untrusted SQL restrict statements, registered sources and filesystem/object-store access. Set CPU, timeout, memory/spill and process limits; engine memory pools are not total-memory guarantees. If runtime/dependency evidence or authorization for a trial is missing, report fit as provisional and do not claim compatibility or performance.
 
 ## Decision table
 

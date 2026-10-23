@@ -57,7 +57,7 @@ If materialization preference is unknown and the repo is shared: **default to co
 
 ### A2 — AGENTS.md
 
-Create/update project `AGENTS.md` with: product one-liner, source-of-truth hierarchy, project rules, tooling, agent operating rules (default `code-craft`, full-skill commitment), code quality pointers, source layout, verify commands, security (no secrets; secret scan expectation).
+Create/update project `AGENTS.md` with: product one-liner, source-of-truth hierarchy, project rules, tooling, agent operating rules (default implementation skill, full-skill commitment), code quality pointers, source layout, verify commands, security (no secrets; secret scan expectation).
 
 Stop: if comprehensive, leave it; if incomplete, patch sections only.
 
@@ -71,7 +71,7 @@ If governance installation is in scope, discover the authorized source pack's cu
 
 ### A5 — Skills core pack (critical)
 
-Materialize **required skill trees** from `references/core-pack.md` — full directories including `references/` for `reviewer` and `working-principles`. Include domain owners and their referenced guidance when the project advertises those routes.
+Materialize **required skill trees** selected by `references/core-pack.md` — full directories including their bundled guidance. Resolve review, planning and domain capabilities through the selected installation manifest; do not require a particular sibling identity to operate this workflow.
 
 **Forbidden:** creating only `INDEX` / `WIRING` that *mention* global skills without a project-resolvable path.
 
@@ -93,7 +93,7 @@ Thin targets: `help`, `fix`, `lint`, `quality`, `test`, `dev`, `dev-up`, `build`
 
 - `docs/architecture.md` — responsibility split, data ownership, data flow, API contracts, integration modes, non-goals
 - `docs/engineering/quality-gates.md` — command matrix, thresholds, escalation, rollout
-- `DESIGN.md` — **For projects with UI/frontend or brand identity**: reference `ui-ux` to initialize `DESIGN.md` at repo root per Google Labs spec (YAML frontmatter tokens + canonical prose sections) and add `npx @google/design.md lint DESIGN.md` to visual quality checks.
+- `DESIGN.md` — **For projects with UI/frontend or brand identity**: use a UI/UX design capability to initialize `DESIGN.md` at repo root per Google Labs spec (YAML frontmatter tokens + canonical prose sections) and add `npx @google/design.md lint DESIGN.md` to visual quality checks.
 
 When the `rapid-demo` profile is active, also complete the compact **Demo Receipt** and production checkpoint in `references/rapid-demo-profile.md`. Reuse the existing phased-delivery Delivery Contract and Active Milestone Packet architecture note; do not duplicate them.
 
@@ -152,7 +152,7 @@ Edit the target harness's dedicated MCP config file directly — no shared canon
 - **Conflict:** local file differs substantially from global source → show diff summary and ask before overwrite.
 - **No global source** and copy requested → ask for path; do not invent rule/skill bodies from memory.
 - **Update-only request** → Mode B; skip greenfield sections.
-- **Single skill edit** → stop; this skill is pack-level, not skill-authoring (use `skill-author`).
+- **Single skill edit** → stop; this skill is pack-level, not skill-authoring (use the governance skill authoring capability).
 
 ---
 
@@ -166,7 +166,7 @@ Edit the target harness's dedicated MCP config file directly — no shared canon
 - [ ] Required skills materialized (full trees)
 - [ ] (optional) Project-local `setup` skill materialized if stack is non-trivial (§A5.1)
 - [ ] INDEX + WIRING + FOUNDATION.md
-- [ ] Makefile + architecture + quality-gates + DESIGN.md (if UI project via `ui-ux`)
+- [ ] Makefile + architecture + quality-gates + DESIGN.md (if UI project via UI/UX design capability)
 - [ ] Drift-checks A passed
 
 **Mode B**
@@ -191,7 +191,7 @@ Edit the target harness's dedicated MCP config file directly — no shared canon
 | Rewrite all rules by hand each bootstrap | Drift from global; stale security/TDD | Materialize from source; overlay in AGENTS.md |
 | Bootstrap once; never re-open the skill | Architecture/glossary/INDEX rot | Mode B on drift signals and explicit audit |
 | Overwrite project-specific skills during sync | Destroys local value | Sync core only; leave `kpur`-style custom skills |
-| Load this skill for a one-line rule typo | Wrong tool | Edit the file; use skill-author only for structural skill work |
+| Load this skill for a one-line rule typo | Wrong tool | Edit the file; use the governance skill authoring capability only for structural skill work |
 
 ---
 
@@ -202,4 +202,4 @@ Edit the target harness's dedicated MCP config file directly — no shared canon
 - `references/setup-skills.md` — executable onboarding skill pattern
 - `references/feedback-flywheel.md` — post-session harness improvement checklist
 - `references/rapid-demo-profile.md` — conditional local-first, synthetic-data demo profile matrix
-- Compose with: `architecture-design` (deep arch / design), `devsecops` (pipeline), `skill-author` (new skills), `codebase-exploration` (domain scan for glossary)
+- Compose with: technical architecture design capability (deep arch / design), CI/CD pipeline capability (pipeline), governance skill authoring capability (new skills), codebase navigation capability (domain scan for glossary)

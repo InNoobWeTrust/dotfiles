@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: "Use this skill when the user asks you to review, check, audit, challenge, or QA any artifact — code, specs, architecture, config, docs, infrastructure, user-facing application behavior, or investment/portfolio assessment memos. Routes to specialized sub-lenses (black-box-qa, code-quality, design-rigor, adversarial, security, edge-case, editorial, investment-memo) based on what's being reviewed. Keep this skill evaluative. For investment allocation or opportunity memos use investment-memo lens; authoring uses investment-assessment skill first."
+description: "Use this skill when the user asks you to review, check, audit, challenge, or QA any artifact — code, specs, architecture, config, docs, infrastructure, user-facing application behavior, or investment/portfolio assessment memos. Routes to specialized sub-lenses (black-box-qa, code-quality, design-rigor, adversarial, security, edge-case, editorial, investment-memo) based on what's being reviewed. Keep this skill evaluative. For investment allocation or opportunity memos, obtain an authoritative investment assessment and its assumptions as input before review; authoring and investment decisions remain outside this evaluator."
 ---
 
 # Reviewer
@@ -25,10 +25,10 @@ Apply [source-first, two-way review](references/core-review.md) within the exist
 
 ## Gate 3 — Contract-Bounded Phase Review
 
-When the artifact belongs to phased delivery, obtain the populated Delivery
-Contract from `../team-operating-model/references/phased-delivery.md` or its active packet before
-judging it. Apply that cross-skill contract; do not reproduce its lifecycle,
-classification, budgets, compromise schema, or trajectory table here. Choose formal review artifacts proportionately to coordination need per that contract.
+When the artifact belongs to phased delivery, obtain the populated delivery
+contract or active packet before
+judging it. Require that input to identify outcome, must-ship/may-defer/never-defer requirements, scope/prerequisites, acceptance evidence, hard invariants and recovery/compatibility obligations, approved behavior and consumer interfaces, current unit/authority/stops, and review/corrective-pass budget. Apply the supplied contract; do not invent its lifecycle,
+classification, budgets, compromise schema, or trajectory table here. If phased delivery applies and the contract is missing, stop and request it. Choose formal review artifacts proportionately to coordination need per that contract.
 
 Every finding must include evidence, severity, and exactly one canonical
 classification. Reviewers recommend a classification and remediation; the
@@ -50,7 +50,7 @@ Trace the changed contract through affected callers, types, imports, tests and c
 - **Hard Prohibition**: Do not report unrelated, pre-existing legacy defects or smells discovered during tracing.
 - For an explicitly scoped artifact audit rather than a changeset review, the named artifact is the review boundary; do not invent a diff requirement or expand into adjacent legacy cleanup.
 
-For applicable code/architecture changes, including Quick reviews, apply [Structural integrity](../architecture-design/references/structural-integrity.md) within this causal boundary: inspect responsibility placement and relevant module/workspace/external edges independently of supplied maps. Follow changed edges through untouched return paths. If responsibilities/boundaries/dependencies/wiring are unchanged, state that and keep the check local; review depth and line count do not waive an affected boundary check. Missing evidence is scoped UNVERIFIED, not permission for unrelated cleanup.
+For applicable code/architecture changes, including Quick reviews, inspect where changed responsibilities belong and the actual affected import, package, external-dependency and runtime-wiring edges independently of supplied maps. Trace consequential paths through untouched consumers and return paths, including error/effect flow; check new dependency direction and combined cycles where structure changed. If responsibilities, boundaries, dependencies and wiring are unchanged, state that and keep the check local. Review depth and line count do not waive an affected boundary check. Missing graph/source evidence is scoped UNVERIFIED, not permission for unrelated cleanup or a whole-repository audit.
 
 ## Diff Preparation & Scoping (Preflight, Bundles, Gating)
 
@@ -145,4 +145,4 @@ Paths: `references/sub-reviewers/<name>.md`.
 1. **Explicit** — user asked for review.
 2. **Self-review before present** — delegate (author bias).
 3. **Proactive** — flag structural/security/assumption issues mid-conversation when not in hot-fix/throwaway mode.
-4. **Evaluator for a loop** — when paired with the `team-operating-model` delivery path, score the artifact named in `TASK.md` against the predeclared rubric and return `PASS`, `FAIL`, or `UNVERIFIED` so the next optimizer pass has grounded feedback.
+4. **Evaluator for a loop** — when used in a phased-delivery loop, consume the supplied task/packet and predeclared acceptance rubric; score the named artifact `PASS`, `FAIL`, or `UNVERIFIED` with evidence so the authorized orchestrator can choose the next step. Do not author the rubric, implement fixes, or convert a PASS into user acceptance.

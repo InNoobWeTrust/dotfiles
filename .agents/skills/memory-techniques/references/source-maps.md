@@ -27,4 +27,4 @@ Avoid raw source dumps, secrets and unrelated context. A HEAD hash alone does no
 - Before applying a recalled map, compare repository/worktree/revision and relevant dirty state; re-read affected symbols, imports, manifests and wiring. Same HEAD or a search hit does not prove freshness. Changed exports, registration, targets, manifests or integrated worker edits invalidate dependent edges/claims.
 - Append corrections and invalidations to authorized task captures; do not overwrite another role's record. Long-term project knowledge still requires the existing separate approval/consolidation process. Do not automatically promote working maps.
 
-Memory accelerates navigation; current source evidence owns conclusions. Missing evidence remains explicit in the [structural integrity result](../../architecture-design/references/structural-integrity.md).
+Memory accelerates navigation; current source evidence owns conclusions. Missing evidence remains explicit in the relevant structural review receipt or as UNVERIFIED.

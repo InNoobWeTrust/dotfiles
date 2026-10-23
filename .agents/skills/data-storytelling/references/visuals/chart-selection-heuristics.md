@@ -23,7 +23,7 @@ Choose the **simplest visual that proves the claim**. Context and Big Idea come 
 3. Use direct labels where possible; legends are a fallback.
 4. If the visual needs a long explanation, choose a simpler visual or use text.
 5. If categories or series exceed readable limits, aggregate or switch formats.
-6. If the message is mostly procedural, causal, or conceptual, escalate to `illustration-craft`.
+6. If the message is mostly procedural, causal, or conceptual, use an authorized visual-composition capability with the approved story, evidence, audience and claim ceiling; if unavailable, keep the supported text/diagram and mark requested bespoke output unresolved.
 
 ## Common anti-patterns
 

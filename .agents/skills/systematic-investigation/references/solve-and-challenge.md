@@ -50,10 +50,12 @@ Fill in these sections, keeping each brief:
 
 ## Phase 4 — Challenge & Validate
 
-Before committing to a solution, apply the adversarial self-challenge protocol
-from the `reviewer` skill's `references/sub-reviewers/adversarial.md` (Mode 2: Self-Challenge). This means:
-running a pre-mortem, challenging across all attack vectors, and surfacing
-tensions inline.
+Before committing to a solution, run an adversarial self-challenge: conduct a
+pre-mortem, test plausible failure/abuse vectors for the actual scope, identify
+assumptions and tensions, and record a PROCEED | REVISE | RETHINK verdict with
+supporting evidence. Do not claim independent review from self-challenge. If the
+problem needs specialist adversarial coverage that is unavailable, state that gap
+and limit the conclusion; do not invent completed review.
 
 > 💡 **Elicitation opportunity**: After your initial challenge, consider running
 > Pre-mortem Analysis, Inversion, or Red Team vs Blue Team from

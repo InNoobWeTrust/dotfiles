@@ -45,7 +45,7 @@ An executed task, expert feedback, desk analysis and a synthetic walkthrough are
 
 ## 5 — Deliver, then decide whether to package (mandatory)
 
-Deliver the smallest useful domain brief or checklist. It may contain all outputs below; separate files are optional and persistence requires authorized scope. For human-facing saved documents, follow applicable format rules and use `doc-craft` when document design is needed.
+Deliver the smallest useful domain brief or checklist. It may contain all outputs below; separate files are optional and persistence requires authorized scope. For human-facing saved documents, follow applicable format rules and use a document format and presentation capability when document design is needed.
 
 - [ ] Task, audience/baseline, constraints and success criteria.
 - [ ] Minimal concept/decision map and glossary where necessary.
@@ -54,7 +54,7 @@ Deliver the smallest useful domain brief or checklist. It may contain all output
 - [ ] Check receipt: planned versus performed, outcomes and unresolved risks.
 - [ ] Next learning/practice action and packaging decision with reasons.
 
-Default to **no new skill**. Only hand off to [skill-author](../skill-author/SKILL.md) when a recurring workflow merits reuse, its critical guidance has appropriately scoped evidence, and a real task attempt has informed its limits. Transfer sources, conditions, failure evidence and untested branches. Authoring authorization is separate; the new skill still starts as a prototype, not expertise certification.
+Default to **no new skill**. Only hand off to a skill authoring capability when a recurring workflow merits reuse, its critical guidance has appropriately scoped evidence, and a real task attempt has informed its limits. Transfer sources, conditions, failure evidence and untested branches. Authoring authorization is separate; the new skill still starts as a prototype, not expertise certification. If the authoring capability is unavailable, retain the brief and packaging checklist as the deliverable without creating a skill.
 
 ## Just-in-time composition
 
@@ -62,13 +62,13 @@ Load only the matching dependency, not a whole chain:
 
 | Need | Handoff |
 |---|---|
-| Explain an observed failure | [systematic-investigation](../systematic-investigation/SKILL.md) |
-| Scientific hypotheses/experiments | [research-ideation](../research-ideation/SKILL.md); keep its scientific scope |
-| Meaningful uncertain choice | [decision-support](../decision-support/SKILL.md); advisory only |
-| Challenge guidance or evidence | [reviewer](../reviewer/SKILL.md) |
-| Reader-ready learning material | [doc-craft](../doc-craft/SKILL.md) |
-| Requested retention/recall | [memory](../memory/SKILL.md); no automatic profiling |
-| Grounded repeatable skill | [skill-author](../skill-author/SKILL.md) |
+| Explain an observed failure | Root-cause investigation capability; apply structured failure analysis (5 Whys, Fishbone) inline if unavailable |
+| Scientific hypotheses/experiments | Scientific research capability; keep scientific scope separate from practical domain curation |
+| Meaningful uncertain choice | Decision-support capability; advisory only; do not substitute for missing evidence |
+| Challenge guidance or evidence | Independent review capability; if unavailable, apply adversarial self-challenge and document remaining uncertainty |
+| Reader-ready learning material | Document format and presentation capability; if unavailable, deliver in plain structured Markdown |
+| Requested retention/recall | Memory management capability; no automatic profiling; if unavailable, note the retention request as an open action |
+| Grounded repeatable skill | Skill authoring capability; packaging authorization is separate |
 
 ## Stop or narrow scope
 
@@ -92,4 +92,4 @@ Load only the matching dependency, not a whole chain:
 
 ## Prototype maintenance
 
-First-use evidence is not yet available. After 1–2 real uses or the review date, inspect which decisions improved, which advice failed to transfer, and whether overhead was proportionate. Do not fabricate usage metrics; route revisions through `skill-author`.
+First-use evidence is not yet available. After 1–2 real uses or the review date, inspect which decisions improved, which advice failed to transfer, and whether overhead was proportionate. Do not fabricate usage metrics; route revisions through the governance skill authoring capability.

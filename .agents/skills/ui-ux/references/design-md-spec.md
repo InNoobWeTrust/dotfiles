@@ -120,6 +120,12 @@ Variants (hover, active, pressed, disabled) are expressed as **separate componen
 
 ### Lint
 
+The optional `@google/design.md` CLI may be run only when already available or
+when package resolution has been authorized; `npx` can acquire a package. Do not
+install it merely to satisfy this workflow. If unavailable, check YAML structure,
+token references, required sections and contrast with the rules below, and report
+automated lint as unverified.
+
 ```bash
 npx @google/design.md lint DESIGN.md
 ```
@@ -146,6 +152,10 @@ Output: structured JSON that agents can parse and act on.
 ```
 
 ### Diff
+
+The optional diff command has the same availability/authorization boundary: use an
+existing installation or authorized package resolution, otherwise compare the
+two source files and report that automated diff was unavailable. Do not install.
 
 ```bash
 npx @google/design.md diff DESIGN.md DESIGN-v2.md

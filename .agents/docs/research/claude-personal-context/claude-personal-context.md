@@ -23,7 +23,7 @@ The useful mechanism is **authentic input → targeted questions → small real 
 
 | Source idea | Setup adaptation | Existing home |
 |---|---|---|
-| Voice profile from authentic examples | Distinguish collaboration preferences from writing-on-behalf profiles; retain scope and source | [Memory scoped context](../../../skills/memory/references/scoped-context.md) |
+| Voice profile from authentic examples | Distinguish collaboration preferences from writing-on-behalf profiles; retain scope and source | [Memory Techniques scoped context](../../../skills/memory-techniques/references/scoped-context.md) |
 | Experience over job titles | Separate demonstrated accomplishments, inferred capabilities, and hypotheses | Existing working memory captures |
 | Real story repository | Situation, constraints, action, result, source, applicability limits | Existing memory backend; no parallel story bank |
 | Improve an unclear prompt | Demonstrate outcome, supplied constraints, and consequential unknowns without expanding intent | [Discovery and planning principles](../../../skills/working-principles/references/planning.md) |
@@ -46,7 +46,7 @@ Explicit remember/use request
 
 ## Decisions and exclusions
 
-- **Extend, do not duplicate:** [memory](../../../skills/memory/SKILL.md) already owns storage and recall; its similar-trace procedure already checks differences and reuse recommendations.
+- **Extend, do not duplicate:** [memory-techniques](../../../skills/memory-techniques/SKILL.md) already owns storage and recall; its similar-trace procedure already checks differences and reuse recommendations.
 - **Keep guidance on demand:** the new reference is routed from memory; no always-on profile injection or new AGENTS requirements.
 - **Keep research separate:** this archive is background, not authoritative agent instructions; research promotion follows the [research index](../INDEX.md).
 - **Keep facts intact:** an edited narrative must not invent achievements, customer permission, or commitments; three samples support a provisional profile, not guaranteed mimicry.

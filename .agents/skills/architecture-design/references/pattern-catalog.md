@@ -9,45 +9,29 @@ To prevent mixing concerns across the codebase, patterns are partitioned across 
 | Concern Level | Governing Skill | Scope & Patterns Owned |
 |---|---|---|
 | **Macro / System Topology** (C4 L1–L3) | `architecture-design` | Hexagonal / Ports & Adapters, Modular Monolith, Microservices, CQRS, Event Sourcing, Transactional Outbox, Sagas, Strangler Fig, API Gateway, BFF, Anti-Corruption Layer. |
-| **Storage & Schema Design** | `db-design` | UUIDv7/ULID PK strategies, 1NF–3NF, composite B-tree/GIN indexing, structural constraints, string enum storage, zero-downtime expand-contract migrations, append-only audit tables. |
-| **Data Access & Session Lifecycle** | `database-access` | Unit of work boundaries, repository vs active record, query builders, parameterized raw SQL, document ODM boundaries, aggregate synchronization, write idempotency. |
-| **Code Craftsmanship (C4 L4)** | `code-craft` | Function/class/struct patterns, type-driven design, local concurrency/cancellation, language idioms, and model-specific code generation traps. |
+| **Storage & Schema Design** | Schema-design capability | UUIDv7/ULID PK strategies, 1NF–3NF, indexes, constraints, compatibility-safe migrations, audit models. |
+| **Data Access & Session Lifecycle** | Data-access implementation capability | Unit-of-work boundaries, repository/session lifecycle, parameterized queries, aggregate sync, write idempotency. |
+| **Code Craftsmanship (C4 L4)** | Implementation capability | Function/class/struct patterns, type-driven design, local concurrency/cancellation, language idioms, and code-generation risks. |
 
 ---
 
 ## 2. Query Contract
 
-When designing subsystem boundaries, microservices, modular monoliths, or asynchronous communication, query the architecture engine:
+When designing subsystem boundaries, modular monoliths, or asynchronous communication, query the relevant catalog under this loaded skill's `assets/` directory.
 
-An available custom-directory CSV-row BM25 capability is optional: select this skill's `assets` directory and the relevant `architecture.csv`, `architecture-reasoning.csv` or `architecture-traps.csv`, with a small result limit and source locators. Inspect its interface; no memory root is created. The CLI below retains aliases, no-query listings and specialized formatting; ordinary file reads and targeted CSV/reference lookup also work without an integration. Generic BM25 scores need not match existing boosts. CLI dependencies must already be available or separately authorized.
+Use any available authorized search/query capability. Prefer BM25 row retrieval for natural-language requirements, or an efficient CSV-aware query tool for exact IDs and field filters: SQLite (`sqlite3`, importing CSV into a temporary database), DuckDB SQL over CSV, Nushell CSV queries, an available BM25 CLI, or a configured MCP capability. These are alternatives, not required dependencies; inspect the actual interface and CSV header rather than assuming a command schema.
 
-```bash
-# Self-executing (via uv shebang)
-./.agents/skills/architecture-design/scripts/search.py "<query>" [--domain <domain>]
-
-# uv runner
-uv run .agents/skills/architecture-design/scripts/search.py "<query>"
-
-# Python 3 standard library
-python3 .agents/skills/architecture-design/scripts/search.py "<query>"
-
-# Architecture decision evaluation
-./.agents/skills/architecture-design/scripts/search.py --decide
-./.agents/skills/architecture-design/scripts/search.py "high write throughput" --decide
-
-# Architecture traps / anti-patterns
-./.agents/skills/architecture-design/scripts/search.py --traps
-```
+Select only the relevant CSV below, query required capabilities/use conditions, and return a few matching rows with IDs and source locators. Check exclusions, trade-offs and constraints before choosing; relevance is not architectural approval. Do not read entire CSV files into context. If no query capability is available, use bounded header/known-ID lookup or the quick reference below and state the retrieval limitation. Do not install tools, create a memory store, or upload catalogs without authorization; keep any database/index temporary and leave source CSVs unchanged.
 
 ---
 
 ## 3. Core Domains
 
-| Domain | CLI `--domain` | Purpose |
+| Domain | CSV under `assets/` | Purpose |
 |---|---|---|
-| **Patterns** | `patterns` / `arch` | Macro architecture patterns: Hexagonal, Modular Monolith, Clean, CQRS, Outbox, Sagas, Strangler Fig, API Gateway, BFF, Anti-Corruption Layer, Data Mesh. |
-| **Decisions** | `reasoning` / `decide` | Decision heuristics mapping operational requirements (read/write split, distributed transactions, legacy migration) to optimal architectures. |
-| **Traps** | `traps` | Macro-architectural anti-patterns to avoid (distributed monolith, 2PC across microservices, shared domain bags, smart pipes/dumb endpoints). |
+| **Patterns** | `architecture.csv` | Macro architecture patterns: Hexagonal, Modular Monolith, Clean, CQRS, Outbox, Sagas, Strangler Fig, API Gateway, BFF, Anti-Corruption Layer, Data Mesh. |
+| **Decisions** | `architecture-reasoning.csv` | Decision heuristics mapping operational requirements (read/write split, distributed transactions, legacy migration) to candidate architectures. |
+| **Traps** | `architecture-traps.csv` | Macro-architectural anti-patterns to avoid (distributed monolith, 2PC across microservices, shared domain bags, smart pipes/dumb endpoints). |
 
 ---
 

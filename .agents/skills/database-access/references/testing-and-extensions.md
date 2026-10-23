@@ -19,7 +19,7 @@ It does not establish libSQL/Turso, file-backed durability/locking/WAL, or
 PostgreSQL/MySQL coverage; those claims require the actual engine/version and
 relevant configuration/mode, otherwise report UNVERIFIED.
 
-Follow [real-first execution](../../code-craft/references/testing.md#real-first-execution).
+Use real execution for current-system-owned data-access code and its actual dependencies. A repository fake or mocked ORM session cannot verify queries, constraints, rollback, concurrency or engine behavior. If real execution is unavailable or unsafe, report the DB coverage UNVERIFIED; use deterministic direct calls for pure mapping helpers only.
 The schema, queries and adapter code that the current system defines and controls
 are owned regardless of where the engine runs; transport, hosting or deployment
 topology alone does not decide ownership. Do not replace them with a repository fake
@@ -127,7 +127,7 @@ When declared in the project Data Access Contract:
 - Hard-delete operations are prohibited unless the contract explicitly permits them.
 - For audit history, repositories append to the audit log; they do not mutate the primary row for historical reads.
 
-Schema design for soft deletion (the `deleted_at` column, partial index, and audit table structure) is a `db-design` concern — see [`../../db-design/references/state-auditing-history.md`](../../db-design/references/state-auditing-history.md).
+Schema design for soft deletion and audit history is a separate contract: specify the deletion marker, matching partial index and audit-table structure before implementing access behavior. Without those schema decisions, stop that dependent work rather than inventing columns or tables.
 
 ### Read Replica Routing
 

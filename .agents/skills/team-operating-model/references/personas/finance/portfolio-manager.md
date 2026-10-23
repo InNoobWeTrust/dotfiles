@@ -31,7 +31,7 @@ Crowding risk: crowded trades via fund flows/short interest/sentiment; avoid her
 Model risk: estimation error in returns/correlations, Bayesian shrinkage, resampled efficiency, factor identification uncertainty.
 Behavioral: home country bias, recency bias, overconfidence in forecasts, anchoring to recent returns.
 
-## MULTI-ASSET SLEEVE RULES (skill `investment-assessment`)
+## MULTI-ASSET SLEEVE RULES (available investment-analysis capability; otherwise record UNVERIFIED and return the allocation decision)
 
 - Assign **job of money** before weights (liquidity / ballast / growth / hedge / spec).
 - Cash floor from life needs; never fill with HY/crypto/single-name equity.
@@ -39,7 +39,7 @@ Behavioral: home country bias, recency bias, overconfidence in forecasts, anchor
 - Cap any wipeout-prone satellite (unsecured credit, alts, single stocks) at **max pain**.
 - Stress **co-failure** (crypto+beta equity; local deposits+local HY; gold-fear regime vs HY).
 - Illiquids: HTM planning; secondary is not the risk control.
-- See `investment-assessment/references/portfolio-construction.md`.
+- Obtain portfolio-construction method from an available investment-analysis capability; absent it, record weights and suitability as UNVERIFIED.
 
 ## ANALYSIS FRAMEWORK
 1. Define IPS: objectives (return/income), constraints (liquidity/horizon/tax/ESG), risk budget (VaR/max DD), restrictions.

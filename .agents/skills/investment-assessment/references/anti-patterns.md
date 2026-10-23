@@ -19,7 +19,7 @@
 | Overfit backtest / sold-out FOMO | Selection bias | Process > narrative |
 | Informal workarounds (pools, side deals) | Legal/title risk | Licensed channels only |
 | Guaranteed-return language | False safety | Refuse or reframe |
-| No disclaimer | Misuse risk | Always decision-support only |
+| No disclaimer | Misuse risk | Always advisory only |
 | Fabricated data | Liability | Sources or unknown |
 | Satellite stack same factor | Hidden concentration | Stress co-failure |
 | Cut hedge to buy carry under collapse fear | Inverted priorities | Cash/hedge before satellite |

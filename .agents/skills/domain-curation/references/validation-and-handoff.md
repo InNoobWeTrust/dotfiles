@@ -47,7 +47,7 @@ Prefer the smallest brief/checklist unless all are true:
 3. An actual, authorized task attempt has informed the workflow's limits; failures/counterexamples are recorded. Desk simulations alone do not qualify.
 4. Reader inputs, authority, capability-absence paths, outputs and stops are clear enough for another reader without the chat.
 
-When met and authoring is authorized, hand off to `skill-author` with task scope, conditional cards, evidence ledger, attempt receipt, failure/boundary cases and unresolved branches. Ask it to extend an existing skill first; a new artifact begins as a prototype with audit criteria. Otherwise state which condition is unmet and the next learning action. This gate is about **curated domain knowledge**, not a ban on authoring a methodology prototype before its first field use.
+When met and authoring is authorized, hand off to a skill authoring capability with task scope, conditional cards, evidence ledger, attempt receipt, failure/boundary cases and unresolved branches. Ask it to extend an existing skill first; a new artifact begins as a prototype with audit criteria. Otherwise state which condition is unmet and the next learning action. This gate is about **curated domain knowledge**, not a ban on authoring a methodology prototype before its first field use.
 
 ## Reader/capability checks for the curator
 

@@ -2,7 +2,7 @@
 
 Use for targeted, read-only source inspection. Report searched versus uninspected coverage rather than claiming complete understanding from a few files.
 
-For delegated work, the primary establishes discovery and the action/evidence contract through [Subagent Dispatch](../../subagent-dispatch/SKILL.md). Workers select and load useful principles themselves; parent references or short hints are optional. Do not assume inherited context or permissions.
+For delegated work, the assigning owner establishes the bounded question, source context, permitted read-only actions, expected evidence and stop conditions. Workers use only their own accessible guidance; do not assume inherited context or permissions or expand scope.
 
 ## Exploration
 

@@ -42,8 +42,12 @@ being solved?).
 
 Evaluate whether consequential behavior, trust/state ownership, and consumer
 contracts are understood and respected. Treat optional structure/readability
-improvements as deferred suggestions, not blockers. Use `code-maintainability`
-for the separate assessment; refinement waits for usefulness and explicit approval.
+improvements as deferred suggestions, not blockers. A separate post-implementation
+maintainability assessment receives the working outcome, source revision, changed
+files, verification evidence, known shortcuts, action limits and authorized record
+destination; it returns concrete source-linked costs and deferred suggestions.
+Missing evidence leaves behavior unverified; missing an independent assessor leaves
+review pending. Refinement waits for demonstrated usefulness and explicit approval.
 
 #### Attack Vectors
 
@@ -143,9 +147,7 @@ Determine the change type to select applicable lenses:
    concrete behavior and repository conventions; a pattern label is not evidence.
 4. **Inspect the relevant flow.** Locate entry, decisions, effects and failures;
    distinguish verified defects from optional reader/change-cost improvements.
-5. **Separate maintenance suggestions.** Use [Code Maintainability](../../../code-maintainability/SKILL.md)
-   and its local methods when warranted. Record useful suggestions for later;
-   no mandatory debt inventory and no automatic refactoring or acceptance veto.
+5. **Separate maintenance suggestions.** When a separate post-implementation maintainability assessment is warranted, give its assessor the working outcome, source revision, changed files, verification evidence, known shortcuts, action limits and authorized record destination. Return concrete source-linked maintenance costs and defer application. Missing evidence means unverified behavior; missing an independent assessor means review is pending. No mandatory debt inventory, automatic refactoring, or acceptance veto; refinement still requires demonstrated usefulness and explicit approval.
 
 ### Step 3: Investigation Rigor Pass (Lens 2)
 

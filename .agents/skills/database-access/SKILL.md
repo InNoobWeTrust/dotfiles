@@ -1,6 +1,6 @@
 ---
 name: database-access
-description: "Use this skill when implementing or reviewing database access code — ORM/data mapper layers, Active Record patterns, query builders, parameterized raw SQL, document store/ODM access, and bulk/native database operations. Covers unit-of-work boundaries, session/context lifecycle, write contracts, idempotency, concurrency, aggregate sync, and testing strategy. Do not use for schema design or migrations (use db-design), high-level analytical pipelines (use architecture-design), or simple config-value changes."
+description: "Use this skill when implementing or reviewing database access code — ORM/data mapper layers, Active Record patterns, query builders, parameterized raw SQL, document store/ODM access, and bulk/native database operations. Covers unit-of-work boundaries, session/context lifecycle, write contracts, idempotency, concurrency, aggregate sync, and testing strategy. It does not define schema/migration design or high-level analytical pipelines; obtain those contracts separately before relying on them."
 ---
 
 # Database Access (`database-access`)
@@ -29,7 +29,7 @@ Progressive disclosure: this file is the router and decision gate. Deep guidelin
 
 **Before writing any data-access code**, establish what the project's data layer actually supports.
 
-For SQLite-file access, default to [libSQL](https://docs.turso.tech/libsql) bindings rather than stock SQLite libraries. Keep existing compatible adapters unless a change is authorized; verify the selected engine, local/sync/remote mode and ORM integration using the [database defaults](../db-design/SKILL.md#gate-1--storage--workload-check). Native Turso and libSQL drivers are not interchangeable.
+For SQLite-file access, prefer [libSQL](https://docs.turso.tech/libsql) bindings; keep existing compatible adapters unless a change is authorized. Verify the selected engine, local/sync/remote mode, language and ORM integration from the project's declared data-access/storage contract. Native Turso and libSQL drivers are not interchangeable; SQLite compatibility alone does not establish extension, transaction or backend-specific schema support. If the required engine/driver capability is unspecified, do not silently substitute one.
 
 1. Read the project `AGENTS.md` for a Data Access Contract section or link to a dedicated data-access document.
 2. If a dedicated document is linked, read it and extract:
@@ -108,7 +108,7 @@ Load `references/testing-and-extensions.md` for test-double strategy and optiona
 - [ ] No automatic retries; retry paths have idempotency policy + fresh UoW
 - [ ] Document store: no assumed relational capabilities without explicit contract
 - [ ] If CLI database exploration or query verification was performed, preferred tool `hsql` was used with `--read-only` and `--timeout`
-- [ ] Relevant write-path and data-integrity behavior is verified. Select maintained tests under [testing guidance](../code-craft/references/testing.md); repository/adapter leaf-unit suites are not a mandatory deliverable. Other internal checks remain temporary unless explicitly approved.
+- [ ] Relevant write-path and data-integrity behavior is verified against the owned adapter and target engine where authorized. Prefer real execution for current-system-owned code; mocks do not establish query, constraint, rollback, concurrency or engine behavior. If real execution is unavailable or unsafe, report that coverage UNVERIFIED. Repository/adapter leaf-unit suites are not a mandatory deliverable; other internal checks remain temporary unless explicitly approved.
 
 ---
 
@@ -147,7 +147,7 @@ If an existing local convention conflicts with the confirmed decisions in this s
 | Silently replace aggregate on sync | Destroys untracked concurrent edits | Default is reconcile-by-stable-key; replacement needs declared domain semantics |
 | Add tenancy/soft-delete/replica logic without contract | Out-of-scope; creates implicit coupling; violates optional-extension boundary | Declare in Data Access Contract first; implement only when declared |
 | Use lazy-loaded relations across request boundary | N+1 queries; relation access after session close raises error | Eager-load required relations within the session; design queries to fetch what's needed |
-| Stretch transactional ORMs/cursors for heavy analytical aggregations | Severe memory bloat (hydrating thousands of ORM entities), slow row-by-row fetching, thread blocking | Route analytical workloads to the Composable Data Stack (**Ibis + DuckDB**) via `code-craft` / `architecture-design` |
+| Stretch transactional ORMs/cursors for heavy analytical aggregations | Severe memory bloat (hydrating thousands of ORM entities), slow row-by-row fetching, thread blocking | Obtain a separately settled analytical dataflow design and implementation contract; columnar options such as **Ibis + DuckDB** may fit, but selection is not implied here |
 
 ---
 
@@ -155,10 +155,10 @@ If an existing local convention conflicts with the confirmed decisions in this s
 
 | Skill | Relationship |
 |---|---|
-| `db-design` | Schema and migration design — hands off to `database-access` for implementation |
-| `architecture-design` | Data-access boundary, capability decisions, and OLAP vs OLTP separation — hands off to `database-access` for OLTP implementation |
-| `code-craft` | Simplest working implementation and verification for non-trivial adapter code; separate maintainability assessment afterward; handles analytical pipelines via Ibis + DuckDB |
-| `reviewer` | Post-implementation review — load for security lens (injection, exposure) or design-rigor lens |
+| Schema/migration design | Separately settled schema, invariants, indexes, migration compatibility and typed data contract; implement access only against the approved contract |
+| Architecture/dataflow | Settled data-access boundary and OLAP-vs-OLTP classification; analytical code needs its own selected stack and constraints |
+| Implementation | Simplest working adapter implementation and authorized verification; a separate maintainability assessment follows only after working behavior |
+| Independent review | Separate source-backed review against the changed contract; security or boundary questions require matching evidence and reviewer independence |
 
 ---
 

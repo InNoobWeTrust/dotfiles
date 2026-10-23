@@ -23,6 +23,7 @@ Interpretation rules:
 - High confidence does not permit stronger language than the approved threshold.
 - Low confidence forces explicit caveats even at low thresholds.
 - Missing baselines or weak sample quality cap the claim at descriptive or temporal language.
+- Keep every narrative sentence within the approved claim ceiling, including hedged or labeled inferences. At a descriptive ceiling, report co-movement/temporal observations; frame competing explanations as questions to investigate, not as a preferred explanation.
 
 ## Causal Threshold Scale
 

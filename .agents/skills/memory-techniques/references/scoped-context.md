@@ -63,7 +63,7 @@ For a similar prior failure, use [existing similar-trace recall](compaction-and-
 
 Within an already-required or requested checkpoint, optionally add **outcome advanced, evidence observed, assumption changed, blocker, next useful action**. Do not create another checkpoint workflow or measure progress solely by tasks completed.
 
-A disproved assumption can make remaining tasks unnecessary. Scheduling a check-in, sending outreach, or reprioritizing external commitments needs its own authorization; the memory skill provides none of these automatically.
+A disproved assumption can make remaining tasks unnecessary. Scheduling a check-in, sending outreach, or reprioritizing external commitments needs its own authorization; the memory-techniques skill provides none of these automatically.
 
 ## Prototype before promotion
 

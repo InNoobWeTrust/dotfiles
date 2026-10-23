@@ -151,7 +151,7 @@ Include a `## Allowed Actions` block in every delegation prompt:
 ```
 ## Allowed Actions
 - READ files: <list specific task files or glob patterns, e.g. src/auth/*.ts>
-- READ guidance: <resolved applicable instruction/rule files, working-principles router/catalog, and selected style/domain references only>
+- READ guidance: <resolved applicable instruction/rule files, available working-style guidance router/catalog, and selected style/domain references only>
 - RUN commands: <list specific read-only commands, e.g. git diff HEAD~1 -- src/>
 - NO file writes
 - NO destructive commands (rm, mv, git reset, etc.)
@@ -163,7 +163,7 @@ For **standard implementation agents** that must write:
 ```
 ## Allowed Actions
 - READ: all files under src/
-- READ guidance: <resolved applicable instruction/rule files, working-principles router/catalog, and selected style/domain references only>
+- READ guidance: <resolved applicable instruction/rule files, available working-style guidance router/catalog, and selected style/domain references only>
 - WRITE: <specific files only, e.g. src/auth/jwt.ts, src/auth/jwt.test.ts>
 - RUN: npm test, npm run lint
 - NO modifying locked interface/DTO contracts or public signatures
@@ -176,7 +176,7 @@ For **Clean-Room TDD implementation agents**:
 ```
 ## Allowed Actions
 - READ: all files under src/ (EXCLUDING the unit test files and test helper files, e.g. *.test.ts, test_*.py)
-- READ guidance: <resolved applicable instruction/rule files, working-principles router/catalog, and selected style/domain references only>; the test-file exclusion remains binding
+- READ guidance: <resolved applicable instruction/rule files, available working-style guidance router/catalog, and selected style/domain references only>; the test-file exclusion remains binding
 - WRITE: <specific implementation files only, e.g. src/auth/jwt.ts>
 - RUN: <specific test runner command, e.g. npm test -- src/auth/jwt.test.ts>
 - NO reading or viewing of the unit test files

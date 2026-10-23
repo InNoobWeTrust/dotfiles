@@ -16,7 +16,7 @@ The harness (skills + rules + sensors) should improve every time it is used. Thi
 
 - After any session that required significant human correction.
 - After a skill loaded but the agent still took a wrong path.
-- During the monthly failure review (`.agents/docs/skills-and-rules/maintaining-rules-and-skills.md`).
+- During the monthly failure review: aggregate captured failures, recurring causes, corrective changes and their verification evidence.
 - Quarterly, alongside the rule/skill audit.
 
 Completed flywheel entries should feed into the Monthly Failure Review. The monthly review aggregates and trends them; it does not need to re-investigate every case from scratch.
@@ -51,8 +51,8 @@ What caught the problem first — a sensor, a rule, a human, or nothing?
 
 | Gap type | Fix location | Example |
 |---|---|---|
-| **Skill routing** — wrong skill loaded, or no skill existed | `skills/INDEX` or new skill | Task needs architecture review but only `code-craft` was loaded. |
-| **Skill workflow** — right skill, but a phase is missing or unclear | Skill `references/` | `code-craft` skipped verification step. |
+| **Skill routing** — wrong skill loaded, or no skill existed | `skills/INDEX` or new skill | Task needs architecture review but only an implementation workflow was loaded. |
+| **Skill workflow** — right skill, but a phase is missing or unclear | Skill `references/` | The implementation workflow skipped a verification step. |
 | **Policy gap** — no applicable safeguard covered the failure | Project governance artifact, within authorized maintenance scope | Agent staged secrets because no secret-scan safeguard was active. |
 | **Rule ignored** — rule exists but agent did not follow it | Rule wording or stop condition | Rule was too long and buried in context. |
 | **Context gap** — agent lacked the right information | Memory capture or skill discovery | Prior decision was not recalled. |
@@ -131,7 +131,6 @@ tags: [feedback-flywheel, <skill-or-rule>]
 
 ## Related
 
-- `.agents/docs/skills-and-rules/maintaining-rules-and-skills.md` — quarterly audit and monthly failure review
-- `.agents/skills/skill-author/references/workflow-b-audit.md` — formal skill/rule audit workflow
-- `.agents/skills/memory/SKILL.md` — short-term / long-term capture and consolidation
-- Research: `.agents/docs/research/thoughtworks-radar-vol34/` — "feedback sensors" and "feedback flywheel" themes
+- Governance audit capability — inspect affected guidance, reconcile failures with original requirements, and return evidence-backed corrections; report unavailable sources rather than inventing a completed audit.
+- Authorized scoped persistence — retain provenance and scope for captured lessons; long-term promotion and consolidation require their applicable human approvals.
+- Optional background: <https://www.thoughtworks.com/radar> — consult inspected upstream material for context, not as a prerequisite for this checklist.

@@ -11,12 +11,12 @@ Each AI agent harness maintains its own dedicated MCP configuration file. These 
 | Harness | Config Path | Schema |
 |---|---|---|
 | **OpenCode** | `~/.config/opencode/opencode.jsonc` | OpenCode JSONC (`"mcp"` key) |
-| **Claude Code (dotfiles launcher)** | `~/.claude/mcp.json` | MCP JSON projected through `_claude_with_mcp` |
-| **Gemini-family config in this dotfiles setup** | `~/.gemini/config/mcp_config.json` | MCP JSON with `disabled` |
+| **Claude Code (via launcher wrapper)** | `~/.claude/mcp.json` | MCP JSON projected through a launcher wrapper |
+| **Gemini CLI (example config path)** | `~/.gemini/config/mcp_config.json` | MCP JSON with `disabled` |
 | **Codex** | `~/.codex/config.toml` | Codex TOML (`[mcp_servers.*]`) |
 
 > [!NOTE]
-> These are this installation's tracked locations, not universal harness defaults. In particular, do not assume Claude auto-discovers `~/.claude/mcp.json` or that Gemini CLI uses this Gemini-family file. Discover the actual consumer and launch adapter first. `XDG_CONFIG_HOME` can change OpenCode's path; `CODEX_HOME` can change Codex's. For other harnesses, consult their official docs and existing launch configuration.
+> These are example tracked locations for one installation; they are not universal harness defaults. In particular, do not assume Claude auto-discovers `~/.claude/mcp.json` or that Gemini CLI uses this config path. Discover the actual consumer and launch adapter in your installation first. `XDG_CONFIG_HOME` can change OpenCode's path; `CODEX_HOME` can change Codex's. For other harnesses, consult their official docs and existing launch configuration.
 
 In dotfiles setups, config files are often managed at a source path and symlinked to the live location. Edit the source file and verify the link is active with `ls -la <live-path>` before assuming the edit applies immediately; this is deployment-specific, not universal.
 
@@ -25,13 +25,13 @@ In dotfiles setups, config files are often managed at a source path and symlinke
 ## Harness Schemas
 
 > [!IMPORTANT]
-> **Use absolute paths or commands on `$PATH` for all harnesses**: Relative paths break because harnesses execute MCP servers from different working directories. This dotfiles setup deploys executables to `~/.agents/mcps/*/bin`, added to `PATH` by `.sh.d/path.sh`.
+> **Use absolute paths or commands on `$PATH` for all harnesses**: Relative paths break because harnesses execute MCP servers from different working directories. Ensure MCP server executables are on `$PATH` or referenced by absolute path; how executables are installed and made available on `$PATH` is deployment-specific (for example, a dotfiles setup might add an `mcps/*/bin` directory to PATH via its shell configuration).
 
 ### Claude Code
 
 Native MCP entries have no `disabled` field. Use the harness's supported disable control or omit an entry from the config supplied to it. Preserve any deployment-specific disable metadata instead of deleting it blindly.
 
-In this dotfiles setup, [`.sh.d/aliases.sh`](../../../../.sh.d/aliases.sh)'s `_claude_with_mcp` reads `~/.claude/mcp.json`, filters `enabled = false` / `disabled = true`, strips those adapter fields, and passes the result via `--mcp-config`. The wrapper, not automatic discovery, makes this dedicated file effective. Keep that projection and its metadata intact.
+If your Claude Code installation uses a launcher wrapper, that wrapper reads the MCP JSON file, filters entries with `enabled = false` / `disabled = true`, strips those adapter fields, and passes the result via `--mcp-config`. Discover your launcher wrapper's actual path from your shell configuration or harness setup documentation. The wrapper, not automatic discovery, makes this dedicated file effective. Keep that projection and its metadata intact.
 
 ```json
 {
@@ -44,7 +44,7 @@ In this dotfiles setup, [`.sh.d/aliases.sh`](../../../../.sh.d/aliases.sh)'s `_c
 }
 ```
 
-### Gemini-family config in this dotfiles setup
+### Gemini CLI (example config)
 
 Existing entries use optional `"disabled"` per entry. Preserve this deployed format; verify the actual harness's schema before applying it elsewhere.
 
@@ -99,14 +99,14 @@ args = []
 
 ## Default Browser Policy
 
-Browser interaction defaults to [terminal-browser](../../cdp-browser-automation/references/terminal-browser.md), not an always-on MCP. Do not add browser MCPs as a configuration-sync side effect. Chrome/CDP requires the browser skill's explicit-task or demonstrated-capability-gap exception and the necessary authorization. If a harness config already has a disabled Chrome definition, preserve that state unless its change is separately authorized.
+Browser interaction defaults to terminal-browser (the browser automation skill's default mode), not an always-on MCP. Do not add browser MCPs as a configuration-sync side effect. Chrome/CDP requires an explicit Chrome task or demonstrated-capability-gap exception and the necessary authorization. If a harness config already has a disabled Chrome definition, preserve that state unless its change is separately authorized.
 
 Each harness uses its own native disable control:
 
 | Harness | Disable control |
 |---|---|
 | OpenCode | `"disabled": true` on the server entry |
-| Claude Code | Native supported disable control; this dotfiles launcher also filters `disabled: true` / `enabled: false` before passing entries |
+| Claude Code | Native supported disable control; if a launcher wrapper is in use, it may also filter disabled entries before passing the config |
 | Gemini-family config shown above | Preserve the existing `"disabled": true` format; verify other consumers separately |
 | Codex | `enabled = false` in `[mcp_servers.<name>]` |
 

@@ -11,7 +11,7 @@ Before splitting files, establish the [main reading path and supporting layers](
 ## The Three-Layer Shape (Human-Facing)
 
 > [!IMPORTANT]
-> The layers below govern **human-facing documentation** (`docs/`, `<module>/README.md`). Internal agent coordination artifacts (atomic plans, sequential vertical slice phase files, inter-agent consensus boards) do NOT belong in `docs/` — they route to `MEMORY_DIR` per [`document-routing-and-audience.md`](document-routing-and-audience.md).
+> The layers below govern **human-facing documentation** (`docs/`, `<module>/README.md`). Internal agent coordination artifacts (atomic plans, sequential vertical slice phase files, inter-agent consensus boards) do NOT belong in `docs/` — use the explicitly scoped coordination-memory contract in [`document-routing-and-audience.md`](document-routing-and-audience.md).
 
 ```
 INDEX (Always loaded / Top-level overview)
@@ -145,5 +145,5 @@ docs/
 ### Human-Facing Code Module Documentation (`<module>/README.md`)
 Placed directly inside each code package or subsystem directory (e.g. `src/auth/README.md`, `packages/parser/README.md`) to document module role, mental model, primary usage, exported abstractions, and invariants at the appropriate abstraction level.
 
-### Agent Coordination Memory (`MEMORY_DIR` — Not `docs/`)
-Atomic execution plans, vertical slice phase files (`phases/01-*.md`), consensus boards, and session checkpoints live under the selected external `MEMORY_DIR` resolved per the memory skill, not the project knowledge directory or `docs/`. Internal tracking stays Markdown and human-traceable without leaking raw task context into Git.
+### Agent Coordination Memory (Not `docs/`)
+Atomic execution plans, vertical slice phase files (`phases/01-*.md`), consensus boards, and session checkpoints belong in an explicitly resolved scope selected through an authorized coordination-memory capability—not an assumed project or host path. Supply record type and privacy scope; require a Markdown/YAML destination and write authorization. If unavailable, stop and report without placing internal tracking in human documentation. Keep authorized records human-traceable and avoid leaking private task context into Git.

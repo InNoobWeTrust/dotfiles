@@ -65,7 +65,7 @@ Standard scannable templates designed to prevent AI-generated discursive prose a
 
 ## 4. Deep Details & References
 - **Complete guide:** [Read the PDF](./<topic>/main.pdf), including clustering and failover chapters.
-- Related specifications: [`../architecture/auth-system.md`](../architecture/auth-system.md)
+- Related specifications (example project-relative path): `../architecture/auth-system.md`
 ```
 
 ---

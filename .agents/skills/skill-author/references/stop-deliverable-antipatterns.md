@@ -2,7 +2,7 @@
 
 - **Workflow A, Phase A1 fails**: Skill not needed. Propose extending existing skill or simpler approach.
 - **Workflow A, Phase A2 unclear**: Scope can't be defined — ask for clarification.
-- **Hidden deployment prerequisite or missing reference**: Repair the capability/reader contract or report the unavailable resource before calling a reusable skill ready. Missing tooling does not authorize setup.
+- **Hidden deployment/sibling prerequisite or missing reference**: Repair the capability/reader contract or report the unavailable resource before calling a reusable skill ready. Missing tooling does not authorize setup; generic wording cannot waive the original method's safety stops.
 - **Workflow B, insufficient data**: If audit data sources (metrics, logs, usage tracking) are not accessible, produce a qualitative audit using available artifacts (git history, handoff files, manual inspection). Document what data was missing and recommend what the org should start tracking. Never fabricate statistics.
 
 ---
@@ -13,6 +13,7 @@
 - [ ] Skill need validated (A1)
 - [ ] Skill scope defined (A2)
 - [ ] Reader/capability contract, portable references and unavailable-capability behavior checked
+- [ ] Whole-directory standalone closure and sibling-rename check; removed dependencies retain concrete method/evidence/authority contracts
 - [ ] Workflow outline designed (A3)
 - [ ] SKILL.md written with all 7 sections (A4)
 - [ ] INDEX updated (A5)
@@ -46,10 +47,11 @@ quarterly metrics, lifecycle transitions or unrelated rule audits.
 | "I'll reorganize all skill files to follow a new convention" | Format churn creates merge conflicts and breaks cross-references | Propose reorganization as a separate, dedicated task |
 | "Move our server adapter under references and the generic skill is portable" | Disclosure depth does not fix deployment coupling | Keep deployment docs separate; discover the available capability |
 | "Existing solution means the MCP I have installed" | Other harnesses may expose a native or different interface | Use the actual authorized capability contract, with explicit absence behavior |
+| "Replace a sibling link with 'use a capability' and portability is solved" | Required methods and stops can disappear | Preserve input/output, evidence, authority and absence behavior; check the whole copied bundle |
 
 ---
 
 ## References
 
-- `INDEX` — Current skill catalog (Phase A5/B2 target)
-- `WIRING` — Composition registry (Phase A5 target)
+- Destination installation's skill catalog — Phase A5/B2 target, not a bundled prerequisite
+- Destination installation's composition registry — Phase A5 target, not a bundled prerequisite

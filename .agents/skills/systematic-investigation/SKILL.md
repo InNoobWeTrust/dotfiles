@@ -38,7 +38,7 @@ Load **one** deep ref at a time. Elicitation second pass: `references/elicitatio
 1. **Define** — 5W statement: *"[Who] experiences [What] in [Where] since [When], causing [impact]."* Load `define-and-debug.md` if tangled or technical.
 2. **Analyze** — pick method from table; load `root-cause-frameworks.md`. Confirm root cause with **evidence**.
    Before promoting a consequential conclusion or recovering failed work, read [Scope-bounded evidence and recovery](references/evidence-and-recovery.md).
-3. **Governance capture** (if AI/process gap) — note rule/skill gap for handoff / skill-author audit (advisory).
+3. **Governance capture** (if AI/process gap) — note the rule/skill gap for an authorized guidance-maintenance audit (advisory).
 4. **Solve** — 5 Hows or OODA/PDCA; load `solve-and-challenge.md`. Fix root cause, not symptom. One change at a time.
 5. **Challenge** — pre-mortem / adversarial vectors; PROCEED | REVISE | RETHINK. Optional: elicitation methods.
 6. **Report** — use `references/report-template.md` when handing off or documenting.

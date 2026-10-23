@@ -52,7 +52,7 @@ For redesigns or polish of existing UI, perform a brief visual audit as part of 
 
 **Purpose**: Understand what we're building, for whom, under what constraints.
 
-1. Load `references/discovery-questions.md` and follow [Planning and shared understanding](../working-principles/references/planning.md) for informed alignment; reuse available product intent and behavior criteria, without requiring a PRD
+1. Load `references/discovery-questions.md`; use available product intent and behavior criteria, and distinguish observed evidence from assumptions. Record unresolved questions and consumer boundaries. Do not require a PRD; preserve owner decisions and stop on unresolved consequential choices rather than inferring permission.
 2. Explain observed UI context, decision-relevant terminology, and why pending choices matter before asking
 3. Select at most 3–5 highest-impact questions from the bank; ask only unresolved decisions. When the user is unavailable, research existing evidence and mark reversible in-scope assumptions `⚠️ Assumed:` for review; missing consequential owner decisions still stop the affected work, not become inferred permission
 4. Create `UX-SPEC.md` from `references/ux-spec-template.md`
@@ -117,7 +117,7 @@ For redesigns: audit existing UI here — identify token violations, spacing iss
 | Situation | Action |
 |---|---|
 | `DESIGN.md` exists and passes lint | Extract tokens; use as source of truth |
-| `DESIGN.md` exists but incomplete | Run `npx @google/design.md lint DESIGN.md`, fix, proceed |
+| `DESIGN.md` exists but incomplete | If the linter is already available or its package resolution is authorized, lint `DESIGN.md` and fix findings; otherwise review against `references/design-md-spec.md` and mark automated lint unverified. Do not install it to continue |
 | No `DESIGN.md` and project has UI | Offer to scaffold per `references/design-md-spec.md` |
 | No `DESIGN.md`, no existing design system, compatible framework | Default to Carbon White (load `references/carbon.md`); verify framework/peer compatibility first; offer DESIGN.md scaffold on top |
 
@@ -151,7 +151,7 @@ Write to `UX-SPEC.md` § Visual Design.
 
 1. **Read UX-SPEC.md** as the source of truth — all sections
 2. **Check existing components** — search project component tree before writing new HTML
-3. **Follow code-craft** — load `code-craft` skill for implementation methodology
+3. **Use an authorized implementation capability** with the project source, approved `UX-SPEC.md` (Phases 1–5), acceptance criteria, writable scope, and test/evidence requirements as inputs. It returns production-ready changes and verification results. If no authorized implementation owner or required source access is available, stop before code; do not bypass the written-design gate.
 4. **Token compliance** — zero hardcoded hex colors or arbitrary px values; all styling references DESIGN.md tokens or CSS variables
 5. **State exhaustion** — implement ALL states from the State Matrix
 6. **Accessibility by default**:
@@ -173,12 +173,12 @@ Write to `UX-SPEC.md` § Visual Design.
 1. **Spec cross-reference** — walk UX-SPEC.md § Verification Checklist, checking each item
 2. **Token compliance** — grep for hardcoded hex colors (`#[0-9a-fA-F]{3,8}`) and arbitrary px values in component files
 3. **State audit** — verify each state from the State Matrix is implemented
-4. **DESIGN.md lint** (if applicable): `npx @google/design.md lint DESIGN.md`
+4. **DESIGN.md lint** (if applicable): use `npx @google/design.md lint DESIGN.md` only when the package is already available or package resolution is authorized; otherwise review the tokens/references manually against `references/design-md-spec.md` and report automated lint as unverified. Do not install dependencies without authorization.
 5. **Accessibility check** — contrast ratios, keyboard nav, ARIA attributes, focus management
 6. **Responsive check** — verify layout at specified breakpoints
 7. **Produce verification report** — pass/fail per checklist item
 
-For Deep track: delegate browser verification to `web-qa-audit` skill.
+For Deep track: use a capable browser-QA executor for the agreed journeys, browsers, viewports, states, and artifacts; provide the completed `UX-SPEC.md` and acceptance criteria as inputs and require observed results with screenshots/traces as applicable. Preserve requested browser evidence. If no authorized executor or required browser capability exists, mark live verification blocked/unverified rather than claiming a pass or downgrading the coverage.
 
 ---
 
@@ -235,4 +235,4 @@ For Deep track: delegate browser verification to `web-qa-audit` skill.
 - `references/generative-ui.md` — Runtime-generated UI contracts, streaming, actions and verification
 - `references/openui.md` — OpenUI integration, source discovery and package boundaries
 - `references/carbon.md` — IBM Carbon default: White theme, packages, compatibility gating, phase routing
-- Compose with: `code-craft` (Phase 6 methodology), `reviewer` (design audit), `web-qa-audit` (Phase 7 browser verification), `project-foundation` (DESIGN.md bootstrap), `illustration-craft` (empty state graphics)
+- Optional handoffs: an implementation capability receives the approved `UX-SPEC.md`, project scope, acceptance criteria and write limits; an independent design evaluator receives the original intent, specification and changed artifact and returns evidence-linked findings; a browser-QA executor receives the sanctioned target, journeys, browser/viewports and required evidence. A visual-asset capability may receive an approved empty-state storyboard, destination, formats and accessibility needs. A design-system bootstrap capability may supply existing `DESIGN.md` tokens or a requested initial token set. These are optional when the current agent can perform the work within authority; if a required owner, source, permission or evidence capability is absent, stop or mark only the affected output blocked/unverified. No handoff changes the written-design gates or approval authority.

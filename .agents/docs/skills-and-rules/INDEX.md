@@ -20,8 +20,9 @@
 | [Lessons from agent-guidance failures](./agent-guidance-lessons.md) | Reader/context boundaries, alignment, portable roles, inspectable work, and verification limits | Sharing observed failures or designing the next improvement |
 | [End-user outcome reviews](./end-user-outcome-reviews.md) | Compare user journeys and agent workflows before/after; trial method with later promotion criteria | Checking usability regressions or deciding whether to extend a review skill |
 | [Designing skills](./designing-skills.md) | Anatomy, YAML, phases, deliverables | Writing a new skill |
+| [Portable skill bundles](./skill-portability.md) | Capability handoffs, standalone closure and rename boundaries | Removing hidden sibling/deployment dependencies or checking a reusable bundle |
 | [Skill lifecycle](./skill-lifecycle.md) | Prototype → hardening → adoption | Promoting or retiring skills |
-| [Skill composition](./skill-composition.md) | WIRING.md and multi-skill pathways | Chaining skills safely |
+| [Skill composition](./skill-composition.md) | Installation WIRING map and multi-skill pathways | Chaining skills safely |
 | [Maintaining over time](./maintaining-rules-and-skills.md) | Quarterly audit, failure review | Owning the rule/skill set as a lead |
 | [Rule template](./templates-rule.md) | Copy-paste rule skeleton | Authoring a rule |
 | [Skill template](./templates-skill.md) | Copy-paste skill skeleton | Authoring a skill |

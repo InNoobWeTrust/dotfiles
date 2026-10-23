@@ -19,7 +19,7 @@ For each finished illustration, produce:
 6. If the destination is markdown and supports SVG or Mermaid poorly, embed the raster and keep the source nearby.
 7. If raster export is unavailable, return the source/spec plus a clear note describing the missing export step rather than pretending the image is production-ready.
 
-For the default Typst document destination, embed a local static SVG or PNG with native `image`/`figure`, meaningful alt text, and a caption. Follow [Typst workflow](../../doc-craft/references/typst-workflow.md#3-include-visuals-and-portable-references); keep editable source and verify the image in the final PDF. A validated Mermaid source still needs rendering before embedding.
+For a Typst document, embed a local static SVG or PNG with native `image`/`figure`, meaningful alt text, and a caption. Keep editable source and inspect the image in the final compiled PDF; a validated Mermaid source still needs rendering before embedding. If compilation or image inspection is unavailable, mark PDF delivery unverified/blocked and provide the source/spec only—do not install tooling, upload the artifact, or imply the output was checked.
 
 ## Placement notes
 

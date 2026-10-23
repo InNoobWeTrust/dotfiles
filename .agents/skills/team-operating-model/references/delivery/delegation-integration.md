@@ -1,6 +1,6 @@
 # Delegated research, building, and release evaluation
 
-Use [Subagent Dispatch](../../../subagent-dispatch/SKILL.md) before every worker launch. Real workers are mandatory: primary plus at least one separately executed worker with current task-relevant evidence. Crowd deliberation remains optional within that team, not permission for solo delivery. Apply [Persistent coordination](../persistent-coordination.md). Unavailable delegation or missing required worker evidence blocks affected work; no simulated fallback or permission bypass.
+Before every worker launch, apply the main skill's inline bounded-handoff contract or an available dispatch capability's worker contract. Real workers are mandatory: primary plus at least one separately executed worker with current task-relevant evidence. Crowd deliberation remains optional within that team, not permission for solo delivery. Apply [Persistent coordination](../persistent-coordination.md). Unavailable delegation or missing required worker evidence blocks affected work; no simulated fallback or permission bypass.
 
 ## Division of responsibility
 
@@ -9,7 +9,7 @@ The primary owns the outcome, decision authority, bounded contracts, integration
 | Work | Worker contract | Primary action |
 |---|---|---|
 | Research | Bounded question, permitted sources/network, evidence and uncertainty; no edits | Compare evidence, decide in-scope choices, document consequential rationale |
-| Implementation | One approved slice, exact contracts/files, approved materialization choices and accessible code-craft/API sources, existing domain verification requirements | Integrate and verify actual API reuse; reapprove contract defects before redispatch |
+| Implementation | One approved slice, exact contracts/files, approved materialization choices and accessible language/API reference sources, existing domain verification requirements | Integrate and verify actual API reuse; reapprove contract defects before redispatch |
 | Execution/E2E | Fixed checks/journeys, authorized isolated environment and resource controls | Validate receipts; do not let the executor silently alter assertions |
 | Independent review | One distinct perspective (different agent/subagent instance than primary and implementers), declared rubric, current artifact/evidence; read-only. One instance = one perspective; simulated panels not independent. For substantial work, include goal-alignment reviewer with original request/feedback. If perspectives ambiguous, identify candidates and consult independent generalist reviewer by default - do not skip; only STOP_INPUT_AMBIGUOUS if specialized judgment materially required and no qualified reviewer identifiable. | Challenge findings, resolve blockers, recheck changed surface |
 
@@ -21,7 +21,7 @@ Keep outcome/invariants fixed while choices are being investigated. The primary 
 
 Product-facing decision notes go in product docs; execution packets/checkpoints/consensus go in task memory. Do not expose full worker transcripts or ask the user to become integrator.
 
-For software capabilities, use the [materialization contract](../../../subagent-dispatch/references/implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) in the existing approved plan/phase file and copy its unit-relevant rows into each implementation handoff, including atomic patches and route replacements. The primary settles recommended library/API choices and justified repository/standard-library exceptions before coding. Missing or incompatible selections return to the primary; dependency installation, manifest edits, and network still require their own scoped authority. Evaluators compare actual API call sites and behavior against that same revision; an import or green test suite alone cannot prove reuse.
+For software capabilities, keep the materialization contract in the existing approved plan/phase file—for each affected capability, the selected library/tool/API, compatibility, accessible reference source, dependency-edit scope, justified exceptions, prohibited substitutions and reuse evidence—and copy its unit-relevant rows into each implementation handoff, including atomic patches and route replacements. The primary settles recommended library/API choices and justified repository/standard-library exceptions before coding. Missing or incompatible selections return to the primary; dependency installation, manifest edits, and network still require their own scoped authority. Evaluators compare actual API call sites and behavior against that same revision; an import or green test suite alone cannot prove reuse.
 
 ## Evaluator-to-optimizer handoff
 
@@ -31,7 +31,7 @@ Before iteration, declare artifact/contract revision, user journeys, machine pro
 - Reviewer PASS needs criterion-linked evidence. Agreement without evidence, unavailable E2E, and unexamined user journeys remain UNVERIFIED.
 - FAIL returns the specific requirement, observed failure, and bounded correction—not a new wishlist. Apply the authority-based retry/stop test in [Release evaluation](procedure.md#7-release-evaluation): concern labels alone do not forbid evidenced, authorized technical corrections; unresolved authority/safety boundaries require STOP_MANUAL_INTERVENTION.
 - UNVERIFIED requires missing evidence or an honest blocker. It cannot be relabeled PASS by a vote.
-- Independent challenge follows `subagent-dispatch`/`reviewer` using different agent/subagent instances than the primary and any implementers (same-agent self-review is not independent; one instance = one perspective; simulated panels not independent). After fixes, recheck affected criteria/current artifact. No endless cosmetic panel cycles.
+- Independent challenge uses an available delegation/review capability with different agent/subagent instances than the primary and any implementers (same-agent self-review is not independent; one instance = one perspective; simulated panels not independent). After fixes, recheck affected criteria/current artifact. No endless cosmetic panel cycles.
 
 ## If crowd deliberation is selected
 

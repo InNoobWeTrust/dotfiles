@@ -2,7 +2,7 @@
 
 ## Purpose and storage
 
-Make role selection improve from observed work, without turning anecdotes into model rankings. The primary records acceptance evidence for its own design/integration decisions as well as workers' outputs. Use the existing task/role event log or a short-term capture under the backend resolved by `memory`; link it from the existing memory entry point. Do not create a second database or duplicate the same event across stores. Cross-project routing uses only explicitly authorized memory scopes; do not scan other projects or global history silently.
+Make role selection improve from observed work, without turning anecdotes into model rankings. The primary records acceptance evidence for its own design/integration decisions as well as workers' outputs. Use the existing task/role event log or a short-term capture under the selected memory scope; link it from the existing memory entry point. Do not create a second database or duplicate the same event across stores. Cross-project routing uses only explicitly authorized memory scopes; do not scan other projects or global history silently.
 
 ## Capture at acceptance or interruption
 
@@ -25,7 +25,7 @@ For a substantive role choice, start at the existing memory index and retrieve o
 
 Use outcomes to refine the task description, add a concrete contract example/check, pair an implementer with an independent challenger, or recommend a narrower role. Track challenged findings that were rejected so prolific false positives do not look like reviewer success. A primary accepting an inappropriate design remains accountable even when the suggestion came from a worker.
 
-One incident warrants a scoped caution, not a model-wide competence claim. Before recommending route removal, description changes or challenger-only assignment, inspect repeated comparable assignments, useful successes, actual identity/version, handoff quality and current applicability. Report the sample size and selection bias; do not manufacture rates from incident-only samples or count service failures as reasoning failures. A serious single incident can justify an immediate task-local restriction, explicitly provisional. Actual profile edits or persistent routing restrictions require authorization for that change; logging is not permission to demote. Long-term promotion/consolidation still follows `memory` approval rules.
+One incident warrants a scoped caution, not a model-wide competence claim. Before recommending route removal, description changes or challenger-only assignment, inspect repeated comparable assignments, useful successes, actual identity/version, handoff quality and current applicability. Report the sample size and selection bias; do not manufacture rates from incident-only samples or count service failures as reasoning failures. A serious single incident can justify an immediate task-local restriction, explicitly provisional. Actual profile edits or persistent routing restrictions require authorization for that change; logging is not permission to demote. Long-term promotion/consolidation still follows the selected memory capability's explicit approval rules.
 
 ## Example event
 

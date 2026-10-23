@@ -40,11 +40,11 @@ Interpretation rules:
 ## Procedure
 
 1. Choose the template if none was specified.
-   - Select serialization separately with [Document format selection](../../../doc-craft/references/document-formats.md). For saved human narratives, use Typst + PDF by default and [Typst workflow](../../../doc-craft/references/typst-workflow.md) for build/inspection; preserve required machine intermediates and consumer formats.
+   - Select serialization separately from the narrative structure. For saved human narratives, use Typst source plus the compiled, inspected PDF by default; preserve required machine intermediates and consumer formats. If compiler access is unavailable, mark the PDF blocked and the source uncompiled; do not install, upload or substitute another format.
 2. Treat the post-QA claim set from skeptic QA as the canonical rendering artifact.
 3. Map only `approved` or `downgraded` claims from that canonical artifact into the required sections for the selected template.
 4. Carry forward confidence notes and caveats; every rendered material claim must include `confidence_label`, `confidence_basis`, and `claim_ceiling`, while `confidence_score` and `limitation_notes` remain internal-only support fields. In multi-claim sections, attach those fields per claim or per insight row rather than once per document.
-5. If a visual plan is approved, place each visual immediately after the claim it supports, with a takeaway-oriented caption or lead-in.
+5. If a visual plan is approved, place each visual immediately after the claim it supports, with a takeaway-oriented caption or lead-in. For a bespoke visual, hand off the approved claim, source evidence, audience, claim ceiling and output format to an authorized visual-composition capability; require editable source, export, alt text and visible caveats. If unavailable, retain a simpler supported visual or mark the bespoke output unresolved.
 6. Add the mandatory `Lenses Used` section required by the template contract, using a native heading in the selected format.
 7. Add revision notes if the draft reflects user feedback.
 8. Keep the output concise enough for the intended audience.
