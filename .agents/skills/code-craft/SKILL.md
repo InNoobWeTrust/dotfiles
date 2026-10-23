@@ -20,6 +20,9 @@ limitations, and a small handoff for separate maintainability assessment.
 - Inspect the relevant existing path and reuse platform/repository capabilities.
   Keep established source ownership and dependency direction; settle new trust,
   state, or consumer boundaries when they actually change.
+- When current code may conflict with intent, apply [Code-intent fit](references/code-intent-fit.md)
+  before choosing a patch, scoped refactor or consequential escalation. This is
+  correctness/source inspection, not an upfront maintainability audit.
 - For server-shaped programs, including MCP servers, keep bootstrap/transport,
   routing, endpoints, middleware, contracts and streaming channels separate;
   protocol ceremony belongs at the boundary, not inside handlers.

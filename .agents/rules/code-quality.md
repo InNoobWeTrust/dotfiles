@@ -29,6 +29,14 @@ trigger: always_on
   green tests or an acyclic graph cannot replace actual placement review.
   Cohesive unchanged-boundary edits need only a brief existing-owner rationale,
   not new folders or forms.
+- When current code conflicts with intent, establish affected behavior/consumers
+  before choosing a patch or scoped refactor. Do not add compensating layers merely
+  to preserve accidental behavior; surface unresolved consequential effects before
+  implementation. Use [Code-intent fit](../skills/code-craft/references/code-intent-fit.md).
+- Reconcile affected guidance, links, indexes and owned outputs with each change;
+  place new material under its actual owner and keep drafts/history off the default
+  requirement route. Tidiness is not a clean Git status or permission to discard
+  user work, deduplicate blindly or clean unrelated areas.
 - Honor an existing glossary and resolve conflicting critical business meanings;
   routine names need no user approval or unsolicited glossary bootstrap.
 - Select meaningful verification and persistence before writing checks. Without

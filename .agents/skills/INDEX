@@ -8,7 +8,7 @@ For non-trivial work, load `team-operating-model` before substantive work: activ
 
 | Skill | Cost | Use When | Do Not Use When |
 | --- | --- | --- | --- |
-| `code-craft` | low | Non-trivial implementation/fixes, approved refactoring, behavior/acceptance specs; verify working behavior before maintainability assessment | Formatting/config-only edits; maintainability-only assessment |
+| `code-craft` | low | Implementation/fixes, approved refactoring, code-intent fit, behavior specs; verify working behavior before maintainability assessment | Formatting/config-only edits; maintainability-only assessment |
 | `code-maintainability` | medium | Separate-agent assessment of working code; record refinements, apply only after usefulness and explicit approval | Upfront implementation gate; automatic cleanup; general security audit |
 | `systematic-investigation` | medium | Debugging, root causes, recurring failures, first-principles diagnosis, architectural decisions, pre-mortems/red-teaming | Creative ideation or straightforward edits |
 | `brainstorming` | low | Creative/product ideation, conceptual exploration, prioritization; settled-direction product intent/PRDs | Analytical debugging or structured fixes |
@@ -18,7 +18,7 @@ For non-trivial work, load `team-operating-model` before substantive work: activ
 | `domain-curation` | medium | Learn unfamiliar domains; curate practitioners' conditional judgment, source lineage and task-attempt limits before packaging | Simple lookup; scientific hypotheses alone; candidate vetting; already-grounded authoring |
 | `distributed-systems-operations` | medium | Integrate/operate chosen workers, HPC/Hadoop/Spark, storage/sync/ledgers; placement, bounded concurrency, retries/commit/recovery | Stack selection only; AI-subagent dispatch; model methodology; protocol invention; unauthorized infrastructure/signing |
 | `codebase-exploration` | medium | Locate unfamiliar behavior, trace call chains/dependencies, map repositories | Relevant files already known |
-| `reviewer` | varies | Review any artifact: code, docs, config, infrastructure, designs, compliance; select warranted sub-lenses | Implementation-only requests without a review need |
+| `reviewer` | varies | Review artifacts and calibrate changed automated reviewers; select warranted sub-lenses | Implementation-only requests without a review need |
 | `ui-ux` | medium | Traditional/generative UI journeys, states, tokens and frontend under UX-SPEC; OpenUI/model-composed interfaces when applicable | Backend-only work; static UI does not need generative references |
 | `developer-experience` | medium | DX/DevX friction: typed configs/templates/defaults, task entry points, project/module dependency and dataflow views, optional diagnostics, reproducible runs/checkpoints, contribution conventions | Root-cause diagnosis only; architecture decisions; UI design; automatic refactoring; foundation/platform bootstrap |
 | `cdp-browser-automation` | medium | Real browser interaction: terminal-browser by default; Chrome/CDP only for explicit tasks or demonstrated gaps | Static source/HTTP inspection suffices |
@@ -34,7 +34,7 @@ For non-trivial work, load `team-operating-model` before substantive work: activ
 | `doc-craft` | low | Human-facing technical docs and presentation of domain-owned specs; Markdown entries, comprehensive Typst/PDF, progressive disclosure | Owning product/technical/behavior meaning; code-only work; internal tracking |
 | `memory-techniques` | low–medium | Scoped capture/recall/plans/checkpoints; project knowledge vs external global/private/task stores; requested consolidation/eviction | Trivial one-shot edits; human-facing docs; automatic profiling/consolidation; no global notes in `~/.agents/memories/` |
 | `team-operating-model` | low–high | Non-trivial delivery/planning/architecture/diagnosis, high-stakes decisions, independent checks, deliberation and continuing roles; real team mandatory | Trivial work (exclude before activation); no solo/simulated fallback or authority expansion |
-| `working-principles` | low | Infer/discover task-appropriate reasoning styles for primary/workers; optional hint/reference, bounded catalog lookup | Mechanical tasks need baseline only; not domain workflow, authority or safety replacement |
+| `working-principles` | low | Task-appropriate reasoning styles; original-source walkthrough and affected input integrity | Mechanical tasks need baseline only; not domain workflow, authority or safety replacement |
 | `subagent-dispatch` | low | Every worker launch, periodic check or delayed reminder; bounded actions/evidence/stops, native waits where suitable | No delegation/monitoring needed; replacing live dialogue or inseparable primary judgment |
 | `project-foundation` | high | Bootstrap/audit/evolve foundations, materialize core skills, detect drift, sync `.agents` or native harness MCP configurations | Single rule/skill-body edits without pack-level change |
 | `devsecops` | high | CI/CD and deployment pipelines with change detection, environment separation, security scanning, evidence/retention/audit trails | One-off local scripts/changes; ordinary code review |

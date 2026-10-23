@@ -29,6 +29,19 @@ Use `decision-support` for meaningful autonomous next steps, recommendations bef
 
 For multiple contributors/sessions, restore [persistent coordination](team-operating-model/references/persistent-coordination.md) before role task sources: immutable task/role + session binding → scoped `memory-techniques` records/approved plan → bounded `subagent-dispatch` → direction-settled joint plan/authorized execution → append checkpoints after every completed/interrupted slice. Deliberation is optional within a real team; never simulated. [Phased delivery](team-operating-model/references/phased-delivery.md) is independently usable without team activation; use its milestone packet/feedback decisions only for phased work. Roadmaps are for multiple milestones, not every task.
 
+### Intent and Input Assurance
+
+`working-principles` [source integrity](working-principles/references/source-integrity.md)
+supports the original-source walkthrough; `code-craft`
+[code-intent fit](code-craft/references/code-intent-fit.md) diagnoses patch/refactor
+choices; `team-operating-model` [intent assurance](team-operating-model/references/intent-assurance.md)
+owns the compact exception/probe handoff. Existing dedicated conformance and critical
+behavior checks supply evidence, not new approval rights. `reviewer`
+[calibration](reviewer/references/calibration.md) checks reviewer changes before
+increased reliance; `project-foundation` [context integrity](project-foundation/references/context-integrity.md)
+owns affected source/status/consumer reconciliation, not a custom link checker. Human findings/limits:
+[Intent assurance](../docs/agentic-qa/intent-assurance/README.md).
+
 ### Delegated Execution
 
 Every named/fallback/dynamic worker or external-node launch uses `subagent-dispatch` and its [worker contract](subagent-dispatch/references/worker-contract.md): scope, output/evidence, READ/WRITE/RUN/network limits, stops and accessible guidance discovery. Workers use `working-principles` themselves; optional hints/references are not inherited parent guidance. Main agents use the same style router; mechanical tasks may use baseline only. When warranted, team deliberation uses separately executed complementary workers (`/swarm`/`/party-mode` only where available); missing permitted workers blocks.

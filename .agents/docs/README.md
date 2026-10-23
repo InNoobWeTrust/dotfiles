@@ -31,7 +31,7 @@ The [chirality research source](./research/chirality_agent_guardrails/main.typ) 
 | [skills-and-rules](./skills-and-rules/INDEX.md) | Designing rules & skills, failure patterns, templates | Creating or evolving rules/skills |
 | [project-lifecycle](./project-lifecycle/INDEX.md) | Onboarding, daily AI work, gates, CI/CD, security, maturity | Setting up or joining a project |
 | [quality-tooling](./quality-tooling/INDEX.md) | Quality layers, OSS-first baselines, Sonar positioning, self-hosted telemetry, comparisons | Choosing quality tools |
-| [agentic-qa](./agentic-qa/INDEX.md) | Pre-agentic QA foundation + agentic testing mental model | Learning agent-assisted QA/QC without cargo-culting skills |
+| [agentic-qa](./agentic-qa/INDEX.md) | QA foundations, agentic testing and intent/source/code assurance | Learning agent-assisted QA/QC without cargo-culting skills |
 | [playbook](./playbook/INDEX.md) | Operational step-by-step guides for practical adoption | Turning concepts into repeatable team workflows |
 | [research](./research/INDEX.md) | Research-phase material — **not battle-tested** | Investigating external patterns before promoting |
 | [slides](./slides/INDEX.md) | Marp decks (EN/VI) | Presenting workshops |

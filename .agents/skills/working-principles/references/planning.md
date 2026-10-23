@@ -42,6 +42,10 @@ user.
 
 ## Primary Planning
 
+When current artifacts could be mistaken for requirements, apply
+[Source integrity](source-integrity.md) within this walkthrough: reconcile authority,
+status and scope before dependent work, not after a large delivery is generated.
+
 - Establish the problem, affected people/consumers, current behavior, desired
   outcome, constraints, non-goals, authority and observable success before choosing
   a solution. A plan request does not mean the solution is settled.

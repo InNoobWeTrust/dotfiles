@@ -20,6 +20,14 @@
 
 Composition sketch lives in `.agents/skills/WIRING` under "Web QA Audit" — treat as **wiring for this toolkit**, not curriculum.
 
+The [intent-assurance guide](intent-assurance/README.md) documents the 23 October
+2026 industry/source findings and the new bounded implementation: source integrity
+(`working-principles`), code-intent fit (`code-craft`), exception/proof handoffs
+(`team-operating-model`), reviewer calibration and foundation context checks.
+The wiring map's **Intent and Input Assurance** route binds them without a new
+committee, MCP or approval policy. Artifact checks and synthetic exercises do not
+establish reduced owner effort or production effectiveness.
+
 ---
 
 ## How to use this map correctly

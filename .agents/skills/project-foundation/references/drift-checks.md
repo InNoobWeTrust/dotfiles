@@ -2,6 +2,11 @@
 
 Run these checks without rewriting healthy files. Produce a **gap report**, then apply only approved fixes.
 
+For an authoring pack (`mode: source`), apply routing, bundle and affected-content
+checks to the declared source scope. Application-specific Makefile/architecture/
+UI checks are not automatically applicable; do not generate unrelated files or
+claim the entire source pack audited. Record unsupported/uninspected surfaces.
+
 ## A. Presence
 
 - [ ] `AGENTS.md` has mandatory sections (source-of-truth, tooling, agent ops, verify commands, security)
@@ -45,12 +50,15 @@ Run these checks without rewriting healthy files. Produce a **gap report**, then
 - [ ] No full duplicate of global docs/ under project `.agents/docs/` unless intentional
 - [ ] Rules that are global baselines are not re-expanded into multi-hundred-line project forks without reason
 - [ ] `AGENTS.md` length stays within the anti-bloat heuristic; if it exceeds ~150 lines or 8 KB, load the governance skill authoring capability's instruction-bloat guidance and refactor into references or rules
+- [ ] Affected entry maps lead to active governing sources; proposals/history and
+  descriptions are not silently normative. Material conflicting claims are reported
+  before dependent work. Use [Context integrity](context-integrity.md), not blind deduplication.
 
 ## Gap report format
 
 ```markdown
 ## Foundation audit — <project> — <date>
-Mode: symlink | copy | mixed
+Mode: symlink | copy | mixed | source
 Source: <path>
 
 ### Critical gaps (breaks agent routing)
@@ -74,5 +82,6 @@ Trigger **Audit/Evolve** (not full Bootstrap) when any of:
 - `skills/INDEX` routes to a skill path that does not exist
 - New major subsystem landed and `docs/architecture.md` / `GLOSSARY.md` were not updated in the same change set
 - Global pack revision in `FOUNDATION.md` is older than 90 days (copy mode) and user is doing foundation-related work
-- First session in a repo that has `AGENTS.md` but no `.agents/FOUNDATION.md`
+- First session in a repo that has `AGENTS.md` but no `.agents/FOUNDATION.md`;
+  investigate source-vs-installed identity, not automatic full Bootstrap
 - `AGENTS.md` exceeds ~150 lines or 8 KB while governance work is already in scope

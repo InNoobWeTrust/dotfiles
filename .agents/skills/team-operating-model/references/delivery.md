@@ -49,6 +49,10 @@ Templates: [TASK](delivery/templates/TASK.md), [PROMPT](delivery/templates/PROMP
 
 ## Loop and release
 
+For substantial delivery, apply [Intent assurance](intent-assurance.md) inside this
+loop: a compact intent/deviation/proof/decision handoff, source/code conflict checks,
+and calibrated review without new permission or routine owner approvals.
+
 1. Capture the requested outcome and bounds; preserve the original user request/feedback immutably in task context or a task/memory file (e.g. `.ralph-original-request.txt`) before reframing. Keep exact wording except secrets, credentials, and sensitive personal data; replace those values with explicit redaction markers before storage or reviewer handoff. Redaction must not change the requested outcome or permissions. Separate user requirements from agent-owned implementation mechanics; consequential direction is not an agent-owned choice.
 2. Research consequential unknowns; record sources, alternatives, rationale, risks, and validation. Apply [Design acceptance](design-acceptance.md) to material cross-component designs regardless of author, settle consequential direction through the eligibility gate, then record the in-scope contract before implementers start. At integration, verify actual dependency direction and consumer wiring alongside behavior.
 3. Declare acceptance/evaluator criteria **before** the slice. Criteria already settled by an explicit source are recorded without routine user sign-off; changing or inventing material criteria is consequential and follows the eligibility gate. Seek user confirmation only for unresolved outcome/authority/safety constraints or explicitly human-reserved approvals; honor agreed collaborative/approval-gated checkpoints. Substantial work alone does not require user confirmation. Version necessary in-scope corrections; do not weaken requirements to pass.

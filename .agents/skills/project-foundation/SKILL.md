@@ -107,7 +107,10 @@ Use the presence checklist in `references/drift-checks.md` section A. All critic
 
 Use when the foundation already exists. **Do not re-bootstrap from scratch.**
 
-1. Read `.agents/FOUNDATION.md` (if missing → treat as critical gap).
+1. Read `.agents/FOUNDATION.md` (if missing → treat as an identity gap). An authoring
+   source pack uses `mode: source`, its actual source/revision and checked scope;
+   do not invent an installation/materialization date or bootstrap unrelated project
+   files to make this source repository resemble a consuming application.
 2. Run `references/drift-checks.md` sections A–E.
 3. Emit the gap report format from that file.
 4. Apply fixes in this priority order:
@@ -117,6 +120,10 @@ Use when the foundation already exists. **Do not re-bootstrap from scratch.**
    4. INDEX slim-down (drop unused mega-skills from the default table)
 5. Update `FOUNDATION.md` date/revision after changes.
 6. Stop after the report if the user only asked for an audit.
+
+When evolving affected guidance, run [Context integrity](references/context-integrity.md):
+reconcile scoped source authority, status, content and affected consumers. Existing
+tools can check routing hygiene; link reachability does not establish input integrity.
 
 ### Proactive trigger (when this skill is not yet loaded)
 

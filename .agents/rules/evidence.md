@@ -12,6 +12,11 @@ trigger: always_on
   evaluate actual sources/results. Report PASS, FAIL or UNVERIFIED with evidence;
   absent evidence is not PASS. Any required FAIL/UNVERIFIED blocks an unqualified
   completion claim. Same-context checking is not independent review.
+- At handoff, tie critical claims to the actual artifact/source revision and
+  expected-versus-observed evidence. Name executed, failed, skipped and unavailable
+  checks separately; a green command with skipped critical checks is not proof of
+  those claims. Distinguish one completed unit from the promised whole. Recheck
+  affected proof after source, requirement, configuration or artifact changes.
 - Before a side-effecting call, establish intended action, target and result.
   Afterwards inspect the actual path, changed content/state and relevant unintended
   effects. Confirm source removal after moves/deletions. Tool success messages

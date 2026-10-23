@@ -36,6 +36,10 @@ Workers discover and load their own guidance; they must not assume the parent's 
 
 Adapt emphasis when evidence changes, without silently changing scope or authority. Report a real capability or contract gap rather than using role-play to conceal it.
 
+When reusing repository guidance or code to interpret intent, apply the bounded
+[source-integrity check](references/source-integrity.md). This checks affected
+sources, not the whole workspace; it adds no approval gate or inventory requirement.
+
 ## Stop and fallback behavior
 
 - Missing optional style reference or no suitable catalog row: use the known baseline, search accessible skill metadata where useful, and state a consequential limitation. Do not stall a clear, safe task just to obtain a persona.

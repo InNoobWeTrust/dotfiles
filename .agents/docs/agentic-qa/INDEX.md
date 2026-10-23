@@ -13,5 +13,6 @@
 | [Trust and evidence](./trust-and-evidence.md) | Why agents must not be trusted blindly | Designing safe adoption |
 | [Maturity path](./maturity-path.md) | How teams grow agentic QA without hype | Planning rollout |
 | [Local materialization](./local-materialization.md) | How this repo's skills map (with caveats) | Mapping concepts → current skills |
+| [Intent assurance](./intent-assurance/README.md) | Industry findings, source/code integrity, exception/probe handoff | Reducing exhaustive owner review without relaxing authority |
 
 **Related sections:** [quality-tooling](../quality-tooling/INDEX.md) · [project-lifecycle](../project-lifecycle/INDEX.md) · [slides](../slides/INDEX.md) · [research](../research/INDEX.md) (research-phase only)

@@ -25,6 +25,11 @@ Apply [source-first, two-way review](references/core-review.md) within the exist
 
 ## Gate 3 — Contract-Bounded Phase Review
 
+Before relying on a new/changed automated reviewer or reducing scrutiny based on
+it, use [Reviewer calibration](references/calibration.md). This is a reviewer-change
+check, not an extra phase on every artifact; missing calibration cannot justify
+relaxing established controls.
+
 When the artifact belongs to phased delivery, obtain the populated delivery
 contract or active packet before
 judging it. Require that input to identify outcome, must-ship/may-defer/never-defer requirements, scope/prerequisites, acceptance evidence, hard invariants and recovery/compatibility obligations, approved behavior and consumer interfaces, current unit/authority/stops, and review/corrective-pass budget. Apply the supplied contract; do not invent its lifecycle,

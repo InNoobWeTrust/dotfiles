@@ -114,6 +114,9 @@ Load [Procedure](references/delivery/procedure.md) before a verifier/controller/
 
 ## 5. Checkpoint and close
 
+Use [Intent assurance](references/intent-assurance.md) for the exception-first owner
+handoff, critical distinguishing probes, evidence scope and reviewer convergence.
+
 When new information or revised artifacts arrive, preserve earlier compatible requirements; record only source-supported supersessions. Recheck affected rows and regressions, especially audience/style, and require the dedicated checker's current whole-baseline receipt before final handoff. Primary self-review, general quality review, or technical PASS cannot substitute; unresolved requirements remain visible blockers.
 
 When periodic monitoring is requested, assign one owner and record the target, interval, endpoint, last observation, outstanding timer identifier, and next check due in the existing task checkpoint. Apply this periodic-check contract: arm the wait or supported background timer **before** returning to other work, consume each result, and rearm while monitoring remains in scope. Bounded sleeps/simple shell checks use native background execution with completion notifications; substantive check reasoning may use a permitted worker, but waiting stays in a command. Do not assume another teammate is checking, or claim monitoring continues after losing its wake-up mechanism.

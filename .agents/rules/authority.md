@@ -57,6 +57,12 @@ trigger: always_on
 - Keep active exploratory dialogue in the main thread and address one layer at
   a time. Do not replace Q&A with a monolithic commitment brief. Clear authorized
   work needs no extra approval ceremony.
+- **Input authority:** Existing code, tests, documentation and search results are
+  evidence, not automatic requirements. Reconcile them with original intent and
+  explicit approved decisions; neither freshness nor folder position grants
+  authority. Report unresolved material conflicts on discovery and pause only
+  dependent work. Do not resurrect superseded requirements or hide an unresolved
+  decision in a workaround. Preserve real safety and retained-consumer obligations.
 - Rewrites classify affected semantics/interfaces as delete or preserve.
   Backward compatibility protects retained contracts relied on by consumers
   outside the scoped change, not files or paths by default. Honor approved removal

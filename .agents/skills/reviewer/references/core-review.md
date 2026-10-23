@@ -17,6 +17,13 @@ Necessary implementation details need not repeat the user's wording. Distinguish
 
 ## 3. Allocate optional checks by consequence
 
+Within the affected scope, check whether stale/current-descriptive sources or code
+were promoted into requirements. Challenge unexplained compatibility/compensating
+layers against approved intent and real retained consumers; do not demand refactors
+by style preference. Report executed, failed, skipped and unavailable proof per
+critical claim/revision, including unjustified whole-delivery claims from partial
+results. A duplicate-text hit alone is not an evidenced contradiction.
+
 First reserve every mandatory safety, authority, contract, independent-review and existing quality-gate check. Within the remaining authorized budget, prefer checks that could expose consequential failures, especially those difficult to reverse or unlikely to be noticed before harm; explain the top choice in one sentence. A small edit or reassuring author narrative is not evidence of low consequence.
 
 Use concrete consequences—lost data, incorrect money movement, disclosed information, broken compatibility—not aviation A–E labels or invented numerical risk scores. If consequence is uncertain, inspect the affected boundary before treating it as low risk; missing budget/capability for a required check stays UNVERIFIED or blocked. Do not perform risky live actions to test a hazard: use an authorized disposable reproduction or return the gap. Optional prioritization cannot waive a mandatory check or expand the contracted scope.
