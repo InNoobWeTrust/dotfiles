@@ -20,8 +20,8 @@ exposed = { vd = "vd", visidata = "visidata", harlequin = "harlequin", hsql = "h
 
 [envs.system-tools]
 channels = ["conda-forge"]
-dependencies = { btop = "*" }
-exposed = { btop = "btop" }
+dependencies = { btop = "*", rclone = "*" }
+exposed = { btop = "btop", rclone = "rclone" }
 
 
 ###############################################################################
