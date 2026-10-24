@@ -14,11 +14,17 @@ if usable gh; then
 fi
 
 # kitty terminal
-# shellcheck source=/dev/null
-usable kitty && kitty + complete setup bash | while IFS= read -r n
-do
-    . "$n"
-done
+if usable kitty; then
+    if [ -n "${ZSH_VERSION:-}" ]; then
+        if ! command -v compdef >/dev/null 2>&1; then
+            autoload -Uz compinit
+            compinit
+        fi
+        eval "$(kitty + complete setup zsh)"
+    elif [ -n "${BASH_VERSION:-}" ]; then
+        eval "$(kitty + complete setup bash)"
+    fi
+fi
 
 
 if [ -n "$BASH_VERSION" ]; then
