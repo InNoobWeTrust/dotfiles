@@ -107,12 +107,15 @@ if command -v pixi >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.pixi/manifests/pixi-glo
         echo "Error: required Pixi environments failed; check connectivity or rerun when online (manifest: $pixi_manifest)." >&2
         exit 1
     }
-    for _env in networks containers db lsp rust; do
-        printf '\n%s\n' "Installing/updating optional Pixi environment: $_env"
-        pixi global update "$_env" || {
-            echo "Warning: optional Pixi environment '$_env' failed (packages may be unavailable on this platform); continuing without guaranteed availability. Retry with: pixi global update $_env" >&2
-        }
-    done
+    # Only install optional environments if flag --full is set; otherwise, skip them to avoid unnecessary downloads.
+    if [ "$1" = "--full" ]; then
+        for _env in networks containers db lsp rust; do
+            printf '\n%s\n' "Installing/updating optional Pixi environment: $_env"
+            pixi global update "$_env" || {
+                echo "Warning: optional Pixi environment '$_env' failed (packages may be unavailable on this platform); continuing without guaranteed availability. Retry with: pixi global update $_env" >&2
+            }
+        done
+    fi
     # Keep the five newest backups by filename timestamp, not preserved mtime.
     (
         cd "$(dirname "$pixi_manifest")" || exit 1

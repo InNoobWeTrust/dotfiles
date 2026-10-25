@@ -22,7 +22,7 @@ exposed = { btop = "btop", rclone = "rclone" }
 
 [envs.networks]
 channels = ["conda-forge"]
-dependencies = { tailscale = "*", tailscaled = "*" }
+dependencies = { tailscale = "==1.104.1", tailscaled = "==1.104.1" }
 exposed = { tailscale = "tailscale", tailscaled = "tailscaled" }
 
 [envs.containers]
