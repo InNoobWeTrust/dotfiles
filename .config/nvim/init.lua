@@ -626,6 +626,9 @@ require("lazy").setup({
                         "ty",
                         -- Typst
                         "tinymist",
+                        -- Rust
+                        "rust_analyzer",
+                        "rust_glancer",
                     },
                     automatic_enable = {
                         exclude = { "basedpyright", "pyright", "deno", "denols" },

@@ -56,6 +56,10 @@ alias cron-routine='cron_routine'
 # Maintenance and cleanup
 alias dot-clean='dotfiles_clean'
 
+# Optional per-machine cloud startup services; no actions during shell startup.
+alias rclone-mount-install='sh "$HOME/.sh.d/utils/rclone-mount/rclone-mount.sh" --install'
+alias rclone-mount-uninstall='sh "$HOME/.sh.d/utils/rclone-mount/rclone-mount.sh" --uninstall'
+
 # Runtime checks live in the function, including when tools were installed later.
 alias distrobox-kind-setup='distrobox_kind_setup'
 
