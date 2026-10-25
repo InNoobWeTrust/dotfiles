@@ -103,11 +103,11 @@ if command -v pixi >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.pixi/manifests/pixi-glo
     # Targeted update installs missing environments too; sync cannot select them.
     # Keep this required list aligned with the manifest; only lsps is optional.
     printf '\n%s\n' "Installing/updating required Pixi global environments..."
-    pixi global update core-utils dev db system-tools || {
+    pixi global update core-utils dev system-tools || {
         echo "Error: required Pixi environments failed; check connectivity or rerun when online (manifest: $pixi_manifest)." >&2
         exit 1
     }
-    for _env in lsps rust; do
+    for _env in networks containers db lsp rust; do
         printf '\n%s\n' "Installing/updating optional Pixi environment: $_env"
         pixi global update "$_env" || {
             echo "Warning: optional Pixi environment '$_env' failed (packages may be unavailable on this platform); continuing without guaranteed availability. Retry with: pixi global update $_env" >&2

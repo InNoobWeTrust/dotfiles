@@ -7,33 +7,41 @@ exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", 7
 
 [envs.dev]
 channels = ["conda-forge"]
-# Keep kind/node and kubectl versions aligned with .config/kind/local.yaml.
-# REA requires Node 24.11+; stay on the Node 24 release line.
-# Expose ast-grep, not its sg alias (which collides with the Unix sg command).
-dependencies = { gh = "*", act = "*", lazydocker = "*", k9s = "*", bun = "*", uv = "*", nvim = "*", helix = "*", go = "*", nodejs = ">=24.11,<25", tailscale = "*", tailscaled = "*", typst = "*", kubernetes-kind = "0.33.*", kubernetes-client = "1.34.*", ast-grep = ">=0.51,<0.52" }
-exposed = { gh = "gh", act = "act", lazydocker = "lazydocker", k9s = "k9s", bun = "bun", bunx = "bunx", uv = "uv", uvx = "uvx", nvim = "nvim", hx = "hx", go = "go", node = "node", npm = "npm", npx = "npx", tailscale = "tailscale", tailscaled = "tailscaled", typst = "typst", kind = "kind", kubectl = "kubectl", ast-grep = "ast-grep" }
-
-[envs.db]
-channels = ["conda-forge"]
-dependencies = { visidata = "*", harlequin = "*" }
-exposed = { vd = "vd", visidata = "visidata", harlequin = "harlequin", hsql = "hsql" }
+dependencies = { gh = "*", bun = "*", uv = "*", go = "*", nodejs = ">=24.11,<25", typst = "*", nvim = "*", helix = "*" }
+exposed = { gh = "gh", bun = "bun", bunx = "bunx", uv = "uv", uvx = "uvx", go = "go", node = "node", npm = "npm", npx = "npx", typst = "typst", nvim = "nvim", hx = "hx" }
 
 [envs.system-tools]
 channels = ["conda-forge"]
 dependencies = { btop = "*", rclone = "*" }
 exposed = { btop = "btop", rclone = "rclone" }
 
-
 ###############################################################################
 # Optional environments in bootstrap.sh
 # manual `pixi global sync` still requires the below environments
 ###############################################################################
-[envs.lsps]
+
+[envs.networks]
+channels = ["conda-forge"]
+dependencies = { tailscale = "*", tailscaled = "*" }
+exposed = { tailscale = "tailscale", tailscaled = "tailscaled" }
+
+[envs.containers]
+channels = ["conda-forge"]
+# Keep kind/node and kubectl versions aligned with .config/kind/local.yaml.
+dependencies = { act = "*", lazydocker = "*", k9s = "*", kubernetes-kind = "0.33.*", kubernetes-client = "1.34.*" }
+exposed = { act = "act", lazydocker = "lazydocker", k9s = "k9s", kind = "kind", kubectl = "kubectl" }
+
+[envs.db]
+channels = ["conda-forge"]
+dependencies = { visidata = "*", harlequin = "*" }
+exposed = { vd = "vd", visidata = "visidata", harlequin = "harlequin", hsql = "hsql" }
+
+[envs.lsp]
 channels = ["conda-forge"]
 # Typst, Rust, Python, JS/TS, shell, TOML, YAML, and web/config languages.
 # Include TypeScript itself for typescript-language-server; keep Node on the dev release line.
-dependencies = { tinymist = "*", rust-analyzer = "*", ty = "*", ruff = "*", typescript-language-server = "*", typescript = "*", nodejs = ">=22,<25", bash-language-server = "*", shellcheck = "*", yaml-language-server = "*", taplo = "*", vscode-langservers-extracted = "*" }
-exposed = { tinymist = "tinymist", rust-analyzer = "rust-analyzer", ty = "ty", ruff = "ruff", typescript-language-server = "typescript-language-server", bash-language-server = "bash-language-server", shellcheck = "shellcheck", yaml-language-server = "yaml-language-server", taplo = "taplo", vscode-json-language-server = "vscode-json-language-server", vscode-html-language-server = "vscode-html-language-server", vscode-css-language-server = "vscode-css-language-server", vscode-eslint-language-server = "vscode-eslint-language-server", vscode-markdown-language-server = "vscode-markdown-language-server" }
+dependencies = { ast-grep = ">=0.51,<0.52", tinymist = "*", rust-analyzer = "*", ty = "*", ruff = "*", typescript-language-server = "*", typescript = "*", nodejs = ">=22,<25", bash-language-server = "*", shellcheck = "*", yaml-language-server = "*", taplo = "*", vscode-langservers-extracted = "*" }
+exposed = { ast-grep = "ast-grep", tinymist = "tinymist", rust-analyzer = "rust-analyzer", ty = "ty", ruff = "ruff", typescript-language-server = "typescript-language-server", bash-language-server = "bash-language-server", shellcheck = "shellcheck", yaml-language-server = "yaml-language-server", taplo = "taplo", vscode-json-language-server = "vscode-json-language-server", vscode-html-language-server = "vscode-html-language-server", vscode-css-language-server = "vscode-css-language-server", vscode-eslint-language-server = "vscode-eslint-language-server", vscode-markdown-language-server = "vscode-markdown-language-server" }
 
 # Rust toolchain for building and running projects; the Rust analyzer stays in `lsps`.
 # Include pkg-config + openssl so native crate builds (openssl-sys) resolve the
