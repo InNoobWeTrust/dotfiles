@@ -17,7 +17,7 @@ case ${1:-} in
         ;;
     *)
         folder=$(cloud_folder "${1:-}") || {
-            printf '%s\n' 'Usage: sh rclone-mount.sh --install | --uninstall | onedrive | gdrive | box | dropbox' >&2
+            printf '%s\n' 'Usage: sh rclone-mount.sh --install | --uninstall | onedrive | box | dropbox' >&2
             exit 64
         }
         # shellcheck source=lib/retry.sh

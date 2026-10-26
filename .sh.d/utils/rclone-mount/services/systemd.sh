@@ -29,15 +29,29 @@ EOF
     if [ "$changed" = 1 ]; then
         systemctl --user daemon-reload
     fi
+    install_failed=0
     for cloud in $systemd_clouds; do
         unit="rclone-mount@$cloud.service"
         status=$(systemctl --user is-enabled "$unit" 2>/dev/null || :)
         case $status in
-            masked|masked-runtime|enabled) ;;
-            *) systemctl --user enable "$unit" ;;
+            masked|masked-runtime) continue ;;
+            enabled) ;;
+            *)
+                if ! systemctl --user enable "$unit"; then
+                    printf 'rclone-mount: Cannot enable %s; continuing with other clouds.\n' "$unit" >&2
+                    install_failed=1
+                    continue
+                fi
+                ;;
         esac
+        # start leaves an already-running service alone; never restart a live mount.
+        if ! systemctl --user start "$unit"; then
+            printf 'rclone-mount: Cannot start %s; check its user journal.\n' "$unit" >&2
+            install_failed=1
+        fi
     done
-    printf '%s\n' 'rclone-mount: Login autostart registered (no mounts started).'
+    [ "$install_failed" = 0 ] || fail 'Some services could not be enabled or started; see errors above.'
+    printf '%s\n' 'rclone-mount: Login autostart registered; unmasked services started (running mounts left alone).'
 }
 
 uninstall_services() {

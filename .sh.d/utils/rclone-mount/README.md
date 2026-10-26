@@ -1,18 +1,20 @@
 # Cloud drives at login
 
-For the dotfiles owner: `rclone-mount.sh` registers independent cloud mounts at user login, without interactive prompts.
+For the dotfiles owner: `rclone-mount.sh` starts independent cloud mounts now and at user login, without interactive prompts.
 Registration is **opt-in per machine**; `bootstrap.sh` does not register services.
 After stowing, run this manually only on machines where you want cloud mounts:
 
 ```sh
-sh ~/.sh.d/utils/rclone-mount/rclone-mount.sh --install
 rclone config
+sh ~/.sh.d/utils/rclone-mount/rclone-mount.sh --install
 ```
 
 In a new/reloaded dotfiles shell, use **`rclone-mount-install`** and
 **`rclone-mount-uninstall`** for the same install/uninstall actions.
 The commands are always available as `sh ~/.sh.d/utils/rclone-mount/rclone-mount.sh --install` / `--uninstall` without aliases.
-If services were registered before relocating the utility, rerun install after stowing to refresh their script paths; this does not start mounts.
+Rerun install after stowing to refresh registrations and start stopped services; already-running mounts are not restarted.
+On macOS, updated definitions for already-loaded jobs take effect at the next GUI login.
+If install warns about an updated loaded job, log out/in before rerunning install; otherwise the loaded job can still use its old paths.
 
 Create any of these remote names in `rclone config`; unconfigured clouds simply fail and back off.
 Credentials remain in rclone's private, writable config, **not in Git**; login separately on each machine.
@@ -20,7 +22,6 @@ Credentials remain in rclone's private, writable config, **not in Git**; login s
 | Remote name | Backend to choose | Fixed mountpoint |
 | --- | --- | --- |
 | `onedrive` | `onedrive` | `~/Cloud/OneDrive` |
-| `gdrive` | `drive` | `~/Cloud/GoogleDrive` |
 | `box` | `box` | `~/Cloud/Box` |
 | `dropbox` | `dropbox` | `~/Cloud/Dropbox` |
 
@@ -29,9 +30,15 @@ Linux needs FUSE (`fusermount3` or `fusermount`); macOS uses rclone's **experime
 macOS mounting/LaunchAgent behavior needs verification on a Mac; check `rclone nfsmount --help` for command availability.
 The [localhost NFS server has no authentication](https://rclone.org/commands/rclone_serve_nfs/): other local users/processes can access it, so use this path only on a trusted Mac.
 
-**Activation:** registration never starts or restarts mounts; log out and back in after installing.
+**Activation:** install enables/starts unmasked Linux services and loads/starts macOS LaunchAgents without restarting running mounts or re-enabling disabled agents.
+Activation failures are reported per cloud, other clouds are still attempted, and install returns an error if any activation failed.
 Linux uses enabled `rclone-mount@CLOUD.service` systemd user services (no lingering required); macOS uses `local.rclone-mount.CLOUD` LaunchAgents at GUI login.
 Root, unsupported OSes and unavailable systemd user managers are skipped; rerun `--install` inside the intended user session.
+Outside a macOS GUI session, definitions are registered but activation is skipped; rerun install from a GUI terminal or log out/in.
+
+**Removing old Google Drive services:** `gdrive` is no longer supported; old registrations are not stopped automatically because uploads may be pending.
+Let uploads finish, run `rclone-mount-uninstall` then `rclone-mount-install` (or the explicit `--uninstall` / `--install` commands above) to remove the old service and register only supported clouds.
+Until cleaned up, an old Google Drive service may keep retrying the removed command; credentials, cached files and `~/Cloud/GoogleDrive` are kept.
 
 ## Retry and recovery
 
@@ -40,33 +47,33 @@ A private, persistent gate survives logout/reboot and sleeps silently: no creden
 The gate resets after its last deadline is over six hours old; a successful listing alone does not reset it, so mount-start failures also back off.
 
 **After login/config changes:** waiting services do not notice credentials until their next attempt.
-To retry immediately, stop the service, remove only its state file, then start it again (replace `gdrive` for another cloud):
+To retry immediately, stop the service, remove only its state file, then start it again (replace `onedrive` for another cloud):
 
 ```sh
 # Linux
-systemctl --user stop rclone-mount@gdrive.service
-rm -f "${XDG_STATE_HOME:-$HOME/.local/state}/rclone-mount/gdrive.state"
-systemctl --user start rclone-mount@gdrive.service
+systemctl --user stop rclone-mount@onedrive.service
+rm -f "${XDG_STATE_HOME:-$HOME/.local/state}/rclone-mount/onedrive.state"
+systemctl --user start rclone-mount@onedrive.service
 
 # macOS: unload, clear the gate, reload
-launchctl bootout "gui/$(id -u)/local.rclone-mount.gdrive"
-rm -f "$HOME/Library/Application Support/rclone-mount/gdrive.state"
-launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/local.rclone-mount.gdrive.plist"
+launchctl bootout "gui/$(id -u)/local.rclone-mount.onedrive"
+rm -f "$HOME/Library/Application Support/rclone-mount/onedrive.state"
+launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/local.rclone-mount.onedrive.plist"
 ```
 
 ## Status and opt-out
 
-**Status/logs:** Linux: `systemctl --user status rclone-mount@gdrive.service` and `journalctl --user -u rclone-mount@gdrive.service`.
-macOS: `launchctl print "gui/$(id -u)/local.rclone-mount.gdrive"` and `~/Library/Logs/rclone-mount/gdrive.log`.
+**Status/logs:** Linux: `systemctl --user status rclone-mount@onedrive.service` and `journalctl --user -u rclone-mount@onedrive.service`.
+macOS: `launchctl print "gui/$(id -u)/local.rclone-mount.onedrive"` and `~/Library/Logs/rclone-mount/onedrive.log`.
 During backoff, a running service may be sleeping rather than mounted; an unsafe or unwritable state directory can still fail at the supervisor's 30-second safety interval.
 
-**Opt out:** Linux: `systemctl --user mask --now rclone-mount@gdrive.service`; the installer respects masks.
-macOS: `launchctl disable "gui/$(id -u)/local.rclone-mount.gdrive"`, then `launchctl bootout "gui/$(id -u)/local.rclone-mount.gdrive"`; registration does not re-enable it.
+**Opt out:** Linux: `systemctl --user mask --now rclone-mount@onedrive.service`; the installer respects masks.
+macOS: `launchctl disable "gui/$(id -u)/local.rclone-mount.onedrive"`, then `launchctl bootout "gui/$(id -u)/local.rclone-mount.onedrive"`; registration does not re-enable it.
 Generated definitions are updated only when marked as ours; foreign files and symlinks are left untouched with an error.
 
 **Uninstall:** `rclone-mount-uninstall` stops/unloads the helper's services before removing its generated definitions.
 It preserves credentials, retry state, caches, logs and mount folders; let pending uploads finish first.
-Reinstall remains opt-in and starts at the next login; it does not clear backoff or override existing masks/launchd disables.
+Reinstall remains opt-in and requests activation immediately; it does not clear backoff or override existing Linux masks/macOS disables.
 
 Linux removes only the helper's `default.target.wants` links and template; custom enablement, overrides and masks are not removed.
 macOS uninstall requires a terminal in your GUI session and validates the legacy `launchctl list` format, failing closed on unknown output or command errors.
@@ -88,11 +95,12 @@ It loads only the modules needed for the selected command; sourcing a module nev
 | `lib/mount.sh` | Credential preflight, cache paths and foreground rclone execution |
 | `services/manage.sh` | Manual lifecycle preconditions and platform dispatch |
 | `services/definitions.sh` | Generated-file ownership, validation and atomic updates |
-| `services/systemd.sh` | Linux user-service definition, registration and safe removal |
-| `services/launchd.sh` | macOS LaunchAgent definition, registration and safe removal |
+| `services/systemd.sh` | Linux user-service definition, registration, activation and safe removal |
+| `services/launchd.sh` | macOS LaunchAgent definition, registration, activation and safe removal |
 
 The entrypoint composes these modules: mounting calls the retry gate before any credential check;
 service management loads one native adapter and never loads the mount flow.
 Platform adapters share generated-file safety helpers but do not depend on one another.
 The dispatcher calls `cloud_names()` from `lib/common.sh` and passes that list to the selected adapter,
-alongside the entrypoint path (install) or user ID (uninstall); adapters do not read a shared cloud-list global.
+alongside the entrypoint path (install) or user ID (uninstall); uninstall also includes retired clouds for cleanup.
+Adapters do not read a shared cloud-list global.

@@ -1,6 +1,6 @@
 # Shared cloud policy and errors. No startup effects or native-service knowledge.
 cloud_names() {
-    printf '%s\n' onedrive gdrive box dropbox
+    printf '%s\n' onedrive box dropbox
 }
 
 fail() {
@@ -11,7 +11,6 @@ fail() {
 cloud_folder() {
     case $1 in
         onedrive) printf '%s\n' OneDrive ;;
-        gdrive) printf '%s\n' GoogleDrive ;;
         box) printf '%s\n' Box ;;
         dropbox) printf '%s\n' Dropbox ;;
         *) return 1 ;;

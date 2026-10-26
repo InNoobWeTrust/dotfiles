@@ -41,7 +41,8 @@ manage_services() {
     case $mode in
         --install) install_services "$service_script" "$service_clouds" ;;
         --uninstall)
-            uninstall_services "$service_user_id" "$service_clouds"
+            # Include retired clouds only for safe cleanup of older registrations.
+            uninstall_services "$service_user_id" "$service_clouds gdrive"
             printf '%s\n' 'rclone-mount: Startup services removed; credentials, retry state, caches, logs and mount folders kept.'
             ;;
     esac
