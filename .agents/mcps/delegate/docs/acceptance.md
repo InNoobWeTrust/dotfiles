@@ -25,7 +25,7 @@ and processes. Add `DELEGATE_E2E_REAL=1` for one paid turn against the real
 |---|---|
 | The interface stays simple | E2E asserts exactly `delegate_status` and `delegate_run`, including an empty harness PATH; discovery comes from status rather than dynamic tool names |
 | Presence is not readiness | Critical tests distinguish missing, unconfigured and unknown executables; unsupported inspectors spawn no model/login probes and are not selectable |
-| Signed-in AGY becomes selectable without a model probe | Critical tests accept recognized `/usage` quota rows and reject catalogs, auth prompts, malformed output and failed/timed-out probes; E2E covers sign-out refresh, refused dispatch, default model and native model passthrough |
+| Signed-in AGY becomes selectable without a model probe | Critical tests accept `/usage` percentages from 0% to 100% despite label/layout changes and reject missing/invalid percentages, auth prompts and failed/timed-out probes; E2E covers sign-out refresh, refused dispatch, default model and native model passthrough |
 | Inspection is bounded and non-recursive | Tests assert exact private non-model CLI argv, aggregate inspection budgets, at most two concurrent inspections, fixed safe reasons and no probes under `DELEGATE_INSPECTION=1` |
 | Status recovers without catalog churn | E2E refreshes after configuration changes and verifies unknown/unconfigured harnesses cannot launch a turn |
 | A prompt reaches the CLI as one literal argument | E2E stub logs every argv element and the prompt appears verbatim as the last element; unit tests pass a prompt containing shell syntax and an argument that looks like one to every `buildArgs` and to `runProcess`, and neither is ever re-parsed |

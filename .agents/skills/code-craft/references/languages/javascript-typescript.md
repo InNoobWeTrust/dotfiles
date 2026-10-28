@@ -2,6 +2,14 @@
 
 Use for greenfield JavaScript/TypeScript services, libraries, and shared tooling. Retain a repository's existing compatible choices.
 
+## Code style — `web-oxfmt` conditional toolchain
+
+Keep the existing coverage decision below: project-pinned Vite+/Oxfmt for compatible new browser applications; where unsuitable, Biome if sufficient, otherwise ESLint plus Prettier. Resolve the branch once, preserve established tools and send the same [style contract](../style-policy.md) to producers/reviewers; do not run competing formatters.
+
+Use applicable naming/API guidance from the [Google TypeScript guide](https://google.github.io/styleguide/tsguide.html), with its internal-Google assumptions explicitly scoped out. The [Google JavaScript guide](https://google.github.io/styleguide/jsguide.html) is no longer maintained and points readers to that guide. Layout belongs to the chosen formatter: Google TS single quotes differ from the double-quote defaults documented for Oxfmt/Prettier, so this is not full Google formatting compliance.
+
+Verify the actual command, cwd/workspace and effective configuration. [Vite+ formatting](https://viteplus.dev/guide/fmt) supports `vp fmt --check`; `vp fmt` resolves from cwd while `vp check` uses the workspace-root fmt block, so package-local assumptions can be wrong. [Standalone Oxfmt defaults](https://oxc.rs/docs/guide/usage/formatter/config-file-reference.html) currently document width 100, double quotes and import sorting disabled, versus [Prettier's](https://prettier.io/docs/en/options) width 80; these do not prove the wrapper's effective options, which remain unverified until observed. For the selected Prettier branch, use the project check or [non-writing `prettier --check`](https://prettier.io/docs/en/cli); framework/template parsers and [optional plugins](https://prettier.io/docs/en/plugins) must actually be available.
+
 ## Baseline
 
 - Prefer TypeScript with strict compiler options and Bun for package management and application/script execution. Use Node.js when required by dependencies, deployment targets, existing-project compatibility, or explicit team preference; it is not the greenfield default.

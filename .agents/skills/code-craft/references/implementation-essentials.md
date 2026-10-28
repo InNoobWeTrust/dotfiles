@@ -12,6 +12,8 @@ an instruction to clean up adjacent code. Existing repository conventions win.
   Report incompatible choices instead of silently substituting a familiar stack.
   Use [language references](languages/README.md) only for an actual stack question;
   no installation, vendoring or toolchain migration is authorized by this guide.
+- **Keep style consistent:** Reuse the resolved [style contract](style-policy.md)
+  and project formatter across workers; no new preference or unrelated reformat.
 - **Keep the contract:** For rewrites, settle what is preserved or deleted. Do not
   invent caller-visible defaults, fallback semantics or new behavior to finish a
   defective contract; return the precise gap to the primary.

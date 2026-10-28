@@ -2,6 +2,12 @@
 
 Use for greenfield Rust services and CLIs. Retain a repository's existing compatible choices.
 
+## Code style — `rust-rustfmt`
+
+Follow the [Rust Style Guide](https://doc.rust-lang.org/style-guide/) for community conventions and the project's [rustfmt](https://github.com/rust-lang/rustfmt) through Cargo for mechanical layout. Use the repository check or `cargo fmt --check` from its approved package/workspace context; resolve the toolchain, crate edition and style edition rather than invoking a direct rustfmt with an assumed edition. Keep stable defaults unless the project explicitly adopts supported alternatives; no nightly-only option or unrelated reformat is implied.
+
+The [Google Rust guide](https://google.github.io/styleguide/rustguide.html) adds company-scoped semantic advice, not universal Chrome/Fuchsia build, async or dependency policy. Select applicable conventions explicitly and review them manually; cargo fmt does not establish full Google-guide compliance. Carry the resolved [style contract](../style-policy.md) to the reviewer.
+
 ## Baseline
 
 - Use Cargo workspaces when appropriate, `cargo fmt`, `cargo clippy`, and `cargo test`. Use cargo-audit for advisory scanning and cargo-deny when license/source policy validation is required.

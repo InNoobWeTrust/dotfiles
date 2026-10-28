@@ -5,55 +5,41 @@ scope: Harnesses that take the prompt as one command-line argument; not a multi-
 ---
 # Delegate MCP
 
-Spawn an **external AI subagent** through two stable tools: discover configured
-workers with `delegate_status`, then use `delegate_run` with a CLI harness ID.
-CLI presence alone is not readiness; startup never submits a model prompt.
+Spawn an **external AI subagent** through two stable tools: `delegate_status` discovers configured workers; `delegate_run` executes one bounded task. CLI presence alone is not readiness; startup runs no model prompt.
 
 | Prerequisite | Notes |
 |---|---|
 | Bun | Resolves major-versioned MCP SDK@1 and Zod@4 imports automatically; no committed `node_modules` |
 | An executable on the MCP server's `PATH` | Shell aliases are not executables and are not resolved by a non-login server |
-| Inspectable account/provider configuration | Supported automatic inspectors: AGY, Claude, Codex, OpenCode; the status call explains other harnesses' unknown readiness |
+| Inspectable account/provider configuration | Automatic inspectors: AGY, Claude, Codex, OpenCode; other harnesses report `unknown` readiness |
 
 ## Start
 
-`mcp-delegate` is configured separately in `.claude/mcp.json`, `.codex/config.toml`,
-`.config/kilo/kilo.jsonc` and `.config/opencode/opencode.jsonc`.
-All launch the package-local
+`mcp-delegate` is configured in `.claude/mcp.json`, `.codex/config.toml`,
+`.gemini/config/mcp_config.json` and `.config/opencode/opencode.jsonc`, each launching
 [`mcp-delegate`](bin/mcp-delegate) at `~/.agents/mcps/delegate/bin/mcp-delegate`
-directly, without a `sh -c` layer. This package is linked by the normal
-dotfiles `./bootstrap.sh` flow, like `mcp-sandbox`;
-that command installs the broader dotfiles setup, not just this MCP.
-
-The launcher must exist at `~/.agents/mcps/delegate/bin/mcp-delegate`, and Bun must be on the
-server's inherited `PATH`. A missing launcher is a startup error, not a harness
+directly without a `sh -c` layer. The launcher must exist and Bun must be on
+the server's inherited `PATH`; a missing launcher is a startup error, not a harness
 readiness result.
 
-Start each client from a shell that has loaded `~/.shrc`: its PATH setup includes
-the package `bin` directories under `~/.agents/mcps/`. The Claude shell alias
-passes its separate config using `--mcp-config`.
-Launchers use the client's exported environment; they do not
-source shell startup files or override client environment filtering.
+Start each client from a shell that has loaded `~/.shrc`; its PATH setup includes
+the `bin` directories under `~/.agents/mcps/`. Launchers use the client's exported
+environment and do not source shell startup files.
 
-To start directly from this package directory instead:
+To start directly from this package directory:
 
 ```sh
 bun --no-env-file src/server.ts
 ```
 
-## What you get
+## Readiness
 
-Both tools always exist, even when no harness is selectable. Status separates
-configured harnesses from missing, unconfigured, or unknown ones:
+Both tools always exist, even when no harness is selectable.
 
 ```jsonc
-// 1. Inspect configuration; choose an id from data.harnesses
+// Discover available harnesses; choose an id from data.harnesses
 { "tool": "delegate_status", "input": {} }
-// Each configured entry includes permissionModes, modelSupported and models.
-// Unsupported entries include a readiness state and a safe explanation.
 ```
-
-### What readiness means
 
 | State | Meaning | Selectable |
 |---|---|---|
@@ -62,101 +48,83 @@ configured harnesses from missing, unconfigured, or unknown ones:
 | `unknown` | No supported inspection, malformed output, or inspection failed/timed out | No |
 | `missing` | No supported executable on the server's `PATH` | No |
 
-AGY uses the CLI-served `/usage` account quota report, not a model turn.
-Claude uses `auth status`; Codex uses `login status`; OpenCode uses private,
-non-model API inspection of integrations, providers and enabled models.
-Each harness gets an aggregate eight-second inspection budget, with at most two
-inspections in flight; process cleanup can extend that deadline briefly.
+AGY uses `agy --print /usage` (a CLI-served account report, not a model turn).
+Claude uses `auth status`; Codex uses `login status`; OpenCode uses private API
+inspection of integrations, providers and enabled models. Each harness gets an
+aggregate eight-second inspection budget, with at most two inspections in flight;
+process cleanup can extend that deadline briefly.
 
 **No model-access guarantee:** `configured` does not test a model request or
-guarantee billing, remaining quota or access to your chosen model. AGY's report
-may refresh account data from its backend; OpenCode's catalog alone is insufficient.
-Anonymous or inline-key OpenCode providers without inspectable connections stay unknown.
+guarantee billing, quota or access to a chosen model. AGY's `/usage` report can
+refresh account data from its backend; OpenCode's catalog alone is insufficient.
+Anonymous or inline-key OpenCode providers without inspectable connections stay `unknown`.
 
 **Unknown harnesses:** `cursor`, `amp`, `droid`, `crush`, `hermes`,
-`gemini`, `qwen`, and `kilo` remain listed with reasons but cannot run through
-this server until a reliable inspection strategy is supported. Sign-in commands
-and model turns are never used as startup probes; raw inspection output is not
-returned.
+`gemini`, `qwen` and `kilo` remain listed with reasons but cannot run until a
+reliable inspection strategy is supported. Sign-in commands and model turns are
+never used as startup probes.
 
-After fixing login/configuration or installing an executable, call
+**After fixing login/configuration or installing an executable:** call
 `delegate_status({refresh: true})`; no tool-catalog restart is needed. Reconnect
 the MCP after server code changes or changes to its inherited environment or `PATH`.
 
 ### Using AGY
 
-Sign in interactively with `agy` once, then check `agy --print /usage` in the
-same account environment as the MCP. A recognized quota report enables `agy`;
-login prompts, timeouts and unfamiliar output do not.
+Sign in interactively with `agy` once, then verify `agy --print /usage` in the
+same account environment as the MCP. A report containing a percentage from 0%
+to 100% enables `agy`, regardless of labels or layout. Login prompts, failed probes,
+timeouts and output without a valid percentage do not.
 
-Select `"harness": "agy"` in `delegate_run`. Omit `model` to use AGY's default,
-or choose a native model slug from `agy models`; that catalog is not login proof.
-An empty status `models` list means no verified model allowlist, not no models.
+Select `"harness": "agy"`. Omit `model` to use AGY's default, or choose a native
+slug from `agy models`; that catalog is not login proof. An empty status `models`
+list means no verified allowlist, not no models.
 
-### Image generation with AGY or Codex
+### Image generation (AGY / Codex)
 
-`agy` and `codex` can generate images using their native capabilities when
-available for the installed CLI and account. See Google's
+`agy` and `codex` can generate images when available for the installed CLI and
+account. Readiness inspection does not verify image access or headless
+image-generation support. See Google's
 [image-generation tool](https://antigravity.google/docs/sdk/tools/) and OpenAI's
 [Codex image-generation guide](https://developers.openai.com/codex/image-generation.md).
-Readiness inspection does not verify image access or headless image generation.
 
-**Before delegating, obtain an explicit absolute output file path from the caller
-if missing, and include it in the worker's prompt.** Require the worker to save
-the image there and return its actual absolute path, or report a capability/save
-failure without claiming success. For example, after the caller supplies the path:
-
-> Generate the requested image using your native image-generation capability.
-> Save it to `/absolute/output/banner.png` and return the actual absolute file path.
-> If image generation or saving is unavailable, report the failure; do not claim
-> that an image was saved.
-
-Delegate returns text and retained stdout/stderr, not image attachments. Existing
-permission, quota, billing and service-terms constraints still apply; image
-capability is not authorization. In particular, check
+**Before delegating:** obtain an explicit absolute output file path from the
+caller and include it in the worker's prompt. Require the worker to save the
+image there and return its actual absolute path, or report a capability/save
+failure. `delegate_run` returns text and retained streams, not image attachments.
+Existing permission, quota, billing and service-terms constraints still apply;
+image capability is not authorization. Check
 [Antigravity terms §6](https://antigravity.google/terms) before using a third-party
-wrapper; the presence of a native tool does not establish that such use is allowed.
+wrapper.
 
-## First delegation
-### Headless web research
+## Running a task
+
+### AGY permissions
 
 AGY cannot prompt for new permissions in `--print` mode. This integration always
-passes `--mode accept-edits --dangerously-skip-permissions`, for **every**
-`permissionMode`, including read-only assignments. Use AGY only with authorization
-for this all-tool autoapproval profile. To additionally select its sandbox profile:
+passes `--mode accept-edits --dangerously-skip-permissions` for **every**
+`permissionMode` value, including read-only assignments. Use AGY only with
+authorization for this all-tool autoapproval profile.
 
 ```json
 { "harness": "agy", "agySandbox": true, "prompt": "Your bounded task" }
 ```
 
-This independently adds `--sandbox`. **Every tool is autoapproved**, not
-just URL reads: file edits, commands, interactive website actions and MCP calls.
-Delegate does not edit user settings or create a temporary configuration.
-
-The sandbox imposes terminal restrictions; it is **not hard read-only isolation**
-for native tools or MCP, and the workspace can remain writable. Scope the task
-within authorization. `agySandbox: false` or omission adds no sandbox flag; it
-does not disable any sandbox already enabled in AGY settings, and does not turn
-off autoapproval. `permissionMode` cannot restrict AGY's authority. All options
-precede `--print`, which immediately precedes the final prompt so it cannot
-consume another flag as its value.
+`agySandbox: true` independently adds `--sandbox`. **Every tool is autoapproved** —
+file edits, commands, interactive website actions and MCP calls. `agySandbox: false`
+or omission adds no sandbox flag and does not disable any sandbox already set in AGY
+settings; it does not turn off autoapproval. `permissionMode` cannot restrict AGY's
+authority. The sandbox imposes terminal restrictions; it is **not hard read-only
+isolation** for native tools or MCP.
 
 If a run is blocked, inspect retained stderr before retrying; do not silently
-escalate authority or replace independent research with main-agent excerpts.
-Label any agreed fallback as synthesis of supplied sources.
+escalate authority.
 
 ### Dispatch
-
-Choose configured external workers or native subagents by task suitability,
-capabilities, interface needs and observed availability. Neither route has a
-fixed priority. External workers fit self-contained one-turn assignments;
-native subagents can support session continuity. Keep tightly coupled work
-with the main agent.
 
 Set `workdir` unless you want the task to run in the connected agent's MCP root.
 
 ```jsonc
-// 2. Run only after status lists this harness as configured
+// Run only after status lists this harness as configured
 { "tool": "delegate_run", "input": { "harness": "agy", "prompt": "Read src/registry.ts and list every harness id it declares, one per line. Read only; no commands, edits, network or further delegation.", "workdir": "/abs/path/to/this/package" } }
 // → { "ok": true, "data": { "exitCode": 0, "stdout": "amp\nagy\n…", "stop": "exited", … } }
 ```
@@ -165,129 +133,75 @@ The external subagent receives no parent conversation or resumable session and
 cannot ask a follow-up question. Include the goal, necessary context, allowed
 actions, exact paths, acceptance criteria and return format in the prompt.
 
-The main agent selects the route and checks the result. A configured harness
-or a profile's position in a list does not establish task fitness or speed.
-
 ## Tool reference
 
 | Tool | Input | Result |
 |---|---|---|
-| `delegate_status` | optional `refresh: true` | Discover configured external subagents: readiness, native model IDs when inspectable, permission modes, refusal reasons and depth |
-| `delegate_run` | `harness`, `prompt`, optional controls below | Run one external-subagent task and return exit status, both streams, duration, resolved workdir, redacted argv and depth |
+| `delegate_status` | optional `refresh: true` | Discover configured external subagents: readiness, native model IDs when inspectable, permission modes, refusal reasons, depth |
+| `delegate_run` | `harness`, `prompt`, optional controls | Exit status, both streams, duration, resolved workdir, redacted argv, depth |
 
-### Shared input
+### Input fields
 
 | Field | Default | Meaning |
 |---|---|---|
-| `harness` | required | ID from `delegate_status().data.harnesses`; unknown or unconfigured IDs are refused |
+| `harness` | required | CLI ID from `delegate_status().data.harnesses`; unknown or unconfigured IDs are refused |
 | `prompt` | required | The whole task, as one argument. Max 64 KiB. Must not begin with `-`. |
-| `workdir` | MCP root, else the server's directory | Absolute directory the harness runs in |
-| `model` | the harness's default | Exact native ID when status has a model list; otherwise passed to the native CLI without claiming model access. Must not begin with `-`; check `modelSupported`. |
-| `permissionMode` | `default` | `default`, `acceptEdits`, or `bypassPermissions`, mapped per harness. Unsupported modes are refused. AGY always autoapproves all tools for every value; this field cannot restrict it. |
-| `wallTimeMs` | 900000 | Wall-clock limit for the whole turn; maximum 7200000 |
-| `agySandbox` | omitted | AGY only: `true` independently adds `--sandbox`; all AGY calls already autoapprove all tools. `false`/omitted adds no sandbox flag, without disabling saved settings. Other harnesses refuse this field. No settings edits; not hard read-only isolation. |
+| `workdir` | MCP root, else server directory | Absolute directory the harness runs in; supplies working directory, not filesystem isolation |
+| `model` | harness default | Exact native ID; an empty inspected model list does not mean no models. Must not begin with `-`. Check `modelSupported`. |
+| `permissionMode` | `default` | `default`, `acceptEdits`, or `bypassPermissions`; unsupported modes are refused. AGY autoapproves all tools for every value. |
+| `wallTimeMs` | 900000 | Wall-clock limit for the whole turn (max 7200000): CLI startup, model/tool round trips, swarm coordination and synthesis. On expiry the process group is killed and partial output is returned. |
+| `agySandbox` | omitted | AGY only: `true` adds `--sandbox`; does not change autoapproval. `false`/omitted adds no flag and does not disable saved AGY settings. Other harnesses refuse this field. |
 
-For substantive AGY work, retain the 15-minute whole-turn default unless task
-evidence supports another bound. Budget CLI startup, model/tool round trips,
-internal swarm coordination and synthesis; single-model speed is not end-to-end
-task latency. A two-minute cap is not a research/review default. State the actual
-runner budget in the handoff, allow time to return partial evidence, and keep any
-outer request deadline compatible. Prompt text cannot extend `wallTimeMs`.
-An agent-chosen short timeout is not proof that AGY or its provider is broken.
-Longer budgets can cost more; this guidance does not authorize unlimited runs.
+### Interpreting output
 
 Successful responses are `{ "ok": true, "data": … }`; validation/readiness
-failures are `{ "ok": false, "error": … }`. Failed turns also retain `data`,
-including partial output, and set the MCP error flag; the text fallback contains
-the same JSON. A call the input schema rejects is
-answered by the MCP SDK before the delegate handler runs, so it arrives as a
-text-only error rather than in this shape.
-Inside `data`, `ok` requires a successful execution with a nonempty answer and
-no recognized AGY headless permission denial. `outcome` is `answered`, `blocked`,
-`empty`, or `failed`. This is observable execution evidence, not proof that the
-task was completed correctly; the main agent must check the answer. Denial
-detection matches AGY's known stderr diagnostic and is not a general semantic
-classifier. `blocked` and `empty` set the MCP error flag even on exit 0;
-`stop` says why a run ended (`exited`, `wall_time`, `capture_failed`,
-`spawn_failed`).
+failures are `{ "ok": false, "error": … }`. A call rejected by the input schema
+arrives as a text-only error rather than this envelope. Failed turns also retain
+`data` (including partial output) and set the MCP error flag.
 
-For project-sensitive harnesses, a different workdir triggers fresh inspection
-before launch; the check does not overwrite the server's startup snapshot.
+Inside `data`:
 
-**Server-controlled preview:** Combined previews are fixed at 64 KiB (counting JSON escaping); callers cannot choose a size. The former `maxOutputBytes` input is removed.
+- `ok` requires a successful execution with a nonempty answer and no recognized
+  AGY headless permission denial — observable execution evidence, not proof the
+  task completed correctly. Check the answer.
+- `outcome`: `answered`, `blocked`, `empty`, or `failed`. `blocked` and `empty`
+  set the MCP error flag even on exit 0. Denial detection matches AGY's known
+  stderr diagnostic; it is not a general semantic classifier.
+- `stop`: `exited`, `wall_time`, `capture_failed`, `spawn_failed`.
+- `truncated: true` means only the inline preview is shortened; read
+  `data.stdoutPath` and `data.stderrPath` for the full original streams.
+  Preview is fixed at 64 KiB combined (counting JSON escaping); callers cannot
+  change the size.
 
-**Long answers finish normally.** When `truncated: true`, only the inline preview
-is shortened: read `data.stdoutPath` and `data.stderrPath` to get the original
-streams, including their ending. `stdoutBytes` and `stderrBytes` count raw saved bytes.
+**Retained streams:** Every launched run retains both cache files at
+`$XDG_CACHE_HOME/delegate/run-*/{stdout,stderr}`, falling back to
+`$HOME/.cache/delegate` when XDG_CACHE_HOME is unset or relative. Directories are
+private (0700), files owner-only (0600). Files remain until removed, can contain
+sensitive output, and have no automatic expiry. `stdoutBytes` and `stderrBytes`
+count raw saved bytes.
 
-**Cache location:** `$XDG_CACHE_HOME/delegate/run-*/{stdout,stderr}`, falling back
-to `$HOME/.cache/delegate` when XDG_CACHE_HOME is unset or relative. Run directories
-are private (0700) and files owner-only (0600); the returned paths are absolute.
+For project-sensitive harnesses, a different `workdir` triggers fresh inspection
+before launch; the result does not overwrite the server's startup snapshot.
 
-**Retention:** Every launched run retains both files and returns their paths,
-including small or empty replies. Files remain until you remove them.
-They can contain sensitive output and consume disk space; there is no automatic expiry.
+## Costs and limits
 
-**Raw bytes:** Non-UTF-8 output also retains cache files and sets `truncated`, even
-when small, because JSON text cannot represent it losslessly. MCP storage/cleanup
-diagnostics appear in the envelope `error`, not in the original stderr preview.
+Each call runs a real model session on the account the harness CLI is logged
+into and may make many model requests before stopping. There is no monetary cap:
+the wall-clock limit can end the run, not the bill. A turn that stops midway
+leaves existing edits in place. `workdir` sets the starting directory; it does
+not confine the harness to that directory.
 
-**Failures stay explicit.** Wall-clock expiry kills the process group and returns
-captured partial output. Cache creation/write/flush failure reports `capture_failed`,
-not success; any returned files may be incomplete.
-
-## What a turn costs and can do
-
-Each call runs a real model session on the account that harness CLI is logged
-into, and it may make many model requests before it stops. There is no monetary
-cap here: the wall-clock limit can end the run, not the bill. Output size does not. A turn
-that stops midway leaves whatever edits it already made in place, and
-`workdir` only chooses where it starts — it does not confine the harness to
-that directory.
-
-## Argument safety
-
-`prompt` and `model` cannot begin with `-`. Some harnesses take the prompt as a
-trailing positional while others read it from a value-taking flag; a value that
-looks like an option would be parsed as a flag by one of them and could silently
-run the wrong command or escalate authority. Both fields are refused at the
-input schema before any process starts. The prompt is passed as one literal
-argv element with `shell: false`, so its content is never re-parsed as shell
-syntax.
-
-Some harnesses accept the prompt through a value-taking flag rather than a
-trailing argument: `gemini`, `qwen`, and `hermes` read the prompt from `-p`/`-z`
-respectively, and `amp` reads it from `-x`. The registry emits that flag
-immediately before the prompt so nothing sits between the flag and its value.
-
-`opencode` is always launched with `--standalone` so it starts its own server
-instead of attaching to a shared, long-lived one, which would let a turn escape
-the wall-clock kill and the depth guard.
-
-A harness that exits 0 while a background descendant keeps running has that
-descendant reaped before the call returns, so a leftover process cannot
-outlive the budget it was launched under. Reaping escalates from `SIGTERM` to
-`SIGKILL` after a short grace period; if the group still refuses to die the call
-returns `ok: false` with an error saying so, rather than reporting a clean turn.
-
-## Limits that remain
-
-- The delegated harness inherits this server's environment, so it can reach the
-  same accounts, files, and network a terminal would. Narrow it with
-  `permissionMode`, and with the harness's own sandbox flag.
+- `prompt` and `model` cannot begin with `-`; both are refused at the input
+  schema before any process starts.
 - `bypassPermissions` drops every approval prompt for every tool the harness
   holds. Get human permission before using it.
-- `cursor` is always launched with `--trust`, and its `acceptEdits` and
-  `bypassPermissions` modes both add `--force`, so that harness cannot be asked
-  to stop at an edit prompt.
-- At most 6 turns run at once per server; a seventh call is refused rather than
-  queued silently.
-- Delegation is two hops deep. A harness started by another delegate gets the
-  same MCP configuration, so it refuses to start a third. This is a `DELEGATE_DEPTH`
-  environment variable, so it bounds ordinary chains only; a harness that drops
-  or rewrites the variable is not stopped by it.
-- Closing this server does not kill turns already in flight; they finish in
-  their own process group.
+- `cursor` is always launched with `--trust`; its `acceptEdits` and
+  `bypassPermissions` modes both add `--force`.
+- At most 6 turns run at once per server; a seventh call is refused, not queued.
+- Delegation is two hops deep. A harness started by another delegate is refused
+  from starting a third.
+- Closing this server does not kill turns already in flight; they finish in their
+  own process group.
 
 See [design and limits](docs/design.md) and [verification / acceptance](docs/acceptance.md).
 

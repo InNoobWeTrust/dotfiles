@@ -191,23 +191,12 @@ function createProbe(executable: string, options: InspectionOptions) {
   }
 }
 
-function isAgyQuotaReport(stdout: string): boolean {
-  if (stdout.trim().length === 0) return false
-  return stdout
-    .trim()
-    .split(/\r?\n/)
-    .every((line) => {
-      const fields = line.split("\t")
-      if (fields.length !== 4) return false
-      const [group, limit, percent, reset] = fields
-      if (!group?.trim() || !percent || !reset) return false
-      if (limit !== "Weekly Limit Remaining" && limit !== "Five Hour Limit Remaining") return false
-      if (!/^\d{1,3}(?:\.\d+)?%$/.test(percent) || Number.parseFloat(percent) > 100) return false
-      return (
-        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(reset) &&
-        Number.isFinite(Date.parse(reset))
-      )
-    })
+function hasAgyQuotaPercentage(stdout: string): boolean {
+  // Labels and report layout can change; only a plausible quota percentage is needed.
+  for (const [percent] of stdout.matchAll(/(?<![\w.+-])\d+(?:\.\d+)?\s*%/g)) {
+    if (Number.parseFloat(percent) <= 100) return true
+  }
+  return false
 }
 
 async function inspectAgy(
@@ -222,7 +211,7 @@ async function inspectAgy(
   const run = await probe(["--log-file", devNull, "--print", "/usage"])
   if (!run || !isParseableExit(run)) return result("unknown", AGY_UNKNOWN_REASON)
 
-  const quotaReport = isAgyQuotaReport(run.stdout)
+  const quotaReport = hasAgyQuotaPercentage(run.stdout)
   const authRequired = outputLines(run).some((line) =>
     /^Authentication required(?:[.!:]|$)/.test(line),
   )

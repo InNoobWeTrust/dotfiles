@@ -16,6 +16,7 @@ docs/research/INDEX.md        ← you are here
 
 | Topic | What it covers | Read when |
 |---|---|---|
+| [Elephant–Goldfish Model](./elephant-goldfish-model/elephant-goldfish-model.md) | Source-grounded comparison, cold-review isolation, handoff comprehension and approved-contract drift experiments | Improving review evidence without duplicating existing gates or adopting the plugin |
 | [DO-178B/C and agent assurance](./do-178-agent-assurance/do-178-agent-assurance.md) | Aviation assurance foundations, B→C changes, source limits, and three falsifiable agent-improvement hypotheses | Testing traceability, evidence validity and verification effectiveness without claiming certification |
 | [Personal context from Claude video](./claude-personal-context/claude-personal-context.md) | Scoped preferences, experience evidence, small trials; original Gemini proposal and timestamped video findings | Improving selective memory without automatic profiling or duplicate skills |
 | [Agent improvement techniques](./agent-improvement-techniques/agent-improvement-techniques.md) | Karpathy / Anthropic / STAPO / RAPO / T-STAR / SOAR-analog map → skill backlog | Deciding what research to adopt into skills |

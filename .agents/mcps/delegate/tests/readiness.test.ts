@@ -138,7 +138,7 @@ describe("inspectReadiness", () => {
     }
   })
 
-  test("agy accepts only a clean account quota report, never a model catalog or auth prompt", async () => {
+  test("agy accepts quota percentages without depending on report layout and preserves probe guards", async () => {
     const quota =
       "Gemini Models\tWeekly Limit Remaining\t90%\t2026-10-15T11:47:50Z\n" +
       "Claude and GPT models\tFive Hour Limit Remaining\t0%\t2026-10-11T15:58:27Z\n"
@@ -148,15 +148,24 @@ describe("inspectReadiness", () => {
       { probe: exited(quota), readiness: "configured" },
       { probe: exited(quota.replace("90%", "100%")), readiness: "configured" },
       { probe: exited(quota.replace("90%", "99.5%")), readiness: "configured" },
-      { probe: exited(quota.replace("90%", "100.5%")), readiness: "unknown" },
-      { probe: exited(quota.replace("90%", "-1%")), readiness: "unknown" },
-      { probe: exited(quota.replace("Gemini Models", "")), readiness: "unknown" },
-      { probe: exited(quota.replace("Weekly Limit Remaining", "Model")), readiness: "unknown" },
-      { probe: exited(quota.replace("2026-10-15T11:47:50Z", "unknown")), readiness: "unknown" },
+      { probe: exited("0%"), readiness: "configured" },
+      { probe: exited("Quota remaining: 99.5 %"), readiness: "configured" },
+      { probe: exited("100.5%"), readiness: "unknown" },
+      { probe: exited("190%"), readiness: "unknown" },
+      { probe: exited("-1%"), readiness: "unknown" },
+      { probe: exited(quota.replace("Gemini Models", "")), readiness: "configured" },
+      { probe: exited(quota.replace("Weekly Limit Remaining", "Model")), readiness: "configured" },
+      { probe: exited(quota.replace("2026-10-15T11:47:50Z", "unknown")), readiness: "configured" },
+      {
+        probe: exited(
+          `${quota}Gemini 4 Argon\tGemini 4 Argon Weekly Limit\t100%\t2026-11-03T17:53:13Z\n`,
+        ),
+        readiness: "configured",
+      },
       { probe: exited(""), readiness: "unknown" },
       { probe: exited("gemini-pro\tGemini Pro\n"), readiness: "unknown" },
       { probe: exited('{"status":"SUCCESS","response":"ready"}'), readiness: "unknown" },
-      { probe: exited(`${quota}unexpected output\n`), readiness: "unknown" },
+      { probe: exited(`${quota}unexpected output\n`), readiness: "configured" },
       { probe: exited(quota, { truncated: true }), readiness: "unknown" },
       { probe: exited(quota, { exitCode: 1 }), readiness: "unknown" },
       { probe: exited(quota, { signal: "SIGTERM" }), readiness: "unknown" },

@@ -23,6 +23,8 @@ In research terms, Reviewer is the repo's **evaluator** half of an evaluator–o
 
 Apply [source-first, two-way review](references/core-review.md) within the existing review: judge requirements and source evidence before the author's explanation, check both unsupported outcomes and unjustified changes, then reconcile. Spend optional checks where a missed failure would matter most; never omit mandatory gates. Record the brief provisional verdict in the existing review response/checkpoint, not a new ledger. If the explanation was already seen, disclose that source-first isolation was unavailable rather than simulate it.
 
+For an assigned cold-reader / “Goldfish” pass, use [cold-reader techniques](references/cold-reader.md): optional implementation-ready explainback or scoped approved-contract drift, not another universal phase. Require fresh-context evidence and neutral inputs; retain all existing review gates and small-task exceptions.
+
 ## Gate 3 — Contract-Bounded Phase Review
 
 Before relying on a new/changed automated reviewer or reducing scrutiny based on
@@ -121,6 +123,7 @@ Paths: `references/sub-reviewers/<name>.md`.
 
 - **Quick:** first lens only. **Deep:** all listed. Aggregate by severity and phase-aware disposition with file:line evidence.
 - **File-targeted micro-rules:** For file-specific failure modes (Go, TS, Python, Workflows, SQL, manifests), consult `references/file-rules.md`.
+- **Code style:** Use [the agreed style contract and source catalog](references/style-guides.md), not a new reviewer preference; project tooling and existing anti-noise gates win.
 
 | Lens | Axis |
 |---|---|

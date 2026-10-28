@@ -21,6 +21,8 @@ Good candidates include bounded exploration, complementary research questions, a
 
 For substantive role selection or reuse after a quality incident, use targeted [Assignment outcomes](references/assignment-outcomes.md) recall from authorized existing memory. Capture a compact evidence-linked outcome when accepting, correcting, rejecting or interrupting an assignment; completion labels alone are not acceptance. Keep solution quality separate from provider health and primary-owned design choices.
 
+For a requested cold-reader / “Goldfish” review, apply [fresh-context review dispatch](references/worker-contract.md#fresh-context-reviews-goldfish). A native child or external one-turn worker may qualify; verify the route and neutral inputs rather than equating a new session with isolation. This does not add a reviewer or stage to ordinary work.
+
 ## Four prompt pillars
 
 1. **Precise scope**: exact deliverable, explicit out-of-scope boundary, and the smallest sufficient context with relevant contracts and sources.

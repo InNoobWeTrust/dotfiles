@@ -111,22 +111,22 @@ can make an executable selectable.
 
 | Inspector | Evidence required |
 |---|---|
-| AGY | Clean exit and a recognized tab-separated `/usage` account quota report; a model catalog alone is not evidence |
+| AGY | Clean `/usage` exit with a percentage from 0% to 100% in stdout and no authentication prompt; labels and layout are ignored |
 | Claude | `auth status` JSON explicitly says `loggedIn: true` |
 | Codex | `login status` reports the recognized signed-in state; custom-provider proof remains limited |
 | OpenCode V2 | Private API GETs join an inspectable integration connection to a non-disabled provider and an enabled, non-deprecated model |
 | Other registry IDs | No proven automatic inspector; safe, harness-specific unknown reason, no model probe |
 
-**Fail closed:** A timeout, truncated output, malformed schema, unknown CLI
-format, or failed refresh cannot retain selectable stale readiness. Reasons are
+**Fail closed:** A timeout, truncated output, missing required evidence, or failed
+refresh cannot retain selectable stale readiness. Reasons are
 fixed prose, never raw inspection output or credentials; a configured result
 does not guarantee billing, future quota or access to a caller-selected model.
 
 **AGY inspection:** `--print /usage` is a CLI-served report that can refresh
 account data without submitting a model prompt. Inspections disable automatic
 updates and direct the CLI log file to the platform's null device.
-The parser recognizes AGY 1.3.3 quota rows with a model group, a weekly/five-hour
-limit label, a percentage and a UTC reset timestamp; unfamiliar formats fail closed.
+The check only needs one percentage from 0% to 100% (including decimals) in stdout;
+new model labels, extra rows, column changes and reset timestamps do not affect readiness.
 
 An unsigned AGY 1.3.3 can still wait for authentication with stdin closed.
 The inspection deadline cancels that wait; no authentication URL or quota values

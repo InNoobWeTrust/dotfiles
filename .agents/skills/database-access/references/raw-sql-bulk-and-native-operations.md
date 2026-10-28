@@ -113,6 +113,8 @@ await session.execute(
 
 **Upsert syntax is dialect-specific.** The capability and correct syntax depend on the database provider. Check the project Data Access Contract for the declared dialect before writing upsert code. Do not write upsert logic when the provider does not support it or when the contract does not declare it.
 
+**SQL style:** Reuse the caller-supplied resolved style record or project SQL conventions, including engine dialect, templater, formatter/version, effective configuration/check and file scope; the same record goes to reviewers. A caller may supply the attributed community SQL Style Guide record and project-configured SQLFluff, but neither a sibling skill nor a guessed ANSI dialect is required. Without a compatible available tool/configuration, keep style manual/unverified; no installation, semantic rewrite or formatter-compliance claim.
+
 ```sql
 -- PostgreSQL: ON CONFLICT DO UPDATE
 INSERT INTO order_items (order_id, sku, qty)

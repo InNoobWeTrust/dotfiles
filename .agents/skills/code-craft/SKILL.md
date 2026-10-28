@@ -45,6 +45,8 @@ limitations, and a small handoff for separate maintainability assessment.
   one line for tiny files, no unrelated retrofit or separate documentation phase.
 - Keep a non-negotiable floor: safety, authorization, data integrity, required
   compatibility, isolation, and correctness. These are not deferred refinement.
+- Reuse one resolved [code-style contract](references/style-policy.md) across
+  producers and reviewers; project tooling wins over greenfield defaults.
 - Use [Testing](references/testing.md) for meaningful checks and test persistence.
   Prefer existing repository commands; exercise relevant failure paths. Test-first
   is optional. Never weaken existing tests or quality gates to get a quick pass.

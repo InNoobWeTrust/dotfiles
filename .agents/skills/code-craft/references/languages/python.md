@@ -2,6 +2,12 @@
 
 **Greenfield defaults only.** `uv`, Ruff, Pyright/mypy apply when starting fresh with no prior tooling decisions. For an existing project, inspect `pixi.toml`, `Makefile`, `pyproject.toml`, and CI first — honor whatever is configured there. A Pixi project using `ty` as its type checker **must not** be migrated to `uv` or have `ty` replaced with Pyright or mypy.
 
+## Code style — `python-ruff`
+
+Use applicable [PEP 8](https://peps.python.org/pep-0008/) and [PEP 257](https://peps.python.org/pep-0257/) conventions with [Ruff formatting](https://docs.astral.sh/ruff/formatter/) for a new unconfigured project; retain existing Black or other agreed tooling. Ruff is Black-compatible, not identical: its default [line length is 88](https://docs.astral.sh/ruff/settings/#line-length), an explicit layout exception to PEP 8's 79, not a claim of complete PEP compliance. Review naming/docstrings and other non-formatting conventions separately.
+
+Resolve target Python version and applicable configuration before using the existing project check or `ruff format --check <files>`. Formatting does not sort imports; only when import ordering is in the agreed contract, use the configured linter or non-fixing `ruff check --select I <files>` separately. Preserve notebook/cell syntax and other parser prerequisites; carry the same resolved [style contract](../style-policy.md) to the reviewer.
+
 ## Baseline
 
 - Use `pyproject.toml`, `uv` for environments/dependencies, Ruff for linting and formatting, and the repository's configured type checker — prefer Pyright (`typeCheckingMode = "strict"`) or mypy (`strict = true`) in strict mode for greenfield projects; repos already using `ty` run `ty check` with the project's established rule configuration.

@@ -6,6 +6,8 @@
 
 This reference equips reviewers with concrete failure modes and defect patterns tailored to specific file types and languages. When reviewing a file in a changeset, match its path against the table below and load the corresponding deep rule sheet from `rules/`.
 
+For style rather than defects, use the local [style policy/catalog](style-guides.md) and the producer's resolved contract; do not infer a new blocking formatting rule from these checklists. Confirm actual syntax for ambiguous extensions and keep existing Go/Python anti-style-noise rules.
+
 | Parameter | Value |
 |---|---|
 | **Role** | JIT file-type defect checklist router |
