@@ -1,7 +1,7 @@
 ---
 metadata:
-  reviewed: "2026-10-21"
-  review-trigger: "Revisit after meaningful local outcomes or checkpoint changes"
+  reviewed: "2026-10-29"
+  review-trigger: "Explicit user direction change; revise atomic task fit after meaningful local outcomes"
 ---
 
 # Agent routing evidence
@@ -20,7 +20,7 @@ metadata:
 |---|---|---|
 | Named DeepSeek route | Architecture/quality preference; consumer-aware implementation | Local experience; public reports are mixed, not proof of universal superiority |
 | Sonnet 4.6 | Settled-interface execution; source-faithful edits for a specified reader | Local failures and execution/planning anecdote; not inability to design |
-| GPT routes | Checked implementation of settled work; document materialization from explicit audience/outline/sources; current local direction assessment: ineligible | Existing roles and local direction outcomes; a current operator assessment, not a family-wide capability verdict or permanent rule; re-assess the specific route by the AGENTS capability criteria |
+| GPT/Codex routes | Atomic implementation/materialization of settled work; factual verification and evidence collection; document materialization from explicit audience/outline/sources. Direction-prohibited by operator policy | Operator prohibition after local direction failures; not a family-wide capability verdict. Actual serving model must be identified; aliases and hidden fallbacks count by their real model |
 | MiMo / GLM Flash | MiMo discovery and implementation trials; GLM bounded screenshot-led implementation | One practitioner account and divergent benchmarks, not unconditional endorsement |
 | Less-evidenced routes | Extraction, comparisons, small checked trials | Conservative allocation, not evidence of inability; no comprehensive per-model survey |
 | Curated `ckey/*` family aliases | Family-level task fit; secondary bounded work under the current local preferences | Operator selects recent models within each corresponding family for price/performance; assess typical current-family behavior rather than require a fixed checkpoint. Individual-model scores are not measured alias averages |
@@ -29,7 +29,7 @@ metadata:
 
 Descriptions guide selection; the direction-eligibility policy separately bounds who may propose or decide consequential direction. Neither changes native permissions, model IDs, variants or primary-agent settings; existing read-only review/perception boundaries remain unchanged.
 
-## Local direction-eligibility policy (2026-10-21)
+## Local direction-eligibility policy (2026-10-29)
 
 The operator requires consequential direction to be proposed and validated by
 routes suited to careful interpretation, not by the orchestrating/implementing
@@ -38,41 +38,68 @@ ranking or a claim that other routes cannot reason.
 
 | Route | Current local assessment | Basis and limit |
 |---|---|---|
-| GPT routes | Orchestration, implementation, verification and evidence review of settled work; direction-ineligible | Operator requirement after local direction failures; not evidence that GPT cannot implement or review |
+| GPT/Codex routes | Atomic implementation/materialization, factual verification and evidence collection; direction-prohibited for proposal, validation, decision, independent challenge and approval | Operator prohibition after local direction failures; not evidence GPT cannot implement or verify. A Codex or OpenAI harness whose serving model cannot be confirmed as non-GPT, an alias resolving to GPT, or an unidentified serving model is covered. Only an explicit user instruction changes this row |
 | DeepSeek V4.1 Flash | Eligible proposer, validator and architect-decision route | Local architecture/review preference and the benchmark context above; not proof of correctness |
 | Claude Sonnet | Eligible proposer, validator and architect-decision route | Local execution/planning evidence; use the current exposed route |
 | Claude Opus | Eligible only when actual access is verified | Access is not assumed from configuration; unverified access is a blocker, not a fallback |
-| Decision-support capability | Advisory decision input for meaningful in-scope alternatives | Advice is not permission or proof; estimates remain advisory |
+| Decision-support capability | Advisory input for meaningful in-scope alternatives only when the serving model is verified non-GPT; cannot supply the direction proposal or validation and cannot be the applicable authority when its serving model is GPT, a GPT-resolving alias or unidentified | Advice is not permission or proof; estimates remain advisory. Check the documented `model` field per call. Internal provider mix creates no agent direction role; if the serving model is excluded or unknown, discard the output for direction and treat the capability as unavailable |
 
 These rows record current local application of the [AGENTS.md](../../AGENTS.md)
 capability criteria and the evidence behind it; they are not a universal
 whitelist. A route absent from them is not automatically eligible or ineligible.
 Assess the specific direction role, record unknown or conflicting evidence as a
-gap, and leave the role unfilled when the evidence does not support it. The GPT
-row records a current operator assessment after local direction failures, not a
-permanent family rule; a specific route may qualify on new task-relevant
-evidence. The main may apply these criteria to an assignment and record the
-evidence in task context without editing this register. Configuration is not
-access: require a usable execution path and record the limitation. Required
-sequence: eligible proposal → separate validation reconciled to the original
-sources (the deciding architect or user may validate itself when it did not
-author the proposal; a decision-support tool cannot) → applicable authority →
-primary records and executes. Cross-family independence remains mandatory where
-the plan/design/audit challenge gate applies. For direction validation, a
-different eligible family is the default when available; a separate eligible
-instance from the same family is the permitted fallback only when no other
-eligible family is actually available, with the limitation recorded. Mechanical
-steps already settled by an explicit source need no direction round. Missing
-eligible roles block affected work; do not substitute ineligible judgment.
+gap, and leave the role unfilled when the evidence does not support it. The
+GPT/Codex row is an operator prohibition, not a capability finding: new
+benchmarks, practitioner reports, a different GPT checkpoint or a local success
+do not restore direction eligibility. Only an explicit user instruction can
+change it; atomic task fit may still be revised from checked outcomes. The main
+may apply these criteria to an assignment and record the evidence in task
+context without editing this register. Configuration is not access: require a
+usable execution path and record the limitation. For every direction role,
+record the provider and actual serving model, not only the alias or harness
+label; an unidentified model is ineligible. Required sequence: eligible
+proposal → separate validation reconciled to the original sources (the deciding
+architect or user may validate itself when it did not author the proposal; a
+decision-support tool cannot) → applicable authority → primary records and
+executes. Cross-family independence remains mandatory where the plan/design/audit
+challenge gate applies. For direction validation, a different eligible family is
+the default when available; a separate eligible instance from the same family is
+the permitted fallback only when no other eligible family is actually available,
+with the limitation recorded. Mechanical steps already settled by an explicit
+source need no direction round. Missing eligible roles block affected work; do
+not substitute ineligible judgment.
+
+A GPT/Codex primary may coordinate, decompose settled work, integrate and
+execute. It may not author, select, validate or approve direction, and may not
+treat a GPT proposal as the proposal merely because a non-GPT route reviewed it.
+It may supply verified facts and constraints but not a preselected design,
+ranked options or acceptance framing; the eligible proposer receives the
+original request and sources. It must obtain an eligible non-GPT proposal, a
+separate validation reconciled to the original sources, and the applicable
+decision, then record and execute the confirmed choice. If no eligible non-GPT
+route is usable, it blocks affected direction; a decision-support fallback to a
+GPT or unidentified serving model does not fill the gap.
+
+The prohibition covers native subagents, external delegate/Codex workers, router
+aliases and decision-support output. Provider prefix, profile name and
+configuration are not proof of the serving model; hidden fallback or an
+unidentified route is ineligible for direction.
 
 This policy changes assignment eligibility, not native permissions, model IDs,
-variants, or the advisory nature of decision support. A decision-support
-capability's internal provider mix does not create an agent direction role or
-eligibility; its advice cannot substitute for the required direction proposal or
-validation. When it is the applicable authority, apply its documented output
-mechanically within the supplied alternatives. Review or challenge from any route
-may be evidence, but cannot substitute for the required proposal, validation or
-authority.
+variants, or the advisory nature of decision support. Factual verification
+confirms what a source, contract or check reports; it is not an architectural
+adequacy judgment, design choice or approval. A GPT verification result that
+implies a design change returns to the non-GPT decision owner as evidence. A
+decision-support capability's internal provider mix does not create an agent
+direction role or eligibility; its advice cannot substitute for the required
+direction proposal or validation. It may be the applicable authority only when
+the serving model is verified non-GPT. Check the documented `model` field on
+each call; a GPT, GPT-resolving alias or unidentified serving model makes that
+result ineligible for direction, so discard it and treat the capability as
+unavailable for that role. When a verified non-GPT result is the applicable
+authority, apply its documented output mechanically within the supplied
+alternatives. Review or challenge from any route may be evidence, but cannot
+substitute for the required proposal, validation or authority.
 
 ## Practitioner evidence
 

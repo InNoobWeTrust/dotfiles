@@ -86,6 +86,18 @@ Suitability inspection, including reading `SKILL.md`, does not activate a workfl
   plan/design/audit challenge gate remains mandatory. This changes assignment
   eligibility, not native permissions or model settings. Current assessments and
   limits: [agent routing evidence](docs/skills-and-rules/agent-routing-evidence.md).
+- **GPT/Codex direction prohibition.** Routes using an OpenAI GPT model, a
+  Codex or OpenAI harness whose serving model cannot be confirmed as non-GPT,
+  an alias resolving to GPT, or any route with an unidentified serving model
+  are atomic-execution only: settled
+  implementation/materialization, factual verification and evidence collection.
+  They never propose, validate, decide, satisfy a required independent challenge
+  or approve consequential direction or high-level design, including as primary.
+  A covered primary coordinates and executes only after demonstrated-capable
+  non-GPT routes supply the proposal, separate validation and decision; otherwise
+  block affected direction. GPT-origin design is evidence, never a direction
+  proposal. Only an explicit user instruction restores eligibility. Details:
+  [agent routing evidence](docs/skills-and-rules/agent-routing-evidence.md).
 - **Continuing roles:** preserve immutable `task_id` + `role_id` bindings, fresh sessions for distinct jobs, append-only slice checkpoints, role-first restoration and approved-plan revalidation under [Persistent coordination](skills/team-operating-model/references/persistent-coordination.md). Keep human acceptance and later consolidation approval separate.
 
 `agents/` files are model-routing adapters, not behavioral bootstraps. Final accountability stays with the outermost main; after the required human stack gate, do not invent further approval rituals inside settled scope.

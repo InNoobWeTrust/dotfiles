@@ -254,11 +254,11 @@ usable npx && \
         # run commands from markdown files
         ! usable runme && alias runme='npx --yes runme'
         # OpenAI Codex
-        ! usable codex && alias codex='npx --yes @openai/codex'
+        ! usable codex && alias codex-npx='npx --yes @openai/codex'
         # Opencode
-        ! usable opencode && alias opencode="npx --yes @opencode/cli@latest"
+        ! usable opencode && alias opencode-npx="npx --yes @opencode/cli@latest"
         # DeepSeek harness
-        ! usable dsh && alias dsh="npx --yes @deepseek-ai/dsh web"
+        ! usable dsh && alias dsh-npx="npx --yes @deepseek-ai/dsh web"
         # Agent skills manager
         ! usable skills && alias skills="npx --yes skills"
         # Tree-sitter CLI
@@ -294,7 +294,7 @@ _claude_with_mcp() (
 if (unalias claude 2>/dev/null; usable claude); then
     alias claude='_claude_with_mcp native'
 elif usable npx; then
-    alias claude='_claude_with_mcp npx'
+    alias claude-npx='_claude_with_mcp npx'
 fi
 
 ## Node-builtin package management for javascript

@@ -47,6 +47,10 @@ secrets, unnecessary personal data or raw private transcripts.
 
 Consultation never substitutes for the eligible proposal, original-source
 validation or applicable authority under the active direction-eligibility policy.
+A capability whose serving model is excluded by that policy, or cannot be
+identified, cannot supply direction input, validation or authority; discard its
+output for that use and treat the capability as unavailable. Do not silently
+accept a fallback route that changes serving-model eligibility.
 
 - Inspect the documented success/error result and any returned advice or estimates. Check the suggested option
   against evidence and constraints; reject unsupported or disallowed suggestions.
@@ -67,7 +71,8 @@ validation or applicable authority under the active direction-eligibility policy
   relevant uncertainty in the normal receipt, not raw model output.
 
 If unavailable or failed, state that limitation and use another authorized route
-or block affected consequential work; ineligible ordinary judgment is not a fallback.
+that satisfies the same policy, or block affected consequential work; ineligible
+ordinary judgment is not a fallback.
 Preserve mandatory stops; do not loop,
 install, reconfigure, escalate permissions or silently select another provider.
 
