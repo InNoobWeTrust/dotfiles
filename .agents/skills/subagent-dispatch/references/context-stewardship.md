@@ -1,3 +1,16 @@
+---
+metadata:
+  prototype: "2026-10-07"
+  aci-pass: |-
+    Result: PASS for the guidance interface; effectiveness is unverified.
+    Main risks: over-delegation, underspecified handoffs, evidence loss, shared-write conflicts,
+    mistaking soft prompts for isolation.
+    Interface upgrades: purpose-based allocation, explicit ownership/action boundaries, adaptable
+    reporting, execution receipts, incomplete-result handling, and retained safety/review gates.
+    Prototype: observe subsequent tasks for useful worker allocation, reduced irrelevant output,
+    correct acceptance, and coordination costs before claiming speed or quality gains.
+---
+
 # Context Stewardship
 
 Use when deciding where work belongs or designing a handoff. These are reasoning principles, not a fixed execution sequence, delegation quota, or model-specific recipe. Extend the existing dispatch contract; do not create extra plans, reports, or orchestration infrastructure merely to follow this guide.
@@ -74,12 +87,9 @@ Workers manage their own attention too: bound searches and output before they sp
 | Reread every worker transcript or rerun every check | Inspect evidence according to acceptance and risk, including mandated audits. |
 | Save context by omitting constraints | Share the smallest sufficient contract; uncertainty is part of the result. |
 
-## ACI Pass / prototype
+## Instrumentation boundary
 
-- Result: PASS for the guidance interface; effectiveness is unverified.
-- Main risks: over-delegation, underspecified handoffs, evidence loss, shared-write conflicts, mistaking soft prompts for isolation.
-- Interface upgrades: purpose-based allocation, explicit ownership/action boundaries, adaptable reporting, execution receipts, incomplete-result handling, and retained safety/review gates.
-- Prototype: 2026-10-07. Observe subsequent tasks for useful worker allocation, reduced irrelevant output, correct acceptance, and coordination costs before claiming speed or quality gains. No new instrumentation or benchmark suite is required merely to use these principles.
+No new instrumentation or benchmark suite is required merely to use these principles.
 
 ## Primary working style
 

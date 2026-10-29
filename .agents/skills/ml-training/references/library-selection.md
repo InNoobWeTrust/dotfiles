@@ -1,3 +1,8 @@
+---
+metadata:
+  official-sources-read: "2026-10-15"
+---
+
 # Library Selection — Hugging Face First, Fit Before Adoption
 
 Use before writing or materially changing a training pipeline. This is the skill's
@@ -62,7 +67,7 @@ policy or expected speedup. Confirm actual trainable parameters, not config inte
 - Record installed compatible versions of selected packages, PyTorch/device backend,
   source/config and exact base/tokenizer/adapter revisions. Use the environment's
   existing lock mechanism; don't upgrade to match the newest tutorial implicitly.
-- Resolve docs for the **installed release**. Research on 2026-10-15 observed Trainer
+- Resolve docs for the **installed release**. Research observed Trainer
   v5.19.0, Accelerate v1.15.0 and PEFT v0.21.0 references; these are observations,
   not required versions. Parameter names, callbacks and defaults change.
 - Configure evaluation, logging, saving, selection metric/direction and destinations
@@ -108,7 +113,7 @@ Before loading repository/model code from elsewhere, inspect provenance and loca
 policy; do not enable `trust_remote_code` or load unsafe pickle silently. Tensor-safe
 weights do not make arbitrary model/metric code trustworthy. Selection isn't installation.
 
-## Official sources — read 2026-10-15
+## Official sources
 
 - [Trainer](https://huggingface.co/docs/transformers/en/trainer),
   [API / TrainingArguments v5.19.0](https://huggingface.co/docs/transformers/v5.19.0/en/main_classes/trainer),

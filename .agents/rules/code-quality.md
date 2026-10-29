@@ -7,11 +7,30 @@ trigger: always_on
 
 # Implementation Baseline
 
-- Before custom logic, check repository capabilities, platform/standard libraries
+- Before design or implementation, obtain the human-approved researched stack
+  and custom-exception receipt; no primary, architect or tool can approve it for
+  the user. Before custom logic, check repository capabilities, platform/standard libraries
   and established tools; for CLI/TUI discovery consult directories such as
   [Terminal Trove](https://terminaltrove.com/list/). Reuse suitable capabilities;
-  justify custom replacements by an evidenced unmet requirement. Selection does
-  not authorize installation or network effects.
+  justify custom replacements by an evidenced unmet requirement and obtain human
+  approval. Selection does not authorize installation or network effects.
+- **Mandatory reuse review:** trace each changed capability to actual approved
+  library/native-tool APIs and relevant behavior. Standard libraries count;
+  unused imports, incidental logging or library use elsewhere do not. Every
+  library-free authored unit/location must be flagged directly to the user, even
+  when custom code is approved. Group deductions by distinct capability, not
+  helper count. Predeclare the **maintainability—reuse policy score**: default
+  `max(0, 10 - distinct library-free capabilities)`, listing every unit and every
+  deduction even at the floor. A project rubric replaces this component only if
+  it retains these flags, explicit numerical deductions and floor reporting;
+  otherwise report this component alongside it. This is a policy score, not an
+  empirical quality rating or merge threshold. Never invent a conversion or
+  double-count a capability. Unknown coverage/approval is `UNVERIFIED`; report
+  observed flags regardless. Unapproved custom substitutions or proceeding without
+  approval fail review despite green tests. Approved custom code still loses
+  points but is not thereby a correctness defect. Reviews of preexisting code
+  without historical receipts report approval unknown, not invented misconduct.
+  See the [reuse audit](../skills/reviewer/references/reuse-review.md).
 - Favor clear responsibilities, small useful interfaces, visible effects and
   idiomatic code. Settle affected consumer behavior/contracts before independent
   implementation; formal signatures/files only where coordination needs them.

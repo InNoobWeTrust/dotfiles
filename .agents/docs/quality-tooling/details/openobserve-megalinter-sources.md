@@ -1,6 +1,11 @@
+---
+metadata:
+  sources-checked: "2026-08-10"
+---
+
 # OpenObserve + MegaLinter Evidence Sources
 
-> **Source map for:** [OpenObserve + MegaLinter](../openobserve-megalinter.md). Checked 2026-08-10.
+> **Source map for:** [OpenObserve + MegaLinter](../openobserve-megalinter.md).
 
 This leaf holds the complete official citation inventory so the canonical page can keep evidence close to claims without carrying a long source list.
 

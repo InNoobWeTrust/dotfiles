@@ -10,10 +10,21 @@ for hypothetical future needs. Iteration and discarding an unhelpful approach ar
 cheaper than polishing it before its usefulness is known.
 
 **Inputs:** desired behavior, relevant source, writable scope, consumer constraints,
-and authorized checks. **Outputs:** working change, observed verification,
+current researched stack proposal/human approval receipt and authorized checks. **Outputs:** working change, observed verification,
 limitations, and a small handoff for separate maintainability assessment.
 
 ## 1. Establish the smallest useful outcome
+
+**Gate — before any design or implementation:** verify the researched tools/
+libraries/APIs, constraints/sources, alternatives and custom insufficiency were
+presented and explicitly human-approved; record task/scope, proposal revision and
+approval source. Read-only discovery, diagnosis and review may precede approval,
+not interfaces, schemas, module plans or prototype code. Primary/architect/tool
+approval cannot replace the human. A concise standard-library/native-tool or
+Markdown-only proposal suffices for small tasks but is not exempt. Reuse an
+unchanged same-task receipt; changed providers, material API/runtime constraints
+or custom exceptions need reapproval. Missing evidence is UNVERIFIED; stop affected
+design/code. Approved-tool absence is not custom/mock fallback authority.
 
 - Clarify observable success and consequential unknowns, not every implementation
   detail. Inline intent is enough; no mandatory phase files or design template.
@@ -27,15 +38,22 @@ limitations, and a small handoff for separate maintainability assessment.
   routing, endpoints, middleware, contracts and streaming channels separate;
   protocol ceremony belongs at the boundary, not inside handlers.
 - For rewrites, classify affected behavior/interfaces as **delete** or **preserve**
-  and settle contracts retained for consumers outside the scoped change.
-  Compatibility does not preserve obsolete files by default: carry out approved
-  code/document/interface deletion and update in-scope references, without
-  pointer-only remnants or unrequested shims in place of the approved removal.
+  and settle required current contracts, not automatic legacy retention.
+  Backward compatibility is **off** unless the project's root engineering docs explicitly
+  enable it with scope; a bare link, nested ADR, existing client, or old test does not
+  opt in. Carry out approved code/document/interface deletion and update in-scope
+  references, without pointer-only remnants or unrequested shims. Report known
+  outside-scope consumers as concrete consequences; investigate unknown required
+  outside-consumer contracts proportionately, mark them `UNVERIFIED`, and pause only
+  dependent work—unknown consumers are not an automatic preservation veto.
 - For **specification-only** requests, use [Behavior and acceptance](references/testing.md#behavior-and-acceptance)
   and stop at the specification. Do not implement, run checks, or dispatch a
   post-implementation assessment for code that was not written.
 
 ## 2. Implement and verify
+
+Carry the current §1 human approval receipt into implementation and every handoff;
+do not let primary plan approval or an atomic-patch exception bypass it.
 
 - Write the simplest solution that meets the current outcome. Avoid speculative
   abstractions, extension points, architectural cleanup, and adjacent improvements.
@@ -43,8 +61,9 @@ limitations, and a small handoff for separate maintainability assessment.
 - Keep [file navigation](references/file-navigation.md) current with the change:
   native purpose header, grouped symbols and consequential edges where useful;
   one line for tiny files, no unrelated retrofit or separate documentation phase.
-- Keep a non-negotiable floor: safety, authorization, data integrity, required
-  compatibility, isolation, and correctness. These are not deferred refinement.
+- Keep a non-negotiable floor: safety, authorization, data integrity, root-opted-in
+  compatibility, current task/dependency suitability, isolation and correctness.
+  These are not deferred refinement. Unavailable root policy is unknown, not OFF.
 - Reuse one resolved [code-style contract](references/style-policy.md) across
   producers and reviewers; project tooling wins over greenfield defaults.
 - Use [Testing](references/testing.md) for meaningful checks and test persistence.
@@ -62,7 +81,10 @@ After the solution works and relevant checks pass, have the primary dispatch a
 independent of the implementer; if no separate assessor is available, report the
 assessment as pending rather than simulating independence.
 Provide only: what works, changed files/revision, verification evidence, known
-shortcuts, and an authorized record destination. A worker implementer returns this
+shortcuts, human stack/custom approval receipt and an authorized record destination.
+Require immediate user-facing library-free flags and numerical reuse-policy
+deductions, even for approved custom code; only optional refinements are deferred.
+A worker implementer returns this
 handoff to the primary; it does not recursively dispatch.
 
 Exception: a bounded refinement approved from an existing assessment ends with

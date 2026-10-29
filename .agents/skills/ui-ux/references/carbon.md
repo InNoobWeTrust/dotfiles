@@ -1,3 +1,11 @@
+---
+metadata:
+  lifecycle: "Prototype"
+  created: "2026-10-18"
+  review-after: "1–2 uses or 2027-01-18"
+  review-note: "Review routing overhead and real component use after 1–2 uses."
+---
+
 # IBM Carbon — Default Design System
 
 > Official docs: <https://carbondesignsystem.com>  
@@ -66,4 +74,4 @@ For generative UI, register the actual approved components in the renderer and g
 - Do not override an existing DESIGN.md or migrate an active design system merely because Carbon is the default.
 - Do not use `@carbon/react` in Vue, native, or Web Components projects.
 
-Lifecycle: **Prototype**, 2026-10-18. Review routing overhead and real component use after 1–2 uses or by 2027-01-18; source checks do not prove future agent adherence.
+Source checks do not prove future agent adherence.

@@ -1,7 +1,16 @@
 # Migration Planning
 
 ## When
-Triggered when executing monolith-to-microservices decomposition, cloud platform migration, or database engine migration. Use this workflow to maintain system continuity and zero-downtime cutover.
+Triggered when planning monolith-to-microservices decomposition, cloud platform
+migration or database engine migration. Use an authorized recovery-safe plan with
+explicit availability requirements, not a universal zero-downtime commitment.
+Root engineering docs must affirmatively enable backward compatibility with scope;
+otherwise it is OFF (unavailable evidence is unknown). Coexistence, dual running,
+shims, soak windows and incremental cutover below are conditional techniques for
+that opted-in scope or an actual availability requirement, not mandatory phases
+for every migration. Approved offline replacement can be appropriate; data-loss,
+security, recovery and destructive-operation approval gates still apply. Research
+and obtain human stack approval before designing any migration machinery.
 
 ---
 
@@ -77,7 +86,7 @@ flowchart LR
 ## Deliverables
 - [ ] Target architecture blueprint & pattern ADRs
 - [ ] Bounded context definitions & CDC event schemas
-- [ ] Dual-running proxy & reconciliation pipeline
+- [ ] Dual-running proxy/reconciliation only where the approved availability or root compatibility contract requires it
 - [ ] Traffic cutover runbook & automated rollback plan
 - [ ] Scope boundary with contracts settled proportionately to consumer/handoff need, and cleanup noted
 - [ ] Cutover implementation phases proportionate to delegation need (separate phase files only for independently delegated or resumable units, otherwise inline sequence)
@@ -86,7 +95,7 @@ flowchart LR
 ## Pitfalls
 | Temptation | Mitigation |
 |---|---|
-| Big Bang cutover | Use Strangler Fig with incremental percentage traffic shifts |
+| Unplanned cutover | Choose authorized offline or staged cutover from availability, recovery and root-opted-in compatibility requirements |
 | Shared monolithic DB | Enforce database-per-service via CDC and event streaming |
 | No rollback strategy | Define automated rollback criteria before shifting traffic |
 | No data reconciliation | Implement continuous background diff tooling during dual-run |

@@ -1,3 +1,9 @@
+---
+metadata:
+  reviewed: "2026-10-21"
+  review-trigger: "Revisit after meaningful local outcomes or checkpoint changes"
+---
+
 # Agent routing evidence
 
 | Reader contract | Scope |
@@ -5,7 +11,6 @@
 | **Audience** | Maintainers of the [agent profiles](../../agents/) |
 | **Purpose** | Keep task-selection descriptions grounded in local outcomes, practitioner experience and benchmark evidence |
 | **Boundary** | Routing guidance and local direction-eligibility policy, not universal rankings, model-access verification or permission enforcement |
-| **Reviewed** | 2026-10-21; revisit after meaningful local outcomes or checkpoint changes |
 
 ## Selection decisions
 

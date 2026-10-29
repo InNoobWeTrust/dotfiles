@@ -1,6 +1,11 @@
 ---
 name: model-benchmarking
 description: "Use this skill to select agent models by task fit, practitioner experience, checked outcomes, benchmarks, pricing, and provider access. Activate when optimizing model assignments, writing caller-facing agent descriptions, comparing LLM cost-performance tradeoffs, selecting delegated-worker tiers, or validating agent configs against schemas. Fleet configuration and periodic review, not a per-delegation step: agent descriptions carry the routing boundary, so dispatching a task requires no benchmark lookup. Not for general non-LLM pricing or permission changes."
+metadata:
+  aci-review: |-
+    Source interface: scoped inputs/outputs, task-fit example and stop boundaries are explicit; runtime routing improvement is unverified.
+    Risks addressed: benchmark overreach, research leakage and alias-score confusion; retain actionable descriptions with separate evidence.
+    First use: check the next 1–2 routing/description updates against actual outcomes before treating this guidance as validated.
 ---
 
 # Agent Model Benchmarking & Optimization
@@ -143,8 +148,3 @@ Stop before changes outside the authorized scope, paid probes, stress tests, res
 
 ## 4. Execution Plan (Diffs)
 ```
-
-## ACI check
-- **Source interface:** scoped inputs/outputs, task-fit example and stop boundaries are explicit; runtime routing improvement is unverified.
-- **Risks addressed:** benchmark overreach, research leakage and alias-score confusion; retain actionable descriptions with separate evidence.
-- **First use:** check the next 1–2 routing/description updates against actual outcomes before treating this guidance as validated.

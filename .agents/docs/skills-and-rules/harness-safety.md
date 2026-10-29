@@ -1,3 +1,11 @@
+---
+metadata:
+  sandbox-aci-review: |-
+    Result: PASS.
+    Main risks: Ambiguous workspace discovery, inferred directories widening the wrong writable scope, and stale tool permissions/catalogs.
+    Interface upgrades: Command, optional workdir and invocation budgets; fixed isolation modes and non-login execution, explicit ambiguity errors, per-call roots discovery, disclosed defaults, and exact permission names.
+---
+
 # Global Instructions Across Harnesses
 
 | Goal | Prerequisite | Boundary |
@@ -56,12 +64,6 @@ The existing sandbox MCP exposes three tools with a required `command`, optional
 **Example:** `sandbox_pure({command: "git status --short"})` uses directory discovery. Add `workdir: "/absolute/project/path"` to select the target explicitly; macOS scratch writes must use `$TMPDIR`, not hard-coded `/tmp`.
 
 **Migration:** The old generic `sandbox` tool and its mode/login/shell/env arguments are removed. OpenCode grants the exact actions `sandbox_sandbox_ro`, `sandbox_sandbox_pure`, and `sandbox_sandbox_rw`; reconnect the MCP server through the harness to refresh its tool catalog without restarting unrelated services.
-
-### ACI Pass
-
-- **Result:** PASS.
-- **Main risks:** Ambiguous workspace discovery, inferred directories widening the wrong writable scope, and stale tool permissions/catalogs.
-- **Interface upgrades:** Command, optional workdir and invocation budgets; fixed isolation modes and non-login execution, explicit ambiguity errors, per-call roots discovery, disclosed defaults, and exact permission names.
 
 ### Resource budgets (prlimit / ulimit)
 

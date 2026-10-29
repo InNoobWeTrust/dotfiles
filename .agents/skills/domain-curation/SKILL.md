@@ -5,6 +5,7 @@ metadata:
   lifecycle: "prototype"
   created: "2026-10-15"
   review-after: "1–2 real uses or 2026-11-15"
+  maintenance-note: "First-use evidence is not yet available. After 1–2 real uses or the review date, inspect which decisions improved, which advice failed to transfer, and whether overhead was proportionate. Do not fabricate usage metrics; route revisions through the governance skill authoring capability."
 ---
 
 # Domain Curation
@@ -89,7 +90,3 @@ Load only the matching dependency, not a whole chain:
 | Hide disagreements | Learner cannot judge transfer | Preserve competing conditions |
 | Call a simulation validation | No real task evidence | Label the evidence type |
 | Turn every brief into a skill | Adds maintenance without reuse | Apply packaging gate |
-
-## Prototype maintenance
-
-First-use evidence is not yet available. After 1–2 real uses or the review date, inspect which decisions improved, which advice failed to transfer, and whether overhead was proportionate. Do not fabricate usage metrics; route revisions through the governance skill authoring capability.

@@ -1,6 +1,9 @@
 ---
 name: memory-techniques
 description: Save, restore and manage scoped agent memory, task plans, role checkpoints and consensus. Use for explicit capture/recall, preferences or sourced lessons, and requested consolidation/eviction. Project knowledge stays in .agents/memories; prefer external memory for short-lived or sensitive context, with direct Markdown management and no MCP dependency.
+metadata:
+  prototype-scope-revised: "2026-10-16"
+  review-task: "Inspect the next 1–2 cross-harness uses."
 ---
 
 # Memory Techniques
@@ -83,4 +86,4 @@ Return mode, selected scope, resolved paths and changed files/sections; note rel
 - [Compaction and step recall](references/compaction-and-step-recall.md): compact handoffs and similar traces.
 - [Eviction scoring](references/eviction-scoring.md): ranked proposals, archive-then-delete.
 
-Prototype scope revision: 2026-10-16; inspect the next 1–2 cross-harness uses. No automatic retention-policy changes or backend security guarantees.
+No automatic retention-policy changes or backend security guarantees.

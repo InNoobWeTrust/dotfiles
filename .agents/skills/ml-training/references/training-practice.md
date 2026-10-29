@@ -1,3 +1,8 @@
+---
+metadata:
+  sources-read: "2026-10-15"
+---
+
 # Training Practice — Earn Trust Before Scaling
 
 Use for a new objective/pipeline or a material training change. For a previously
@@ -155,7 +160,7 @@ for stage, frozen-mode and kernel changes; “fine-tuning” is not synonymous w
 These are candidate checks, not diagnoses from chart shape alone. Unexpected failure
 uses the investigation workflow; preserve logs and checkpoint evidence first.
 
-## Sources and applicability — read 2026-10-15
+## Sources and applicability
 
 - **Andrej Karpathy, [A Recipe for Training Neural Networks](https://karpathy.github.io/2019/04/25/recipe/)
   (2019-04-25):** inspect data at the model boundary, simple skeleton/baselines, initial

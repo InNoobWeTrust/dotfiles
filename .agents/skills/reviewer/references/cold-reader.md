@@ -1,3 +1,10 @@
+---
+metadata:
+  prototype: "2026-10-28"
+  review-after: "1–2 real uses"
+  maintenance-review: "Prototype; assess utility/overhead after 1–2 real uses."
+---
+
 # Cold-reader techniques
 
 **Purpose:** test whether an artifact and its authoritative sources communicate the intended contract without the author's conversation. Use within an already assigned review, proportionately; this is a borrowed Goldfish technique, not the upstream plugin's full protocol.
@@ -40,4 +47,4 @@ Matching tests do not authorize a changed contract. Internal details outside app
 
 Record source coverage/revisions, freshness evidence, actual reads, unavoidable exposure and action-scope compliance with the provisional result before optional author reconciliation. Read the author's explanation only afterward, if useful, and resolve disagreements against originals; do not let the explanation rewrite the rubric. Preserve existing findings format, severity, independent review, budget and acceptance rules; zero findings or exhausted budget is not owner approval.
 
-**Prototype:** 2026-10-28; assess utility/overhead after 1–2 real uses. Source checks and synthetic cases do not demonstrate production efficacy or harness isolation; changed reviewer behavior must not justify reduced scrutiny without calibration.
+Source checks and synthetic cases do not demonstrate production efficacy or harness isolation; changed reviewer behavior must not justify reduced scrutiny without calibration.

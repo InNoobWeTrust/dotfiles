@@ -62,6 +62,12 @@ sequenceDiagram
 ---
 
 ## Phase 5 — Versioning & Lifecycle
+
+Apply this legacy-preservation phase only to compatibility affirmatively enabled
+with scope in the actual root engineering docs. Otherwise report caller-visible
+changes and retire authorized obsolete interfaces without default version aliases,
+additive-only constraints or deprecation windows. Current provider/API suitability
+and required task contracts remain mandatory; unknown evidence is not an opt-in.
 ```mermaid
 flowchart LR
     V1[API v1 Active] --> Deprecate[Sunset Header Warning] --> V2[API v2 Available] --> EOL[v1 Shutdown]
@@ -79,13 +85,13 @@ flowchart LR
 - [ ] Linted OpenAPI 3.1 / Protobuf specification
 - [ ] RFC 7807 error format & DX guideline checklist
 - [ ] Active mock server instance (Prism / WireMock)
-- [ ] API versioning strategy & deprecation lifecycle policy
+- [ ] Root compatibility policy recorded; versioning/deprecation lifecycle only for its opted-in scope
 
 ## Pitfalls
 | Temptation | Mitigation |
 |---|---|
 | Leaking DB schemas | Map internal DB entities to decoupled external DTO contracts |
-| Breaking backwards compat | Enforce additive changes only; use deprecation windows for breaking edits |
+| Breaking an opted-in compatibility promise | Honor the root-defined scope; no additive-only or deprecation default when OFF |
 | Inconsistent error formats | Mandate RFC 7807 Problem Details schema for all error responses |
 
 ## Approvers

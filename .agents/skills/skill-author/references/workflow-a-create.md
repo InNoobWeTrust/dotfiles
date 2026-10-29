@@ -81,6 +81,16 @@ into the body or an explicit reachable resource; do not leave it only in a desig
 
 1. **YAML frontmatter**: `name`, `description` (2-5 sentences with trigger phrases AND exclusion criteria). Use `\"` to escape internal quotes. Do NOT duplicate description content in the skill body.
 
+   Put artifact-maintenance records—not only their dates—in the frontmatter
+   `metadata` map: lifecycle/status, creation/revision, source-inspection snapshots,
+   retrospective ACI/test results and their limits, review triggers, owners and
+   follow-up tasks. Preserve existing fields and distinct event associations. Use
+   string values: quoted scalars or indented YAML literal blocks (`|-`) for longer
+   notes. Classify statements individually: operational instructions, safety
+   limits, substantive citations, historical records and teaching examples remain
+   in the body; do not bury required reader contracts in metadata. Remove empty
+   maintenance headings and align authoring templates with this convention.
+
 2. **Intro paragraph**: 1-2 sentences expanding the frontmatter with post-loading context.
 
 3. **Workflow phases**: One section per phase. Purpose, exact steps, artifacts. Mark mandatory explicitly.

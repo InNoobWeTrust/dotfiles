@@ -1,3 +1,11 @@
+---
+metadata:
+  lifecycle: "Prototype"
+  created: "2026-10-18"
+  review-after: "1–2 real uses or 2027-01-18"
+  aci-note: "ACI: source-level contract defines inputs, outputs, phase mapping, example, missing-capability behavior and unsafe shortcuts."
+---
+
 # Generative UI branch
 
 Use when model responses become interactive interfaces at runtime, not merely
@@ -131,11 +139,8 @@ Report the gap; do not install replacements, switch providers or fake validation
 | Repair forever or silently show partial results | Bound retries, label states and provide fallback |
 | Claim success from one pretty response | Verify failure cases, provenance and accessibility |
 
-## ACI and maintenance
+## Evidence limits and walkthrough
 
-- **ACI:** source-level contract defines inputs, outputs, phase mapping, example,
-  missing-capability behavior and unsafe shortcuts. Runtime compliance is unverified.
-- **Lifecycle:** Prototype, 2026-10-18. Review after 1–2 real uses or by 2027-01-18.
-  Paired walkthrough: ordinary UI keeps the existing path; runtime UI gains catalog,
-  stream and action checks; missing runtime access stops implementation. These are
-  walkthroughs, not measured improvements or executed application tests.
+Runtime compliance is unverified. Paired walkthrough: ordinary UI keeps the existing path; runtime UI gains catalog,
+stream and action checks; missing runtime access stops implementation. These are
+walkthroughs, not measured improvements or executed application tests.

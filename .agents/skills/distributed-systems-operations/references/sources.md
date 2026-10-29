@@ -1,6 +1,22 @@
+---
+metadata:
+  initial-source-sweep: "2026-10-15"
+  reduction-guidance-added: "2026-10-28"
+  reduction-guidance-note: |-
+    Added reduction guidance curates C13–C16 plus C1/C2: avoid
+    unnecessary work, combine locally when semantics permit, then bound execution.
+    The Google MapReduce paper's practitioner account of combiners/stragglers was
+    available only through indexed excerpts, not an end-to-end paper read; no
+    quantitative result, speculative-execution recommendation or speedup claim is
+    adopted from it. Conditional algebra and threshold rules are author synthesis;
+    source checks and desk cases do not establish agent competence or activation.
+  validation-history: "No jobs, benchmarks, restores, network partitions, CRDT applications or ledger transactions were run for this skill. No user platform's effective settings were inspected."
+  maintenance-review: "First use should record the selected platform/version, actual integration, bounded checks, failures, overhead and unknowns. Promote only guidance supported by that evidence; retain untested branches as conditional discovery gates, not generic repair commands."
+---
+
 # Operational source ledger
 
-Checked **2026-10-15**. These are primary product documents except the first-party incident account. They verify stated platform behavior, not this skill's runtime effectiveness or a reader's deployment. `latest`/`stable` URLs can change; recheck installed-version documentation before using defaults or issuing commands. Engineering integration patterns and the synthetic region example are author synthesis, not executed benchmarks or independently proven protocols.
+These are primary product documents except the first-party incident account; later per-source checks are identified below. They verify stated platform behavior, not this skill's runtime effectiveness or a reader's deployment. `latest`/`stable` URLs can change; recheck installed-version documentation before using defaults or issuing commands. Engineering integration patterns and the synthetic region example are author synthesis, not executed benchmarks or independently proven protocols.
 
 ## Compute
 
@@ -18,6 +34,10 @@ Checked **2026-10-15**. These are primary product documents except the first-par
 | C10 | [Spark Structured Streaming](https://spark.apache.org/docs/latest/streaming/apis-on-dataframes-and-datasets.html#using-foreach-and-foreachbatch) | Source/sink-dependent guarantees; `foreachBatch` at-least-once and batch-ID deduplication; rendered 4.2.0 |
 | C11 | [Hadoop documentation](https://hadoop.apache.org/docs/stable/) | HDFS/YARN/MapReduce separation and insecure-cluster warning; resolved 3.3.5, not a newest-release claim |
 | C12 | [Nextflow executors](https://docs.nextflow.io/en/latest/executor.html) | Executor launch/resource/storage boundary; exact cache/retry behavior not checked here |
+| C13 | [Java SE 21 Stream](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/Stream.html) | Checked 2026-10-28: short-circuit match operations, empty identities, associative reduction, ordering and side-effect limits; algebra is portable, APIs are Java-specific |
+| C14 | [Python concurrent futures](https://docs.python.org/3/library/concurrent.futures.html) | Checked 2026-10-28: cancellation cannot stop an already-running future; bounded `map(buffersize=...)` is Python 3.14+, not a portable older-version default |
+| C15 | [Hadoop MapReduce tutorial](https://hadoop.apache.org/docs/stable/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html) | Checked 2026-10-28: local combiners reduce transfer; task granularity must amortize overhead; no universal duration threshold adopted |
+| C16 | [PostgreSQL FDW planning](https://www.postgresql.org/docs/current/fdw-planning.html) | Checked 2026-10-28: cost-based filter/aggregation pushdown, clause reordering and concurrent-update rechecks; not permission to reorder arbitrary application effects |
 
 ## State and integrity
 
@@ -31,8 +51,6 @@ Checked **2026-10-15**. These are primary product documents except the first-par
 | S6 | [Rekor overview and auditing](https://docs.sigstore.dev/logging/overview/) | Inclusion/consistency evidence, monitoring/witnessing; not truth or universal nonrepudiation |
 | S7 | [Cloudflare incident and corrected classification](https://blog.cloudflare.com/a-byzantine-failure-in-the-real-world/) | Partial connectivity and recovery-automation cascade; omission fault, not evidence for mandatory BFT |
 
-## Evidence gaps and promotion criteria
+## Further research requirements
 
-- No jobs, benchmarks, restores, network partitions, CRDT applications or ledger transactions were run for this skill. No user platform's effective settings were inspected.
 - MPI fault recovery, Nextflow cache details, HDFS administration, BFT membership, validator/signing recovery and public compute/storage provider guarantees need further version-specific research before those actions.
-- First use should record the selected platform/version, actual integration, bounded checks, failures, overhead and unknowns. Promote only guidance supported by that evidence; retain untested branches as conditional discovery gates, not generic repair commands.

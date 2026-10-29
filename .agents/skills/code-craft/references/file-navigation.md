@@ -1,3 +1,10 @@
+---
+metadata:
+  maintenance-review: |-
+    Source interface: inputs, output, examples, placement and exception paths are explicit; runtime compliance and navigation benefit remain unverified.
+    Risks addressed: stale summaries, toolchain damage, context leakage and documentation sprawl; maps remain hints, not coverage claims.
+---
+
 # Code-file Navigation
 
 Give humans and agents a quick, source-local map of what a file does and where its
@@ -85,8 +92,6 @@ existing change summary/handoff; a module README remains an optional consumer
 entry point. Update affected entries of an existing authoritative project map when
 needed, but create no new project map merely to satisfy this convention.
 
-## ACI check and first use
+## Pilot
 
-- **Source interface:** inputs, output, examples, placement and exception paths are explicit; runtime compliance and navigation benefit remain unverified.
-- **Risks addressed:** stale summaries, toolchain damage, context leakage and documentation sprawl; maps remain hints, not coverage claims.
-- **Pilot:** on the first 1–2 representative uses, check native tooling and whether the reader can locate the main flows and affected consumers without the chat.
+On the first 1–2 representative uses, check native tooling and whether the reader can locate the main flows and affected consumers without the chat.

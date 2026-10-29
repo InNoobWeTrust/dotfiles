@@ -1,3 +1,8 @@
+---
+metadata:
+  maintenance-note: "This addition has source reconciliation and synthetic checks, not target-reader validation. After the first 1–2 real uses, review which placement decisions helped or obstructed the task; retain, revise, or remove guidance accordingly."
+---
+
 # Reader Path and Supporting Layers
 
 | Reader contract | Scope |
@@ -54,7 +59,7 @@ Use the same reader/task to compare the current and revised arrangement. First r
 
 These are synthetic editorial walkthroughs, not observed reader outcomes. For real validation, ask a target reader to complete the main task and find a supporting detail; record confusion, unnecessary jumps, and missing context without inventing improvement metrics.
 
-## Evidence and maintenance
+## Evidence
 
 These are conditional editorial judgments informed by the following guidance, not universal word-count rules or proof of a readability effect. Chicago is a separate editorial tradition; GOV.UK and DWP are related sources, not independent confirmations of the same footnote advice.
 
@@ -65,5 +70,3 @@ These are conditional editorial judgments informed by the following guidance, no
 | [DWP research report guidance](https://www.gov.uk/government/publications/dwp-research-reports-style-guide/dwp-research-reports-guidance) | Contents, standalone executive summary, and detailed methods/supporting material in appendices; publication-specific rules are not generic mandates |
 | [Google: Organizing large documents](https://developers.google.com/tech-writing/two/large-docs) | Task-oriented outlines, navigation, and concepts near use; longer tutorials and reference documents can still suit their readers |
 | [W3C: Headings](https://www.w3.org/WAI/tutorials/page-structure/headings/) | Semantic heading structure supports navigation, including assistive technology; not evidence for a specific note policy |
-
-**Maintenance:** This addition has source reconciliation and synthetic checks, not target-reader validation. After the first 1–2 real uses, review which placement decisions helped or obstructed the task; retain, revise, or remove guidance accordingly.

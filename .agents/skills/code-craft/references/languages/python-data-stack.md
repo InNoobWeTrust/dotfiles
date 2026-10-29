@@ -1,3 +1,9 @@
+---
+metadata:
+  documentation-checked: "2026-10-22"
+  validation-note: "Documentation checked from unversioned pages; no engine/Python/Ibis combination or operation matrix runtime-validated."
+---
+
 # Composable Data Stack: Ibis + DuckDB
 
 The modern data science and data engineering baseline in Python centers on the **Composable Data Stack**: **Ibis** (`ibis-framework`) as the universal dataframe interface, **DuckDB** as the default embedded OLAP execution engine, and **Apache Arrow** (`pyarrow`) as the standardized zero-copy in-memory interchange format.
@@ -18,7 +24,7 @@ Core DataFusion runs within one process using threads; it is not itself a distri
 - Define CPU/concurrency, query timeout/cancellation, query-memory and spill-disk budgets. DataFusion's execution memory pool is not a hard bound on total application memory: use process/container limits when required. Spill support is operator-dependent; verify it for the actual query rather than promise out-of-memory safety.
 - If packages or permitted runtime checks are unavailable, return the fit assessment and an explicit trial proposal; do not install dependencies or migrate automatically. Before an authorized trial, record exact Rust crate, Python package and Ibis versions for the chosen route. Compare representative identical inputs and output correctness under fixed resources, then end-to-end timing, peak memory, materialization and spill behavior against the existing engine. A proposed trial is not a benchmark result.
 
-**Evidence status:** documentation checked 2026-10-22 from unversioned pages; no engine/Python/Ibis combination or operation matrix runtime-validated. Recheck on engine or Ibis/backend upgrades, a newly required operator/connector, and after the first 1–2 real uses; confirm correctness and resource bounds before promoting a default.
+Recheck on engine or Ibis/backend upgrades, a newly required operator/connector, and after the first 1–2 real uses; confirm correctness and resource bounds before promoting a default.
 
 Sources: [DataFusion](https://datafusion.apache.org/), [positioning and execution scope](https://datafusion.apache.org/user-guide/faq.html), [Python](https://datafusion.apache.org/python/), [Ibis backend](https://ibis-project.org/backends/datafusion/) and [operation matrix](https://ibis-project.org/backends/support/matrix), [security and resource controls](https://datafusion.apache.org/library-user-guide/securing-datafusion.html), [Ballista](https://datafusion.apache.org/ballista/) and [Comet](https://datafusion.apache.org/comet/).
 

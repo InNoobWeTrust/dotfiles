@@ -1,3 +1,8 @@
+---
+metadata:
+  official-sources-read: "2026-10-15"
+---
+
 # Deployment-Target-Aware Training
 
 Use when the experiment must produce a model for a named edge device, runtime or
@@ -175,7 +180,7 @@ No export, compilation, package/kernel download, device access, firmware/applica
 deployment or training is authorized by this reference. Discover authorized tools;
 missing capabilities are limits, not permission to install or change infrastructure.
 
-## Official sources — read 2026-10-15
+## Official sources
 
 - [ONNX Runtime quantization](https://onnxruntime.ai/docs/performance/model-optimizations/quantization.html):
   QDQ/QOperator, static/dynamic calibration, error debugging, backend limits and

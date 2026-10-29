@@ -1,12 +1,29 @@
+---
+metadata:
+  sources-checked: "2026-10-15"
+  review-after: "1–2 authorized uses or 2027-01-15"
+  lifecycle: "Prototype selection brief"
+  validation-history: "No performance benchmark or cluster recovery test informed this brief. No attempt has been performed for this brief. No compute-specific practitioner incident was validated in this pass; runtime selection remains provisional."
+  aci-review: "ACI desk check: inputs and output are explicit; missing tools/timings return a measurement proposal; no-provider evaluation stays out of scope. This checks the interface, not runtime competence. Review after 1–2 authorized uses; retain failure evidence before promoting to an operational playbook."
+---
+
 # Parallel compute selection
 
-Source-backed **prototype selection brief**, checked 2026-10-15. For agents choosing how to execute an existing workload, not permission to install, submit jobs, rent machines, or send data elsewhere. No performance benchmark or cluster recovery test informed this brief. Use it for a narrow recommendation without the full architecture workflow.
+Source-backed selection brief. For agents choosing how to execute an existing workload, not permission to install, submit jobs, rent machines, or send data elsewhere. Use it for a narrow recommendation without the full architecture workflow.
 
 ## 1. Frame the workload before choosing a runtime
 
 Obtain the task, current implementation, representative input, output-equivalence criterion, bottleneck evidence, available CPU/RAM/GPU/storage, data-access policy, scheduler and resource/cost limits. If timings are absent, recommend a bounded profiling check rather than asserting a speedup.
 
 Separate the layers: a **runtime** executes tasks; a **scheduler** allocates resources; a **workflow engine** tracks dependencies and runs; **storage** holds inputs and outputs. These can compose: Nextflow → Slurm jobs → a tool using local threads. Adding a DAG library does not automatically distribute execution; see [dataflow selection](dataflow-stack-selection.md).
+
+Before selecting more workers or finer partitions, establish the output/reduction
+contract: decision-only versus every match/full diagnostics, per-item versus global
+stopping, merge/identity, coverage and unknown/error behavior. Rule out repeated
+O(accumulated-state) coordinator work with call-count/cost evidence; preserve
+accounting and publication guarantees. Obtain an algorithm/performance diagnosis
+when this evidence is missing; no available diagnostic capability means return
+the bounded measurement proposal, not an assumed benefit from a new runtime.
 
 Classify the work:
 - Independent inputs or parameter sweeps: each unit can finish without talking to peers.
@@ -48,17 +65,15 @@ Capabilities are discovered, not assumed: native profiler/CLI or an authorized i
 
 **Boundary:** millions of tiny function calls, one large shared mutable object, or a workload limited by shared storage may become slower with remote workers. Batch or improve the local engine first. If one computation needs frequent rank communication, an array alone does not solve it.
 
-**Next authorized attempt:** compare baseline and one candidate on the same small approved input, with fixed resource/concurrency limits and correctness checks; add a bounded worker-failure check only with permission. No attempt has been performed for this brief.
+**Next authorized attempt:** compare baseline and one candidate on the same small approved input, with fixed resource/concurrency limits and correctness checks; add a bounded worker-failure check only with permission.
 
-## Handoff and maintenance
+## Handoff
 
 Return: workload/evidence, chosen layer and rejected alternative, data placement, resource bound, correctness/retry contract, proposed measurement, unknowns and authority needed. Stop a recommendation when input privacy, output semantics, resource limits or necessary evidence remain unresolved.
 
-ACI desk check: inputs and output are explicit; missing tools/timings return a measurement proposal; no-provider evaluation stays out of scope. This checks the interface, not runtime competence. Review after 1–2 authorized uses or by 2027-01-15; retain failure evidence before promoting to an operational playbook.
-
 ## Sources and limits
 
-Primary documentation checked 2026-10-15; performance examples are vendor illustrations, not measurements of the reader's workload. No compute-specific practitioner incident was validated in this pass; runtime selection remains provisional.
+Performance examples in the checked primary documentation are vendor illustrations, not measurements of the reader's workload.
 
 - **S1** [Slurm job arrays](https://slurm.schedmd.com/job_array.html): concurrency caps, dependencies, ordering constraints.
 - **S2** [Nextflow executors](https://docs.nextflow.io/en/latest/executor.html): workflow/executor separation and storage requirements.

@@ -2,10 +2,14 @@
 name: ml-training
 description: "Choose libraries and plan, debug, preflight, monitor and recover classical/tabular ML, vision, audio, time-series and multimodal training/fine-tuning, including training for edge or hardware-specific deployment. Prefer Hugging Face for compatible neural workflows; verify learning, evaluation, durable metrics and recoverable artifacts. Use for 'train a model', 'fine-tune', 'cross-validation', 'multimodal', 'FlashAttention', 'train for edge', 'ONNX/TFLite target', 'validation curve' or 'recover a run'. Excludes hypothesis-only research, inference-only packaging and LLM agent model benchmarking."
 metadata:
-  lifecycle: prototype
+  lifecycle: "prototype"
   created: "2026-10-15"
   updated: "2026-10-15"
   review-after: "1–2 real uses or 2027-01-15"
+  maintenance-review: |-
+    After 1–2 authorized uses check task/API fit, tiny-set learning, cadence after batching,
+    classical fit/reload, modality/attention/target semantics, missing events and retention.
+    Source walkthroughs do not prove live training safeguards work.
 ---
 
 # ML Training
@@ -139,9 +143,3 @@ restart user jobs. Do not claim monitoring without a real owner/wake-up path.
 | Keep only best/latest for all claims | Rotation erases trajectory states | Budget claim-specific snapshots |
 | Plot `loss` as validation | Names need provenance | Trace loader and event origin |
 | Missing curve means rerun everything | Existing scores/states may suffice | Inventory and recover first |
-
-## Prototype validation
-
-After 1–2 authorized uses check task/API fit, tiny-set learning, cadence after batching,
-classical fit/reload, modality/attention/target semantics, missing events and retention.
-Source walkthroughs do not prove live training safeguards work.

@@ -2,9 +2,13 @@
 name: decision-support
 description: Consult an existing decision-support capability for meaningful choices among plausible options, autonomous next steps, recommendations before asking the user, and worker continue-versus-return triage. Use proactively when trade-offs or uncertainty matter; skip trivial deterministic choices. Harness- and provider-independent; advisory output does not replace evidence, user authority, mandatory stops, domain workflows or independent review.
 metadata:
-  lifecycle: prototype
+  lifecycle: "prototype"
   created: "2026-10-15"
   review-after: "2026-11-15"
+  maintenance-review: |-
+    Prototype: audit after representative primary and worker uses, including an error
+    case; review by the metadata date. Do not infer adoption or effectiveness from
+    registration alone.
 ---
 
 # Decision Support
@@ -84,7 +88,3 @@ the advisory estimate. No separate file or raw consultation transcript is needed
 | Worker can run one safe targeted check or return partial findings | Consult if the trade-off is unresolved; primary retains scope ownership |
 | Test deterministically identifies a missing required argument | Fix within scope without consulting |
 | Worker needs unauthorized network access | Return the blocker; do not ask the model to grant access |
-
-Prototype: audit after representative primary and worker uses, including an error
-case; review by the metadata date. Do not infer adoption or effectiveness from
-registration alone.

@@ -1,3 +1,17 @@
+---
+metadata:
+  revised: "2026-10-09"
+  lifecycle: "Prototype"
+  review-task: "Validate on the first 1–2 real deliveries: mode respected; technical choices resolved without unnecessary user stops; bounded jobs canceled/cleaned; current multi-perspective evidence obtained; handoff understandable; feedback resumes safely."
+  aci-pass: |-
+    ACI result: PASS for the source interface; operational adoption UNVERIFIED.
+    Main risks: autonomy mistaken for permission, unbounded processes/spending, rubric weakening,
+    reviewer groupthink, stale evidence, and unreadable documentation.
+    Interface controls: explicit decision owner, separate unattended readiness, null aggregate caps,
+    fail-closed verifier template, independent release gate, freshness binding, checkpoint/cleanup,
+    and final human acceptance.
+---
+
 # Procedure: autonomous ownership with bounded execution
 
 Read before implementing a controller, verifier, state or AFK execution. Apply [Authorized delivery](../delivery.md): establish outcome, explicit action authority, isolated writable/network surfaces, per-job time/resource limits, cancellation, persistent state and observed cleanup. AFK does not grant permission. Recursive/process-tree or stress workloads need an explicitly constrained container/VM, not host execution. Use available compatible sandboxes; a denial is not permission to retry unrestricted or increase budgets.
@@ -109,8 +123,4 @@ On delivery, emit `STOP_SUCCESS` only for ready-for-user-acceptance. Supply arti
 
 ## Interface/prototype checkpoint
 
-Lifecycle: **Prototype**, revised 2026-10-09. Source/verifier checks do not prove a harness can persist AFK execution across disconnects. Validate on the first 1–2 real deliveries: mode respected; technical choices resolved without unnecessary user stops; bounded jobs canceled/cleaned; current multi-perspective evidence obtained; handoff understandable; feedback resumes safely.
-
-ACI result: **PASS for the source interface; operational adoption UNVERIFIED**. Independent source reviews and controlled guidance-interpretation scenarios support the contract, not real-delivery or AFK lifecycle guarantees.
-
-Main risks: autonomy mistaken for permission, unbounded processes/spending, rubric weakening, reviewer groupthink, stale evidence, and unreadable documentation. Interface controls: explicit decision owner, separate unattended readiness, null aggregate caps, fail-closed verifier template, independent release gate, freshness binding, checkpoint/cleanup, and final human acceptance.
+Source/verifier checks do not prove a harness can persist AFK execution across disconnects. Independent source reviews and controlled guidance-interpretation scenarios support the contract, not real-delivery or AFK lifecycle guarantees.

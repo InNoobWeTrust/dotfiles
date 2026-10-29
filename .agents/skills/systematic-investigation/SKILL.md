@@ -1,6 +1,6 @@
 ---
 name: systematic-investigation
-description: "Use this skill when debugging, troubleshooting, or investigating why something is broken or behaving unexpectedly. Applies structured frameworks (5 Whys, Fishbone, First Principles, OODA) to find root causes before attempting fixes. Also use for pre-mortems, assumption challenges, and architectural decisions that need rigorous analysis. Activate when the user is stuck in circles, facing recurring failures, or asks \"why does this keep happening\" — even if they frame it as \"just fix this bug.\""
+description: "Use this skill when debugging, troubleshooting, or investigating why something is broken or behaving unexpectedly, including slowness, poor scaling, stalled workers and scaling regressions. Applies structured frameworks (5 Whys, Fishbone, First Principles, OODA) to find root causes before attempting fixes. Also use for pre-mortems, assumption challenges, and architectural decisions that need rigorous analysis. Activate when the user is stuck in circles, facing recurring failures, or asks \"why does this keep happening\" — even if they frame it as \"just fix this bug.\""
 ---
 
 # Systematic Investigation
@@ -28,6 +28,7 @@ DEFINE → ANALYZE → SOLVE & ACT → CHALLENGE
 | Stakeholder report | A3 | Solve | `solve-and-challenge.md` |
 | Multi-concern mess | Kepner-Tregoe SA | Define | `define-and-debug.md` |
 | Technical bug / test fail | Debug protocol (4 sub-phases) | All | `define-and-debug.md` |
+| Slowness / poor scaling / stalled workers | Critical-path and repeated-work diagnosis | Define → Analyze | [Performance diagnosis](references/performance-diagnosis.md) |
 
 Load **one** deep ref at a time. Elicitation second pass: `references/elicitation-methods.md`. Origins: `references/origins.md`.
 

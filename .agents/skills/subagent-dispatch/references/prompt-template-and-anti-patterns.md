@@ -45,7 +45,7 @@ contract decision remains open; no plan file is required for that exception.]
 6. Explicit out-of-scope list: [...]
 7. Acceptance criteria and required evidence: [...]
 8. Stop conditions: [see below]
-9. Approved materialization choices: [unit-relevant capability → selected library/tool/API; compatibility; rationale and accessible language/API reference sources; authorized dependency-file changes; approved exceptions/prohibited substitutions; actual reuse evidence. Use implementation-payload-and-preflight.md's materialization contract, or explicit N/A + rationale. Confirm required sources before coding; missing choices → INCOMPLETE; incompatible choices → INCOMPLETE: CONTRACT_DEFECT, never silent fallback.]
+9. Human-approved materialization choices: [unit-relevant capability → selected library/tool/API; compatibility; rationale and accessible language/API reference sources; authorized dependency-file changes; approved exceptions/prohibited substitutions; actual reuse evidence. Use implementation-payload-and-preflight.md's materialization contract, or explicit N/A + rationale. Confirm required sources before coding; missing choices → INCOMPLETE; incompatible choices → INCOMPLETE: CONTRACT_DEFECT, never silent fallback.]
 
 If you find zero or multiple units, missing acceptance criteria/evidence, an
 unresolved design or contract decision, or a request that expands scope: do
@@ -155,7 +155,7 @@ Run through this before every delegated worker launch:
 - [ ] **Scope**: Does the prompt name the exact files, URLs, or data — not a vague domain?
 - [ ] **Cumulative requirements**: Are earlier applicable constraints preserved with sources, rather than replaced by latest steering? When required, is a separate dedicated checker assigned with original requirement evidence and revision-bound whole-baseline coverage?
 - [ ] **Code target — exactly one unit**: If dispatching implementation to code implementer, does the prompt carry exactly one selected functional unit (plan pasted as context only), with the dispatch basis declared (approved plan / Active Milestone Packet, or explicit `Atomic patch exception`)?
-- [ ] **Code target — unit payload complete**: Are all nine fields bounded — plan basis/exception rationale, unit ID + one-sentence outcome, exact writable surface, contracts/invariants, satisfied prerequisites, explicit out-of-scope list, acceptance criteria/evidence, stop conditions, approved materialization choices?
+- [ ] **Code target — unit payload complete**: Are all nine fields bounded — plan basis/exception rationale, unit ID + one-sentence outcome, exact writable surface, contracts/invariants, satisfied prerequisites, explicit out-of-scope list, acceptance criteria/evidence, stop conditions, human-approved materialization choices?
 - [ ] **Code target — no stop-before-dispatch condition**: Confirm none of these holds: zero or multiple units · missing acceptance criteria/evidence · an unresolved design or contract decision · a scope-expansion request. If one holds, do NOT dispatch; report `INCOMPLETE` + continuation state to the main orchestrator instead.
 - [ ] **Delivery Contract**: When the phased-delivery trigger applies, does every implementation, exploration, or review prompt include the canonical populated contract plus scope-expansion, adjacent-work, and continuation/resumption instructions?
 - [ ] **Return contract**: Does the chosen report or receipt preserve observed evidence, obstacles, uncertainty, and completion state without unnecessary output?

@@ -1,6 +1,19 @@
+---
+metadata:
+  sources-inspected: "2026-10-23"
+  validation-history: |-
+    No applications were modified or benchmarked to prove this guide effective.
+    Documentation capabilities, practitioner accounts and source-interface walkthroughs
+    are not executed recovery/performance evidence. Agent-specific productivity,
+    universal graph thresholds, instrumentation budgets and generic replay guarantees
+    remain unestablished. DVC pages were unavailable; no DVC-specific advice is based
+    on them. The published core avoids relying on inaccessible practitioner material.
+  maintenance-review: "After 1–2 real uses, retain/revise/remove prototype guidance from observed outcomes rather than adoption or prose quality alone."
+---
+
 # Sources, conditional judgments and limits
 
-Public sources inspected 2026-10-23 by separate configuration, structure,
+Public sources inspected by separate configuration, structure,
 reproducibility and developer-workflow research roles, followed by cross-role
 discussion and an independent different-model-family source challenge. This guide
 is a synthesis; sources do not prescribe its exact workflow or guarantee benefits.
@@ -58,12 +71,5 @@ are conditional synthesis, not a standardized schema or quantified overhead rule
 
 ## Evidence gaps and validation scope
 
-No applications were modified or benchmarked to prove this guide effective.
-Documentation capabilities, practitioner accounts and source-interface walkthroughs
-are not executed recovery/performance evidence. Agent-specific productivity,
-universal graph thresholds, instrumentation budgets and generic replay guarantees
-remain unestablished. DVC pages were unavailable; no DVC-specific advice is based
-on them. The published core avoids relying on inaccessible practitioner material.
 Future applications must verify their own tools/versions, defaults, edges, state
-and side effects; after 1–2 real uses, retain/revise/remove prototype guidance from
-observed outcomes rather than adoption or prose quality alone.
+and side effects.

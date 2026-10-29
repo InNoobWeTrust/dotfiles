@@ -1,3 +1,12 @@
+---
+metadata:
+  aci-pass: |-
+    Result: PASS.
+    Risks: unsafe activation; stale tool guidance.
+    Upgrades: explicit inputs/output receipt/ineligibility/hard stop; profile-specific avoid-when
+    fields; progressive disclosure.
+---
+
 # Rapid-Demo Profile
 
 Use this guide only after A1 explicitly selects `rapid-demo` for a hackathon, prototype, rapid demo, or funding demo. It is a bounded local-first, synthetic-data MVP profile—not production architecture or deployment guidance.
@@ -62,9 +71,3 @@ Before continuing beyond the demo, make a fresh architecture, security, and data
 - Vercel deployments: <https://vercel.com/docs/deployments>
 - Cloudflare Workers local development: <https://developers.cloudflare.com/workers/local-development/>
 - Expo environment setup: <https://docs.expo.dev/get-started/set-up-your-environment/>
-
-## ACI Pass
-
-- Result: **PASS**
-- Risks: unsafe activation; stale tool guidance.
-- Upgrades: explicit inputs/output receipt/ineligibility/hard stop; profile-specific avoid-when fields; progressive disclosure.

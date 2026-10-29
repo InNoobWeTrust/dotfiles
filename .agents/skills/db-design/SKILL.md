@@ -1,6 +1,6 @@
 ---
 name: db-design
-description: "Use this skill for operational database design — OLTP schema modeling, 1NF-3NF normalization, PK/FK strategies (UUIDv7/ULID), indexing optimization, structural constraints, state auditing, concurrency/locking, zero-downtime migrations, strongly-typed repository DTO mapping, and ORM-safe enum storage patterns that preserve backward-compatible rollouts. It produces schema and migration contracts; implementation and broad system architecture are separate responsibilities."
+description: "Use this skill for operational database design — OLTP schema modeling, 1NF-3NF normalization, PK/FK strategies (UUIDv7/ULID), indexing optimization, structural constraints, state auditing, concurrency/locking, recovery-safe migrations, strongly-typed repository DTO mapping, and ORM-safe enum storage. Backward compatibility requires root engineering opt-in; rolling coexistence may separately serve authorized availability needs. It produces schema and migration contracts; implementation and broad system architecture are separate responsibilities."
 ---
 
 # Database Design (`db-design`)
@@ -8,6 +8,17 @@ description: "Use this skill for operational database design — OLTP schema mod
 Operational database engineering across the full lifecycle: schema modeling, indexing, constraints, concurrency, migrations, and strongly-typed repository mapping.
 
 Progressive disclosure: this file is the decision gate and router. Deep technical guidelines live in `references/`.
+
+Before schema/interface or migration design, research and present the relevant
+existing/native/standard-library and established engine/driver/tool stack, APIs,
+sources/constraints, alternatives and custom insufficiency; require the human's
+approval source plus task/scope/proposal revision. Read-only discovery may precede
+approval, design/prototypes may not. Primary/architect/tool approval cannot replace
+it. Reuse unchanged same-task approval; reapprove material stack/custom changes.
+Missing receipt, required source or tool stops affected design as UNVERIFIED.
+Backward compatibility is OFF unless actual root engineering docs affirmatively
+enable it with scope; unavailable evidence is unknown. Data/recovery safety and
+authorized availability remain required independently of legacy preservation.
 
 | Concern | Load |
 |---|---|
@@ -17,7 +28,7 @@ Progressive disclosure: this file is the decision gate and router. Deep technica
 | Integrity, structural constraints, enum storage, FK rules | `references/integrity-constraints.md` |
 | State changes, soft deletes, audit history | `references/state-auditing-history.md` |
 | Optimistic locking, MVCC, concurrency | `references/concurrency-locking.md` |
-| Zero-downtime migrations (expand-contract) | `references/migrations-evolution.md` |
+| Recovery-safe schema evolution; expand-contract when required | `references/migrations-evolution.md` |
 | Strongly-typed DTO / Repository mapping | `references/typed-mapping.md` |
 
 ---
@@ -48,7 +59,7 @@ Every database schema design delivered by an agent MUST pass these 7 gates:
 1. **Primary Key Choice**: Use **UUIDv7** or **ULID** for distributed/API entities (time-sortable + B-tree index friendly); `BigInt` auto-increment for internal-only lookup tables. Never random UUIDv4 as PKs.
 2. **Schema Normalization**: Design in **3NF** by default. Do not use JSONB/Document columns as a substitute for structured relational tables.
 3. **Indexing Strategy**: Every foreign key and query predicate (`WHERE`, `JOIN`, `ORDER BY`) MUST be evaluated for index coverage. Composite indexes must follow the leftmost prefix rule.
-4. **Data Integrity**: Enforce structural constraints at the database level (`NOT NULL`, `FOREIGN KEY ON DELETE RESTRICT/CASCADE`, `UNIQUE`). Use `CHECK` constraints selectively for stable physical invariants (e.g. non-negative amounts, start/end ordering), not as the default mechanism for ORM/application enums or mutable workflow states. For app-domain enums, prefer plain string storage plus application-level validation so rolling deploys, deprecated values, and rollbacks remain backward-compatible.
+4. **Data Integrity**: Enforce structural constraints at the database level (`NOT NULL`, `FOREIGN KEY ON DELETE RESTRICT/CASCADE`, `UNIQUE`). Use `CHECK` constraints selectively for stable physical invariants (e.g. non-negative amounts, start/end ordering), not as the default mechanism for ORM/application enums or mutable workflow states. For app-domain enums, prefer plain string storage plus application-level validation; justify the representation against current integrity/recovery needs, not automatic preservation of deprecated values. Rolling coexistence applies only to opted-in compatibility or actual availability needs.
 5. **State & History**: No naive `is_deleted` flags without partial indexes (`WHERE is_deleted = false`). Use append-only audit log tables or CDC for immutable historical tracking.
 6. **Concurrency**: High-contention entities MUST include an optimistic locking column (`version INT DEFAULT 1`).
 7. **Strongly-Typed Repository Mapping**: Query results MUST map to explicit DTOs/Entities (e.g. `@dataclass`, Pydantic `BaseModel`, TS `interface`, Go/Rust `struct`). Returning raw tuples or untyped dicts is forbidden.
@@ -60,7 +71,7 @@ The 7 gates check the **schema design**, but the depth of evidence required depe
 | Artifact | What the gates check | What belongs elsewhere |
 |---|---|---|
 | **Engineering design doc (TRD)** | The design *specifies* PK strategy (e.g. "UUIDv7"), normalization level, audit model, concurrency approach, and typed contracts. ER diagram shows entities, relationships, key types. | Exact DDL, index definitions, migration scripts, repository method signatures — these are implementation details for the code phase. |
-| **Implementation / migration script** | The code *enforces* all 7 gates in actual DDL: `CREATE TABLE` with `NOT NULL`, `FK`, `UNIQUE`, selective invariant `CHECK`, `CREATE INDEX`, `version` column, typed repository returns. ORM/application enums may intentionally remain plain string columns with app-level validation for compatibility-safe rollouts. | Design rationale, ADR, alternative analysis — these belong in the TRD. |
+| **Implementation / migration script** | The code *enforces* all 7 gates in actual DDL: `CREATE TABLE` with `NOT NULL`, `FK`, `UNIQUE`, selective invariant `CHECK`, `CREATE INDEX`, `version` column, typed repository returns. ORM/application enums may remain plain strings with app-level validation; old/new coexistence is conditional on root policy or actual availability needs. | Design rationale, ADR, alternative analysis — these belong in the TRD. |
 | **Code review (PR)** | The diff *implements* the gates correctly: no raw tuples, no missing indexes, no naive soft-delete, no missing FK. | Design-level questions — defer to TRD review. |
 
 **Do not fail a design doc for not containing implementation DDL.** A TRD that specifies "UUIDv7 PK, 3NF, append-only audit with polymorphic target, optimistic locking on mutable entities, typed repository DTOs" has passed the gates at the design level. The exact `CREATE INDEX` statements belong in the migration script.
@@ -84,8 +95,8 @@ The 7 gates check the **schema design**, but the depth of evidence required depe
 
 - **Illustration-first**: Include an ER diagram (`mermaid erDiagram`) for all schema proposals.
 - **Explicit types over tuples**: DB repositories must NEVER return positional tuples or untyped dicts.
-- **Zero-downtime migrations**: Schema changes on live databases must use the Expand-Contract pattern. Never run destructive `DROP COLUMN` without a prior contract phase.
-- **Compatibility-first enum storage**: For application-domain enums/status fields in ORM-backed services, prefer plain string columns plus typed application mapping/validation. Do not default to DB `ENUM` types or allowed-value `CHECK` lists unless the value set is truly immutable and schema-coupled deployment is acceptable.
+- **Recovery-safe migrations**: Require authorized data changes, validated recovery and availability bounds. Use Expand-Contract when root-opted-in rolling compatibility or actual availability requires coexistence, not for every live schema change. Opt-out never authorizes destructive DDL or data loss.
+- **Enum storage fit**: For application-domain enums/status fields, prefer plain strings plus typed mapping/validation. Do not default to DB `ENUM` or allowed-value `CHECK` lists unless immutable/schema-coupled deployment fits; do not retain deprecated values solely for unrequested compatibility.
 - **No unindexed JSONB queries**: If a JSONB field is queried in a `WHERE` clause, it MUST have a GIN index or expression index.
 
 ---
@@ -96,9 +107,9 @@ The 7 gates check the **schema design**, but the depth of evidence required depe
 - [ ] Primary key strategy specified (UUIDv7 / ULID / BigInt)
 - [ ] Foreign keys and UNIQUE indices defined
 - [ ] Any `CHECK` constraints are justified as stable invariants rather than default enum/status gates
-- [ ] Enum/storage compatibility strategy documented for persisted app-domain states
+- [ ] Enum/storage integrity and recovery strategy; root compatibility scope recorded when enabled
 - [ ] Index strategy documented with target query access patterns
-- [ ] Migration strategy (Expand-Contract plan if modifying existing schema)
+- [ ] Authorized recovery-safe migration strategy; Expand-Contract only when coexistence is required
 - [ ] Strongly-typed DTO / Repository interface definition
 
 ---
@@ -112,5 +123,5 @@ The 7 gates check the **schema design**, but the depth of evidence required depe
 - `references/integrity-constraints.md` — Database-level safety & constraints
 - `references/state-auditing-history.md` — Soft deletes vs audit tables vs temporal logs
 - `references/concurrency-locking.md` — Optimistic locking & isolation levels
-- `references/migrations-evolution.md` — Zero-downtime schema evolution
+- `references/migrations-evolution.md` — Recovery-safe evolution and conditional zero-downtime techniques
 - `references/typed-mapping.md` — Strongly-typed DTO / Repository return mapping

@@ -1,6 +1,10 @@
 ---
 name: game-theory
 description: "Use when outcomes depend on other people's choices: why won't they cooperate, will people adopt it, who can veto, how will others respond, is that promise credible, or will this incentive backfire. Apply game theory to incentives, coordination, bargaining, information, power and institutional change alongside the owning domain skill. Not for mechanical or actor-free technical tasks, evidence-free motive attribution, or harmful manipulation."
+metadata:
+  prototype: "2026-10-22"
+  review-after: "1–2 real uses or 2027-01-22"
+  review-criteria: "Review after 1–2 real uses for useful predictions, unsupported attribution, missed actors and unnecessary analytical overhead."
 ---
 
 # Game Theory
@@ -129,6 +133,5 @@ not an invented final decision, to the workflow that requested the analysis.
 | Strategy means defeating another party | Many games admit mutual gains | Improve rules and consider all affected groups |
 | Discard norms or treat them as infallible | Both skip causal and value analysis | Examine their function, evidence and consequences |
 
-**Prototype — 2026-10-22.** Source checks and walkthroughs are not demonstrated agent
-improvement. Review after 1–2 real uses, or by 2027-01-22, for useful predictions,
-unsupported attribution, missed actors and unnecessary analytical overhead.
+Source checks and walkthroughs are not demonstrated agent
+improvement.

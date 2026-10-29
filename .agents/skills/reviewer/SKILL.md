@@ -25,6 +25,14 @@ Apply [source-first, two-way review](references/core-review.md) within the exist
 
 For an assigned cold-reader / “Goldfish” pass, use [cold-reader techniques](references/cold-reader.md): optional implementation-ready explainback or scoped approved-contract drift, not another universal phase. Require fresh-context evidence and neutral inputs; retain all existing review gates and small-task exceptions.
 
+**Mandatory for code, design, stack or materialization review, including Quick:**
+apply [actual reuse and human approval review](references/reuse-review.md). Obtain
+the researched proposal and current human receipt before judging authorization;
+inspect actual capability/API delegation, not imports. Report all library-free
+units and numerical reuse-policy deductions directly to the user, including approved
+custom work. Missing historical receipts in an existing-code audit mean unknown,
+not presumed misconduct. This gate is not optional structural polish.
+
 ## Gate 3 — Contract-Bounded Phase Review
 
 Before relying on a new/changed automated reviewer or reducing scrutiny based on
@@ -34,7 +42,7 @@ relaxing established controls.
 
 When the artifact belongs to phased delivery, obtain the populated delivery
 contract or active packet before
-judging it. Require that input to identify outcome, must-ship/may-defer/never-defer requirements, scope/prerequisites, acceptance evidence, hard invariants and recovery/compatibility obligations, approved behavior and consumer interfaces, current unit/authority/stops, and review/corrective-pass budget. Apply the supplied contract; do not invent its lifecycle,
+judging it. Require that input to identify outcome, must-ship/may-defer/never-defer requirements, scope/prerequisites, acceptance evidence, hard invariants and recovery obligations, root-opted-in compatibility scope (OFF if checked and silent, unknown if unavailable), human-approved stack/receipt, approved behavior and consumer interfaces, current unit/authority/stops, and review/corrective-pass budget. Apply the supplied contract; do not invent its lifecycle,
 classification, budgets, compromise schema, or trajectory table here. If phased delivery applies and the contract is missing, stop and request it. Choose formal review artifacts proportionately to coordination need per that contract.
 
 Every finding must include evidence, severity, and exactly one canonical

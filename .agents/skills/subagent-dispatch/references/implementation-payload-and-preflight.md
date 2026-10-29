@@ -1,3 +1,16 @@
+---
+metadata:
+  prototype: "2026-10-28"
+  aci-pass: |-
+    Result: PASS for the source interface; live implementer compliance remains unverified.
+    Main risks: inherited-guidance assumptions, vague dependency lists, unused imports, silent
+    fallback, and selection mistaken for installation authority.
+    Upgrades: capability/API mapping, compatibility and accessible sources, explicit exception owner,
+    scoped dependency edits, and call-site/behavior evidence.
+    Prototype: inspect the next 1–2 real implementation handoffs for choice retention and actual
+    reuse before claiming effectiveness.
+---
+
 # Implementation Dispatch Payload and Preflight
 
 Read this reference before dispatching to a code implementer. The main orchestrator selects one approved functional unit; a full plan may be provided only as context and is never executable scope.
@@ -23,7 +36,10 @@ Bound all fields before launch:
 6. Explicit out-of-scope list.
 7. Acceptance criteria and required evidence.
 8. Stop conditions.
-9. Approved materialization choices: the unit-relevant capability-to-library/API mapping defined below, or an explicit `N/A` with rationale when no capability choice is affected. Required for both dispatch bases.
+9. Human-approved materialization choices and receipt: task/scope, proposal revision,
+   human approval source and unit-relevant capability/API mapping. `N/A` new choices
+   can describe unchanged mechanics, never waive the current human stack receipt.
+   Required for both dispatch bases, even prose, utilities and atomic patches.
 
 ## Structural context — part of the unit handoff
 
@@ -33,22 +49,29 @@ Workers return actual placement and edge changes, relevant source/check evidence
 
 ## Materialization choices — part of the implementation contract
 
-Core logic and interface signatures are not enough: specify which established capabilities must implement them. The primary resolves choices using repository dependencies/conventions, explicit user constraints, and the smallest applicable approved language/API reference or pattern-catalog result. Carry the approved unit-relevant rows from the plan into the dispatch; do not leave a worker to infer selections from a skill name, broad plan link, or remembered coding patterns.
+Core logic and interface signatures are not enough: specify which established capabilities must implement them. The primary researches existing/native/standard-library and established choices using current sources and task constraints; the **human explicitly approves the presented stack before any design or implementation**. Read-only discovery/research/review may precede it, not interfaces, schemas, module plans or prototypes. Carry approved unit-relevant rows and the human receipt into dispatch; never infer selections from skill names, broad plans or remembered patterns.
 
 Record these fields in the existing plan/phase file (inline for an atomic patch); no separate registry is required:
 
 | Field | Required content |
 |---|---|
 | Capability → selected provider | Concrete package/tool/platform and required API/entry point; select one, not an unresolved list of alternatives. |
+| Human receipt | Task/scope, proposal revision, explicit human approval source, conditions/fallbacks; primary plan approval is not stack approval. |
 | Compatibility | Repository-resolved version or supported range/runtime constraints; consult current API documentation, not guessed signatures. |
 | Basis and guidance | Brief rationale, repository evidence, applicable approved language/pattern reference section, and authoritative API docs or a repository usage example. |
 | Dependency surface | Existing dependency or approved addition; name allowed manifest/lockfile changes within the locked writable surface. Selection is not permission to install packages or use network. |
 | Exceptions and prohibitions | Approved deviations and rationale, or `NONE`; identify substitutions/custom reimplementations that are forbidden. |
 | Acceptance evidence | Actual call sites using the selected APIs plus relevant behavior checks; an installed or unused import alone is not evidence. |
 
-For new or substantially changed structured CLIs, prefer the established parser recommended by accessible stack guidance or repository convention, rather than defaulting to hand parsing or a lower-level built-in interface from training memory. Preserve compatible repository choices; a small-utility standard-library choice or another deviation must be explicit and primary-approved with its suitability rationale, not invented by the implementer. This does not require new dependencies for unrelated patches or override repository/user constraints. Library recommendations stay with the applicable approved reference; this contract carries the researched selection, not a duplicated library catalog.
+For new or substantially changed structured CLIs, prefer the established parser recommended by accessible stack guidance or repository convention, rather than defaulting to hand parsing or a lower-level built-in interface from training memory. Preserve compatible repository choices; a small-utility standard-library choice or another deviation must be explicit and human-approved with its suitability rationale, not invented by the implementer. This does not require new dependencies for unrelated patches or override repository/user constraints. Library recommendations stay with the applicable approved reference; this contract carries the researched selection, not a duplicated library catalog.
 
-Supply worker-accessible guidance/doc paths or scoped excerpts and permit their reads. Before coding, the worker confirms the selected API and compatibility against those sources. Missing choices or inaccessible required sources → `INCOMPLETE`; an unavailable/incompatible selected library/API → `INCOMPLETE: CONTRACT_DEFECT` with evidence and a proposed adjustment for the primary. Never silently substitute, vendor, or reimplement the capability. Approval follows Delivery Ownership; reapprove and propagate a changed choice before dependent work resumes.
+Supply accessible guidance/docs or excerpts and permit their reads. Before design/
+code, confirm the human receipt and actual API/runtime suitability. Missing choices,
+receipt or sources → `UNVERIFIED`/`INCOMPLETE`; unavailable API/tool → contract defect
+with evidence. Never silently substitute, vendor, mock or reimplement it. Reuse only
+unchanged same-task approval; changed providers/material API/runtime constraints or
+custom exceptions need HUMAN reapproval before dependent work. AFK needs approved
+fallbacks or a halt. Selection never authorizes installation/network effects.
 
 ### Example: Python multi-command CLI
 
@@ -66,14 +89,16 @@ Evidence: command definitions and invocation use Typer; check --help,
 
 Resolve guidance paths against the worker's accessible instruction root and confirm repository/version facts before dispatch; the example is a contract shape, not a claim about the current repository.
 
-### ACI Pass / prototype
-
-- Result: PASS for the source interface; live implementer compliance remains unverified.
-- Main risks: inherited-guidance assumptions, vague dependency lists, unused imports, silent fallback, and selection mistaken for installation authority.
-- Upgrades: capability/API mapping, compatibility and accessible sources, explicit exception owner, scoped dependency edits, and call-site/behavior evidence.
-- Prototype: 2026-10-14; inspect the next 1–2 real implementation handoffs for choice retention and actual reuse before claiming effectiveness.
-
-For a rewrite, overhaul, or delete-and-rebuild unit, classify each old semantic/interface as **delete** or **preserve** according to the approved scope. Settle contracts retained for consumers outside the unit, or obtain explicit authorization for their change/removal; do not presume compatibility stubs are required. Include approved obsolete-file deletion and in-scope reference cleanup, not pointer-only replacements for paths approved for removal. Report unresolved outside-consumer impact rather than assuming no consumers.
+For rewrites classify each old semantic/interface as **delete** or **preserve**
+within approved scope. Backward compatibility is OFF unless actual root engineering
+docs explicitly enable it with scope; a bare link, nested ADR, existing client or
+old test is not opt-in. Unavailable root evidence is unknown. Settle required
+current task contracts and opted-in promises, not automatic legacy retention for
+outside consumers. Include approved deletion/reference cleanup, not pointer stubs.
+Report known consumers as consequences; investigate unknown required current/
+outside-consumer contracts proportionately, mark UNVERIFIED and pause only dependent
+work. Opt-out never authorizes new scope, unrelated deletion, data loss or unsafe
+effects. Security, data/recovery and authorized availability remain distinct duties.
 
 ## Stop-before-dispatch conditions
 
@@ -86,11 +111,11 @@ Do not dispatch without one coherent approved unit, scope, acceptance evidence, 
 - [ ] Exactly one accepted dispatch basis is declared.
 - [ ] Material cross-component design has the current independent challenge receipt (responsibility/dependency direction, consumers and simpler alternative examined by a separate instance), regardless of author; or no material design is changed. Primary approval alone is insufficient.
 - [ ] Every required unit-payload field is bounded.
-- [ ] Materialization choices are resolved and primary-approved (or explicitly N/A); the dispatch carries the unit-relevant rows, accessible guidance/API sources, dependency-edit scope, and reuse evidence. Missing/incompatible choices block implementation, including atomic patches.
+- [ ] Current human approval receipt and resolved materialization choices are carried with API sources, dependency-edit scope and actual reuse evidence. N/A new choices does not waive approval; missing/incompatible evidence blocks affected design/code, including atomic patches.
 - [ ] Required consumer signatures/schema/errors are settled; no invented business semantics or unapproved public contract changes.
 - [ ] Writable scope, disjoint ownership and cleanup are explicit; exact file deltas are conditional on coordination needs.
 - [ ] Rewrite semantics/interfaces are classified delete or preserve.
-- [ ] Remaining outside consumers have settled retained contracts, or their change/removal is explicitly authorized; no automatic compatibility stubs.
+- [ ] Required current/outside-consumer contracts and root-opted-in promises are settled; unknown required evidence pauses only dependent work. Known impact is reported, not a default legacy veto.
 - [ ] The declared writable surface, allowed actions, out-of-scope boundary, and stop conditions agree.
 - [ ] The phased Delivery Contract is included only when its trigger applies, with delegation-specific scope, adjacent-finding, action, and continuation instructions.
 - [ ] The five-section output contract and surgical context are present.

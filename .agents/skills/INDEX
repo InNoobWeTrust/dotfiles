@@ -10,13 +10,13 @@ For non-trivial work, load `team-operating-model` before substantive work: activ
 | --- | --- | --- | --- |
 | `code-craft` | low | Implementation/fixes, approved refactoring, code-intent fit, behavior specs; verify working behavior before maintainability assessment | Formatting/config-only edits; maintainability-only assessment |
 | `code-maintainability` | medium | Separate-agent assessment of working code; record refinements, apply only after usefulness and explicit approval | Upfront implementation gate; automatic cleanup; general security audit |
-| `systematic-investigation` | medium | Debugging, root causes, recurring failures, first-principles diagnosis, architectural decisions, pre-mortems/red-teaming | Creative ideation or straightforward edits |
+| `systematic-investigation` | medium | Debugging, root causes, slowness/poor scaling/stalled workers, recurring failures, first-principles diagnosis, architectural decisions, pre-mortems/red-teaming | Creative ideation or straightforward edits |
 | `brainstorming` | low | Creative/product ideation, conceptual exploration, prioritization; settled-direction product intent/PRDs | Analytical debugging or structured fixes |
 | `decision-support` | low | Meaningful uncertain choices: autonomous next steps, recommendations before asking, worker continue/return triage; consult an existing capability | Trivial choices; fact gathering; replacing authority, hard stops, workers or independent review |
 | `game-theory` | medium | Interdependent human choices: adoption/resistance, incentives, coordination, bargaining, commitments, information/power/institutions; return hypotheses/options to owner | Actor-free/mechanical tasks; unsupported motives; harmful manipulation; replacing domain knowledge/authority |
 | `research-ideation` | medium | Scientific synthesis, literature, hypotheses/proposals; modality audit, competing hypotheses and falsifiable experiments, not software TDD/slicing | Production implementation, application bug fixes, refactoring, UI design |
 | `domain-curation` | medium | Learn unfamiliar domains; curate practitioners' conditional judgment, source lineage and task-attempt limits before packaging | Simple lookup; scientific hypotheses alone; candidate vetting; already-grounded authoring |
-| `distributed-systems-operations` | medium | Integrate/operate chosen workers, HPC/Hadoop/Spark, storage/sync/ledgers; placement, bounded concurrency, retries/commit/recovery | Stack selection only; AI-subagent dispatch; model methodology; protocol invention; unauthorized infrastructure/signing |
+| `distributed-systems-operations` | medium | Integrate/operate chosen workers, distributed map-reduce/early-terminating reductions, HPC/Hadoop/Spark, storage/sync/ledgers; placement, bounded concurrency, retries/commit/recovery | Ordinary local filtering; stack selection only; AI-subagent dispatch; model methodology; protocol invention; unauthorized infrastructure/signing |
 | `codebase-exploration` | medium | Locate unfamiliar behavior, trace call chains/dependencies, map repositories | Relevant files already known |
 | `reviewer` | varies | Review artifacts and calibrate changed automated reviewers; select warranted sub-lenses | Implementation-only requests without a review need |
 | `ui-ux` | medium | Traditional/generative UI journeys, states, tokens and frontend under UX-SPEC; OpenUI/model-composed interfaces when applicable | Backend-only work; static UI does not need generative references |
@@ -41,7 +41,7 @@ For non-trivial work, load `team-operating-model` before substantive work: activ
 | `skill-author` | medium | Create/modify skills and governance; lifecycle, routing, audits, failure-driven maintenance | Non-governance work; do not invent reusable skills for one-off tasks |
 | `architecture-design` | medium | System/component/DDD/C4 design, technical specs/TRDs, ADRs/audits, API/data/security/MCP, storage/sync and compute/runtime selection | Minor code edits without architectural impact |
 | `mermaid-validation` | low | Validate generated or failing Mermaid before embedding; no package install required | No Mermaid produced |
-| `db-design` | medium | OLTP schemas, keys/constraints/indexes, locking, migrations, typed mapping and rollout-compatible enums | Simple config/typos; analytical warehouse architecture |
+| `db-design` | medium | OLTP schemas, keys/constraints/indexes, locking, recovery-safe migrations and typed mapping; backward compatibility only by root opt-in | Simple config/typos; analytical warehouse architecture |
 | `database-access` | medium | Implement/review ORM, query/ODM/SQL adapters, sessions/UoW, write/idempotency/concurrency contracts, adapter tests and inspection (`hsql`) | Schema/migration/index design; trivial query config; analytical pipelines |
 
 ## Routing Rules

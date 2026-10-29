@@ -1,3 +1,12 @@
+---
+metadata:
+  maintenance-review: |-
+    ACI source-interface evidence — source only, runtime compliance unverified,
+    review after first 1–2 uses. Inputs/output/question set/failure contract
+    declared; three medium examples; portable skill-relative links; no harness,
+    install, or path assumed.
+---
+
 # Artifact Context — Settle Reader and Use Assumptions
 
 Apply before authoring or updating any artifact: document, code, slide, visual,
@@ -67,9 +76,3 @@ and re-evaluate affected assumptions when usage, audience or constraints change.
 - Medium-specific requirements: use an available medium or domain authoring capability, or state the constraints inline; e.g. human-facing technical documents need audience-appropriate structure, progressive disclosure and citations, while UI artifacts need journey, state and accessibility criteria. Do not duplicate that owner's full method here.
 - No tool installs, network access, or environment assumptions required for this
   check.
-
----
-*ACI source-interface evidence — source only, runtime compliance unverified,
-review after first 1–2 uses. Inputs/output/question set/failure contract
-declared; three medium examples; portable skill-relative links; no harness,
-install, or path assumed.*

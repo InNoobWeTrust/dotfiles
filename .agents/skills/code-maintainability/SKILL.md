@@ -1,6 +1,10 @@
 ---
 name: code-maintainability
 description: "Assess working code in a separate agent and record concrete maintainability refinements for later. Use for post-implementation assessment, recording shortcuts, readability or SOLID review, and approved refinement of a solution proven useful. Not an upfront implementation gate, general security audit, or permission to automatically refactor."
+metadata:
+  maintenance-review: |-
+    Source-interface PASS: explicit inputs, snapshot, action limits, recording contract, example, approval gates, unavailable-capability behavior, and locally owned assessment references. Mixed guides are separated by implementer/assessor purpose; no duplicate library or old-path stubs.
+    Review after 1–2 real uses or the next quarterly audit. Source checks/walkthroughs do not prove runtime compliance or productivity gains.
 ---
 
 # Code Maintainability
@@ -13,7 +17,9 @@ after that software proves useful. A useful assessment may conclude **leave it a
 verification evidence, known shortcuts, READ/RUN boundaries, and an authorized
 durable record destination (existing task, issue, PR, or project record preferred).
 Resolve paths against the supplied project root. Do not assume parent chat access.
-**Outputs:** a recorded assessment, or a bounded approved refinement with fresh checks.
+**Outputs:** a recorded assessment with mandatory reuse flags/score reported to the
+user, or a bounded approved refinement with fresh checks. Obtain the scoped stack
+proposal/human receipt and root engineering policy; unknown evidence stays unknown.
 
 ## 1. Assess working code — default, report-only
 
@@ -27,6 +33,10 @@ by this skill. RUN only checks explicitly allowed in the assignment.
 Look for concrete costs: difficult-to-follow effects, confusing names, mixed
 responsibilities, duplicated rules likely to diverge, inappropriate dependencies,
 or unnecessary abstraction. Do not manufacture findings to fill a checklist.
+Always apply [Library reuse assessment](references/library-reuse.md): actual API
+delegation, every library-free unit/location, approved custom rationale and a
+predeclared numerical reuse-policy deduction. This is mandatory reporting, not an
+optional suggestion deferred until the code proves useful.
 Load only the relevant method, not the whole library:
 
 | Need | Optional method |
@@ -49,8 +59,9 @@ Include:
 - Assessed revision/files, working outcome, supplied/run checks, and limitations.
 - Each suggestion: source location, concrete maintenance cost, smallest useful
   adjustment, expected benefit, risk/effort, and when it would become worthwhile.
-- Status **deferred — awaiting demonstrated usefulness and explicit approval**.
-- Any safety, correctness, integrity, or required-compatibility defect separately
+- Status **deferred — awaiting demonstrated usefulness and explicit approval** for
+  optional refinements only; report mandatory reuse flags/deductions immediately.
+- Any safety, correctness, integrity, human stack-approval violation or root-opted-in compatibility defect separately
   as a blocker needing the normal repair workflow, never hidden as optional debt.
 - **No worthwhile refinement** when leaving the code alone is the better choice.
 
@@ -63,12 +74,14 @@ Example record (paths relative to the supplied project root):
 > Deferred — usefulness not established, no refactor approved. Blockers: none.
 
 Assessment completion does not approve its recommendations or prove usefulness.
-Suggestions are non-blocking for trying the working solution. Preserve the record
+Optional suggestions are non-blocking; required approval violations are not suggestions.
+Preserve the record
 even if refinement never happens; do not create a new tracking system by default.
 
 ## 3. Refine later — only with explicit approval
 
-Before any code change, require both evidence/user confirmation that the solution
+Before any design or code change, require a current human-approved researched
+stack/custom-exception receipt (a primary cannot supply it), plus evidence/user confirmation that the solution
 is useful and explicit user approval of the selected suggestions and writable
 scope. Neither green tests, assessment dispatch, silence, nor recorded suggestions
 satisfies these gates. If either is absent, stop at the record.
@@ -91,7 +104,8 @@ or broader scope require returning to the primary before proceeding.
 - No separate permitted assessor: primary reports pending, never self-certifies independence.
 - Missing record destination/write permission: return the report and mark recording
   pending; no silent memory-store creation or expansion of writable scope.
-- Missing usefulness evidence or approval: no refinement writes.
+- Missing usefulness evidence, refinement approval or current human stack receipt:
+  no refinement design/writes; read-only research/review may close evidence gaps.
 - Safety or contract defect: escalate affected work; suggestions cannot waive it.
 
 Deliver a source-linked assessment and record location/status, explicit blockers,
@@ -108,11 +122,3 @@ also deliver scope compliance and fresh behavior evidence.
 | Invent future consumers | Tie refinement to observed pain or an explicit trigger |
 | Bury a correctness defect as debt | Report a blocker separately |
 | Apply a stale report | Revalidate the current source first |
-
-## ACI pass / prototype
-
-Source-interface PASS: explicit inputs, snapshot, action limits, recording contract,
-example, approval gates, unavailable-capability behavior, and locally owned
-assessment references. Mixed guides are separated by implementer/assessor purpose;
-no duplicate library or old-path stubs. Review after 1–2 real uses or the next quarterly audit.
-Source checks/walkthroughs do not prove runtime compliance or productivity gains.

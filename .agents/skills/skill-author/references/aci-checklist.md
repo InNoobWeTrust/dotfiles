@@ -40,15 +40,18 @@ Run this checklist when creating or materially changing any agent-facing interfa
 
 ## ACI Evidence Block
 
-When this checklist is used, leave lightweight evidence in one of these durable locations:
+When this checklist is used, leave lightweight evidence in the frontmatter `metadata`
+of one of these durable locations:
 - the workflow/design outline being prepared for the skill or rule, or
 - the short-term handoff/checkpoint entry if the design is being paused
 
 ```markdown
-## ACI Pass
-- Result: PASS | PASS WITH GAPS | NOT APPLICABLE
-- Main risks: [list or NONE]
-- Interface upgrades applied: [list]
+---
+metadata:
+  aci-result: "PASS | PASS WITH GAPS | NOT APPLICABLE"
+  aci-risks: "[list or NONE]"
+  aci-upgrades: "[list]"
+---
 ```
 
 ## Delivery note

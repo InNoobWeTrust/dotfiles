@@ -8,7 +8,7 @@ an instruction to clean up adjacent code. Existing repository conventions win.
 
 - **Inspect first:** Find the existing implementation, relevant callers and
   platform/repository capabilities before introducing a replacement.
-- **Choose deliberately:** Keep the primary-approved libraries, versions and APIs.
+- **Choose deliberately:** Keep the human-approved libraries, versions and APIs.
   Report incompatible choices instead of silently substituting a familiar stack.
   Use [language references](languages/README.md) only for an actual stack question;
   no installation, vendoring or toolchain migration is authorized by this guide.

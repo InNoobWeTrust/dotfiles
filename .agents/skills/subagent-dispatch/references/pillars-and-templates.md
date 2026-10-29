@@ -1,3 +1,13 @@
+---
+metadata:
+  aci-pass: |-
+    Result: PASS (instruction contract; not a hard permission boundary).
+    Main risks: treating uncertainty as an approved requirement, turning investigation into repair,
+    and hiding evidence that invalidates the chosen approach.
+    Interface upgrades applied: assignment intent, settled versus open decisions, outcome-linked
+    observations, exploratory example, and stop/report behavior.
+---
+
 ## The Four Pillars (Prompt Contract)
 
 You own the **handoff**, whether the harness exposes a worker-definition field or only a task input. Implement every task pillar in the actual prompt and establish discovery through [Portable Worker Contract](worker-contract.md). Workers select and load useful working principles themselves; personality references and short hints are optional. Named, fallback, and dynamic workers must not depend on inherited parent context.
@@ -211,8 +221,6 @@ Rules:
 - If evidence cannot support the brief, verify or report the gap; do not manufacture certainty.
 - After the user answers, restate the agreed model and remaining uncertainties. An answer given without adequate context is non-binding: explicitly say the earlier answer lacked context, present the missing context, and ask the user to confirm or change that decision; never silently upgrade the old answer.
 
-## ACI Pass — shared-understanding handoffs
+## Handoff contract boundaries
 
-- Result: PASS (instruction contract; not a hard permission boundary).
-- Main risks: treating uncertainty as an approved requirement, turning investigation into repair, and hiding evidence that invalidates the chosen approach.
-- Interface upgrades applied: assignment intent, settled versus open decisions, outcome-linked observations, exploratory example, and stop/report behavior. Existing exact scope, output contract, and Allowed Actions declarations remain required.
+Existing exact scope, output contract, and Allowed Actions declarations remain required.

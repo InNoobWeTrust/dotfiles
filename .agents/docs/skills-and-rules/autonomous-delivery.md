@@ -18,10 +18,17 @@ scope: "Delivery ownership, communication, safety boundaries, and final acceptan
 
 No special command or configuration is needed: describe the work in your request. The agent states the mode before starting and does not ask you to reconfirm an already clear instruction.
 
+**The researched stack remains human-approved.** Before design or implementation,
+the agent presents relevant tools/libraries/APIs, sources/constraints, alternatives
+and justified custom exceptions, then waits for your explicit approval. An unchanged
+same-task approval is reused; changed stacks/custom fallbacks need reapproval.
+Even AFK or “don't ask” delivery cannot waive this reserved gate. A concise native-
+tool/standard-library or Markdown-only proposal is sufficient where appropriate.
+
 | Say this | Expected behavior |
 |---|---|
-| “Build this feature and work until it is ready for me to test.” | Autonomous by default: research and decide within scope, verify, then hand over the result |
-| “Own this end to end. Don't ask about implementation choices. Put decisions and usage in the product docs.” | Make in-scope decisions independently; interrupt only for a genuine blocker or safety/authority boundary |
+| “Build this feature and work until it is ready for me to test.” | Research/present the stack and obtain your approval, then execute within scope, verify and hand over |
+| “Own this end to end. Don't ask about implementation choices. Put decisions and usage in the product docs.” | Obtain human stack approval first; then decide ordinary in-stack mechanics, interrupting for blockers or reserved decisions |
 | “Explore the options with me first.” | Collaborative discussion; exploration alone does not authorize implementation |
 | “Ask before each iteration.” | Approval-gated work at the requested checkpoints |
 | “You may run unattended inside this isolated environment.” | AFK execution only after resource controls, persistent state, cancellation, and cleanup are verified |
@@ -31,7 +38,8 @@ No special command or configuration is needed: describe the work in your request
 ## What you should receive
 
 - **A usable result:** artifact location, startup/usage guide, and a concrete journey you can try without remembering the conversation.
-- **Proof of readiness:** relevant executed checks and user-perspective evaluation of first use, ordinary use, and failure/recovery; applicable safety and compatibility checks.
+- **Proof of readiness:** relevant executed checks and first/ordinary/failure-recovery evaluation; safety and root-opted-in compatibility checks. Compatibility is OFF when root engineering docs are checked and silent, unknown if inaccessible.
+- **Actual reuse evidence:** approved stack versus real API/tool use, custom insufficiency and approval, every library-free code location and numerical maintainability—reuse policy deductions, including approved custom work.
 - **Useful explanation:** consequential choices, sources, trade-offs, and constraints in product docs or an existing README, with deeper detail linked only where needed.
 - **Honest limitations:** required missing evidence is a blocker or partial handoff, not a success claim; internal agent logs and plans are not dumped into your usage guide.
 
@@ -46,7 +54,7 @@ There is no default total turn count or elapsed-time deadline. The agent keeps m
 | **Scope and permissions** | No unrelated repairs, publishing, deployment, commit, or push without authority |
 | **Individual jobs and concurrent work** | Watchdogs, sandbox controls, cancellation, and cleanup prevent runaway workloads |
 | **Available resources and authorized cost** | Provider quotas, storage, context, and approved spending still apply; absent total limits never authorize new paid services or larger resource budgets |
-| **Safety and existing promises** | No destructive actions, secret exposure, production mutation, or unauthorized compatibility breaks |
+| **Safety and explicit promises** | No unauthorized destructive effects, secret exposure, production mutation, or breach of root-opted-in compatibility; opt-out does not waive data/recovery safety |
 | **Evidence** | Repeated failures trigger diagnosis and a changed approach, not blind retries or weaker tests |
 
 You can still set an overall iteration, time, or cost cap. Sandbox access helps contain execution; it does not grant permission or guarantee product correctness.

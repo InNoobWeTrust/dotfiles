@@ -1,3 +1,9 @@
+---
+metadata:
+  prototype: "2026-10-16"
+  review-task: "Revisit after 1–2 cross-harness uses."
+---
+
 # Memory scopes and identity
 
 Choose the narrowest correct audience **before** resolving a path or searching. A shared directory is not permission to read everything in it. Ordinary project knowledge stays in the project; raw requests, task evidence and scratchpads stay out of Git.
@@ -54,4 +60,4 @@ Copy and compare file counts and SHA256 before removing originals. Repair live d
 - [Git worktrees](https://git-scm.com/docs/git-worktree): worktrees share repository state but have per-worktree paths/admin files; path-derived identity would not reliably express intentional cross-clone sharing.
 - [XDG Base Directory](https://specifications.freedesktop.org/basedir-spec/latest/): durable user data belongs under data home, disposable indexes under cache (or in memory), not ephemeral runtime directories. Respect platform/user configuration; a provider's concrete defaults belong in its integration documentation.
 
-Prototype: 2026-10-16. Scope classification and migration are task-attempt evidence, not proof of cross-machine sync or privacy against unrestricted filesystem access. Revisit after 1–2 cross-harness uses.
+Scope classification and migration are task-attempt evidence, not proof of cross-machine sync or privacy against unrestricted filesystem access.

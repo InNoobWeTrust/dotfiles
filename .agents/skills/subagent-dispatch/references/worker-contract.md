@@ -1,3 +1,18 @@
+---
+metadata:
+  prototype: "2026-10-28"
+  aci-prototype-goldfish: "Prototype: source-level contract; assess overhead and launch/input evidence after 1–2 real uses."
+  aci-prototype-conformance: "Prototype: source-level contract, not proof of automatic requirement retention. Review after 1–2 real adaptations, including a missing-source/checker case."
+  aci-pass: |-
+    Interface: explicit purpose, inputs/output, optional style direction, guidance-discovery access,
+    bounded task example, and stop/report contract.
+    Misuse guards: no inherited-context assumption, compulsory personality payload,
+    model-as-personality shortcut, optional-style-as-authority, or prompt-as-hard-permission claim.
+    Prototype check: observe workers interpreting no-hint, short-hint, and reference-directed
+    assignments and actually reading useful guidance. A request need not contain personality prose;
+    source checks alone do not prove live discovery or improved delegation quality.
+---
+
 # Portable Worker Contract
 
 Use before launching a named worker, a fallback route, or a worker defined on the fly. The model route selects execution capability; the worker interprets the assignment and discovers useful working principles. This is prompt guidance, not a permissions implementation or a new orchestration framework.
@@ -32,7 +47,7 @@ This is a discovery instruction, not a personality setting. Do not repeat it in 
    State whether this is settled execution or direction judgment: propose/validate direction only when the active direction-eligibility policy permits the route and the handoff assigns that role; capability, title or primary approval confers no authority, and missing required proposal/validation/authority receipts make direction-dependent execution `INCOMPLETE`—return the choice to the primary for eligible routing.
 2. Supply precise sources and boundaries, acceptance evidence, action/resource limits, a proportionate return shape, and stop behavior. Retain applicable [implementation/planning gates](../SKILL.md#dispatch-routing-and-gates). These are task obligations, not optional personality settings.
 3. Check discovery access. A working-style reference or short hint is optional; omit it when the assignment already gives the worker enough to infer a useful approach. Do not dump full skills or make the parent compose a complete personality.
-4. For planning/implementation, carry settled [materialization choices](implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) and accessible task-relevant language/API reference sources. Library/API choices are mandatory task constraints, not optional working-style hints. Implementers confirm sources before coding and report incompatible selections rather than silently substituting. Keep the same choices and exceptions on route fallback; re-resolve source access, not the architecture.
+4. For planning/implementation, carry human-approved [materialization choices](implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) and accessible task-relevant language/API reference sources. Library/API choices are mandatory task constraints, not optional working-style hints. Implementers confirm sources before coding and report incompatible selections rather than silently substituting. Keep the same choices and exceptions on route fallback; re-resolve source access, not the architecture.
    For coding/review units, also reuse one resolved style input: guide/profile scope, formatter/version, actual check command/cwd and effective config/options, syntax/dialect/edition/target version, affected files and exceptions/manual status. Supply the applicable source-backed record as runtime input; do not require sibling guidance or let a replacement worker/reviewer choose a competing style. Preserve existing project tooling; missing tools or source access is unverified, not installation authority or a fabricated pass.
 5. Carry the applicable cumulative user requirements with source identifiers, including audience, assumed knowledge, tone/writing style, format, exclusions, and prohibitions. These are deliverable constraints, not the worker's optional working-style direction. Apply the dedicated conformance gate below; forwarding only the latest steering is insufficient.
 
@@ -68,7 +83,7 @@ Native controls remain separate: preserve configured deny rules and apply suppor
 
 **Calibration:** when testing changed review guidance, use source-labeled clean and defective packets, unavailable required evidence, and an independent grader with gold answers withheld from reviewers. Record baseline/candidate inputs, exposure, tools, boundary violations and confounders separately. A synthetic parent-only marker can diagnose a leak; absence alone cannot establish isolation. Correct judgments do not cure unauthorized actions or prove efficacy. Never relax established controls on that basis.
 
-**Prototype:** source-level contract, 2026-10-28; assess overhead and launch/input evidence after 1–2 real uses. No automatic promotion or claim of runtime enforcement.
+No automatic promotion or claim of runtime enforcement.
 
 ## Dedicated user-requirement conformance
 
@@ -146,9 +161,6 @@ new content is explained for those readers, not merely included. A later explici
 request to write for ML specialists supersedes only the affected reader criteria
 with that message cited; it does not silently remove format or scope constraints.
 
-**Prototype:** source-level contract, not proof of automatic requirement retention.
-Review after 1–2 real adaptations, including a missing-source/checker case.
-
 ## Example: request with no personality direction
 
 Assume the worker already has a usable discovery entry point and permission to read applicable shared guidance. The same task can go to a named, compatible fallback, or dynamically defined worker:
@@ -188,9 +200,3 @@ Session-binding guards (this contract's own schema):
 After each completed or interrupted slice, append to the role record: approved plan revision + unit; restored sources confirmed; changed outputs with PASS/FAIL/UNVERIFIED evidence; blockers and next safe action. Preserve prior bytes and never rewrite earlier checkpoints. A primary-approved plan change requires reading and revalidating the new approved scope before continuing — silently inheriting old scope is not permitted.
 
 Native permission boundaries are unchanged: a read-only assignment does not become writable because of a role binding; preserve configured deny rules and supported native restrictions.
-
-## ACI Pass / prototype
-
-- **Interface:** explicit purpose, inputs/output, optional style direction, guidance-discovery access, bounded task example, and stop/report contract.
-- **Misuse guards:** no inherited-context assumption, compulsory personality payload, model-as-personality shortcut, optional-style-as-authority, or prompt-as-hard-permission claim.
-- **Prototype check:** observe workers interpreting no-hint, short-hint, and reference-directed assignments and actually reading useful guidance. A request need not contain personality prose; source checks alone do not prove live discovery or improved delegation quality.

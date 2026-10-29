@@ -1,21 +1,47 @@
+---
+metadata:
+  maintenance-review: |-
+    Prototype: on representative use, check whether a reader can locate decisions, effects and failure behavior with fewer file jumps and less explanation; source checks alone do not establish improvement.
+    ACI Pass:
+    - Result: PASS for the guidance interface; real-use benefit remains unverified pending a representative pilot.
+    - Main risks: framework over-adoption, helper/documentation proliferation, graphs mistaken for execution evidence, hidden replay effects.
+    - Interface upgrades applied: implementer-only scope, bounded inputs/output, explicit stops, conditional tool selection and example failure path; assessment record shape is owned separately.
+---
 # Implementing Explicit Execution Flow
 
 Use for a concrete implementation problem involving orchestration, branching, state or effects. Assessment questions and walkthrough records belong to Code Maintainability, not this implementation guide.
 
-For small linear patches or utility scripts, keep ordinary explicit code without loading a framework or creating extra artifacts. For analytical stacks, first settle workload, input formats, transformations, scale, quality, privacy and operational constraints; choose an engine through an architecture/dataflow capability and keep missing compatibility evidence explicit. Do not use OLTP defaults for analytical work.
+For small linear patches or utility scripts, prefer the smallest suitable existing
+native/standard-library or established capability. Research and present it before
+design/code, obtain explicit human stack approval, and justify custom orchestration
+with evidenced insufficiency of existing solutions plus human exception approval.
+Do not require a framework for simple work or treat simple work as permission to
+write a custom scheduler. For analytical stacks, establish workload, formats,
+transformations, scale, quality/privacy and operational constraints before proposing
+the engine. Missing current dependency/API evidence remains explicit; OLTP defaults
+do not apply to analytics.
 
 ## Scope and contract
 
 - **Inputs:** approved behavior and failure contracts, repository conventions, the entry point and relevant implementation, and applicable safety/performance constraints.
 - **Output:** working implementation with visible consequential decisions and effects, plus actual check results in the existing handoff. [File navigation](file-navigation.md) supplies local symbol/flow orientation, not task evidence or a replacement module entry point.
 - **Exclusions:** no mandatory DAG, new runtime, tracing system, diagram, class hierarchy, or rewrite of adjacent code. Research-only requests stop at findings and suggestions.
-- **Stops:** clarify ambiguous caller-visible behavior; obtain informed agreement before changing stack or execution semantics; follow Code Craft's rewrite/consumer gates before replacing existing interfaces. This guide does not grant refactoring authority.
+- **Stops:** clarify ambiguous caller-visible behavior; obtain the human-approved
+  researched stack receipt before any design/code, not merely before a stack change.
+  Reuse only an unchanged same-task approval; material changes/custom exceptions
+  require human reapproval, not primary/tool approval. Follow the rewrite/consumer
+  contract; no refactor permission is granted here.
 
 ## 1. Make the real flow visible
 
 Follow one representative input from entry to result. Locate consequential decisions, external reads/writes, state owners, and failure exits. For stateful or concurrent work, also locate cancellation, ordering, retry, partial-result, and cleanup behavior where applicable.
 
-Prefer flow visible in ordinary code: meaningful domain names, named intermediate values, explicit branches, and a cohesive orchestration entry point. Preserve existing framework conventions; do not add a second orchestrator merely to obtain a picture.
+Within the human-approved stack, keep meaningful names, intermediate values,
+branches and orchestration boundaries visible. Delegate scheduling/lifecycle to
+the approved APIs where suitable; visible ordinary code is not a custom-runtime
+default. Preserve existing framework conventions; do not add a second orchestrator
+merely to obtain a picture. Library-free glue/domain code still needs flags and
+numerical reuse-policy deductions even when approved.
 
 An illustrative submission flow—not an instruction to extract one function per arrow:
 
@@ -49,6 +75,11 @@ Make the commit's transaction ownership and failure contract inspectable at its 
 | Analytical transformations and lineage | Existing SQL/Ibis/Python flow and materialization boundaries | Use the separate dataflow stack-selection guide for Hamilton/dbt |
 | What happened in one execution | Existing logs, receipts or targeted local traces | Additional instrumentation only for a concrete observation gap |
 
+This table describes inspection views **inside an already human-approved stack**,
+not an instruction to implement the listed scheduler/state/router mechanics by
+hand. Established tools are researched before custom exceptions; all library-free
+authored units remain visible in the reuse assessment.
+
 Classic FBP involves autonomous components, ports and buffered communication; borrowing explicit connections does not require adopting that runtime. A DAG must be acyclic, but can still contain conditional logic and repeated executions. Do not disguise stateful loops as a DAG or hide important conditions inside opaque nodes.
 
 A graph shows a particular abstraction, not every dependency or effect. Prefer code-derived views when they represent the relevant flow faithfully; label a manual map as a summary, link it to source, and update it when behavior changes. Neither a static map nor a few runtime traces prove all paths correct. Inspect node bodies, guards, routers, state merges and effect contracts where they matter.
@@ -70,18 +101,10 @@ Use [testing guidance](testing.md) for authorized verification. Explain relevant
 | Show only the happy-path diagram | Failure, partial completion and effect ordering remain hidden | Include consequential failure/state transitions and ownership |
 | Present traces as complete proof | Only instrumented, executed paths are observed | Label coverage and unverified paths; retain tests and source review |
 
-## Sources and prototype check
+## Sources
 
 - [Classic FBP concepts](https://jpaulm.github.io/fbp/concepts.html): ports, independent processes and bounded buffers.
 - [Functional core / imperative shell: Boundaries](https://www.destroyallsoftware.com/talks/boundaries): separate decisions from external effects.
 - [XState](https://stately.ai/docs): state/actor modeling; verify the selected version before adoption.
 - [LangGraph graph API](https://docs.langchain.com/oss/python/langgraph/graph-api) and [persistence](https://docs.langchain.com/oss/python/langgraph/persistence): graph execution and checkpoint semantics.
 - [OpenTelemetry sensitive-data guidance](https://opentelemetry.io/docs/security/handling-sensitive-data/): minimize collection and protect telemetry.
-
-**Prototype:** on representative use, check whether a reader can locate decisions, effects and failure behavior with fewer file jumps and less explanation; source checks alone do not establish improvement.
-
-## ACI Pass
-
-- Result: PASS for the guidance interface; real-use benefit remains unverified pending a representative pilot.
-- Main risks: framework over-adoption, helper/documentation proliferation, graphs mistaken for execution evidence, hidden replay effects.
-- Interface upgrades applied: implementer-only scope, bounded inputs/output, explicit stops, conditional tool selection and example failure path; assessment record shape is owned separately.

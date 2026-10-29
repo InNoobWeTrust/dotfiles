@@ -1,6 +1,12 @@
+---
+metadata:
+  validated: "2026-08-10"
+  validation-status: "Validated"
+---
+
 # OpenObserve + MegaLinter: Self-Hosted Quality Telemetry
 
-> **Validated 2026-08-10.** This page documents a composition, not a drop-in SonarQube replacement.
+This page documents a composition, not a drop-in SonarQube replacement.
 
 > **MVP operational setup:** Start with the [OpenObserve Quality Garden MVP playbook](../playbook/openobserve-megalinter-garden-playbook.md) for one local monorepo. Return to this canonical guide for advanced operating decisions.
 

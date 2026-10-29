@@ -1,3 +1,8 @@
+---
+metadata:
+  sources-read: "2026-10-15"
+---
+
 # Transfer Learning and Attention Backends
 
 Use for pretrained feature extraction, fine-tuning or changing attention execution.
@@ -114,7 +119,7 @@ Measured throughput/memory / dispatched kernel or fallback / justified choice:
 Artifacts and restore evidence / blocked capabilities / next safe action:
 ```
 
-## Sources and limits — read 2026-10-15
+## Sources and limits
 
 - François Chollet, [Transfer learning & fine-tuning](https://keras.io/guides/transfer_learning/)
   (created 2020-04-15; modified 2023-06-25): head/fine-tuning, feature caching, trainability,

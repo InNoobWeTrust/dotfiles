@@ -1,3 +1,12 @@
+---
+metadata:
+  sources-checked: "2026-10-07"
+  aci-review: |-
+    Result: PASS (selection interface; adoption efficacy requires a future pilot).
+    Main risks: framework over-adoption; mistaking static dependencies for result provenance; version/backend drift.
+    Interface upgrades applied: concrete triggers, declared inputs/output, conditional options, explicit research-only stop, pilot evidence contract, repository-relative example, and source/version notes.
+---
+
 # Inspectable Dataflow Stack Selection
 
 ## Scope and outcome
@@ -6,7 +15,7 @@ Use when choosing tools for analytical/scientific pipelines, untangling notebook
 
 **Inputs:** repository conventions, representative transformation code, source/output contracts, execution environment, and the user's inspection needs. If missing, inspect a small representative path or ask; do not assume the domain from a repository name.
 
-**Output:** a short recommendation containing the current flow, the visibility gap, the smallest adequate option, a rejected alternative with its cost, and an audit/verification sketch. Stop there when asked only for research or suggestions. Obtain informed agreement before changing stack, environment, execution semantics, or rewriting a consumer interface. Ask whether backward compatibility is required before a rewrite; do not invent compatibility shims.
+**Output:** a short researched stack recommendation containing the current flow, visibility gap, smallest adequate option, alternatives/fit, sources/constraints and custom insufficiency. Stop there when asked only for research or suggestions. Obtain explicit human stack approval before solution design, interfaces, pilot plans or implementation; carry its task/scope/revision/receipt and reapprove changed choices. Before a rewrite, inspect root engineering docs: compatibility is OFF unless affirmatively enabled there with scope; missing evidence is unknown, not OFF. Report affected consumers and investigate required unknown contracts proportionately; do not invent shims or a routine compatibility-approval gate when OFF. Scope, safety, data and recovery still apply.
 
 ## Selection sequence
 
@@ -55,7 +64,7 @@ For an extensible Rust/Arrow embedded query-engine requirement, Apache DataFusio
 - Use `source` for declared input relations and `ref` for model dependencies, rather than hard-coded downstream relation names. Document each model's **grain** (what one row represents), key, units, join cardinality, and null policy.
 - Prefer direct, readable SQL models to deeply nested macros. Add generic data tests only where their assumptions hold; add custom checks for conservation totals, join fan-out, ranges, and domain invariants. Passing tests do not establish biological validity or source independence.
 - Keep definition artifacts (manifest/compiled SQL/docs) separate from run artifacts (run results, test results, source receipts). The model DAG is not automatically column-level or row-level lineage.
-- **Version-sensitive, checked 2026-10-07:** Python dbt Core 1.x + `dbt-duckdb` and Rust-based dbt v2 are different execution/distribution paths. dbt v2 has native DuckDB support through ADBC; do not assume its driver uses the project's Python DuckDB version. Verify engine, extension, adapter, license, and environment compatibility before selecting either path. Do not prescribe a migration based on this note alone.
+- **Version-sensitive:** Python dbt Core 1.x + `dbt-duckdb` and Rust-based dbt v2 are different execution/distribution paths. dbt v2 has native DuckDB support through ADBC; do not assume its driver uses the project's Python DuckDB version. Verify engine, extension, adapter, license, and environment compatibility before selecting either path. Do not prescribe a migration based on this note alone.
 - Python models are adapter/platform-specific. `dbt-duckdb` supports local Python models; that does not imply equivalent support in every dbt engine/platform. Avoid introducing pandas or another dataframe API against repository conventions.
 - Do not claim column lineage is always paid-only: current dbt v2 offers local column lineage with strict static analysis. Verify the selected version's capabilities. Current CLI path: `dbt compile --generate-info-schema --static-analysis strict`, then `dbt show --info column_lineage`. Parsing/compilation and tests can require database access; do not describe them as harmless offline inspection.
 - For file/SQLite inputs, define and validate how they become queryable dbt sources (attachment, staging, or exported artifacts). Model declarations do not perform arbitrary ingestion automatically.
@@ -108,16 +117,10 @@ Pilot evidence: trace coverage to assemblies/metadata; test unknown taxonomy and
 record source completeness and output identity; compare to agreed existing summary semantics.
 ```
 
-## Sources and maintenance
+## Sources
 
-Checked 2026-10-07. Recheck version-specific claims before adoption; this guide is selection policy, not a dependency pin.
+Recheck version-specific claims before adoption; this guide is selection policy, not a dependency pin.
 
 - [Hamilton visualization](https://hamilton.apache.org/concepts/visualization/), [Ibis integration](https://hamilton.apache.org/integrations/ibis/), [output immutability](https://hamilton.apache.org/concepts/best-practices/output-immutability/), [caching tutorial](https://hamilton.apache.org/how-tos/caching-tutorial/).
 - [dbt SQL models](https://docs.getdbt.com/docs/build/sql-models), [data tests](https://docs.getdbt.com/docs/build/data-tests), [manifest artifacts](https://docs.getdbt.com/reference/artifacts/manifest-json), [Python models](https://docs.getdbt.com/docs/build/python-models), [column-level lineage](https://docs.getdbt.com/docs/collaborate/column-level-lineage).
 - [DuckDB: dbt v2 support and distribution choices](https://duckdb.org/2026/09/22/dbt-fusion), [dbt-duckdb adapter and Python support](https://github.com/duckdb/dbt-duckdb).
-
-### ACI Pass
-
-- Result: PASS (selection interface; adoption efficacy requires a future pilot).
-- Main risks: framework over-adoption; mistaking static dependencies for result provenance; version/backend drift.
-- Interface upgrades applied: concrete triggers, declared inputs/output, conditional options, explicit research-only stop, pilot evidence contract, repository-relative example, and source/version notes.

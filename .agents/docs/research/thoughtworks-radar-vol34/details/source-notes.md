@@ -1,3 +1,8 @@
+---
+metadata:
+  source-extracted: "2026-07-28"
+---
+
 # Vol 34 Source Notes
 
 > Research leaf — fidelity and theme extracts. Parent: [thoughtworks-radar-vol34.md](../thoughtworks-radar-vol34.md)
@@ -10,7 +15,7 @@
 | Publisher | Thoughtworks |
 | Date | April 2026 (TAB meeting Bengaluru, March 2026) |
 | PDF | https://www.thoughtworks.com/content/dam/thoughtworks/documents/radar/2026/04/tr_technology_radar_vol_34_en_1.pdf |
-| Extracted | 2026-07-28 (local PDF text extract for research) |
+| Extraction method | Local PDF text extract for research |
 
 Disclaimer: paraphrases and mappings are ours. Official ring placements and blip wording belong to Thoughtworks. Do not treat this leaf as a legal substitute for the PDF.
 

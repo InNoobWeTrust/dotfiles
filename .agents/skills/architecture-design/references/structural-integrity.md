@@ -1,3 +1,15 @@
+---
+metadata:
+  materialization-clarification-added: "2026-10-18"
+  review-after: "1–2 real uses or 2027-01-18"
+  prototype-review: "Validate routing and overhead in the next 1–2 real uses; instruction compliance is not measured improvement in code quality."
+  materialization-review: "Review after 1–2 real uses; source walkthroughs alone do not prove future adherence."
+  aci-review: |-
+    Result: PASS WITH GAPS — source interface checked; live multi-agent effectiveness remains unverified.
+    Main risks: over-scoped graph audits, stale maps, unsupported semantic tools, file splitting without cohesion.
+    Interface upgrades: explicit applicability and local fast path, one shared method, source identity/coverage, concrete cycle witness, bounded fallback and ownership escalation. Native tools or authorized integrations can supply evidence; no deployment-specific prerequisite.
+---
+
 # Structural integrity
 
 Shared method for architecture, implementation and review. Use when creating or changing maintained capabilities, runtime/trust or public boundaries, dependencies, registration or state ownership, and when relocating source modules. New systems are included. For a cohesive helper or behavior-only edit within an existing boundary, briefly name the existing owner and why those surfaces are unchanged, then check the local flow; do not demand new folders, forms or a whole-repository graph. Research-only work need not adopt delivery gates; do not claim its structure was verified without evidence.
@@ -45,16 +57,10 @@ Observed placement/allowed-edge violations are **FAIL**; absent required evidenc
 
 Return separate results for behavior/build checks, responsibility/readability, dependency direction/cycles, and graph coverage. Human understandability requires clear names, cohesive boundaries and a traceable normal/error path, not just passing tests. Record exclusions honestly; missing evidence blocks only the corresponding claim or required acceptance item.
 
-## Interface and prototype check
+## Interface and walkthrough cases
 
 Inputs: scoped change/question, source identity, consumer constraints and authorized tools. Output: compact source-backed responsibility/flow map, placement decision, graph delta and scoped results/unknowns. No extra report is needed for an unchanged boundary.
 
-Prototype walkthrough cases: (1) cohesive local patch stays local, (2) growing mixed-responsibility file gets a placement decision, (3) new edge closes a path through unchanged code, (4) two safe-looking worker deltas form a combined cycle, (5) unavailable LSP/resolver or stale memory cannot yield a complete-graph claim. Validate routing and overhead in the next 1–2 real uses; instruction compliance is not measured improvement in code quality.
+Walkthrough cases: (1) cohesive local patch stays local, (2) growing mixed-responsibility file gets a placement decision, (3) new edge closes a path through unchanged code, (4) two safe-looking worker deltas form a combined cycle, (5) unavailable LSP/resolver or stale memory cannot yield a complete-graph claim.
 
-Materialization clarification prototype, 2026-10-18: also check new multi-capability generation at agreed homes and rejection of acyclic forbidden edges or code outside those homes. Review after 1–2 real uses or by 2027-01-18; source walkthroughs alone do not prove future adherence.
-
-### ACI pass
-
-- Result: PASS WITH GAPS — source interface checked; live multi-agent effectiveness remains unverified.
-- Main risks: over-scoped graph audits, stale maps, unsupported semantic tools, file splitting without cohesion.
-- Interface upgrades: explicit applicability and local fast path, one shared method, source identity/coverage, concrete cycle witness, bounded fallback and ownership escalation. Native tools or authorized integrations can supply evidence; no deployment-specific prerequisite.
+Also check new multi-capability generation at agreed homes and rejection of acyclic forbidden edges or code outside those homes.

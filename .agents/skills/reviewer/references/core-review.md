@@ -1,3 +1,9 @@
+---
+metadata:
+  prototype: "2026-10-21"
+  review-after: "1–2 real uses"
+---
+
 # Source-first, two-way review
 
 Use inside an already-required review, not as an additional reviewer or approval gate. Inputs are the original cumulative requirements, authorized artifacts/actions, necessary raw observations and the author's separately supplied explanation; output is the existing evidence-linked verdict. This is an agent-workflow experiment inspired by assurance principles, not an aviation-compliance procedure.
@@ -30,4 +36,4 @@ Use concrete consequences—lost data, incorrect money movement, disclosed infor
 
 ## Prototype and limits
 
-**2026-10-21:** A = two-way questions; B = source-first judgment/reconciliation; C = consequence-directed optional effort. These mechanisms are implemented, not presumed effective; compare each with the current workflow on clean and defective cases at matched budgets. Record false acceptance, unnecessary blocking and verification effort separately, including null results, before claiming benefit; reassess after 1–2 real uses. A source-only walkthrough or synthetic exercise does not establish production effectiveness.
+**Prototype mechanisms:** A = two-way questions; B = source-first judgment/reconciliation; C = consequence-directed optional effort. These mechanisms are implemented, not presumed effective; compare each with the current workflow on clean and defective cases at matched budgets. Record false acceptance, unnecessary blocking and verification effort separately, including null results, before claiming benefit; reassess after 1–2 real uses. A source-only walkthrough or synthetic exercise does not establish production effectiveness.

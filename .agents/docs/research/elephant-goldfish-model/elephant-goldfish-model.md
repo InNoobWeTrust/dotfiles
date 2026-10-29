@@ -2,6 +2,9 @@
 audience: Maintainers familiar with this cross-harness agent setup, skills and subagents
 purpose: Identify useful EGM experiments before changing agent behavior
 scope: Source analysis and provisional recommendations; no installation or workflow adoption
+metadata:
+  research-as-of: "2026-10-28"
+  research-status: "Research only; no local EGM workflow or isolation probes run"
 ---
 
 # Elephant–Goldfish: test the handoff, not another review layer
@@ -10,7 +13,6 @@ scope: Source analysis and provisional recommendations; no installation or workf
 |---|---|
 | **Recommendation** | Borrow measurable cold-reader checks, not the whole plugin |
 | **Existing coverage** | Independence, handoffs, readiness and calibration have local owners |
-| **Status** | Research only, 2026-10-28; no local EGM workflow or isolation probes run |
 
 The useful question is **whether another worker can recover intended behavior without the author's chat history**. Fresh sessions can still receive biased briefings or stale references.
 

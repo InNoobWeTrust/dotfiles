@@ -1,3 +1,10 @@
+---
+metadata:
+  prototype-authoring: "2026-10-22"
+  source-inspection-note: "Public sources were inspected during prototype authoring; inspection depth is explicit in the source-map section."
+  review-task: "Prototype review must test actual usefulness and overhead."
+---
+
 # Worked Cases and Evidence Limits
 
 Use these cases to see the method, not to substitute a familiar story for current
@@ -79,8 +86,7 @@ invent a payoff matrix or claim to know the supplier's motives.
 
 These sources support conditional concepts, not certification of a strategy. Lectures
 from one course share an origin; the Academy summaries describe underlying work,
-not independent replications of every result. Public sources were inspected during
-prototype authoring on 2026-10-22; inspection depth is explicit below.
+not independent replications of every result.
 
 ### Strategic models
 
@@ -140,4 +146,4 @@ datasets, practitioner interviews or field tests were performed for this skill.
 The adoption, supplier and approval-rule examples are synthetic. Ticket-proxy gaming,
 coalition-rule reconstruction and response tracing are practical analytical applications,
 not validated causal claims about a particular institution. Inspect local evidence
-before transferring them. Prototype review must test actual usefulness and overhead.
+before transferring them.

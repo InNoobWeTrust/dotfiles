@@ -21,7 +21,24 @@ Keep outcome/invariants fixed while choices are being investigated. The primary 
 
 Product-facing decision notes go in product docs; execution packets/checkpoints/consensus go in task memory. Do not expose full worker transcripts or ask the user to become integrator.
 
-For software capabilities, keep the materialization contract in the existing approved plan/phase file—for each affected capability, the selected library/tool/API, compatibility, accessible reference source, dependency-edit scope, justified exceptions, prohibited substitutions and reuse evidence—and copy its unit-relevant rows into each implementation handoff, including atomic patches and route replacements. The primary settles recommended library/API choices and justified repository/standard-library exceptions before coding. Missing or incompatible selections return to the primary; dependency installation, manifest edits, and network still require their own scoped authority. Evaluators compare actual API call sites and behavior against that same revision; an import or green test suite alone cannot prove reuse.
+Before **any design or implementation**, the primary researches and presents the
+existing/native/standard-library and established tools/APIs, relevant constraints/
+sources, alternatives and custom insufficiency; explicit HUMAN approval is required.
+Read-only discovery/research/review may precede it, not schemas/interfaces/module
+plans/prototypes. Primary plan approval, architect decisions and consultation cannot
+replace it. A concise prose/no-new-dependency proposal still needs approval.
+Keep the materialization contract in existing task context: task/scope, proposal
+revision, human approval source/conditions, capability → tool/library/API, current
+version/runtime suitability, accessible sources, dependency-edit scope, justified
+custom exceptions, prohibited substitutions and reuse evidence. Carry unit-relevant
+rows/receipt through design and implementation handoffs, atomic patches and route
+replacements. Reuse unchanged same-task approval; changed providers/material API/
+runtime constraints or custom exceptions require HUMAN reapproval. Missing approved
+tool means stop affected work, not custom/mock fallback; AFK needs approved fallbacks
+or a halt. Installation/network effects still need scoped authority. Evaluators
+compare actual API calls and relevant behavior, not imports or green tests alone,
+and report every library-free unit plus numerical reuse-policy deductions directly
+to the user, even when custom work is approved.
 
 ## Evaluator-to-optimizer handoff
 

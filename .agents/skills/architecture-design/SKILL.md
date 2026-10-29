@@ -10,6 +10,18 @@ Modular-first & illustration-first — prefer clear component boundaries and mer
 
 Before designing, read [Architecture working principles](references/working-principles.md#architecture). Ground proposals in existing flows and constraints, and distinguish proposed choices from authorized implementation.
 
+**Pre-design human gate:** read-only discovery/research may identify relevant
+repository/native/standard-library and established tools, APIs, versions/constraints,
+sources, alternatives and custom insufficiency. Present this stack and wait for
+explicit human approval before interfaces, schemas, module plans or prototypes.
+Require task/scope, proposal revision and human receipt; primary/architect/tool
+approval is not a substitute. Reuse an unchanged same-task receipt; changed providers,
+material API/runtime constraints or custom exceptions need reapproval. Missing
+receipt/source/tool means affected design is `UNVERIFIED`, not custom-fallback authority.
+Backward compatibility is OFF unless actual root engineering docs affirmatively
+enable it with scope; unavailable root evidence is unknown. Preserve current task
+correctness, safety, data and recovery, not legacy contracts by default.
+
 For changed responsibility placement, boundaries or dependencies, apply [Structural integrity](references/structural-integrity.md) before selecting modules and again against the realized design. It owns the shared placement/graph method; builds alone cannot verify architecture.
 
 Progressive disclosure: this file is the workflow router.
@@ -186,7 +198,7 @@ Use one focused interaction, sequence, data-flow, or boundary diagram only when 
 
 ## Deliverables
 
-- [ ] Scope check passed (Gate 1)
+- [ ] Current human-approved researched stack/custom exceptions and receipt precede design; scope check passed (Gate 1)
 - [ ] Artifact level calibrated: milestone note or canonical/subsystem/migration artifact
 - [ ] C4 depth and illustration budget met when producing canonical architecture documentation
 - [ ] Milestone note records touched boundaries/contracts/invariants/data ownership/failure behavior and one-step runway when using milestone delivery

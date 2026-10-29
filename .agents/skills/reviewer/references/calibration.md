@@ -1,3 +1,8 @@
+---
+metadata:
+  prototype: "2026-10-23"
+---
+
 # Calibrate the reviewer, not just the product
 
 Use before relying on a new/changed automated reviewer or relaxing checks because
@@ -44,6 +49,6 @@ resolved-as-wrong, intentional, unimportant and fixed outcomes separately; unmar
 comments are not proven correct. Schedule recurring evaluations only under actual
 job authority, resources and a real wake-up mechanism—not prose saying “daily.”
 
-**Prototype:** 2026-10-23. Synthetic checks establish only case behavior. Field
+**Prototype.** Synthetic checks establish only case behavior. Field
 benefit requires owner review+repair time, rework/escaped failures and noise measured
 over real deliveries. Calibration never grants approval, merge or deployment rights.

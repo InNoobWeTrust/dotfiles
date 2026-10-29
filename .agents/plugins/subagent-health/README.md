@@ -1,3 +1,8 @@
+---
+metadata:
+  maintenance-review: "Audit false positives and notification delivery after the first 1–2 real uses."
+---
+
 # Subagent health guard
 
 Local OpenCode V2 plugin for child sessions. Root sessions, forks, other projects and other plugin locations are excluded. It never switches models, submits prompts, deletes sessions or controls external delegate CLI processes.
@@ -32,6 +37,6 @@ bun test ./.agents/plugins/subagent-health/src/policy.test.ts
 
 Offline checks use mocked host methods, not real provider requests or live-session interruption. Activation and real parent wake-up require a separate safe smoke check after OpenCode loads the configuration. No service restart is required by this module or performed by its tests. Remove its config entry to disable on the next configuration load.
 
-## Maintenance boundaries
+## Source ownership and runtime boundaries
 
-`src/index.ts` owns hook registration, fresh child/location checks, deferred control calls and cleanup. `src/policy.ts` owns retry counting and fingerprints. Control requests have five-second deadlines. A control/notification failure logs only a sanitized category and child ID; it does not undo the stop latch or silently authorize replacement. Non-JSON/cyclic tool payloads are reported and excluded from fingerprint matching. The guard intentionally does not infer semantic equivalence or kill quiet workers. State is local to each loaded plugin instance; reloads reset history. Audit false positives and notification delivery after the first 1–2 real uses.
+`src/index.ts` owns hook registration, fresh child/location checks, deferred control calls and cleanup. `src/policy.ts` owns retry counting and fingerprints. Control requests have five-second deadlines. A control/notification failure logs only a sanitized category and child ID; it does not undo the stop latch or silently authorize replacement. Non-JSON/cyclic tool payloads are reported and excluded from fingerprint matching. The guard intentionally does not infer semantic equivalence or kill quiet workers. State is local to each loaded plugin instance; reloads reset history.

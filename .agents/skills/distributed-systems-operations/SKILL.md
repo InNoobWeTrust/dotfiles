@@ -1,6 +1,11 @@
 ---
 name: distributed-systems-operations
-description: 'Integrate and operate already-chosen parallel runtimes, workers, HPC/Slurm/MPI, Hadoop/Spark, and distributed storage/sync/consensus systems. Use for "parallelize this workload", "integrate workers", "bound concurrency", "make retries safe", "resume distributed jobs", "sync replicas safely", or "operate a ledger network". Covers data placement, resource accounting, duplicate effects, backpressure, observation and recovery. Not tool selection, AI-subagent dispatch, model-specific training methodology, cryptographic protocol invention, or permission to deploy, spend or mutate live clusters.'
+description: 'Integrate and operate already-chosen parallel runtimes, workers, HPC/Slurm/MPI, Hadoop/Spark, and distributed storage/sync/consensus systems. Use for "parallelize this workload", distributed map-reduce or early-terminating reductions, "integrate workers", "bound concurrency", "make retries safe", "resume distributed jobs", "sync replicas safely", or "operate a ledger network". Covers data placement, resource accounting, duplicate effects, backpressure, observation and recovery. Not ordinary local filtering, tool selection, AI-subagent dispatch, model-specific training methodology, cryptographic protocol invention, or permission to deploy, spend or mutate live clusters.'
+metadata:
+  created: "2026-10-15"
+  review-after: "1–2 real uses or 2027-01-15"
+  lifecycle: "Stage 1: Prototype"
+  maintenance-review: "Review after 1–2 real uses."
 ---
 
 # Distributed Systems Operations
@@ -30,7 +35,7 @@ Choose only the required track:
 
 | Situation | Load |
 |---|---|
-| Local/distributed workers, batch/HPC, data engines | [Compute integration](references/compute-integration.md) |
+| Local/distributed workers, batch/HPC, data engines; map-reduce or per-item early exit | [Compute integration](references/compute-integration.md), including its output/decision contract before fan-out |
 | Ray/Dask, Slurm/MPI, Spark/Hadoop, workflow executors | Also the matching section of [Platform quirks](references/platform-quirks.md) |
 | Replicated storage, sync, locks, consensus, ledgers | [State integration and recovery](references/state-integration.md) |
 | Checking a guarantee or using an unfamiliar version | Matching entry in [Source ledger](references/sources.md); retrieve deployed-version docs before relying on defaults |
@@ -86,8 +91,8 @@ Return observed status, output/commit identities, measurements, incomplete units
 | Replica count or CID equals backup | Unrecoverable deletion or missing bytes | Independent retained recovery copy and retrieval test |
 | Lock/ledger/signature makes effects correct | Stale writers or agreed bad data | Fence writes; validate application invariants |
 
-## Prototype and ACI evidence
+## Evidence limits and interface cases
 
-**Stage 1: Prototype**, created 2026-10-15; review after 1–2 real uses or by 2027-01-15. Source-backed operational checklist, not a validated deployment runbook. Protocol-specific BFT/public-network operations require additional evidence.
+Source-backed operational checklist, not a validated deployment runbook. Protocol-specific BFT/public-network operations require additional evidence.
 
 ACI desk cases: native CLI access → inspect approved target and bounded sample; configured integration → require equivalent identity/config/status evidence; absent tools/access → return **UNVERIFIED** and a scoped check request. Examples cover duplicate effects and partial outputs. These are interface walkthroughs, not executed jobs, fault injection or proof of protocol safety.

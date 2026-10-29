@@ -1,6 +1,16 @@
 ---
 name: working-principles
 description: "Discover and apply a task-appropriate reasoning style or perspective for main agents and delegated workers. Use for substantive assignments, optional role hints, or unfamiliar working-style needs. Mechanical tasks may use the baseline without selecting a specialist; this does not replace domain workflows, authority, or safety rules."
+metadata:
+  lifecycle: "Prototype"
+  created: "2026-10-08"
+  review-after: "1–2 real uses or next quarterly skill audit"
+  maintenance-review: |-
+    Lifecycle: Prototype. Review selection and source access after the first 1–2 real uses, or at the next quarterly skill audit. Mechanical catalog checks do not demonstrate Antigravity or any other harness's loading/compliance.
+    ACI Pass:
+    - Result: PASS for the source interface; runtime discovery remains unverified.
+    - Main risks: undiscoverable guidance, hint-as-authority, duplicated principles, unnecessary persona selection, and invented expertise.
+    - Interface upgrades: optional hints/references, no-hint inference, readable catalog with exclusions, rooted references, baseline fallback, explicit stop conditions, and bounded examples.
 ---
 
 # Working Principles
@@ -74,17 +84,10 @@ sources, not the whole workspace; it adds no approval gate or inventory requirem
 | Invent a specialist for every tiny task | Use the baseline when further guidance adds no value. |
 | Assume a reference was read by the parent, so it is already available here | Establish access and read it in this context. |
 
-## Collection maintenance and prototype
+## Extending the catalog
 
 Add a descriptive row to `assets/catalog.csv` and a reference only when an existing source cannot cover a recurring need. Columns are `id,use_when,avoid_when,perspective,reference`; IDs are unique lowercase kebab-case, references are portable file paths with optional heading anchors. Prefer linking an existing authoritative section over copying its text. Quoted CSV fields may contain commas; use CSV-aware tooling when parsing rather than splitting on commas.
 
-Lifecycle: **Prototype**, created **2026-10-08**. Review selection and source access after the first 1–2 real uses, or at the next quarterly skill audit. Mechanical catalog checks do not demonstrate Antigravity or any other harness's loading/compliance.
-
-## ACI Pass
-
-- Result: PASS for the source interface; runtime discovery remains unverified.
-- Main risks: undiscoverable guidance, hint-as-authority, duplicated principles, unnecessary persona selection, and invented expertise.
-- Interface upgrades: optional hints/references, no-hint inference, readable catalog with exclusions, rooted references, baseline fallback, explicit stop conditions, and bounded examples.
 
 ## References
 

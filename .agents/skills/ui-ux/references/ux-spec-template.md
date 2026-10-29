@@ -13,11 +13,14 @@ The file **must** be named exactly `UX-SPEC.md` — no feature suffixes or alias
 ---
 
 ````markdown
-# UX Specification: [Feature Name]
+---
+metadata:
+  status: "Draft | In Review | Approved | Implemented"
+  created: "[date]"
+  last-updated: "[date]"
+---
 
-> Status: Draft | In Review | Approved | Implemented
-> Created: [date]
-> Last updated: [date]
+# UX Specification: [Feature Name]
 
 ---
 

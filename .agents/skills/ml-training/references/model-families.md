@@ -1,3 +1,8 @@
+---
+metadata:
+  sources-read: "2026-10-15"
+---
+
 # Model Families and Modality Contracts
 
 Choose this branch before applying neural-specific training checks. A model family,
@@ -131,7 +136,7 @@ reconstruction, generative or another actual objective before choosing a trainer
 Apply [Transfer and attention](transfer-and-attention.md) to applicable components;
 a multimodal model can need different precision/backends for different encoders.
 
-## Sources and applicability — read 2026-10-15
+## Sources and applicability
 
 - scikit-learn: [pitfalls](https://scikit-learn.org/stable/common_pitfalls.html),
   [cross-validation](https://scikit-learn.org/stable/modules/cross_validation.html),

@@ -23,6 +23,11 @@ reaching production.
 
 ## Mindset
 
+Apply [actual reuse review](../reuse-review.md) for code/design/stack materialization,
+even on Quick or small reviews. Human stack approval and library-free flags/score
+are mandatory policy checks, not discretionary smell findings. Justified custom
+code can be correct and approved while still requiring flags and deductions.
+
 - **Judge the actual workload.** Match structural expectations to the artifact's
   users, expected load and consequences of failure. A local utility does not need
   production-system architecture; a production boundary cannot waive safeguards
@@ -318,7 +323,8 @@ Assign each finding a severity based on compounding risk:
    be fixed with one-line changes. Describe the structural refactoring direction,
    not the exact diff.
 4. **False positives are expected.** Smells are signals, not verdicts. Flag them
-   and let the author defend. A justified smell stops being a finding.
+    and let the author defend. A justified smell stops being a structural finding;
+    mandatory reuse-policy flags and deductions remain, including approved custom code.
 5. **Silence on well-structured code.** Don't list every line that looks fine.
    Only report what needs attention. When there are zero findings, explicitly
    state: _"No architecture or code smell findings — review completed, not skipped."_

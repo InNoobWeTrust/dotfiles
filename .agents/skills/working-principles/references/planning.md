@@ -42,6 +42,11 @@ user.
 
 ## Primary Planning
 
+Before solution design or implementation, apply [Human stack approval](stack-approval.md).
+Read-only discovery and alternatives research may precede the human's approval;
+interfaces, schemas, module plans and prototype code may not. An unchanged current
+same-task approval can be reused; primary plan approval is not stack approval.
+
 When current artifacts could be mistaken for requirements, apply
 [Source integrity](source-integrity.md) within this walkthrough: reconcile authority,
 status and scope before dependent work, not after a large delivery is generated.
@@ -56,7 +61,8 @@ status and scope before dependent work, not after a large delivery is generated.
 - Explain consequential choices in plain language: relevant facts and unknowns,
   terms, a concrete example, alternatives and practical consequences. Ask only
   unresolved questions, then summarize the chosen model and uncertainty. Revalidate
-  agreement if important context was missing; clear authorized work needs no ritual gate.
+  agreement if important context was missing; after human stack approval, clear
+  authorized work inside that unchanged stack needs no repeated ritual gate.
 - Retain intent, cross-boundary coherence and the settled record with the primary.
   Consequential interpretation or direction follows the active eligibility policy;
   workers return contract defects to that owner. New scope, broken public promises
@@ -84,10 +90,14 @@ ceiling for a deep round, not a quota. Respect an existing glossary and resolve
 conflicting critical business meaning, not every variable name.
 
 For rewrites, classify old semantics/interfaces as **delete** or **preserve**.
-Show caller-visible before/after examples and settle compatibility with the
-authorized owner. Where affected consumers need them, agree on signatures/schema,
-errors and stubs before independent implementation. Do not invent hidden shims,
-preserve behavior by reflex or break public promises without approval.
+Check root engineering docs: compatibility is OFF unless the root explicitly
+enables it and names its scope; a bare link, nested document or old test is not
+opt-in. Missing root evidence is unknown, not OFF. Report affected consumers and
+caller-visible consequences; do not add shims or retain old behavior by reflex.
+Investigate unknown required current/outside-consumer contracts proportionately
+and pause only dependent work. Scope, safety, data and recovery still apply when
+compatibility is OFF. After stack approval, agree on required current signatures,
+errors and schema before independent implementation where coordination needs them.
 
 If evidence invalidates a plan or contract, stop only the affected unit, explain
 the defect and revise through its owner. Verify outcomes against user-grounded

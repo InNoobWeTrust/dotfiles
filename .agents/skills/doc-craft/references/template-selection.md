@@ -1,3 +1,9 @@
+---
+metadata:
+  catalog-snapshot: "2026-10-24"
+  validation-history: "The eight catalog entries were inspected at their linked source/metadata pages. No external package was downloaded or compiled as part of this catalog, and no publisher, ATS or recipient acceptance was tested."
+---
+
 # Select a Document Template
 
 For an agent choosing a document structure or page-layout starting point. The output is one suitable candidate with its version, requirements, limitations and check status—not a claim that attractive preview pages prove usability.
@@ -26,8 +32,8 @@ Use the searchable [document template catalog](../assets/document-templates.csv)
 - **Accessibility and extraction:** Check heading semantics, PDF reading order, text extraction and the actual target workflow. Resume authors' ATS-friendly claims and compiler tagging are not independent certification.
 - **No fitting tricks:** Do not rewrite substantive claims, shrink body type indiscriminately or use negative spacing/tracking to imitate a screenshot or force a page count. Fix the relevant layout layer or return an unresolved content/space trade-off to its owner.
 
-## Verification status
+## Verification limits
 
-**Snapshot: 2026-10-24.** The eight catalog entries were inspected at their linked source/metadata pages; `source-inspected;not-compiled` means precisely that, not recommended-for-production or tested with the recipient's content. For non-Typst structure resources, compilation is not applicable and native workflow usability remains unchecked.
+`source-inspected;not-compiled` means precisely that, not recommended-for-production or tested with the recipient's content. For non-Typst structure resources, compilation is not applicable and native workflow usability remains unchecked.
 
-**Limits:** No external package was downloaded or compiled as part of this catalog, and no publisher, ATS or recipient acceptance was tested. Keep these limits when handing off a selection; record actual adoption/build/render observations separately rather than upgrading all candidates after one template succeeds.
+Keep these limits when handing off a selection; record actual adoption/build/render observations separately rather than upgrading all candidates after one template succeeds.

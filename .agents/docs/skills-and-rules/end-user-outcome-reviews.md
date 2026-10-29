@@ -2,6 +2,10 @@
 audience: "Maintainers and engineering leads reviewing agent guidance or product changes"
 purpose: "Find usability regressions by comparing end-user outcomes before and after a change"
 scope: "A trial review method and promotion criteria, not a new mandatory gate or skill"
+metadata:
+  lifecycle: "Prototype attack vector in the adversarial reviewer; real-delivery effectiveness remains unverified"
+  maintenance-note: "The adversarial reviewer now includes this method as a prototype vector; this guide supplies examples and evidence guidance, not another mandatory workflow. Before expanding it or creating a standalone skill, evaluate repeated, independently checked uses for benefit. For each use, retain only a concise assessment of real findings, false positives, review effort, and whether the resulting correction improved the intended outcome."
+  review-trigger: "Revisit after the next two applicable deliveries. Treat any proposed skill or reviewer extension as a prototype until its instructions and real use have both been evaluated."
 ---
 
 # Review changes through end-user outcomes
@@ -10,7 +14,6 @@ scope: "A trial review method and promotion criteria, not a new mandatory gate o
 |---|---|
 | **Goal** | Check that a change improves what users can accomplish, not just internal correctness |
 | **Inputs** | Original request, before/after artifacts, scope, permissions, and acceptance evidence |
-| **Status** | Prototype [attack vector in the adversarial reviewer](../../skills/reviewer/references/sub-reviewers/adversarial.md#attack-vector-end-user-outcome-regression); real-delivery effectiveness remains unverified |
 | **Boundary** | Review is not permission to implement, execute external tools, publish, or accept on the user's behalf |
 
 An **end-user outcome review** asks whether someone can still accomplish the original goal after an update, with understandable instructions and proportionate effort. Pair it with an **agent-workflow review** when agents, skills, rules, or delegation are affected: check that the executor can discover guidance and complete the same task within its permissions.
@@ -69,9 +72,9 @@ These are illustrative checks, not a claim that the scenarios have been executed
 | **A specific technical safety correction** | Real authority or specialist gaps stop safely | A concern label blocks an evidenced correction already inside authority |
 | **Read-only external research** | Independent research returns useful sources | A proxy drops the caller's action boundary or accepts outside-scope edits afterward |
 
-## Evaluate the prototype before further promotion
+## Promotion criteria
 
-The adversarial reviewer now includes this method as a prototype vector; this guide supplies examples and evidence guidance, not another mandatory workflow. Before expanding it or creating a standalone skill, evaluate repeated, independently checked uses for benefit. For each use, retain only a concise assessment of real findings, false positives, review effort, and whether the resulting correction improved the intended outcome; task logs and reviewer transcripts belong in task memory, not this guide.
+Task logs and reviewer transcripts belong in task memory, not this guide. The [adversarial review vector](../../skills/reviewer/references/sub-reviewers/adversarial.md#attack-vector-end-user-outcome-regression) supplies the existing review home.
 
 | Promotion question | Decision |
 |---|---|
@@ -80,5 +83,3 @@ The adversarial reviewer now includes this method as a prototype vector; this gu
 | **Can it reuse existing guidance?** | Prefer a reference or lens in `reviewer`, composing with `subagent-dispatch`, before a standalone skill |
 | **Is a separate skill justified?** | Only if a recurring need has distinct triggers, inputs, outputs, exclusions, and a workflow not already covered |
 | **What authorizes promotion?** | A separate scoped decision using [Skill Author](../../skills/skill-author/SKILL.md) and the [skill lifecycle](skill-lifecycle.md); this note does not activate or register a skill |
-
-Revisit after the next two applicable deliveries. Treat any proposed skill or reviewer extension as a prototype until its instructions and real use have both been evaluated.

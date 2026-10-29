@@ -2,9 +2,10 @@
 name: developer-experience
 description: "Improve developer experience (DX/DevX): discoverable typed configuration and generated defaults, common-task commands, project/module dependency and dataflow views, optional diagnostics, reproducible runs/checkpoints, and consistent contribution paths. Use for workflow friction, configuration discoverability, task entry points, or codebase navigability. Not a replacement for root-cause investigation, architecture decisions, UI design, automatic refactoring, or project/platform bootstrap."
 metadata:
-  lifecycle: prototype
+  lifecycle: "prototype"
   created: "2026-10-23"
   review-after: "2027-01-23"
+  maintenance-review: "Prototype: assess the first 1–2 real applications for retain/revise/remove; review by the metadata date. Source walkthroughs are not measured developer-effectiveness results."
 ---
 
 # Developer Experience
@@ -21,6 +22,13 @@ change only the authorized, useful slice.
 - Discover native capabilities first, then authorized existing integrations. Inspect their actual interface and scope; neither availability nor this skill authorizes installs, exports, remote writes or expensive runs.
 - If automation is absent, use a bounded source-backed/manual view or explicitly report the gap. Do not silently omit requested coverage or claim an unperformed check.
 - Small fixes use the same four phases briefly. Larger work takes multiple task-sized slices, not an all-area overhaul.
+- Before solution design or changes, research/present relevant established/native/
+  standard-library tools, APIs, sources/constraints, alternatives and custom
+  insufficiency; wait for explicit human approval with task/scope/proposal revision.
+  Read-only discovery/review may precede it. Reuse unchanged same-task approval;
+  changed providers/material constraints/custom exceptions require reapproval.
+  Primary/tool approval is not human approval; missing receipt/tool is a scoped gap,
+  not fallback authority. Concise no-new-dependency fixes are not exempt.
 
 ## 1 — Establish the developer task
 
@@ -50,8 +58,11 @@ For dependency/dataflow work, explicitly address **both scales for each view**.
 Record why a scale is collapsed into another view, not applicable, or deferred;
 never substitute a package graph for module internals without explanation.
 
-Select the smallest slice that addresses the friction. Name compatibility and
-safety constraints, observable checks and deferred gaps before implementation.
+Select the smallest slice that addresses the friction after human stack approval.
+Inspect root engineering docs: backward compatibility is OFF unless affirmatively
+enabled there with scope; missing evidence is unknown. Report affected consumers
+and unknown required current contracts proportionately, not a default legacy veto.
+Name safety/data/recovery constraints, observable checks and deferred gaps.
 
 ## 3 — Improve through existing owners
 
@@ -76,7 +87,7 @@ tool adoption; use task observations and developer feedback, not individual rank
 
 ## Stop conditions
 
-- Scope, compatibility, authority or consequential owner decision missing → clarify before the affected change.
+- Scope, human stack approval, root policy evidence or required current consumer decision missing → investigate/clarify before dependent changes; root checked and silent is compatibility OFF, not an unresolved approval question.
 - Required evidence/capability absent → report the gap and limit the affected claim; continue unrelated safe work only within scope.
 - Secrets exposure, unauthorized telemetry/export, untrusted restore or duplicate external effects possible → stop that operation until a safe authorized path exists.
 - A discoverability fix needs architecture migration, new tooling/platform or unsolicited cleanup → return to the appropriate owner for a bounded decision.
@@ -103,9 +114,7 @@ tool adoption; use task observations and developer feedback, not individual rank
 | Call a seed/lockfile/checkpoint “reproducible” | Omits inputs/state/restore/effects | Declare and test the actual promise |
 | Reorganize files for consistency alone | Risks compatibility without proven value | Follow existing owner; propose exceptions separately |
 
-## Evidence and lifecycle
+## Evidence scope
 
 [Sources and limits](references/sources.md) distinguish documented capabilities,
-practitioner observations and this guide's synthesis. Prototype: assess the first
-1–2 real applications for retain/revise/remove; review by the metadata date.
-Source walkthroughs are not measured developer-effectiveness results.
+practitioner observations and this guide's synthesis.

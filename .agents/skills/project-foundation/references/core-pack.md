@@ -75,11 +75,15 @@ If none found and copy is required, stop and ask where the source pack lives.
 Record in `.agents/FOUNDATION.md` (created by the skill):
 
 ```markdown
+---
+metadata:
+  materialized_at: "<ISO-8601 timestamp>"
+  source: "~/.agents | path | copy"
+  core_pack_revision: "<git short sha of source if available, else date>"
+  mode: "symlink | copy"
+---
+
 # Foundation pack
-source: ~/.agents | path | copy
-materialized_at: ISO-8601
-core_pack_revision: <git short sha of source if available, else date>
-mode: symlink | copy
 ```
 
 Use this file in Audit/Evolve to detect stale copies.

@@ -1,3 +1,8 @@
+---
+metadata:
+  reviewed: "2026-07-23"
+---
+
 # Research notes — Agent improvement techniques
 
 > Leaf detail for [agent-improvement-techniques.md](../agent-improvement-techniques.md).  
@@ -116,5 +121,3 @@ If a specific SOAR paper URL is supplied later, update this leaf and re-map.
 | Karpathy practice labels | Yes — as operational themes |
 | STAPO / RAPO / T-STAR | Yes — **analogs only**; cite arXiv in docs; never imply trained STAPO/RAPO/T-STAR policies |
 | Unresolved SOAR paper | Park; keep self-observation interpretation |
-
-Last reviewed: 2026-07-23.

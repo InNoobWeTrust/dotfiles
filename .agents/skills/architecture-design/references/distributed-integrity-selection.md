@@ -1,6 +1,15 @@
+---
+metadata:
+  sources-checked: "2026-10-15"
+  review-after: "1–2 authorized uses or 2027-01-15"
+  lifecycle: "Prototype selection brief"
+  validation-history: "No fault-injection, restore, CRDT or ledger implementation was executed. None of the proposed synthetic checks were executed in this research."
+  aci-review: "ACI desk check: explicit guarantee inputs, conditional outputs, missing-evidence stops and absent-capability fallback. No runtime/security validation claimed. Review after 1–2 authorized uses; require task-attempt evidence before promotion to an operational playbook."
+---
+
 # Distributed storage, sync and integrity selection
 
-Source-backed **prototype selection brief**, checked 2026-10-15. For agents identifying the guarantees an application needs, not a deployment recipe, security certification or permission to publish data. No fault-injection, restore, CRDT or ledger implementation was executed. Use it for a narrow recommendation without the full architecture workflow.
+Source-backed selection brief. For agents identifying the guarantees an application needs, not a deployment recipe, security certification or permission to publish data. Use it for a narrow recommendation without the full architecture workflow.
 
 ## 1. Define the guarantee, not the product category
 
@@ -45,17 +54,17 @@ For large data, consider keeping bytes in approved object/file storage and recor
 
 **Boundary desk case:** multiple disconnected writers require both unrestricted writes and immediate agreement on a single global state. A partition forces an availability/coordination trade-off; neither a CRDT nor a ledger removes the requirement conflict. Clarify which operations may wait and which conflicts are acceptable.
 
-**Next authorized attempt:** use synthetic non-sensitive objects to test one-byte tampering, missing content, concurrent edits, stale reads, and restore under explicit expected outcomes. Test partitions or validator failures only in an approved isolated environment with bounded resources. None were executed in this research.
+**Next authorized attempt:** use synthetic non-sensitive objects to test one-byte tampering, missing content, concurrent edits, stale reads, and restore under explicit expected outcomes. Test partitions or validator failures only in an approved isolated environment with bounded resources.
 
-## Handoff and maintenance
+## Handoff
 
 Return: invariant/threat model, operator/writer trust, candidate and rejected alternative, precise provided/missing guarantees, privacy/deletion impact, failure behavior, required verification and next authorized check. Discover native tools or authorized integrations; if unavailable, provide a check proposal, not invented proof or an installation.
 
-ACI desk check: explicit guarantee inputs, conditional outputs, missing-evidence stops and absent-capability fallback. No runtime/security validation claimed. Review after 1–2 authorized uses or by 2027-01-15; require task-attempt evidence before promotion to an operational playbook. BFT/public-network branches remain research leads until a specific protocol is investigated.
+BFT/public-network branches remain research leads until a specific protocol is investigated.
 
 ## Sources and limits
 
-Primary documentation and the incident account checked 2026-10-15. These are distinct origins concerning different layers, not independent certifications of a proposed combined system. Generic cryptographic and failure-model distinctions are background reasoning; this brief does not specify cryptographic algorithms or prove a protocol.
+Primary documentation and the incident account are distinct origins concerning different layers, not independent certifications of a proposed combined system. Generic cryptographic and failure-model distinctions are background reasoning; this brief does not specify cryptographic algorithms or prove a protocol.
 
 - **S1** [IPFS persistence, pinning and garbage collection](https://docs.ipfs.tech/how-to/pin-files/).
 - **S2** [Automerge introduction and merge semantics links](https://automerge.org/docs/hello/).

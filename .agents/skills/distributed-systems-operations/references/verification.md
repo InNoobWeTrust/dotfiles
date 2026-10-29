@@ -7,6 +7,11 @@ Use existing tests/check tools when they cover the integration. Only execute wit
 1. **Inspection:** verify target identity, versions, effective config, ownership, credentials scope and input/output paths. Reading docs is not inspecting a live deployment.
 2. **Single-unit execution:** verify imports/environment/data access, correctness and output commit. Compare with the existing baseline and declared tolerance.
 3. **Bounded concurrency:** verify coverage, duplicates, skew and peak resources; compare useful throughput including staging/queue/startup/aggregation. Use a fixed representative input, not easier inputs for the parallel case.
+   Match accumulated-state size too: an empty output/cache cannot expose repeated
+   whole-state scans. Include late/no matches, early/late decisive observations,
+   empty partitions, errors and required complete counts where applicable; verify
+   both output equivalence and work actually avoided. Observe coordinator/drain
+   waits as well as worker compute before claiming a bottleneck resolved.
 4. **Failure/recovery:** exercise the relevant rows below on synthetic/non-sensitive data in an approved isolated environment. If not authorized/available, record NOT RUN and constrain claims/scale-up accordingly.
 5. **Operational handoff:** reconcile effects, active work and artifacts; demonstrate the precise resume/cancel path and retained evidence. A required unperformed check remains UNVERIFIED, not PASS.
 

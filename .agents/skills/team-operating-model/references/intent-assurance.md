@@ -1,3 +1,9 @@
+---
+metadata:
+  prototype: "2026-10-23"
+  review-task: "Prototype; assess after 1–2 real deliveries."
+---
+
 # Intent assurance without exhaustive owner review
 
 Use for substantial delivery with an existing outcome, scope, independent checking
@@ -90,5 +96,5 @@ misunderstandings caught before delivery, later rework/escaped failures and revi
 noise. Preserve null results and confounders; stop any unsafe relaxation. Implemented
 guidance and synthetic exercises do not demonstrate production benefit.
 
-**Prototype:** 2026-10-23; assess after 1–2 real deliveries. No new service,
+No new service,
 continuous surveillance, risk-tier policy or automatic approval is supplied here.

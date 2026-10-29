@@ -2,12 +2,14 @@
 audience: Decisions MCP maintainers
 purpose: Explain supported gateways and additional decision-model candidates
 scope: Provider contracts and public catalogs; not a guarantee of account access
+metadata:
+  sources-checked: "2026-10-19"
 ---
 # Decision providers and candidates
 
 [Back to Decisions MCP](../README.md)
 
-**Checked: 2026-10-19.** OpenRouter's [decision catalog](https://openrouter.ai/api/v1/models?output_modalities=decisions) is separate from its chat catalog. The MCP supports Zen → OpenRouter Clef → OpenRouter Mercury free → OpenRouter GPT Luna, advancing only on HTTP 429 and skipping unconfigured/ineligible routes. Decision models are not chat subagents.
+OpenRouter's [decision catalog](https://openrouter.ai/api/v1/models?output_modalities=decisions) is separate from its chat catalog. The MCP supports Zen → OpenRouter Clef → OpenRouter Mercury free → OpenRouter GPT Luna, advancing only on HTTP 429 and skipping unconfigured/ineligible routes. Decision models are not chat subagents.
 
 | Route | Candidate | Listed input price / 1M tokens | Integration gap |
 |---|---|---|---|

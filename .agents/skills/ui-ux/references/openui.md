@@ -1,3 +1,10 @@
+---
+metadata:
+  source-inspected: "2026-10-18"
+  source-inspection-note: "Inspected; upstream main is mutable and exact published versions were not validated during authoring."
+  review-schedule: "Prototype and review schedule follow generative-ui.md."
+---
+
 # OpenUI integration
 
 Use alongside [generative-ui.md](generative-ui.md) when the selected runtime is
@@ -113,10 +120,9 @@ program, unknown component, malformed/truncated stream, cancelled turn, replay
 and invalid action. If package/runtime/browser access is absent, return the
 integration plan and explicitly UNVERIFIED checks; never claim a working app.
 
-## Source lineage and maintenance
+## Source lineage and re-checks
 
-Inspected 2026-10-18; upstream `main` is mutable and exact published versions were
-not validated during authoring. Re-check version-specific signatures at use time.
+Re-check version-specific signatures at use time.
 This is locally curated guidance, not a vendored or automatically synchronized
 copy of the upstream skill; no remote-sync manifest entry is needed.
 
@@ -127,5 +133,3 @@ copy of the upstream skill; no remote-sync manifest entry is needed.
 - [Direct provider](https://github.com/thesysdev/skills/blob/main/skills/openui/references/direct-provider.md)
 - [Reliability](https://github.com/thesysdev/skills/blob/main/skills/openui/references/reliability.md)
 - [Documentation index](https://www.openui.com/llms.txt)
-
-Prototype and review schedule follow [generative-ui.md](generative-ui.md).

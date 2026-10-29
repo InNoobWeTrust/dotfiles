@@ -2,6 +2,13 @@
 
 Read this reference before dispatching planning work. The orchestrator selects the depth and next target; the planner does not decide what to drill into next. The plan file is shared state across calls.
 
+Before any solution-design planning (interfaces, schemas, modules or prototypes),
+require the researched stack proposal and explicit human receipt: task/scope,
+proposal revision, approval source and custom exceptions. Without it, dispatch
+only bounded read-only discovery/diagnosis/research/review, not L0/L1 design under
+another label. Primary/architect/tool approval is not the human gate. Concise
+native-tool/standard-library or Markdown-only proposals are not exempt.
+
 ## Depth levels
 
 Choose a depth suited to the uncertainty. Use these levels for large plans; a bounded plan can go directly to one actionable unit without ceremonial intermediate levels.
@@ -22,7 +29,7 @@ Set every applicable field before launch:
 4. **Goal context:** the full goal for L0; only the target slice and cross-cutting constraints for L1/L2.
 5. **Out of scope:** what this pass must not expand into.
 6. **Stop conditions:** do not expand beyond the selected target, depth or authority.
-7. **Materialization constraints:** existing stack/dependencies, explicit user requirements, and relevant approved language/pattern guidance. L0/L1 retain settled choices and identify unresolved capability choices without prematurely specifying units. Any dispatchable `[ATOMIC]` or L2 unit must include primary-approved [materialization choices](implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract) in its plan/phase file: selected libraries/APIs, compatibility, rationale/sources, dependency surface, exceptions, and reuse evidence. Planners may research/propose selections; implementation waits for primary approval. Do not defer provider selection to an implementer's learned patterns.
+7. **Materialization constraints:** existing stack/dependencies, explicit user requirements and relevant language/pattern guidance. Research may propose unresolved choices, but design at every depth and implementation wait for explicit human stack approval. L0/L1 retain approved choices without prematurely specifying units. Any dispatchable `[ATOMIC]` or L2 unit carries human-approved [materialization choices](implementation-payload-and-preflight.md#materialization-choices--part-of-the-implementation-contract): libraries/APIs, current runtime/version suitability, rationale/sources, dependency surface, exceptions, reuse evidence and human receipt. Do not defer provider selection to learned patterns. Reuse unchanged same-task approval; changed providers/material API/runtime constraints/custom exceptions need reapproval. No approved tool available means return a gap, not custom fallback authority.
 
 ## Stop-before-dispatch conditions
 
@@ -36,6 +43,7 @@ Do not dispatch with an ambiguous target/depth, omitted writable boundary, unres
 - [ ] L1/L2 names exactly one target.
 - [ ] Context matches the selected level; L1/L2 include only the target slice and cross-cutting constraints.
 - [ ] Settled materialization choices survive decomposition; dispatchable units carry the concrete capability/provider contract, and unresolved choices remain blockers to implementation rather than implicit worker discretion.
+- [ ] Every design/implementation unit carries the current human stack receipt (task/scope, proposal revision, approval source); N/A new selections does not bypass it. Missing receipt permits only bounded read-only discovery/research/review.
 - [ ] Dispatchable units settle affected consumer signatures/schema where needed; implementation cannot invent business semantics.
 - [ ] In/out-of-scope paths and cleanup are explicit; exact file deltas are used where disjoint ownership needs them.
 - [ ] Separate phase files are used only where persistent or independently resumable handoffs benefit.

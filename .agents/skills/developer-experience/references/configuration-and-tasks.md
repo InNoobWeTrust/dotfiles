@@ -1,7 +1,10 @@
 # Discoverable configuration and task invocation
 
-Use when configuration or command discovery is the selected friction. Preserve
-existing invocation, setting names and precedence unless a change is authorized.
+Use when configuration or command discovery is the selected friction. Keep the
+authorized current task contract; backward compatibility for old invocations,
+setting names or precedence requires affirmative scoped opt-in in root engineering
+docs. Missing evidence is unknown; report consumers and investigate required
+unknown contracts without inventing aliases or a default preservation veto.
 Source lineage: [sources](sources.md), “Configuration and invocation.”
 
 ## Configuration: one authority, three distinct products
@@ -23,7 +26,7 @@ infer runtime defaults from a schema export.
 
 - Reuse existing schema/default export, init/template command or editor schema support. If absent and in scope, expose a small template/export path from the authoritative declarations; avoid copied default constants.
 - Make the template easy to find from the real command help or project entry page. Show required inputs, accepted types/units and safe examples close to settings, not only in a distant manual.
-- Document the loader's **actual** precedence, merging, unknown-key handling and missing/empty/null semantics. Do not prescribe a universal order; existing user expectations are a compatibility constraint.
+- Document the loader's **actual** precedence, merging, unknown-key handling and missing/empty/null semantics. Do not prescribe a universal order; preserve legacy expectations only within root-opted-in compatibility scope, while implementing the approved current behavior correctly.
 - Verify defaults are valid, wrong types/ranges fail usefully, and misspelled keys/environment names do not silently select surprising values without documented handling.
 - Errors identify the field, expected form and corrective action without echoing secrets. Handle invalid input before destructive work.
 - For source inspection/effective-config commands, show provenance only through an allowlisted/redacted projection. Flags, process environment, files and secret stores have different exposure properties; choose within the project's threat model, not a universal “environment is safe” rule.
@@ -56,7 +59,7 @@ and ownership clear.
 - A developer can list tasks or get help without reading implementation code. Provide a minimal example and describe prerequisites/working directory and expected result.
 - Use consistent names/options; keep defaults safe. Expensive, destructive or remote effects must be visible before invocation, not hidden behind “setup” or “check.”
 - Use meaningful nonzero failures, actionable errors, results on stdout and diagnostics on stderr where the existing CLI contract permits.
-- Support non-interactive execution explicitly: no unexpected prompts/TTY dependency, decorative ANSI or progress noise in machine output. Preserve documented compatibility if changing output.
+- Support non-interactive execution explicitly: no unexpected prompts/TTY dependency, decorative ANSI or progress noise in machine output. Check root compatibility scope when changing output; do not infer legacy preservation from an old manual alone.
 - Avoid secrets in command arguments or examples. Do not install dependencies, contact services or mutate data merely to display help/list tasks.
 - Reuse task/build semantics: a command runner is not automatically an incremental build engine; avoid two copies of the same dependency logic.
 
@@ -65,7 +68,8 @@ and ownership clear.
 ```text
 Project: <resolved root>; entry point: <existing help/list command>
 Developer task: adjust <setting> and run <existing task>
-Scope: config/template/help only; preserve precedence and task names
+Scope: config/template/help only; implement approved precedence and task names
+Approval: <human-approved stack proposal/revision/source>; root compatibility: <scope/OFF/unknown>
 Check: safe template parses; exposed defaults match runtime; invalid input
        fails with a useful message; task works without a TTY
 Effects allowed: <explicit local/remote limits>; unrun checks: <reason>

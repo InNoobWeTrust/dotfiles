@@ -1,3 +1,9 @@
+---
+metadata:
+  prototype: "2026-10-23"
+  review-task: "Evaluate missed source conflicts and false alarms on real affected changes."
+---
+
 # Scoped context-integrity checks
 
 Use for affected governance/documentation during foundation evolution, not a full
@@ -32,5 +38,4 @@ only the dependent interpretation. Do not install tools, broaden access or inven
 approval. Check the final changed content; no automatic moves, deletions, archive,
 background gardening or service is authorized here.
 
-**Prototype:** 2026-10-23. Evaluate missed source conflicts and false alarms on real
-affected changes. Readable structure and reachable files do not prove intent fidelity.
+Readable structure and reachable files do not prove intent fidelity.

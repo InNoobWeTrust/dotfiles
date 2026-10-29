@@ -1,3 +1,12 @@
+---
+metadata:
+  prototype: "2026-10-22"
+  maintenance-review: |-
+    Prototype heuristic. Source-level walkthroughs are not measured
+    agent improvement. Review after the first 1–2 real uses for unsupported motive
+    attribution, missed stakeholders, needless ceremony and useful discriminating tests.
+---
+
 # First Principles: Incentives and Constraints
 
 Use this perspective when a social, institutional or strategic outcome is explained
@@ -150,7 +159,3 @@ Give a short narrative, not an exhaustive checklist for every task:
 Do not replace this explanation with “people are selfish,” “the system is rigged,”
 “nature proves it is right,” “net benefit excuses it,” or “opposition proves genius.”
 Each shortcut skips the mechanism, evidence or legitimacy that needs examination.
-
-**Prototype heuristic — 2026-10-22.** Source-level walkthroughs are not measured
-agent improvement. Review after the first 1–2 real uses for unsupported motive
-attribution, missed stakeholders, needless ceremony and useful discriminating tests.

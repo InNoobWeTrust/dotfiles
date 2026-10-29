@@ -39,7 +39,10 @@ flowchart LR
 ```
 **Do:**
 - Establish canonical domain data models and document field-level mapping rules.
-- Enforce strict JSON Schema / Protobuf definitions with backward compatibility rules.
+- Enforce the approved current JSON Schema / Protobuf contract. Preserve old
+  schemas only when root engineering docs explicitly enable compatibility with
+  scope; otherwise report consumer impact without default shims. Required unknown
+  current/outside-consumer contracts are scoped UNVERIFIED pending investigation.
 **Ask:**
 - How are breaking schema changes from third-party partners detected and managed?
 
@@ -85,7 +88,7 @@ sequenceDiagram
 | Temptation | Mitigation |
 |---|---|
 | Tight sync coupling | Prefer async event streams/webhooks for non-blocking operations |
-| Unversioned contracts | Enforce semver for API specs and strict canonical mapping |
+| Unclear current contracts | Verify provider versions and canonical mapping; legacy-version coexistence only for root-opted-in compatibility |
 | No partial failure design | Implement circuit breakers, retries, and DLQ replay capabilities |
 
 ## Approvers

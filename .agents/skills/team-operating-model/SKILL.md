@@ -1,6 +1,17 @@
 ---
 name: team-operating-model
 description: "Use proactively for non-trivial delivery, ambiguous planning, architecture trade-offs, cross-cutting implementation, difficult diagnosis, high-stakes decisions, independent review, second opinions, swarm/party mode, cross-validation, and team-based 'work until done' or implement-verify-correct loops. Activation REQUIRES a real team: a primary plus at least one separately executed worker with task-relevant evidence. Never run this skill solo or simulate workers; if permitted delegation cannot form or maintain the team, stop and report the blocker. Trivial single-pass tasks stay outside this skill. Unifies team delivery/release evaluation, multi-perspective deliberation, and persistent roles/plans/checkpoints. Autonomous delivery has no default aggregate turn/time cap; jobs, resources, authority, and spending remain bounded. Supports collaborative/HITL and AFK only with verified isolation and resumable state. Does not grant implementation, launch, or billing authority."
+metadata:
+  lifecycle: "merged prototype"
+  merged: "2026-10-11"
+  review-after: "1–2 real uses or 2027-01-11"
+  aci-pass: |-
+    Evidence (recorded limits): automatic activation, blocked-team recovery, and AFK lifecycle
+    require real-use validation.
+    Upgrades: mandatory real-team activation, current worker evidence, fail-closed delegation,
+    preserved coordination/release guards, and on-demand references.
+    Lifecycle: merged prototype; review routing/overhead after 1–2 real uses or the next quarterly
+    audit.
 ---
 
 # Team Operating Model
@@ -102,8 +113,7 @@ current revision's receipt; mechanical edits with no changed design are exempt.
 
 The primary retains architecture stewardship across workers: maintain the bounded source-backed map, pass relevant structure/flow knowledge in handoffs, and verify combined placement, dependency deltas and human understandability at integration under that design-acceptance reference. Consequential architecture direction follows the eligibility gate.
 
-For software work, consequential library/tool/API selections are settled through
-the eligibility gate using repository constraints and applicable code guidance; local mechanics within the settled stack remain with the implementer. Keep the materialization contract in the existing plan/phase file (inline for an atomic patch): for each affected capability, record the selected library/tool/API, compatibility, accessible reference source, dependency-edit scope, justified exceptions, prohibited substitutions and actual reuse evidence. Carry its unit-relevant rows into worker handoffs, and revalidate changed choices on replacement/revision. Acceptance checks actual API use and behavior, not imports alone; workers report missing/incompatible choices rather than silently reverting to learned patterns.
+For software work, library/tool/API selections require the human stack gate (researched proposal presented, explicit user approval obtained, receipt recorded); the eligibility gate does not substitute for this human-owned approval. Local mechanics within the human-approved stack remain with the implementer. Keep the materialization contract in the existing plan/phase file (inline for an atomic patch): for each affected capability, record the selected library/tool/API, compatibility, accessible reference source, dependency-edit scope, justified exceptions, prohibited substitutions and actual reuse evidence. Carry its unit-relevant rows into worker handoffs, and revalidate changed choices on replacement/revision. Acceptance checks actual API use and behavior, not imports alone; workers report missing/incompatible choices rather than silently reverting to learned patterns.
 
 Load [Delivery](references/delivery.md) before authorized build/fix/work-until-done loops.
 It governs autonomous/collaborative/HITL mode, bounded jobs, criteria, correction, and release.
@@ -161,7 +171,7 @@ the consolidator with the primary silently.
 - [ ] Real team formed and current worker contribution recorded; launch permission verified.
 - [ ] Assignments, ownership, limits, dependencies, and evidence are explicit.
 - [ ] Dedicated conformance subagent checked original-source baseline completeness and every active user requirement against the current revision, including earlier audience/style constraints after adaptation; no FAIL/UNVERIFIED rows hidden by technical success.
-- [ ] Software plans and implementer handoffs retain approved materialization choices/exception rationale; current call-site and behavior evidence confirms actual reuse.
+- [ ] Software plans and implementer handoffs retain human-approved materialization choices/exception rationale; current call-site and behavior evidence confirms actual reuse.
 - [ ] Material cross-component design has a revision-linked independent challenge receipt; integration checks actual dependency direction and consumer wiring, not runtime success alone.
 - [ ] Synthesis preserves dissent and separates evidence from assumptions.
 - [ ] Applicable persistent guards, plan revision, and checkpoints are intact.
@@ -180,11 +190,9 @@ the consolidator with the primary silently.
 | Manufacture consensus or acceptance from green checks | Preserve dissent; wait for recorded user acceptance |
 | Adapt to new facts and forget earlier audience or writing style | Keep cumulative source-linked requirements; obtain the dedicated checker's point-by-point current receipt |
 
-## ACI pass and prototype
+## Evidence boundary
 
-- **Evidence:** distinguish source/worker checks from runtime behavior; automatic activation, blocked-team recovery, and AFK lifecycle require real-use validation.
-- **Upgrades:** mandatory real-team activation, current worker evidence, fail-closed delegation, preserved coordination/release guards, and on-demand references.
-- **Lifecycle:** merged prototype, 2026-10-11; review routing/overhead after 1–2 real uses or the next quarterly audit (2027-01-11).
+Distinguish source/worker checks from runtime behavior.
 
 ## References
 

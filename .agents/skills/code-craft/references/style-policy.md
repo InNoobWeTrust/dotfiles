@@ -1,3 +1,9 @@
+---
+metadata:
+  prototype-added: "2026-10-28"
+  maintenance-review: "Prototype. Reassess after 1–2 real uses. Source-backed defaults and a shared contract do not by themselves prove consistent subagent output."
+---
+
 # Consistent code style
 
 Resolve style once for a coding unit and reuse it across producers and reviewers. This is an inline part of the existing handoff, not a new phase, document or permission to reformat a repository.
@@ -16,5 +22,3 @@ Resolve style once for a coding unit and reuse it across producers and reviewers
 **Formatting is not the whole guide.** Prefer the selected opinionated formatter for layout, quotes and wrapping; check naming, API, documentation and other applicable conventions separately. Declare deliberate differences between formatter defaults and a prose guide, rather than claiming complete guide compliance or repeatedly overriding the formatter.
 
 **Scope and availability:** Format only authorized affected files. Use existing non-mutating checks for verification; a tool that only rewrites needs separately authorized scratch/diff handling, not a reviewer write to user files. No installation, auto-download, toolchain/config change or competing formatter is authorized by this reference; unavailable tools, unsupported syntax/plugins or unresolved options are reported as unverified, not a fabricated pass.
-
-**Prototype:** Added 2026-10-28; reassess after 1–2 real uses. Source-backed defaults and a shared contract do not by themselves prove consistent subagent output.

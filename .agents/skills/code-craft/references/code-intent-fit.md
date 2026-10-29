@@ -1,3 +1,11 @@
+---
+metadata:
+  prototype: "2026-10-23"
+  maintenance-review: |-
+    Prototype. Validate on actual patch/refactor decisions before claiming
+    less rework; a synthetic case or readable rationale is not effectiveness evidence.
+---
+
 # Code-intent fit
 
 Use inside initial source inspection when existing behavior could contradict the
@@ -47,6 +55,3 @@ If a decision is needed, supply intent versus located code conflict, consequence
 options, recommendation and exact choice in the existing exception handoff.
 Otherwise proceed with the settled scoped correction. Keep the separate
 post-working-code maintainability assessment; this analysis does not replace it.
-
-**Prototype:** 2026-10-23. Validate on actual patch/refactor decisions before claiming
-less rework; a synthetic case or readable rationale is not effectiveness evidence.

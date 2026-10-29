@@ -1,3 +1,16 @@
+---
+metadata:
+  prototype-added: "2026-10-09"
+  hybrid-pattern-updated: "2026-10-20"
+  lifecycle: "Prototype"
+  maintenance-review: "Audit after the first 1–2 real document deliveries: compile the starter, inspect a table/code/diagram/link example, and exercise required-Markdown and missing-tooling controls. Local compilation, recipient usability, and accessibility have not yet been demonstrated by this guidance change."
+  aci-review: |-
+    Result: PASS WITH GAPS — format/source/failure contracts are explicit; runtime delivery remains unverified.
+    Main risks: Overbroad Markdown exceptions, unavailable tooling/assets, stale PDF, inaccessible or leaking output.
+    Interface upgrades: Consumer gate, format-native templates, direct build, one source per narrative, explicit blocked delivery, bounded local execution, final-revision checks.
+  hybrid-pattern-review: "Markdown entries and concise summaries route to an assembled Typst/PDF book for depth. Source-level checks cover the entry-only, multi-chapter, native-consumer and missing-compiler paths; actual delivery and reader usability still require the final-revision checks above and review after the next 1–2 uses."
+---
+
 # Typst Authoring and PDF Delivery
 
 Use for human-facing documents selected by [Document format selection](document-formats.md). Keep the task's domain skill for content; this reference supplies authoring and delivery, not a second research/specification workflow.
@@ -126,7 +139,7 @@ PDF tagging is enabled by default, but successful compilation/tagging is not pro
 
 Deliver the checked PDF and the source/assets needed for the agreed editable handoff. If compilation or inspection is unavailable, label the source **uncompiled/unverified**, state which requested output is missing and the exact next build/check step, and never present a stale PDF as current; do not silently install, upload, or substitute Markdown. Any subsequent source/asset edit requires rebuilding and rechecking.
 
-## Sources and Prototype Audit
+## Sources
 
 - [Official compiler and CLI](https://github.com/typst/typst) — Direct compile/watch workflow; no Markdown converter required.
 - [PDF export and accessibility](https://typst.app/docs/reference/pdf/) — Default output/tagging and limitations of automated accessibility checks.
@@ -134,13 +147,3 @@ Deliver the checked PDF and the source/assets needed for the agreed editable han
 - [Paths and project roots](https://typst.app/docs/reference/foundations/path/) — Input-root semantics; not a claim of OS isolation.
 - [Packages](https://github.com/typst/packages#downloads) — Exact-version imports, on-demand acquisition, cached offline use.
 - [Images](https://typst.app/docs/reference/visualize/image/) — SVG/PNG embedding and alternatives.
-
-**Lifecycle:** Prototype, 2026-10-09. Audit after the first 1–2 real document deliveries: compile the starter, inspect a table/code/diagram/link example, and exercise required-Markdown and missing-tooling controls. Local compilation, recipient usability, and accessibility have not yet been demonstrated by this guidance change.
-
-### ACI Pass
-
-- **Result:** PASS WITH GAPS — format/source/failure contracts are explicit; runtime delivery remains unverified.
-- **Main risks:** Overbroad Markdown exceptions, unavailable tooling/assets, stale PDF, inaccessible or leaking output.
-- **Interface upgrades:** Consumer gate, format-native templates, direct build, one source per narrative, explicit blocked delivery, bounded local execution, final-revision checks.
-
-**Hybrid-pattern update, 2026-10-20:** Markdown entries and concise summaries route to an assembled Typst/PDF book for depth. Source-level checks cover the entry-only, multi-chapter, native-consumer and missing-compiler paths; actual delivery and reader usability still require the final-revision checks above and review after the next 1–2 uses.

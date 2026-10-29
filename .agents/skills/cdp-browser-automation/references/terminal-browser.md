@@ -1,3 +1,16 @@
+---
+metadata:
+  correction: "2026-10-18"
+  default-routing-updated: "2026-10-09"
+  aci-result: |-
+    Source interface checked; installed v0.13.4 open, ls, and action help verified.
+    Live pane/control behavior remains unverified by this guidance update.
+  main-risks: "active-tab drift, stale refs, secrets in captures, viewport/engine substitution, unavailable evidence, and shared-daemon teardown."
+  interface-upgrades: "explicit selectors, observable verification, capability-specific exceptions, permission-first native browser startup/control, genuine-denial stops, and ownership-aware cleanup."
+  correction-note: "Correction: request bounded host-execution permission before browser startup instead of predictably failing in a sandbox. Source guidance is updated."
+  prototype-note: "Prototype: default routing updated; audit after the first 1–2 real browser uses."
+---
+
 # terminal-browser — Default Browser Control
 
 Use for ordinary browser interaction, live repros, forms, screenshots, and QA. [terminal-browser](https://terminal-browser.com/) renders a real Chromium-based browser in a terminal pane and exposes an agent-browser-compatible `action` CLI. It manages the connection: no browser MCP, separate Chrome launch, or custom CDP client is needed.
@@ -87,12 +100,8 @@ For supported extra commands, consult the installed CLI and [agent-browser comma
 
   Close only task-owned tabs when cleanup is authorized. Leave user panes and the shared daemon running: **never use `terminal-browser shutdown` as routine cleanup**, since it affects other browsers.
 
-## Interface evidence and prototype audit
+## Execution evidence and sources
 
-- **ACI result:** source interface checked; installed v0.13.4 `open`, `ls`, and `action` help verified. Live pane/control behavior remains unverified by this guidance update.
-- **Main risks:** active-tab drift, stale refs, secrets in captures, viewport/engine substitution, unavailable evidence, and shared-daemon teardown.
-- **Interface upgrades:** explicit selectors, observable verification, capability-specific exceptions, permission-first native browser startup/control, genuine-denial stops, and ownership-aware cleanup.
-- **2026-10-18 correction:** request bounded host-execution permission before browser startup instead of predictably failing in a sandbox. Source guidance is updated; live browser behavior still needs actual execution evidence.
-- **Prototype:** default routing updated 2026-10-09; audit after the first 1–2 real browser uses. Record actual successes/failures, not inferred reliability.
+Live browser behavior still needs actual execution evidence. Record actual successes/failures, not inferred reliability.
 
 Sources: [terminal-browser README](https://github.com/zenbu-labs/terminal-browser), [v0.13.4 action implementation](https://github.com/zenbu-labs/terminal-browser/blob/v0.13.4/cli/src/action.ts), [bundled agent-browser v0.38.1 commands](https://github.com/vercel-labs/agent-browser/blob/v0.38.1/README.md).

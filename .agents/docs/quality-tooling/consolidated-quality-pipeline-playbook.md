@@ -1,6 +1,12 @@
+---
+metadata:
+  validated: "2026-08-14"
+  validation-status: "Validated"
+---
+
 # Consolidated Quality Pipeline & Garden Orchestration Playbook
 
-> **Validated 2026-08-14.** Production patterns and operational learnings for building clean, multi-engine quality pipelines with MegaLinter, Garden 0.14, and OpenObserve telemetry.
+Production patterns and operational learnings for building clean, multi-engine quality pipelines with MegaLinter, Garden 0.14, and OpenObserve telemetry.
 
 ---
 

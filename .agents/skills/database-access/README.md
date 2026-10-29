@@ -1,3 +1,12 @@
+---
+metadata:
+  created: "2026-08-06"
+  review-after: "Quarterly governance audit (Q4 2026)"
+  lifecycle: "Stage 1: Prototype"
+  owner: "Governance / reusable-guidance maintenance"
+  maintenance-note: "This is a Stage 1 Prototype skill. First real-project usage should verify that the capability-contract template, facade guides, and stop conditions work without agent confusion. After 1–2 uses, promote to Stage 2 (Hardened) or file gaps as issues for the next Workflow B audit."
+---
+
 # database-access
 
 Agent skill for governing database access correctness and state lifecycle across all access patterns.
@@ -40,15 +49,6 @@ database-access/
     └── hsql-inspection.md              # Database inspection, catalog discovery, and query testing with hsql
 ```
 
-## Lifecycle
-
-| Field | Value |
-|---|---|
-| Stage | Stage 1: Prototype |
-| Created | 2026-08-06 |
-| Next review | Quarterly governance audit (Q4 2026) |
-| Owner | Governance / reusable-guidance maintenance |
-
 ## Design Decisions
 
 - **hsql is the preferred CLI tool for agents.** Use `hsql` for headless schema/catalog exploration and query verification with bounded `--read-only` and `--timeout` controls.
@@ -66,7 +66,3 @@ database-access/
 - Begin only when schema changes have an approved schema/migration contract and data-access boundaries are settled; missing inputs block dependent work.
 - Non-trivial adapter changes require an implementation capability and observable verification; after working behavior, an independent maintainability assessment remains separate.
 - Independent review requires the changed source, acceptance contract and relevant security/boundary evidence; authors do not self-validate.
-
-## Maintenance Notes
-
-This is a Stage 1 Prototype skill. First real-project usage should verify that the capability-contract template, facade guides, and stop conditions work without agent confusion. After 1–2 uses, promote to Stage 2 (Hardened) or file gaps as issues for the next Workflow B audit.

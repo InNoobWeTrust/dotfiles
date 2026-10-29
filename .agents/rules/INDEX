@@ -4,12 +4,12 @@ Read this map first; load each rule body only when its trigger fires, before the
 
 | Rule | Trigger |
 |---|---|
-| `authority.md` | Decision ownership, operating mode, elevated autonomy, material decisions, process/resource safety |
+| `authority.md` | Before design/implementation: human stack approval; decision ownership, root compatibility opt-in, autonomy and material decisions |
 | `evidence.md` | Verification/self-review, completion claims, side-effect tools, skepticism or pushback |
 | `skill-use.md` | Skill discovery/selection and binding workflow commitments |
 | `execution-safety.md` | Before the first shell command and throughout execution; sandbox routing, secrets, long-running processes |
 | `git-safety.md` | Staging, committing, pushing, destructive Git operations |
-| `code-quality.md` | Code implementation, capability reuse, test persistence, existing domain vocabulary |
+| `code-quality.md` | Stack research, code design/implementation/review, actual capability reuse, library-free flags/score, tests and domain vocabulary |
 | `document-formats.md` | Creating/saving/substantially revising/sharing human-facing documents or choosing report/spec formats |
 
 **Layering:** instructions → triggered rules; skill discovery → `../skills/INDEX` → selected `SKILL.md` → requested references. Rules may point to skills; skills must never link back to or depend on rule files. Do not duplicate rule text into skills.

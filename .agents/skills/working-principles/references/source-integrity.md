@@ -1,3 +1,12 @@
+---
+metadata:
+  prototype: "2026-10-23"
+  maintenance-review: |-
+    Prototype. Evaluate after 1–2 real uses for missed conflicts, false
+    alarms and owner review/rework effort. Structure and synthetic checks alone do not
+    establish prevention of intent drift.
+---
+
 # Source integrity before reuse
 
 Use when repository material, prior decisions or current code inform a task's
@@ -55,7 +64,3 @@ Protect user work. Do not reorganize unrelated files, erase dirty work or create
 per-file metadata bureaucracy. If necessary source access/checking is unavailable,
 mark the affected interpretation UNVERIFIED and stop its dependent action; do not
 install tools, invent source evidence or silently broaden access.
-
-**Prototype:** 2026-10-23. Evaluate after 1–2 real uses for missed conflicts, false
-alarms and owner review/rework effort. Structure and synthetic checks alone do not
-establish prevention of intent drift.

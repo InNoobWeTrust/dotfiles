@@ -100,6 +100,13 @@ Hypotheses from `research-ideation` when needed → `ml-training` split provenan
 
 Already-chosen compute/storage/sync/consensus platform → `distributed-systems-operations` actual target/version, invariants, placement/resources, commit/retry/recovery and verified bounded integration before scale → `code-craft` adapters (`database-access` for transactional sink/deduplication). `ml-training` retains model split/schedule/metric/checkpoint contracts. Investigate stalls/failures; review warranted resource/security/correctness boundaries. Undecided stack → architecture selection; AI-agent delegation → `subagent-dispatch`, not distributed code-task operations. No implicit launch/mutation/transfer/spend/sign authority.
 
+Slowness/poor scaling/stalled workers → `systematic-investigation` performance
+diagnosis (critical path, required work, accumulated-state costs) before assuming
+more workers help. Distributed map-reduce/early termination → operations output
+contract: per-item stopping is not global completion; complete counts/audits may
+forbid skipping. Changed stage ownership/runtime → architecture design with the
+diagnostic evidence. Plain local filtering does not require distributed operations.
+
 ### Documentation Craftsmanship
 
 Domain specification owner → `doc-craft` audience/format/layering/abstraction/visual rhythm → `mermaid-validation` for diagrams (render SVG/PNG for Typst, not diagram source as the visual) → warranted editorial review. Preserve native Markdown consumers; comprehensive human-facing detail uses Typst/PDF. Specs can hand directly to independent semantic/editorial review; internal plans/phase specs/consensus tracking go to `memory-techniques`, not document publishing.

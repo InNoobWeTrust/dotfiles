@@ -1,8 +1,20 @@
-# Zero-Downtime Schema Migrations
+# Recovery-safe schema migrations
+
+First require a human-approved researched engine/driver/migration-tool stack and
+an authorized change/recovery plan. Inspect actual root engineering docs: backward
+compatibility is OFF unless enabled there with scope; missing evidence is unknown.
+Old tests, clients and nested policy do not enable it. Report affected consumers;
+investigate unknown required current contracts proportionately and pause dependent
+work. Data integrity, safe recovery, lock/availability bounds and destructive-operation
+approval remain mandatory even with compatibility OFF. No live DDL is authorized here.
 
 ## 1. The Expand-Contract (Parallel Change) Pattern
 
-Never execute destructive DDL (`DROP COLUMN`, `RENAME COLUMN`, altering data types) in a single deployment. Zero-downtime database changes require a 4-phase rollout:
+Use expand-contract when explicitly opted-in rolling compatibility or actual
+availability requires old/new coexistence. The four-phase example below is one
+conditional technique, not a rule for every schema change. An authorized offline
+replacement can instead use a validated backup/restore and cutover plan. Never
+infer destructive DDL permission from compatibility opt-out.
 
 ```mermaid
 sequenceDiagram
@@ -29,6 +41,10 @@ sequenceDiagram
 ---
 
 ## 2. Non-Blocking DDL Guidelines (Postgres / MySQL)
+
+Apply to a selected engine/version when non-blocking availability is required;
+verify its actual DDL and transaction restrictions. These examples are PostgreSQL,
+not portable MySQL syntax or blanket permission to run migrations.
 
 - **Adding Columns**: Always add new columns as `NULLABLE` or with `DEFAULT` values that do not lock the table (Postgres 11+ handles defaults without rewriting the table).
 - **Adding Indexes**: Always build indexes concurrently on live tables:

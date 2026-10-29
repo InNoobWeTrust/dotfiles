@@ -1,3 +1,15 @@
+---
+metadata:
+  aci-pass: |-
+    Result: PASS WITH GAPS — instruction contract checked; harness-specific wake-up and live cluster
+    behavior require runtime verification before promising monitoring.
+    Main risks: forgotten rearming, duplicate timers, unsupported wake-ups, timeout shorter than wait,
+    and confusing liveness with success.
+    Interface upgrades: native-command-first routing, no sleep-only delegation, explicit
+    owner/target/endpoint, one-shot command, bounded receipt, read-only actions, rearm-before-continuing,
+    and honest interruption handling.
+---
+
 # Periodic Progress Checks
 
 Use when asked to “check periodically,” “monitor this job,” “check again in a minute,” or “remind me to check.” Applies to multiplexer workloads and distributed queues such as Slurm. Monitoring observes work; it does not authorize cancelling, resubmitting, or changing it.
@@ -55,9 +67,3 @@ sleep 60
 ```
 
 When completion notifies the parent, run `squeue -j 12345 -h -o '%i %T %M %R'` using the authorized shell route. If absent, query `sacct -j 12345 --format=JobID,State,ExitCode --noheader`; missing accounting means `UNKNOWN`. Report the observation and rearm only if needed. No subagent is launched. A supplied read-only check may instead follow the sleep in the same bounded command; preserve its output and exit status for the parent. A synchronous external delegate is not automatically an asynchronous timer.
-
-## ACI Pass
-
-- Result: PASS WITH GAPS — instruction contract checked; harness-specific wake-up and live cluster behavior require runtime verification before promising monitoring.
-- Main risks: forgotten rearming, duplicate timers, unsupported wake-ups, timeout shorter than wait, and confusing liveness with success.
-- Interface upgrades: native-command-first routing, no sleep-only delegation, explicit owner/target/endpoint, one-shot command, bounded receipt, read-only actions, rearm-before-continuing, and honest interruption handling.

@@ -1,3 +1,16 @@
+---
+metadata:
+  prototype-added: "2026-10-24"
+  prototype-validation: |-
+    The previous starter and this style block both compiled as two-page synthetic CV plus technical/product-note specimens with Typst 0.15.1; rendered pages and extracted text were inspected. An intentionally absent font still produced a PDF with a warning, confirming the need for checks beyond exit status; these tests do not establish that the new style is universally better or that less capable models will follow it.
+  maintenance-review: |-
+    No real-user CV, non-Latin typography, complex scientific specimen, external template runtime, publisher acceptance or model comparison was validated. After the next 1–2 real document uses, check whether the spacing controls and feedback loop prevented the reported errors before claiming effectiveness.
+  aci-review: |-
+    Result: PASS WITH GAPS — inputs, distinct controls, examples and blocked-rendering behavior are explicit; model-following and broader document outcomes remain unverified.
+    Main risks: Confusing leading with baseline spacing, overriding a template, silent font substitution and treating compilation as visual approval.
+    Interface upgrades: Just-in-time router, searchable template catalog, conditional heuristics, scoped settings and final-revision rendered checks.
+---
+
 # Typography and Spacing
 
 For agents laying out paginated documents in Typst, especially when a model tends to fix density with arbitrary spacing. Use this reference to choose controls and inspect results, not to redesign the document's content or override a required template.
@@ -75,18 +88,8 @@ Use a semantic `table` for related row/column data instead of a layout grid. Nei
 4. **Fix the responsible layer:** Correct template parameters or the shared style before patching individual paragraphs. If content truly exceeds the agreed space, discuss prioritization or permitted pagination instead of deleting meaning or compressing type to force a fit.
 5. **Recheck boundaries:** Try a longer label, a near-page-break section and the actual dependency/font environment. Rebuild and reinspect after each source, font, layout or asset change; when rendering is unavailable, report visual verification as blocked rather than approved.
 
-## Sources, scope and prototype evidence
+## Sources and scope
 
 - **Typst semantics:** Official [paragraph](https://typst.app/docs/reference/model/par/), [text](https://typst.app/docs/reference/text/text/), [line break](https://typst.app/docs/reference/text/linebreak/), [lists](https://typst.app/docs/reference/model/list/), [blocks](https://typst.app/docs/reference/layout/block/), [grid](https://typst.app/docs/reference/layout/grid/), [table](https://typst.app/docs/reference/model/table/) and [styling](https://typst.app/docs/reference/styling/) references establish controls, not aesthetic approval.
 - **Practitioner heuristics:** Matthew Butterick's [typography in ten minutes](https://practicaltypography.com/typography-in-ten-minutes.html), [line spacing](https://practicaltypography.com/line-spacing.html), [letterspacing](https://practicaltypography.com/letterspacing.html) and [paragraph spacing](https://practicaltypography.com/space-between-paragraphs.html) supply conditional print advice, not universal standards or Typst-specific values.
 - **Independent résumé context:** University of Wisconsin–Madison's [résumé guidance](https://careercenter.education.wisc.edu/prepare-apply/resume/) emphasizes readable type, consistency and whitespace; page count depends on context/experience. This does not validate academic CV conventions or ATS behavior.
-
-**Prototype, 2026-10-24:** The previous starter and this style block both compiled as two-page synthetic CV plus technical/product-note specimens with Typst 0.15.1; rendered pages and extracted text were inspected. An intentionally absent font still produced a PDF with a warning, confirming the need for checks beyond exit status; these tests do not establish that the new style is universally better or that less capable models will follow it.
-
-**Remaining evidence:** No real-user CV, non-Latin typography, complex scientific specimen, external template runtime, publisher acceptance or model comparison was validated. After the next 1–2 real document uses, check whether the spacing controls and feedback loop prevented the reported errors before claiming effectiveness.
-
-### ACI pass
-
-- **Result:** PASS WITH GAPS — inputs, distinct controls, examples and blocked-rendering behavior are explicit; model-following and broader document outcomes remain unverified.
-- **Main risks:** Confusing leading with baseline spacing, overriding a template, silent font substitution and treating compilation as visual approval.
-- **Interface upgrades:** Just-in-time router, searchable template catalog, conditional heuristics, scoped settings and final-revision rendered checks.

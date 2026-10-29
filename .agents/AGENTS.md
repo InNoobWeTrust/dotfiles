@@ -21,15 +21,19 @@ After necessary instruction/safety bootstrap and before task work—even small t
 
 | When | Required policy |
 |---|---|
-| Accepting work, choosing autonomy, consequential direction or material decisions, rewriting behavior | `rules/authority.md` |
+| Accepting work, before design/implementation, choosing autonomy, consequential decisions, rewriting behavior | `rules/authority.md` |
 | Before the first shell command, and throughout command/process execution | `rules/execution-safety.md` |
 | Verifying outcomes, reporting completion, side-effect tools or responding to pushback | `rules/evidence.md` |
 | Selecting or following skills | `rules/skill-use.md` |
-| Generating/implementing code, source ownership/dependency boundaries, retaining tests or changing domain vocabulary | `rules/code-quality.md` |
+| Researching a stack, designing/implementing/reviewing code, capability reuse, test persistence or domain vocabulary | `rules/code-quality.md` |
 | Staging, committing, pushing or destructive Git actions | `rules/git-safety.md` |
 | Creating or substantially revising human-facing documents | `rules/document-formats.md` |
 
 Establish outcome, scope and observable success before substantial implementation. Authorized delivery defaults to autonomous execution within settled direction and bounds; honor collaborative/HITL requests. Exploration is not implementation permission. Explain material choices before asking for a decision; do not manufacture agreement or verification. No default aggregate task cap waives bounded jobs or safety stops.
+
+**Human stack gate:** before any design or implementation, research and present the task-specific tools/libraries/dependencies and custom exceptions, then wait for the user's explicit approval. A concise native-tool/standard-library or Markdown-only proposal is sufficient when appropriate; small tasks and AFK do not bypass approval. Reuse a current unchanged same-task approval; changed stacks or custom substitutions need reapproval. See `rules/authority.md` and the [stack approval method](skills/working-principles/references/stack-approval.md).
+
+Backward compatibility is **off unless explicitly enabled with scope in the project's root engineering docs**. Reuse established capabilities, including standard libraries, for the actual work. Review must flag every library-free authored code unit, deduct visibly per distinct capability, and report the flags and maintainability—reuse policy score directly to the user (`rules/code-quality.md`); approved custom code is not exempt.
 
 Never stage, commit, push or discard changes without the required explicit approval. Protect secrets, user work and user processes. Approval of a bounded operation covers scoped native execution when sandboxing is unsuitable, not new effects, larger budgets or bypassing mandatory isolation. Report server issues; do not restart unexpectedly. Follow applicable execution rules and active tool contracts for harness-specific controls.
 
@@ -37,7 +41,7 @@ Never stage, commit, push or discard changes without the required explicit appro
 
 - **Production software:** `code-craft`; use MVP-first delivery and slicing proportionately. For rewrites, preserve/delete classification and consumer compatibility follow `rules/authority.md`.
 - **Scientific research and exploratory ideation:** `research-ideation`; no production roadmaps, TDD, slicing or administrative terminology freezes. Favor literature-grounded hypotheses and falsifiable experiments.
-- **Utilities, dotfiles and bounded local fixes:** fast path. Resolve consequential uncertainty, reuse established tools, and verify observable behavior without compulsory phase files, DTO scaffolding or clean-room TDD. Small code is not automatically low risk.
+- **Utilities, dotfiles and bounded local fixes:** fast path after human stack approval. Resolve consequential uncertainty, reuse established tools, and verify observable behavior without compulsory phase files, DTO scaffolding or clean-room TDD. Small code is not automatically low risk.
 
 Prefer native/platform capabilities and established tools before custom layers; consult curated indexes such as [Terminal Trove](https://terminaltrove.com/list/) and package registries where relevant. Retain only end-to-end tests and important critical-logic unit tests without additional approval; keep other checks temporary and protect existing suites (`rules/code-quality.md`).
 
@@ -75,14 +79,16 @@ Suitability inspection, including reading `SKILL.md`, does not activate a workfl
   when it did not author the proposal), then the applicable authority: the
   configured decision-support capability, an explicitly delegated architect
   decision job, or the user for reserved decisions. The primary records and
-  executes the confirmed choice. Mechanical steps settled by an explicit source
-  are exempt. Missing eligible roles block affected work. The existing cross-family
+  executes the confirmed choice. Stack approval is always human-reserved; neither
+  this gate nor a primary/architect/decision tool can replace it. Mechanical steps
+  within a current human-approved stack need no repeat approval. Missing eligible
+  roles block affected work. The existing cross-family
   plan/design/audit challenge gate remains mandatory. This changes assignment
   eligibility, not native permissions or model settings. Current assessments and
   limits: [agent routing evidence](docs/skills-and-rules/agent-routing-evidence.md).
 - **Continuing roles:** preserve immutable `task_id` + `role_id` bindings, fresh sessions for distinct jobs, append-only slice checkpoints, role-first restoration and approved-plan revalidation under [Persistent coordination](skills/team-operating-model/references/persistent-coordination.md). Keep human acceptance and later consolidation approval separate.
 
-`agents/` files are model-routing adapters, not behavioral bootstraps. Final accountability stays with the outermost main; no unnecessary approval gates inside authorized scope.
+`agents/` files are model-routing adapters, not behavioral bootstraps. Final accountability stays with the outermost main; after the required human stack gate, do not invent further approval rituals inside settled scope.
 
 ## Reader and browser defaults
 

@@ -1,3 +1,10 @@
+---
+metadata:
+  prototype-added: "2026-10-28"
+  review-after: "1–2 real uses"
+  maintenance-review: "Prototype; reassess after 1–2 real uses. Catalog/link checks are source checks, not evidence of formatter execution or improved review outcomes."
+---
+
 # Review the agreed style, not a new preference
 
 Use for code-style or formatter questions alongside the existing [core review](core-review.md) and [file rules](file-rules.md). Preserve their scope, severity, output and anti-noise gates; this is not another universal review stage.
@@ -18,5 +25,3 @@ Both URL columns use **` | `** to separate multiple URLs; blank means no verifie
 - **Semantic conventions:** Manually inspect applicable naming, API and documentation advice not enforced by the formatter. Do not infer correctness, security or full guide compliance from a format pass, or import company-specific build, architecture or language-version restrictions without a project decision.
 - **No retrospective blockers:** Without an agreed style contract or applicable project rule, catalog guidance is advisory; disclose the missing contract and do not manufacture a blocking preference-only finding. Preserve existing Go/Python anti-style-noise rules. Attribute pre-existing formatting debt separately and keep ordinary review findings within the diff unless a wider audit is explicitly authorized.
 - **Ambiguous syntax:** Resolve the actual language, not just its extension. Objective-C `.m` explicitly uses the `objc` record through the runtime contract despite the existing MATLAB extension route; ambiguous `.m` remains advisory. Reason `.re/.rei`, ArkTS, Vyper and templates require their own supported parser, not a superficially similar language's formatter.
-
-**Prototype:** Added 2026-10-28; reassess after 1–2 real uses. Catalog/link checks are source checks, not evidence of formatter execution or improved review outcomes.

@@ -108,7 +108,8 @@ Define conditions where the skill workflow must HALT. A stop condition means: "d
 
 Example from code-craft:
 ```
-STOP CONDITION: Required behavior, consumer compatibility or safe execution is unresolved.
+STOP CONDITION: Human stack approval, required current behavior, root policy evidence,
+opted-in compatibility or safe execution is unresolved.
 → Stop affected work; return the evidence and proposed clarification.
   Do not invent fallback semantics or broaden the task into a redesign.
 ```
@@ -125,8 +126,9 @@ What must be true for the task to be considered complete:
 
 The implementation handoff includes:
 - [ ] Requested behavior, relevant checks and verification limitations
-- [ ] Preserved safety, integrity and required consumer compatibility
-- [ ] Separate report-only assessment and record, or explicit pending status and reason
+- [ ] Human-approved researched stack/custom exceptions with current proposal/receipt
+- [ ] Preserved safety/integrity and root-opted-in compatibility, not automatic legacy shims
+- [ ] Separate report-only assessment with all library-free flags/numerical reuse-policy deductions directly reported, or explicit pending status and reason
 ```
 
 #### Section 5: Anti-Pattern Table

@@ -3,6 +3,9 @@ audience: Agent-setup maintainers
 purpose: Preserve source findings and explain the scoped memory adaptation for later improvement
 scope: Gemini proposal, edited video evidence, adaptation boundaries, and evaluation criteria
 status: research-prototype
+metadata:
+  implementation-status: "Scoped memory guidance implemented as a prototype; effectiveness requires real use"
+  maintenance-review: "After 1–2 real uses or the next quarterly skill audit. Guided scenarios and static checks are useful prototype evidence, but do not establish runtime routing, automatic recall, privacy enforcement, or general effectiveness."
 ---
 
 # Personal Context for Agent Improvement
@@ -13,7 +16,6 @@ status: research-prototype
 | Source | [Vietnamese edited video about Alicia Lyttle and Claude](https://www.youtube.com/watch?v=Vo8DCzi6n2E), roughly 40 minutes |
 | Evidence | English and Vietnamese original auto-captions retrieved with `yt-dlp`; not manually edited subtitles |
 | Boundaries | No new skill catalog, automatic profiles, scheduler, provider changes, or income guarantees |
-| Status | Scoped memory guidance implemented as a prototype; effectiveness requires real use |
 
 **Reader path:** start here for the adaptation; open [video source findings](details/source-findings.md) to check attribution and timestamps, or [original Gemini proposal](details/gemini-proposal.md) to revisit the initial ideas. This Markdown archive serves the repository's agent-searchable wiki and is not an execution plan.
 
@@ -63,8 +65,6 @@ Explicit remember/use request
 | Email with authentic style | Fewer stylistic edits, facts preserved | Polished wording changes promises or invents experience |
 
 **Measure real work:** use comparable tasks with and without minimal context; record editing/correction effort, unsupported claims, clarification friction, and irrelevant context. Record actual observations, not invented scores or claims that longer prompts are better.
-
-**Review timing:** after 1–2 real uses or the next quarterly skill audit. Guided scenarios and static checks are useful prototype evidence, but do not establish runtime routing, automatic recall, privacy enforcement, or general effectiveness.
 
 ## Sources and limitations
 
