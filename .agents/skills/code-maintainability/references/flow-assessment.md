@@ -29,11 +29,11 @@ Flow: <file:symbol> -> <consequential decision/stage> -> <result>
 Effects/state: <read/write boundaries; state and resource owners>
 Failure: <rejection/error/cancellation/partial result; cleanup or retry>
 Evidence/limits: <supplied or authorized checks; unobserved paths>
-Suggestion: <location, observed cost, smallest adjustment, benefit/risk, trigger>
-Blockers: <actual defects separate from deferred refinements, or none>
+Suggestion: <location, class (structural | optional | out-of-footprint), violated rule/cost, smallest adjustment, risk>
+Blockers: <actual defects separate from cleanup/optional items, or none>
 ```
 
-A small linear script may need only a sentence and a leave-alone conclusion.
+A small linear script may need only a sentence and a nothing-to-clean conclusion.
 For complex flow, add a small manual view only when it answers the inspection
 question; label its limits and use actual source anchors. Do not require a DAG,
 state-machine framework, new orchestrator, telemetry or a second documentation
@@ -41,5 +41,5 @@ system. The header holds file navigation; the assessment record holds findings
 and evidence; a module README serves its consumers when needed.
 
 Keep sensitive inputs and traces local unless separately authorized. Structural
-suggestions must address observed cost rather than decorate hidden flow with
-comments. Record now; apply only after usefulness and explicit bounded approval.
+findings inside the footprint are mandatory cleanup after the user locks behavior;
+optional items wait for explicit approval.

@@ -1,9 +1,10 @@
 # Design Rigor Reviewer
 
 Review lens for consequential design and problem-solving decisions, not a gate
-requiring upfront ceremony. Working-first implementation is intentional:
-maintainability suggestions are recorded separately for later usefulness and
-approval. Missing phase artifacts or SOLID checklists alone are not findings.
+requiring upfront ceremony. Test-flight slices narrow scope rather than structure:
+once working behavior is locked, structural violations inside the task footprint
+are mandatory cleanup, while optional refinements wait for explicit approval.
+Missing phase artifacts or SOLID checklists alone are not findings.
 
 ## Relationship to Other Sub-Reviewers
 
@@ -40,14 +41,14 @@ being solved?).
 
 ### Lens 1: Design Discipline
 
-Evaluate whether consequential behavior, trust/state ownership, and consumer
-contracts are understood and respected. Treat optional structure/readability
-improvements as deferred suggestions, not blockers. A separate post-implementation
-maintainability assessment receives the working outcome, source revision, changed
-files, verification evidence, known shortcuts, action limits and authorized record
-destination; it returns concrete source-linked costs and deferred suggestions.
-Missing evidence leaves behavior unverified; missing an independent assessor leaves
-review pending. Refinement waits for demonstrated usefulness and explicit approval.
+Evaluate whether consequential behavior, trust/state ownership, consumer
+contracts, and the structure plan are understood and respected. A separate
+post-implementation maintainability assessment receives the working outcome,
+source revision, changed files (the footprint), verification and gate evidence,
+known shortcuts, action limits and authorized record destination; it classifies
+findings into structural (mandatory cleanup inside the footprint after lock),
+optional (deferred until explicit approval) and defects. Missing evidence leaves
+behavior unverified; missing an independent assessor leaves review pending.
 
 #### Attack Vectors
 

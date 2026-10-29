@@ -14,12 +14,12 @@ and approval. No code changes or new tool runs are authorized by this reference.
 | Dependency direction | Domain decisions depend on transport/storage details, producing a traced change ripple | Adjust the affected dependency or pass the needed capability explicitly; no framework by default |
 | Abstraction depth | Wrappers or indirection add navigation without hiding a meaningful rule or boundary | Remove or consolidate only where the simpler path demonstrably reduces reader effort |
 
-A short helper, large cohesive function, missing phase document or unchecked lens
-is not a finding by itself. Do not require an N/A ritual, numerical complexity
-budget or an upfront design document.
+A short helper, missing phase document or unchecked lens is not a finding by
+itself. Do not require an N/A ritual or an upfront design document. Configured
+gates and the governing structure standard define the numeric and boundary limits.
 
-For a worthwhile suggestion, record location, actual change/reader cost, smallest
-adjustment, benefit, risk/effort and trigger for doing it. **Leave it alone** is
-valid; suggestions do not block trying working software. Safety, correctness,
-integrity and required-compatibility defects go to the primary as separate
-blockers. A recorded suggestion never approves its application.
+For each finding, record location, violated rule or actual change/reader cost,
+smallest behavior-preserving adjustment, and risk/effort. Classify it under the
+root skill: **structural** (standard violation inside the footprint; mandatory
+cleanup after lock), **optional** (needs explicit approval) or **defect** (blocker).
+**Nothing to clean** is valid when the footprint already meets the standard.

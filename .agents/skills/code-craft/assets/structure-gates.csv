@@ -1,0 +1,39 @@
+id,capability,language,tool,rule_or_setting,default_value,notes
+gate-ts-cyclomatic,cyclomatic complexity,javascript-typescript,ESLint core,complexity,10,"[""error"", 10]"
+gate-ts-cognitive,cognitive complexity,javascript-typescript,eslint-plugin-sonarjs or Biome,sonarjs/cognitive-complexity | complexity/noExcessiveCognitiveComplexity,15,Biome option maxAllowedComplexity
+gate-ts-fn-length,function length,javascript-typescript,ESLint core,max-lines-per-function,50,"skipBlankLines and skipComments true"
+gate-ts-depth,nesting depth,javascript-typescript,ESLint core,max-depth,4,
+gate-ts-params,parameters,javascript-typescript,ESLint core,max-params,5,
+gate-ts-file-length,file length,javascript-typescript,ESLint core,max-lines,400,"skipBlankLines and skipComments true; override to 800 for test globs"
+gate-ts-boundaries,layer and feature boundaries,javascript-typescript,dependency-cruiser | eslint-plugin-boundaries | eslint-plugin-import,forbidden rules + no-circular | boundaries/element-types | import/no-restricted-paths,zero violations,"Write rule comments that state the allowed import path"
+gate-ts-dead,dead code and unused exports/deps,javascript-typescript,knip,default config,zero new,
+gate-ts-ratchet,baseline and ratchet,javascript-typescript,ESLint bulk suppressions | betterer,eslint --suppress-all then prune | betterer.results,counts only decrease,"Check ESLint version supports bulk suppressions"
+gate-py-cyclomatic,cyclomatic complexity,python,Ruff,C901 with lint.mccabe.max-complexity,10,
+gate-py-cognitive,cognitive complexity,python,complexipy,max complexity,15,"Alternative: flake8-cognitive-complexity"
+gate-py-fn-length,function length,python,Ruff,PLR0915 lint.pylint.max-statements,50,"Statements, not lines; pair with Lizard -L 50 if line count is required"
+gate-py-branches,branches,python,Ruff,PLR0912 lint.pylint.max-branches,12,
+gate-py-params,parameters,python,Ruff,PLR0913 lint.pylint.max-args,5,
+gate-py-depth,nesting depth,python,Ruff,PLR1702 lint.pylint.max-nested-blocks,4,"Preview rule in some Ruff versions"
+gate-py-boundaries,layer and feature boundaries,python,import-linter | tach,layers/forbidden/independence contracts,zero violations,
+gate-py-dead,dead code,python,vulture,--min-confidence 80,zero new,"Whitelist framework entry points explicitly"
+gate-py-ratchet,baseline and ratchet,python,Ruff,ruff check --add-noqa for existing debt; new code clean,counts only decrease,"Track noqa count per file"
+gate-go-cognitive,cognitive complexity,go,golangci-lint gocognit | revive cognitive-complexity,min-complexity,15,
+gate-go-cyclomatic,cyclomatic complexity,go,golangci-lint gocyclo,min-complexity,10,
+gate-go-fn-length,function length,go,golangci-lint funlen | revive function-length,lines,50,
+gate-go-depth,nesting depth,go,golangci-lint nestif | revive max-control-nesting,max nesting,4,
+gate-go-params,parameters,go,revive,argument-limit,5,
+gate-go-file-length,file length,go,revive,file-length-limit,400,
+gate-go-boundaries,layer and feature boundaries,go,internal/ packages + golangci-lint depguard,depguard rules,zero violations,"Prefer internal/ visibility before lint rules"
+gate-go-dead,dead code,go,deadcode (golang.org/x/tools) + golangci-lint unused,default,zero new,
+gate-go-ratchet,baseline and ratchet,go,golangci-lint,issues.new-from-rev,counts only decrease,
+gate-rs-cognitive,cognitive complexity,rust,clippy,clippy::cognitive_complexity + cognitive-complexity-threshold,15,"Lint is not default-enabled; enable explicitly"
+gate-rs-fn-length,function length,rust,clippy,clippy::too_many_lines + too-many-lines-threshold,50,"Pedantic lint; enable explicitly"
+gate-rs-params,parameters,rust,clippy,clippy::too_many_arguments + too-many-arguments-threshold,5,
+gate-rs-boundaries,layer and feature boundaries,rust,workspace crates + pub(crate) + cargo-deny,bans,zero violations,"Crate edges are the enforced boundary"
+gate-rs-dead,dead code and unused deps,rust,rustc lints + cargo-machete | cargo-udeps,deny(dead_code unused),zero new,
+gate-jvm-metrics,complexity/length/params/nesting/file,java-kotlin,Checkstyle | detekt,CyclomaticComplexity MethodLength ParameterNumber NestedIfDepth FileLength,per standard,
+gate-jvm-boundaries,layer and feature boundaries,java-kotlin,ArchUnit,layeredArchitecture / noClasses rules as tests,zero violations,
+gate-any-metrics,complexity/length/params,any,Lizard,-C 10 -L 50 -a 5,per standard,"Cross-language fallback"
+gate-any-duplication,duplication,any,jscpd,minTokens 50 minLines 5,no new clones,
+gate-any-hooks,run gates automatically,any,pre-commit | lefthook | husky + harness after-edit/before-finish hooks,project hook config,all gates,"Harness hook names differ; check the harness's own docs"
+gate-any-step-size,reviewable step size,any,git diff --stat (excluding generated/test paths),changed hand-written non-test lines,400,"Report in handoff change map"

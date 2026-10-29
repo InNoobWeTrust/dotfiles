@@ -80,10 +80,10 @@ never establish coverage or readiness to commit.
 
 Use a failing check first when it clarifies the contract or guards a regression.
 Observe the intended failure, then implement the smallest correct change. Adjust
-structure as needed for that authorized behavior, keeping checks intact; green
-tests do not authorize discretionary cleanup. Later maintainability refinement
-requires usefulness and explicit approval. Test-first is not mandatory for
-documentation, trivial edits or exploratory research.
+structure as needed for that authorized behavior, keeping checks intact; once
+behavior is locked, structural findings inside the task footprint are mandatory
+cleanup while optional refinements require explicit approval. Test-first is not
+mandatory for documentation, trivial edits or exploratory research.
 
 ## Optional clean-room verification
 

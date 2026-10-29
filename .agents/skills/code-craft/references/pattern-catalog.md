@@ -39,7 +39,8 @@ Retrieve a few matching rows with IDs and source locators. Apply stack, language
 | **Code Patterns** | `design-patterns.csv` | Structuring classes, functions, and modules (Result, Typestate, Functional Options, Builder, Strategy, Specification, Value Object, Discriminated Union, Constructor DI). |
 | **Concurrency & Resilience** | `resilience.csv` | In-process execution safety, retries, rate limits, worker pools, structured concurrency (TaskGroup), and deadline propagation. |
 | **Stacks** | `stacks.csv` | Pulling concrete, idiomatic syntax blueprints for Go, Rust, Python, TypeScript, C#, Java. |
-| **Model Traps** | `model-traps.csv` | Checking generated code for observable defects such as over-abstraction, lost error context, and class bloat, regardless of model family. |
+| **Model Traps** | `model-traps.csv` | Checking generated code for observable defects such as over-abstraction, god-file stuffing, bucket modules, cross-feature reach, lost error context, and class bloat, regardless of model family. |
+| **Structure Gates** | `structure-gates.csv` | Selecting stack-specific linters and thresholds for complexity, function/file length, boundaries, duplication, dead code, and legacy ratchets. |
 | **Decisions** | `code-reasoning.csv` | Evaluating concrete trade-offs (e.g. exceptions vs Result, typestate vs boolean flags, closures vs ABCs, Rust persistence adapters). Retrieve conditional candidates, then verify the actual requirements and backend capabilities. |
 
 ---

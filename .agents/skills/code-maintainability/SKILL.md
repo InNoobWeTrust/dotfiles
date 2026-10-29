@@ -1,124 +1,115 @@
 ---
 name: code-maintainability
-description: "Assess working code in a separate agent and record concrete maintainability refinements for later. Use for post-implementation assessment, recording shortcuts, readability or SOLID review, and approved refinement of a solution proven useful. Not an upfront implementation gate, general security audit, or permission to automatically refactor."
+description: "Assess working code in a separate agent against the governing structure standard and classify findings as structural (mandatory cleanup after the user locks behavior), optional (recorded, approval needed) or defects. Use for post-implementation assessment, cleanup-pass planning, legacy hotspot reports, readability or SOLID review. Not an upfront implementation gate, general security audit, or permission to change behavior."
 metadata:
   maintenance-review: |-
     Source-interface PASS: explicit inputs, snapshot, action limits, recording contract, example, approval gates, unavailable-capability behavior, and locally owned assessment references. Mixed guides are separated by implementer/assessor purpose; no duplicate library or old-path stubs.
     Review after 1–2 real uses or the next quarterly audit. Source checks/walkthroughs do not prove runtime compliance or productivity gains.
+  structure-revision: "2026-10-30: structural findings became mandatory cleanup after lock instead of deferred suggestions; structure standard and gate output added as assessment inputs."
 ---
 
 # Code Maintainability
 
-Spend assessment effort after there is working software, and refinement effort
-after that software proves useful. A useful assessment may conclude **leave it alone**.
+Assess working code against the structure standard that governs it, so cleanup
+happens while the change is fresh. A useful assessment may conclude **nothing to clean**.
 
-**Reader:** a separately dispatched assessor, or a later authorized refiner.
-**Inputs:** outcome and constraints, changed files plus revision/snapshot identity,
-verification evidence, known shortcuts, READ/RUN boundaries, and an authorized
-durable record destination (existing task, issue, PR, or project record preferred).
+**Reader:** a separately dispatched assessor, or a later cleanup implementer.
+**Inputs:** outcome and constraints, changed files plus revision/snapshot identity
+(the task footprint), verification and lock evidence, gate output, known shortcuts,
+the governing structure standard (project override or installation default; the
+caller supplies it when not discoverable), READ/RUN boundaries, and an authorized
+record destination (existing task, issue, PR, or project record preferred).
 Resolve paths against the supplied project root. Do not assume parent chat access.
-**Outputs:** a recorded assessment with mandatory reuse flags/score reported to the
-user, or a bounded approved refinement with fresh checks. Obtain the scoped stack
+**Outputs:** a classified assessment with mandatory reuse flags/score reported to the
+user and a cleanup plan for structural findings. Obtain the scoped stack
 proposal/human receipt and root engineering policy; unknown evidence stays unknown.
 
-## 1. Assess working code — default, report-only
+## 1. Assess working code — report first
 
 Confirm the handoff identifies working behavior and evidence. Missing checks mean
 that behavior is unverified, not that the assessor should silently finish it.
-Inspect only the changed surface and enough consumers to understand its effects.
-Use available native tools or authorized integrations; no particular harness or
-provider is required. No code writes, installs, or nested delegation are authorized
-by this skill. RUN only checks explicitly allowed in the assignment.
+Inspect the footprint and enough consumers to understand its effects. No code writes,
+installs, or nested delegation are authorized by this skill. RUN only checks
+explicitly allowed in the assignment; prefer the project's configured structure gates
+and report missing gates as a foundation gap.
 
-Look for concrete costs: difficult-to-follow effects, confusing names, mixed
-responsibilities, duplicated rules likely to diverge, inappropriate dependencies,
-or unnecessary abstraction. Do not manufacture findings to fill a checklist.
+Check, in order: structure-plan compliance and placement; boundaries and layer
+direction; limit breaches; duplicated business rules (search for existing equivalents,
+not only within the diff); banned bucket names and pass-through layers; dead code and
+leftover old paths; then readability. Do not manufacture findings to fill a checklist.
 Always apply [Library reuse assessment](references/library-reuse.md): actual API
 delegation, every library-free unit/location, approved custom rationale and a
-predeclared numerical reuse-policy deduction. This is mandatory reporting, not an
-optional suggestion deferred until the code proves useful.
-Load only the relevant method, not the whole library:
+predeclared numerical reuse-policy deduction—mandatory reporting, never deferred.
+Load only the relevant method:
 
-| Need | Optional method |
+| Need | Method |
 |---|---|
 | Responsibility/interface/dependency assessment | [SOLID cost questions](references/solid-checklist.md) |
 | Readability, naming, duplication and caller documentation | [Readability assessment](references/readability.md) |
 | Effects, branching, orchestration and evidence walkthrough | [Flow assessment](references/flow-assessment.md) |
 
-This skill owns assessment methods; Code Craft owns implementation techniques,
-testing, native file navigation, language/tooling choices and pattern lookup.
-These methods do not authorize enforcing every style preference or implementing
-suggestions. Scope recommendations to observed costs, not hypothetical needs.
+This skill owns assessment methods; the implementation capability owns
+implementation techniques, the default structure standard, testing, native file
+navigation and pattern lookup.
 
-## 2. Record suggestions now; defer application
+## 2. Classify and record
+
+| Class | Meaning | Status |
+|---|---|---|
+| **Structural** | Violates the governing standard: placement, boundary/layer, limit, duplicated rule, banned name, pass-through layer, dead code/old path, mixed concerns | **Mandatory cleanup** after lock, inside the task footprint |
+| **Optional** | Improvement within the standard with no observed violation | Recorded; needs explicit approval |
+| **Defect** | Safety, correctness, integrity, stack-approval or opted-in compatibility | Blocker; normal repair workflow |
+| **Out-of-footprint debt** | Pre-existing violation the task did not create or touch | Legacy remediation backlog |
 
 Return a compact record for the primary to persist at the authorized destination;
-write that record directly only when the assignment explicitly allows that path.
-Include:
-
-- Assessed revision/files, working outcome, supplied/run checks, and limitations.
-- Each suggestion: source location, concrete maintenance cost, smallest useful
-  adjustment, expected benefit, risk/effort, and when it would become worthwhile.
-- Status **deferred — awaiting demonstrated usefulness and explicit approval** for
-  optional refinements only; report mandatory reuse flags/deductions immediately.
-- Any safety, correctness, integrity, human stack-approval violation or root-opted-in compatibility defect separately
-  as a blocker needing the normal repair workflow, never hidden as optional debt.
-- **No worthwhile refinement** when leaving the code alone is the better choice.
+write it directly only when the assignment allows that path. Include assessed
+revision/files, outcome, checks and limitations, and per finding: location, class,
+violated rule (standard section or project override), smallest behavior-preserving
+fix, step size, and lock coverage of the affected path.
 
 Example record (paths relative to the supplied project root):
 
-> Revision: supplied snapshot A; `src/import.ts`; import smoke check passed.
-> Suggestion: `src/import.ts:42` mixes parsing and saving, making parser changes
-> hard to isolate. Consider extracting parsing when a second input format is
-> actually needed. Benefit: localized changes; effort: small; risk: error ordering.
-> Deferred — usefulness not established, no refactor approved. Blockers: none.
+> Revision: snapshot A; footprint `src/features/import/*`; smoke + lock checks passed.
+> Structural: `src/features/import/handler.ts:42` parses and saves in one 140-line
+> function (limit 50; mixes service and adapter layers). Fix: move parsing to
+> `import/service/parse.ts` (pure move, ~60 lines), then extract save adapter. Lock: covered.
+> Optional: rename `rec` → `importRecord`. Blockers: none.
 
-Assessment completion does not approve its recommendations or prove usefulness.
-Optional suggestions are non-blocking; required approval violations are not suggestions.
-Preserve the record
-even if refinement never happens; do not create a new tracking system by default.
+## 3. Clean up
 
-## 3. Refine later — only with explicit approval
+- **Structural, inside the footprint:** the user's lock authorizes cleanup as part of
+  the task. Use an implementation capability with the plan, writable scope and lock
+  checks; behavior-preserving budgeted steps; gates and lock checks green after each.
+  No lock evidence for a path → do not restructure it; report.
+- **Optional:** apply only with explicit user approval of selected items and scope.
+- **Out-of-footprint:** user-approved remediation batches with baseline and ratchet.
 
-Before any design or code change, require a current human-approved researched
-stack/custom-exception receipt (a primary cannot supply it), plus evidence/user confirmation that the solution
-is useful and explicit user approval of the selected suggestions and writable
-scope. Neither green tests, assessment dispatch, silence, nor recorded suggestions
-satisfies these gates. If either is absent, stop at the record.
-
-Revalidate the current source against the assessed revision; stale suggestions
-need a fresh scoped assessment, not blind application. Use an implementation
-capability with the explicit approved change, writable scope, observable behavior
-and consumer contracts. Preserve those contracts, run relevant checks again, and
-record what changed and what remains deferred. Request separate authorization for
-any behavior change or broader redesign; do not turn refinement into a rewrite.
-
-Close a bounded refinement with fresh checks and the record update; do not trigger
-another assessment automatically. Reassess only when requested or new evidence
-invalidates the prior assessment. Newly affected trust/state/consumer boundaries
-or broader scope require returning to the primary before proceeding.
+Before any write, require the current human stack/custom-exception receipt (a primary
+cannot supply it). Revalidate current source against the assessed revision; stale
+findings need a fresh scoped assessment. Any behavior or consumer-contract change
+needs separate authorization. Close a cleanup with fresh checks and the record
+update; do not trigger another assessment automatically.
 
 ## Stops and deliverable
 
 - Missing source/evidence: report the precise limitation; do not invent findings.
 - No separate permitted assessor: primary reports pending, never self-certifies independence.
-- Missing record destination/write permission: return the report and mark recording
-  pending; no silent memory-store creation or expansion of writable scope.
-- Missing usefulness evidence, refinement approval or current human stack receipt:
-  no refinement design/writes; read-only research/review may close evidence gaps.
-- Safety or contract defect: escalate affected work; suggestions cannot waive it.
+- Missing record destination/write permission: return the report and mark recording pending.
+- Missing lock evidence or stack receipt: no cleanup writes; read-only review may close gaps.
+- Safety or contract defect: escalate affected work; findings cannot waive it.
 
-Deliver a source-linked assessment and record location/status, explicit blockers,
-and deferred suggestions or a leave-alone conclusion. For approved refinement,
-also deliver scope compliance and fresh behavior evidence.
+Deliver a source-linked classified assessment, record location/status, blockers, the
+structural cleanup plan, and optional or out-of-footprint items. For cleanup, also
+deliver scope compliance, gate output and fresh lock-check evidence.
 
 ## Avoid
 
 | Temptation | Instead |
 |---|---|
-| Polish before it works | Assess the verified working result |
-| Automatically apply easy suggestions | Record now; wait for usefulness and approval |
-| Demand full SOLID compliance | Recommend changes with concrete benefit |
-| Invent future consumers | Tie refinement to observed pain or an explicit trigger |
+| Downgrade a standard violation to an optional suggestion | Classify it structural; it is mandatory cleanup |
+| Assess only the diff for duplication | Search for existing equivalents of the new rule |
+| Accept "gates pass" without output | Mark UNVERIFIED or run the allowed gate |
+| Restructure behavior that is not locked | Require lock checks first |
+| Expand cleanup into adjacent legacy code | Record as remediation backlog |
 | Bury a correctness defect as debt | Report a blocker separately |
 | Apply a stale report | Revalidate the current source first |

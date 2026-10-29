@@ -57,7 +57,7 @@ If materialization preference is unknown and the repo is shared: **default to co
 
 ### A2 — AGENTS.md
 
-Create/update project `AGENTS.md` with: product one-liner, source-of-truth hierarchy, project rules, tooling, agent operating rules (default implementation skill, full-skill commitment), code quality pointers, source layout, verify commands, security (no secrets; secret scan expectation).
+Create/update project `AGENTS.md` with: product one-liner, source-of-truth hierarchy, project rules, tooling, agent operating rules (default implementation skill, full-skill commitment), **Structure Contract** (from `references/structure-contract-template.md`: feature-first layout, forward-only layer order, 1–3 exemplar modules, checkable golden principles, project limit overrides, and structure-gate command), verify commands, and security (no secrets; secret scan expectation).
 
 Stop: if comprehensive, leave it; if incomplete, patch sections only.
 
@@ -92,7 +92,7 @@ Thin targets: `help`, `fix`, `lint`, `quality`, `test`, `dev`, `dev-up`, `build`
 ### A7 — Architecture, quality gates + visual design system (DESIGN.md)
 
 - `docs/architecture.md` — responsibility split, data ownership, data flow, API contracts, integration modes, non-goals
-- `docs/engineering/quality-gates.md` — command matrix, thresholds, escalation, rollout
+- `docs/engineering/quality-gates.md` — use `references/structure-contract-template.md`: mechanical gate matrix (boundary linter with agent-readable fix messages, complexity/size caps, duplication, dead code, ≤400-LOC step budget), pre-commit and harness hook wiring, and for existing codebases a baseline + ratchet and legacy target map
 - `DESIGN.md` — **For projects with UI/frontend or brand identity**: use a UI/UX design capability to initialize `DESIGN.md` at repo root per Google Labs spec (YAML frontmatter tokens + canonical prose sections) and add `npx @google/design.md lint DESIGN.md` to visual quality checks.
 
 When the `rapid-demo` profile is active, also complete the compact **Demo Receipt** and production checkpoint in `references/rapid-demo-profile.md`. Reuse the existing phased-delivery Delivery Contract and Active Milestone Packet architecture note; do not duplicate them.
@@ -206,6 +206,7 @@ Edit the target harness's dedicated MCP config file directly — no shared canon
 
 - `references/core-pack.md`
 - `references/drift-checks.md`
+- `references/structure-contract-template.md` — `AGENTS.md` structure contract, exemplar modules, mechanical quality gates and legacy ratchet templates
 - `references/setup-skills.md` — executable onboarding skill pattern
 - `references/feedback-flywheel.md` — post-session harness improvement checklist
 - `references/rapid-demo-profile.md` — conditional local-first, synthetic-data demo profile matrix

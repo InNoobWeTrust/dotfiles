@@ -8,8 +8,8 @@ For non-trivial work, load `team-operating-model` before substantive work: activ
 
 | Skill | Cost | Use When | Do Not Use When |
 | --- | --- | --- | --- |
-| `code-craft` | low | Implementation/fixes, approved refactoring, code-intent fit, behavior specs; verify working behavior before maintainability assessment | Formatting/config-only edits; maintainability-only assessment |
-| `code-maintainability` | medium | Separate-agent assessment of working code; record refinements, apply only after usefulness and explicit approval | Upfront implementation gate; automatic cleanup; general security audit |
+| `code-craft` | low | Implementation/fixes, approved refactoring, cleanup passes, code-intent fit, behavior specs; structure plan before code, early test-flight slice, then mandatory structural cleanup after lock | Formatting/config-only edits; maintainability-only assessment |
+| `code-maintainability` | medium | Separate-agent assessment of working code against the structure standard; classify findings as structural (mandatory cleanup after lock), optional (needs approval) or defects | Upfront implementation gate; behavior changes without approval; general security audit |
 | `systematic-investigation` | medium | Debugging, root causes, slowness/poor scaling/stalled workers, recurring failures, first-principles diagnosis, architectural decisions, pre-mortems/red-teaming | Creative ideation or straightforward edits |
 | `brainstorming` | low | Creative/product ideation, conceptual exploration, prioritization; settled-direction product intent/PRDs | Analytical debugging or structured fixes |
 | `decision-support` | low | Meaningful uncertain choices: autonomous next steps, recommendations before asking, worker continue/return triage; consult an existing capability | Trivial choices; fact gathering; replacing authority, hard stops, workers or independent review |

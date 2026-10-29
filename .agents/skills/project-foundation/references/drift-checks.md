@@ -9,7 +9,7 @@ claim the entire source pack audited. Record unsupported/uninspected surfaces.
 
 ## A. Presence
 
-- [ ] `AGENTS.md` has mandatory sections (source-of-truth, tooling, agent ops, verify commands, security)
+- [ ] `AGENTS.md` has mandatory sections (source-of-truth, tooling, agent ops, **Structure Contract** with layer order + 1–3 exemplar modules + golden principles, verify commands, security)
 - [ ] A `GLOSSARY.md` exists when requested or recurring business ambiguity justifies one; otherwise absence is not a gap. No term-count quota.
 - [ ] `.agents/FOUNDATION.md` exists (source, mode, revision, date)
 - [ ] Every **required** rule from `core-pack.md` is present and non-empty
@@ -19,7 +19,7 @@ claim the entire source pack audited. Record unsupported/uninspected surfaces.
 - [ ] `skills/INDEX` lists all required skills with Use When / Do Not Use When
 - [ ] `skills/WIRING` exists
 - [ ] `Makefile` has help/fix/lint/quality/test/dev/build (or documented equivalents)
-- [ ] `docs/architecture.md` and `docs/engineering/quality-gates.md` exist
+- [ ] `docs/architecture.md` and `docs/engineering/quality-gates.md` (with mechanical boundary, complexity/size, duplication, dead-code gates, hook wiring, and legacy baseline/ratchet where needed) exist
 - [ ] `DESIGN.md` exists for UI/frontend projects (verified via UI/UX design capability)
 
 ## B. Wiring integrity
@@ -34,7 +34,8 @@ claim the entire source pack audited. Record unsupported/uninspected surfaces.
 - [ ] `AGENTS.md` verify commands match real Makefile / package scripts
 - [ ] Stack statements (language, package manager, ports) match the repo
 - [ ] `GLOSSARY.md` terms still appear in code; flag dead terms and new unnamed concepts
-- [ ] Quality-gates doc thresholds match CI / Makefile
+- [ ] Quality-gates doc thresholds match actual linter configs / CI / Makefile, and existing-project baselines only ratchet downward
+- [ ] Exemplar modules named in `AGENTS.md` exist on disk and pass the configured structure gates
 - [ ] Architecture non-goals still true; no major subsystem missing from the map
 - [ ] `DESIGN.md` passes lint (`npx @google/design.md lint DESIGN.md`) and tokens match UI implementation
 

@@ -34,20 +34,40 @@ trigger: always_on
 - Favor clear responsibilities, small useful interfaces, visible effects and
   idiomatic code. Settle affected consumer behavior/contracts before independent
   implementation; formal signatures/files only where coordination needs them.
-  Numeric style thresholds, one-export files and README creation
-  are contextual techniques, not universal gates. Do not overengineer utilities.
+  Apply the [code structure standard](../skills/code-craft/references/structure-standard.md)
+  to new and existing projects: global defaults (feature-first layout, forward-only
+  layers, functional core/imperative shell, banned bucket names, complexity/size/
+  duplication/dead-code/boundary limits and the ≤400-LOC reviewable step budget)
+  hold unless the project's root engineering docs or linter config explicitly
+  override them. Enforce limits with project gates (baseline + ratchet for legacy
+  debt) rather than model judgment. One-export files and unsolicited README creation
+  remain contextual, not universal gates.
 - Keep compact [file navigation](../skills/code-craft/references/file-navigation.md)
   in native docstrings/comments: purpose for new hand-maintained files; grouped
   symbols and consequential edges where needed. Refresh affected navigation when
   responsibilities, dependencies or consumer flows change. Tiny files need only
   one line; no unrelated retrofit or generated-file edits. Verify source/callers
   before trusting the map; a header does not establish codebase integrity.
-- **Structure before volume:** Before generating new or changed capabilities or
-  runtime/trust boundaries, settle source homes and allowed dependency direction,
-  then materialize code there. Apply the [source-boundary contract](../skills/architecture-design/references/structural-integrity.md);
-  green tests or an acyclic graph cannot replace actual placement review.
-  Cohesive unchanged-boundary edits need only a brief existing-owner rationale,
-  not new folders or forms.
+- **Structure before volume:** Before generating new or changed capabilities,
+  file groups or runtime/trust boundaries, settle a concrete **structure plan**
+  (file homes, responsibilities/layers, public surface, allowed dependency edges,
+  exemplar followed) under the [code structure standard](../skills/code-craft/references/structure-standard.md)
+  and [source-boundary contract](../skills/architecture-design/references/structural-integrity.md).
+  The structure plan is design direction: an eligible direction route or the user
+  authors or approves it; atomic-execution routes materialize it strictly and stop
+  if code does not fit the planned homes. Green tests or an acyclic graph cannot
+  replace placement and gate verification. Cohesive edits inside one existing owner
+  need only a one-line owner rationale.
+- **Test flight, lock, mandatory cleanup:** An early test-flight slice narrows
+  **scope** so the user can probe misunderstanding quickly—it never waives structure
+  or limits. Once the user locks working behavior, protect it with lock checks and
+  dispatch a separate maintainability assessment. **Structural findings inside the
+  task footprint are mandatory behavior-preserving cleanup** in the same task,
+  executed in budgeted steps with structure gates and lock checks green after each;
+  only cosmetic/optional suggestions wait for separate approval. Pre-existing debt
+  outside the footprint follows ratcheted remediation batches, while the touched-unit
+  rule forbids worsening any touched file. See
+  [Test flight, lock, clean up](../skills/code-craft/references/cleanup-pass.md).
 - When current code conflicts with intent, establish affected behavior/consumers
   before choosing a patch or scoped refactor. Do not add compensating layers merely
   to preserve accidental behavior; surface unresolved consequential effects before

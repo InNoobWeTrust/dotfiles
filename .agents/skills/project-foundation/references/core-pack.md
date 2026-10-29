@@ -18,7 +18,7 @@ is missing, report that installation gap; do not invent its policies.
 | Skill | Required | Why |
 |---|---|---|
 | `code-craft` | Yes | Default implementation skill |
-| `code-maintainability` | Yes | Separate post-working assessment; record suggestions, refine only after usefulness and explicit approval |
+| `code-maintainability` | Yes | Separate post-working assessment against the structure standard; structural findings inside the footprint are mandatory cleanup after lock, optional items need approval |
 | `systematic-investigation` | Yes | Debug / root cause |
 | `codebase-exploration` | Yes | Unfamiliar navigation |
 | `reviewer` (+ `references/`) | Yes | Explicit review; needs sub-reviewers |
