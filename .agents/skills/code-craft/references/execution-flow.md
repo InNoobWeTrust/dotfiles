@@ -90,6 +90,55 @@ Keep inspection artifacts and traces local by default. Do not collect sensitive 
 
 Use [testing guidance](testing.md) for authorized verification. Explain relevant limitations in the ordinary handoff, not a mandatory inspection report. Comments do not repair incorrect ordering, hidden writes or violated contracts; fix in-scope defects and return broader scope questions to the primary. Discretionary readability refinement is not an extra implementation phase.
 
+## 4. Lifecycle, cleanup and streaming boundaries
+
+Apply when implementing component lifetimes, dynamic dependencies, cleanup or rollback claims, or bounded streaming channels. Skip for straightforward linear code with no acquired resources and no dynamic dependencies.
+
+**Evidence limit:** these are source-derived patterns, without an accepted local use or measured improvement in this setup. They do not require adopting Cordis or an FBP runtime.
+
+### Effect teardown ordering
+
+Do not assume global LIFO across separate registration contexts.
+
+| Scope in the inspected Cordis implementation | Ordering |
+|---|---|
+| Within one effect registration block | Collected disposers run in reverse sequential order |
+| Across separate top-level effect registrations | Teardown may start concurrently |
+
+If cross-effect ordering matters to correctness, make the sequence explicit — sequenced awaits or an explicit dependency between registrations — not an assumed global ordering.
+
+**Source limit:** ordering from the inspected Cordis `fiber.ts` snapshot (4.0.0-rc.12) and paper arXiv 2608.25512 §5.1.3. Verify the actual API for your framework; other runtimes may differ.
+
+### Dependency init and stop ordering
+
+- **Initialize providers** before consuming components.
+- **Stop consumers** before providers leave or become unavailable.
+- **Define dependency-loss behavior** if a consumer can outlive an unavailable provider; silence is not a contract.
+
+### Reversibility contracts
+
+**Decide the tracked boundary.** A state location is inside it only when the component can modify it exclusively **and** restore its pre-modification state. If either ability fails, the operation is outside the lifecycle model's tracked/reverted state (paper §6.1).
+
+Before implementing cleanup or rollback, classify each effect:
+
+- **Reversible acquisition** — paired open/close, register/deregister: cleanup is the explicit authored inverse.
+- **Irreversible emission** — sent message, published event, external write: not automatically retractable on component unload; do not describe it as automatic rollback.
+- **Compensation** — restores a chosen business equivalence, not necessarily original state: the equivalence must be established explicitly, and the lifecycle metatheory re-established rather than assumed to transfer.
+
+**Separate the handle from what it sends.** The acquired resource can be the channel for an emission; closing a descriptor releases it but does not retract bytes already written. Authorship alone is not proof of a correct inverse: check that it actually reverses the acquisition, such as close releasing the acquired resource (paper §5.1.1, p. 59).
+
+**Withhold or compensate.** Withhold emissions until the producing state is certain to persist, or define application-level compensation; neither route is automatic retraction on unload.
+
+State that must survive a reload needs a longer-lived owner or an explicit migration contract; reload does not preserve arbitrary component-local memory. Nominal service names across a reload do not establish behavioral or state compatibility.
+
+### Bounded buffer contracts for streaming
+
+A bounded queue creates flow control; it does not guarantee progress or deadlock freedom.
+
+Require explicit contracts for: EOS/completion signaling; cancellation and abort propagation; error propagation across buffer boundaries; drain behavior; and packet ordering.
+
+**Check count-before-records deadlock.** If a consumer requires a count before accepting records and the count is emitted only after all records are sent, a full record buffer will deadlock both sides — the producer cannot finish, so the count never arrives. Feedback loops and split/recombine topologies need explicit packet-count and receive-order reasoning. A buffer bound alone does not prevent this class of deadlock.
+
 ## Anti-patterns
 
 | Shortcut | Why it fails | Prefer |
@@ -108,3 +157,5 @@ Use [testing guidance](testing.md) for authorized verification. Explain relevant
 - [XState](https://stately.ai/docs): state/actor modeling; verify the selected version before adoption.
 - [LangGraph graph API](https://docs.langchain.com/oss/python/langgraph/graph-api) and [persistence](https://docs.langchain.com/oss/python/langgraph/persistence): graph execution and checkpoint semantics.
 - [OpenTelemetry sensitive-data guidance](https://opentelemetry.io/docs/security/handling-sensitive-data/): minimize collection and protect telemetry.
+- [Cordis paper (arXiv 2608.25512)](https://arxiv.org/abs/2608.25512): lifecycle effect ordering and reversibility boundaries; source-derived, not verified runtime behavior.
+- [FBP deadlock chapter](https://www.jpaulmorrison.com/fbp/deadlock.shtml): count-before-records bounded-buffer deadlock.

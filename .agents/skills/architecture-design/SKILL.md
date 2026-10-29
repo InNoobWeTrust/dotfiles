@@ -41,6 +41,7 @@ Deep detail lives in `references/`.
 | Writing an ADR | `references/adr-templates.md` |
 | Analyzing tradeoffs or fitness | `references/analysis/fitness-functions.md` |
 | Designing an MCP/JSON-RPC tool server | `references/mcp-server-architecture.md` |
+| Plugin lifetimes, dynamic dependencies, cleanup or rollback claims, or streaming channel contracts | `references/lifecycle-composition.md` |
 
 ---
 

@@ -25,6 +25,10 @@ Master index for all reference material. Load only what the current workflow nee
 
 - [MCP server architecture](mcp-server-architecture.md) — apply ordinary server layering (bootstrap, router, endpoints, middleware, contracts, streaming) to MCP/JSON-RPC tool servers; task-shaped endpoints, not protocol ceremony.
 
+## Lifecycle and Composition
+
+- [Lifecycle and composition patterns](lifecycle-composition.md) — component lifetimes, dynamic dependency ordering, cleanup scope, reversibility classification, and bounded streaming contracts; research-derived from arXiv 2608.25512 and Cordis source snapshot, not battle-tested or accepted local use.
+
 ## Focused Stack Selection
 
 - `dataflow-stack-selection.md` — inspectable analytical/scientific dataflows; plain Python/Ibis/marimo vs Hamilton vs dbt; graph and run-provenance contracts. Use without the full enterprise workflow for a narrow stack recommendation.
