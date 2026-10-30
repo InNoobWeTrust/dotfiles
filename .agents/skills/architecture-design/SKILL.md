@@ -57,6 +57,14 @@ Before starting, determine:
 | Code change only, no arch impact? | STOP — skill not needed. |
 | Code review request? | Use an independent reviewer with the changed source, acceptance criteria and required evidence; design authors do not self-validate. |
 
+**Orchestrated design (non-trivial or multi-level work):** the main agent does not author and
+approve consequential design alone. Follow the level-by-level author → independent review →
+approval loop in the planning guidance's [multi-level planning](../working-principles/references/multi-level-planning.md)
+(architecture boundaries, then structure, then slices): dispatch a separate design worker and a
+separate reviewer per level, give reviewers the original sources, and do not start a lower level
+before its parent passes. If delegation or an independent reviewer is unavailable, mark the level
+`INCOMPLETE`; do not self-review.
+
 ## Gate 2 — C4 Level Calibration & Modular Boundaries
 
 ```mermaid

@@ -34,6 +34,13 @@ work; an unavailable approved tool is not authority for a custom or mock fallbac
   [structure standard](references/structure-standard.md) §3 (project overrides win).
   The plan is design direction: an eligible direction route or the user authors or
   approves it; execution-only routes materialize it and stop when code does not fit.
+- **Multi-level plan before code.** For non-trivial work the primary orchestrates the plan
+  levels (architecture → structure plan → slice plan) per
+  [multi-level planning](../working-principles/references/multi-level-planning.md): a separate author
+  worker and a separate independent reviewer per level, receipts in a plan ledger, no lower level or
+  source write until its parent is approved. The primary does not author or self-review consequential
+  levels. Implementers materialize the approved levels and stop on a conflict; if delegation or an
+  independent reviewer is unavailable, report the level `INCOMPLETE` rather than proceeding solo.
 - When current code may conflict with intent, apply [Code-intent fit](references/code-intent-fit.md)
   before choosing a patch, scoped refactor or escalation.
 - Server-shaped programs, including MCP servers, keep bootstrap/transport, routing,

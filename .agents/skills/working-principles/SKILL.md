@@ -94,6 +94,7 @@ Add a descriptive row to `assets/catalog.csv` and a reference only when an exist
 - [Catalog](assets/catalog.csv)
 - [Baseline](references/baseline.md)
 - [Planning and shared understanding](references/planning.md) — lightweight discovery, bounded plans and consumer transitions; usable without formal specifications
+- [Multi-level planning orchestration](references/multi-level-planning.md) — for design before non-trivial implementation: the primary dispatches a separate author and a separate independent reviewer per level (outcome/stack → architecture → structure → slices), records approval, and descends only after each level passes
 - [Research](references/research.md)
 - [Delegation setup](references/domain-principles.md#primary-collaboration) — keep outcome ownership and synthesis with the primary; a worker receives a short accessible guidance pointer and the assignment's authority/evidence boundaries
 - [Artifact context](references/artifact-context.md) — settle audience, purpose and constraints before authoring or updating any artifact
