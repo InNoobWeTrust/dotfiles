@@ -6,7 +6,15 @@ Apply the progressive-disclosure shape (`progressive-disclosure-pattern.md`) to 
 
 ## Target layout
 
-Language-agnostic shape. Adapt filenames to the language.
+Language-agnostic shape for a small module. Adapt filenames to the language.
+This public-surface example is not a maximum directory depth for a subsystem.
+Larger subsystems preserve nested abstraction levels: subsystem → layer/stage →
+bounded responsibility → component/mechanism. Count directories along one path,
+starting with the subsystem root as level 1; sibling buckets add breadth, and
+files add no directory levels. For example,
+`pretraining/stage1_data_cache/ingestion/engine/` has four directory levels.
+Use valid package identifiers (`stage1_data_cache`, not `1_data_cache`, in Python).
+Shared capabilities may be shallower and CLI entrypoint files may stay at the root.
 
 ```
 <module>/
@@ -53,7 +61,9 @@ Keep the index under one screen. If it doesn't fit, the module is doing too much
 
 For each feature entry:
 
-- Move helpers, internal types, and private state into sibling files or an `internal/` folder.
+- Move helpers, internal types, and private state into their owning responsibility
+  or mechanism directory. Sibling files or an `internal/` folder suffice within a
+  small cohesive owner; they do not replace a subsystem's vertical hierarchy.
 - Leaves must not be re-exported through the module index.
 - Consumers reaching into leaves is a lint smell — flag it.
 
@@ -84,9 +94,11 @@ Language-agnostic, tune per project:
 | Public index | 40 re-exports | 60 |
 | Feature entry file | 200 LOC | 400 |
 | Leaf file | 300 LOC | 600 |
-| Module tree depth | 3 layers | 4 |
 
 Growth past these limits is the split signal.
+Directory depth has no universal cap here: each nested directory must narrow its
+parent's responsibility. Preserve meaningful levels; do not pad every branch to
+the same depth or flatten a subsystem merely to meet a numeric limit.
 
 ---
 
@@ -105,7 +117,8 @@ Growth past these limits is the split signal.
 |---|---|---|
 | Re-export everything from the index "for convenience" | Consumers reach into internals; refactors break the world | Export only the intended surface. Leaves stay private. |
 | Add a public function to a leaf because it's "close to the data" | Splits the surface across the module; consumers can't find it | Move it to the feature entry, re-export from the index. |
-| Deep nesting (5+ folders) for a small module | Overhead dominates the payload | Flatten. Two layers are enough for most modules. |
+| Flatten a subsystem into sibling buckets | Breadth does not express successive abstraction levels | Preserve subsystem → layer/stage → responsibility → mechanism; show an actual directory chain. |
+| Add directories solely to reach a depth count | Empty levels do not clarify ownership | Keep meaningful boundaries; allow shallow shared capabilities and root entrypoints. |
 | `utils.ts` grows to 800 LOC | It's not a module; it's a dump | Split by concern into named leaves. |
 | Circular imports between leaves | Hidden dependency graph outside the index | Route shared code through the entry that owns both leaves. |
 

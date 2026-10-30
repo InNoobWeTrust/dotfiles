@@ -51,6 +51,71 @@ Exemplars: the project names 1–3 exemplar modules. New code copies their layou
 naming. Without exemplars, the first feature that passes this standard and is accepted
 by the user becomes one.
 
+### Directory depth means vertical abstraction
+
+Represent a subsystem's abstraction hierarchy in **nested directories**, not just
+more sibling buckets. Count directory levels along a single root-to-leaf path,
+with the subsystem root as level 1. Repository prefixes such as `code/src/` and
+source filenames do not count. Sibling count measures breadth, not depth.
+
+For a subsystem with these responsibilities, the hierarchy is:
+
+**Level 1: subsystem → Level 2: layer/stage → Level 3: bounded domain or
+responsibility → Level 4: component/mechanism.**
+
+For example, `data_pipeline/cache/` and `data_pipeline/preparation/` are two
+sibling directories at level 2; they do not provide a multi-level decomposition.
+Likewise, `interfaces/cli/prepare.py` has three directory levels when counted
+from the subsystem root, not four: `prepare.py` is a file.
+
+Concrete scientific-pipeline example (directory-only branches contain the
+implementation files):
+
+```text
+ntv3_pretraining/                         # L1: subsystem
+├── stage1_data_cache/                    # L2: stage
+│   ├── ingestion/                        # L3: responsibility
+│   │   ├── engine/                       # L4: orchestration mechanism
+│   │   └── transforms/                   # L4: cleaning and admission
+│   └── persistence/
+│       ├── parquet/
+│       └── memory/
+├── stage2_training_campaign/
+│   ├── planning/
+│   │   ├── throughput/
+│   │   └── settings/
+│   ├── execution/
+│   │   ├── runner/
+│   │   └── model/
+│   └── supervision/
+│       ├── clock/
+│       └── guard/
+├── stage3_reporting_analysis/
+│   └── synthesis/
+│       ├── validation/
+│       └── visualization/
+├── foundation/
+│   ├── config/
+│   ├── integrity/
+│   └── cluster/
+├── cli_prepare.py
+├── cli_train.py
+├── cli_report.py
+└── cli.py
+```
+
+Each parent-to-child step narrows responsibility. Architectural layers may replace
+pipeline stages when appropriate; this example is not a universal naming scheme.
+Use language-valid package names: Python stages can be `stage1_data_cache`, not
+`1_data_cache`, for ordinary import syntax.
+
+Preserve meaningful vertical hierarchy rather than flattening it into sibling
+folders. Four levels illustrate the decomposition, not a uniform depth quota:
+shared `foundation` capabilities may be shallower and CLI entrypoints may remain
+at the root. Do not add empty directories, forwarding wrappers or artificial
+levels to pad the count. A deep module's small public interface (§1.5) is a
+different property from filesystem depth; neither proves the other.
+
 ## 2. Default limits
 
 Hand-written source only. Generated code, vendored code, lockfiles, data fixtures and
@@ -80,6 +145,8 @@ dependency edge, settle a short **structure plan**:
 ```text
 STRUCTURE PLAN
 Files: <path> — <responsibility, layer>          (create / modify / delete)
+Directory hierarchy: <subsystem → layer/stage → responsibility → mechanism>
+Depth evidence: <actual directory chain, root = L1; explain shallower branches>
 Public surface: <entry symbols other code may use>
 New edges: <A → B> (allowed by layer order? yes/no)
 Exemplar followed: <path>   Limits/overrides: <default | project rule>
@@ -115,7 +182,9 @@ routes that tend to optimize locally (make the test pass, ignore the codebase sh
   a step budget; writing outside listed paths, adding a top-level directory, shared
   module or dependency not in the plan is a stop-and-return, not a judgment call.
 - **Separate structural review.** A route that did not write the code checks placement,
-  boundaries, duplication and limits; an observed violation is FAIL and blocks acceptance.
+   boundaries, duplication and limits; an observed violation is FAIL and blocks acceptance.
+   Check actual root-to-leaf directory chains against the approved hierarchy:
+   sibling fan-out and filenames cannot satisfy directory-depth requirements.
 - **Ratchet.** Violation counts may only go down; a new or worsened violation fails.
 
 ## 6. Manual check when no tool is configured
@@ -124,4 +193,7 @@ Report "gates not configured" as a foundation gap, then check by reading: plan
 compliance, imports against layer order and public surfaces, the largest/most
 complex changed functions against §2, new near-duplicates of existing rules
 (search for key literals and names), banned names, and leftovers from replaced code.
+For directory changes, enumerate representative root-to-leaf directory chains,
+label their abstraction levels and check that each step narrows responsibility;
+verify intentional shallow branches rather than imposing identical depth.
 Manual results are labelled as such, not as gate passes.
