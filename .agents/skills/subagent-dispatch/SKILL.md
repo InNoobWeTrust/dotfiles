@@ -54,6 +54,35 @@ For implementation, cite an approved plan/packet unit or an explicit inline atom
 
 For phased work, use an available team-delivery contract or supply an inline phase contract with outcome, independently useful units, writable scope, evidence, stops and continuation state. Add delegation-specific writable scope, adjacent-finding handling, allowed actions and continuation state; do not duplicate the lifecycle.
 
+## Progress at handoff boundaries
+
+Before redispatch and on each return, carry and update the existing task record's
+per-outcome approach, attempt counts, recurring blocker, verified progress and next
+discriminating check. Include primary self-revisions and prior workers' attempts;
+one substantive correction plus evaluation is one attempt, not each tool call.
+Unevaluated substantive design revisions also count, without counting their later
+evaluation twice. Track consecutive no-progress attempts and cumulative rounds.
+Progress needs outcome-linked evidence: working required behavior, a resolved
+blocker without reopening another, or a check eliminating a relevant hypothesis.
+Patches, prose changes, agreement and new sessions alone are not progress.
+
+Pause affected patches/redispatches at three consecutive no-progress attempts,
+five correction/review rounds on the same unresolved outcome, or a correction
+reopening a resolved blocker/returning to a rejected state. Reconcile original
+requirements and failures; consider architectural assumptions, evaluator defects,
+conflicting requirements, missing evidence and environment failures. Resume only
+with recorded evidence, a falsifiable explanation and discriminating check, an
+authorized correction or revised approach, and a bounded next attempt with an
+expected result. No supported path → `STOP_OSCILLATION` with evidence and the
+decision needed. Workers return the trigger and history to the parent rather than
+silently redesigning or recruiting replacements.
+
+Preserve history through replacement, compaction, renamed findings and recovery;
+unknown history is not zero. A failed recovery does not grant a fresh retry cycle.
+These are reassessment heuristics, not architecture verdicts or total task caps;
+honor earlier evidence-based stops. This contract needs only existing task context
+and evidence, not a runtime monitor or another installed skill.
+
 ## Cumulative requirement conformance
 
 Implementation handoffs also carry the unit's current structural context and source-map freshness requirements under [Implementation payload](references/implementation-payload-and-preflight.md#structural-context--part-of-the-unit-handoff); unchanged boundaries need only a brief rationale. Return actual placement/dependency deltas for aggregate integration checks.

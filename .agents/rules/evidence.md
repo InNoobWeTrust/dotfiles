@@ -34,6 +34,20 @@ trigger: always_on
   ground truth plus a possible disconfirmation before agreeing, apologizing or
   discarding working behavior. Correct false premises neutrally; acknowledge
   verified errors concisely. A requested design pivot is not proof of a defect.
+- Track substantive correction/evaluation attempts and unevaluated design revisions
+  against the same unresolved outcome, including self-patches and worker handoffs.
+  Pause the affected approach after three consecutive attempts without verified
+  progress, five correction/review rounds on that outcome, or a correction that
+  reopens a resolved blocker or returns to a rejected design state. These are
+  reassessment triggers, not proof of wrong architecture or total task caps.
+  Preserve counts and failure history across replacement, compaction and recovery;
+  unknown history is not zero. Before further patching or redispatch, reconcile
+  requirements and evidence, identify a falsifiable explanation and discriminating
+  check, and record an authorized recovery with a bounded next attempt and expected
+  result. No supported path → `STOP_OSCILLATION`, with evidence and the decision
+  needed. See the [progress-based loop breaker](../skills/team-operating-model/references/delivery/loop-patterns.md#progress-based-loop-breaker)
+  for counting, progress and recovery semantics; reading this method alone does
+  not activate team delivery.
 
 Methods: [Reviewer](../skills/reviewer/SKILL.md),
 [Testing](../skills/code-craft/references/testing.md).
