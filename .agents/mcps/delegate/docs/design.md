@@ -187,7 +187,7 @@ Permission modes per harness, as of the first release:
 - QwenLM/qwen-code `config.ts` and `top-level-options.ts` for `--approval-mode`
   choices `plan|default|auto-edit|auto|yolo`; the hyphenated `auto-edit` is the
   accepted spelling there, and `auto_edit` is rejected before normalisation
-- [OpenCode V2 CLI](https://opencode.ai/v2/docs/cli) and [OpenAPI](https://opencode.ai/v2/openapi.json) for private server inspection and integration/provider/model schemas
+- [OpenCode V2 CLI](https://opencode.ai/v2/docs/cli) and [OpenAPI](https://opencode.ai/v2/openapi.json) for service/private server inspection and integration/provider/model schemas
 - [Claude CLI reference](https://code.claude.com/docs/en/cli-reference) for `auth status`
 - [Codex authentication](https://developers.openai.com/codex/auth) for `login status`
 - [AGY headless mode](https://antigravity.google/docs/cli/headless/) and [/usage](https://antigravity.google/docs/cli/commands/usage/) for CLI-served account reports; quota output verified with AGY 1.3.3

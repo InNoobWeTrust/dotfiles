@@ -49,8 +49,9 @@ Both tools always exist, even when no harness is selectable.
 | `missing` | No supported executable on the server's `PATH` | No |
 
 AGY uses `agy --print /usage` (a CLI-served account report, not a model turn).
-Claude uses `auth status`; Codex uses `login status`; OpenCode uses private API
-inspection of integrations, providers and enabled models. Each harness gets an
+Claude uses `auth status`; Codex uses `login status`; OpenCode inspects integrations
+and providers through its service, then enabled models through a private API process.
+The service may start automatically; delegated model turns still use a private server. Each harness gets an
 aggregate eight-second inspection budget, with at most two inspections in flight;
 process cleanup can extend that deadline briefly.
 

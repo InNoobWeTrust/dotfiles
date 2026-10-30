@@ -517,30 +517,20 @@ async function inspectOpenCode(
 ): Promise<ReadinessResult> {
   const probe = createProbe(executable, options)
 
-  const integrationsRun = await probe([
-    "api",
-    "get",
-    "/api/integration",
-    "--standalone",
-    "--log-level",
-    "none",
-  ])
+  // Reuse service discovery: separate private startups exhaust the shared budget,
+  // and a cold private provider endpoint can return an empty catalog.
+  const integrationsRun = await probe(["api", "get", "/api/integration", "--log-level", "none"])
   if (!integrationsRun) return result("unknown", OPENCODE_UNKNOWN_REASON)
   const integrationsData = parseDataArray(integrationsRun)
   if (!integrationsData) return result("unknown", OPENCODE_UNKNOWN_REASON)
 
-  const providersRun = await probe([
-    "api",
-    "get",
-    "/api/provider",
-    "--standalone",
-    "--log-level",
-    "none",
-  ])
+  const providersRun = await probe(["api", "get", "/api/provider", "--log-level", "none"])
   if (!providersRun) return result("unknown", OPENCODE_UNKNOWN_REASON)
   const providersData = parseDataArray(providersRun)
   if (!providersData) return result("unknown", OPENCODE_UNKNOWN_REASON)
 
+  // Keep one private startup: the shared CLI can exit before flushing a large
+  // model catalog to its stdout pipe. Private shutdown allows it to drain.
   const modelsRun = await probe(["api", "get", "/api/model", "--standalone", "--log-level", "none"])
   if (!modelsRun) return result("unknown", OPENCODE_UNKNOWN_REASON)
   const modelsData = parseDataArray(modelsRun)

@@ -347,8 +347,8 @@ describe("inspectReadiness", () => {
         "provider-openai/family/submodel#long-context",
       ])
       expect(calls.map((call) => call.args)).toEqual([
-        ["api", "get", "/api/integration", "--standalone", "--log-level", "none"],
-        ["api", "get", "/api/provider", "--standalone", "--log-level", "none"],
+        ["api", "get", "/api/integration", "--log-level", "none"],
+        ["api", "get", "/api/provider", "--log-level", "none"],
         ["api", "get", "/api/model", "--standalone", "--log-level", "none"],
       ])
       expect(calls.map((call) => call.options.wallTimeMs)).toEqual([8_000, 5_000, 2_000])
@@ -494,14 +494,7 @@ describe("inspectReadiness", () => {
     })
 
     expect(calls).toHaveLength(1)
-    expect(calls[0]?.args).toEqual([
-      "api",
-      "get",
-      "/api/integration",
-      "--standalone",
-      "--log-level",
-      "none",
-    ])
+    expect(calls[0]?.args).toEqual(["api", "get", "/api/integration", "--log-level", "none"])
     expect(result.readiness).toBe("unknown")
     expect(result.models).toEqual([])
     expect(result.reason).not.toContain("__RAW_CLI_VALUE__")
