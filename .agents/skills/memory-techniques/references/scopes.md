@@ -15,7 +15,7 @@ Choose the narrowest correct audience **before** resolving a path or searching. 
 | Harness global | Learnings/preferences applicable across projects within one harness; not automatically every harness | Stable harness ID | External capability or direct external directory |
 | Repository private | Sensitive repo-specific context, account/environment facts; not a substitute for committing pure project knowledge | Stable `repo_id` | External capability or direct external directory |
 | Repository task | Requests, plans, role checkpoints, phases and consensus shared across harnesses for the same repo-task pair | `repo_id` + immutable `task_id` | External capability or direct external directory |
-| Harness session | Short scratchpad/whiteboard and quorum discussion belonging to one originating session | Originating `harness` + `session_id` | External capability or direct external directory |
+| Harness session | Cumulative request history, Mermaid Kanban entry point, task/team links and quorum discussion | Originating `harness` + `session_id` | External capability or direct external directory; resolve first for session request tracking |
 
 ## Resolve, then manage files directly
 
@@ -44,7 +44,9 @@ Project knowledge uses `core.md` (or `README.md`) → `knowledge/<topic>.md` and
 
 A resolved task root **is already the task directory**: `task.md`, immutable `request.md`, `plan.md`, `roles/<role_id>.md`, optional `phases/` and `consensus/`. Bind `TASK_DIR=MEMORY_DIR`; never append a second `tasks/<task_id>`. In older references, `tasks/<task-id>/...` denotes this logical task subtree, not a command to create a nested task directory. Feature plans and phases belonging to a task stay in that task root. Standalone private planning lives in the chosen repository-private scope, not project knowledge.
 
-Harness/repository-private scopes may use `core.md`, `short-term/`, `long-term/`, `plans/` and `consensus/` as needed. Sessions use `scratchpad.md` and optional `roles/`/`consensus/`; use append-only attributed contributions for concurrent quorum discussion, preferably separate per-role files. Direct file editing supplies no merge protocol or multi-host locking. Avoid simultaneous rewrites; surface conflicts. Completion, age, context pressure and scope alone authorize neither consolidation nor deletion.
+Harness/repository-private scopes may use `core.md`, `short-term/`, `long-term/`, `plans/` and `consensus/` as needed. For session request tracking, resolve the originating session first and bind `SESSION_DIR`; its entry point is `board.md`, with optional `scratchpad.md`, `roles/` and `consensus/`. Follow [Session request continuity](hierarchy-and-storage.md#session-request-continuity). Canonical task roots remain separately resolved and linked, not moved or copied. Record scope identities and explicit root/board paths in the link index; links are navigation, never read/write authorization.
+
+Optional team directories are ordinary subdirectories such as `SESSION_DIR/teams/<team-id>/` or existing authorized roots, not a new resolver scope. Each has one board owner; session links expose which requests each team owns. Use append-only attributed contributions for quorum discussion, preferably separate per-role files. Direct files supply no merge protocol or multi-host locking. Avoid simultaneous rewrites; surface conflicts. Completion, age, context pressure and scope alone authorize neither consolidation nor deletion.
 
 ## Migration and Git safety
 

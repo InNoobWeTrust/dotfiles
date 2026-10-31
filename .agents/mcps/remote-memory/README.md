@@ -69,6 +69,20 @@ reasons and indexed relative paths.
 
 ### Example calls
 
+#### Session-first request tracking
+
+Resolve the actual originating harness/session pair before organizing requests or opening linked task memory. Example identities below must be replaced with the real handoff/runtime identities:
+
+```json
+{"scope":"session","harness":"opencode","session_id":"session-example","create":true}
+```
+
+Bind the returned path as `SESSION_DIR`; read/manage `board.md` there with ordinary file tools. `create:true` is intentional authorized creation, not a read-only lookup; omit it when resolving an existing scope. The board contains Mermaid Kanban, task/team links and append-only request/history entries; projections are refreshed from those records, not independent status authority.
+
+Resolve each linked task separately using its recorded `repo_id`/`task_id`, as below, and retain its canonical root. Store those identities and the resolved path beneath the session Kanban; no relocation is needed. Links do not grant access and neither resolver nor search follows them automatically. Optional `teams/<team-id>/board.md` directories beneath the session root, or links to existing authorized team roots, need no new scope/API. Each board has one writer; session displays of team progress derive from the owning team boards.
+
+#### Task and search examples
+
 Resolve a task directory, then read/edit Markdown directly at the returned absolute path:
 
 ```json

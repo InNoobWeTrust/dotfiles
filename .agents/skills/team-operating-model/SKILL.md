@@ -50,6 +50,8 @@ Deliberation is optional **within the real team**; it never grants implementatio
 
 ## 2. Establish roles and a proportionate contract
 
+Resolve the originating session memory root first and establish its `board.md` before organizing requests or dispatching. Follow [Session request continuity](references/persistent-coordination.md#session-request-continuity): cumulative sources, Mermaid Kanban and canonical task links; optional team boards only for separate work streams. Capture each new request before acting, without dropping earlier compatible requirements.
+
 Keep live user dialogue, integration, execution, and acceptance with the primary;
 consequential direction follows the active eligibility gate and is recorded, not
 self-ratified. Choose complementary jobs from actual uncertainty, not a fixed cast or
@@ -128,6 +130,8 @@ Use [Intent assurance](references/intent-assurance.md) for the exception-first o
 handoff, critical distinguishing probes, evidence scope and reviewer convergence.
 
 When new information or revised artifacts arrive, preserve earlier compatible requirements; record only source-supported supersessions. Recheck affected rows and regressions, especially audience/style, and require the dedicated checker's current whole-baseline receipt before final handoff. Primary self-review, general quality review, or technical PASS cannot substitute; unresolved requirements remain visible blockers.
+
+Before handoff, reconcile every session request ID with its owning board and linked task evidence, including closed requests. Update derived Kanban views from recorded events; keep partial completion in Review and never infer user acceptance.
 
 When periodic monitoring is requested, assign one owner and record the target, interval, endpoint, last observation, outstanding timer identifier, and next check due in the existing task checkpoint. Apply this periodic-check contract: arm the wait or supported background timer **before** returning to other work, consume each result, and rearm while monitoring remains in scope. Bounded sleeps/simple shell checks use native background execution with completion notifications; substantive check reasoning may use a permitted worker, but waiting stays in a command. Do not assume another teammate is checking, or claim monitoring continues after losing its wake-up mechanism.
 

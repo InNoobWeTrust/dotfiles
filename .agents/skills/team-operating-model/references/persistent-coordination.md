@@ -4,6 +4,21 @@ Apply this path whenever this skill is active: a real team always has multiple
 contributors. Also use it when a bound role is resumed/replaced or accepted-task
 consolidation is routed. No solo or simulated-team exception is available.
 
+## Session request continuity
+
+Resolve the originating session's external root **first**, using actual harness/session identities and an available scoped resolver or the same configured authorized direct-file store. Bind `SESSION_DIR`; never guess identities or silently switch stores. Start with `SESSION_DIR/board.md`, not a new task directory hierarchy. Its YAML identifies scope, harness/session and one designated owner. Keep a Mermaid `kanban` projection, a request/task/team link index and an append-only Requests and history section at the end. Other scratchpads are optional.
+
+- Before acting on each substantive request, append its source/faithful quotation, constraints and stable session-local ID (`R001`); full identity includes origin harness/session. Never reuse IDs. Preserve compatible earlier requests; append source-backed corrections/cancellations/supersessions naming affected IDs. Propagate changes into affected task requirements and plans under existing authority gates.
+- Link each request to exactly one owning board and all affected canonical task roots, recording their scope identities/paths. Resolve each linked scope before access; links are navigation, not permissions. Do not move or duplicate existing task records. A coordinator's backlog never permits cross-task reuse of bound workers.
+- Add team boards only for independent work streams, in `SESSION_DIR/teams/<team-id>/` or existing authorized roots. Teams are ordinary directories, not a new resolver scope. Session history retains sources and links to team roots/boards; team boards reference those sources and own their lifecycle history. Any session-level team-status view is derived/read-only, never separately authoritative.
+- Source/history entries and role checkpoints are append-only. Current column/status, owner, diagram and link index are mutable projections: append supporting lifecycle/transfer events first. Use unique column/card IDs and plain Mermaid labels; ordinary Markdown links beneath the diagram provide navigation. Validate syntax with an available parser or report manual-only checking when unavailable.
+- Use Inbox → Active/Blocked → Review → Closed. Machine completion is Review. Close a request only with recorded explicit acceptance, cancellation or supersession and closure of **all** linked tasks on those grounds; partial completion is insufficient. A task-free request needs its own explicit closure source. Keep closed cards/history discoverable. Cancellation/supersession does not set `accepted_by_user: true` or authorize consolidation.
+- One writer owns each board/history; contributors return receipts or write separately owned role files. Record writer transfer and outgoing-writer quiescence before replacement writes. Files provide no concurrent-write locking.
+- On restoration, read session entry and relevant history → relevant task/team links → own role → task/roster → approved plan. Before handoff reconcile all request IDs, including closed requests, against owning-board evidence. Repair stale projections from sources, not recollection.
+- Missing identity/source, conflicting metadata, inaccessible required storage, duplicate ownership or failed capture blocks only affected continuation. Retain unsaved payload in the conversation and report the gap; never claim capture succeeded or create a silent fallback store.
+
+Prototype check after 1–2 real uses: unrelated follow-up, shared constraint, stale projection, two teams, partial closure, failed capture. Source walkthroughs establish instruction coverage, not runtime reliability.
+
 ## Roles and session binding
 
 Two orthogonal identities coexist and must not be conflated:
@@ -26,7 +41,7 @@ Every dispatched session is assigned exactly one `task_id` +
 ## Onboarding and replacement
 
 Before any task-source reads, load applicable mandatory guidance and safety rules,
-then the memory storage protocol and resolve `MEMORY_DIR`. A fresh replacement's
+then the memory storage protocol; resolve the originating session entry and its relevant task link before `TASK_DIR`. A fresh replacement's
 first task reads (in order):
 1. Own role record (`roles/<role-id>.md` in the selected repository-task root, `TASK_DIR=MEMORY_DIR`; use an available external-memory capability or direct external files, without requiring MCP. The selected root is already the task directory, so do not append that hierarchy again).
 2. Task record and role roster.

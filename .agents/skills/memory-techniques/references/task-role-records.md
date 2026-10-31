@@ -19,6 +19,7 @@ consolidated: false              # true only after approved consolidation apply 
 
 Required body sections:
 - **Outcome and authority**: scope, memory backend, authoritative sources.
+- **Session request references**, when applicable: originating harness/session, session board path and stable request IDs. Canonical task records stay here; multiple sessions may link the same task without changing its identity.
 - **Permanent role roster**: table — role ID, responsibility, session binding, role memory path.
 - **Declared acceptance criteria**: explicit, outcome-linked conditions approved by the authorized owner under the delivery mode. Primary owns in-scope criteria in autonomous delivery; the user retains final acceptance and all explicitly human-reserved approvals.
 - **Evidence and lifecycle**: initial snapshot, per-job scopes, acceptance event (none until recorded).
@@ -106,7 +107,7 @@ A primary-approved plan change does not silently inherit old scope. The bound ac
 1. Stop or complete the outgoing actor's in-flight work first.
 2. Append a checkpoint with retirement note to the outgoing role record.
 3. Primary updates the roster: retire the old binding, record provenance.
-4. Before any task-source reads, the fresh actor loads applicable mandatory guidance and safety rules, then the memory storage protocol and resolves `MEMORY_DIR`. First task reads (in order):
+4. Before any task-source reads, the fresh actor loads applicable mandatory guidance and safety rules, then the memory storage protocol. Resolve the originating session entry first when supplied, follow its relevant task link and resolve `TASK_DIR`; session discovery does not change task-bound scope. First task reads (in order):
     1. Own role record.
     2. Task record and role roster.
     3. Current approved plan.

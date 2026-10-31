@@ -12,7 +12,7 @@ Agent working memory, execution tracking, consensus and consolidated knowledge. 
 
 ## Hard rules
 
-1. Short-term memory is unbounded and append-only during a session. Long-term is size-limited and grows only through requested consolidation with human approval.
+1. Short-term sources/history and checkpoints are unbounded and append-only during a session. Board diagrams, current status/owner and link indexes are rebuildable, mutable projections; record supporting events first. Long-term is size-limited and grows only through requested consolidation with human approval.
 2. Consolidation, eviction, archive and long-term writes are proposals until explicitly approved. Capturing a task, completion, context pressure, age or size never triggers a dream cycle.
 3. Agent coordination/plans belong in the correctly scoped memory root, never `docs/`. Reusable non-sensitive project knowledge belongs in `<git-root>/.agents/memories/`; sensitive repo information and raw task/session context stay outside the repository.
 4. Markdown with YAML frontmatter is authoritative, human-traceable and directly editable. Disposable search indexes are not memory authority. Text being Git-compatible does **not** authorize committing private memory.
@@ -44,13 +44,15 @@ An accepted task (`accepted_by_user: true`) plus an explicit consolidation reque
 | Cross-project learning for one harness | Harness-global external memory |
 | Sensitive repo-specific context | Repository-private external memory |
 | Task request/plan/roles/phases/consensus across harnesses | External repo-task pair |
-| Quorum scratchpad/whiteboard | External originating harness-session pair |
+| Cumulative requests, session Kanban, task/team links and quorum scratchpad | External originating harness-session pair; resolve before linked task roots |
 
 Prefer an available external-memory capability for short-lived memories and sensitive details. It may supply scoped paths and search, but is optional: ordinary file tools against a known or explicitly selected external directory are sufficient. Discover the available interface rather than requiring MCP or a particular provider. Keep the same scope/privacy rules with either route; missing integration alone does not block the skill. Detail, path selection, metadata and conventions: [Scopes](references/scopes.md).
 
 All global/shared memory belongs in that same external store, not `~/.agents/memories/`; that location may overlap a dotfiles project's own knowledge. Preserve separate shared-global and harness-specific audiences rather than treating all global notes as public to every harness.
 
 `MEMORY_DIR` is the selected scope root. For a task, `TASK_DIR=MEMORY_DIR` and `roles/` is directly beneath it. Historical `tasks/<task-id>/...` examples denote that logical task subtree, not another directory to append.
+
+For session request tracking, bind `SESSION_DIR` first and use `board.md`: Mermaid Kanban, task/team links and append-only request/history entries. Follow [Session request continuity](references/hierarchy-and-storage.md#session-request-continuity) before acting on new requests and when restoring work. Keep canonical task roots linked; a new request never silently replaces the backlog.
 
 ## Size limits
 

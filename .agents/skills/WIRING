@@ -29,6 +29,8 @@ Use `decision-support` for meaningful autonomous next steps, recommendations bef
 
 For multiple contributors/sessions, restore [persistent coordination](team-operating-model/references/persistent-coordination.md) before role task sources: immutable task/role + session binding → scoped `memory-techniques` records/approved plan → bounded `subagent-dispatch` → direction-settled joint plan/authorized execution → append checkpoints after every completed/interrupted slice. Deliberation is optional within a real team; never simulated. [Phased delivery](team-operating-model/references/phased-delivery.md) is independently usable without team activation; use its milestone packet/feedback decisions only for phased work. Roadmaps are for multiple milestones, not every task.
 
+For cumulative request continuity, `memory-techniques` resolves the originating session root first → `board.md` Kanban/source history → linked canonical task/team roots → within each task own role, task/roster, approved plan → bounded dispatch/checkpoints. `team-operating-model` retains its local continuity contract. In this installation, [remote-memory](../mcps/remote-memory/README.md#session-first-request-tracking) supplies existing session/task `resolve_root` calls; ordinary file tools manage boards. No new team scope or automatic link traversal. Portable bundles also support the same authorized direct-file store without this MCP.
+
 ### Intent and Input Assurance
 
 `working-principles` [source integrity](working-principles/references/source-integrity.md)

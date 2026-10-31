@@ -20,7 +20,7 @@ All authoritative entries remain Markdown with YAML frontmatter. Direct edits ar
 
 ## Short-term entries
 
-Short-term memory is unbounded during a session and append-only. Session checkpoints are one kind of short-term entry; working notes and scratchpads are others.
+Short-term sources/history are unbounded during a session and append-only. Session checkpoints are one kind of short-term entry; working notes and scratchpads are others. Board projections may be refreshed from recorded events; this exception never permits rewriting historical entries or checkpoints.
 
 ### Filename
 
@@ -275,13 +275,47 @@ updated: 2026-10-03T20:15:00+07:00
 
 ---
 
+## Session request continuity
+
+Before organizing or resuming session requests, resolve the **originating** harness-session root and bind `SESSION_DIR`. Use the actual identity and selected authorized external store; do not guess IDs or create a duplicate store. Create `SESSION_DIR/board.md` when request tracking is needed. One file initially suffices:
+
+1. YAML: `kind: session-board`, `memory_scope: session`, actual `harness`, `session_id`, and designated `owner`.
+2. `## Kanban`: mutable Mermaid projection of recorded lifecycle events.
+3. `## Request and task/team links`: mutable index of request ID, owning board, task scope identities and resolved paths; include team ID/root/board when applicable.
+4. `## Requests and history`: append-only source and event entries, kept at the end.
+
+**Ingest before acting.** Assign each substantive request a stable session-local ID (`R001`, then `R002`); its full identity includes the originating harness/session pair. Never reuse or renumber IDs. Append the source/faithful quotation, constraints, affected task links, evidence/blocker and next action. Compare with earlier requests: preserve compatible requirements; append only source-supported corrections, cancellations or supersessions naming affected IDs. Carry changes into affected task requirements/plans through their existing authority gates. A shared constraint can link several tasks without becoming several requests.
+
+**Route, do not relocate.** Each request has exactly one owning board, even when it affects several tasks or teams. Resolve linked task roots in their own scopes before access. Keep canonical task records there; links provide organizational containment without copying or moving them. Links never grant read/write permission. Start with the session board; add team-owned boards only for independent work streams, under `teams/<team-id>/` or existing authorized roots. Teams are not a new scope. Session history retains original sources and request-to-board links; team boards reference those sources. Team lifecycle events are authoritative for their requests. Any session-level display of team status is a read-only derived projection with source links, never a second independently edited progress record.
+
+**Update and close.** Append lifecycle evidence before refreshing current status/column, owner or links. Use `Inbox`, `Active`, `Blocked`, `Review`, `Closed`. Machine completion goes to Review. A request closes only when all linked tasks have recorded closure by explicit acceptance, cancellation or supersession, with the request closure reason/source recorded; partial completion is insufficient. For requests without tasks, record the same explicit closure source directly. Cancellation/supersession never sets `accepted_by_user: true`. Keep closed cards and history discoverable; closure does not authorize archival or consolidation.
+
+**One writer.** Designate one owner per board file/history. Contributors return receipts or use separately owned role files. Record a writer transfer and establish outgoing-writer quiescence before replacement writes; direct files do not lock or merge concurrent edits.
+
+**Restore and reconcile.** Read the resolved session entry and relevant history, follow relevant links, then within a task read own role → task/roster → current approved plan. Reconcile all request IDs, including closed ones, with their owning boards before handoff; repair stale projections from recorded sources, never recollection. A session backlog does not authorize cross-task worker reuse. Missing identity/source, conflicting metadata, inaccessible required storage, duplicate ownership or failed capture blocks only affected continuation; retain the unsaved payload in the conversation and report the gap.
+
+Minimal diagram (example labels, not live state); keep ordinary Markdown task/team links beneath it:
+
+```mermaid
+kanban
+  inbox[Inbox]
+    R002[Follow-up request]
+  active[Active]
+    R001[Original request]
+  blocked[Blocked]
+  review[Review]
+  closed[Closed]
+```
+
+Column/card IDs must be unique within the diagram. Use short plain labels; preserve exact request text in history. No custom ticket-link configuration is needed. Syntax reference: [Mermaid Kanban](https://mermaid.ai/open-source/syntax/kanban.html). Validate with an available parser; otherwise report manual syntax review separately from rendering verification. Prototype audit after 1–2 uses: new unrelated/shared requests, stale projection after compaction, two teams, linked existing tasks, partial closure and failed capture. Source walkthroughs do not prove future runtime compliance.
+
 ## Capture mode
 
-Use when the user explicitly asks to save a checkpoint, note, plan, or working state.
+Use when the user explicitly asks to save a checkpoint, note, plan, or working state, or the active authorized workflow requires request ingestion or a checkpoint. No extra “save this” utterance is needed for session continuity.
 
 1. Choose scope and resolve `MEMORY_BACKEND`/`MEMORY_DIR` using Scopes. For a task also bind `TASK_DIR=MEMORY_DIR`.
 2. Select the smallest destination:
-   - Session working state → session `scratchpad.md` or `short-term/<created-stamp>--<branch>--<topic>.md` in the selected external scope.
+   - Session requests → resolve `SESSION_DIR` first and follow §Session request continuity; other working state → `scratchpad.md` or `short-term/<created-stamp>--<branch>--<topic>.md`.
    - Task request/plan/role checkpoint → `TASK_DIR/{task,request,plan}.md` or `TASK_DIR/roles/<role-id>.md`; follow [task-role records](task-role-records.md).
    - Task phases/consensus → `TASK_DIR/phases/` or `TASK_DIR/consensus/`. Do not duplicate role working state in flat short-term notes.
    - Standalone private feature plans → selected private scope `plans/<feature-slug>/plan.md` with optional phases.
@@ -300,7 +334,7 @@ Never dump atomic feature plans, slice phase files, or consensus boards into `do
 Use when the user asks to restore, resume, load context, or lists prior notes.
 
 1. Choose scope/identities and resolve the root. Missing selected scope means no prior memory there; never search a broader scope automatically.
-2. Read its `core.md`, `README.md` or `long-term/INDEX.md` when present, then select only relevant leaves. Task restoration reads `TASK_DIR/{task,plan}.md` and the bound role before task sources. Session quorum recall uses the originating harness-session pair.
+2. For session work, resolve the originating session first, read `board.md` and relevant history, then follow relevant task/team links. Otherwise read the selected root's `core.md`, `README.md` or `long-term/INDEX.md` when present. Within a task, first read own bound role → task/roster → approved plan, before task sources. Session quorum recall uses the originating harness-session pair.
 3. Search only that scope/subdirectory: optional scoped BM25 for text relevance; ordinary file/shell tools are sufficient for reading, names and literal patterns. For similar traces load [compaction and step recall](compaction-and-step-recall.md). Do not union external namespaces or load every file.
 4. Verify matching Markdown sources and provenance, not just ranking. Report no matches explicitly. Load clearly relevant matches autonomously; ask only when unresolved user intent decides between distinct tasks/topics. Print minimal useful summaries (goal/status/decisions/next steps/blockers), not unrelated private context.
 5. Files in the resolved scope are authoritative; external/vendor indexes or model recollection cannot override their facts or approval gates.
