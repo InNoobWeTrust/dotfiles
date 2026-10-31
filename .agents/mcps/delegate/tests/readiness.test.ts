@@ -395,7 +395,32 @@ describe("inspectReadiness", () => {
     expect(result.reason.length).toBeGreaterThan(0)
   })
 
-  test("opencode returns unknown when one integration has multiple saved credentials and never leaks credential diagnostics", async () => {
+  test("opencode classifies uniform saved credentials without letting env override them", async () => {
+    for (const count of [2, 3]) {
+      for (const active of [true, false]) {
+        const connections = Array.from({ length: count }, (_, index) =>
+          credential(`account-${index}`, "Account", {
+            method: index === 0 ? "oauth" : "key",
+            ...(active ? {} : { status: needsAuth() }),
+          }),
+        )
+        const { run } = queueRun([
+          exited(response([integration("int-openai", [...connections, envConnection("KEY")])])),
+          exited(response([provider("openai", { integrationID: "int-openai" })])),
+          exited(response([model("gpt-5", "openai")])),
+        ])
+        const result = await inspectReadiness(mustFind("opencode"), "/opt/opencode", {
+          cwd: "/work",
+          env: {},
+          run,
+        })
+        expect(result.readiness).toBe(active ? "configured" : "not_configured")
+        expect(result.models).toEqual(active ? ["openai/gpt-5"] : [])
+      }
+    }
+  })
+
+  test("opencode returns unknown when one integration has mixed saved credential states and never leaks credential diagnostics", async () => {
     const rawLabel = "Primary account __RAW_LABEL__"
     const rawMessage = "Credential expired __RAW_MESSAGE__"
     const rawUrl = "https://example.test/reauth?token=__RAW_TOKEN__"

@@ -220,13 +220,15 @@ usable wget && ! usable curl && \
     }
 
 if usable bun; then
-    alias install-devcontainer='bun i -g --trust @devcontainers/cli'
-    alias install-opencode='bun i -g --trust @opencode/cli'
-    alias install-dsh='bun i -g --trust @deepseek-ai/dsh'
+    alias install-devcontainer='bun add -g --trust @devcontainers/cli'
+    alias install-opencode='bun add -g --trust @opencode/cli'
+    alias install-pi-agent='bun add -g --ignore-scripts @earendil-works/pi-coding-agent'
+    alias install-dsh='bun add -g --trust @deepseek-ai/dsh'
 elif usable npm; then
-    alias install-devcontainer='npm i -g --allow-scripts @devcontainers/cli'
-    alias install-opencode='npm i -g --allow-scripts @opencode/cli'
-    alias install-dsh='npm i -g --allow-scripts @deepseek-ai/dsh'
+    alias install-devcontainer='npm install -g --allow-scripts @devcontainers/cli'
+    alias install-opencode='npm install -g --allow-scripts @opencode/cli'
+    alias install-pi-agent='npm install -g --ignore-scripts @earendil-works/pi-coding-agent'
+    alias install-dsh='npm install -g --allow-scripts @deepseek-ai/dsh'
 fi
 
 # Node utilities

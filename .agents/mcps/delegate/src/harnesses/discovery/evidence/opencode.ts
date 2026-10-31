@@ -141,8 +141,12 @@ function inspectConnections(connections: unknown[]): IntegrationState {
     }
     if (classified.activity === "active") hasActiveEnv = true
   }
-  if (credentials.length > 1) return "unknown"
-  if (credentials.length === 1) return credentials[0] === "active" ? "connected" : "inactive"
+  if (credentials.length > 0) {
+    // Uniform states do not depend on which saved credential OpenCode selects.
+    if (credentials.every((activity) => activity === "active")) return "connected"
+    if (credentials.every((activity) => activity === "inactive")) return "inactive"
+    return "unknown"
+  }
   return hasActiveEnv ? "connected" : "inactive"
 }
 
@@ -346,7 +350,7 @@ function freeModelHints(
   }
   if (providerStates.get("opencode") === "unknown") incomplete = true
   if (hints.size > 0) return { hints: [...hints], state: incomplete ? "unknown" : "available" }
-  return { hints, state: incomplete ? "unknown" : "empty" }
+  return { hints: [...hints], state: incomplete ? "unknown" : "empty" }
 }
 
 /** Evaluates captured evidence without I/O and preserves the source arrays verbatim. */
