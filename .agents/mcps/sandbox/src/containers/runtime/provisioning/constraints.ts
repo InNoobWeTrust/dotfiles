@@ -17,7 +17,7 @@ function isValidWorkspaceBind(binds: unknown, canonicalWs: string, access: "ro" 
   if (fields.length === 2) return access === "rw"
 
   const options = fields[2].split(",")
-  const allowed = new Set(["ro", "rw", "rprivate", "rbind"])
+  const allowed = new Set(["ro", "rw", "rprivate", "rbind", "nosuid", "nodev"])
   if (options.some((option) => !option || !allowed.has(option))) return false
   if (new Set(options).size !== options.length) return false
   const accessModes = options.filter((option) => option === "ro" || option === "rw")
