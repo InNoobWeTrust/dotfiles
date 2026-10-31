@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "ui-studio": {
+      "command": "mcp-ui-studio",
+      "args": []
+    },
+    "remote-memory": {
+      "command": "mcp-remote-memory",
+      "args": []
+    },
+    "sandbox": {
+      "command": "mcp-sandbox",
+      "args": []
+    },
+    "decisions": {
+      "command": "mcp-decisions",
+      "args": []
+    },
+    "delegate": {
+      "command": "mcp-delegate",
+      "args": []
+    },
+    "lsp": {
+      "command": "mcp-lsp",
+      "args": []
+    }
+  }
+}

@@ -145,6 +145,86 @@ describe("automatic Zen name hints are not the run allowlist", () => {
   })
 })
 
+describe("credential state aggregation across discovery consumers", () => {
+  const active = { type: "credential", id: "primary", label: "Account", method: "key" }
+  const inactive = {
+    ...active,
+    id: "secondary",
+    method: "oauth",
+    status: { status: "needs_auth", message: "Reconnect" },
+  }
+  const env = { type: "env", name: "TEST_KEY" }
+  const sourceWith = (connections: unknown[]): OpenCodeEvidence => ({
+    ...evidence([model("free", { variants: [{ id: "reasoning" }] })]),
+    integrations: [{ id: "connected", connections }],
+  })
+
+  test("uniform credentials agree on readiness, catalog variants and automatic hints", async () => {
+    for (const count of [2, 3]) {
+      for (const connected of [true, false]) {
+        for (const withEnv of [true, false]) {
+          const credentials = Array.from({ length: count }, (_, index) => ({
+            ...(connected ? active : inactive),
+            id: `account-${index}`,
+          }))
+          const source = sourceWith([...credentials, ...(withEnv ? [env] : [])])
+          const evaluated = evaluateOpenCodeEvidence(source)
+          const selectors = connected ? ["opencode/free", "opencode/free#reasoning"] : []
+          expect(evaluated.readiness).toBe(connected ? "configured" : "not_configured")
+          expect(evaluated.catalogValid).toBe(true)
+          expect(evaluated.models).toEqual(selectors)
+          expect(evaluated.modelHints).toEqual(connected ? ["opencode/free"] : [])
+          expect(evaluated.modelHintsState).toBe(connected ? "available" : "empty")
+          const page = await listModels(input(), context(apiRun(source)))
+          expect(page.models.map((row) => row.selector)).toEqual(selectors)
+        }
+      }
+    }
+  })
+
+  test("mixed credential states fail closed regardless of order or env fallback", async () => {
+    for (const credentials of [
+      [active, inactive],
+      [inactive, active],
+    ]) {
+      for (const withEnv of [true, false]) {
+        const source = sourceWith([...credentials, ...(withEnv ? [env] : [])])
+        const evaluated = evaluateOpenCodeEvidence(source)
+        expect(evaluated.readiness).toBe("unknown")
+        expect(evaluated.catalogValid).toBe(false)
+        expect(evaluated.modelHintsState).toBe("unknown")
+        await expect(listModels(input(), context(apiRun(source)))).rejects.toThrow(
+          "CATALOG_INVALID:",
+        )
+      }
+    }
+  })
+
+  test("active alternatives cannot rescue malformed connection evidence", async () => {
+    for (const malformed of [
+      null,
+      { ...active, method: "unknown" },
+      { ...active, status: null },
+      { ...active, status: { status: "needs_auth" } },
+      { ...env, name: "" },
+      { ...env, status: { status: "unexpected", message: "Invalid" } },
+    ]) {
+      const source = sourceWith([active, { ...active, id: "backup" }, env, malformed])
+      expect(evaluateOpenCodeEvidence(source).catalogValid).toBe(false)
+      await expect(listModels(input(), context(apiRun(source)))).rejects.toThrow("CATALOG_INVALID:")
+    }
+  })
+
+  test("an unknown provider still invalidates the complete catalog", async () => {
+    const source = sourceWith([active, { ...active, id: "backup" }])
+    source.models.push(model("other-model", { providerID: "missing" }))
+    const evaluated = evaluateOpenCodeEvidence(source)
+    expect(evaluated.readiness).toBe("configured")
+    expect(evaluated.catalogValid).toBe(false)
+    await expect(listModels(input(), context(apiRun(source)))).rejects.toThrow("CATALOG_INVALID:")
+  })
+})
+
 describe("explicit catalog input and bounded presentation", () => {
   test("text is literal, case-insensitive, Unicode-aware and bounded by UTF-8 bytes", () => {
     const rows = [

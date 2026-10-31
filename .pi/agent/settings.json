@@ -1,0 +1,29 @@
+{
+  "$schema": "https://pi.dev/schemas/settings.schema.json",
+  "lastChangelogVersion": "1.4.0",
+  "packages": [
+    "npm:@kkkiio/pi-web-ui",
+    "npm:@tintinweb/pi-subagents"
+  ],
+  "images": {
+    "blockImages": true
+  },
+  "showHardwareCursor": true,
+  "editorPaddingX": 0,
+  "outputPad": 0,
+  "terminal": {
+    "showTerminalProgress": true
+  },
+  "httpIdleTimeoutMs": 0,
+  "markdown": {
+    "mermaid": "streaming"
+  },
+  "showCacheMissNotices": true,
+  "enableInstallTelemetry": false,
+  "defaultProjectTrust": "ask",
+  "doubleEscapeAction": "tree",
+  "treeFilterMode": "default",
+  "tuiMode": "fullscreen",
+  "fullscreenExitOutput": "transcript",
+  "theme": "system"
+}

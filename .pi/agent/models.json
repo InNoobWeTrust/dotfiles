@@ -1,0 +1,149 @@
+{
+  "$schema": "https://pi.dev/schemas/models.schema.json",
+  "providers": {
+    "ckey": {
+      "name": "CKey",
+      "baseUrl": "https://api.xah.io/v1",
+      "apiKey": "$CKEY_API_KEY",
+      "api": "anthropic-messages",
+      "models": [
+        {
+          "id": "forbiddengun/gemini",
+          "name": "CKey Gemini",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 1048576,
+          "maxTokens": 65536
+        },
+        {
+          "id": "forbiddengun/glm",
+          "name": "CKey GLM",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 1000000,
+          "maxTokens": 131072
+        },
+        {
+          "id": "forbiddengun/deepseek",
+          "name": "CKey DeepSeek",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 1000000,
+          "maxTokens": 384000
+        },
+        {
+          "id": "forbiddengun/qwen",
+          "name": "CKey Qwen",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 1000000,
+          "maxTokens": 64000
+        }
+      ]
+    },
+    "kilo": {
+      "name": "Kilo",
+      "baseUrl": "https://api.kilo.ai/api/gateway/v1",
+      "apiKey": "$KILO_API_KEY",
+      "api": "anthropic-messages",
+      "models": [
+        {
+          "id": "~openai/gpt-terra-latest",
+          "name": "Kilo GPT Terra Latest",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 272000,
+          "maxTokens": 128000
+        },
+        {
+          "id": "~openai/gpt-luna-latest",
+          "name": "Kilo GPT Luna Latest",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 272000,
+          "maxTokens": 128000
+        },
+        {
+          "id": "openai/gpt-chat-latest",
+          "name": "Kilo GPT Chat Latest",
+          "reasoning": false,
+          "input": ["text", "image"],
+          "contextWindow": 128000,
+          "maxTokens": 16384
+        },
+        {
+          "id": "~openai/gpt-mini-latest",
+          "name": "Kilo GPT Mini Latest",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 128000,
+          "maxTokens": 16384
+        },
+        {
+          "id": "dots-studio/dots-3-note-preview:free",
+          "name": "Kilo Dots 3 Note Preview (Free)",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 131072,
+          "maxTokens": 16384
+        },
+        {
+          "id": "poolside/laguna-s-2.1:free",
+          "name": "Kilo Laguna S 2.1 (Free)",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 16384
+        },
+        {
+          "id": "poolside/laguna-xs-2.1:free",
+          "name": "Kilo Laguna XS 2.1 (Free)",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 16384
+        },
+        {
+          "id": "nvidia/nemotron-3.5-super-vl:free",
+          "name": "Kilo Nemotron 3.5 Super VL (Free)",
+          "reasoning": false,
+          "input": ["text", "image"],
+          "contextWindow": 131072,
+          "maxTokens": 16384
+        },
+        {
+          "id": "recursive/flint-v1.0:free",
+          "name": "Kilo Flint v1.0 (Free)",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 16384
+        },
+        {
+          "id": "reflection/beam-free",
+          "name": "Kilo Beam (Free)",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 16384
+        },
+        {
+          "id": "stealth/glyph-cluster",
+          "name": "Kilo Glyph Cluster",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 16384
+        },
+        {
+          "id": "xingchen-agi/xing4.0-29b-a4b:free",
+          "name": "Kilo Xing 4.0 29B (Free)",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 16384
+        }
+      ]
+    }
+  }
+}
