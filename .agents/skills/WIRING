@@ -90,6 +90,12 @@ Shallow research until active decision/slice/non-deferrable boundaries are clear
 
 `data-storytelling` derives evidence, answer-first narrative and chart needs → `illustration-craft` only beyond standard charts/Mermaid → optional high-stakes editorial/design-rigor review. For architecture, `architecture-design` maps systems/trade-offs first; add storytelling for nontechnical/decision audiences and bespoke illustration only beyond Mermaid/C4. Finished illustrations can hand to editorial review.
 
+Ordinary diagrams → `mermaid-diagrams` for non-beta type selection, source authoring guidance, syntax checks and target-compatibility guidance. Domain owners retain meaning; chart selection remains with `data-storytelling`, architecture boundaries with `architecture-design`. Parsing proves neither rendering nor semantics. Image export requires a separately available authorized rendering capability; unavailable capabilities yield a declared text/table or source-only fallback.
+
+### Context-sensitive Investigation and Ideation
+
+`systematic-investigation` optionally uses its local Cynefin lens to distinguish established practice, expert diagnosis, bounded probes, human-authorized scoped containment and unresolved context. `brainstorming` uses its local lens for experiment selection without reopening settled product intent or weakening scientific controls. Classification grants no action authority; urgency is not chaos and unfamiliarity is not complexity. The Cynefin framework remains usable in prose while its beta Mermaid diagram is excluded from `mermaid-diagrams`.
+
 ### Scientific Research & Ideation
 
 `brainstorming` scientific discovery path owns modality audit + three-angle hypothesis tournament → adversarial critique/literature → falsifiable proposal and Colab/Marimo notebook blueprint, replacing production TDD/slicing. Warranted scientific review checks controls/statistics/falsifiability before laboratory commitment; ideation grants no compute/lab authority.
@@ -111,7 +117,7 @@ diagnostic evidence. Plain local filtering does not require distributed operatio
 
 ### Documentation Craftsmanship
 
-Domain specification owner → `doc-craft` audience/format/layering/abstraction/visual rhythm → `mermaid-validation` for diagrams (render SVG/PNG for Typst, not diagram source as the visual) → warranted editorial review. Preserve native Markdown consumers; comprehensive human-facing detail uses Typst/PDF. Specs can hand directly to independent semantic/editorial review; internal plans/phase specs/consensus tracking go to `memory-techniques`, not document publishing.
+Domain specification owner → `doc-craft` audience/format/layering/abstraction/visual rhythm → `mermaid-diagrams` for diagram selection, source and syntax checks → warranted editorial review. Typst image deliverables need SVG/PNG from an available authorized rendering capability, not the parser; if unavailable, report the image gap and declare any source/text fallback. Preserve native Markdown consumers; comprehensive human-facing detail uses Typst/PDF. Specs can hand directly to independent semantic/editorial review; internal plans/phase specs/consensus tracking go to `memory-techniques`, not document publishing.
 
 ### Browser Automation
 
@@ -135,7 +141,7 @@ Existing pipeline/security posture → `devsecops` CI/CD, secrets/dependencies/S
 
 ### Database Design → Database Access Implementation
 
-`db-design` schema/migrations/typed mapping → `database-access` repositories/adapters, session lifecycle, write/test contracts → `code-craft` verified implementation → reviewer security (parameterization/injection/entity exposure). If access boundaries/facade/capabilities are undecided, `architecture-design` settles them first → access implementation → reviewer design-rigor boundary check. DB design ER diagrams → `mermaid-validation`.
+`db-design` schema/migrations/typed mapping → `database-access` repositories/adapters, session lifecycle, write/test contracts → `code-craft` verified implementation → reviewer security (parameterization/injection/entity exposure). If access boundaries/facade/capabilities are undecided, `architecture-design` settles them first → access implementation → reviewer design-rigor boundary check. DB design ER diagrams → `mermaid-diagrams`.
 
 ### Analytical Data Processing & Pipelines (Composable Data Stack)
 

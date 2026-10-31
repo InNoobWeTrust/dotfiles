@@ -25,8 +25,8 @@ Use when facing a tangle of issues and you don't know where to start.
 
 ## Systematic Debugging Protocol
 
-> **Iron Law**: NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST.
-> If you haven't completed Phase 1, you cannot propose fixes.
+> **Iron Law**: no durable fixes without root-cause investigation and supporting evidence first.
+> Before Phase 1 is complete, do not propose a durable fix as if its cause were established. Explicitly authorized containment and bounded probes remain unresolved interventions, not verified resolution.
 
 Use for ANY technical issue: test failures, bugs, unexpected behavior, performance problems, build failures, integration issues.
 
@@ -37,11 +37,27 @@ Use for ANY technical issue: test failures, bugs, unexpected behavior, performan
 - Previous fix didn't work
 - You don't fully understand the issue
 
+### Emergency containment before diagnosis
+
+Time pressure alone does not change the diagnostic requirements. If effective
+constraints have failed and stabilization is needed, only act when the human owner
+has explicitly authorized the specific containment scope; otherwise escalate
+without acting. Keep stabilization minimal, preserve diagnostic evidence where
+safe, and record scope, owner, observations, stop/rollback limits and the next
+review. Reassess after stabilization and resume the four phases for durable
+remediation. A symptom disappearing is not causal confirmation or resolution.
+
+When context is uncertain or mixed, the optional [Cynefin lens](cynefin.md) helps
+distinguish analysis, a bounded hypothesis probe and containment. Probes require
+its hypothesis/owner/limits/observation/stop-or-rollback/review contract and actual
+execution authority. Missing authority or an unsafe probe blocks action, not
+reporting an unresolved diagnosis.
+
 ### The Four Phases
 
 #### Phase 1: Root Cause Investigation
 
-**BEFORE attempting ANY fix:**
+**BEFORE attempting durable remediation:**
 
 1. **Read Error Messages Carefully** — Don't skip past errors or warnings
 2. **Reproduce Consistently** — Can you trigger it reliably? What are exact steps?
@@ -64,9 +80,9 @@ Use for ANY technical issue: test failures, bugs, unexpected behavior, performan
 
 **Scientific method:**
 
-1. **Form Single Hypothesis** — "I think X is the root cause because Y"
+1. **Form Single Hypothesis** — "I think X is a causal factor because Y"; test one hypothesis at a time without excluding other contributing causes by assumption
 2. **Test Minimally** — SMALLEST possible change to test hypothesis, one variable at a time
-3. **Verify Before Continuing** — Did it work? Yes → Phase 4. Didn't work? NEW hypothesis.
+3. **Verify Before Continuing** — Did the observation support the causal explanation and distinguish relevant alternatives? If so, proceed to Phase 4 within authority. A symptom change alone is insufficient; retain uncertainty or form a new hypothesis.
 4. **When You Don't Know** — Say "I don't understand X", don't pretend to know
 
 #### Phase 4: Implementation
@@ -82,13 +98,13 @@ Use for ANY technical issue: test failures, bugs, unexpected behavior, performan
      - **Each fix reveals new shared state/coupling/problem in different place** → architectural problem, question fundamentals
      - **Root cause found but fix is outside your control** (external dependency, vendor API, legacy system) → document the constraint, implement appropriate handling (retry, timeout, error message), add monitoring
 
-**Note on external root causes:** If you've traced the problem to something you don't own or can't change (vendor API behavior, external service, OS-level issue), you've still completed the process. Document the constraint, handle it gracefully, and move on.
+**Note on external root causes:** If evidence traces the problem to something you don't own or can't change (vendor API behavior, external service, OS-level issue), document the constraint and distinguish completed diagnosis from verified remediation. Propose appropriate handling within authority; mitigation does not establish that the external cause is resolved.
 
 ### Red Flags - STOP
 
-- "Quick fix for now, investigate later"
+- "Quick fix for now, investigate later" presented as resolution; containment without specific human authorization
 - "Just try changing X and see if it works"
-- Proposing solutions before tracing data flow
+- Proposing durable fixes before tracing data flow
 - **"One more fix attempt"** (when already tried 2+)
 - Each fix reveals new problem in different place
 - 3+ fixes failed = architectural problem, question fundamentals
@@ -98,7 +114,7 @@ Use for ANY technical issue: test failures, bugs, unexpected behavior, performan
 | Excuse | Reality |
 |--------|---------|
 | "Issue is simple, don't need process" | Simple issues have root causes too |
-| "Emergency, no time for process" | Systematic debugging is FASTER than guess-and-check |
+| "Emergency, no time for process" | Only specifically human-authorized containment can precede diagnosis; preserve unresolved status and resume investigation |
 | "Just try this first, then investigate" | First fix sets the pattern. Do it right from start |
 | "I'll write test after confirming fix works" | Untested fixes don't stick |
 | "Multiple fixes at once saves time" | Can't isolate what worked, causes new bugs |

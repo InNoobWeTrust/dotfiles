@@ -1,0 +1,11 @@
+id,reason,source_url,docs_version,collected
+agentflow,"Beta-listed in pinned official registry; excluded from the default non-beta selection catalog.",https://mermaid.ai/open-source/syntax/agentflow.html,12.2.0,2026-10-31
+architecture,"Beta-listed in pinned official registry; excluded from the default non-beta selection catalog.",https://mermaid.ai/open-source/syntax/architecture.html,12.2.0,2026-10-31
+cynefin,"Beta-listed in pinned official registry; excluded from the default non-beta selection catalog. Framework concepts may still be discussed in prose.",https://mermaid.ai/open-source/syntax/cynefin.html,12.2.0,2026-10-31
+radar,"Beta-listed in pinned official registry; excluded from the default non-beta selection catalog.",https://mermaid.ai/open-source/syntax/radar.html,12.2.0,2026-10-31
+railroad,"Beta-listed in pinned official registry; excluded from the default non-beta selection catalog.",https://mermaid.ai/open-source/syntax/railroad.html,12.2.0,2026-10-31
+swimlanes,"Beta-listed in pinned official registry; excluded from the default non-beta selection catalog.",https://mermaid.ai/open-source/syntax/swimlanes.html,12.2.0,2026-10-31
+treeView,"Beta-listed in pinned official registry; excluded from the default non-beta selection catalog.",https://mermaid.ai/open-source/syntax/treeView.html,12.2.0,2026-10-31
+usecase,"Beta-listed in pinned official registry; excluded from the default non-beta selection catalog.",https://mermaid.ai/open-source/syntax/usecase.html,12.2.0,2026-10-31
+venn,"Beta-listed in pinned official registry; excluded from the default non-beta selection catalog.",https://mermaid.ai/open-source/syntax/venn.html,12.2.0,2026-10-31
+wardley,"Beta-listed in pinned official registry; excluded from the default non-beta selection catalog.",https://mermaid.ai/open-source/syntax/wardley.html,12.2.0,2026-10-31

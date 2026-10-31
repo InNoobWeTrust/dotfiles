@@ -38,6 +38,24 @@ existing task context. A primary, worker, architect or decision tool cannot supp
 this approval. Missing research, sources or receipt is `UNVERIFIED`: stop affected
 design/implementation, not the permitted discovery needed to close the gap.
 
+## Separate implementation from invocation
+
+This gate controls the stack being designed or added to the deliverable, not every
+invocation of an existing tool. "No new dependencies" in an implementation proposal
+does not by itself mean "no runtime dependency resolution" or "offline execution."
+Keep three scopes distinct: project dependency/manifest changes, an existing tool's
+documented runtime resolution/cache writes, and persistent/global installation.
+
+For example, preserving an existing Bun verification script without adding project
+dependencies does not itself require `--no-install` when invoking it. Normal Bun
+package resolution remains subject to the actual network/execution permissions;
+the implementation constraint alone is neither a prohibition nor a grant of those
+permissions. Explicit no-download/no-install restrictions and sandbox boundaries
+still govern. Do not silently change invocation flags to enforce an inferred ban,
+then report the induced failure as proof that the tool cannot run. If scope really
+is ambiguous, name the concrete effect to clarify rather than conflating these
+three categories.
+
 ## Carry the approved contract
 
 Reuse approval for the same task/scope and unchanged stack; no per-edit ritual.

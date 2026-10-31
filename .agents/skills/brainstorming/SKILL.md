@@ -5,6 +5,7 @@ metadata:
   lifecycle: "Prototype consolidation; assess routing after 1–2 real uses."
   aci-result: "Source-level checks only; live routing effectiveness remains unverified."
   aci-upgrades: "One outcome-based entry point; bundled specialized workflows; explicit inputs, outputs, resource roots and missing-evidence stops."
+  cynefin-review: "Prototype lens, 2026-10-31; official-source and source-level checks only, live efficacy unverified. Review after 1–2 real uses."
 ---
 
 # Brainstorming
@@ -24,6 +25,10 @@ Resolve all resource paths from this skill's root. Load only the selected workfl
 - **Clarify a chosen product direction:** “Write a product brief” or “specify this PRD.” Load [product intent](references/product-brief.md): ground the problem → define outcome → bound scope → expose uncertainty → deliver the requested brief. Do not reopen settled direction or force idea generation.
 
 For mixed requests, apply each method only to its relevant question. Creative suspension of judgment never overrides scientific evidence checks. If the intended outcome is unclear, clarify it before choosing a workflow.
+
+### Optional context lens
+
+When uncertainty or mixed contexts make the next learning step unclear, use [Cynefin](references/cynefin.md) and search [domain cues](assets/cynefin-domains.csv) by observed conditions, checking disconfirmers. This is optional experiment-selection guidance, not a mandatory classification or a replacement for the selected method. Unknown does not mean complex; urgent does not mean chaotic. Preserve scientific competing angles, negative controls and kill criteria, and do not reopen settled product intent. Proposals grant no execution authority.
 
 ## Boundaries and completion
 

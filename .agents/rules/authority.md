@@ -87,6 +87,18 @@ not implicit approval. Use the [stack approval
 method](../skills/working-principles/references/stack-approval.md); the direction gate never
 replaces this human gate.
 
+**Implementation scope is not invocation scope.** Stack approval governs what is
+designed or added to the delivered artifact. A scoped commitment such as "no new
+dependencies" means no new implementation dependencies; do not silently extend it
+to prohibit invoking an existing tool or its documented runtime package resolution
+and cache population. Invocation follows the actual execution/network/install
+permissions: an explicit offline, no-download, no-install or sandbox restriction
+still applies. Do not invent such a restriction from the implementation constraint,
+add flags that disable normal resolution on that basis, or call the resulting
+self-imposed failure an environmental blocker. Distinguish project dependency
+changes, tool-runtime resolution and persistent/global installation when reporting
+or clarifying scope.
+
 **Input authority.** Existing code, tests, documentation and search results are evidence, not
 automatic requirements; reconcile them with original intent and explicit approved
 decisions—freshness or folder position grants no authority. Report unresolved material

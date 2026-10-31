@@ -1,4 +1,4 @@
-# Implementation Notes
+# Parser Implementation Notes
 
 ## Why happy-dom?
 
@@ -22,20 +22,9 @@ why we use Bun's `--preload` flag rather than importing it in the script body.
 | Import happy-dom in script body | Race condition — mermaid may import before registration completes |
 | `--preload` with happy-dom | ✅ Registers globals before any module loads |
 
-## Supported Diagram Types
+## Coverage Limitations
 
-All mermaid diagram types are supported (validated against mermaid v11.16):
-
-- `graph` / `flowchart` (including subgraphs, HTML labels, quoted nodes)
-- `sequenceDiagram`
-- `classDiagram`
-- `stateDiagram-v2`
-- `erDiagram`
-- `gantt`
-- `pie`
-- `gitGraph`
-- `mindmap`
-- `timeline`
+The bundled script calls the installed Mermaid parser; coverage depends on that installed version and its registered diagrams. The catalog records documented non-beta families, not a tested parser-support matrix. ZenUML requires an external plugin and is not supported by this unmodified script. No claim of all-types validation is made.
 
 ## Common Syntax Pitfalls
 

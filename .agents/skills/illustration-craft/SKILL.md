@@ -22,6 +22,7 @@ Operational activation cues:
 
 Stop and route elsewhere when:
 
+- the message fits an ordinary Mermaid diagram → use diagram-selection and syntax-validation guidance with the audience, source relationships and target renderer/version; request readable source plus validation status. If that capability or renderer is unavailable, retain text/table or explicitly unverified source rather than forcing a bespoke illustration. Syntax parsing does not render or verify meaning.
 - the task is mainly choosing a chart for data evidence → use a chart-selection/data-narrative capability with the dataset, audience, decision and evidence constraints; if absent, do not invent a bespoke composition as a substitute
 - the task is mainly UI/product interface design → use an interface-design capability with the approved journey, UX-SPEC, state requirements and accessibility targets; if absent, do not turn an unresolved interface into an illustration
 - the task is mainly C4 or architecture documentation → obtain an authoritative architecture artifact from its owner before adding presentation; if the system meaning or boundaries are unresolved, stop and request that source

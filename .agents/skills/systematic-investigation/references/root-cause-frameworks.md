@@ -16,8 +16,13 @@ When this investigation uncovers a pattern that warrants governance attention (r
 
 ## Phase 2 — Find the Root Cause
 
-> **Iron Law**: NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST.
-> If you haven't completed Phase 1, you cannot propose fixes.
+> **Iron Law**: no durable fixes without root-cause investigation and supporting evidence first.
+> Explicitly authorized containment and bounded probes are not durable fixes; follow their local contract in [Cynefin](cynefin.md), retain unresolved status and resume causal investigation for remediation.
+
+These are causal-analysis heuristics, not proof that every situation has a single
+linear root cause. Preserve branching causes, test explanations against evidence,
+and leave unsupported causes unresolved. Use analysis where applicable; a complex
+context may need bounded interaction before a causal account can be supported.
 
 > 💡 **Elicitation opportunity**: After analysis, consider running a named
 > elicitation method to push deeper. See [elicitation-methods](elicitation-methods.md)
