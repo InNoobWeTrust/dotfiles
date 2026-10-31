@@ -1,6 +1,6 @@
 ---
 name: subagent-dispatch
-description: "Use this skill before launching any delegated agent, background worker, or parallel task, or when asked to check periodically, monitor a long-running job, or remind the agent to check later. It routes delegation and periodic checks with bounded actions, output contracts, and explicit stop behavior. Do not use it to delegate sequential discovery whose intermediate work must remain in the main thread."
+description: "Use this skill before launching any delegated agent (built-in subagent, external harness through a delegation tool, or self via CLI), background worker, or parallel task, or when asked to check periodically, monitor a long-running job, or remind the agent to check later. It routes delegation and periodic checks with bounded actions, output contracts, and explicit stop behavior. Do not use it to delegate sequential discovery whose intermediate work must remain in the main thread."
 ---
 
 # Subagent Dispatch
@@ -21,7 +21,7 @@ Good candidates include bounded exploration, complementary research questions, a
 
 For substantive role selection or reuse after a quality incident, use targeted [Assignment outcomes](references/assignment-outcomes.md) recall from authorized existing memory. Capture a compact evidence-linked outcome when accepting, correcting, rejecting or interrupting an assignment; completion labels alone are not acceptance. Keep solution quality separate from provider health and primary-owned design choices.
 
-For a requested cold-reader / “Goldfish” review, apply [fresh-context review dispatch](references/worker-contract.md#fresh-context-reviews-goldfish). A native child or external one-turn worker may qualify; verify the route and neutral inputs rather than equating a new session with isolation. This does not add a reviewer or stage to ordinary work.
+For a requested cold-reader / “Goldfish” review, apply [fresh-context review dispatch](references/worker-contract.md#fresh-context-reviews-goldfish). A subagent reached through any interface may qualify; verify the route and neutral inputs rather than equating a new session with isolation. This does not add a reviewer or stage to ordinary work.
 
 ## Four prompt pillars
 
@@ -32,9 +32,29 @@ For a requested cold-reader / “Goldfish” review, apply [fresh-context review
 
 Read `references/pillars-and-templates.md` when wording a pillar or selecting a findings template.
 
+## Delegation interfaces are equivalent
+
+**Canonical definition (applies to every file in this skill and its references):** a **subagent** (also "worker" or "child") is any delegated agent session run under a bounded contract, reached by **any** interface. The interface is a transport detail, never a different kind of agent. Terms such as "native child", "external worker" or "external harness instance" name the transport only and carry no different rules, priority or eligibility.
+
+These routes are equivalent for every rule here (scope, contract, health, challenge, conformance, receipts):
+
+- the harness's built-in subagent/task facility;
+- an external harness reached through a delegation tool exposed by the environment (for example an MCP server);
+- an external harness's CLI, or the same harness invoked as a CLI process (self-delegation), run through the bounded-command/background facility.
+
+A harness without built-in subagents is therefore **not** a Worker-only runtime and not a blocker: if any of these routes is available, permitted and passes a readiness check (status call, `--version`/help, or a trivial bounded read-only turn), it can host delegation. Pick the route by task fit, capability, cost and observed availability, not by whether it is built in. Route differences are only operational: pass the full contract in the prompt (no inherited context, skills or approvals), set the wall-time limit explicitly (an interface default may be shorter than the task needs; size it generously as a ceiling, about 3–10× the expected duration), capture returned output as the receipt, and keep a CLI self-delegate non-recursive (child gets no further delegation) unless recursion controls are verified. Block only when **no** route is available, never merely because the built-in one is absent.
+
+### Route choice and fair load distribution
+
+- **Do not default to the built-in facility.** Built-in, tool-based and CLI routes are peers; the built-in one is not the preferred or "real" subagent. Discover all available routes (the tool catalog, any readiness/status tool, installed harness CLIs) before a task's first launch, not only after a failure.
+- **Spread work across providers.** Distribute independent units, parallel fan-out, reviews and challenges over the available routes and provider families, favoring those with spare quota. Concentrating everything on the primary's own provider/route while other configured harnesses sit idle is a routing defect, unless a stated capability, privacy or permission constraint requires it.
+- **Quota or outage on one route means switch routes, not stop or work solo.** On quota, rate-limit, overload or unavailability, cool that route down for this task and use another available route (built-in, tool-based or CLI) on a different provider. Do not wait on it, retry it unchanged, or do delegable work directly while a ready route exists. Quota failures say nothing about solution quality.
+- **Unfamiliar is not unavailable.** Never having used a tool-based or CLI route, or its tools not being named "subagent", is not evidence it is unusable. Check the tool catalog and run any readiness check it offers.
+- Direct primary work is right only when handoff overhead dominates or no route is ready, not because the built-in route is exhausted.
+
 ## Dispatch routing and gates
 
-Discover the current environment's available delegation interfaces and follow its applicable routing policy; this reusable skill does not prescribe a provider, transport or named worker. If that policy specifies a preferred route, use it when available and suitable; justify a fallback with observed failure, unavailability or a concrete capability/interface mismatch. Ordinary source reads or document checks do not need separately verified CPU/RAM/PID isolation merely because the worker is a CLI process. Bound scope, actions, concurrency, wall time and cancellation; retain any task-specific hard isolation requirements. Do not invent resource prerequisites for the assigned workload or expand it into recursive, fan-out or stress work without the required controls.
+Discover the current environment's available delegation interfaces and follow its applicable routing policy; this reusable skill does not prescribe a provider, transport or named worker. If that policy specifies a preferred route, use it when available and suitable; justify a fallback with observed failure, unavailability or a concrete capability/interface mismatch. Ordinary source reads or document checks do not need separately verified CPU/RAM/PID isolation merely because the worker is a CLI process. Bound scope, actions, concurrency, wall time and cancellation, sizing limits as generous ceilings against runaway growth (about 3–10× expected workload), never so tight that a normal run fails; retain any task-specific hard isolation requirements. Do not invent resource prerequisites for the assigned workload or expand it into recursive, fan-out or stress work without the required controls.
 
 The primary may accept and version a plan/contract only after the active direction gate has settled consequential choices and, for implementation work, the human-approved stack receipt is present (researched proposal + explicit user approval + task/scope + approval source recorded); it records that direction and may not substitute its own. Workers cannot assume approval or invent changes. Direction-affecting contract defects return through the primary to the eligible authority, not automatically to the user. Human-reserved authority/safety gates remain with the user.
 

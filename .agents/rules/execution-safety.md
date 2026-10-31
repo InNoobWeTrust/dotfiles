@@ -52,11 +52,15 @@ trigger: always_on
   No global/system installs without explicit instruction or undeclared global
   dependencies. Package resolution never overrides network/install permission.
 - Ordinary bounded commands/workers need scope, actions, concurrency, timeout
-  and cleanup. Recursive-agent/process-tree, parallel fan-out or stress workloads
+  and cleanup, sized per [Limit sizing](references/limit-sizing.md) (generous, not minimal). Recursive-agent/process-tree, parallel fan-out or stress workloads
   additionally need verified CPU, RAM/swap, PID, storage and network bounds.
   Recursive/process-tree or stress workloads run only in constrained containers/VMs,
   not on the host. Stop on exhaustion, proliferation or lost containment.
 - Bound jobs with timeouts/watchdogs even when the overall task has no total cap.
+  Limits are **ceilings against runaway growth, not targets**: size them generously
+  from expected workload (roughly 3–10×), never so low that a normal run fails; a
+  healthy progressing job hitting a limit is extended, not retried at the same value.
+  See [Limit sizing](references/limit-sizing.md).
   Diagnose failures before retrying. Never touch user processes or existing
   zellij/tmux/screen sessions; manage only agent-created `agent-*` resources.
 - Persistent services/watchers use tmux, then screen; otherwise run bounded
