@@ -18,7 +18,8 @@
     },
     "delegate": {
       "command": "mcp-delegate",
-      "args": []
+      "args": [],
+      "timeout": 3600
     },
     "lsp": {
       "command": "mcp-lsp",

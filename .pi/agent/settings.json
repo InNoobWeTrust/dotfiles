@@ -25,5 +25,9 @@
   "treeFilterMode": "default",
   "tuiMode": "fullscreen",
   "fullscreenExitOutput": "transcript",
-  "theme": "system"
+  "theme": "system",
+  "hideThinkingBlock": false,
+  "enabledModels": ["ckey/*", "kilo/*", "openrouter/*", "openai/*", "github-copilot/*"],
+  "defaultProvider": "openai",
+  "defaultModel": "gpt-6.1-sol"
 }
