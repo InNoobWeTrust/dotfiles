@@ -35,7 +35,9 @@ in the handoff.
    (language-native privacy first: Go `internal/`, Rust `pub(crate)`, Python
    `_private` + `__all__`, TS package `exports`). No cross-feature imports of internals.
 5. **Deep modules.** A module hides real behavior behind a small interface. No
-   pass-through wrappers, `*Manager`/`*Helper` shells or layers that only forward calls.
+   pass-through wrappers, `*Manager`/`*Helper` shells or layers that only forward calls
+   (a genuine supervisor managing active failure domains, restart budgets, cancellation,
+   or health checks is an imperative shell component, not a pass-through wrapper).
 6. **One owner per rule.** A business rule exists once. Keep code feature-local until a
    second real consumer appears; then move it to its capability home instead of copying.
 7. **Names.** Name files and modules after the concept they own. Banned as new names:

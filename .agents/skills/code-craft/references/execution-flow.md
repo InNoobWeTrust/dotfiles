@@ -1,5 +1,8 @@
 ---
 metadata:
+  pipeline-guidance-review: |-
+    Prototype: artifact/manifest handoffs, concurrency ownership, supervision boundaries and event contracts received source-level review; live agent adherence and effectiveness remain unverified. Recheck after 1–2 real pipeline tasks, including grown-inventory resume and missed-notification cases.
+    ACI: PASS WITH GAPS — existing reference routes retained; conditional inputs, outputs, ownership and failure contracts checked. No runtime or paired agent-behavior evaluation was executed.
   maintenance-review: |-
     Prototype: on representative use, check whether a reader can locate decisions, effects and failure behavior with fewer file jumps and less explanation; source checks alone do not establish improvement.
     ACI Pass:
@@ -139,6 +142,31 @@ Require explicit contracts for: EOS/completion signaling; cancellation and abort
 
 **Check count-before-records deadlock.** If a consumer requires a count before accepting records and the count is emitted only after all records are sent, a full record buffer will deadlock both sides — the producer cannot finish, so the count never arrives. Feedback loops and split/recombine topologies need explicit packet-count and receive-order reasoning. A buffer bound alone does not prevent this class of deadlock.
 
+## 5. Stage handoffs and signaling
+
+### 5a. Payload references and manifest persistence
+
+Handoff by descriptor when payload size, lifecycle, or fan-out warrants it. Pass a descriptor (stable ID, immutable artifact URI/path, digest/version, schema, count, status) between stages when the payload is large, reused downstream, survives restarts, is sensitive, or fans out. Pass values directly when small, transient, consumed by a single recipient, and not required for resume.
+
+Distinguish serialization from durable result persistence. When an accumulated inventory or collection of descriptors grows large, persist the manifest to durable storage and pass a single manifest descriptor or URI across boundaries rather than serializing descriptor collections in flow parameters or messages. On resume, verify grown-state flow parameters and reconcile descriptor inventories against durable storage.
+
+Descriptors require: durable producer publication before emission; consumer digest and identity validation; clear retention and cleanup ownership; and visible failure on dangling references.
+
+### 5b. Notification and event contracts
+
+Before adding events, callbacks, pub/sub, or reactive subscriptions, type the event by purpose and declare the delivery contract:
+
+1. **Type by purpose**: distinguish *state-change notifications* (notifying that persistent state mutated; the durable record of truth is the state, and the event carries an ID or descriptor), *event sourcing* (where the stream itself is the authoritative state record), and *ephemeral telemetry/progress* (metrics, heartbeats, and in-flight progress with no prior commit table).
+2. **Commit before notify**: for state-change notifications, withhold emission until the producing state is committed to durable storage (§4).
+3. **Delivery and deduplication policy**: state explicit delivery semantics per channel (at-least-once with idempotent consumers by event ID vs. at-most-once / drop-on-lag for loss-tolerant telemetry); do not assume at-least-once universally or mandate deduplication stores for transient streams.
+4. **Ordering scope**: declare ordering guarantees (per-unit, per-key, or unordered).
+5. **Backpressure and failure**: bounded buffers provide legitimate flow-control backpressure; blocking a producer to prevent out-of-memory exhaustion is valid when paired with cancellation and progress monitoring. Prevent unmonitored deadlock, slow-consumer starvation, and unhandled subscriber crashes; state an explicit block, coalesce, or drop policy.
+6. **Loss recovery**: for loss-intolerant state notifications, ensure consumers can reconcile or re-list from durable state after missed or out-of-order events.
+7. **Signaling channel**: ensure cancellation, termination, and error signals follow declared channels.
+8. **Lifecycle owner**: designate a single owner for subscription lifetime and unsubscribe cleanup.
+
+Progress reporting from a single producer may use direct callbacks or bounded queues. External brokers or buses are warranted only when decoupled lifecycles, independent consumers, or cross-process routing require them within the approved stack.
+
 ## Anti-patterns
 
 | Shortcut | Why it fails | Prefer |
@@ -146,7 +174,7 @@ Require explicit contracts for: EOS/completion signaling; cancellation and abort
 | Compress everything into a one-liner | Fewer lines can conceal decisions and intermediate meanings | Explicit statements with domain names |
 | Turn every operation into a node or helper | Wiring and navigation can exceed the logic being explained | Meaningful boundaries; inline cohesive trivial work |
 | Put huge opaque functions behind a three-node graph | A small picture does not make the internals inspectable | Readable stages and visible consequential decisions |
-| Add a manager or strategy for every mutation or parameter | More objects and files can increase review effort | Owned local state and straightforward interfaces unless complexity justifies more |
+| Add a manager or strategy for every mutation or parameter | More objects and files can increase review effort | Owned local state and straightforward interfaces unless complexity justifies more (a supervisor managing active failure domains, timeouts, cancellation, or restart policy is an imperative shell component, not a pass-through wrapper) |
 | Show only the happy-path diagram | Failure, partial completion and effect ordering remain hidden | Include consequential failure/state transitions and ownership |
 | Present traces as complete proof | Only instrumented, executed paths are observed | Label coverage and unverified paths; retain tests and source review |
 

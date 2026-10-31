@@ -64,6 +64,8 @@ Map data paths from each worker's perspective. Stage explicitly; distinguish sha
 
 Load data on workers or use the runtime's supported data placement. Avoid embedding huge client objects in task graphs [C2]. Persist intermediate results only when measured reuse justifies memory/storage pressure; cache is not a recovery copy. Partition/layout changes can outperform adding workers; change one lever at a time and record the effect.
 
+Pass stable references (IDs, paths, digests) across task and stage boundaries when payloads warrant it. When an accumulated inventory or collection of descriptors grows large, persist the manifest to storage and pass a single manifest reference or URI rather than serializing bulk descriptor collections through coordinators or flow parameters.
+
 ## 4. Treat failures by effect, not exception name alone
 
 | Observation | Safe next action |

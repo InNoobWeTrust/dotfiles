@@ -13,7 +13,7 @@ Use the fields relevant to the task in an existing run record or response. This 
 | Partition/merge | Coverage, overlap/halos, skew, ordering, deterministic reduction or justified tolerance; aggregation owner |
 | Data path | Worker-readable input, approved scratch, durable result/checkpoint storage, authoritative sink; filesystem/object-store semantics |
 | Effects/commit | What may change; when it becomes visible; atomicity scope; duplicate detection; unknown-outcome reconciliation |
-| Bounds | Running workers/ranks, threads per process, pending submissions, RAM/VRAM, scratch, I/O/network, time, retries and spend as applicable |
+| Bounds | Running workers/ranks, threads per process, pending submissions, RAM/VRAM, scratch, I/O/network, time, retries and spend as applicable; for each limit, the single named authority that resolves it and where the effective value is recorded |
 | Failure policy | Retryable/nonretryable errors, deadline, bounded backoff/jitter; loss of worker/coordinator/storage/quorum; stale writer handling |
 | Evidence | Run/task/attempt IDs, statuses, expected output set, validation, metrics and sanitized logs |
 | Recovery/lifecycle | Cancellation owner, drain/late-write behavior, resume source, retention/cleanup, recovery-point/time objectives |

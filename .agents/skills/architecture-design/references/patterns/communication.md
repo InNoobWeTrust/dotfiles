@@ -20,7 +20,7 @@ flowchart LR
 | **Use when** | Decoupling services via asynchronous state changes is required |
 | **Skip when** | Simple synchronous workflows with immediate response needs fit better |
 | **Tradeoffs** | ✅ High scalability & loose coupling · ❌ Eventual consistency & complexity |
-| **Key decision** | Broker selection (Kafka vs RabbitMQ) and event schema governance |
+| **Key decision** | Delivery contract (state notification vs. event sourcing vs. telemetry, delivery/dedup semantics, ordering scope, backpressure, durable reconciliation) and broker selection when decoupled lifetimes warrant one |
 | **Composes with** | CQRS, Event Sourcing, Pub/Sub |
 
 ---

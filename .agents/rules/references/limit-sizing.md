@@ -16,6 +16,14 @@ more resources through retries than it saves.
    long idle window (several minutes) is a stronger hang signal than elapsed time.
 4. **Concurrency**: default to the machine's real capacity (cores, free RAM) minus headroom for
    the user's own work. Do not default to 1–2 workers for work that parallelizes safely.
+   Resolve each concurrency limit **once**, at one named authority (CLI, config, or environment,
+   in documented precedence), and pass the resolved value down. Do not re-default, clamp, or shadow
+   the same resource in application code across subsequent layers. Distinct resources (process
+   pool size, in-flight submission window, native threads per process, I/O readers) are separate
+   controls and may have distinct limits; name each by the concrete resource it bounds. External
+   environment boundaries (container quotas, cgroups, scheduler allocations) are valid runtime
+   constraints; the application respects them without re-implementing redundant internal capping.
+   A granted allocation or environment cap is an upper ceiling, not an automatic low default.
 
 ## Orders of magnitude (starting points, not mandates)
 
