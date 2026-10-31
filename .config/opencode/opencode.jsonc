@@ -90,20 +90,6 @@
         "CKEY_API_KEY",
       ],
       "models": {
-        "forbiddengun/architect": {
-          "capabilities": {
-            "input": [
-              "text",
-            ],
-            "output": [
-              "text",
-            ]
-          },
-          "limit": {
-            "context": 1000000,
-            "output": 384000,
-          },
-        },
         "forbiddengun/gemini": {
           "capabilities": {
             "input": [
@@ -256,7 +242,7 @@
     {
       "action": "subagent",
       "resource": "*",
-      "effect": "deny"
+      "effect": "allow"
     },
     {
       "action": "question",
