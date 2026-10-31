@@ -40,7 +40,7 @@ Never stage, commit, push or discard changes without the required explicit appro
 ## Choose the trajectory
 
 - **Production software:** `code-craft`; use MVP-first delivery and slicing proportionately. For rewrites, preserve/delete classification and consumer compatibility follow `rules/authority.md`.
-- **Scientific research and exploratory ideation:** `research-ideation`; no production roadmaps, TDD, slicing or administrative terminology freezes. Favor literature-grounded hypotheses and falsifiable experiments.
+- **Scientific research and exploratory ideation:** `brainstorming`, scientific discovery path; no production roadmaps, TDD, slicing or administrative terminology freezes. Favor literature-grounded hypotheses and falsifiable experiments.
 - **Utilities, dotfiles and bounded local fixes:** fast path after human stack approval. Resolve consequential uncertainty, reuse established tools, and verify observable behavior without compulsory phase files, DTO scaffolding or clean-room TDD. Small code is not automatically low risk.
 
 Prefer native/platform capabilities and established tools before custom layers; consult curated indexes such as [Terminal Trove](https://terminaltrove.com/list/) and package registries where relevant. Retain only end-to-end tests and important critical-logic unit tests without additional approval; keep other checks temporary and protect existing suites (`rules/code-quality.md`).

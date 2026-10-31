@@ -1,44 +1,40 @@
 ---
 name: brainstorming
-description: "Use this skill for creative ideation, product design, conceptual exploration, and product briefs or PRDs. Activate to generate ideas, explore options, break creative blocks, or specify product intent for a settled direction without implementation. Use a behavior/acceptance specification workflow for specs, and a technical design workflow for architecture."
+description: "Use for creative and product ideation, conceptual exploration, scientific research synthesis, literature-grounded hypotheses, falsifiable research proposals, and settled-direction product briefs or PRDs. Routes by outcome to creative exploration, scientific discovery with modality checks and negative controls, or product-intent clarification. Not production implementation, debugging, technical architecture, or behavior/acceptance specification."
+metadata:
+  lifecycle: "Prototype consolidation; assess routing after 1–2 real uses."
+  aci-result: "Source-level checks only; live routing effectiveness remains unverified."
+  aci-upgrades: "One outcome-based entry point; bundled specialized workflows; explicit inputs, outputs, resource roots and missing-evidence stops."
 ---
 
 # Brainstorming
 
-Choose the path from the request: explore alternatives, or clarify a settled product direction. A product-brief or spec-only request does not require brainstorming new directions or authorize implementation.
+Start from the unresolved outcome, then load the method that fits it. Shared framing does not make every task follow the same tournament, idea quota, or evidence standard.
 
-For the exploration path only, load phase detail and techniques from `references/phases.md`.
+**Inputs:** the user's question or desired outcome, available sources/evidence, constraints, and any settled decisions. **Outputs:** alternatives with next experiments, competing hypotheses with a discriminating experiment, or a product brief with open decisions, according to the selected path.
 
-## Exploration path
+For an agent facilitating exploration or clarifying intent, use supplied context and available authorized research capabilities. Missing evidence remains a visible gap; it never licenses fabricated sources, invented user research, tool installation, or experiment execution.
 
-1. **Frame** the problem (goal, constraints, success).
-2. **Diverge** (volume techniques — SCAMPER, worst idea, etc.).
-3. **Facilitate** (no early judgment; cluster themes).
-4. **Converge** (rank, combine, kill weak ideas).
-5. **Multi-perspective evaluate** (optional hats / stakeholders).
-6. **Action plan** — top 3–5 with next experiments.
+## Route by the needed outcome
 
-### Output
+Resolve all resource paths from this skill's root. Load only the selected workflow and its needed references, before doing that work.
 
-Problem statement; captured ideas; prioritized shortlist with rationale; next experiments. Top 3–5 is useful when comparing alternatives, not a quota for a settled direction.
+- **Explore possibilities:** “Generate ideas,” “explore options,” or “break a creative block.” Load [creative exploration](references/phases.md): frame → diverge → cluster → converge → evaluate → next experiments. Return the problem, captured ideas, prioritized shortlist with rationale, and next experiments; top 3–5 applies to comparing alternatives, not settled directions.
+- **Explain or test a scientific claim:** “Synthesize this literature,” “generate hypotheses,” or “design a falsifiable research proposal.” Load [scientific discovery](references/scientific-research.md): map entities/modalities → compete on mechanisms → critique evidence → propose a discriminating experiment. Preserve three competing angles, causal links, four rigor axes, negative controls and kill criteria. Scientific ideation does not require production TDD, slicing, or terminology freezes.
+- **Clarify a chosen product direction:** “Write a product brief” or “specify this PRD.” Load [product intent](references/product-brief.md): ground the problem → define outcome → bound scope → expose uncertainty → deliver the requested brief. Do not reopen settled direction or force idea generation.
 
-## Settled-direction product brief / PRD path
+For mixed requests, apply each method only to its relevant question. Creative suspension of judgment never overrides scientific evidence checks. If the intended outcome is unclear, clarify it before choosing a workflow.
 
-Use when the user asks for product requirements, a PRD, or a brief for an already chosen direction. Inputs are the request, available user evidence, existing product decisions and constraints. Apply planning and shared-understanding principles for unresolved discovery: frame problems before solutions, expose gaps to their owners, and stop the affected specification on conflicting scope rather than silently choosing a direction. Skip divergence and ranking unless a real product choice remains open.
+## Boundaries and completion
 
-1. **Ground the problem**: who is affected, their current workflow or pain, why it matters, and what evidence supports it. Label hypotheses; do not invent research or personas.
-2. **Define the outcome**: desired user benefit and observable success. Prefer a measurable target with a baseline and measurement window when known; otherwise state what must be learned. For example, “reduce median onboarding time from 5 to 2 minutes within 30 days,” not “improve UX.”
-3. **Bound the product**: included capabilities, non-goals, affected users/stakeholders, dependencies and constraints. Capture core use cases in plain language or user stories; do not prescribe architecture to fill a product gap.
-4. **Expose uncertainty**: distinguish agreed intent, assumptions and open decisions; identify the evidence or authorized owner needed to resolve each consequential gap. Stop the affected specification on conflicting scope or missing owner decisions rather than silently choosing a new direction.
-5. **Deliver only the requested specification**: a concise product brief is enough by default; expand to a formal PRD when explicitly requested or when durable coordination requires it. Update affected intent when the direction changes, linking existing sources rather than duplicating them.
+- Follow the selected reference's required checks, deliverables and stops; shared framing is not a replacement for its method.
+- Unsupported scientific principles remain conjectures; missing data or capability blocks the affected experiment, not honest ideation.
+- Stop an affected specification on conflicting scope or missing owner decisions; do not silently choose new product intent.
+- Ideation and briefs do not authorize implementation, compute runs, or laboratory work. Technical design, behavior/acceptance specification, and interaction design require their respective capabilities; record unavailable handoffs as open items.
 
-The output must let a reader identify the problem, audience, outcome, scope/non-goals, core use cases and unresolved decisions without this chat. Missing evidence remains visible; a completed brief is not proof of product success or approval to build.
+### Scientific supporting references
 
-### Domain handoffs
-
-- A behavior/acceptance specification capability owns observable behavior, acceptance criteria and BDD examples, including spec-only requests. If unavailable, capture outstanding acceptance criteria as explicit open items in the brief.
-- A technical design capability owns technical constraints, boundaries and trade-offs; an interaction and visual design capability owns interaction and visual design. If unavailable, record the technical or design boundary as an open decision requiring the relevant capability.
-- A document format and presentation capability owns presentation and format for a saved human-facing brief, not its product decisions. No mandatory PRD → technical spec → BDD ladder follows from this path. If unavailable, deliver the brief in plain Markdown and note any format requirements for later.
+Load at the corresponding scientific phase: [hypothesis tournament](references/hypothesis-tournament.md), [adversarial rigor](references/scientific-anti-sycophancy.md), and [proposal template](references/proposal-template.md).
 
 ## Investment handoff
 

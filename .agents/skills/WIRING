@@ -90,11 +90,11 @@ Shallow research until active decision/slice/non-deferrable boundaries are clear
 
 ### Scientific Research & Ideation
 
-`research-ideation` owns modality audit + three-angle hypothesis tournament → adversarial critique/literature → falsifiable proposal and Colab/Marimo notebook blueprint, replacing production TDD/slicing. Warranted scientific review checks controls/statistics/falsifiability before laboratory commitment; ideation grants no compute/lab authority.
+`brainstorming` scientific discovery path owns modality audit + three-angle hypothesis tournament → adversarial critique/literature → falsifiable proposal and Colab/Marimo notebook blueprint, replacing production TDD/slicing. Warranted scientific review checks controls/statistics/falsifiability before laboratory commitment; ideation grants no compute/lab authority.
 
 ### ML Experiment Execution and Recovery
 
-Hypotheses from `research-ideation` when needed → `ml-training` split provenance, update/event schedules, preflight/retention before launch (existing runs: recovery, not automatic rerun) → investigate evaluation/callback/serialization/logging failures before repair → `code-craft` for non-trivial pipeline changes → `data-storytelling` measured split/checkpoint/coverage-aware results. Snapshots are not trajectories.
+Hypotheses from `brainstorming` scientific discovery path when needed → `ml-training` split provenance, update/event schedules, preflight/retention before launch (existing runs: recovery, not automatic rerun) → investigate evaluation/callback/serialization/logging failures before repair → `code-craft` for non-trivial pipeline changes → `data-storytelling` measured split/checkpoint/coverage-aware results. Snapshots are not trajectories.
 
 ### Distributed Runtime and State Integration
 
@@ -141,7 +141,7 @@ Existing pipeline/security posture → `devsecops` CI/CD, secrets/dependencies/S
 
 ### Domain Knowledge Curation
 
-`domain-curation` concrete task→credible lineage→conditional practitioner judgment→representative/boundary checks→brief. Add investigation for failures, consultation for choices, review for evidence; scientific next outcomes use `research-ideation`, reader-ready material `doc-craft`, requested retention `memory-techniques`. Package via `skill-author` only when recurring workflow, critical evidence and real task-attempt limits justify it; otherwise retain the brief. Already-grounded authoring skips acquisition.
+`domain-curation` concrete task→credible lineage→conditional practitioner judgment→representative/boundary checks→brief. Add investigation for failures, consultation for choices, review for evidence; scientific next outcomes use `brainstorming` scientific discovery path, reader-ready material `doc-craft`, requested retention `memory-techniques`. Package via `skill-author` only when recurring workflow, critical evidence and real task-attempt limits justify it; otherwise retain the brief. Already-grounded authoring skips acquisition.
 
 ### Skill Authoring & Maintenance
 

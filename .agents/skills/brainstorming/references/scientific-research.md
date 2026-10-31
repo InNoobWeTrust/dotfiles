@@ -1,9 +1,6 @@
----
-name: research-ideation
-description: "Use this skill for scientific research synthesis, literature grounding, hypothesis generation, and research proposals. Disentangles physical/biological modalities, conducts multi-hypothesis tournaments (conservative, analogical leap, high-risk), and designs falsifiable experiments with negative controls. Bypasses software engineering TDD and slicing bureaucracy."
----
-
 # Research Ideation
+
+Scientific research path of brainstorming. All `references/` paths below resolve from the brainstorming skill root. Load the tournament, anti-sycophancy and proposal references when reaching their respective phases.
 
 Scientific discovery, literature synthesis, hypothesis generation, and research proposals. Start from the user's unresolved outcome and the source's causal principles, not its most detailed implementation example.
 
