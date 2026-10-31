@@ -1,0 +1,299 @@
+/** Foundational delegate wire schemas and result contracts. */
+import { z } from "zod@4"
+
+/** Largest prompt accepted, measured in UTF-8 bytes of the single argv element. */
+export const MAX_PROMPT_BYTES = 65_536
+
+export const DEFAULT_WALL_TIME_MS = 900_000
+export const MAX_WALL_TIME_MS = 7_200_000
+
+/**
+ * Authority granted to the delegated harness, mapped per harness to its own flag.
+ * Except for AGY's explicitly configured always-autoapprove profile, `default`
+ * keeps the harness's own policy; this is not a read-only guarantee.
+ */
+export const permissionModeSchema = z
+  .enum(["default", "acceptEdits", "bypassPermissions"])
+  .describe(
+    "For non-AGY harnesses: 'default' keeps the harness's own policy (not read-only isolation); 'acceptEdits' allows unattended edits; 'bypassPermissions' skips all tool approval prompts and requires explicit human permission. AGY always passes --mode accept-edits --dangerously-skip-permissions for every value, including default and read-only assignments. Scope the task; permissionMode cannot restrict AGY authority.",
+  )
+
+export type PermissionMode = z.infer<typeof permissionModeSchema>
+
+const positiveInt = (max: number) => z.number().int().positive().max(max)
+
+/**
+ * A leading `-` would be parsed by the harness CLI as an option rather than as
+ * the value it was meant to be. `claude -p --version` prints a version and exits
+ * 0 without running the task, and `qwen -p -m --yolo …` turns a model id into
+ * an approval bypass. No legitimate prompt or model identifier starts with a
+ * dash, so both are refused up front instead of relying on every supported CLI
+ * to treat them literally.
+ */
+const notAnOption = (value: string): boolean => !value.startsWith("-")
+
+const optionSafe = (label: string) => ({
+  message: `${label} must not start with '-': the harness CLI would read it as an option rather than as the value. No supported CLI takes an end-of-options delimiter for the prompt, so the text has to start with a letter, a digit, or a space — a leading space is invisible to the harness and keeps a bullet list or diff intact.`,
+})
+
+/**
+ * One schema shared by every advertised tool. Unsupported authority controls
+ * are refused rather than silently ignored.
+ */
+export const delegateInputSchema = {
+  prompt: z
+    .string()
+    .min(1)
+    .refine(notAnOption, optionSafe("prompt"))
+    .describe(
+      "Complete, self-contained instructions for the external AI subagent: the goal, necessary context, allowed actions, exact paths, acceptance criteria, and output format. For image generation with agy or codex, an explicit absolute output file path is required in the prompt: obtain it from the caller before launching if missing, and require saving the image there and returning the actual path or a failure report. No parent conversation, follow-up, or resumable session is supplied. Passed literally as one argv element that is not interpreted by a shell; it allows at most 64 KiB of UTF-8 bytes, cannot start with '-', and text that looks like shell syntax is passed through unchanged.",
+    ),
+  workdir: z
+    .string()
+    .optional()
+    .describe(
+      "Absolute directory the harness runs in; it supplies the working directory, not filesystem isolation. Defaults to this session's MCP root when the client exposes one, otherwise the server's working directory.",
+    ),
+  model: z
+    .string()
+    .min(1)
+    .refine(notAnOption, optionSafe("model"))
+    .optional()
+    .describe(
+      "Harness-native model identifier or alias. Leave unset to use that harness's configured default. Use delegate_models for explicit discovery where supported; status contains only name-matched Zen hints, not the full catalog. Must not start with '-'.",
+    ),
+  permissionMode: permissionModeSchema
+    .default("default")
+    .describe(
+      "For non-AGY harnesses: default keeps native policy, acceptEdits allows unattended edits, bypassPermissions skips all tool approvals and requires explicit human permission. AGY always uses --mode accept-edits --dangerously-skip-permissions, regardless of this value or agySandbox, including read-only tasks. This field cannot restrict AGY authority; scope the prompt. Defaults to default.",
+    ),
+  wallTimeMs: positiveInt(MAX_WALL_TIME_MS)
+    .default(DEFAULT_WALL_TIME_MS)
+    .describe(
+      "Wall-clock limit for the whole delegated turn: CLI startup, model/tool round trips, internal swarm coordination and final synthesis. Default 900000 (15 min), maximum 7200000 (2 h). Keep the default for substantive AGY work unless evidence justifies a different bound; do not infer a two-minute task from a fast model. Match any prompt budget to this deadline. On expiry the harness process group is killed and partial output is returned; expiry alone does not prove the route is broken.",
+    ),
+  agySandbox: z
+    .boolean()
+    .optional()
+    .describe(
+      "AGY only: true independently adds --sandbox for AGY's sandbox profile. All AGY calls already pass --mode accept-edits --dangerously-skip-permissions, including read-only tasks; this flag does not enable or disable autoapproval. Do not assume terminal restrictions isolate native tools/MCP or guarantee read-only access. Omitted/false adds no sandbox flag and does not disable saved AGY settings. Other harnesses reject this field; no settings are edited.",
+    ),
+} satisfies Record<string, z.ZodType>
+
+export const delegateInput = z.object(delegateInputSchema).strict()
+export type DelegateInput = z.infer<typeof delegateInput>
+
+/**
+ * Input for the `delegate_run` tool: all delegateInput fields plus a stable
+ * harness registry ID selected from `delegate_status`.
+ */
+export const delegateRunSchema = delegateInput.extend({
+  harness: z
+    .string()
+    .min(1)
+    .describe(
+      "External subagent CLI ID from delegate_status, selected by task suitability, capabilities, interface needs and observed availability. No harness has a fixed priority. This selects a CLI worker, not a model.",
+    ),
+})
+export type DelegateRunInput = z.infer<typeof delegateRunSchema>
+
+/** Explicit catalog queries stay small; status is only an automatic hint surface. */
+export const modelsInputSchema = z
+  .object({
+    harness: z.string().min(1).describe("Harness ID to inspect; currently opencode or agy."),
+    workdir: delegateInputSchema.workdir,
+    text: z
+      .string()
+      .min(1)
+      .max(256)
+      .refine((value) => Buffer.byteLength(value, "utf8") <= 256, "Maximum 256 UTF-8 bytes")
+      .optional()
+      .describe(
+        "Literal case-insensitive substring of selector or label, like grep -Fi. Not a regex.",
+      ),
+    offset: z.number().int().nonnegative().default(0),
+    limit: positiveInt(100).default(25).describe("Maximum rows per page; default 25, maximum 100."),
+  })
+  .strict()
+
+export const modelsOutputSchema = z
+  .object({
+    harness: z.string(),
+    workdir: z.string(),
+    models: z.array(z.object({ selector: z.string(), label: z.string().nullable() }).strict()),
+    total: z.number().int().nonnegative(),
+    matched: z.number().int().nonnegative(),
+    offset: z.number().int().nonnegative(),
+    nextOffset: z.number().int().nonnegative().nullable(),
+  })
+  .strict()
+
+export type ModelsInput = z.infer<typeof modelsInputSchema>
+export type ModelsOutput = z.infer<typeof modelsOutputSchema>
+
+export const delegateOutputSchema = z
+  .object({
+    ok: z
+      .boolean()
+      .describe(
+        "True only when execution succeeded and a nonempty answer was returned without a recognized headless permission denial. Not proof of task completion.",
+      ),
+    outcome: z
+      .enum(["answered", "blocked", "empty", "failed"])
+      .describe(
+        "Observable run outcome, not semantic verification of the answer. Blocked means a recognized headless permission denial; empty means no stdout answer.",
+      ),
+    harness: z.string().describe("Harness id that ran, e.g. 'claude'."),
+    executable: z.string().describe("Absolute path of the binary that was executed."),
+    exitCode: z.number().int().nullable().describe("Exit status, or null when killed by a signal."),
+    signal: z
+      .string()
+      .nullable()
+      .describe("Terminating signal name, or null when the process exited."),
+    stop: z
+      .enum(["exited", "cancelled", "wall_time", "capture_failed", "spawn_failed"])
+      .describe(
+        "Why the run ended: exited, cancelled by the MCP client, wall-time expiry, capture failure or launch failure.",
+      ),
+    timedOut: z.boolean().describe("True when the wall-clock limit killed the run."),
+    truncated: z
+      .boolean()
+      .describe(
+        "True only when inline previews omit bytes; full captured streams are in the returned paths. Check stop for execution/capture failure.",
+      ),
+    // Recovery paths precede previews so a client's own clipping preserves them.
+    stdoutPath: z
+      .string()
+      .nullable()
+      .describe(
+        "Absolute private XDG cache file for original stdout, always retained even for small or empty output; null only when cache creation failed. Failed runs may have partial files.",
+      ),
+    stderrPath: z
+      .string()
+      .nullable()
+      .describe(
+        "Absolute private XDG cache file for original stderr, always retained even for small or empty output; null only when cache creation failed. Failed runs may have partial files.",
+      ),
+    stdoutBytes: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe("Raw stdout bytes preserved in cache before preview reduction."),
+    stderrBytes: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe("Raw stderr bytes preserved in cache before preview reduction."),
+    durationMs: z.number().int().nonnegative().describe("Wall-clock time the harness consumed."),
+    workdir: z.string().describe("Resolved working directory the harness ran in."),
+    argv: z.array(z.string()).describe("Exact argument vector, prompt redacted."),
+    promptBytes: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe("Size of the prompt argument in UTF-8 bytes."),
+    depth: z.number().int().nonnegative().describe("Delegation depth of this call, 0 at the top."),
+    stdout: z.string().describe("Standard output, or a bounded inline prefix when truncated."),
+    stderr: z
+      .string()
+      .describe(
+        "Standard error, or a bounded inline prefix when truncated. MCP capture/teardown diagnostics appear in the envelope error, not in this original-stream preview.",
+      ),
+  })
+  .strict()
+
+export type DelegateOutput = z.infer<typeof delegateOutputSchema>
+
+export const statusOutputSchema = z
+  .object({
+    ok: z.boolean().describe("True when at least one harness is advertised."),
+    harnesses: z
+      .array(
+        z
+          .object({
+            id: z.string().describe("External subagent CLI ID to pass as delegate_run.harness."),
+            executable: z.string().describe("Absolute path of the detected binary."),
+            version: z
+              .string()
+              .nullable()
+              .describe("Reported version string, or null when probing failed."),
+            readiness: z
+              .literal("configured")
+              .describe("Readiness state; always 'configured' for advertised harnesses."),
+            reason: z
+              .string()
+              .describe("Human-readable explanation of the readiness state, credential-free."),
+            models: z
+              .array(z.string())
+              .describe(
+                "Automatic OpenCode Zen base-model hints whose display name or native ID contains 'free' (case-insensitive); this is not price verification or a billing guarantee. Never the full run allowlist. Empty does not mean no models. Use delegate_models for explicit discovery and check modelSupported before selection.",
+              ),
+            modelHintsState: z.enum(["available", "empty", "unknown", "not_applicable"]),
+            modelListing: z.enum(["supported", "unsupported"]),
+            permissionModes: z
+              .array(permissionModeSchema)
+              .describe("Permission modes this harness accepts, in ascending authority."),
+            modelSupported: z
+              .boolean()
+              .describe(
+                "True when the harness accepts a model flag; false when it ignores or rejects one (e.g. amp).",
+              ),
+            depth: z
+              .number()
+              .int()
+              .nonnegative()
+              .describe("Depth available to this harness in the current chain."),
+          })
+          .strict(),
+      )
+      .describe(
+        "External AI subagents in the current status snapshot, in advertisement order; refresh:true returns the re-inspected list.",
+      ),
+    unsupported: z
+      .array(
+        z
+          .object({
+            id: z.string().describe("Harness id that was checked."),
+            executable: z
+              .string()
+              .nullable()
+              .describe("Absolute path of the binary, or null when not found on PATH."),
+            readiness: z
+              .enum(["missing", "not_configured", "unknown"])
+              .describe(
+                "Why this CLI is unavailable as an external subagent: missing, not configured, or unknown.",
+              ),
+            reason: z.string().describe("Human-readable explanation, credential-free."),
+          })
+          .strict(),
+      )
+      .describe("Supported harnesses that were not advertised, with the reason."),
+    maxDepth: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe("Deepest delegation chain this server permits."),
+    depth: z
+      .number()
+      .int()
+      .nonnegative()
+      .describe("This server's own depth in the delegation chain."),
+  })
+  .strict()
+
+export type StatusOutput = z.infer<typeof statusOutputSchema>
+
+/**
+ * Every tool answers with this envelope: `data` when the call produced a result,
+ * `error` when it was refused or failed. Both members are optional because the
+ * client validates the response against this schema before handing it back, and
+ * a half-filled envelope would be rejected as a protocol error instead of
+ * reported as the failure it actually is.
+ */
+export function resultEnvelope<T extends z.ZodType>(data: T) {
+  return z.object({
+    ok: z.boolean().describe("True when the tool produced a result, false when it failed."),
+    data: data.optional().describe("Result payload; absent on failure."),
+    error: z.string().optional().describe("Why the call failed; absent on success."),
+  })
+}

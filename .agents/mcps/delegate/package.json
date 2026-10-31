@@ -10,7 +10,7 @@
     "format:check": "bunx --bun --package @biomejs/biome@2.5.15 biome format . --error-on-warnings",
     "check": "bunx --bun --package @biomejs/biome@2.5.15 biome check . --error-on-warnings",
     "check:fix": "bunx --bun --package @biomejs/biome@2.5.15 biome check --write . --error-on-warnings",
-    "test": "bun test tests/registry.test.ts tests/detect.test.ts tests/readiness.test.ts tests/execute.test.ts tests/lifecycle.test.ts",
+    "test": "bun test tests/registry.test.ts tests/detect.test.ts tests/readiness.test.ts tests/models.test.ts tests/execute.test.ts tests/lifecycle.test.ts",
     "test:e2e": "DELEGATE_E2E=1 bun run tests/e2e.ts"
   }
 }

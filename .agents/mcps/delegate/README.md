@@ -5,7 +5,7 @@ scope: Harnesses that take the prompt as one command-line argument; not a multi-
 ---
 # Delegate MCP
 
-Spawn an **external AI subagent** through two stable tools: `delegate_status` discovers configured workers; `delegate_run` executes one bounded task. CLI presence alone is not readiness; startup runs no model prompt.
+Spawn an **external AI subagent** through three stable tools: `delegate_status` discovers configured workers; `delegate_models` lists models explicitly; `delegate_run` executes one bounded task. CLI presence alone is not readiness; startup runs no model prompt. Any MCP-capable client or bridge can use this interface without hosting its own workflow in OpenCode.
 
 | Prerequisite | Notes |
 |---|---|
@@ -34,7 +34,7 @@ bun --no-env-file src/server.ts
 
 ## Readiness
 
-Both tools always exist, even when no harness is selectable.
+All three tools always exist, even when no harness is selectable.
 
 ```jsonc
 // Discover available harnesses; choose an id from data.harnesses
@@ -77,8 +77,45 @@ to 100% enables `agy`, regardless of labels or layout. Login prompts, failed pro
 timeouts and output without a valid percentage do not.
 
 Select `"harness": "agy"`. Omit `model` to use AGY's default, or choose a native
-slug from `agy models`; that catalog is not login proof. An empty status `models`
-list means no verified allowlist, not no models.
+slug with `delegate_models({harness: "agy"})`, which inspects `agy models`.
+AGY's status hints are always empty; its explicit catalog is not login proof.
+
+### Choosing a model
+
+Status `models` contains **only OpenCode Zen base-model hints whose display name or
+native ID contains “free”**, never a complete catalog. `modelHintsState` distinguishes `available`, `empty`, `unknown` and
+`not_applicable`; `modelListing` says whether explicit discovery is supported.
+This is a case-insensitive name filter, not price verification; it does not guarantee free use, access, remaining quota or future billing.
+
+```jsonc
+// Explicit discovery, filtered by literal text in the selector or display label
+{ "tool": "delegate_models", "input": { "harness": "opencode", "text": "opencode/", "limit": 25 } }
+{ "tool": "delegate_models", "input": { "harness": "agy", "text": "gemini" } }
+```
+
+Pass a returned `selector` unchanged as `delegate_run.model`; OpenCode selectors use
+`provider/model[#variant]`. Explicit paid models and variants remain selectable:
+run validation uses the full internal catalog, independently of status hints.
+
+Listing supports OpenCode and AGY only, even if another harness supports model selection.
+An installed harness may provide a catalog without being ready to run; check status before dispatch.
+Commandcode is not registered.
+
+| Listing field | Meaning |
+|---|---|
+| `harness` | Required CLI ID |
+| `workdir` | Existing MCP-root/server-directory default; use the intended project's directory |
+| `text` | Optional literal case-insensitive substring of selector or label, at most 256 UTF-8 bytes; no regex |
+| `offset`, `limit` | Default 0 and 25; maximum 100 rows per page |
+
+Results contain `models` (`selector`, `label`), `total`, `matched`, `offset` and
+`nextOffset`. Continue with `nextOffset` until null; each call inspects a fresh
+snapshot, so catalog changes can shift pages.
+Responses stay within 64 KiB by shortening pages; a single oversized row fails explicitly.
+
+An empty catalog or no filter matches is a successful empty result. Unsupported
+listing, malformed inspection, timeouts and exhausted inspection slots return errors;
+`DISCOVERY_BUSY` means both shared inspection slots are occupied.
 
 ### Image generation (AGY / Codex)
 
@@ -126,7 +163,7 @@ Set `workdir` unless you want the task to run in the connected agent's MCP root.
 
 ```jsonc
 // Run only after status lists this harness as configured
-{ "tool": "delegate_run", "input": { "harness": "agy", "prompt": "Read src/registry.ts and list every harness id it declares, one per line. Read only; no commands, edits, network or further delegation.", "workdir": "/abs/path/to/this/package" } }
+{ "tool": "delegate_run", "input": { "harness": "agy", "prompt": "Read src/harnesses/catalog/registry.ts and list every harness id it declares, one per line. Read only; no commands, edits, network or further delegation.", "workdir": "/abs/path/to/this/package" } }
 // → { "ok": true, "data": { "exitCode": 0, "stdout": "amp\nagy\n…", "stop": "exited", … } }
 ```
 
@@ -138,17 +175,18 @@ actions, exact paths, acceptance criteria and return format in the prompt.
 
 | Tool | Input | Result |
 |---|---|---|
-| `delegate_status` | optional `refresh: true` | Discover configured external subagents: readiness, native model IDs when inspectable, permission modes, refusal reasons, depth |
+| `delegate_status` | optional `refresh: true` | Readiness, name-matched Zen hints, listing support, permission modes, refusal reasons, depth |
+| `delegate_models` | `harness`, optional `workdir`, `text`, `offset`, `limit` | Explicit filtered catalog with counts and next-page offset |
 | `delegate_run` | `harness`, `prompt`, optional controls | Exit status, both streams, duration, resolved workdir, redacted argv, depth |
 
-### Input fields
+### Run input fields
 
 | Field | Default | Meaning |
 |---|---|---|
 | `harness` | required | CLI ID from `delegate_status().data.harnesses`; unknown or unconfigured IDs are refused |
 | `prompt` | required | The whole task, as one argument. Max 64 KiB. Must not begin with `-`. |
 | `workdir` | MCP root, else server directory | Absolute directory the harness runs in; supplies working directory, not filesystem isolation |
-| `model` | harness default | Exact native ID; an empty inspected model list does not mean no models. Must not begin with `-`. Check `modelSupported`. |
+| `model` | harness default | Exact native selector from explicit discovery; empty status hints do not mean no models. Must not begin with `-`. Check `modelSupported`. |
 | `permissionMode` | `default` | `default`, `acceptEdits`, or `bypassPermissions`; unsupported modes are refused. AGY autoapproves all tools for every value. |
 | `wallTimeMs` | 900000 | Wall-clock limit for the whole turn (max 7200000): CLI startup, model/tool round trips, swarm coordination and synthesis. On expiry the process group is killed and partial output is returned. |
 | `agySandbox` | omitted | AGY only: `true` adds `--sandbox`; does not change autoapproval. `false`/omitted adds no flag and does not disable saved AGY settings. Other harnesses refuse this field. |
@@ -168,7 +206,7 @@ Inside `data`:
 - `outcome`: `answered`, `blocked`, `empty`, or `failed`. `blocked` and `empty`
   set the MCP error flag even on exit 0. Denial detection matches AGY's known
   stderr diagnostic; it is not a general semantic classifier.
-- `stop`: `exited`, `wall_time`, `capture_failed`, `spawn_failed`.
+- `stop`: `exited`, `cancelled`, `wall_time`, `capture_failed`, `spawn_failed`. Cancellation sends Ctrl+C (SIGINT) to the owned process group, then SIGKILL after the existing grace period if needed; partial output is retained.
 - `truncated: true` means only the inline preview is shortened; read
   `data.stdoutPath` and `data.stderrPath` for the full original streams.
   Preview is fixed at 64 KiB combined (counting JSON escaping); callers cannot
@@ -186,7 +224,7 @@ before launch; the result does not overwrite the server's startup snapshot.
 
 ## Costs and limits
 
-Each call runs a real model session on the account the harness CLI is logged
+Each `delegate_run` call runs a real model session on the account the harness CLI is logged
 into and may make many model requests before stopping. There is no monetary cap:
 the wall-clock limit can end the run, not the bill. A turn that stops midway
 leaves existing edits in place. `workdir` sets the starting directory; it does
@@ -202,7 +240,9 @@ not confine the harness to that directory.
 - Delegation is two hops deep. A harness started by another delegate is refused
   from starting a third.
 - Closing this server does not kill turns already in flight; they finish in their
-  own process group.
+  own process group. Cancelling an in-progress `delegate_run` request is different:
+  the MCP request signal sends SIGINT to its process group and escalates to SIGKILL
+  after the grace period if the group remains.
 
 See [design and limits](docs/design.md) and [verification / acceptance](docs/acceptance.md).
 

@@ -4,7 +4,7 @@ import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 import { Client } from "@modelcontextprotocol/sdk@1/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk@1/client/stdio.js"
-import { runEngine } from "../src/engine.ts"
+import { runEngine } from "../src/retrieval/engine.ts"
 
 const workspace = await mkdtemp(join(tmpdir(), "remote-memory-e2e-"))
 const home = join(workspace, "home")

@@ -9,7 +9,7 @@ import {
   lineLength,
   lineStarts,
   toLspPosition,
-} from "../src/edits.ts"
+} from "../src/workspace/edits.ts"
 
 const workspace = await mkdtemp(join(tmpdir(), "lsp-text-"))
 const uri = (name: string) => pathToFileURL(join(workspace, name)).href

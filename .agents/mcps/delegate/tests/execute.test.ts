@@ -2,8 +2,8 @@ import { afterAll, describe, expect, test } from "bun:test"
 import { mkdtempSync } from "node:fs"
 import { mkdtemp, readFile, realpath, rm, stat } from "node:fs/promises"
 import { join } from "node:path"
-import { firstLine, runProcess } from "../src/execute.ts"
-import { OutputCapture } from "../src/output.ts"
+import { OutputCapture } from "../../shared/output/capture.ts"
+import { firstLine, type RunOptions, runProcess } from "../src/execution/process/execute.ts"
 
 const testCache = mkdtempSync(join(process.env.TMPDIR ?? "/tmp", "delegate-tests-"))
 afterAll(() => rm(testCache, { recursive: true, force: true }))
@@ -19,7 +19,7 @@ const base = {
   maxOutputBytes: 1_048_576,
 }
 
-const sh = (script: string, options: Partial<typeof base> = {}) =>
+const sh = (script: string, options: Partial<RunOptions> = {}) =>
   runProcess("/bin/sh", ["-c", script], { ...base, ...options })
 
 describe("runProcess", () => {
@@ -103,6 +103,66 @@ describe("runProcess", () => {
     const result = await sh("trap '' TERM; sleep 30", { wallTimeMs: 200 })
     expect(result.stop).toBe("wall_time")
     expect(result.durationMs).toBeLessThan(8_000)
+  })
+
+  test("does not spawn when already cancelled", async () => {
+    const controller = new AbortController()
+    controller.abort()
+    const result = await runProcess("/nonexistent/delegate-binary", [], {
+      ...base,
+      signal: controller.signal,
+    })
+    expect(result.stop).toBe("cancelled")
+    expect(result.error).toBeUndefined()
+    expect(result.exitCode).toBeNull()
+  })
+
+  test("cancellation sends SIGINT and returns when the process group exits", async () => {
+    const controller = new AbortController()
+    const run = sh("trap 'printf interrupted; exit 0' INT; while :; do :; done", {
+      signal: controller.signal,
+    })
+    setTimeout(() => controller.abort(), 100)
+    const result = await run
+    expect(result.stop).toBe("cancelled")
+    expect(result.stdout).toContain("interrupted")
+    expect(result.durationMs).toBeLessThan(2_000)
+  })
+
+  test("cancellation escalates to SIGKILL for an unresponsive process group", async () => {
+    const controller = new AbortController()
+    const run = sh("trap '' INT; while :; do :; done", { signal: controller.signal })
+    setTimeout(() => controller.abort(), 100)
+    const result = await run
+    expect(result.stop).toBe("cancelled")
+    expect(result.durationMs).toBeGreaterThanOrEqual(1_900)
+    expect(result.durationMs).toBeLessThan(5_000)
+  })
+
+  test("an abort after settlement does not change the completed run", async () => {
+    const controller = new AbortController()
+    const result = await sh("printf finished", { signal: controller.signal })
+    controller.abort()
+    expect(result.stop).toBe("exited")
+    expect(result.stdout).toBe("finished")
+  })
+
+  test("cancellation during descendant cleanup does not report success", async () => {
+    const controller = new AbortController()
+    const run = sh("trap '' TERM; sleep 30 >/dev/null 2>&1 & printf '%s' $!", {
+      signal: controller.signal,
+    })
+    // The parent exits immediately; the TERM-ignoring descendant holds cleanup open.
+    const timer = setTimeout(() => controller.abort(), 200)
+    try {
+      const result = await run
+      expect(result.exitCode).toBe(0)
+      expect(result.stop).toBe("cancelled")
+      expect(result.durationMs).toBeLessThan(5_000)
+      expect(() => process.kill(Number(result.stdout), 0)).toThrow()
+    } finally {
+      clearTimeout(timer)
+    }
   })
 
   test("preserves oversized streams byte-for-byte and lets the worker finish", async () => {

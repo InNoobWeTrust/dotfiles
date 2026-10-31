@@ -2,9 +2,9 @@ import { afterAll, afterEach, beforeEach, describe, expect, test } from "bun:tes
 import { mkdtempSync } from "node:fs"
 import { readFile, rm, stat } from "node:fs/promises"
 import { join } from "node:path"
-import { INLINE_OUTPUT_BYTES, ResponseCapture, serializeAnonymousError } from "../src/response.ts"
-import { evaluate, failure, MODEL } from "../src/api.ts"
-import type { ResponsePayload } from "../src/schema.ts"
+import { INLINE_OUTPUT_BYTES, ResponseCapture, serializeAnonymousError } from "../src/evaluation/capture/response.ts"
+import { evaluate, failure, MODEL } from "../src/evaluation/api.ts"
+import type { ResponsePayload } from "../src/evaluation/schema.ts"
 
 // NOTE: api.ts uses only `import type` from zod@4 and schema.ts — no runtime zod dependency.
 // evaluate() accepts an injected validateResponse so tests supply a mock without needing zod.

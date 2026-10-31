@@ -1,13 +1,13 @@
 import { describe, expect, test } from "bun:test"
-import type { DelegateInput } from "../src/contracts.ts"
-import type { HarnessSpec } from "../src/registry.ts"
+import type { HarnessSpec } from "../src/harnesses/catalog/registry.ts"
 import {
   assertArgv,
   assertRegistryInvariants,
   HARNESSES,
   harnessById,
   toolDescription,
-} from "../src/registry.ts"
+} from "../src/harnesses/catalog/registry.ts"
+import type { DelegateInput } from "../src/protocol/contracts.ts"
 
 const MODES = ["default", "acceptEdits", "bypassPermissions"] as const
 
@@ -17,7 +17,7 @@ const MODES = ["default", "acceptEdits", "bypassPermissions"] as const
  * would fail here even though the server resolves it fine. What keeps these
  * literals in step with `DelegateInput` is that the return type is annotated:
  * a field added to or renamed in the schema fails this file to compile, and
- * `src/registry.ts`'s own `DelegateInput` literal is checked the same way.
+ * `src/harnesses/catalog/registry.ts`'s own `DelegateInput` literal is checked the same way.
  */
 const input = (overrides: Partial<DelegateInput> = {}): DelegateInput => ({
   prompt: "summarise the auth module",

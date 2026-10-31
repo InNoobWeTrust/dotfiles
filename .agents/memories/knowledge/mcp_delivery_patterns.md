@@ -15,7 +15,8 @@ Stable implementation patterns for MCP servers in this repository.
   skips to the next candidate.
 - **Probe contract**: exact probe limits (wallTimeMs, maxOutputBytes) and the Podman-specific
   environment allowlist extensions are implementation values in the sandbox MCP source; consult
-  `.agents/mcps/sandbox/README.md` and `src/engine.ts` for current authoritative values.
+   `.agents/mcps/sandbox/README.md` and `.agents/mcps/sandbox/src/containers/runtime/engine.ts`
+   for current authoritative values.
 - **Engine pinned at startup, no hot fallback**: once selected, the engine is fixed for the session
   lifetime. Lifecycle failures report the selected engine; they do not trigger re-detection. This is
   intentional fail-closed design.

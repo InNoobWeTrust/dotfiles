@@ -42,8 +42,8 @@ inspect verification before any workload starts.
 
 - Podman usable → container tools plus a `<container_sandbox engine="podman">` instruction block.
 - Podman unusable, Docker usable → the same with `engine="docker"`.
-- Neither usable → host tools only: no container tools and no container instruction block; the host
-  sandbox keeps working unchanged.
+- Neither usable → host tools: no container tools and no container instruction block;
+  the host sandbox keeps working unchanged.
 
 Selection is a startup snapshot with **no hot fallback** to the other engine later, including during
 container cleanup. Restart the server (reconnect the MCP client) after installing or repairing an engine.
@@ -69,6 +69,19 @@ Container expired or destroyed? Acquire a new one. There is no renew, status, or
 Failed acquisition issues no handle; unconfirmed cleanup stays tracked for automatic retry and shutdown
 cleanup, without another tool call or option.
 
+## Failure traces and persistence
+
+Container failures return `tracePath` pointing to the exact private JSON trace at
+`$XDG_CACHE_HOME/sandbox/run-*/stderr` (default root `~/.cache/sandbox`). The trace preserves original
+exception stacks, nested causes, cleanup failures, and available engine-command stream references. Read
+the referenced `stdoutPath` and `stderrPath` files for complete command output; inline responses stay
+concise and do not expose raw engine diagnostics. Startup and background failures log trace references on
+server stderr.
+
+Cache directories are private (`0700`) and files are `0600`; traces may contain sensitive local error
+details. A failed trace write reports `tracePath: null` and `traceError` rather than claiming a saved
+artifact. Artifacts remain until removed.
+
 ## Tool reference
 
 | Tool | Key input | Result fields (container results nest under `data`) |
@@ -80,7 +93,7 @@ cleanup, without another tool call or option.
 | `container_exec` | `container`, `command`; opt `wallTimeMs` | Exit code, `stdoutPath`/`stderrPath`/`stdoutBytes`/`stderrBytes`, bounded stream previews, `termination`, `truncated`, `containerDestroyed` |
 | `container_release` | `container` | `{ released: boolean }` |
 
-Every container response: `{ "ok": true/false, "data": ... }` or `{ "ok": false, "error": ... }`.
+Every container response: `{ "ok": true/false, "data": ... }` or `{ "ok": false, "error": ..., "tracePath": ... }`.
 Structured content and the JSON text fallback match. Check both `ok` and `termination`.
 
 **No output-size option, no output-size termination.** There is no output limit to choose and no volume

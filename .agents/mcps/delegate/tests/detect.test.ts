@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test"
-import { detectHarnesses, locate, type WhichFn } from "../src/detect.ts"
-import type { ReadinessResult } from "../src/readiness.ts"
-import { type HarnessSpec, harnessById } from "../src/registry.ts"
+import { type HarnessSpec, harnessById } from "../src/harnesses/catalog/registry.ts"
+import { detectHarnesses, locate, type WhichFn } from "../src/harnesses/discovery/detect.ts"
+import type { ReadinessResult } from "../src/harnesses/discovery/readiness.ts"
 
 const present =
   (names: string[]): WhichFn =>

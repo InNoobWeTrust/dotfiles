@@ -19,8 +19,8 @@ scope: Container CLI runtime (Podman/Docker) and session ownership; excludes hos
 `detectEngine` probes `podman info` then `docker info` once at startup, each bounded to 5 s with an internal
 4 MiB combined preview allowance wide enough for the engine's own response to be read in full. Only a clean
 exit with no error, timeout, or omitted preview bytes selects an engine; every failed
-probe is skipped with a terse name/status-only diagnostic on server stderr — raw CLI output and environment
-values never leak. Both probes failing leaves the server host-only: no container tools, no container
+probe is skipped with a terse status and private trace reference on server stderr — raw CLI output and environment
+values are not printed. Both probes failing leaves the server with host tools: no container tools, no container
 instruction block, no manager or sweep timer. A missing engine is not a startup failure.
 
 The probe proves CLI connectivity only, not lifecycle capability: image availability and resource
@@ -30,6 +30,18 @@ verifies these fields rather than the Docker-style `CapDrop: ["ALL"]` sentinel. 
 held to the same security and resource constraints. The selected engine is pinned for the process lifetime —
 every lifecycle operation, helper, and error message uses that exact binary, with no hot fallback to the
 other engine later, including cleanup. No devcontainer configuration participates in selection.
+
+## Failure traces
+
+Failure wrappers retain original causes and aggregate cleanup failures rather than replacing them.
+Private JSON traces preserve exception stacks and CLI-stage metadata, including paths to complete raw
+streams; successful CLI output remains traceable when parsing or isolation verification subsequently fails.
+
+The existing output cache owns persistence and permissions. Traces are stored at
+`$XDG_CACHE_HOME/sandbox/run-*/stderr` (default root `~/.cache/sandbox`); the returned `tracePath` is the
+exact trace file location. A path is published only after its record is written and closed; persistence
+failures return an explicit null path and diagnostic-write error. Tool responses and background logs
+expose references, while sensitive raw details stay in private files.
 
 ## Ownership flow
 

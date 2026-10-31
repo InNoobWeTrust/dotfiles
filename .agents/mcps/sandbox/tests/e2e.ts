@@ -5,8 +5,8 @@ import { tmpdir } from "node:os"
 import path from "node:path"
 import { Client } from "@modelcontextprotocol/sdk@1/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk@1/client/stdio.js"
-import type { ContainerView, ExecResult } from "../src/contracts"
-import { run } from "../src/process"
+import type { ContainerView, ExecResult } from "../src/containers/contracts"
+import { run } from "../src/execution/process"
 
 const enabled = process.env.CONTAINER_SANDBOX_E2E === "1"
 const root = path.resolve(import.meta.dir, "..")

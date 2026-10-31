@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test"
+import { readFile } from "node:fs/promises"
 import type {
   AcquireInput,
   ContainerHandle,
@@ -6,9 +7,9 @@ import type {
   ContainerSpec,
   ExecInput,
   ExecResult,
-} from "../src/contracts.ts"
-import { ImageProvisioningError } from "../src/errors.ts"
-import { ContainerManager } from "../src/manager.ts"
+} from "../src/containers/contracts.ts"
+import { ImageProvisioningError } from "../src/containers/errors.ts"
+import { ContainerManager } from "../src/containers/manager.ts"
 
 // Critical ownership, expiry, atomicity, cleanup, and queue races protect data and avoid stranded containers.
 const alice = { session: "alice-private-session" }
@@ -48,6 +49,21 @@ function observe<T>(promise: Promise<T>) {
     (value) => ({ value, error: undefined }),
     (error) => ({ value: undefined, error: error as Error }),
   )
+}
+
+function errorGraphText(error: unknown, seen = new Set<unknown>()): string {
+  if (error === null || (typeof error !== "object" && typeof error !== "function")) {
+    return String(error)
+  }
+  if (seen.has(error)) return "[circular]"
+  seen.add(error)
+  const value = error as { cause?: unknown; errors?: unknown; message?: unknown; stack?: unknown }
+  const parts = [String(value.message ?? ""), String(value.stack ?? "")]
+  if ("cause" in value) parts.push(errorGraphText(value.cause, seen))
+  if (Array.isArray(value.errors)) {
+    parts.push(...value.errors.map((item) => errorGraphText(item, seen)))
+  }
+  return parts.join("\n")
 }
 
 class FakeRuntime implements ContainerRuntime {
@@ -298,7 +314,10 @@ describe("expiry and verified deadline changes", () => {
       ...completed,
       termination: "runtime_error",
       error: expect.stringContaining("Execution completed"),
+      tracePath: expect.any(String),
     })
+    if (!result.tracePath) throw new Error("Expected deadline failure trace")
+    expect(await readFile(result.tracePath, "utf8")).toContain(`secret:${bob.session}`)
     expect(result.error).not.toContain(bob.session)
     expect(result.error).toContain("do not blindly retry")
     runtime.deadlineHook = undefined
@@ -373,14 +392,35 @@ describe("initialization, queue ordering, and missing containers", () => {
     await manager.close()
   })
 
+  test("failed create keeps the original runtime error as a cause without exposing it inline", async () => {
+    const marker = "private-create-marker"
+    runtime.createHook = async () => {
+      throw new Error(marker)
+    }
+    const failed = await observe(manager.acquire(input, alice))
+    expect(failed.error).toBeInstanceOf(Error)
+    expect(failed.error?.message).toContain("Container")
+    expect(failed.error?.message).not.toContain(marker)
+    expect(errorGraphText(failed.error?.cause)).toContain(marker)
+    expect(runtime.removals).toEqual([])
+    expect(runtime.live.size).toBe(0)
+  })
+
   test("failed acquisition cleanup stays tracked for sweep without issuing a token", async () => {
+    const createMarker = "private-initial-deadline-marker"
+    const cleanupMarker = "private-cleanup-marker"
     runtime.deadlineHook = async () => {
-      throw new Error("deadline failed")
+      throw new Error(createMarker)
     }
     runtime.removeHook = async () => {
-      throw new Error("remove failed")
+      throw new Error(cleanupMarker)
     }
-    await expect(manager.acquire(input, alice)).rejects.toThrow("cleanup failed")
+    const failed = await observe(manager.acquire(input, alice))
+    expect(failed.error?.message).toContain("cleanup failed")
+    expect(failed.error?.message).not.toContain(createMarker)
+    expect(failed.error?.message).not.toContain(cleanupMarker)
+    expect(errorGraphText(failed.error)).toContain(createMarker)
+    expect(errorGraphText(failed.error)).toContain(cleanupMarker)
     expect(runtime.live.size).toBe(1)
     runtime.removeHook = undefined
     await manager.sweep()
@@ -529,12 +569,14 @@ describe("initialization, queue ordering, and missing containers", () => {
 
   test("runtime failure does not poison the queue and does not expose raw diagnostics", async () => {
     const container = await manager.acquire(input, alice)
+    const marker = `private command ${bob.session}`
     runtime.execHook = async () => {
-      throw new Error(`private command ${bob.session}`)
+      throw new Error(marker)
     }
     const failed = await observe(manager.exec(command(container.container), alice))
     expect(failed.error?.message).toContain("Container execution failed")
     expect(failed.error?.message).not.toContain(bob.session)
+    expect(errorGraphText(failed.error?.cause)).toContain(marker)
     runtime.execHook = undefined
     expect((await manager.exec(command(container.container), alice)).stdout).toBe("ok")
     await manager.close()

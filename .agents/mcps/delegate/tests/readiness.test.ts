@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test"
 import { devNull } from "node:os"
-import type { RunOptions, RunResult } from "../src/execute.ts"
-import { inspectReadiness } from "../src/readiness.ts"
-import { type HarnessSpec, harnessById } from "../src/registry.ts"
+import type { RunOptions, RunResult } from "../src/execution/process/execute.ts"
+import { type HarnessSpec, harnessById } from "../src/harnesses/catalog/registry.ts"
+import { inspectReadiness } from "../src/harnesses/discovery/readiness.ts"
 
 type RunCall = { file: string; args: string[]; options: RunOptions }
 

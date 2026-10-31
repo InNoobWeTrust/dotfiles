@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test"
 import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs"
 import { join } from "node:path"
-import { evaluate, failure } from "../src/api.ts"
-import { ENDPOINT, FALLBACK_MODEL, MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/providers.ts"
-import type { DecisionModel, EvaluateArgs, ResponsePayload } from "../src/schema.ts"
+import { evaluate, failure } from "../src/evaluation/api.ts"
+import { ENDPOINT, FALLBACK_MODEL, MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/evaluation/providers/config.ts"
+import type { DecisionModel, EvaluateArgs, ResponsePayload } from "../src/evaluation/schema.ts"
 
 const envNames = ["OPENCODE_API_KEY", "CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN", "OPENROUTER_API_KEY", "XDG_CACHE_HOME"] as const
 const originalFetch = globalThis.fetch

@@ -3,7 +3,7 @@ import { existsSync } from "node:fs"
 import { mkdir, mkdtemp, rm, stat, symlink, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
-import { withStartupLock, withWarmCache } from "../startup.ts"
+import { withStartupLock, withWarmCache } from "../startup/coordination.ts"
 
 const scratch = await mkdtemp(join(tmpdir(), "mcp-lock-test-"))
 afterAll(() => rm(scratch, { recursive: true, force: true }))
@@ -31,7 +31,7 @@ test("failed import releases the lock without replacing its inode", async () => 
 
 test("contention times out; SIGKILL releases the kernel lock without stale recovery", async () => {
   const directory = join(scratch, "killed-owner")
-  const module = resolve(import.meta.dir, "../startup.ts")
+  const module = resolve(import.meta.dir, "../startup/coordination.ts")
   const child = Bun.spawn([process.execPath, "--no-env-file", "--eval", [
     `import {withStartupLock} from ${JSON.stringify(module)};`,
     `await withStartupLock(async()=>{console.log("held");await Bun.sleep(30000)},`,

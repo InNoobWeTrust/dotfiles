@@ -28,7 +28,11 @@ const MAX_CAPTURE_BYTES = 262_144
 const WATCHDOG_MS = 30_000
 const TEST_TIMEOUT_MS = 40_000
 type EngineState = "healthy" | "failing" | "absent"
-type ProbeOutput = { instructions: string; toolNames: string[]; diagnostics: string }
+type ProbeOutput = {
+  instructions: string
+  toolNames: string[]
+  diagnostics: string
+}
 
 // Generated into per-test scratch only, never a committed file. Normal
 // major-qualified SDK imports; launches the real server with a PATH that
@@ -181,7 +185,8 @@ async function runProbe(engines: Record<"podman" | "docker", EngineState>): Prom
     }
     const helperPath = path.join(scratch, "probe.ts")
     await writeFile(helperPath, PROBE_HELPER, { mode: 0o644 })
-    return await probeServer(helperPath, bin, path.join(scratch, "cache"))
+    const probe = await probeServer(helperPath, bin, path.join(scratch, "cache"))
+    return probe
   } finally {
     // Teardown failures surface as errors; scratch is agent-created and always removed.
     await rm(scratch, { recursive: true, force: true })

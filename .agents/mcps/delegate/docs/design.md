@@ -7,8 +7,8 @@ scope: Internal design and operating limits; usage lives in ../README.md
 
 ## What this server is
 
-A translator for external AI subagents, not an orchestrator. Two stable tools
-discover configured workers and run a bounded task through a selected CLI,
+A translator for external AI subagents, not an orchestrator. Three stable tools
+discover configured workers, explicitly list models and run a bounded task through a selected CLI,
 returning what it printed. It has no queue, retries, or session resumption;
 oversized output is retained in private cache files rather than lost at a response limit.
 
@@ -40,7 +40,7 @@ the instructions already sent to the client.
 
 | Decision | Reason and consequence |
 |---|---|
-| Stable `delegate_status` and `delegate_run` | The caller learns one interface and gets selectable IDs, capabilities and refusal reasons from status. Installation or login changes can be refreshed without changing the catalog. The earlier unpublished per-harness tools are removed without shims. |
+| Stable `delegate_status`, `delegate_models` and `delegate_run` | Status provides selectable harness IDs, name-matched Zen hints, capabilities and refusal reasons. Full model catalogs require explicit filtered queries. Installation or login changes can be refreshed without changing tool names. |
 | Keep native argument mapping inside the registry | CLI-specific flags are irreducible, but do not need to become separate tools. A run selects a registry ID only after readiness inspection. |
 | Pass the prompt as one trailing argv element | Every supported harness accepts it, so one input schema serves all of them. Consequence: no shell involved at all (`shell: false`), and a prompt cannot be reinterpreted as syntax. The cost is the 64 KiB argv limit. |
 | Refuse a `prompt` or `model` that starts with `-` | A trailing positional is only safe if the harness treats it as one. Some harnesses read the prompt from a value-taking flag instead, and a model value can be misread as an option that escalates authority (`--yolo`) or replaces the task (`--version`, which would print a version and exit 0 while the call reported success). Both fields are refused at the schema, before any process starts; there is no `--` delimiter that all twelve CLIs agree on. |
@@ -49,6 +49,7 @@ the instructions already sent to the client.
 | One shared input schema | Shared fields retain harness-specific mappings. AGY always uses `--mode accept-edits --dangerously-skip-permissions` for every `permissionMode`, including read-only assignments; `agySandbox` independently adds `--sandbox`. This user-authorized profile is not hard read-only isolation. Harnesses that lack a flag simply do not get one; `amp` has no model flag, so passing `model` to it is refused rather than dropped. Preview size is server-owned, not an input. |
 | Refuse an unsupported permission mode | Silently dropping `--dangerously-skip-permissions` would turn a deliberate escalation into a silent downgrade of the caller's intent, and dropping it upward would run something the caller did not ask for. Failing loudly keeps the tool description honest about what each harness can do. |
 | Detached process group, killed as a group | Harness CLIs spawn their own children. Signalling only the direct child leaves those running, still holding tokens and file handles. `spawn(..., { detached: true })` plus `process.kill(-pid, …)` reaps the whole tree, with SIGTERM then SIGKILL after a grace period. |
+| MCP request cancellation signals the owned group | The SDK request signal reaches `runProcess`; cancellation sends SIGINT (Ctrl+C equivalent) to the group, waits for group disappearance or the existing 2000 ms grace, then sends SIGKILL once if needed. Cancellation and existing cleanup share the same teardown promise; preparation checks prevent a cancelled request from launching. The result is `stop: "cancelled"` even when the child exits 0, with partial output retained. |
 | Reap the group even when the parent exits 0 | A harness can background a child with its streams redirected and then exit successfully. Settling on the parent's exit would release the concurrency slot while that child keeps working unsupervised, so the group is reaped on clean exit too. |
 | Poll for the group's disappearance instead of scheduling a fixed `SIGKILL` | A delayed kill outliving its run is dangerous: process-group ids are reused, so a stale signal can hit an unrelated group. `stopGroup()` therefore signals `SIGTERM`, polls `kill(-pid, 0)` every 50 ms, escalates to `SIGKILL` only if the group is still there after the grace period, and keeps polling until it is gone — once the group is observed gone, nothing further is sent. If it is still there after a short drain the call gives up rather than signalling forever, and reports `ok: false` with the reason, so a surviving process is never reported as a clean turn. |
 | Truncate output on UTF-8 boundaries | The byte budget can land mid-character. Decoding the cut sequence produced a replacement character larger than the bytes it represented, so the returned output exceeded its own advertised budget; `decode()` drops the dangling bytes instead. |
@@ -68,16 +69,17 @@ the instructions already sent to the client.
 | Setting | Value | Where it comes from |
 |---|---|---|
 | Wall-clock limit | 900000 ms, maximum 7200000 | `wallTimeMs`, default and cap in `contracts.ts` |
-| Inline preview | 65536 bytes combined, counting JSON escapes | Fixed `INLINE_OUTPUT_BYTES` in shared/output.ts; not a tool input or generation limit |
+| Inline preview | 65536 bytes combined, counting JSON escapes | Fixed `INLINE_OUTPUT_BYTES` in shared/output/capture.ts; not a tool input or generation limit |
 | Prompt size | 65536 bytes | `MAX_PROMPT_BYTES`; refused before any process starts |
 | Concurrent turns | 6 | `MAX_CONCURRENT` in `server.ts` |
 | Chain depth | 2 | `MAX_DEPTH`; the third hop is refused |
-| Readiness inspection | Aggregate 8000 ms per harness; at most 2 concurrently | CLI inspection only, no model prompt; cleanup grace may extend elapsed time |
+| Inspection | Aggregate 8000 ms per harness; at most 2 concurrently | One shared admission gate for startup, refresh, workdir reinspection and catalog queries; cleanup grace may extend elapsed time |
+| Catalog pages | Default 25, maximum 100 rows; 64 KiB serialized envelope | Literal case-insensitive filtering, fresh snapshot per query; shorten at row boundaries |
 | SIGTERM grace | 2000 ms, then SIGKILL, 250 ms drain | `GRACE_MS` and `DRAIN_MS` in `execute.ts` |
 
 ## Output cache
 
-`../../shared/output.ts` writes both raw streams incrementally using standard filesystem APIs;
+`../../shared/output/capture.ts` writes both raw streams incrementally using standard filesystem APIs;
 synchronous chunk writes bound memory without an unbounded pending-write queue.
 `execute.ts` owns lifecycle, process teardown, and final cache flush/close.
 
@@ -142,6 +144,26 @@ the marker is an advisory initialization guard, not security isolation.
 refresh. Failed turns set both envelope `ok: false` and the MCP error flag while
 retaining partial run data; validation/readiness refusals have no run data.
 
+## Model discovery
+
+`inspection.ts` owns probe budgets and shared admission; `opencode-evidence.ts`
+owns the integration/provider/model join. Readiness and explicit catalog discovery
+reuse that evidence without mutating one another's snapshots.
+
+Public status hints are separate from the complete internal run allowlist. Eligible
+base selectors on connected provider `opencode` qualify when the model display name
+or native ID contains `free`, case-insensitively. This is a name filter, not price
+verification or a billing guarantee; variants have no automatic hints. Missing cost
+data does not affect hints or readiness.
+
+`delegate_models` supports OpenCode's inspected API catalog and AGY's native TSV
+catalog. It deduplicates and sorts selectors before literal matching and pagination;
+invalid evidence fails rather than silently returning a partial or empty catalog.
+Catalog availability never upgrades readiness, and unsupported adapters are explicit errors.
+
+`tools.ts` owns MCP registration, envelopes and public status projection;
+`server.ts` composes these capabilities with workdir resolution and run lifecycle.
+
 ## The registry
 
 `registry.ts` is the only place that knows a harness's command line. Each entry
@@ -175,7 +197,7 @@ Permission modes per harness, as of the first release:
   harness fails with the CLI's own error until the mapping is updated.
 - Version remains a nullable compatibility field and is not probed. Inspectable
   configuration is not a guarantee of future account reachability, quota or access to a
-  caller-selected model; only returned native model lists are allowlists.
+   caller-selected model; status hints and catalog pages are not run allowlists.
 
 ## Sources
 

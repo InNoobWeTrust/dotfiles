@@ -5,8 +5,8 @@ import { join, resolve } from "node:path"
 import { pathToFileURL } from "node:url"
 import { Client } from "@modelcontextprotocol/sdk@1/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk@1/client/stdio.js"
-import { discover } from "../src/discovery.ts"
-import { recipeLanguages, recipes } from "../src/recipes.ts"
+import { discover } from "../src/language-service/discovery/discovery.ts"
+import { recipeLanguages, recipes } from "../src/language-service/discovery/recipes.ts"
 
 const workspace = await mkdtemp(join(tmpdir(), "lsp-mcp-e2e-"))
 const projectBin = join(workspace, ".venv/bin")

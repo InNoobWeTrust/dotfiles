@@ -23,7 +23,7 @@ and processes. Add `DELEGATE_E2E_REAL=1` for one paid turn against the real
 
 | Gate | Evidence |
 |---|---|
-| The interface stays simple | E2E asserts exactly `delegate_status` and `delegate_run`, including an empty harness PATH; discovery comes from status rather than dynamic tool names |
+| The interface stays simple | E2E must assert exactly `delegate_status`, `delegate_models` and `delegate_run`, including an empty harness PATH; discovery uses stable tool names |
 | Presence is not readiness | Critical tests distinguish missing, unconfigured and unknown executables; unsupported inspectors spawn no model/login probes and are not selectable |
 | Signed-in AGY becomes selectable without a model probe | Critical tests accept `/usage` percentages from 0% to 100% despite label/layout changes and reject missing/invalid percentages, auth prompts and failed/timed-out probes; E2E covers sign-out refresh, refused dispatch, default model and native model passthrough |
 | Inspection is bounded and non-recursive | Tests assert exact non-model CLI argv, aggregate inspection budgets, at most two concurrent inspections, fixed safe reasons and no probes under `DELEGATE_INSPECTION=1` |
@@ -35,6 +35,7 @@ and processes. Add `DELEGATE_E2E_REAL=1` for one paid turn against the real
 | A failed turn is reported, not thrown away | Non-zero exit, spawn failure, wall-clock expiry, and cache IO failure return failed data with explicit `stop` and captured output. Failed cleanup also prevents a clean result even when the harness exited 0 |
 | Long output completes without loss | Unit and E2E fixtures emit finite oversized streams with final markers, exit successfully, and compare full cached files byte-for-byte; inline previews stay bounded even with legacy large allowances |
 | Limits end the work | E2E reads the stub's PID from its log and waits until the process is really gone after the wall-clock limit |
+| Client cancellation tears down the run | Critical `execute.test.ts` cases cover pre-abort without spawn, graceful SIGINT exit, SIGKILL escalation for an unresponsive group, and abort after settlement without another signal; cancellation is reported as failed with partial output retained |
 | Work does not outlive a successful parent | `execute.test.ts` backgrounds a descendant that ignores `SIGTERM`, confirms the run still exits 0 with `stop: "exited"` and no `error`, and asserts the descendant's pid is gone by the time the run resolves — which fails if teardown is made fire-and-forget. E2E does the same through the MCP server with a stub and confirms the turn still returns `ok: true`, then polls for up to 5 s after the response for the descendant to disappear |
 | A nested server stops | A server started with `DELEGATE_DEPTH=2` refuses every delegation and launches nothing |
 | Shutdown runs once | `lifecycle.test.ts` drives the re-entrant close path and asserts the transport closes exactly once; it fails (`Expected: 1 / Received: 11`) against the naive guard. E2E additionally confirms the server exits 0 with empty stderr on stdin hang-up |
@@ -174,20 +175,34 @@ this package and need not be repeated when those links already exist.
 Then, from a main agent that has the `delegate` MCP server connected:
 
 1. **Inspect:** Call `delegate_status`. Expect configured entries with supported
-   modes/models, and separate missing, unconfigured or unknown entries with
+    modes, name-matched Zen hints and listing support, and separate missing, unconfigured or unknown entries with
    reasons; neither an alias nor a catalog is enough to become selectable.
 2. **Refresh:** After an intentional account/configuration change, call status
-   with `refresh: true`. Expect the same two tools and updated readiness; a
+   with `refresh: true`. Expect the same three tools and updated readiness; a
    changed server code or environment still requires reconnection.
-3. **Authorize one turn:** If desired, approve the model spend and use
+3. **List models:** Call `delegate_models` with `harness: "opencode"` or `"agy"`
+   and an optional literal `text` filter. Expect counts and `nextOffset`; an empty
+   match succeeds, while inspection failures are errors. Pass the returned selector
+   unchanged as `model`; listing does not prove readiness or remaining quota.
+4. **Authorize one turn:** If desired, approve the model spend and use
    `delegate_run` with a configured ID and an explicit absolute workdir to list
-   exported harnesses from `src/registry.ts`, read-only with no commands, edits,
+   exported harnesses from `src/harnesses/catalog/registry.ts`, read-only with no commands, edits,
    network or further delegation. Expect `ok: true` and `stop: "exited"`, or a
    clearly failed run retaining its output; configuration is not a live guarantee.
-4. **Check refusal:** An unknown/unconfigured ID or a prompt of `"--version"`
+5. **Check refusal:** An unknown/unconfigured ID or a prompt of `"--version"`
    must fail without launching a turn. An unsupported permission mode must also
    fail; do not use a supported bypass mode without human approval. AGY always
    uses its approved all-tool autoapproval profile, even for read-only prompts;
    `permissionMode: "default"` does not restrict it.
-5. **Check limits with stubs:** Use `test:e2e` to verify timeout/lossless-output/cleanup
+6. **Check limits with stubs:** Use `test:e2e` to verify timeout/lossless-output/cleanup
    behavior without paying for a deliberately interrupted model session.
+## Cancellation process verification — 2026-10-31
+
+The current `tests/execute.test.ts` passed in a network-disabled, resource-bounded Bun container:
+**20 tests, 92 assertions**. This includes pre-cancellation without spawning, graceful SIGINT exit,
+SIGKILL escalation, cancellation during descendant cleanup, and harmless cancellation after settlement.
+The container was released after testing.
+
+Host workspace mounting still failed, so the four required source/test files were copied into the
+container's scratch space. This closes the cancellation-process verification gap; it does not establish
+live harness cancellation or full MCP end-to-end behavior.

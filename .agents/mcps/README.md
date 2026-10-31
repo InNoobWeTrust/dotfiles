@@ -24,7 +24,7 @@ exec env "BUN_INSTALL_CACHE_DIR=$BUN_INSTALL_CACHE_DIR" bun --no-env-file "$bin/
 
 ```ts
 // bin/launch.ts
-import { withWarmCache } from "../../shared/startup.ts"
+import { withWarmCache } from "../../shared/startup/coordination.ts"
 await withWarmCache("<name>", () => import("../src/server.ts"), { sourceDir: join(import.meta.dir, "..") })
 ```
 
@@ -34,7 +34,7 @@ Bun must be installed and reachable through `PATH`. Check each server's README f
 
 **Private package caches.** Each launcher sets `BUN_INSTALL_CACHE_DIR` to `$XDG_CACHE_HOME/agent-mcps/install/<name>` (`~/.cache/...` when `XDG_CACHE_HOME` is unset) before Bun starts, because Bun selects its auto-install cache at process start. Servers therefore never populate the same cache concurrently — the setup under which Bun 1.4.2 failed to resolve packages (`Unexpected while resolving package 'ajv-formats'` and similar, followed by connect timeouts). An explicit `BUN_INSTALL_CACHE_DIR` already present in the environment is respected and wins.
 
-**Warm-start fast path.** `withWarmCache(name, load, { sourceDir })` in [shared/startup.ts](shared/startup.ts) records a warm marker under `.../agent-mcps/warm/<name>` after a successful locked load: the Bun version plus a fingerprint (path, mtime, size) of the server's TypeScript sources. While the marker is current, later starts import lockless, so parallel MCP starts never queue behind each other. Cold starts, source edits and cleared caches fall back to a per-MCP lock; a failed warm load drops the marker and retries under the lock.
+**Warm-start fast path.** `withWarmCache(name, load, { sourceDir })` in [shared/startup/coordination.ts](shared/startup/coordination.ts) records a warm marker under `.../agent-mcps/warm/<name>` after a successful locked load: the Bun version plus a fingerprint (path, mtime, size) of the server's TypeScript sources. While the marker is current, later starts import lockless, so parallel MCP starts never queue behind each other. Cold starts, source edits and cleared caches fall back to a per-MCP lock; a failed warm load drops the marker and retries under the lock.
 
 **Locks.** The guard uses Bun's built-in `bun:ffi` and the system `flock` API on **macOS or glibc Linux**, without another package. Each MCP locks its own `startup-<name>.lock` in the shared `agent-mcps` directory, so distinct servers never serialize; all coordinated launchers must share the same `XDG_CACHE_HOME` (or home directory when unset) on a writable local filesystem. Lock files are persistent by design: the OS releases them on exit, including forced termination, and **deleting one while an MCP starts can split ownership**, so leave them alone. Acquisition waits up to 60 seconds; set `MCP_STARTUP_TIMEOUT_MS` to a larger positive millisecond value for slow downloads. Cold starts still require network access; no per-project installation is needed.
 

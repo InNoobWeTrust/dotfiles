@@ -1,7 +1,7 @@
 import { afterEach, expect, test } from "bun:test"
-import { discoverProviders } from "../src/availability.ts"
-import { MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/providers.ts"
-import type { DecisionModel, ResponsePayload } from "../src/schema.ts"
+import { discoverProviders } from "../src/evaluation/providers/availability.ts"
+import { MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/evaluation/providers/config.ts"
+import type { DecisionModel, ResponsePayload } from "../src/evaluation/schema.ts"
 
 const originalFetch = globalThis.fetch
 afterEach(() => { globalThis.fetch = originalFetch })

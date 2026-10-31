@@ -1,8 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk@1/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk@1/server/stdio.js"
-import { AstGrep } from "./ast-grep.ts"
-import { SessionManager } from "./sessions.ts"
-import { registerTools } from "./tools/index.ts"
+import { SessionManager } from "./language-service/sessions.ts"
+import { registerTools } from "./protocol/tools/index.ts"
+import { AstGrep } from "./syntax-search/ast-grep.ts"
 
 const instructions = `Task-focused LSP bridge over installed language servers. No setup calls needed.
 Pass a workspace-relative file plus 1-based line/character (UTF-16); the best installed server for the file type starts on first use and stays warm.

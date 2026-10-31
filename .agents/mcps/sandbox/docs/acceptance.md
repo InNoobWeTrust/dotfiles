@@ -68,8 +68,13 @@ These checks remain unverified; the offline unit results do not establish live c
 
 ## Final user acceptance
 
-1. **Connect:** configure the MCP using [README](../README.md) and confirm exactly six tools appear:
+1. **Connect:** configure the MCP using [README](../README.md) and confirm six tools appear with a usable engine:
    `sandbox_ro`, `sandbox_pure`, `sandbox_rw`, `container_acquire`, `container_exec`, `container_release`.
+   Without a usable engine, only the three host tools appear.
+1b. **Failure trace:** on a container failure, follow the returned `tracePath` to the original error and
+    nested cleanup causes; confirm inline responses do not include raw engine details. The exact JSON trace
+    is stored at `$XDG_CACHE_HOME/sandbox/run-*/stderr` (default root `~/.cache/sandbox`) and remains
+    available after the request finishes.
 2. **Host tools:** run `id -u; pwd` with `sandbox_ro`. Confirm the host UID, captured streams, and limits.
 3. **Container defaults:** call `container_acquire` with no arguments. Confirm a `container` token,
    `containerId`, and `expiresAt` are returned. Run `id -u; pwd; ls /workspace` and expect non-root UID

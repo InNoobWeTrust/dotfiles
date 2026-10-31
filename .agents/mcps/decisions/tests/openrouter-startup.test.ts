@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, writeFileSync, rmSync } from "node:fs"
 import { join } from "node:path"
 import { spawn } from "node:child_process"
 import { createInterface } from "node:readline"
-import { FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/providers.ts"
+import { FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/evaluation/providers/config.ts"
 
 // Only HTTP is replaced; the real launcher, SDK, codecs and handlers run together.
 const preload = `

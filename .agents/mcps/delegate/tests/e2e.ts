@@ -5,7 +5,7 @@ import { devNull, tmpdir } from "node:os"
 import path from "node:path"
 import { Client } from "@modelcontextprotocol/sdk@1/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk@1/client/stdio.js"
-import type { DelegateOutput, StatusOutput } from "../src/contracts"
+import type { DelegateOutput, ModelsOutput, StatusOutput } from "../src/protocol/contracts"
 
 const enabled = process.env.DELEGATE_E2E === "1"
 const root = path.resolve(import.meta.dir, "..")
@@ -28,6 +28,10 @@ if [ "\${DELEGATE_INSPECTION:-0}" = "1" ]; then
   printf '%s %s %s\\n' "$name" "$1" "$2" >> "$STUB_INSPECTION_LOG"
   case "\${name}:$1:$2" in
     agy:--log-file:${devNull})
+      if [ "$3" = "models" ]; then
+        if [ "$#" != "3" ] || [ "$AGY_CLI_DISABLE_AUTO_UPDATE" != "true" ]; then exit 2; fi
+        printf 'gemini-pro\\tGemini Pro\\n'; exit 0
+      fi
       if [ "$3" != "--print" ] || [ "$4" != "/usage" ] || [ "$AGY_CLI_DISABLE_AUTO_UPDATE" != "true" ]; then exit 2; fi
       if [ -f "$HOME/.stub-agy-signed-out" ]; then
         printf 'Authentication required. Please sign in.\\n' >&2; exit 1
@@ -51,7 +55,7 @@ if [ "\${DELEGATE_INSPECTION:-0}" = "1" ]; then
           fi
           printf '{"data":[{"id":"stub_provider","integrationID":"stub_int","activation":"enabled"}]}\\n'; exit 0 ;;
         /api/model)
-          printf '{"data":[{"id":"stub_provider/stub_model","providerID":"stub_provider","enabled":true,"status":"active","variants":[]}]}\\n'; exit 0 ;;
+          printf '{"data":[{"id":"stub_provider/stub_model","providerID":"stub_provider","name":"Stub Paid Model","cost":[{"input":2,"output":3,"cache":{"read":0,"write":0}}],"enabled":true,"status":"active","variants":[]}]}\\n'; exit 0 ;;
       esac ;;
   esac
   # Harnesses with no verified inspection strategy (amp, etc.) fall through;
@@ -221,9 +225,10 @@ async function verifyStubbedEndToEnd() {
     const api = await connect(env)
     clients.push(api)
 
-    // Exactly two tools regardless of which harnesses are installed.
+    // Exactly three tools regardless of which harnesses are installed.
     const catalog = await api.client.listTools()
     expect(catalog.tools.map((tool) => tool.name).sort()).toEqual([
+      "delegate_models",
       "delegate_run",
       "delegate_status",
     ])
@@ -233,6 +238,15 @@ async function verifyStubbedEndToEnd() {
     if (!runTool) throw new Error("delegate_run was not advertised")
     const statusTool = catalog.tools.find((tool) => tool.name === "delegate_status")
     if (!statusTool) throw new Error("delegate_status was not advertised")
+    const modelsTool = catalog.tools.find((tool) => tool.name === "delegate_models")
+    if (!modelsTool) throw new Error("delegate_models was not advertised")
+    expect(Object.keys(modelsTool.inputSchema.properties ?? {}).sort()).toEqual([
+      "harness",
+      "limit",
+      "offset",
+      "text",
+      "workdir",
+    ])
     expect(runTool.description).toMatch(/external.*subagent/i)
     expect(runTool.description).toMatch(/task suitability/i)
     expect(runTool.description).not.toMatch(/\bprefer(?:red|ence)?\b/i)
@@ -270,15 +284,55 @@ async function verifyStubbedEndToEnd() {
     expect(status.output.data?.harnesses.every((h) => typeof h.modelSupported === "boolean")).toBe(
       true,
     )
-    // opencode stub returns a configured model via /api/model.
+    // Non-Zen and paid selectors stay usable internally but never become automatic hints.
     const opencodeSt = status.output.data?.harnesses.find((h) => h.id === "opencode")
-    expect(opencodeSt?.models).toEqual(["stub_provider/stub_model"])
+    expect(opencodeSt?.models).toEqual([])
+    expect(opencodeSt?.modelHintsState).toBe("empty")
+    expect(opencodeSt?.modelListing).toBe("supported")
     // A quota report proves AGY configuration, not a model catalog or allowlist.
     expect(status.output.data?.harnesses.find((h) => h.id === "agy")?.models).toEqual([])
+    expect(status.output.data?.harnesses.find((h) => h.id === "agy")?.modelListing).toBe(
+      "supported",
+    )
+    expect(status.output.data?.harnesses.find((h) => h.id === "agy")?.modelHintsState).toBe(
+      "not_applicable",
+    )
     expect(status.output.data?.unsupported.find((h) => h.id === "amp")?.readiness).toBe("unknown")
     expect(status.output.data?.unsupported.map((h) => h.id)).toContain("kilo")
     expect(status.output.data?.depth).toBe(0)
     expect(status.output.data?.maxDepth).toBe(2)
+
+    // Explicit discovery filters labels literally, returns counts, and never starts a turn.
+    const models = await api.call<ModelsOutput>("delegate_models", {
+      harness: "opencode",
+      text: "PAID MODEL",
+      workdir: workspacePath,
+      limit: 1,
+    })
+    expect(models.response.isError).toBe(false)
+    expect(models.output.data).toEqual({
+      harness: "opencode",
+      workdir: workspacePath,
+      models: [{ selector: "stub_provider/stub_model", label: "Stub Paid Model" }],
+      total: 1,
+      matched: 1,
+      offset: 0,
+      nextOffset: null,
+    })
+    const literal = await api.call<ModelsOutput>("delegate_models", {
+      harness: "opencode",
+      text: ".*",
+    })
+    expect(literal.output.data?.models).toEqual([])
+    expect(literal.output.data?.total).toBe(1)
+    expect(literal.output.data?.matched).toBe(0)
+    const agyModels = await api.call<ModelsOutput>("delegate_models", {
+      harness: "agy",
+      text: "GEMINI PRO",
+    })
+    expect(agyModels.response.isError).toBe(false)
+    expect(agyModels.output.data?.models).toEqual([{ selector: "gemini-pro", label: "Gemini Pro" }])
+    expect(await callLog(logFile)).toHaveLength(0)
 
     // Refresh: re-detection resolves to the same configured harnesses.
     const refreshed = await api.call<StatusOutput>("delegate_status", { refresh: true })
@@ -331,6 +385,7 @@ async function verifyStubbedEndToEnd() {
     const inspectionsAfter = (await readFile(inspectionLogFile, "utf8")).trim().split("\n").length
     expect(inspectionsAfter - inspectionsBefore).toBe(6)
     expect((await api.client.listTools()).tools.map((tool) => tool.name).sort()).toEqual([
+      "delegate_models",
       "delegate_run",
       "delegate_status",
     ])
@@ -372,8 +427,22 @@ async function verifyStubbedEndToEnd() {
     })
     const agyCalls = await callLog(logFile)
     expect(agyCalls).toHaveLength(2)
-    expect(agyCalls[0]?.argv).toEqual(["--mode", "accept-edits", "--dangerously-skip-permissions", "--print", agyPrompt])
-    expect(agyCalls[1]?.argv).toEqual(["--model", "gemini-pro", "--mode", "accept-edits", "--dangerously-skip-permissions", "--print", agyPrompt])
+    expect(agyCalls[0]?.argv).toEqual([
+      "--mode",
+      "accept-edits",
+      "--dangerously-skip-permissions",
+      "--print",
+      agyPrompt,
+    ])
+    expect(agyCalls[1]?.argv).toEqual([
+      "--model",
+      "gemini-pro",
+      "--mode",
+      "accept-edits",
+      "--dangerously-skip-permissions",
+      "--print",
+      agyPrompt,
+    ])
     const sandboxed = await api.call<DelegateOutput>("delegate_run", {
       harness: "agy",
       prompt: agyPrompt,
@@ -455,6 +524,8 @@ async function verifyStubbedEndToEnd() {
     })
     expect(badModel.response.isError).toBe(true)
     expect(badModel.output.error).toContain("not in the verified model list")
+    expect(badModel.output.error).toContain("delegate_models")
+    expect(badModel.output.error).not.toContain("stub_provider/stub_model")
     expect((await callLog(logFile)).length).toBe(2)
 
     // Project inspection must not inherit the launch directory's availability.
@@ -468,9 +539,12 @@ async function verifyStubbedEndToEnd() {
     expect(projectRun.response.isError).toBe(true)
     expect((await callLog(logFile)).length).toBe(2)
     const launchSnapshot = await api.call<StatusOutput>("delegate_status")
-    expect(launchSnapshot.output.data?.harnesses.find((h) => h.id === "opencode")?.models).toEqual([
-      "stub_provider/stub_model",
-    ])
+    expect(launchSnapshot.output.data?.harnesses.find((h) => h.id === "opencode")?.models).toEqual(
+      [],
+    )
+    expect(launchSnapshot.output.data?.harnesses.find((h) => h.id === "opencode")?.readiness).toBe(
+      "configured",
+    )
     await rm(projectMarker)
 
     // An empty prompt is rejected by the schema before any harness is started.
@@ -505,6 +579,22 @@ async function verifyStubbedEndToEnd() {
       expect(textOf(lookalike.content)).toContain("must not start with '-'")
     }
     expect((await callLog(logFile)).length).toBe(2)
+
+    // Explicit paid/non-Zen selection remains allowed even though status hints are empty.
+    const paid = await api.call<DelegateOutput>("delegate_run", {
+      harness: "opencode",
+      prompt: "STUB_OK explicit paid selector",
+      model: "stub_provider/stub_model",
+    })
+    expect(paid.response.isError).toBe(false)
+    expect(paid.output.data?.stdout).toBe("answer from opencode\n")
+    expect((await callLog(logFile)).at(-1)?.argv).toEqual([
+      "run",
+      "--standalone",
+      "--model",
+      "stub_provider/stub_model",
+      "STUB_OK explicit paid selector",
+    ])
 
     // A non-zero exit is a failed delegation: isError=true and data retains the
     // partial output so the caller can inspect stderr.
@@ -638,7 +728,7 @@ async function verifyStubbedEndToEnd() {
     process.kill(-Number(survivorPid), "SIGKILL")
 
     console.log(
-      "PASS: two-tool catalog, startup detection, AGY quota readiness and sign-out refresh, readiness gate, literal prompt argv, model passthrough, refused authority modes, unavailable/unknown harness refusal, model allowlist, option-lookalike rejection, pre-launch validation, failed-turn isError with retained data, exit/wall-time failures, lossless cached output and safe previews, orphan reaping, concurrency refusal, nested depth refusal, refresh, surviving close, quiet shutdown, structured content with JSON fallback",
+      "PASS: three-tool catalog, explicit literal model discovery, free-only status hints and paid-selector passthrough, startup detection, AGY quota readiness and sign-out refresh, readiness gate, literal prompt argv, model passthrough, refused authority modes, unavailable/unknown harness refusal, model allowlist, option-lookalike rejection, pre-launch validation, failed-turn isError with retained data, exit/wall-time failures, lossless cached output and safe previews, orphan reaping, concurrency refusal, nested depth refusal, refresh, surviving close, quiet shutdown, structured content with JSON fallback",
     )
   } finally {
     for (const api of clients) await api.client.close().catch(() => {})
@@ -656,7 +746,7 @@ async function verifyCleanShutdown() {
   if (!bun) throw new Error("bun is not on PATH, so the server cannot be started directly")
   const fakeHome = await mkdtemp(path.join(tmpdir(), "agent-delegate-home-"))
   try {
-    // PATH is emptied so startup finds no harness at all: only the two tools are
+    // PATH is emptied so startup finds no harness at all: only the three tools are
     // left, and nothing here may depend on a harness being installed. stdin is a
     // pipe rather than /dev/null, because a hang-up has to be an observable event.
     const child = spawn(bun, ["--no-env-file", path.join(root, "src/server.ts")], {

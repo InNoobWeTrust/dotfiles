@@ -3,7 +3,7 @@ import { mkdtempSync } from "node:fs"
 import { mkdtemp, readFile, rm, stat } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { run } from "../src/process.ts"
+import { run } from "../src/execution/process.ts"
 
 // Capture integrity protects lossless recovery: complete raw bytes must always
 // survive on disk, bounded previews must never exceed the combined allowance,

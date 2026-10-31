@@ -132,10 +132,12 @@ deleted child process and are not replaced by a fake timer around synchronous wo
 
 No consolidation, hooks, reminders, sync, auth, cloud adapters, glob/grep, file management or persistent
 database. No score/boost/alias/shortcut parity with the older CLI catalog scripts; those scripts remain
-for specialized operations, and skills may prefer generic CSV search. `src/scope.ts` owns base/scope/metadata,
-`src/corpus.ts` the bounded FS walk, change detection, chunking and strict CSV parsing, `src/engine.ts` the
-ephemeral MiniSearch BM25+ ranking, response bounds and strict Zod validation, and `src/server.ts`
-wire schemas and registration. Startup loads the SDK before dynamically importing the engine;
+for specialized operations, and skills may prefer generic CSV search. `src/scopes/scope.ts` owns
+base/scope/metadata, `src/retrieval/corpus/corpus.ts` the bounded FS walk, change detection, chunking and
+strict CSV parsing, and `src/retrieval/engine.ts` the ephemeral MiniSearch BM25+ ranking and response
+validation. `src/protocol/contracts.ts` owns wire schemas, `src/protocol/targets.ts` resolves validated
+targets, `src/protocol/tools.ts` owns registration, and `src/server.ts` retains startup/lifetime composition.
+Startup loads the SDK before dynamically importing the engine;
 the [shared startup guard](../README.md#startup-coordination) also prevents competing MCP dependency
 loads from racing over Bun's cold cache.
 Extend by documented schema/engine behavior with an

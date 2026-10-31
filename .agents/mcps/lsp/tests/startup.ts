@@ -45,12 +45,15 @@ try {
 
   // Simulate an unavailable client dependency without touching the user's Bun cache.
   const isolatedRoot = join(cwd, "mcps/lsp")
-  await mkdir(join(cwd, "mcps/shared"), { recursive: true })
-  await cp(join(import.meta.dir, "../../shared/startup.ts"), join(cwd, "mcps/shared/startup.ts"))
+  await mkdir(join(cwd, "mcps/shared/startup"), { recursive: true })
+  await cp(
+    join(import.meta.dir, "../../shared/startup/coordination.ts"),
+    join(cwd, "mcps/shared/startup/coordination.ts"),
+  )
   await cp(join(import.meta.dir, "../src"), join(isolatedRoot, "src"), { recursive: true })
   const failure = "LSP client dependency unavailable (startup fixture)"
   await writeFile(
-    join(isolatedRoot, "src/client.ts"),
+    join(isolatedRoot, "src/language-service/protocol/client.ts"),
     `throw new Error(${JSON.stringify(failure)});\n`,
   )
   await mkdir(join(cwd, ".venv/bin"), { recursive: true })

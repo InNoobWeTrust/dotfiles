@@ -1,8 +1,12 @@
 import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test"
-import type { AcquireInput } from "../src/contracts.ts"
-import { ContainerCliRuntime } from "../src/docker.ts"
-import { ContainerManager } from "../src/manager.ts"
-import * as processRunner from "../src/process.ts"
+import { mkdtemp, rm } from "node:fs/promises"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
+import type { AcquireInput } from "../src/containers/contracts.ts"
+import { ContainerManager } from "../src/containers/manager.ts"
+import { ContainerCliRuntime } from "../src/containers/runtime/cli.ts"
+import type { ProcessResult } from "../src/execution/contracts.ts"
+import * as processRunner from "../src/execution/process.ts"
 
 // Critical allocation/removal transitions must not strand containers or remove another instance's work.
 const instance = "cleanup-test-instance"
@@ -28,7 +32,7 @@ type ImageInspect = "present" | "absent" | "error"
 type PullOutcome = "success" | "timeout" | "fail"
 type PodmanCapsState = "null" | "nonempty" | "missing"
 
-function result(stdout = "", stderr = "", exitCode = 0): processRunner.ProcessResult {
+function result(stdout = "", stderr = "", exitCode = 0): ProcessResult {
   return {
     stdoutPath: null,
     stderrPath: null,
@@ -107,7 +111,7 @@ let name: string
 let failure: Failure
 let removeFailures: number
 let confirmationFails: boolean
-let confirmationReply: processRunner.ProcessResult
+let confirmationReply: ProcessResult
 let labelInstance: string
 let manager: ContainerManager
 let restoreRun: () => void
@@ -115,6 +119,7 @@ let imageInspect: ImageInspect
 let pullOutcome: PullOutcome
 let podmanCapsState: PodmanCapsState
 let engineMode: "docker" | "podman"
+let inspectionOverride: Record<string, unknown> | undefined
 
 beforeEach(() => {
   calls = []
@@ -129,6 +134,7 @@ beforeEach(() => {
   pullOutcome = "success"
   podmanCapsState = "null"
   engineMode = "docker"
+  inspectionOverride = undefined
   const runner = spyOn(processRunner, "run").mockImplementation(async (args) => {
     calls.push([...args])
     const operation = args[1]
@@ -169,7 +175,8 @@ beforeEach(() => {
           ? result("", "private inspect error", 1)
           : result(
               JSON.stringify(
-                engineMode === "podman" ? podmanInspection(podmanCapsState) : inspection(),
+                inspectionOverride ??
+                  (engineMode === "podman" ? podmanInspection(podmanCapsState) : inspection()),
               ),
             )
       return result("true")
@@ -334,7 +341,7 @@ describe("image provisioning before container allocation", () => {
 
   test("unknown inspect failure aborts before allocation with sanitized error and no pull or create", async () => {
     imageInspect = "error"
-    const { ImageProvisioningError } = await import("../src/errors.ts")
+    const { ImageProvisioningError } = await import("../src/containers/errors.ts")
     const error = await manager.acquire(input, owner).catch((e) => e as Error)
     expect(error).toBeInstanceOf(ImageProvisioningError)
     expect(error.message).toBe(ImageProvisioningError.MESSAGE)
@@ -349,7 +356,7 @@ describe("image provisioning before container allocation", () => {
   test("pull timeout aborts before allocation with sanitized error and no create", async () => {
     imageInspect = "absent"
     pullOutcome = "timeout"
-    const { ImageProvisioningError } = await import("../src/errors.ts")
+    const { ImageProvisioningError } = await import("../src/containers/errors.ts")
     const error = await manager.acquire(input, owner).catch((e) => e as Error)
     expect(error).toBeInstanceOf(ImageProvisioningError)
     expect(error.message).toBe(ImageProvisioningError.MESSAGE)
@@ -363,7 +370,7 @@ describe("image provisioning before container allocation", () => {
   test("pull failure aborts before allocation with sanitized error and no create", async () => {
     imageInspect = "absent"
     pullOutcome = "fail"
-    const { ImageProvisioningError } = await import("../src/errors.ts")
+    const { ImageProvisioningError } = await import("../src/containers/errors.ts")
     const error = await manager.acquire(input, owner).catch((e) => e as Error)
     expect(error).toBeInstanceOf(ImageProvisioningError)
     expect(error.message).toBe(ImageProvisioningError.MESSAGE)
@@ -439,4 +446,137 @@ describe("Podman capability constraints", () => {
     expect(container.container).toMatch(/^[a-f0-9]{64}$/)
     await manager.close()
   })
+})
+
+describe("verified workspace bind mounts", () => {
+  test.each([
+    [
+      "Podman accepts read-only options in a different order",
+      "podman",
+      "rprivate,rbind,ro",
+      "ro",
+      false,
+    ],
+    ["Docker accepts a read-only bind", "docker", "ro", "ro", false],
+    ["an implicit bind is writable", "docker", undefined, "rw", true],
+    ["propagation-only options imply writable", "docker", "rprivate,rbind", "rw", true],
+    [
+      "Docker accepts normalized explicit writable options",
+      "docker",
+      "rw,rprivate,rbind",
+      "rw",
+      true,
+    ],
+  ] as const)("%s", async (_label, engine, options, access, rw) => {
+    const workspace = await mkdtemp(join(tmpdir(), "sandbox-bind-"))
+    try {
+      engineMode = engine
+      manager = new ContainerManager(new ContainerCliRuntime(instance, engine), instance)
+      const base = engine === "podman" ? podmanInspection("null") : inspection()
+      inspectionOverride = {
+        ...base,
+        HostConfig: {
+          ...base.HostConfig,
+          Binds: [`${workspace}:/workspace${options === undefined ? "" : `:${options}`}`],
+        },
+        Mounts: [{ Type: "bind", Source: workspace, Destination: "/workspace", RW: rw }],
+      }
+      await manager.acquire({ ...input, workspace, access }, owner)
+      expect(calls.some((args) => args[1] === "start")).toBe(true)
+      await manager.close()
+    } finally {
+      await rm(workspace, { recursive: true, force: true })
+    }
+  })
+
+  const invalidDeclarations: Array<[string, (workspace: string) => unknown]> = [
+    ["lookalike source", (workspace) => [`${workspace}-other:/workspace:ro`]],
+    ["lookalike target", (workspace) => [`${workspace}:/workspace-extra:ro`]],
+    ["declared access mismatch", (workspace) => [`${workspace}:/workspace:rw`]],
+    ["extra declared bind", (workspace) => [`${workspace}:/workspace:ro`, "/other:/else:ro"]],
+    ["non-string bind", () => [42]],
+    ["empty options", (workspace) => [`${workspace}:/workspace:`]],
+    ["empty option token", (workspace) => [`${workspace}:/workspace:ro,,rbind`]],
+    ["duplicate option", (workspace) => [`${workspace}:/workspace:ro,ro`]],
+    ["unknown option", (workspace) => [`${workspace}:/workspace:ro,unknown`]],
+    ["conflicting access options", (workspace) => [`${workspace}:/workspace:ro,rw`]],
+    ["SELinux z option", (workspace) => [`${workspace}:/workspace:ro,z`]],
+    ["SELinux Z option", (workspace) => [`${workspace}:/workspace:ro,Z`]],
+    ["SELinux U option", (workspace) => [`${workspace}:/workspace:ro,U`]],
+    ["shared propagation", (workspace) => [`${workspace}:/workspace:ro,rshared`]],
+    ["slave propagation", (workspace) => [`${workspace}:/workspace:ro,rslave`]],
+    ["extra colon field", (workspace) => [`${workspace}:/workspace:ro:extra`]],
+    ["non-string binds collection", () => "bind"],
+    ["missing bind declaration", () => []],
+  ]
+
+  const invalidMounts: Array<[string, (workspace: string) => unknown]> = [
+    ["missing effective mount", () => []],
+    [
+      "effective RW is not boolean",
+      (workspace) => [{ Type: "bind", Source: workspace, Destination: "/workspace", RW: "false" }],
+    ],
+    [
+      "effective access mismatch",
+      (workspace) => [{ Type: "bind", Source: workspace, Destination: "/workspace", RW: true }],
+    ],
+    [
+      "extra effective bind",
+      (workspace) => [
+        { Type: "bind", Source: workspace, Destination: "/workspace", RW: false },
+        { Type: "bind", Source: "/other", Destination: "/other", RW: false },
+      ],
+    ],
+    [
+      "named volume",
+      (workspace) => [
+        { Type: "bind", Source: workspace, Destination: "/workspace", RW: false },
+        { Type: "volume", Name: "unexpected", Destination: "/data", RW: false },
+      ],
+    ],
+  ]
+
+  test.each(invalidDeclarations)(
+    "rejects invalid declaration: %s before start",
+    async (_label, makeBinds) => {
+      const workspace = await mkdtemp(join(tmpdir(), "sandbox-bind-"))
+      try {
+        const base = inspection()
+        inspectionOverride = {
+          ...base,
+          HostConfig: { ...base.HostConfig, Binds: makeBinds(workspace) },
+          Mounts: [{ Type: "bind", Source: workspace, Destination: "/workspace", RW: false }],
+        }
+        await expect(
+          manager.acquire({ ...input, workspace, access: "ro" }, owner),
+        ).rejects.toThrow()
+        expect(calls.some((args) => args[1] === "start")).toBe(false)
+        expect(exists).toBe(false)
+      } finally {
+        await rm(workspace, { recursive: true, force: true })
+      }
+    },
+  )
+
+  test.each(invalidMounts)(
+    "rejects invalid effective mounts: %s before start",
+    async (_label, makeMounts) => {
+      const workspace = await mkdtemp(join(tmpdir(), "sandbox-bind-"))
+      try {
+        const base = inspection()
+        inspectionOverride = {
+          ...base,
+          HostConfig: { ...base.HostConfig, Binds: [`${workspace}:/workspace:ro`] },
+          Mounts: makeMounts(workspace),
+        }
+        await expect(
+          manager.acquire({ ...input, workspace, access: "ro" }, owner),
+        ).rejects.toThrow()
+        expect(calls.some((args) => args[1] === "start")).toBe(false)
+        expect(exists).toBe(false)
+      } finally {
+        await rm(workspace, { recursive: true, force: true })
+      }
+    },
+  )
 })

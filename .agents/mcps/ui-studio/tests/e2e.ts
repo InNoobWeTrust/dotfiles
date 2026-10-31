@@ -3,7 +3,7 @@ import { resolve } from "node:path"
 import { randomUUID } from "node:crypto"
 import { Client } from "@modelcontextprotocol/sdk@1/client/index.js"
 import { StdioClientTransport } from "@modelcontextprotocol/sdk@1/client/stdio.js"
-import { BoardStore } from "../src/sessions/store.ts"
+import { BoardStore } from "../src/boards/store.ts"
 
 // Protocol fixtures intentionally do not demonstrate browser catalog generation or render success.
 const fixtureCatalog = { prompt: "PROTOCOL FIXTURE ONLY: TextContent(text)", bundle_version: "carbon-white-charts-1" as const }
@@ -368,8 +368,8 @@ async function protocol() {
 
 /** Owned HTTP/store children with stub assets: process independence, NOT two full MCP/browser builds. */
 async function independentHTTPProcesses() {
-  const storeModule = new URL("../src/sessions/store.ts", import.meta.url).href
-  const httpModule = new URL("../src/http/server.ts", import.meta.url).href
+  const storeModule = new URL("../src/boards/store.ts", import.meta.url).href
+  const httpModule = new URL("../src/delivery/http/server.ts", import.meta.url).href
   const spawn = (title: string) => Bun.spawn({
     cmd: [process.execPath, "--no-env-file", "--eval", `
       import { BoardStore } from ${JSON.stringify(storeModule)};
