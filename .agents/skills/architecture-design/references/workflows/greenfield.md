@@ -4,6 +4,8 @@
 
 New system, new major subsystem, or new domain service with no existing architecture.
 
+**Phase and exposure (state inline; no new artifact):** delivery phase (prototype, MVP/first real users, production, or explicitly unknown), who is exposed (local synthetic/private/public-sensitive), core real-user outcomes, non-goals, and known safety/privacy/data/legal/recovery/public-contract obligations. Phase calibrates the depth below; it never waives an obligation. Unknown phase is not prototype or production; ask only for missing context that changes the current design decision and keep affected items open.
+
 ---
 
 ## Phase 1 — Domain & Requirements Discovery
@@ -17,21 +19,20 @@ flowchart LR
 
 **Do:**
 - Run Event Storming or lightweight domain discovery
-- Identify NFRs: availability %, p99 latency, data retention
-- Project scale: RPS, storage growth over 1–3 year horizon
-- Identify compliance boundaries (GDPR, HIPAA, SOC2)
+- Identify only applicable NFRs (availability, latency, retention) with the phase/workload that makes them material
+- Project scale only to the declared phase or known consumer target; if none exists, record unknown and design for current observed load
+- Identify compliance boundaries only where declared exposure or legal obligations establish them; do not import regimes speculatively
 
 **Ask:**
-- What are the explicit SLA/SLO expectations?
+- What are the explicit SLA/SLO expectations, if this phase has an operational obligation?
 - Does the team have operational mastery of the chosen stack?
-- What is the projected scale in 1–3 years?
+- What scale is actually expected for this phase? If unknown, say unknown; do not substitute a default horizon.
 
 ---
 
 ## Phase 2 — C4 Context & Container Modeling
 
-Draw C4 Level 1 (System Context) and Level 2 (Container).
-Use templates from `../visualization/c4-mermaid-templates.md`.
+For a canonical architecture doc, draw C4 Level 1 (System Context) and Level 2 (Container) using `../visualization/c4-mermaid-templates.md`. For a prototype or milestone note, use one focused context/interaction sketch only when it clarifies the tested assumption or a real boundary; do not produce canonical C4 by default.
 
 ```mermaid
 graph TD
@@ -66,7 +67,7 @@ graph TD
 
 ## Phase 4 — Architecture Spike
 
-Build an isolated PoC to validate critical assumptions.
+Build an isolated PoC only for a named critical assumption whose resolution is needed for the declared phase.
 
 ```mermaid
 flowchart LR
@@ -78,19 +79,19 @@ flowchart LR
     F --> A
 ```
 
-**Time-box:** Max 3 days per spike.
+**Time-box:** the smallest effort that produces the decision; stop when the named assumption is supported or falsified. Do not run a spike without a decision it will inform.
 
 **Validate:**
-- Latency under expected load
+- The declared NFR/workload, not an invented production profile
 - Data consistency guarantees
 - Integration with external services
-- Operational complexity (deploy, monitor, debug)
+- Operational complexity only to the extent the declared phase/exposure requires it
 
 ---
 
 ## Phase 5 — Document & Conditional ADR
 
-Produce these deliverables:
+Produce the applicable subset for the declared phase and artifact. A canonical architecture doc requires the full checklist below; a prototype or milestone note follows the artifact calibration in the skill and does not need full C4 L1–L3, a data ownership table, or an API contract strategy unless the touched scope or a real consumer requires them. Obligations certain from exposure still apply.
 
 - [ ] C4 Context diagram (Level 1)
 - [ ] C4 Container diagram (Level 2)
@@ -114,10 +115,10 @@ Produce these deliverables:
 |---|---|
 | Premature microservice decomposition | Start modular monolith; split when evidence demands it |
 | Choosing tech by hype | Evaluate alternatives; create an ADR only when the canonical threshold is met |
-| Under-specifying NFRs | Phase 1 must produce measurable quality attributes |
-| Skipping the spike | Phase 4 catches wrong assumptions early — 3 days saves 3 months |
-| Designing for 10× current scale on day 1 | Design for 2× with clear scaling path; over-engineering kills velocity |
+| Under-specifying applicable NFRs, or inventing inapplicable ones | Phase 1 must produce measurable quality attributes only where phase/exposure/consumers make them material |
+| Running an unbounded spike, or skipping a needed one | Spike only a named risky assumption with a decision bound; a fixed 3-day mandate is not required |
+| Designing for speculative scale on day 1 | Design for the declared phase and current observed workload with a clear changeability path; do not prebuild a fixed 2× or 10× target. Revisit when evidence or a declared target requires it. |
 
 ## Approvers
 
-Principal/Staff Architect, Engineering Director, Security Lead, Product Manager.
+Canonical architecture: Principal/Staff Architect, Engineering Director, Security Lead, Product Manager. Prototype or MVP milestone note: the accountable owner plus the applicable safety/data owner; a full specialist panel is not required.

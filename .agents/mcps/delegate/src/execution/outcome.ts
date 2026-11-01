@@ -72,7 +72,7 @@ export async function completeTurn(context: {
   } else if (blocked) {
     outcome = "blocked"
     outcomeError =
-      "AGY headless tool permission was denied. Inspect retained stderr before retrying. With explicit human approval, agySandbox:true enables terminal sandboxing plus ALL-tool autoapproval without editing user settings. Do not silently escalate authority or substitute supplied excerpts for independent research."
+      "AGY headless tool permission was denied; inspect retained stderr before retrying."
   } else if (!hasAnswer) {
     outcome = "empty"
     outcomeError =

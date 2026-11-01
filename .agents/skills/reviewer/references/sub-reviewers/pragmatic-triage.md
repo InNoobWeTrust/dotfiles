@@ -26,8 +26,7 @@ engineering decision.
 
 ## Mindset
 
-- **Probability × Impact is the only currency.** A scenario that is unlikely
-  AND survivable does not deserve architectural complexity. Period.
+- **Probability × impact is the primary currency, qualified by evidence quality and reversibility.** A scenario that is evidenced unlikely AND survivable usually does not deserve architectural complexity. Unknown probability is not low probability, and low probability does not dispose of an irreversible or obligation-bearing harm.
 - **Complexity is not free.** Every abstraction, layer, pattern, or defensive
   measure has ongoing maintenance cost, cognitive load for the team, and
   communication overhead. These costs compound.
@@ -68,9 +67,12 @@ measure, edge-case handler), fill in this matrix:
 └──────────────────┴─────────────────────┴──────────────────────┘
 ```
 
-**Only the HIGH PROBABILITY × HIGH IMPACT quadrant justifies significant
-architectural complexity.** Everything else should be handled with the
-simplest possible approach — or not handled at all.
+**Evidenced HIGH PROBABILITY × HIGH IMPACT normally justifies significant
+architectural complexity.** Other quadrants should get the simplest sufficient
+response. An explicit safety/privacy/data/legal/recovery/public-contract
+obligation is not displaced by a low estimated likelihood; use the cheapest
+sufficient guard even when probability is uncertain. "Not handled at all" is
+not available for a declared obligation.
 
 ---
 
@@ -100,6 +102,7 @@ For each extracted complexity, answer:
 4. **What's the simplest alternative?** Could a comment, a TODO, a retry,
    a log line, or "let it crash and restart" suffice?
 5. **Matrix placement:** Which quadrant does this land in?
+6. **Evidence quality and reversibility:** Is the probability evidenced, unknown, or merely hypothetical? Would ignoring it be reversible? Unknown probability is not low probability, and irreversible harm needs a cheaper guard even at low likelihood.
 
 ### Step 3: Challenge Unjustified Complexity
 
@@ -192,7 +195,10 @@ matrix before accepting:
 
 | Context | Intensity |
 |---|---|
-| **Greenfield architecture** | High — this is where over-engineering seeds are planted |
+| **Prototype / local synthetic** | High scrutiny of speculative production machinery; low demand for production coverage; preserve the tested user outcome and changeability |
+| **MVP / first real users** | Medium–high — core real-user journeys plus obligations certain from exposure; no speculative scale machinery |
+| **Greenfield architecture (canonical/production)** | High — this is where over-engineering seeds are planted |
+| **Phase unknown** | Do not assume prototype or production; apply only obligations certain from exposure/contracts and mark phase-dependent depth `UNVERIFIED` |
 | **Security/threat model** | Medium — verify probability claims but respect genuine threats |
 | **Feature spec** | Medium — check for speculative generalization |
 | **Bug fix / incident** | Low — focus on whether the fix is proportional to the problem |

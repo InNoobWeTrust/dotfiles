@@ -32,7 +32,7 @@ export function registerDelegateTools(server: McpServer, handlers: DelegateToolH
     "delegate_status",
     {
       description:
-        "Discover configured external AI subagents, readiness, permission modes and OpenCode Zen base-model hints whose display name or native ID contains 'free' (case-insensitive). This is not price verification or a billing guarantee. Hints are not the full catalog or a quota/access guarantee; use delegate_models for explicit model discovery. Status is authoritative for readiness; startup instructions are not regenerated. Pass refresh:true after account/config changes; discovery runs no model task.",
+        "Discover configured external AI subagents, readiness and OpenCode Zen base-model hints whose display name or native ID contains 'free' (case-insensitive). This is not price verification or a billing guarantee. Hints are not the full catalog or a quota/access guarantee; use delegate_models for explicit model discovery. Status is authoritative for readiness; startup instructions are not regenerated. Pass refresh:true after account/config changes; discovery runs no model task.",
       inputSchema: {
         refresh: z
           .boolean()
@@ -67,7 +67,7 @@ export function registerDelegateTools(server: McpServer, handlers: DelegateToolH
     {
       description:
         "Spawn an external AI subagent for one bounded task and return its result. Choose external workers or native subagents by task suitability, capabilities, interface needs and observed availability, without a fixed harness or provider priority. Check delegate_status first. Supply a self-contained prompt: no parent chat, follow-up or resumable session is provided. Output size never ends a turn: oversized replies have bounded inline previews and full XDG cache paths to read. Wall-clock expiry, capture failure or client cancellation can return partial output; cancellation sends SIGINT to the process group and escalates to SIGKILL after the grace period if needed.",
-      inputSchema: delegateRunSchema.shape,
+      inputSchema: delegateRunSchema,
       outputSchema: resultEnvelope(delegateOutputSchema),
     },
     (input, extra) => respond(() => handlers.delegateRun(input, extra.signal)),
@@ -106,7 +106,6 @@ function statusData(snapshot: DetectionResult, depth: number, maxDepth: number):
       modelHintsState:
         entry.spec.id === "opencode" ? (entry.modelHintsState ?? "unknown") : "not_applicable",
       modelListing: supportsModelListing(entry.spec.id) ? "supported" : "unsupported",
-      permissionModes: entry.spec.permissionModes,
       modelSupported: entry.spec.modelSupported,
       depth: depth + 1,
     })),

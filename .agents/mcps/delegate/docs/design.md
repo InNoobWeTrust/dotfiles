@@ -44,10 +44,9 @@ the instructions already sent to the client.
 | Keep native argument mapping inside the registry | CLI-specific flags are irreducible, but do not need to become separate tools. A run selects a registry ID only after readiness inspection. |
 | Pass the prompt as one trailing argv element | Every supported harness accepts it, so one input schema serves all of them. Consequence: no shell involved at all (`shell: false`), and a prompt cannot be reinterpreted as syntax. The cost is the 64 KiB argv limit. |
 | Refuse a `prompt` or `model` that starts with `-` | A trailing positional is only safe if the harness treats it as one. Some harnesses read the prompt from a value-taking flag instead, and a model value can be misread as an option that escalates authority (`--yolo`) or replaces the task (`--version`, which would print a version and exit 0 while the call reported success). Both fields are refused at the schema, before any process starts; there is no `--` delimiter that all twelve CLIs agree on. |
-| `promptFlag` per harness | `agy` reads the prompt from `--print`, `gemini`, `qwen`, `hermes` from `-p`/`-z` and `amp` from `-x`; placing that flag immediately before the prompt keeps it the last argv element while leaving nothing between the flag and its value. The server calls `assertRegistryInvariants()` while loading, and `assertArgv()` on the arguments of every call it is about to run, so a malformed entry — a missing prompt flag, a flag in the wrong position, a duplicated one, a prompt that is not last, or a permission mode that disagrees with `buildArgs` — is refused instead of producing one odd command line during a real turn. |
+| `promptFlag` per harness | `agy` reads the prompt from `--print`, `gemini`, `qwen`, `hermes` from `-p`/`-z` and `amp` from `-x`; placing that flag immediately before the prompt keeps it the last argv element while leaving nothing between the flag and its value. The server calls `assertRegistryInvariants()` while loading, and `assertArgv()` on the arguments of every call it is about to run, so a malformed entry — a missing prompt flag, a flag in the wrong position, a duplicated one, a prompt that is not last — is refused instead of producing one odd command line during a real turn. |
 | `opencode run --standalone` | Plain `run` can attach to an already-running OpenCode server, which would run the turn outside this process group and outside the inherited `DELEGATE_DEPTH`. `--standalone` forces a private server so the wall-clock kill and the depth cap still apply. |
-| One shared input schema | Shared fields retain harness-specific mappings. AGY always uses `--mode accept-edits --dangerously-skip-permissions` for every `permissionMode`, including read-only assignments; `agySandbox` independently adds `--sandbox`. This user-authorized profile is not hard read-only isolation. Harnesses that lack a flag simply do not get one; `amp` has no model flag, so passing `model` to it is refused rather than dropped. Preview size is server-owned, not an input. |
-| Refuse an unsupported permission mode | Silently dropping `--dangerously-skip-permissions` would turn a deliberate escalation into a silent downgrade of the caller's intent, and dropping it upward would run something the caller did not ask for. Failing loudly keeps the tool description honest about what each harness can do. |
+| One shared input schema | Shared fields retain harness-specific mappings. Each harness uses its fixed native profile, with no caller-selectable permission mode. AGY uses `--mode accept-edits --dangerously-skip-permissions`, including read-only assignments; `agySandbox` independently adds `--sandbox`. Read-only or edit scope belongs in the prompt, not a hard enforcement guarantee. Harnesses that lack a flag simply do not get one; `amp` has no model flag, so passing `model` to it is refused rather than dropped. Preview size is server-owned, not an input. |
 | Detached process group, killed as a group | Harness CLIs spawn their own children. Signalling only the direct child leaves those running, still holding tokens and file handles. `spawn(..., { detached: true })` plus `process.kill(-pid, …)` reaps the whole tree, with SIGTERM then SIGKILL after a grace period. |
 | MCP request cancellation signals the owned group | The SDK request signal reaches `runProcess`; cancellation sends SIGINT (Ctrl+C equivalent) to the group, waits for group disappearance or the existing 2000 ms grace, then sends SIGKILL once if needed. Cancellation and existing cleanup share the same teardown promise; preparation checks prevent a cancelled request from launching. The result is `stop: "cancelled"` even when the child exits 0, with partial output retained. |
 | Reap the group even when the parent exits 0 | A harness can background a child with its streams redirected and then exit successfully. Settling on the parent's exit would release the concurrency slot while that child keeps working unsupervised, so the group is reaped on clean exit too. |
@@ -167,26 +166,23 @@ Catalog availability never upgrades readiness, and unsupported adapters are expl
 ## The registry
 
 `registry.ts` is the only place that knows a harness's command line. Each entry
-declares its binary names, whether it takes a directory flag, the permission
-flags it understands, and a `buildArgs` that always ends with the prompt.
+declares its binary names, model support, prompt flag and a `buildArgs` that
+uses the fixed native profile and always ends with the prompt. Startup probes
+each entry's baseline argv once; per-run validation checks the actual argv too.
 Adding a harness needs verified argument mapping and a dedicated, documented
 non-model readiness strategy with critical tests. Help or version output alone
 cannot enable dispatch; unsupported inspectors stay unknown.
 
-Permission modes per harness, as of the first release:
-
-| Harness | `default` | `acceptEdits` | `bypassPermissions` |
-|---|---|---|---|
-| `claude`, `codex`, `agy`, `gemini`, `droid`, `cursor` | yes | yes | yes |
-| `qwen` | yes | yes (`auto-edit`) | yes (`yolo`) |
-| `crush`, `hermes`, `kilo` | yes | no | yes |
-| `opencode` | yes | yes (`--auto`) | no |
-| `amp` | yes | no | no, and `model` is refused too |
+Profiles preserve the existing adapter defaults: Codex uses `--sandbox read-only`,
+AGY uses the fixed headless flags above, and Cursor uses `--trust`. Other adapters
+add no permission-selection flags and retain their native configured policy.
+`amp` still refuses `model`. No permission selector is exposed in run input or status.
 
 ## Limits that remain
 
 - A delegated harness is a separate process with the server's environment. It is
-  bounded by budgets and by its own permission flags, not by this server.
+  bounded by budgets and its preconfigured native permissions, not isolated by
+  this server. Prompt read-only/edit scope does not grant additional authority.
 - There is no retry. A failed turn is reported as failed so the caller decides.
 - Detection is a startup snapshot until explicit refresh. Inherited environment
   changes require restarting this server, not unrelated services.

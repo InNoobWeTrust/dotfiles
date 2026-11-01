@@ -7,19 +7,6 @@ export const MAX_PROMPT_BYTES = 65_536
 export const DEFAULT_WALL_TIME_MS = 900_000
 export const MAX_WALL_TIME_MS = 7_200_000
 
-/**
- * Authority granted to the delegated harness, mapped per harness to its own flag.
- * Except for AGY's explicitly configured always-autoapprove profile, `default`
- * keeps the harness's own policy; this is not a read-only guarantee.
- */
-export const permissionModeSchema = z
-  .enum(["default", "acceptEdits", "bypassPermissions"])
-  .describe(
-    "For non-AGY harnesses: 'default' keeps the harness's own policy (not read-only isolation); 'acceptEdits' allows unattended edits; 'bypassPermissions' skips all tool approval prompts and requires explicit human permission. AGY always passes --mode accept-edits --dangerously-skip-permissions for every value, including default and read-only assignments. Scope the task; permissionMode cannot restrict AGY authority.",
-  )
-
-export type PermissionMode = z.infer<typeof permissionModeSchema>
-
 const positiveInt = (max: number) => z.number().int().positive().max(max)
 
 /**
@@ -37,8 +24,7 @@ const optionSafe = (label: string) => ({
 })
 
 /**
- * One schema shared by every advertised tool. Unsupported authority controls
- * are refused rather than silently ignored.
+ * Shared run fields; strict object schemas reject obsolete and unknown inputs.
  */
 export const delegateInputSchema = {
   prompt: z
@@ -62,11 +48,6 @@ export const delegateInputSchema = {
     .describe(
       "Harness-native model identifier or alias. Leave unset to use that harness's configured default. Use delegate_models for explicit discovery where supported; status contains only name-matched Zen hints, not the full catalog. Must not start with '-'.",
     ),
-  permissionMode: permissionModeSchema
-    .default("default")
-    .describe(
-      "For non-AGY harnesses: default keeps native policy, acceptEdits allows unattended edits, bypassPermissions skips all tool approvals and requires explicit human permission. AGY always uses --mode accept-edits --dangerously-skip-permissions, regardless of this value or agySandbox, including read-only tasks. This field cannot restrict AGY authority; scope the prompt. Defaults to default.",
-    ),
   wallTimeMs: positiveInt(MAX_WALL_TIME_MS)
     .default(DEFAULT_WALL_TIME_MS)
     .describe(
@@ -76,7 +57,7 @@ export const delegateInputSchema = {
     .boolean()
     .optional()
     .describe(
-      "AGY only: true independently adds --sandbox for AGY's sandbox profile. All AGY calls already pass --mode accept-edits --dangerously-skip-permissions, including read-only tasks; this flag does not enable or disable autoapproval. Do not assume terminal restrictions isolate native tools/MCP or guarantee read-only access. Omitted/false adds no sandbox flag and does not disable saved AGY settings. Other harnesses reject this field; no settings are edited.",
+      "AGY-only optional terminal profile; normally omit. Other harnesses reject this field.",
     ),
 } satisfies Record<string, z.ZodType>
 
@@ -230,9 +211,6 @@ export const statusOutputSchema = z
               ),
             modelHintsState: z.enum(["available", "empty", "unknown", "not_applicable"]),
             modelListing: z.enum(["supported", "unsupported"]),
-            permissionModes: z
-              .array(permissionModeSchema)
-              .describe("Permission modes this harness accepts, in ascending authority."),
             modelSupported: z
               .boolean()
               .describe(

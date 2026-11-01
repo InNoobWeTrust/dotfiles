@@ -258,19 +258,16 @@ async function verifyStubbedEndToEnd() {
     expect(properties?.prompt?.description).toMatch(/self-contained/i)
     expect(properties?.harness?.description).toMatch(/task suitability/i)
     expect(properties?.harness?.description).not.toMatch(/\bprefer(?:red|ence)?\b/i)
-    expect(properties?.permissionMode?.description).toMatch(/human.*permission/i)
-    expect(properties?.permissionMode?.description).toMatch(/not read-only/i)
     expect(Object.keys(runTool.inputSchema.properties ?? {}).sort()).toEqual([
       "agySandbox",
       "harness",
       "model",
-      "permissionMode",
       "prompt",
       "wallTimeMs",
       "workdir",
     ])
 
-    // delegate_status reports readiness, reason, models, permissionModes, modelSupported.
+    // delegate_status reports readiness, reason, models and modelSupported, not modes.
     const status = await api.call<StatusOutput>("delegate_status")
     expect(status.output.ok).toBe(true)
     // agy, claude, codex, opencode pass their stubs' readiness checks.
@@ -280,7 +277,7 @@ async function verifyStubbedEndToEnd() {
     expect(status.output.data?.harnesses.every((h) => h.readiness === "configured")).toBe(true)
     expect(status.output.data?.harnesses.every((h) => typeof h.reason === "string")).toBe(true)
     expect(status.output.data?.harnesses.every((h) => Array.isArray(h.models))).toBe(true)
-    expect(status.output.data?.harnesses.every((h) => Array.isArray(h.permissionModes))).toBe(true)
+    expect(status.output.data?.harnesses.every((h) => !("permissionModes" in h))).toBe(true)
     expect(status.output.data?.harnesses.every((h) => typeof h.modelSupported === "boolean")).toBe(
       true,
     )
@@ -467,7 +464,6 @@ async function verifyStubbedEndToEnd() {
       prompt,
       workdir: path.join(scratch, "workspace"),
       model: "some-model",
-      permissionMode: "acceptEdits",
     })
     expect(ok.response.isError).toBe(false)
     const output = ok.output.data
@@ -481,22 +477,26 @@ async function verifyStubbedEndToEnd() {
     const [first] = await callLog(logFile)
     expect(first?.cwd).toBe(workspacePath)
     expect(first?.depth).toBe("1")
-    expect(first?.argv.at(-1)).toBe(prompt)
+    expect(first?.argv).toEqual(["-p", "--model", "some-model", prompt])
 
     // A model the caller did not ask for is never invented.
     await api.call("delegate_run", { harness: "codex", prompt: "STUB_OK no model" })
     const second = (await callLog(logFile))[1]
-    expect(second?.argv.join(" ")).not.toContain("some-model")
+    expect(second?.argv).toEqual(["exec", "-C", root, "--sandbox", "read-only", "STUB_OK no model"])
 
-    // Unsupported authority is refused, never silently downgraded.
-    const refused = await api.call("delegate_run", {
-      harness: "opencode",
-      prompt: "STUB_OK nope",
-      permissionMode: "bypassPermissions",
-    })
-    expect(refused.response.isError).toBe(true)
-    expect(refused.output.error).toContain("not available for this harness")
-    expect((await callLog(logFile)).length).toBe(2)
+    // The obsolete option is rejected strictly for every configured harness,
+    // including its former default; it must never be silently ignored.
+    for (const harness of harnessIds ?? []) {
+      for (const permissionMode of ["default", "acceptEdits", "bypassPermissions"]) {
+        const refused = await api.client.callTool({
+          name: "delegate_run",
+          arguments: { harness, prompt: "STUB_OK nope", permissionMode },
+        })
+        expect(refused.isError).toBe(true)
+        expect(textOf(refused.content)).toContain("permissionMode")
+        expect((await callLog(logFile)).length).toBe(2)
+      }
+    }
 
     // An unavailable harness (amp: unknown readiness) is refused before launch.
     const unavailRun = await api.call("delegate_run", {
@@ -625,7 +625,9 @@ async function verifyStubbedEndToEnd() {
       expect(incomplete.output.data?.stdoutPath).toBeTruthy()
       expect(incomplete.output.data?.stderrPath).toBeTruthy()
       expect(incomplete.output.error).toMatch(
-        outcome === "blocked" ? /explicit human approval/ : /without an answer/,
+        outcome === "blocked"
+          ? /permission was denied; inspect retained stderr/
+          : /without an answer/,
       )
     }
 
@@ -728,7 +730,7 @@ async function verifyStubbedEndToEnd() {
     process.kill(-Number(survivorPid), "SIGKILL")
 
     console.log(
-      "PASS: three-tool catalog, explicit literal model discovery, free-only status hints and paid-selector passthrough, startup detection, AGY quota readiness and sign-out refresh, readiness gate, literal prompt argv, model passthrough, refused authority modes, unavailable/unknown harness refusal, model allowlist, option-lookalike rejection, pre-launch validation, failed-turn isError with retained data, exit/wall-time failures, lossless cached output and safe previews, orphan reaping, concurrency refusal, nested depth refusal, refresh, surviving close, quiet shutdown, structured content with JSON fallback",
+      "PASS: three-tool catalog, explicit literal model discovery, free-only status hints and paid-selector passthrough, startup detection, AGY quota readiness and sign-out refresh, readiness gate, literal prompt argv, model passthrough, strict obsolete-option rejection and fixed native argv, unavailable/unknown harness refusal, model allowlist, option-lookalike rejection, pre-launch validation, failed-turn isError with retained data, exit/wall-time failures, lossless cached output and safe previews, orphan reaping, concurrency refusal, nested depth refusal, refresh, surviving close, quiet shutdown, structured content with JSON fallback",
     )
   } finally {
     for (const api of clients) await api.client.close().catch(() => {})

@@ -16,6 +16,7 @@ docs/research/INDEX.md        ← you are here
 
 | Topic | What it covers | Read when |
 |---|---|---|
+| [Phase-aware engineering judgment](./phase-aware-guidance/phase-aware-guidance.md) | Principles, templates, phased rigor and specialist advice; source evidence, counterexamples and untested hypotheses | Investigating proportionate design/review without adopting new governance |
 | [Cordis and spatiotemporal composability](./cordis-spatiotemporal-composability/cordis-spatiotemporal-composability.md) | Lifecycle/dependency composition versus FBP, reversibility limits, source/version corrections and conditional questions; research-phase, not battle-tested | Investigating modular design/materialization without runtime adoption or promotion to accepted guidance |
 | [Elephant–Goldfish Model](./elephant-goldfish-model/elephant-goldfish-model.md) | Source-grounded comparison, cold-review isolation, handoff comprehension and approved-contract drift experiments | Improving review evidence without duplicating existing gates or adopting the plugin |
 | [DO-178B/C and agent assurance](./do-178-agent-assurance/do-178-agent-assurance.md) | Aviation assurance foundations, B→C changes, source limits, and three falsifiable agent-improvement hypotheses | Testing traceability, evidence validity and verification effectiveness without claiming certification |

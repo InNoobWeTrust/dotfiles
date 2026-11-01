@@ -93,11 +93,11 @@ For “check periodically” requests, use [Periodic Progress Checks](../../skil
 
 ### External worker boundaries
 
-The [Delegate MCP](../../mcps/delegate/README.md) exposes two stable tools. `delegate_status({})` reports inspected configuration and refusal reasons; `delegate_run({harness: "opencode", prompt: "Inspect the named file without edits", workdir: "/absolute/project/path"})` starts one bounded turn only for a selectable harness.
+The [Delegate MCP](../../mcps/delegate/README.md) exposes three stable tools. `delegate_status({})` reports inspected configuration and refusal reasons; `delegate_models({harness: "opencode"})` lists model selectors; `delegate_run({harness: "opencode", prompt: "Inspect the named file without edits", workdir: "/absolute/project/path"})` starts one bounded turn only for a selectable harness.
 
 **Readiness boundary:** An executable or shell alias is not an account/provider configuration. Startup and `delegate_status({refresh: true})` use supported CLI inspection commands, never a model prompt; `configured` is not proof of valid billing, quota, credentials, or backend reachability. Unknown readiness is not selectable, and a changed working directory can require fresh inspection.
 
-**Authority boundary:** Delegation is not a sandbox. The child inherits the environment, accounts and native permissions; its prompt must name allowed reads, writes, commands, network, and stop conditions. Obtain human approval before `permissionMode: "bypassPermissions"`; do not infer authority from a tool being callable.
+**Authority boundary:** Delegation is not a sandbox. The child inherits the environment, accounts and native permissions; its prompt must name allowed reads, writes, commands, network, and stop conditions. Each harness uses its preconfigured native profile, with no caller-selectable permission mode. State read-only or edit scope in the prompt; this is task guidance, not hard enforcement. Existing authorization and approval limits still apply; do not infer authority from a tool being callable.
 
 **Lifetime boundary:** Time and output caps attempt process-group cleanup but do not bound token spend or provide hard filesystem, RAM, PID or storage isolation. Nested delegation has a depth guard, not a security boundary; closing the MCP connection does not cancel a running turn. Use the [worker contract](../../skills/subagent-dispatch/references/worker-contract.md) and verified isolation for resource-sensitive or recursive work.
 

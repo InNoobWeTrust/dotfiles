@@ -5,7 +5,7 @@
       "name": "CKey",
       "baseUrl": "https://api.xah.io/v1",
       "apiKey": "$CKEY_API_KEY",
-      "api": "anthropic-messages",
+      "api": "openai-completions",
       "models": [
         {
           "id": "forbiddengun/gemini",
@@ -45,7 +45,7 @@
       "name": "Kilo",
       "baseUrl": "https://api.kilo.ai/api/gateway/v1",
       "apiKey": "$KILO_API_KEY",
-      "api": "anthropic-messages",
+      "api": "openai-completions",
       "models": [
         {
           "id": "~openai/gpt-terra-latest",

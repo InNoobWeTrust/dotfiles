@@ -13,6 +13,10 @@ This guide helps you decide when to perform reviews directly vs when to delegate
 
 ## Decision Tree
 
+### Phase/exposure preflight (before any pattern)
+
+Carry the Gate 3 contract into every delegated review prompt: declared phase (prototype, MVP/first real users, production, or explicitly unknown), exposure, core real-user outcomes/non-goals, and known obligations. If absent, request it; do not infer prototype or production. A specialist persona is an advisory lens, not an accountable role; it cannot expand scope, waive a declared obligation, or import a production default. Use only patterns warranted by the contract; a multi-persona panel is not mandatory. For a genuine scope-versus-risk trade-off, an available decision-support capability or one bounded PO/PM/QA lens may advise; absence is not a blocker.
+
 ```
 Review request received
 │
@@ -138,7 +142,7 @@ You are a senior auditor with no prior context. Your role is to:
 Do NOT assume the author's decisions are correct.
 Do NOT accept "best practices" without evidence.
 
-Apply full adversarial protocol from reviewer skill.
+Apply the review protocol declared in the supplied contract; use the full adversarial protocol only when the contract requires it or an evidenced Never Defer blocker justifies escalation.
 Return findings with severity: CRITICAL / HIGH / MEDIUM / LOW.
 ```
 
@@ -169,11 +173,11 @@ Return findings as: ACCEPT / CONDITIONAL / REJECT with reasoning.
 ```
 Review [artifact] from an SRE/Operations perspective.
 
-You are the SRE who will be paged at 3 AM when this breaks.
+You are an SRE reviewing the declared phase, exposure and operational obligations. If the artifact has no production/operational obligation, say so and limit findings to the declared scope; do not import a production on-call model.
 
 Evaluate:
-- Observability: Can we debug it in production?
-- Resilience: What breaks under load?
+- Observability: only to the extent a declared operational obligation requires it
+- Resilience: against the declared workload/failure model, not an invented production load
 - Operational burden: How hard to deploy/maintain?
 - Failure modes: What are the blast radius risks?
 
@@ -246,7 +250,7 @@ You are a performance engineer. Analyze:
 - Scalability limits
 
 Return findings with:
-- Expected performance at 1x, 10x, 100x scale
+- Expected performance at the declared workload target; if none is declared, current observed/estimated behavior and a clearly optional scale note, not a 1x/10x/100x requirement.
 - Bottleneck locations (file:line references)
 - Optimization recommendations ranked by impact
 ```
@@ -278,6 +282,7 @@ When you receive findings from multiple delegated reviewers:
 3. **Highlight trade-offs**: Where one perspective's fix harms another (e.g., security vs usability)
 4. **Prioritize**: Combine severity + feasibility + business impact
 5. **Present**: Findings first, then analysis, then recommendations
+6. Carry the declared phase/exposure into synthesis; a specialist's default depth cannot expand the contract. Mark phase-dependent findings `UNVERIFIED` when the contract lacks the needed input.
 
 **Format:**
 ```markdown

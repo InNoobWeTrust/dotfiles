@@ -1,6 +1,9 @@
 ---
 name: reviewer
 description: "Use this skill when the user asks you to review, check, audit, challenge, or QA any artifact — code, specs, architecture, config, docs, infrastructure, user-facing application behavior, or investment/portfolio assessment memos. Routes to specialized sub-lenses (black-box-qa, code-quality, design-rigor, adversarial, security, edge-case, editorial, investment-memo) based on what's being reviewed. Keep this skill evaluative. For investment allocation or opportunity memos, obtain an authoritative investment assessment and its assumptions as input before review; authoring and investment decisions remain outside this evaluator."
+metadata:
+  phase-guidance-status: 'Prototype; source-level calibration, not runtime-validated.'
+  phase-guidance-aci: 'Phase/exposure inputs and missing-context behavior are explicit; copied-bundle and live behavior remain to be checked.'
 ---
 
 # Reviewer
@@ -42,8 +45,8 @@ relaxing established controls.
 
 When the artifact belongs to phased delivery, obtain the populated delivery
 contract or active packet before
-judging it. Require that input to identify outcome, must-ship/may-defer/never-defer requirements, scope/prerequisites, acceptance evidence, hard invariants and recovery obligations, root-opted-in compatibility scope (OFF if checked and silent, unknown if unavailable), human-approved stack/receipt, approved behavior and consumer interfaces, current unit/authority/stops, and review/corrective-pass budget. Apply the supplied contract; do not invent its lifecycle,
-classification, budgets, compromise schema, or trajectory table here. If phased delivery applies and the contract is missing, stop and request it. Choose formal review artifacts proportionately to coordination need per that contract.
+judging it. Require that input to identify outcome, must-ship/may-defer/never-defer requirements, scope/prerequisites, acceptance evidence, hard invariants and recovery obligations, root-opted-in compatibility scope (OFF if checked and silent, unknown if unavailable), human-approved stack/receipt, approved behavior and consumer interfaces, current unit/authority/stops, review/corrective-pass budget, and the declared delivery phase and exposure (prototype, MVP/first real users, production, or explicitly unknown) with core real-user outcomes and non-goals. Apply the supplied contract; do not invent its lifecycle,
+classification, budgets, compromise schema, or trajectory table here. If phased delivery applies and the contract is missing, stop and request it; a missing contract is not permission for a reduced-scope review. If phase/exposure is missing from an otherwise supplied contract, request it and stop only the phase-sensitive depth judgment; do not infer prototype or production. If the contract explicitly records phase as unknown, apply only obligations certain from the declared exposure and public contracts, keep speculative production depth out of scope, and mark unresolved phase-dependent coverage `UNVERIFIED`; return `INCOMPLETE: CONTRACT_DEFECT` when phase is material to the review verdict. Choose formal review artifacts proportionately to coordination need per that contract.
 
 Every finding must include evidence, severity, and exactly one canonical
 classification. Reviewers recommend a classification and remediation; the
@@ -129,7 +132,7 @@ Worked scenarios: `references/examples/delegation-scenarios.md` (load only if ne
 
 Paths: `references/sub-reviewers/<name>.md`.
 
-- **Quick:** first lens only. **Deep:** all listed. Aggregate by severity and phase-aware disposition with file:line evidence.
+- **Quick:** first lens only. **Deep:** every lens warranted by the declared contract, phase/exposure and obligations — not every catalog lens by default. Aggregate by severity and phase-aware disposition with file:line evidence. A declared safety/privacy/data/legal/recovery/public-contract obligation retains its required lens even in Quick.
 - **File-targeted micro-rules:** For file-specific failure modes (Go, TS, Python, Workflows, SQL, manifests), consult `references/file-rules.md`.
 - **Code style:** Use [the agreed style contract and source catalog](references/style-guides.md), not a new reviewer preference; project tooling and existing anti-noise gates win.
 
@@ -150,7 +153,7 @@ Paths: `references/sub-reviewers/<name>.md`.
 
 ## Delegation mode (short)
 
-1. Pick audit / multi-persona / specialized pattern (`framework.md`).
+1. Pick audit / multi-persona / specialized pattern (`framework.md`); carry the Gate 3 phase/exposure contract and use only warranted patterns.
 2. Isolate personas (`personas.md`) — one agent per hat.
 3. Synthesize: CRITICAL → HIGH → MEDIUM → LOW; call out conflicts and trade-offs.
 

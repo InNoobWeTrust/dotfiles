@@ -17,7 +17,7 @@ Follow the actual task's authority and runtime restrictions.
 
 ## Lifecycle
 
-1. **Frame:** Establish the problem, reader/user outcome, scope and authority.
+1. **Frame:** Establish the problem, actual reader/user outcome, declared delivery phase and exposure (prototype, MVP/first real users, production, or explicitly unknown), core real-user outcomes and non-goals, scope and authority. Phase calibrates depth; it never waives the Never Defer obligations below. Do not infer prototype or production from silence; ask only for missing phase/exposure that changes the current decision.
 2. **Discover:** Verify constraints and important unknowns before committing.
 3. **Roadmap:** Order independently useful milestones only if needed.
 4. **Calibrate:** Separate must-ship, may-defer, and never-defer requirements.
@@ -29,6 +29,8 @@ Never defer evidence-backed core outcomes, safety/privacy/security obligations,
 data integrity, legal constraints, recovery promises or approved public contracts.
 Hypothetical scale, elegance and speculative extension points are not invariants.
 Do not prebuild future milestones' infrastructure.
+
+Start from core real-user use cases; add engineering structure as evidence and declared obligations require. For a genuine scope-versus-risk trade-off, an available decision-support capability or a bounded PM/PO/QA lens may advise; no panel is required and its absence is not a blocker.
 
 ## Formal artifacts are independent choices
 
@@ -48,6 +50,7 @@ Record proportionately in the existing task context or packet:
 
 ```text
 Objective and observable outcome:
+Delivery phase and exposure (prototype, MVP/first real users, production, or explicitly unknown); core real-user outcomes and non-goals:
 Must ship / may defer / never defer:
 In-scope and out-of-scope boundaries; prerequisites:
 Acceptance criteria and required evidence:

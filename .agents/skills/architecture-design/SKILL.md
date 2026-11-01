@@ -1,6 +1,9 @@
 ---
 name: architecture-design
 description: "Use this skill for software architecture and technical specifications (including spec-only TRDs), system design, architecture documentation, pattern selection (Modular Monolith default), modular component design (C4 L1-L3), DDD bounded contexts, ADR writing, architecture audits, API/data/security architecture, MCP/tool-server architecture, parallel/distributed compute selection (workers, Hadoop, HPC), storage/sync/ledger integrity, and fitness functions. It defines technical boundaries and trade-offs; implementation and schema work remain separately scoped."
+metadata:
+  phase-guidance-status: 'Prototype; source-level calibration, not runtime-validated.'
+  phase-guidance-aci: 'Phase/exposure inputs and missing-context behavior are explicit; copied-bundle and live behavior remain to be checked.'
 ---
 
 # Architecture Design
@@ -57,6 +60,8 @@ Before starting, determine:
 | Code change only, no arch impact? | STOP — skill not needed. |
 | Code review request? | Use an independent reviewer with the changed source, acceptance criteria and required evidence; design authors do not self-validate. |
 
+**Phase and exposure (state inline):** before design, record the declared delivery phase (prototype, MVP/first real users, production, or explicitly unknown), who is exposed (local synthetic/private/public-sensitive), core real-user outcomes, non-goals, and known safety/privacy/data/legal/recovery/public-contract obligations. Phase calibrates engineering depth and artifact choice; it never waives an obligation. Unknown phase is not prototype or production: ask only for missing context that changes the current decision, keep affected depth open, and do not demand speculative production coverage.
+
 **Orchestrated design (non-trivial or multi-level work):** the main agent does not author and
 approve consequential design alone. Follow the level-by-level author → independent review →
 approval loop in the planning guidance's [multi-level planning](../working-principles/references/multi-level-planning.md)
@@ -66,6 +71,8 @@ before its parent passes. If delegation or an independent reviewer is unavailabl
 `INCOMPLETE`; do not self-review.
 
 ## Gate 2 — C4 Level Calibration & Modular Boundaries
+
+Gate 1 phase/exposure calibrates this table. Canonical architecture docs still follow the table; a prototype or MVP milestone note does not trigger mandatory canonical C4 L3 unless a canonical architecture artifact is actually required. Project size alone does not establish production maturity.
 
 ```mermaid
 graph LR
@@ -148,8 +155,8 @@ When choosing an architecture pattern:
 1. Default to **Modular Monolith** with DDD Bounded Contexts (`references/patterns/modular-architecture.md`) before breaking into premature microservices.
 2. Load `references/patterns/INDEX.md` to explore pattern categories.
 3. Query the architecture CSV catalog with an available BM25 search or CSV-aware query capability per `references/pattern-catalog.md`. Resolve catalog paths from the loaded bundle, retrieve bounded candidates, and check their constraints; do not load entire CSV files into context.
-4. Enforce **Hexagonal Architecture (Ports & Adapters)** for domain components — domain logic must not depend on databases, HTTP frameworks, or third-party SDKs.
-5. Enforce **Explicit Contract DTOs** across component interfaces — positional tuples and untyped dictionaries across module boundaries are forbidden.
+4. Enforce **Hexagonal Architecture (Ports & Adapters)** where a real domain component/port boundary exists — domain logic must not depend on databases, HTTP frameworks, or third-party SDKs. Do not invent ports or adapters solely to satisfy a template in a throwaway/local prototype with no real boundary.
+5. Enforce **Explicit Contract DTOs** across real component interfaces and module boundaries — positional tuples and untyped dictionaries across those boundaries are forbidden. For canonical docs or any real inter-module/consumer contract this remains mandatory; a local prototype with no such boundary needs no invented DTO layer.
 
 ---
 

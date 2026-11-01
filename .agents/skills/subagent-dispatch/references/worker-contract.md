@@ -17,9 +17,9 @@ metadata:
 
 Use before launching a named worker, a fallback route, or a worker defined on the fly. The model route selects execution capability; the worker interprets the assignment and discovers useful working principles. This is prompt guidance, not a permissions implementation or a new orchestration framework.
 
-**Inputs:** assignment intent, settled decisions and open uncertainty, authoritative sources, required evidence, available tools, native permissions, authorized actions, and an optional working-style reference or short hint.
+**Inputs:** assignment intent, settled decisions and open uncertainty, authoritative sources, required evidence, available tools, native permissions, authorized actions, the declared delivery phase and exposure (prototype, MVP/first real users, production, or explicitly unknown), core real-user outcomes and non-goals, known safety/privacy/data/legal/recovery/public-contract obligations, and an optional working-style reference or short hint.
 **Output:** a bounded task prompt and a usable guidance-discovery entry point. A full personality definition is not required. Use supported harness fields only; do not invent a system/description field or rely on undocumented inheritance.
-**Stop:** missing authority, inaccessible required task sources or safety instructions, incompatible route limits, or an unresolved implementation contract. Missing optional personality guidance alone need not block safe work.
+**Stop:** missing authority, inaccessible required task sources or safety instructions, incompatible route limits, or an unresolved implementation contract. Missing optional personality guidance alone need not block safe work. Missing phase/exposure blocks only the affected phase-dependent judgment and must be recorded; it is not a global stop by itself.
 
 ## Working-style selection belongs to the worker
 
@@ -43,7 +43,7 @@ This is a discovery instruction, not a personality setting. Do not repeat it in 
 
 ## Compose the bounded handoff
 
-1. State the assignment and authority: investigation, design, implementation, verification, or review; what is agreed versus still uncertain; what observation the result will help evaluate.
+1. State the assignment and authority: investigation, design, implementation, verification, or review; what is agreed versus still uncertain; what observation the result will help evaluate. State the delivery phase and exposure (or explicitly "unknown"), core real-user outcomes and non-goals, and known obligations. Unknown phase must not be inferred as prototype or production; it blocks only phase-dependent depth, not unrelated safe work.
    State whether this is settled execution or direction judgment: propose/validate direction only when the active direction-eligibility policy permits the route and the handoff assigns that role; capability, title or primary approval confers no authority, and missing required proposal/validation/authority receipts make direction-dependent execution `INCOMPLETE`—return the choice to the primary for eligible routing.
 2. Supply precise sources and boundaries, acceptance evidence, action/resource limits, a proportionate return shape, and stop behavior. Retain applicable [implementation/planning gates](../SKILL.md#dispatch-routing-and-gates). These are task obligations, not optional personality settings.
 3. Check discovery access. A working-style reference or short hint is optional; omit it when the assignment already gives the worker enough to infer a useful approach. Do not dump full skills or make the parent compose a complete personality.

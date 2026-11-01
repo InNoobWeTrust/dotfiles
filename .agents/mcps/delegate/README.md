@@ -136,28 +136,19 @@ wrapper.
 
 ## Running a task
 
-### AGY permissions
-
-AGY cannot prompt for new permissions in `--print` mode. This integration always
-passes `--mode accept-edits --dangerously-skip-permissions` for **every**
-`permissionMode` value, including read-only assignments. Use AGY only with
-authorization for this all-tool autoapproval profile.
-
-```json
-{ "harness": "agy", "agySandbox": true, "prompt": "Your bounded task" }
-```
-
-`agySandbox: true` independently adds `--sandbox`. **Every tool is autoapproved** —
-file edits, commands, interactive website actions and MCP calls. `agySandbox: false`
-or omission adds no sandbox flag and does not disable any sandbox already set in AGY
-settings; it does not turn off autoapproval. `permissionMode` cannot restrict AGY's
-authority. The sandbox imposes terminal restrictions; it is **not hard read-only
-isolation** for native tools or MCP.
-
-If a run is blocked, inspect retained stderr before retrying; do not silently
-escalate authority.
-
 ### Dispatch
+
+Each harness uses its preconfigured native permission profile, with no caller-selectable
+permission mode. State read-only or edit scope in the prompt; this guides the worker,
+not hard enforcement. AGY uses its fixed headless profile.
+A selected model's quota failure is not a harness outage. Use `delegate_models`
+to inspect selectors and `agy --print /usage` to check current quota pools. Choose
+a suitable model from an independently available pool within existing authority.
+For example, Gemini 4 Argon, general Gemini (including Gemini 3.8), and the
+reported Claude/GPT group have separate pools; use the current usage report,
+not model-name guesses. Effort variants are not separate pools. Check outcome
+and retained stderr before replacement; do not automatically replay work that
+may have side effects.
 
 Set `workdir` unless you want the task to run in the connected agent's MCP root.
 
@@ -175,7 +166,7 @@ actions, exact paths, acceptance criteria and return format in the prompt.
 
 | Tool | Input | Result |
 |---|---|---|
-| `delegate_status` | optional `refresh: true` | Readiness, name-matched Zen hints, listing support, permission modes, refusal reasons, depth |
+| `delegate_status` | optional `refresh: true` | Readiness, name-matched Zen hints, listing support, refusal reasons, depth |
 | `delegate_models` | `harness`, optional `workdir`, `text`, `offset`, `limit` | Explicit filtered catalog with counts and next-page offset |
 | `delegate_run` | `harness`, `prompt`, optional controls | Exit status, both streams, duration, resolved workdir, redacted argv, depth |
 
@@ -187,9 +178,8 @@ actions, exact paths, acceptance criteria and return format in the prompt.
 | `prompt` | required | The whole task, as one argument. Max 64 KiB. Must not begin with `-`. |
 | `workdir` | MCP root, else server directory | Absolute directory the harness runs in; supplies working directory, not filesystem isolation |
 | `model` | harness default | Exact native selector from explicit discovery; empty status hints do not mean no models. Must not begin with `-`. Check `modelSupported`. |
-| `permissionMode` | `default` | `default`, `acceptEdits`, or `bypassPermissions`; unsupported modes are refused. AGY autoapproves all tools for every value. |
 | `wallTimeMs` | 900000 | Wall-clock limit for the whole turn (max 7200000): CLI startup, model/tool round trips, swarm coordination and synthesis. On expiry the process group is killed and partial output is returned. |
-| `agySandbox` | omitted | AGY only: `true` adds `--sandbox`; does not change autoapproval. `false`/omitted adds no flag and does not disable saved AGY settings. Other harnesses refuse this field. |
+| `agySandbox` | omitted | AGY-only optional terminal profile; normally omit. Other harnesses reject this field. |
 
 ### Interpreting output
 
@@ -232,10 +222,9 @@ not confine the harness to that directory.
 
 - `prompt` and `model` cannot begin with `-`; both are refused at the input
   schema before any process starts.
-- `bypassPermissions` drops every approval prompt for every tool the harness
-  holds. Get human permission before using it.
-- `cursor` is always launched with `--trust`; its `acceptEdits` and
-  `bypassPermissions` modes both add `--force`.
+- The child inherits the server's environment, accounts and native permissions.
+  Prompt scope does not sandbox those capabilities or grant new authority.
+- `cursor` is always launched with `--trust`.
 - At most 6 turns run at once per server; a seventh call is refused, not queued.
 - Delegation is two hops deep. A harness started by another delegate is refused
   from starting a third.

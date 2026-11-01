@@ -30,8 +30,8 @@ and processes. Add `DELEGATE_E2E_REAL=1` for one paid turn against the real
 | Status recovers without catalog churn | E2E refreshes after configuration changes and verifies unknown/unconfigured harnesses cannot launch a turn |
 | A prompt reaches the CLI as one literal argument | E2E stub logs every argv element and the prompt appears verbatim as the last element; unit tests pass a prompt containing shell syntax and an argument that looks like one to every `buildArgs` and to `runProcess`, and neither is ever re-parsed |
 | An option-shaped value cannot reach a CLI | E2E calls with `prompt: "--version"` and with `model: "--yolo"`, both refused by the schema with `must not start with '-'`, and no stub is launched. `registry.test.ts` asserts that a harness with a `promptFlag` emits it at `argv.length - 2` and nowhere earlier, so nothing sits between a value-taking flag and its value; `assertRegistryInvariants()`, which the server runs at startup, additionally refuses a registry that declares the flag twice |
-| A malformed registry entry stops the server | `registry.test.ts` feeds the argv assertions five broken entries — a prompt that is not the last argument, a mode advertised but rejected, a mode accepted but not advertised, a model option wedged between a prompt flag and its value, and a dropped prompt flag — and each is refused with a message naming the problem. `server.ts` runs the entry-level check while loading, so a broken entry fails at startup rather than during a real turn. Because that startup probe supplies no model, `server.ts` also runs `assertArgv()` against the arguments of every call it is about to execute, and a separate test feeds `assertArgv()` a builder whose defect only appears once a model is supplied |
-| Authority is explicit and never downgraded | `delegate_run` selecting `opencode` with `bypassPermissions` fails with `not available for this harness`, and no turn stub is launched |
+| A malformed registry entry stops the server | `registry.test.ts` must reject malformed argv entries: a prompt that is not last, a model option wedged between a prompt flag and its value, and a dropped or duplicated prompt flag, with a message naming the problem. `server.ts` runs the entry-level check while loading, so a broken entry fails at startup rather than during a real turn. Because that startup probe supplies no model, `server.ts` also runs `assertArgv()` against the arguments of every call it is about to execute, and a separate test feeds `assertArgv()` a builder whose defect only appears once a model is supplied |
+| No caller permission selector remains | Run schema keys exclude `permissionMode`; status entries exclude `permissionModes`. E2E sends every former mode value to every configured stub harness and requires a strict input error before launch. Registry tests assert fixed native argv, including Codex read-only and AGY's unchanged profile with independent sandbox selection |
 | A failed turn is reported, not thrown away | Non-zero exit, spawn failure, wall-clock expiry, and cache IO failure return failed data with explicit `stop` and captured output. Failed cleanup also prevents a clean result even when the harness exited 0 |
 | Long output completes without loss | Unit and E2E fixtures emit finite oversized streams with final markers, exit successfully, and compare full cached files byte-for-byte; inline previews stay bounded even with legacy large allowances |
 | Limits end the work | E2E reads the stub's PID from its log and waits until the process is really gone after the wall-clock limit |
@@ -40,6 +40,33 @@ and processes. Add `DELEGATE_E2E_REAL=1` for one paid turn against the real
 | A nested server stops | A server started with `DELEGATE_DEPTH=2` refuses every delegation and launches nothing |
 | Shutdown runs once | `lifecycle.test.ts` drives the re-entrant close path and asserts the transport closes exactly once; it fails (`Expected: 1 / Received: 11`) against the naive guard. E2E additionally confirms the server exits 0 with empty stderr on stdin hang-up |
 | Protocol shape holds | Every response the server produces is parsed twice: once as structured content and once from the JSON text fallback, and both must be equal. A call the input schema rejects is answered by the MCP SDK before the delegate handler runs, so it arrives as a text-only error and is not covered here. |
+
+## Permission-control removal — partial verification
+
+Executed checks (not a green full suite or user acceptance):
+
+- `bun run test`: 53 tests passed, with 742 assertions; `models.test.ts` failed
+  to load `@modelcontextprotocol/sdk@1/client/index.js`, so catalog tests did not run.
+- Registry tests: 12 passed, including exact configured default argv for all
+  twelve harnesses, model positions, and independent AGY sandbox selection.
+- Direct schema checks: ordinary requests accepted; removed permission fields
+  absent from input/status and rejected when supplied; startup invariants passed.
+  An earlier implementation check rejected all three former values across twelve IDs.
+- Source compilation: `bun build src/server.ts --target=bun --packages=external
+  --outfile=/dev/null` passed.
+- `bun run check` and `git diff --check` passed.
+- `DELEGATE_E2E=1 bun run tests/e2e.ts`: passed schema/status checks, obsolete-option
+  rejection before launch for every configured stub harness, and fixed native argv.
+  The run later failed at the survivor-shutdown assertion (`ESRCH` checking the
+  supposedly surviving child). A clean HEAD baseline stopped earlier at a stale
+  description assertion, so the later failure's baseline status is **UNVERIFIED**.
+- No live harness turn was run for this permission-control removal.
+
+The reported pre-change baseline was 61 passing tests plus a separate
+`models.test.ts` SDK@1/client loader error, not a green full suite.
+
+The dated verification sections below are preserved historical evidence.
+Their mode-selection claims are obsolete, not current acceptance guarantees.
 
 ## Current verification — 2026-10-15
 
@@ -174,8 +201,8 @@ this package and need not be repeated when those links already exist.
 
 Then, from a main agent that has the `delegate` MCP server connected:
 
-1. **Inspect:** Call `delegate_status`. Expect configured entries with supported
-    modes, name-matched Zen hints and listing support, and separate missing, unconfigured or unknown entries with
+1. **Inspect:** Call `delegate_status`. Expect configured entries without
+   `permissionModes`, with name-matched Zen hints and listing support, and separate missing, unconfigured or unknown entries with
    reasons; neither an alias nor a catalog is enough to become selectable.
 2. **Refresh:** After an intentional account/configuration change, call status
    with `refresh: true`. Expect the same three tools and updated readiness; a
@@ -190,10 +217,11 @@ Then, from a main agent that has the `delegate` MCP server connected:
    network or further delegation. Expect `ok: true` and `stop: "exited"`, or a
    clearly failed run retaining its output; configuration is not a live guarantee.
 5. **Check refusal:** An unknown/unconfigured ID or a prompt of `"--version"`
-   must fail without launching a turn. An unsupported permission mode must also
-   fail; do not use a supported bypass mode without human approval. AGY always
-   uses its approved all-tool autoapproval profile, even for read-only prompts;
-   `permissionMode: "default"` does not restrict it.
+   must fail without launching a turn. The obsolete `permissionMode` option,
+   including `"default"`, must be rejected rather than ignored for every harness.
+   Each harness uses its preconfigured native profile; state read-only or edit
+   scope in the prompt. Prompt scope is not hard enforcement and grants no new
+   authority. AGY retains its fixed headless profile; Codex retains read-only sandbox argv.
 6. **Check limits with stubs:** Use `test:e2e` to verify timeout/lossless-output/cleanup
    behavior without paying for a deliberately interrupted model session.
 ## Cancellation process verification — 2026-10-31
