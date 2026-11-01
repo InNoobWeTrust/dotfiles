@@ -1,22 +1,12 @@
-import { constants } from "node:fs"
-import { access, realpath, stat } from "node:fs/promises"
+import { stat } from "node:fs/promises"
 import { delimiter, dirname, join, resolve } from "node:path"
 import type { Recipe } from "./contracts.ts"
+import { isExecutable } from "./executable.ts"
 import { recipes } from "./recipes.ts"
 
 export interface Discovered extends Recipe {
   executable: string
   source: string
-}
-
-async function executable(path: string): Promise<string | undefined> {
-  try {
-    await access(path, constants.X_OK)
-    if (!(await stat(path)).isFile()) return
-    return await realpath(path)
-  } catch {
-    return
-  }
 }
 
 export async function discover(cwd: string, path = process.env.PATH ?? ""): Promise<Discovered[]> {
@@ -40,7 +30,7 @@ export async function discover(cwd: string, path = process.env.PATH ?? ""): Prom
   for (const recipe of recipes) {
     search: for (const directory of directories) {
       for (const name of recipe.executables) {
-        const candidate = await executable(join(directory.path, name))
+        const candidate = await isExecutable(join(directory.path, name))
         if (!candidate) continue
         // Preserve launcher symlinks (Node shims can depend on their invoked path).
         found.push({ ...recipe, executable: join(directory.path, name), source: directory.source })

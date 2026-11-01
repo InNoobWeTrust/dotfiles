@@ -7,14 +7,23 @@ import {
   locationText,
 } from "../../language-service/protocol/semantics.ts"
 import type { SessionManager } from "../../language-service/sessions.ts"
+import type { ProviderResult, ProviderStatus } from "../../quality/contracts.ts"
+import type { QualityRunner } from "../../quality/run.ts"
 import type { AstGrep } from "../../syntax-search/ast-grep.ts"
-import { absoluteFromUri, displayUri, within } from "../../workspace/paths.ts"
+import {
+  absoluteFromUri,
+  displayUri,
+  resolveWorkspacePath,
+  type WorkspacePath,
+  within,
+} from "../../workspace/paths.ts"
 
 /** Dependencies shared by every tool registration. */
 export interface ToolContext {
   cwd: string
   sessions: SessionManager
   astGrep: AstGrep
+  quality: QualityRunner
 }
 
 export const result = (value: unknown) => ({
@@ -25,6 +34,63 @@ export const error = (cause: unknown) => ({
   ...result({ error: cause instanceof Error ? cause.message : String(cause) }),
   isError: true,
 })
+
+export const causeText = (cause: unknown) =>
+  cause instanceof Error ? cause.message : String(cause)
+
+/** Wraps an existing LSP digest as one readonly provider row. */
+export function providerResult<T>(
+  provider: string,
+  data: T,
+  source: "pull" | "push" | "cache",
+): ProviderResult<T> {
+  return { provider, mechanism: "lsp", status: "ok", data, evidence: { source } }
+}
+
+/** One explicit failure row; never used for path or argument errors. */
+export function providerFailure(
+  provider: string,
+  cause: unknown,
+  status: ProviderStatus = "error",
+): ProviderResult {
+  return {
+    provider,
+    mechanism: "lsp",
+    status,
+    evidence: { source: "pull" },
+    note: causeText(cause),
+  }
+}
+
+const missingServer = /^No (?:installed language server|language server recipe)/
+const badArgument =
+  /^(?:Language server '.*' is not installed|No language server session is warm yet|Several language server sessions are warm|No session is warm and no single server can be inferred)/
+
+/** True for caller mistakes that stay call-level errors instead of provider rows. */
+export function badArgumentError(cause: unknown): boolean {
+  return badArgument.test(causeText(cause))
+}
+
+/** Missing server degrades to not-applicable; launch and capability failures stay errors. */
+export function lspFailure(cause: unknown): ProviderResult {
+  return providerFailure(
+    "lsp",
+    cause,
+    missingServer.test(causeText(cause)) ? "not-applicable" : "error",
+  )
+}
+
+/**
+ * Resolves and reads the target before any provider work, so containment and
+ * unreadable-file failures stay call-level errors rather than provider rows.
+ */
+export async function validateTarget(
+  cwd: string,
+  file: string,
+): Promise<WorkspacePath & { content: string }> {
+  const resolved = await resolveWorkspacePath(cwd, file)
+  return { ...resolved, content: await readFile(resolved.path, "utf8") }
+}
 
 export const readOnly = { readOnlyHint: true, destructiveHint: false, openWorldHint: false }
 export const mutating = { readOnlyHint: false, destructiveHint: true, openWorldHint: false }

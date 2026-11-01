@@ -622,6 +622,8 @@ require("lazy").setup({
                         "ts_ls",
                         "tailwindcss",
                         "vue_ls",
+                        --- TOML
+                        "tombi",
                         --- Python
                         "ty",
                         -- Typst

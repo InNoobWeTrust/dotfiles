@@ -126,6 +126,15 @@ export const recipes: Recipe[] = [
     caveat: "Bare stdio launch documented by nvim-lspconfig; not locally runtime-verified.",
   },
   {
+    id: "toml",
+    name: "tombi",
+    executables: ["tombi"],
+    args: ["lsp"],
+    languageIds: ["toml"],
+    extensions: [".toml"],
+    languages: { ".toml": "toml" },
+  },
+  {
     id: "yaml",
     name: "yaml-language-server",
     executables: ["yaml-language-server"],

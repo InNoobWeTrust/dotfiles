@@ -2,18 +2,86 @@ version = 1
 
 [envs.core-utils]
 channels = ["conda-forge"]
-dependencies = { ripgrep = "*", fd-find = "*", bat = "*", zoxide = "*", zsh-autosuggestions = "*", eza = "*", 7zip = "*", yazi = "*", git = "*", lazygit = "*", starship = "*", coreutils = "*", tmux = "*", socat = "*", trash-cli = "*" }
-exposed = { rg = "rg", fd = "fd", bat = "bat", zoxide = "zoxide", eza = "eza", 7z = "7z", 7za = "7za", 7zr = "7zr", 7zz = "7zz", yazi = "yazi", ya = "ya", git = "git", lazygit = "lazygit", starship = "starship", sha256sum = "sha256sum", tmux = "tmux", socat = "socat", trash = "trash", trash-put = "trash-put", trash-list = "trash-list", trash-restore = "trash-restore", trash-empty = "trash-empty", trash-rm = "trash-rm" }
+
+[envs.core-utils.dependencies]
+ripgrep = "*"
+fd-find = "*"
+bat = "*"
+zoxide = "*"
+zsh-autosuggestions = "*"
+eza = "*"
+7zip = "*"
+yazi = "*"
+git = "*"
+lazygit = "*"
+starship = "*"
+coreutils = "*"
+tmux = "*"
+socat = "*"
+trash-cli = "*"
+
+[envs.core-utils.exposed]
+rg = "rg"
+fd = "fd"
+bat = "bat"
+zoxide = "zoxide"
+eza = "eza"
+7z = "7z"
+7za = "7za"
+7zr = "7zr"
+7zz = "7zz"
+yazi = "yazi"
+ya = "ya"
+git = "git"
+lazygit = "lazygit"
+starship = "starship"
+sha256sum = "sha256sum"
+tmux = "tmux"
+socat = "socat"
+trash = "trash"
+trash-put = "trash-put"
+trash-list = "trash-list"
+trash-restore = "trash-restore"
+trash-empty = "trash-empty"
+trash-rm = "trash-rm"
 
 [envs.dev]
 channels = ["conda-forge"]
-dependencies = { gh = "*", bun = "*", uv = "*", go = "*", nodejs = ">=24.11,<25", typst = "*", nvim = "*", helix = "*" }
-exposed = { gh = "gh", bun = "bun", bunx = "bunx", uv = "uv", uvx = "uvx", go = "go", node = "node", npm = "npm", npx = "npx", typst = "typst", nvim = "nvim", hx = "hx" }
+
+[envs.dev.dependencies]
+gh = "*"
+bun = "*"
+uv = "*"
+go = "*"
+nodejs = ">=24.11,<25"
+typst = "*"
+nvim = "*"
+helix = "*"
+
+[envs.dev.exposed]
+gh = "gh"
+bun = "bun"
+bunx = "bunx"
+uv = "uv"
+uvx = "uvx"
+go = "go"
+node = "node"
+npm = "npm"
+npx = "npx"
+typst = "typst"
+nvim = "nvim"
+hx = "hx"
 
 [envs.system-tools]
 channels = ["conda-forge"]
-dependencies = { btop = "*", rclone = "*" }
-exposed = { btop = "btop", rclone = "rclone" }
+
+[envs.system-tools.dependencies]
+btop = "*"
+rclone = "*"
+
+[envs.system-tools.exposed]
+btop = "btop"
+rclone = "rclone"
 
 ###############################################################################
 # Optional environments in bootstrap.sh
@@ -22,31 +90,108 @@ exposed = { btop = "btop", rclone = "rclone" }
 
 [envs.networks]
 channels = ["conda-forge"]
-dependencies = { tailscale = "==1.104.1", tailscaled = "==1.104.1" }
-exposed = { tailscale = "tailscale", tailscaled = "tailscaled" }
+
+[envs.networks.dependencies]
+tailscale = "==1.104.1"
+tailscaled = "==1.104.1"
+
+[envs.networks.exposed]
+tailscale = "tailscale"
+tailscaled = "tailscaled"
 
 [envs.containers]
 channels = ["conda-forge"]
 # Keep kind/node and kubectl versions aligned with .config/kind/local.yaml.
-dependencies = { act = "*", lazydocker = "*", k9s = "*", kubernetes-kind = "0.33.*", kubernetes-client = "1.34.*" }
-exposed = { act = "act", lazydocker = "lazydocker", k9s = "k9s", kind = "kind", kubectl = "kubectl" }
+
+[envs.containers.dependencies]
+act = "*"
+lazydocker = "*"
+k9s = "*"
+kubernetes-kind = "0.33.*"
+kubernetes-client = "1.34.*"
+
+[envs.containers.exposed]
+act = "act"
+lazydocker = "lazydocker"
+k9s = "k9s"
+kind = "kind"
+kubectl = "kubectl"
 
 [envs.db]
 channels = ["conda-forge"]
-dependencies = { visidata = "*", harlequin = "*" }
-exposed = { vd = "vd", visidata = "visidata", harlequin = "harlequin", hsql = "hsql" }
+
+[envs.db.dependencies]
+visidata = "*"
+harlequin = "*"
+
+[envs.db.exposed]
+vd = "vd"
+visidata = "visidata"
+harlequin = "harlequin"
+hsql = "hsql"
 
 [envs.lsp]
 channels = ["conda-forge"]
 # Typst, Rust, Python, JS/TS, shell, TOML, YAML, and web/config languages.
 # Include TypeScript itself for typescript-language-server; keep Node on the dev release line.
-dependencies = { ast-grep = ">=0.51,<0.52", tinymist = "*", rust-analyzer = "*", ty = "*", ruff = "*", typescript-language-server = "*", typescript = "*", nodejs = ">=22,<25", bash-language-server = "*", shellcheck = "*", yaml-language-server = "*", taplo = "*", vscode-langservers-extracted = "*" }
-exposed = { ast-grep = "ast-grep", tinymist = "tinymist", rust-analyzer = "rust-analyzer", ty = "ty", ruff = "ruff", typescript-language-server = "typescript-language-server", bash-language-server = "bash-language-server", shellcheck = "shellcheck", yaml-language-server = "yaml-language-server", taplo = "taplo", vscode-json-language-server = "vscode-json-language-server", vscode-html-language-server = "vscode-html-language-server", vscode-css-language-server = "vscode-css-language-server", vscode-eslint-language-server = "vscode-eslint-language-server", vscode-markdown-language-server = "vscode-markdown-language-server" }
+
+[envs.lsp.dependencies]
+ast-grep = ">=0.51,<0.52"
+tinymist = "*"
+rust-analyzer = "*"
+ty = "*"
+ruff = "*"
+typescript-language-server = "*"
+typescript = "*"
+nodejs = ">=22,<25"
+bash-language-server = "*"
+shellcheck = "*"
+yaml-language-server = "*"
+tombi = "*"
+vscode-langservers-extracted = "*"
+eslint = "*"
+gopls = "*"
+staticcheck = "*"
+yamllint = "*"
+actionlint = "*"
+markdownlint-cli2 = "*"
+stylelint = "*"
+
+[envs.lsp.exposed]
+ast-grep = "ast-grep"
+tinymist = "tinymist"
+rust-analyzer = "rust-analyzer"
+ty = "ty"
+ruff = "ruff"
+typescript-language-server = "typescript-language-server"
+bash-language-server = "bash-language-server"
+shellcheck = "shellcheck"
+yaml-language-server = "yaml-language-server"
+tombi = "tombi"
+vscode-json-language-server = "vscode-json-language-server"
+vscode-html-language-server = "vscode-html-language-server"
+vscode-css-language-server = "vscode-css-language-server"
+vscode-eslint-language-server = "vscode-eslint-language-server"
+vscode-markdown-language-server = "vscode-markdown-language-server"
+eslint = "eslint"
+gopls = "gopls"
+staticcheck = "staticcheck"
+yamllint = "yamllint"
+actionlint = "actionlint"
+markdownlint-cli2 = "markdownlint-cli2"
+stylelint = "stylelint"
 
 # Rust toolchain for building and running projects; the Rust analyzer stays in `lsps`.
 # Include pkg-config + openssl so native crate builds (openssl-sys) resolve the
 # environment's OpenSSL instead of falling through to Homebrew's.
 [envs.rust]
 channels = ["conda-forge"]
-dependencies = { rust = "*", pkg-config = "*", openssl = "*" }
-exposed = { cargo = "cargo", rustc = "rustc" }
+
+[envs.rust.dependencies]
+rust = "*"
+pkg-config = "*"
+openssl = "*"
+
+[envs.rust.exposed]
+cargo = "cargo"
+rustc = "rustc"

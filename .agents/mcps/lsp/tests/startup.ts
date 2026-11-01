@@ -79,9 +79,14 @@ try {
         name: "hover",
         arguments: { file: "scratch.py", line: 1, character: 1 },
       })
-      assert.equal(failed.isError, true)
+      assert.notEqual(failed.isError, true)
       const content = failed.content as { text: string }[]
-      assert.equal(JSON.parse(content[0]?.text ?? "null").error, failure)
+      const providers = JSON.parse(content[0]?.text ?? "null")
+      assert(Array.isArray(providers))
+      assert.equal(providers.length, 1)
+      assert.equal(providers[0].mechanism, "lsp")
+      assert.equal(providers[0].status, "error")
+      assert.equal(providers[0].note, failure)
     }
     assert((await isolatedClient.listTools()).tools.some((tool) => tool.name === "ast_grep_search"))
     console.log("PASS static tools without client dependency, semantic errors and slot recovery")

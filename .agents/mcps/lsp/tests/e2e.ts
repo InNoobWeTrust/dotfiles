@@ -122,6 +122,25 @@ async function connect(extra: Record<string, string> = {}) {
   return client
 }
 
+interface ProviderEnvelope<T> {
+  provider: string
+  mechanism: "lsp" | "cli"
+  status: "ok" | "unavailable" | "not-applicable" | "error"
+  data?: T
+  note?: string
+  evidence: { source: string }
+}
+const semanticTools = new Set([
+  "hover",
+  "definition",
+  "references",
+  "symbols",
+  "workspace_symbols",
+  "diagnostics",
+])
+
+// Keep every original digest assertion below, but validate the new wire envelope
+// before unwrapping it. Raw requests and edit results are deliberately untouched.
 async function call<T>(client: Client, name: string, args: object): Promise<T> {
   const response = await client.callTool({ name, arguments: args })
   assert.notEqual(
@@ -129,7 +148,39 @@ async function call<T>(client: Client, name: string, args: object): Promise<T> {
     true,
     `${name} failed: ${(response.content as { text: string }[])[0]?.text}`,
   )
-  return decode<T>(response)
+  if (!semanticTools.has(name)) return decode<T>(response)
+  const providers = decode<ProviderEnvelope<T>[]>(response)
+  assert(Array.isArray(providers), `${name} must return a literal array`)
+  if (name !== "diagnostics") assert.equal(providers.length, 1)
+  const selected = providers[0]
+  assert(selected)
+  assert.equal(selected.mechanism, "lsp")
+  assert.equal(selected.status, "ok", selected.note)
+  assert(selected.provider)
+  assert(selected.evidence.source)
+  assert(selected.data !== undefined, `${name} must preserve the digest in [0].data`)
+  if (name === "diagnostics") {
+    const file = (args as { file: string }).file
+    const expected = file.endsWith(".py") ? "ruff" : file.endsWith(".sh") ? "shellcheck" : undefined
+    if (expected) {
+      const cli = providers.find((entry) => entry.provider === expected)
+      assert(cli, `${expected} must be included even on a hermetic PATH`)
+      assert.equal(cli.mechanism, "cli")
+      assert.equal(cli.status, "unavailable")
+    }
+  }
+  return selected.data
+}
+
+async function providerFailure(client: Client, name: string, args: object, status: string) {
+  const response = await client.callTool({ name, arguments: args })
+  assert.notEqual(response.isError, true)
+  const providers = decode<ProviderEnvelope<unknown>[]>(response)
+  assert(Array.isArray(providers))
+  assert.equal(providers.length, 1)
+  assert.equal(providers[0]?.mechanism, "lsp")
+  assert.equal(providers[0]?.status, status)
+  return providers[0]?.note ?? ""
 }
 
 async function fails(client: Client, name: string, args: object): Promise<string> {
@@ -165,7 +216,7 @@ async function waitForDead(pid: number, ms = 5000) {
 }
 
 async function metadataCheck() {
-  assert.equal(recipes.length, 18)
+  assert.equal(recipes.length, 19)
   assert.equal(new Set(recipes.map((recipe) => recipe.id)).size, recipes.length)
   // Snapshot of Mason registry package identities, not lspconfig aliases or binary names.
   assert.deepEqual(Object.fromEntries(recipes.map(({ id, name }) => [id, name])), {
@@ -181,6 +232,7 @@ async function metadataCheck() {
     markdown: "marksman",
     typst: "tinymist",
     makefile: "autotools-language-server",
+    toml: "tombi",
     yaml: "yaml-language-server",
     json: "json-lsp",
     html: "html-lsp",
@@ -211,6 +263,11 @@ async function metadataCheck() {
     recipeLanguages("go.work").map(({ recipe }) => recipe.id),
     ["go"],
   )
+  assert.deepEqual(
+    recipeLanguages("settings.toml").map(({ recipe, languageId }) => [recipe.id, languageId]),
+    [["toml", "toml"]],
+  )
+  assert.deepEqual(recipes.find(({ id }) => id === "toml")?.args, ["lsp"])
   assert.deepEqual(recipeLanguages("unknown.zzz"), [])
   assert.equal(recipeLanguages("module.pyi")[0]?.recipe.id, "ty")
   const records = await discover(workspace, globalBin)
@@ -267,6 +324,7 @@ async function reuseCheck() {
   assert.equal(after.processId, pid)
   assert.equal(await readPid("ty.pid"), pid)
   await client.close()
+  assert(await waitForDead(pid), "closing MCP must stop its owned LSP child")
 }
 
 async function conversionCheck() {
@@ -462,7 +520,7 @@ async function capabilityCheck() {
   const client = await connect()
   await writeFile(join(workspace, "cap.sh"), "echo cap\n")
   assert.match(
-    await fails(client, "references", { file: "cap.sh", line: 1, character: 1 }),
+    await providerFailure(client, "references", { file: "cap.sh", line: 1, character: 1 }, "error"),
     /does not support textDocument\/references/,
   )
   await client.close()
@@ -487,6 +545,7 @@ async function renameCheck() {
     files: { file: string; edits: number; changed: boolean }[]
     totalEdits: number
   }>(client, "rename", { file: "ren.py", line: 1, character: 1, new_name: "fresh" })
+  assert.equal(Array.isArray(applied), false, "edits remain a single result")
   assert.equal(applied.applied, true)
   assert.equal(applied.totalEdits, 2)
   assert.deepEqual(
@@ -536,6 +595,7 @@ async function formatCheck() {
     files: { file: string; edits: number; changed: boolean }[]
     totalEdits: number
   }>(client, "format", { file: "fmt.py" })
+  assert.equal(Array.isArray(applied), false, "edits remain a single result")
   assert.equal(applied.applied, true)
   assert.equal(applied.totalEdits, 1)
   assert.equal(applied.files[0]?.file, "fmt.py")
@@ -676,8 +736,13 @@ async function surfaceCheck() {
   )
   await writeFile(join(workspace, "out.zzz"), "x\n")
   assert.match(
-    await fails(client, "hover", { file: "out.zzz", line: 1, character: 1 }),
-    /No language server recipe/,
+    await providerFailure(
+      client,
+      "hover",
+      { file: "out.zzz", line: 1, character: 1 },
+      "not-applicable",
+    ),
+    /No language server recipe|no installed language server/i,
   )
   assert.match(
     await fails(client, "hover", {

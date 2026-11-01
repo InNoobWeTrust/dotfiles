@@ -1,20 +1,41 @@
 import type { McpServer } from "@modelcontextprotocol/sdk@1/server/mcp.js"
 import { caps, requireCapability, symbolDigest } from "../../language-service/protocol/semantics.ts"
+import type { AcquiredSession } from "../../language-service/sessions.ts"
 import { displayUri } from "../../workspace/paths.ts"
-import { error, fileShape, readOnly, result, type ToolContext } from "./context.ts"
+import {
+  error,
+  fileShape,
+  lspFailure,
+  providerFailure,
+  providerResult,
+  readOnly,
+  result,
+  type ToolContext,
+  validateTarget,
+} from "./context.ts"
 
 export function registerSymbolsTool(server: McpServer, context: ToolContext) {
   server.registerTool(
     "symbols",
     {
       description:
-        "Document symbols for a file, as a compact hierarchical digest with kinds and 1-based selection starts. Starts and syncs the language server automatically.",
+        "Document outline for a file. Returns a one-element array with the selected server's hierarchical symbol digest.",
       inputSchema: fileShape,
       annotations: readOnly,
     },
     async ({ file: target }) => {
       try {
-        const acquired = await context.sessions.acquire(target)
+        await validateTarget(context.cwd, target)
+      } catch (cause) {
+        return error(cause)
+      }
+      let acquired: AcquiredSession
+      try {
+        acquired = await context.sessions.acquire(target)
+      } catch (cause) {
+        return result([lspFailure(cause)])
+      }
+      try {
         requireCapability(
           acquired.session.client.capabilities,
           "documentSymbolProvider",
@@ -29,9 +50,9 @@ export function registerSymbolsTool(server: McpServer, context: ToolContext) {
           (uri) => displayUri(acquired.file.root, uri),
           caps.symbols,
         )
-        return result(digest)
+        return result([providerResult(acquired.session.recipeId, digest, "pull")])
       } catch (cause) {
-        return error(cause)
+        return result([providerFailure(acquired.session.recipeId, cause)])
       }
     },
   )
