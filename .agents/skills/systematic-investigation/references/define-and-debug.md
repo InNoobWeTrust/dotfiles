@@ -59,11 +59,14 @@ reporting an unresolved diagnosis.
 
 **BEFORE attempting durable remediation:**
 
-1. **Read Error Messages Carefully** — Don't skip past errors or warnings
-2. **Reproduce Consistently** — Can you trigger it reliably? What are exact steps?
-3. **Check Recent Changes** — What changed that could cause this?
-4. **Gather Evidence in Multi-Component Systems** — Add diagnostic instrumentation at each boundary layer (log what enters, what exits, verify environment/config propagation)
-5. **Trace Data Flow** — Where does the bad value originate? What called this with bad value? Keep tracing backward until you find the source. Fix at source, not symptom.
+1. **Read and Frame the Symptom** — Read errors/warnings carefully; capture observed versus expected behavior and known component/version/environment. Gather enough initial evidence to search, not a complete causal explanation.
+2. **Check Existing Knowledge Early** — Ask who else has encountered this. Perform the bounded [existing-knowledge check](existing-knowledge.md) before lengthy reproduction, instrumentation or source tracing. Search relevant internet documentation, known issues, trackers and practitioner cases; record candidate applicability and a distinguishing local check, or an explicit exception/access gap. A perfect reproduction is not required to begin searching.
+3. **Reproduce Consistently** — Can you trigger it reliably? What are exact steps? Use this evidence to test candidates, not to assume a matching online symptom has the same cause.
+4. **Check Recent Changes** — What changed that could cause this? Refine the known-report search when versions, subsystem or signature become clearer.
+5. **Gather Evidence in Multi-Component Systems** — Add diagnostic instrumentation at each boundary layer (log what enters, what exits, verify environment/config propagation)
+6. **Trace Data Flow** — Where does the bad value originate? What called this with bad value? Keep tracing backward until you find the source. Fix at source, not symptom.
+
+**Bound diagnosis as well as fixes:** name the next discriminating observation and a time/attempt allowance. If the allowance expires or equivalent checks repeat without new evidence, pause that approach, preserve history, reframe the symptom and refresh external knowledge or seek an authorized outside perspective. Resume only with a supported bounded next check; otherwise hand off unresolved findings. Do not spend hours diagnosing merely because no fix has yet failed.
 
 **Silent failures:** If there are NO error messages — hanging processes, timing-dependent behavior, memory leaks, or silent data corruption — treat the absence of observable errors as the symptom to investigate. Define "correct behavior" first, then find where reality diverges.
 
@@ -71,7 +74,7 @@ reporting an unresolved diagnosis.
 
 **Find the pattern before fixing:**
 
-1. **Find Working Examples** — Locate similar working code in same codebase
+1. **Find Working Examples** — Locate similar working code in the same codebase and relevant upstream/reference cases; recheck applicability rather than copying a remedy
 2. **Compare Against References** — Read reference implementations COMPLETELY (don't skim)
 3. **Identify Differences** — What's different between working and broken?
 4. **Understand Dependencies** — What other components, settings, environment does this need?
@@ -93,9 +96,9 @@ reporting an unresolved diagnosis.
 2. **Implement Single Fix** — Address root cause identified, ONE change at a time
 3. **Verify Fix** — Test passes now? No other tests broken?
 4. **If Fix Doesn't Work:**
-   - If < 3 fixes: Return to Phase 1, re-analyze with new information
-   - If ≥ 3 fixes: STOP and assess. Two possible patterns:
-     - **Each fix reveals new shared state/coupling/problem in different place** → architectural problem, question fundamentals
+   - If < 3 fixes: Return to Phase 1 only with new evidence or a changed falsifiable hypothesis and bounded next check; the count is not permission to repeat an unproductive attempt.
+   - If ≥ 3 fixes, or diagnosis is already stalled: STOP and reassess the problem framing, known upstream reports and alternatives. Failure count alone does not establish an architectural cause. Possible patterns:
+     - **Each fix reveals new shared state/coupling/problem in different place** → investigate architectural coupling as a hypothesis, not a foregone conclusion
      - **Root cause found but fix is outside your control** (external dependency, vendor API, legacy system) → document the constraint, implement appropriate handling (retry, timeout, error message), add monitoring
 
 **Note on external root causes:** If evidence traces the problem to something you don't own or can't change (vendor API behavior, external service, OS-level issue), document the constraint and distinguish completed diagnosis from verified remediation. Propose appropriate handling within authority; mitigation does not establish that the external cause is resolved.
@@ -107,7 +110,8 @@ reporting an unresolved diagnosis.
 - Proposing durable fixes before tracing data flow
 - **"One more fix attempt"** (when already tried 2+)
 - Each fix reveals new problem in different place
-- 3+ fixes failed = architectural problem, question fundamentals
+- 3+ fixes failed, or diagnosis repeats without new evidence: reassess assumptions and existing knowledge; do not infer an architectural cause from the count alone
+- Treating a similar search hit as causal proof, or no search hits as proof of novelty
 
 ### Debugging Rationalizations (STOP and follow process)
 
@@ -119,5 +123,8 @@ reporting an unresolved diagnosis.
 | "I'll write test after confirming fix works" | Untested fixes don't stick |
 | "Multiple fixes at once saves time" | Can't isolate what worked, causes new bugs |
 | "Reference too long, I'll adapt the pattern" | Partial understanding guarantees bugs |
+| "Our issue must be unique; keep tracing locally" | Search existing knowledge after initial framing; refine with new evidence rather than assume novelty |
+| "No fixes have failed, so diagnosis can continue indefinitely" | Budget diagnostic checks too; stalled evidence gathering requires reassessment |
+| "Someone online fixed it this way" | Check environment, mechanism and a distinguishing local prediction before adopting the remedy |
 
 ---

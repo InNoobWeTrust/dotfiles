@@ -3,6 +3,8 @@ name: systematic-investigation
 description: "Use this skill when debugging, troubleshooting, or investigating why something is broken or behaving unexpectedly, including slowness, poor scaling, stalled workers and scaling regressions. Applies structured frameworks (5 Whys, Fishbone, First Principles, OODA) to investigate causes before durable fixes, with optional Cynefin context triage. Also use for pre-mortems, assumption challenges, and architectural decisions that need rigorous analysis. Activate when the user is stuck in circles, facing recurring failures, or asks \"why does this keep happening\" — even if they frame it as \"just fix this bug.\""
 metadata:
   cynefin-review: "Prototype lens, 2026-10-31; official-source and source-level checks only, live efficacy unverified. Review after 1–2 real uses."
+  existing-knowledge-review: "Source-backed methodology prototype; practitioner guidance and two same-author incident accounts, not a field efficacy trial. Review early-search timing, stall recovery and overhead after 1–2 real uses."
+  existing-knowledge-aci: "Source-interface check: explicit inputs/output, early/refined search timing, budget/stop and unavailable-access contracts, worked incident, bundled resources and no sibling prerequisites. Standalone-copy scan performed; real agent compliance and efficacy unverified."
 ---
 
 # Systematic Investigation
@@ -10,7 +12,7 @@ metadata:
 Structured problem-solving — not guess-and-check. Before diagnosing, read [Diagnostic working principles](references/working-principles.md#diagnosis); proposed fixes and actually verified remediation must remain distinct.
 
 ```
-DEFINE → ANALYZE → SOLVE & ACT → CHALLENGE
+DEFINE → CHECK EXISTING KNOWLEDGE → ANALYZE → SOLVE & ACT → CHALLENGE
 ```
 
 **Iron law:** no durable fixes without root-cause investigation and supporting evidence first. Explicitly authorized containment and bounded hypothesis probes are not fixes or verified resolution; leave their causal status unresolved.
@@ -45,12 +47,13 @@ Load **one** deep ref at a time. Elicitation second pass: `references/elicitatio
 ## Mandatory flow
 
 1. **Define** — 5W statement: *"[Who] experiences [What] in [Where] since [When], causing [impact]."* Load `references/define-and-debug.md` if tangled or technical.
-2. **Analyze** — pick an applicable method; load `references/root-cause-frameworks.md` for causal analysis. Confirm causal claims with **evidence** before durable remediation; retain multiple causes or unresolved hypotheses where warranted. A complex context may need a bounded probe rather than a forced linear root cause.
+2. **Check existing knowledge** — once the symptom is clear enough to search meaningfully, ask **“Who else has encountered this, and what existing explanation or solution could apply?”** Before deep local diagnosis, read and perform the bounded [existing-knowledge check](references/existing-knowledge.md). Search authorized internet sources for prior reports, known issues and solutions; do not wait for a fully localized cause. Verify candidate applicability and causal predictions locally. Record unavailable/unauthorized retrieval or an evidenced immediate-cause bypass; do not delay authorized emergency containment. Refine searches as evidence changes.
+3. **Analyze** — pick an applicable method; load `references/root-cause-frameworks.md` for causal analysis. Confirm causal claims with **evidence** before durable remediation; retain multiple causes or unresolved hypotheses where warranted. A complex context may need a bounded probe rather than a forced linear root cause.
    Before promoting a consequential conclusion or recovering failed work, read [Scope-bounded evidence and recovery](references/evidence-and-recovery.md).
-3. **Governance capture** (if AI/process gap) — note the rule/skill gap for an authorized guidance-maintenance audit (advisory).
-4. **Solve** — 5 Hows or OODA/PDCA; load `references/solve-and-challenge.md`. Durable fixes address evidenced causes, not symptoms. One change at a time. For emergency containment before diagnosis, follow the human-authorized scope and unresolved-status path in `references/define-and-debug.md`; otherwise escalate without acting.
-5. **Challenge** — pre-mortem / adversarial vectors; PROCEED | REVISE | RETHINK. Optional: elicitation methods.
-6. **Report** — use `references/report-template.md` when handing off or documenting.
+4. **Governance capture** (if AI/process gap) — note the rule/skill gap for an authorized guidance-maintenance audit (advisory).
+5. **Solve** — 5 Hows or OODA/PDCA; load `references/solve-and-challenge.md`. Durable fixes address evidenced causes, not symptoms. One change at a time. For emergency containment before diagnosis, follow the human-authorized scope and unresolved-status path in `references/define-and-debug.md`; otherwise escalate without acting.
+6. **Challenge** — pre-mortem / adversarial vectors; PROCEED | REVISE | RETHINK. Optional: elicitation methods.
+7. **Report** — use `references/report-template.md` when handing off or documenting.
 
 ---
 
@@ -58,6 +61,8 @@ Load **one** deep ref at a time. Elicitation second pass: `references/elicitatio
 
 - "Quick fix now, investigate later" presented as resolution; containment without specific human authorization
 - Multiple fixes at once; 3+ failed fixes without re-analysis
+- Deep local diagnosis without checking known solutions or recording a justified exception
+- Diagnosis repeats checks without new evidence or exhausts its declared budget: pause, reframe and refresh external knowledge or seek an authorized outside perspective before another equivalent attempt; do not wait for failed fixes
 - Proposing durable fixes before tracing data flow
 - "Just try X and see"
 
@@ -66,6 +71,7 @@ Load **one** deep ref at a time. Elicitation second pass: `references/elicitatio
 ## Done checklist
 
 - [ ] Problem defined clearly (5W)
+- [ ] Existing-knowledge check performed before deep diagnosis, or explicit exception/access gap recorded; candidate sources/applicability and next distinguishing check retained; stalled work reassessed without erasing history
 - [ ] Status distinguishes verified remediation from unresolved diagnosis, containment or probes
 - [ ] For durable remediation: causal explanation confirmed with evidence and solution addresses it
 - [ ] For containment/probes: authority, limits, observations, stop/rollback and next review recorded; no resolution claim

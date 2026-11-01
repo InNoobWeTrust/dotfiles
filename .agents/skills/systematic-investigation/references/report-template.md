@@ -6,6 +6,7 @@ root cause or checking remediation items as complete; state its status explicitl
 
 - [ ] Problem **defined clearly** (someone uninvolved could understand it)
 - [ ] Status and verification scope explicitly stated
+- [ ] Early existing-knowledge check and any stall-triggered refresh recorded, or explicit exception/access gap; source applicability and next distinguishing check retained
 - [ ] For durable remediation: causal explanation **confirmed with evidence** (not just a theory); multiple contributing causes retained where warranted
 - [ ] For durable remediation: solution addresses the **evidenced causes**, not just the symptom
 - [ ] Solution **challenged from first principles** (Phase 4)
@@ -39,6 +40,8 @@ Fill this out when systematically tackling a problem.
 - **Statement:** "[Who] experiences [What] in [Where] since [When], causing [impact]."
 
 ## 2. Root Cause Analysis
+
+**Existing-knowledge check:** [query/problem framing; source URLs + relevant versions/conditions; candidate/rejected explanation + reason; next distinguishing check and observed result if executed; or justified bypass/unavailable retrieval. Record stall-triggered refresh and remaining uncertainty where applicable. No hits do not establish novelty.]
 
 ### Method: [5 Whys / Ishikawa / Iceberg / First Principles]
 
