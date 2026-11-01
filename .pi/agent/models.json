@@ -80,68 +80,129 @@
           "maxTokens": 16384
         },
         {
-          "id": "dots-studio/dots-3-note-preview:free",
-          "name": "Kilo Dots 3 Note Preview (Free)",
+          "id": "kilo-auto/free",
+          "name": "Kilo Auto Free",
           "reasoning": true,
-          "input": ["text", "image"],
-          "contextWindow": 131072,
-          "maxTokens": 16384
-        },
-        {
-          "id": "poolside/laguna-s-2.1:free",
-          "name": "Kilo Laguna S 2.1 (Free)",
-          "reasoning": false,
           "input": ["text"],
-          "contextWindow": 131072,
-          "maxTokens": 16384
-        },
-        {
-          "id": "poolside/laguna-xs-2.1:free",
-          "name": "Kilo Laguna XS 2.1 (Free)",
-          "reasoning": false,
-          "input": ["text"],
-          "contextWindow": 131072,
-          "maxTokens": 16384
+          "contextWindow": 256000,
+          "maxTokens": 32768,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
         },
         {
           "id": "nvidia/nemotron-3.5-super-vl:free",
           "name": "Kilo Nemotron 3.5 Super VL (Free)",
-          "reasoning": false,
+          "reasoning": true,
           "input": ["text", "image"],
-          "contextWindow": 131072,
-          "maxTokens": 16384
-        },
-        {
-          "id": "recursive/flint-v1.0:free",
-          "name": "Kilo Flint v1.0 (Free)",
-          "reasoning": false,
-          "input": ["text"],
-          "contextWindow": 131072,
-          "maxTokens": 16384
+          "contextWindow": 1000000,
+          "maxTokens": 131072,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
         },
         {
           "id": "reflection/beam-free",
           "name": "Kilo Beam (Free)",
-          "reasoning": false,
+          "reasoning": true,
           "input": ["text"],
-          "contextWindow": 131072,
-          "maxTokens": 16384
+          "contextWindow": 1048576,
+          "maxTokens": 131072,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
         },
         {
           "id": "stealth/glyph-cluster",
           "name": "Kilo Glyph Cluster",
-          "reasoning": false,
+          "reasoning": true,
           "input": ["text"],
-          "contextWindow": 131072,
-          "maxTokens": 16384
+          "contextWindow": 256000,
+          "maxTokens": 256000,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
+        },
+        {
+          "id": "recursive/flint-v1.0:free",
+          "name": "Kilo Flint v1.0 (Free)",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 262144,
+          "maxTokens": 235929,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
         },
         {
           "id": "xingchen-agi/xing4.0-29b-a4b:free",
           "name": "Kilo Xing 4.0 29B (Free)",
-          "reasoning": false,
+          "reasoning": true,
           "input": ["text"],
-          "contextWindow": 131072,
-          "maxTokens": 16384
+          "contextWindow": 262144,
+          "maxTokens": 235929,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
+        },
+        {
+          "id": "dots-studio/dots-3-note-preview:free",
+          "name": "Kilo Dots 3 Note Preview (Free)",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 512000,
+          "maxTokens": 460800,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
+        },
+        {
+          "id": "liquid/lfm-2.5-2.6b:free",
+          "name": "Kilo LFM 2.5 2.6B (Free)",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 65536,
+          "maxTokens": 8192,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
+        },
+        {
+          "id": "nvidia/nemotron-3.5-lightning:free",
+          "name": "Kilo Nemotron 3.5 Lightning (Free)",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 1000000,
+          "maxTokens": 65536,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
+        },
+        {
+          "id": "cohere/north-mini-code:free",
+          "name": "Kilo North Mini Code (Free)",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 256000,
+          "maxTokens": 64000,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
+        },
+        {
+          "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "name": "Kilo Nemotron 3 Ultra (Free)",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 1000000,
+          "maxTokens": 65536,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
+        },
+        {
+          "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+          "name": "Kilo Nemotron 3 Nano Omni (Free)",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 256000,
+          "maxTokens": 65536,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
+        },
+        {
+          "id": "openrouter/free",
+          "name": "Kilo OpenRouter Free Models Router",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 200000,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
+        },
+        {
+          "id": "inclusionai/ling-3.1-flash-1019-free",
+          "name": "Kilo Ling 3.1 Flash 1019 (Free)",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 1000000,
+          "maxTokens": 262144,
+          "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}
         }
       ]
     }
