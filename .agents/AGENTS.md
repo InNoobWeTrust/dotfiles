@@ -102,6 +102,10 @@ Suitability inspection, including reading `SKILL.md`, does not activate a workfl
 
 `agents/` files are model-routing adapters, not behavioral bootstraps. Final accountability stays with the outermost main; after the required human stack gate, do not invent further approval rituals inside settled scope.
 
+## Code exploration retrieval
+
+When locating or tracing code, prefer the most efficient available capability suited to the question over opening files directly: use LSP symbols, definitions and references for semantic navigation; AST matching for structural patterns; and scoped path/text search for literal names, strings or paths. Read files when those capabilities are unavailable or unsuitable, or when their bounded results cannot provide needed implementation or wiring context. Do not force failed calls or treat tool output as complete behavioral proof. Do not install tools or use language-server rename/format during read-only exploration. For this installation's LSP/AST capability details, see `mcps/lsp/README.md`; the workflow remains usable through other existing authorized capabilities.
+
 ## Reader and browser defaults
 
 Match content to its reader and purpose; include only what they need to act correctly. Explain where explanation serves that purpose, not by default.

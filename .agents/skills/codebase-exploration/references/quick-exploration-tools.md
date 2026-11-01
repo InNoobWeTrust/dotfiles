@@ -4,7 +4,7 @@ Purpose: choose concise, existing capabilities for 2–3-turn reconnaissance. A 
 
 ## Discover capabilities, do not fetch tools implicitly
 
-Prefer native path/search/read tools, then trusted installed AST/LSP clients. Inspect actual tool schemas or installed-command documentation before use. Package runners such as `npx`, `bunx`, `uvx` or `pkgx` may download and execute code; these examples grant no installation, network or execution authority. Missing tools are a reason to use an available alternative or report a gap, not to install them.
+Choose the most efficient available capability suited to the question: LSP symbols/definitions/references for semantic navigation, AST matching for structural patterns, and scoped path/text search for literal or path questions. Read relevant files when those methods are unavailable or unsuitable, or their bounded results cannot supply needed implementation/wiring context. Inspect actual tool schemas or installed-command documentation before use. Package runners such as `npx`, `bunx`, `uvx` or `pkgx` may download and execute code; do not invoke them implicitly. Missing tools are a reason to use an available alternative or report a gap, not to install them. Do not force unsuccessful calls or treat tool outputs as full behavioral proof.
 
 For LSP definitions/references, bridge lifecycle and fallback, use [Structural tracing](structural-tracing.md). A language server executable is not a generic `symbols` CLI. Never assume server-specific methods or flags.
 
@@ -12,7 +12,7 @@ For LSP definitions/references, bridge lifecycle and fallback, use [Structural t
 
 | Question | Smallest useful evidence |
 |---|---|
-| Where does this behavior live? | Bounded path search, then search entrypoint/feature names and read candidate functions |
+| Where does this behavior live? | Bounded path/workspace-symbol search, then semantic navigation or scoped literal search; read only needed implementation |
 | What does this file expose? | Available document symbols or installed AST parser, followed by exports and their consumers |
 | Which declaration/callers does this name mean? | Supported LSP definition/reference methods; otherwise source/AST tracing with binding uncertainty explicit |
 | Which modules depend on this? | Imports/re-exports plus alias/config resolution; do not equate text matches with resolved edges |
@@ -36,8 +36,8 @@ Restrict directories and patterns first. `--max-count` limits matches per file, 
 
 ## Recon sequence and fallback
 
-1. Locate a few candidate files and manifests.
-2. Inspect symbols/exports and read the relevant implementation and consumers.
+1. Locate candidates with bounded path search or workspace symbols.
+2. Use supported LSP symbols/definitions/references or AST matching to navigate structure; use scoped text search for literals. Read implementation and consumers only where needed to establish context.
 3. Identify entry/registration and next dependency/flow question. Answer a bounded location question with source evidence, or select a deeper exploration strategy.
 
 For slow/failing tools, preserve the failure, narrow scope and use an available simpler capability. Do not kill unrelated user processes. A missing LSP method is not proof of repository complexity or a reason to launch a worker merely to retry it. Do not run a full build for quick reconnaissance; where verification is later required, apply its authorized execution workflow.

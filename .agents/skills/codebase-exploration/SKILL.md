@@ -5,7 +5,7 @@ description: "Use this skill to navigate and map unfamiliar codebases — find w
 
 # Codebase Exploration
 
-Navigate large unfamiliar codebases without reading everything. Before scouting, read [Exploration working principles](references/working-principles.md#exploration). Always **quick recon first**, then decide direct vs deep.
+Navigate large unfamiliar codebases without reading everything. Before scouting, read [Exploration working principles](references/working-principles.md#exploration). Always **quick recon first**, then decide direct vs deep. Prefer task-suitable efficient retrieval over opening files: semantic LSP navigation (symbols, definitions, references), AST matching for structural patterns, and scoped path/text search for literal or path questions. Read files when these capabilities are unavailable or unsuitable, or their bounded outputs cannot supply needed implementation/wiring context. Do not force unsuccessful calls; outputs are evidence, not complete behavioral proof. Never install tools or use language-server rename/format during read-only exploration.
 
 ---
 
@@ -13,9 +13,9 @@ Navigate large unfamiliar codebases without reading everything. Before scouting,
 
 Goal: enough overview to answer or know you need a deep dive.
 
-1. Locate domain (`fd` / glob / path search — limit results).
-2. Identify structure (symbols, exports, routes — concise tools).
-3. Assess complexity (imports, file count, unfamiliar patterns).
+1. Locate the domain with bounded path search or workspace symbols, whichever best fits the question.
+2. Identify structure using supported LSP symbols/definitions/references or AST matching; use scoped text search for literal questions.
+3. Read relevant source only as needed to establish implementation, callers, wiring or behavior beyond tool output; assess complexity.
 
 Tool recipes: `references/quick-exploration-tools.md`.  
 Direct vs delegate scenarios: `references/quick-vs-delegate-scenarios.md`.

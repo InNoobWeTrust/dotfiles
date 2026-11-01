@@ -38,8 +38,7 @@ What do you need to do?
    - Look for return statements, API responses, file writes, or UI renders.
 
 3. **Draw the boundary** — everything between entry and exit is your "bubble." Ignore everything outside it.
-   - Read only the files and functions in the bubble. Resist the urge to explore beyond.
-   - Use AST/LSP symbol extraction to skim files without reading everything.
+   - Prefer supported LSP symbols, definitions and references for semantic navigation; use AST matching for structural patterns and scoped text search for literal names. Read only the files/functions needed when these capabilities are unavailable, unsuitable or insufficient for implementation/wiring context. Resist exploring beyond the bubble.
 
 4. **Make your change** within the bubble. Test at the entry and exit points.
 
@@ -51,7 +50,7 @@ rg "POST /api/login" --max-count=1
 # → Found in: src/routes/auth.ts:42
 
 # Turn 2: Extract function structure
-bunx @ast-grep/cli scan src/routes/auth.ts --pattern 'async function $NAME'
+# Use an available AST-matching capability for the structural pattern (inspect its interface first).
 # → Found: handleLogin, refreshToken, logout
 
 # Turn 3: Check what it calls
@@ -98,7 +97,7 @@ rg "PluginRegistry|registerPlugin" --files-with-matches
 # → Found in: src/core/plugin-registry.ts, src/plugins/*/index.ts
 
 # Turn 2: Check plugin interface
-bunx @ast-grep/cli scan src/core/plugin-registry.ts --pattern 'interface Plugin'
+# Use an available AST-matching capability for the interface pattern (inspect its interface first).
 # → Interface requires: init(), execute(), cleanup()
 
 # Turn 3: Count implementing plugins

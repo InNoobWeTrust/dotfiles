@@ -17,7 +17,7 @@ src/api/v1/endpoints.ts:45:  { method: 'POST', path: '/auth/login', handler: 'au
 
 **Turn 2: Check handler implementation**
 ```bash
-$ bunx @ast-grep/cli scan src/routes/auth.routes.ts --pattern 'function handleLogin'
+# Use an available AST-matching capability for this structural pattern (inspect its interface first).
 src/routes/auth.routes.ts:25: async function handleLogin(req, res) { ... }
 
 $ rg "validateCredentials|authenticateUser" src/routes/auth.routes.ts --max-count=2
@@ -29,7 +29,7 @@ src/routes/auth.routes.ts:27:  const user = await validateCredentials(req.body);
 - Found clear entry point: `src/routes/auth.routes.ts:25`
 - Single handler function calls `validateCredentials`
 - Bubble is small (2-3 files maximum)
-- **Action**: Read auth.routes.ts and proceed with change
+- **Action**: Read the relevant implementation if the navigation results do not supply the context needed to proceed.
 
 ---
 
@@ -50,7 +50,7 @@ src/plugins/logging/index.ts
 
 **Turn 2: Check plugin interface**
 ```bash
-$ bunx @ast-grep/cli scan src/core/plugin-registry.ts --pattern 'interface IPlugin'
+# Use an available AST-matching capability for this structural pattern (inspect its interface first).
 src/core/plugin-registry.ts:15: interface IPlugin {
   name: string;
   version: string;
