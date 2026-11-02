@@ -1,6 +1,6 @@
 {
   "$schema": "https://pi.dev/schemas/settings.schema.json",
-  "lastChangelogVersion": "1.4.0",
+  "lastChangelogVersion": "1.5.0",
   "packages": [
     "npm:@kkkiio/pi-web-ui",
     "npm:@tintinweb/pi-subagents"
@@ -27,7 +27,16 @@
   "fullscreenExitOutput": "transcript",
   "theme": "system",
   "hideThinkingBlock": false,
-  "enabledModels": ["ckey/*", "kilo/*", "openrouter/*", "openai/*", "github-copilot/*"],
+  "enabledModels": [
+    "ckey/*",
+    "kilo/*",
+    "openrouter/*",
+    "openai/*",
+    "github-copilot/*"
+  ],
   "defaultProvider": "openai",
-  "defaultModel": "gpt-6.1-sol"
+  "defaultModel": "gpt-6.1-sol",
+  "extensionChangelogVersions": {
+    "{\"source\":\"npm:@tintinweb/pi-subagents\",\"scope\":\"user\"}": "0.22.1"
+  }
 }
