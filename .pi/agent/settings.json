@@ -37,6 +37,6 @@
   "defaultProvider": "openai",
   "defaultModel": "gpt-6.1-sol",
   "extensionChangelogVersions": {
-    "{\"source\":\"npm:@tintinweb/pi-subagents\",\"scope\":\"user\"}": "0.23.0"
+    "{\"source\":\"npm:@tintinweb/pi-subagents\",\"scope\":\"user\"}": "0.23.1"
   }
 }

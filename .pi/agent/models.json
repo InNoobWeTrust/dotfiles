@@ -5,7 +5,7 @@
       "name": "CKey",
       "baseUrl": "https://api.xah.io/v1",
       "apiKey": "$CKEY_API_KEY",
-      "api": "openai-completions",
+      "api": "openai-responses",
       "models": [
         {
           "id": "forbiddengun/gemini",

@@ -1,0 +1,182 @@
+# Your patch layer for this dsh profile, applied after every bundle layer:
+# a top-level YAML array of loader patch entries (id-targeted config
+# overrides, disables, and insert lists; `!!js` expressions allowed).
+- id: ui-settings-general
+  name: "@deepseek-ai/dsh-client-ui-settings-general"
+  config:
+    welcomeNoticeVersion: 2026-09-28.1
+- id: agent-default-model
+  name: "@deepseek-ai/dsh-agent-default-model"
+  config:
+    provider: openrouter
+    model: auto
+    reasoningEffort: medium
+- id: llm-pi-ai
+  name: "@deepseek-ai/dsh-llm-pi-ai"
+  config:
+    providers:
+      google:
+        models:
+          - id: gemini-flash-lite-latest
+            name: Gemini Flash-Lite Latest
+            contextWindow: 1048576
+            maxTokens: 65536
+            input:
+              - text
+              - image
+        apiKeyEnv: GOOGLE_API_KEY
+      openrouter:
+        models:
+          - id: ~deepseek/deepseek-flash-latest
+            name: "DeepSeek: DeepSeek Flash Latest"
+            contextWindow: 1048576
+            maxTokens: 943718
+            input:
+              - text
+              - image
+          - id: ~google/gemini-flash-latest
+            name: "Google: Gemini Flash Latest"
+            contextWindow: 1048576
+            maxTokens: 65536
+            input:
+              - text
+              - image
+          - id: ~openai/gpt-luna-latest
+            name: "OpenAI: GPT Luna Latest"
+            contextWindow: 1050000
+            maxTokens: 128000
+            input:
+              - text
+              - image
+          - id: ~openai/gpt-mini-latest
+            name: "OpenAI: GPT Mini Latest"
+            contextWindow: 400000
+            maxTokens: 128000
+            input:
+              - text
+              - image
+          - id: ~openai/gpt-sol-latest
+            name: "OpenAI: GPT Sol Latest"
+            contextWindow: 1050000
+            maxTokens: 128000
+            input:
+              - text
+              - image
+          - id: ~openai/gpt-terra-latest
+            name: "OpenAI: GPT Terra Latest"
+            contextWindow: 1050000
+            maxTokens: 128000
+            input:
+              - text
+              - image
+          - id: openrouter/free
+            name: Free Models Router
+            contextWindow: 200000
+            maxTokens: 4096
+            input:
+              - text
+              - image
+      ckey:
+        displayName: CKey (DSH/OpenAI Responses)
+        apiKeyEnv: CKEY_API_KEY
+        api: openai-responses
+        baseURL: https://api.xah.io/v1
+        models:
+          - id: forbiddengun/deepseek
+            name: CKey DeepSeek
+            contextWindow: 1000000
+            maxTokens: 384000
+            input:
+              - text
+          - id: forbiddengun/glm
+            name: CKey GLM
+            contextWindow: 1000000
+            maxTokens: 131072
+            input:
+              - text
+          - id: forbiddengun/qwen
+            name: CKey Qwen
+            contextWindow: 1000000
+            maxTokens: 64000
+            input:
+              - text
+          - id: forbiddengun/gemini
+            name: CKey Gemini
+            contextWindow: 1048576
+            maxTokens: 65536
+            input:
+              - text
+              - image
+- id: subagent-model-selection-settings
+  name: "@deepseek-ai/dsh-tool-subagent/model-selection-settings"
+  config:
+    enabled: true
+    allowedModels:
+      - provider: google
+        model: gemini-flash-lite-latest
+      - provider: openrouter
+        model: ~openai/gpt-luna-latest
+      - provider: openrouter
+        model: ~openai/gpt-mini-latest
+      - provider: openrouter
+        model: ~openai/gpt-terra-latest
+      - provider: openrouter
+        model: ~openai/gpt-sol-latest
+      - provider: openrouter
+        model: openrouter/free
+      - provider: ckey
+        model: forbiddengun/deepseek
+      - provider: ckey
+        model: forbiddengun/glm
+      - provider: ckey
+        model: forbiddengun/qwen
+      - provider: ckey
+        model: forbiddengun/gemini
+- id: subagent
+  name: "@deepseek-ai/dsh-subagent"
+  config:
+    maxDepth: 2
+- insert:
+    - id: mcp-ui-studio
+      name: "@deepseek-ai/dsh-mcp-client"
+      config:
+        serverName: ui-studio
+        transport: stdio
+        command: mcp-ui-studio
+        args: []
+    - id: mcp-remote-memory
+      name: "@deepseek-ai/dsh-mcp-client"
+      config:
+        serverName: remote-memory
+        transport: stdio
+        command: mcp-remote-memory
+        args: []
+    - id: mcp-sandbox
+      name: "@deepseek-ai/dsh-mcp-client"
+      config:
+        serverName: sandbox
+        transport: stdio
+        command: mcp-sandbox
+        args: []
+    - id: mcp-decisions
+      name: "@deepseek-ai/dsh-mcp-client"
+      config:
+        serverName: decisions
+        transport: stdio
+        command: mcp-decisions
+        args: []
+    - id: mcp-delegate
+      name: "@deepseek-ai/dsh-mcp-client"
+      config:
+        serverName: delegate
+        transport: stdio
+        command: mcp-delegate
+        args: []
+        toolCallTimeoutMs: 3600000
+    - id: mcp-lsp
+      name: "@deepseek-ai/dsh-mcp-client"
+      config:
+        serverName: lsp
+        transport: stdio
+        command: mcp-lsp
+        args: []
