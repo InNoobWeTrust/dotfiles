@@ -19,36 +19,29 @@ usage() {
   cat <<'EOF'
 Usage: agent_computer <command> [options]
 
-Manage the agent computer: a local, loopback-only Webtop container whose
-browser is attached and driven by automation tools and agents over WebDriver.
-It is deliberately separate from the dev_* utilities: those persist development
-environments on remote machines, while this desktop is a local container for
-automation tools.
+Manage loopback-only computers: Webtop default; Tuxee pinned upstream, no build/driver.
 
 Commands:
-  up [NAME] [--gpu-device PATH] [--tz TZ] [--puid N] [--pgid N]
-            [--desktop-port N] [--webdriver-port N]
-            [--rebuild] [--pull] [--no-browser]
-                          Build the image if needed, create or start the
-                          container, wait until the desktop answers, then start
-                          the automation browser and its WebDriver server on the
-                          published WebDriver port. --no-browser skips both (start
-                          them yourself inside the container). NAME defaults to
-                          agent-computer. The first detected GPU render node
-                          (/dev/dri/renderD*) is attached automatically when
-                          available; --gpu-device picks a specific device.
-  stop [NAME]             Stop the container.
-  rm [NAME] [--purge]     Remove the container. --purge also deletes the home
-                          volume (site logins and profiles are lost).
-  status [NAME]           Show one desktop's state, or list all desktops.
-  build [--pull] [--driver-url URL]
-                          Build or refresh the agent-computer image from the
-                          self-contained context in images/agent-computer/;
-                          the matching chromedriver is resolved inside the
-                          build.
-  names                   List instance names.
+  up [NAME] [--mode webtop|tuxee] [--desktop-port N] [--tz TZ] [--pull]
+    [--password-file PATH] Creation-only override; otherwise root / agent-computer.
+    Default: ${XDG_CONFIG_HOME:-$HOME/.config}/agent-computer/password (never overwritten).
+    Overrides: nonempty, current-owner 0600 regular files, no links. Retain for restarts.
+    Recreate to rotate; rm --purge preserves the password file.
+    Defaults: webtop / agent-computer / 6080; tuxee / agent-computer-tuxee / 6081.
+    Existing NAME recovers its mode; explicit mismatches fail.
+    Webtop: [--gpu-device PATH] [--puid N] [--pgid N] [--webdriver-port N] [--rebuild] [--no-browser]
+      Automatic GPU selection; persistent abc config; browser/driver unless --no-browser.
+    Tuxee: [--cpus DECIMAL] [--memory N[b|k|m|g]]
+      Optional CPU/memory limits; PID limit 4096; no bundled browser or terminal tools.
+      Existing instances reject explicit resources/ports/timezone; recreate to change.
+      Bare restarts need no password flag; --pull refreshes the image, not the instance.
+      Access HTTP UI or engine exec -it NAME /bin/bash.
+  stop [NAME]             Stop (default NAME: agent-computer).
+  rm [NAME] [--purge]      Preserve volumes unless --purge (Tuxee checks ownership).
+  status [NAME]           Show instance details or list all computers.
+  names                   List instance names (original ownership label).
   completion [bash|zsh]   Emit shell completion.
-  help, -h, --help        Show this help.
+  help, -h, --help        Show help.
 
 Environment:
   AGENT_COMPUTER_ENGINE      Force the container engine (podman or docker).
@@ -114,13 +107,7 @@ detect_engine() {
 # Echoes the host port published for a container-side port, or nothing.
 published_port() {
   local engine="$1" name="$2" cport="$3"
-  command -v jq >/dev/null 2>&1 || return 0
-  "$engine" inspect "$name" 2>/dev/null | jq -r --arg key "$cport/tcp" '
-    (if type == "array" then (.[0] // {}) else . end)
-    | (.NetworkSettings.Ports[$key]? // []) as $entries
-    | ($entries | if type == "array" then (.[0] // {}) else . end)
-    | .HostPort? // empty
-  '
+  "$engine" inspect -f "{{range (index .NetworkSettings.Ports \"$cport/tcp\")}}{{.HostPort}}{{break}}{{end}}" "$name" 2>/dev/null
 }
 
 detect_tz() {
@@ -143,212 +130,169 @@ image_exists() {
   "$1" image inspect "$2" >/dev/null 2>&1
 }
 
-build_image() {
-  local engine="$1" pull="$2" driver_url="${3:-}"
-  local -a pull_arg=()
-  if [ "$pull" -eq 1 ]; then
-    case "${engine##*/}" in
-      *podman*) pull_arg=(--pull=always) ;;
-      *) pull_arg=(--pull) ;;
-    esac
-  fi
+# shellcheck source-path=SCRIPTDIR
+# shellcheck source=credentials.sh
+source "$script_dir/credentials.sh"
 
-  # The image directory is a self-contained build context: the Dockerfile
-  # resolves and downloads a chromedriver matching the base image's Chromium
-  # inside a builder stage, so no host tooling or staging files are needed.
-  local context="$script_dir/images/agent-computer"
-  local -a build_args=(--build-arg "BASE_IMAGE=$BASE_IMAGE")
-  if [ -n "$driver_url" ]; then
-    build_args+=(--build-arg "DRIVER_URL=$driver_url")
-  fi
+# shellcheck source-path=SCRIPTDIR
+# shellcheck source=modes/webtop.sh
+source "$script_dir/modes/webtop.sh"
 
-  note "Building $IMAGE ..."
-  "$engine" build -t "$IMAGE" ${pull_arg[@]+"${pull_arg[@]}"} "${build_args[@]}" "$context"
+# shellcheck source-path=SCRIPTDIR
+# shellcheck source=modes/tuxee.sh
+source "$script_dir/modes/tuxee.sh"
 
-  local info chromium_version="" driver_version=""
-  info=$("$engine" run --rm --entrypoint /usr/bin/cat "$IMAGE" \
-    /usr/local/share/agent-computer/build-info 2>/dev/null || true)
-  chromium_version=$(printf '%s\n' "$info" | sed -n 's/^chromium=//p')
-  driver_version=$(printf '%s\n' "$info" | sed -n 's/^chromedriver=//p')
-  if [ -n "$chromium_version" ]; then
-    note "Built $IMAGE (Chromium ${chromium_version}, chromedriver ${driver_version:-unknown})."
-  else
-    note "Built $IMAGE."
-  fi
+require_value() {
+  [ "$#" -ge 2 ] && [ -n "$2" ] && [[ "$2" != -* ]] ||
+    die "$1 requires a nonempty value."
 }
 
-wait_ready() {
-  local engine="$1" name="$2" desktop_port="$3" code elapsed=0
-  note "Waiting for the desktop to answer on http://127.0.0.1:${desktop_port}/ ..."
-  while :; do
-    code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 \
-      "http://127.0.0.1:${desktop_port}/" 2>/dev/null || true)
-    if [ "$code" = "200" ]; then
-      break
-    fi
-    if ! container_running "$engine" "$name"; then
-      "$engine" logs --tail 40 "$name" 2>&1 || true
-      die "Container '$name' exited while waiting for the desktop."
-    fi
-    if [ "$elapsed" -ge 180 ]; then
-      "$engine" logs --tail 40 "$name" 2>&1 || true
-      die "Desktop did not become ready within 180s."
-    fi
-    sleep 2
-    elapsed=$((elapsed + 2))
-  done
-  # The web server can answer before X is up on a first boot; give the X
-  # server a bounded extra wait so the browser can start immediately.
-  elapsed=0
-  while ! "$engine" exec "$name" sh -c 'pgrep -x Xvfb >/dev/null || pgrep -x Xorg >/dev/null' 2>/dev/null; do
-    if [ "$elapsed" -ge 120 ]; then
-      note "Warning: X server not detected after 120s; continuing anyway."
-      break
-    fi
-    sleep 2
-    elapsed=$((elapsed + 2))
-  done
-  note "Desktop is up."
+validate_mode() {
+  case "$1" in webtop|tuxee) ;; *) die "Unknown mode '$1' (use webtop or tuxee)." ;; esac
 }
 
-ensure_browser() {
-  local engine="$1" name="$2"
-  if "$engine" exec "$name" sh -c 'pgrep -f "[r]emote-debugging-port=9222" >/dev/null' 2>/dev/null; then
-    note "Automation browser already running (remote debugging port 9222)."
-    return 0
-  fi
-  note "Launching the automation browser ..."
-  "$engine" exec -d -u abc -e HOME=/config -e DISPLAY=:1 "$name" \
-    /bin/bash /usr/local/bin/start-chromium-automation.sh
-  sleep 3
-  if "$engine" exec "$name" sh -c 'pgrep -f "[r]emote-debugging-port=9222" >/dev/null' 2>/dev/null; then
-    note "Browser launched."
-  else
-    note "Warning: the browser is not detected yet; check the container logs or the desktop UI."
-  fi
+validate_port() {
+  if [[ "$1" =~ ^[0-9]{1,5}$ ]] && ((10#$1 >= 1 && 10#$1 <= 65535)); then return; fi
+  die "Port must be an integer from 1 through 65535."
 }
 
-ensure_webdriver() {
-  local engine="$1" name="$2"
-  if "$engine" exec "$name" sh -c 'pgrep -f "[c]hromedriver --port=" >/dev/null' 2>/dev/null; then
-    note "WebDriver server already running."
-    return 0
-  fi
-  note "Starting the WebDriver server ..."
-  "$engine" exec -d -u abc -e HOME=/config "$name" \
-    /bin/bash /usr/local/bin/start-webdriver.sh
-  sleep 2
-  if "$engine" exec "$name" sh -c 'pgrep -f "[c]hromedriver --port=" >/dev/null' 2>/dev/null; then
-    note "WebDriver server started."
-  else
-    note "Warning: the WebDriver server is not detected yet; check the container logs."
-  fi
-}
-
-cmd_up() {
-  local name="$DEFAULT_NAME" gpu_device="" tz="" puid="" pgid=""
-  local desktop_port="$DEFAULT_DESKTOP_PORT" webdriver_port="$DEFAULT_WEBDRIVER_PORT"
-  local rebuild=0 pull=0 launch_browser=1
+# Parse into cmd_up's dynamic locals; record explicit presence, not defaults.
+parse_up() {
   while [ "$#" -gt 0 ]; do
+    seen_flags+=("$1")
     case "$1" in
-      --gpu-device)
-        [ "$#" -ge 2 ] || die "up: --gpu-device requires a value."
-        gpu_device="$2"
-        shift ;;
-      --tz) [ "$#" -ge 2 ] || die "up: --tz requires a value."; tz="$2"; shift ;;
-      --puid) [ "$#" -ge 2 ] || die "up: --puid requires a value."; puid="$2"; shift ;;
-      --pgid) [ "$#" -ge 2 ] || die "up: --pgid requires a value."; pgid="$2"; shift ;;
-      --desktop-port) [ "$#" -ge 2 ] || die "up: --desktop-port requires a value."; desktop_port="$2"; shift ;;
-      --webdriver-port) [ "$#" -ge 2 ] || die "up: --webdriver-port requires a value."; webdriver_port="$2"; shift ;;
+      --mode|--tz|--desktop-port|--webdriver-port) parse_up_connection "$@"; shift ;;
+      --gpu-device|--puid|--pgid) parse_up_webtop "$@"; shift ;;
+      --password-file|--cpus|--memory) parse_up_resources "$@"; shift ;;
       --rebuild) rebuild=1 ;;
       --pull) pull=1 ;;
       --no-browser) launch_browser=0 ;;
       -*) die "up: unknown option '$1' (see agent_computer help)." ;;
-      *) name="$1" ;;
+      *) [ -z "$name" ] || die "up: unexpected argument '$1'."; name="$1" ;;
     esac
     shift
   done
+}
 
-  [ -n "$tz" ] || tz=$(detect_tz)
-  [ -n "$puid" ] || puid=$(id -u)
-  [ -n "$pgid" ] || pgid=$(id -g)
+parse_up_connection() {
+  require_value "$@"
+  case "$1" in
+    --mode) mode="$2"; validate_mode "$mode" ;;
+    --tz) tz="$2" ;;
+    --desktop-port) desktop_port="$2"; validate_port "$desktop_port" ;;
+    --webdriver-port) webdriver_port="$2"; validate_port "$webdriver_port" ;;
+  esac
+}
 
-  local engine
+parse_up_webtop() {
+  require_value "$@"
+  case "$1" in
+    --gpu-device) gpu_device="$2" ;;
+    --puid) puid="$2"; [[ "$puid" =~ ^[0-9]+$ ]] || die "Invalid PUID." ;;
+    --pgid) pgid="$2"; [[ "$pgid" =~ ^[0-9]+$ ]] || die "Invalid PGID." ;;
+  esac
+}
+
+parse_up_resources() {
+  require_value "$@"
+  case "$1" in
+    --password-file) password_file="$2" ;;
+    --cpus)
+      cpus="$2"
+      [[ "$cpus" =~ ^[0-9]+([.][0-9]+)?$ && "$cpus" =~ [1-9] ]] || die "CPUs must be a positive decimal."
+      ;;
+    --memory)
+      memory="$2"
+      [[ "$memory" =~ ^[0-9]+[bBkKmMgG]?$ && "$memory" =~ [1-9] ]] || die "Memory must be a positive integer with optional b/k/m/g."
+      ;;
+  esac
+}
+
+container_mode() {
+  local mode
+  mode=$("$1" inspect -f '{{index .Config.Labels "agent-computer-mode"}}' "$2") ||
+    die "Cannot inspect mode for '$2'."
+  case "$mode" in ""|"<no value>") mode=webtop ;; esac
+  validate_mode "$mode"
+  printf '%s\n' "$mode"
+}
+
+flag_seen() {
+  local flag
+  for flag in ${seen_flags[@]+"${seen_flags[@]}"}; do
+    [ "$flag" != "$1" ] || return 0
+  done
+  return 1
+}
+
+validate_up_mode() {
+  local flag forbidden="--cpus --memory"
+  [ "$mode" != tuxee ] || forbidden="--gpu-device --puid --pgid --webdriver-port --no-browser --rebuild"
+  for flag in $forbidden; do
+    if flag_seen "$flag"; then die "up: $flag is not supported in $mode mode."; fi
+  done
+  if [ "$mode" = tuxee ] && [ "$exists" -eq 1 ]; then
+    for flag in --cpus --memory --desktop-port --tz; do
+      if flag_seen "$flag"; then die "up: $flag is creation-only; rm then up to recreate Tuxee."; fi
+    done
+  fi
+}
+
+cmd_up() {
+  local name="" mode="" gpu_device="" tz="" puid="" pgid=""
+  local -a seen_flags=()
+  local desktop_port="$DEFAULT_DESKTOP_PORT" webdriver_port="$DEFAULT_WEBDRIVER_PORT"
+  local password_file="" credential_path="" credential_kind=default credential_created=0
+  local cpus="" memory="" rebuild=0 pull=0 launch_browser=1
+  local engine exists=0 stored_mode
+  parse_up "$@"
+  if [ "$mode" = tuxee ]; then
+    [ -n "$name" ] || name=agent-computer-tuxee
+    flag_seen --desktop-port || desktop_port=6081
+  fi
+  [ -n "$name" ] || name="$DEFAULT_NAME"
   engine=$(detect_engine "$name")
-
-  if [ "$rebuild" -eq 1 ] || [ "$pull" -eq 1 ] || ! image_exists "$engine" "$IMAGE"; then
-    build_image "$engine" "$pull"
-  fi
-
   if container_exists "$engine" "$name"; then
-    if container_running "$engine" "$name"; then
-      note "Container '$name' is already running."
-    else
-      note "Starting existing container '$name' ..."
-      "$engine" start "$name" >/dev/null
+    exists=1
+    if flag_seen --password-file; then
+      die "--password-file is creation-only; rm then up to recreate $name"
     fi
-    note "Note: creation options (ports, GPU, timezone) only apply when the container is first created; 'rm' then 'up' to change them."
-    desktop_port=$(published_port "$engine" "$name" 3000)
-    [ -n "$desktop_port" ] || die "Container '$name' has no published desktop port (3000/tcp)."
-    webdriver_port=$(published_port "$engine" "$name" 4444)
-    [ -n "$webdriver_port" ] || die "Container '$name' has no published WebDriver port (4444/tcp)."
+    stored_mode=$(container_mode "$engine" "$name")
+    [ -z "$mode" ] || [ "$mode" = "$stored_mode" ] ||
+      die "Container '$name' uses $stored_mode, not $mode; no mode conversion."
+    mode="$stored_mode"
+  fi
+  mode="${mode:-webtop}"
+  validate_up_mode
+  if [ "$exists" -eq 0 ]; then credential_gate; fi
+  [ -n "$tz" ] || tz=$(detect_tz)
+  if [ "$mode" = tuxee ]; then
+    up_tuxee
   else
-    local volume="${name}-config"
-    "$engine" volume create "$volume" >/dev/null 2>&1 || true
-    # SELinux hosts (Fedora/Bazzite): container_t may not mount devpts/proc, so
-    # bubblewrap fails. gdk-pixbuf 2.44 routes image loads through the glycin
-    # sandbox (bwrap); failed loads crash-loop xfce4-session on icon assertions.
-    # Disabling the SELinux label for this rootless, loopback-only container
-    # restores bwrap (accepted trade-off, see README). No-op on non-SELinux hosts.
-    local -a args=(run -d
-      --name "$name"
-      --restart unless-stopped
-      --label "$LABEL"
-      --security-opt label=disable
-      --shm-size=1gb
-      --pids-limit=16384
-      -e "PUID=$puid"
-      -e "PGID=$pgid"
-      -e "TZ=$tz"
-      -e SELKIES_ENABLE_SHARING=false
-      -e SELKIES_ENABLE_COLLAB=false
-      -e PELORUS=false
-      -p "127.0.0.1:${desktop_port}:3000"
-      -p "127.0.0.1:${webdriver_port}:4444")
-    if [ -z "$gpu_device" ]; then
-      for candidate in /dev/dri/renderD*; do
-        if [ -e "$candidate" ]; then
-          gpu_device="$candidate"
-          break
-        fi
-      done
-      if [ -z "$gpu_device" ]; then
-        note "No GPU render node found (/dev/dri/renderD*); creating '$name' without GPU passthrough."
-      fi
-    else
-      [ -e "$gpu_device" ] || die "up: GPU device '$gpu_device' does not exist."
-    fi
-    if [ -n "$gpu_device" ]; then
-      note "Attaching GPU device $gpu_device."
-      args+=(--device "$gpu_device")
-    fi
-    args+=(-v "${volume}:/config" "$IMAGE")
-    note "Creating container '$name' ..."
-    "$engine" "${args[@]}" >/dev/null
+    [ -n "$puid" ] || puid=$(id -u)
+    [ -n "$pgid" ] || pgid=$(id -g)
+    up_webtop
   fi
+  if [ "$exists" -eq 0 ]; then print_login; fi
+}
 
-  wait_ready "$engine" "$name" "$desktop_port"
-  if [ "$launch_browser" -eq 1 ]; then
-    ensure_browser "$engine" "$name"
-    ensure_webdriver "$engine" "$name"
+up_tuxee() {
+  if [ "$exists" -eq 1 ]; then
+    tuxee_volumes "$engine" "$name" check
+    desktop_port=$(published_port "$engine" "$name" 80)
+    [ -n "$desktop_port" ] || die "Container '$name' has no published HTTP port (80/tcp)."
+    if [ "$pull" -eq 1 ]; then
+      "$engine" pull "$(tuxee_image)"
+      note "Image refreshed; existing instance not upgraded. Recreate to upgrade."
+    fi
+    if ! container_running "$engine" "$name"; then "$engine" start "$name" >/dev/null; fi
+  else
+    create_tuxee
   fi
-
-  note ""
-  note "Desktop:    http://127.0.0.1:${desktop_port}"
-  note "WebDriver:  127.0.0.1:${webdriver_port} (loopback only)"
-  note "Container:  ${name}"
-  note "Attach from a driving tool by connecting to http://127.0.0.1:${webdriver_port};"
-  note "log into sites once in the desktop UI. Sessions persist in volume ${name}-config."
+  wait_tuxee_ready "$engine" "$name" "$desktop_port"
+  note "HTTP:       http://127.0.0.1:${desktop_port}/"
+  note "Container:  $name"
+  note "Exec:       $engine exec -it $name /bin/bash"
 }
 
 cmd_stop() {
@@ -374,10 +318,14 @@ cmd_rm() {
   local engine
   engine=$(detect_engine "$name")
   container_exists "$engine" "$name" || die "No container named '$name'."
+  local mode
+  mode=$(container_mode "$engine" "$name")
+  if [ "$mode" = tuxee ] && [ "$purge" -eq 1 ]; then tuxee_volumes "$engine" "$name" check; fi
   note "Removing container '$name' ..."
   "$engine" rm -f "$name" >/dev/null
   note "Removed container '$name'."
   if [ "$purge" -eq 1 ]; then
+    if [ "$mode" = tuxee ]; then tuxee_volumes "$engine" "$name" purge; return; fi
     local volume="${name}-config"
     note "Removing volume '$volume' (site logins and profiles are lost) ..."
     "$engine" volume rm "$volume" >/dev/null
@@ -400,47 +348,18 @@ cmd_status() {
     return 0
   fi
   container_exists "$engine" "$name" || die "No container named '$name'."
-  local dp wp
-  dp=$(published_port "$engine" "$name" 3000)
-  wp=$(published_port "$engine" "$name" 4444)
-  note "Container:  $name ($engine)"
-  note "State:      $("$engine" inspect -f '{{.State.Status}}' "$name")"
-  note "Image:      $("$engine" inspect -f '{{.Config.Image}}' "$name")"
-  note "Desktop:    http://127.0.0.1:${dp:-6080}/"
-  note "WebDriver:  127.0.0.1:${wp:-?} (loopback only)"
-  if container_running "$engine" "$name"; then
-    local driver running http webdriver_up
-    driver=$("$engine" exec "$name" chromedriver --version 2>/dev/null || true)
-    note "Driver:     ${driver:-(not found)}"
-    webdriver_up=$("$engine" exec "$name" sh -c 'pgrep -f "[c]hromedriver --port=" | wc -l' 2>/dev/null | tr -d ' ' || echo 0)
-    note "Server:     ${webdriver_up:-0} chromedriver server process(es)"
-    running=$("$engine" exec "$name" sh -c 'pgrep -f "[r]emote-debugging-port=9222" | wc -l' 2>/dev/null | tr -d ' ' || echo 0)
-    note "Browser:    ${running:-0} automation-browser process(es)"
-    http=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://127.0.0.1:${dp:-6080}/" 2>/dev/null || true)
-    note "HTTP:       ${http:-?}"
-  fi
+  local mode
+  mode=$(container_mode "$engine" "$name")
+  case "$mode" in
+    tuxee) status_tuxee "$engine" "$name" ;;
+    webtop) status_webtop "$engine" "$name" ;;
+  esac
 }
 
 cmd_names() {
   local engine
   engine=$(detect_engine "$DEFAULT_NAME")
   "$engine" ps -a --filter "label=$LABEL" --format '{{.Names}}' 2>/dev/null || true
-}
-
-cmd_build() {
-  local pull=0 driver_url=""
-  while [ "$#" -gt 0 ]; do
-    case "$1" in
-      --pull) pull=1 ;;
-      --driver-url) [ "$#" -ge 2 ] || die "build: --driver-url requires a value."; driver_url="$2"; shift ;;
-      -*) die "build: unknown option '$1' (see agent_computer help)." ;;
-      *) die "build: unexpected argument '$1'." ;;
-    esac
-    shift
-  done
-  local engine
-  engine=$(detect_engine "$DEFAULT_NAME")
-  build_image "$engine" "$pull" "$driver_url"
 }
 
 action="${1:-help}"
@@ -450,7 +369,6 @@ case "$action" in
   stop) cmd_stop "$@" ;;
   rm) cmd_rm "$@" ;;
   status) cmd_status "$@" ;;
-  build) cmd_build "$@" ;;
   names) cmd_names ;;
   completion)
     case "${1:-bash}" in
