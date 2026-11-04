@@ -16,6 +16,34 @@ the human stack-approval receipt, the governing structure standard and authorize
 checks. **Outputs:** working change, gate and check evidence, change map, and the
 cleanup result or pending status.
 
+## Tool-assisted understanding and edits
+
+Prefer **available LSP/programming tools (built-in or MCP) → terminal programming
+tools → plain file reads and targeted edits/writes**. Discover the actual supported
+interfaces; select by task fit, not transport, and do not force an unsuitable tool.
+
+- **Understand before changing:** use symbols, definitions, references, hover/type
+  information and call hierarchy where supported to locate behavior and affected
+  consumers. Check diagnostics; follow relevant wiring and normal/error paths.
+- **Edit with semantic support:** prefer supported rename, code actions and scoped
+  refactors over textual replacements when symbol identity or cross-file references
+  matter. Preview the affected files and keep changes inside the approved scope;
+  do not accept unrelated workspace-wide fixes.
+- **Terminal fallback:** use existing scoped search tools (for example `rg`), AST
+  queries/transforms, repository refactoring commands, formatters and checks when
+  higher-level tools are unavailable or unsuitable. Literal/path searches need not
+  go through LSP. Use structural tools for syntax-aware changes when practical.
+- **Plain-file fallback and confirmation:** read the necessary source context when
+  tool results are insufficient; use targeted edits for remaining changes, reserving
+  full-file writes for new files or intentional rewrites. Do not dump whole files
+  or hand-rewrite cross-file symbols when suitable programming tools can do the job.
+- Tool availability does not authorize installation, reconfiguration or new access.
+  On missing/failed capabilities, state the limitation and use the next suitable
+  authorized option; stop affected work if safe understanding or editing is blocked.
+  Search/reference results are not completeness proof. Inspect the actual diff and
+  run relevant diagnostics and behavior checks after edits; tool success alone is
+  not verification.
+
 ## 1. Establish the outcome and the structure
 
 **Gate — before any design or implementation:** require a recorded human approval of
@@ -27,8 +55,8 @@ custom exceptions need reapproval. Missing evidence is UNVERIFIED and stops affe
 work; an unavailable approved tool is not authority for a custom or mock fallback.
 
 - Clarify observable success and consequential unknowns; inline intent is enough.
-- Inspect the existing path; reuse platform/repository capabilities and the project's
-  exemplar modules.
+- Inspect the existing path using the tool preference above; reuse platform/repository
+  capabilities and the project's exemplar modules.
 - **Structure plan first.** Before the first source write that adds a capability,
   file group, public surface or dependency edge, settle the plan in the
   [structure standard](references/structure-standard.md) §3 (project overrides win).
@@ -60,8 +88,8 @@ work; an unavailable approved tool is not authority for a custom or mock fallbac
 - Write the simplest solution for the current outcome **inside the planned homes and
   within the standard's limits**. Simple means fewer concepts, not fewer files: do not
   pile unrelated responsibilities into one file or add pass-through layers.
-- Follow the standard's change shape: one concern per step, step budget, no drive-by
-  edits, no leftover old paths.
+- Follow the standard's change shape and tool preference above: one concern per step,
+  step budget, no drive-by edits, no leftover old paths.
 - Keep [file navigation](references/file-navigation.md) current with the change.
 - Non-negotiable floor: safety, authorization, data integrity, root-opted-in
   compatibility, dependency suitability, isolation and correctness.
