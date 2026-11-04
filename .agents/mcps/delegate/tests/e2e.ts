@@ -262,6 +262,7 @@ async function verifyStubbedEndToEnd() {
       "agySandbox",
       "harness",
       "model",
+      "piSessionDir",
       "prompt",
       "wallTimeMs",
       "workdir",

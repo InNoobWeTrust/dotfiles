@@ -43,8 +43,9 @@ the instructions already sent to the client.
 | Stable `delegate_status`, `delegate_models` and `delegate_run` | Status provides selectable harness IDs, name-matched Zen hints, capabilities and refusal reasons. Full model catalogs require explicit filtered queries. Installation or login changes can be refreshed without changing tool names. |
 | Keep native argument mapping inside the registry | CLI-specific flags are irreducible, but do not need to become separate tools. A run selects a registry ID only after readiness inspection. |
 | Pass the prompt as one trailing argv element | Every supported harness accepts it, so one input schema serves all of them. Consequence: no shell involved at all (`shell: false`), and a prompt cannot be reinterpreted as syntax. The cost is the 64 KiB argv limit. |
-| Refuse a `prompt` or `model` that starts with `-` | A trailing positional is only safe if the harness treats it as one. Some harnesses read the prompt from a value-taking flag instead, and a model value can be misread as an option that escalates authority (`--yolo`) or replaces the task (`--version`, which would print a version and exit 0 while the call reported success). Both fields are refused at the schema, before any process starts; there is no `--` delimiter that all twelve CLIs agree on. |
-| `promptFlag` per harness | `agy` reads the prompt from `--print`, `gemini`, `qwen`, `hermes` from `-p`/`-z` and `amp` from `-x`; placing that flag immediately before the prompt keeps it the last argv element while leaving nothing between the flag and its value. The server calls `assertRegistryInvariants()` while loading, and `assertArgv()` on the arguments of every call it is about to run, so a malformed entry — a missing prompt flag, a flag in the wrong position, a duplicated one, a prompt that is not last — is refused instead of producing one odd command line during a real turn. |
+| Refuse a `prompt` or `model` that starts with `-` | A trailing positional is only safe if the harness treats it as one. Some harnesses read the prompt from a value-taking flag instead, and a model value can be misread as an option that escalates authority (`--yolo`) or replaces the task (`--version`, which would print a version and exit 0 while the call reported success). Both fields are refused at the schema, before any process starts; there is no `--` delimiter that all registered CLIs agree on. |
+| `promptFlag` per harness | `agy` and `pi` read the prompt from `--print`, `gemini`, `qwen`, `hermes` from `-p`/`-z` and `amp` from `-x`; placing that flag immediately before the prompt keeps it the last argv element while leaving nothing between the flag and its value. The server calls `assertRegistryInvariants()` while loading, and `assertArgv()` on the arguments of every call it is about to run, so a malformed entry — a missing prompt flag, a flag in the wrong position, a duplicated one, a prompt that is not last — is refused instead of producing one odd command line during a real turn. |
+| Pi session directory | A Pi-only `piSessionDir` selects an absolute, NUL-free session path; otherwise the XDG cache default or HOME fallback is used. The effective path is passed via `--session-dir`, appears in returned argv, and is retained until manual removal. Newly created directories use 0700 subject to umask; existing directories are not chmodded. Other harnesses keep their normal stores; AGY `--settings` isolation remains unverified. |
 | `opencode run --standalone` | Plain `run` can attach to an already-running OpenCode server, which would run the turn outside this process group and outside the inherited `DELEGATE_DEPTH`. `--standalone` forces a private server so the wall-clock kill and the depth cap still apply. |
 | One shared input schema | Shared fields retain harness-specific mappings. Each harness uses its fixed native profile, with no caller-selectable permission mode. AGY uses `--mode accept-edits --dangerously-skip-permissions`, including read-only assignments; `agySandbox` independently adds `--sandbox`. Read-only or edit scope belongs in the prompt, not a hard enforcement guarantee. Harnesses that lack a flag simply do not get one; `amp` has no model flag, so passing `model` to it is refused rather than dropped. Preview size is server-owned, not an input. |
 | Detached process group, killed as a group | Harness CLIs spawn their own children. Signalling only the direct child leaves those running, still holding tokens and file handles. `spawn(..., { detached: true })` plus `process.kill(-pid, …)` reaps the whole tree, with SIGTERM then SIGKILL after a grace period. |
@@ -99,7 +100,7 @@ no roots capability, the server's own working directory is used. The result is
 `realpath`-resolved and checked to be a directory, so a harness never starts in
 something that cannot be entered.
 
-**Project context:** OpenCode, Codex and Cursor configuration can depend on the
+**Project context:** OpenCode, Codex, Cursor and Pi configuration can depend on the
 working directory. When it differs from startup, dispatch repeats the applicable
 inspection before spawning a turn; unknown readiness refuses the run and the
 ephemeral result does not replace the startup snapshot.
@@ -116,6 +117,7 @@ can make an executable selectable.
 | Claude | `auth status` JSON explicitly says `loggedIn: true` |
 | Codex | `login status` reports the recognized signed-in state; custom-provider proof remains limited |
 | OpenCode V2 | Private API GETs join an inspectable integration connection to a non-disabled provider and an enabled, non-deprecated model |
+| Pi | A successful `--list-models --offline --no-extensions --no-mcp` probe produces the native six-column header and at least one model row; stderr warnings do not veto readiness |
 | Other registry IDs | No proven automatic inspector; safe, harness-specific unknown reason, no model probe |
 
 **Fail closed:** A timeout, truncated output, missing required evidence, or failed
@@ -133,6 +135,12 @@ An unsigned AGY 1.3.3 can still wait for authentication with stdin closed.
 The inspection deadline cancels that wait; no authentication URL or quota values
 are returned to the caller. Zero remaining quota is still configuration evidence,
 not permission to use a model without quota.
+
+**Pi inspection:** No model table is ambiguous between missing authentication and no
+enabled chat models, so readiness remains `unknown`; extension-only providers are
+invisible to the probe. Pi may perform idempotent native migrations during inspection.
+Normal Pi turns do not use the probe's offline, extension-disabling or MCP-disabling
+flags, and preserve native extensions, MCP, network and permissions.
 
 **Avoid recursion:** Every inspection subprocess inherits
 `DELEGATE_INSPECTION=1`. A Delegate MCP started by that subprocess resolves
@@ -159,6 +167,8 @@ data does not affect hints or readiness.
 catalog. It deduplicates and sorts selectors before literal matching and pagination;
 invalid evidence fails rather than silently returning a partial or empty catalog.
 Catalog availability never upgrades readiness, and unsupported adapters are explicit errors.
+Pi is not supported by `delegate_models`: its native model selector passes unchanged
+to Pi without Delegate catalog validation.
 
 `tools.ts` owns MCP registration, envelopes and public status projection;
 `server.ts` composes these capabilities with workdir resolution and run lifecycle.
@@ -176,7 +186,8 @@ cannot enable dispatch; unsupported inspectors stay unknown.
 Profiles preserve the existing adapter defaults: Codex uses `--sandbox read-only`,
 AGY uses the fixed headless flags above, and Cursor uses `--trust`. Other adapters
 add no permission-selection flags and retain their native configured policy.
-`amp` still refuses `model`. No permission selector is exposed in run input or status.
+`amp` still refuses `model`. Pi refuses prompts beginning with `@`, which its CLI
+interprets as file includes. No permission selector is exposed in run input or status.
 
 ## Limits that remain
 
@@ -197,6 +208,7 @@ add no permission-selection flags and retain their native configured policy.
 
 ## Sources
 
+- Installed Pi 1.5.0 CLI argument, model-listing and migration sources for the Pi adapter and probe
 - `claude --help`, `agy --help`, `opencode run --help` on the machine that
   produced this package
 - openai/codex#20919 for the stdin hang that motivates closing stdin

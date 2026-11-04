@@ -1,4 +1,7 @@
 /** Prepares delegated turns, owns concurrency slots and invokes process/outcome owners. */
+
+import { mkdirSync } from "node:fs"
+import { isAbsolute, join } from "node:path"
 import { INLINE_OUTPUT_BYTES } from "../../../shared/output/capture.ts"
 import { assertArgv, harnessById } from "../harnesses/catalog/registry.ts"
 import type { DetectionResult } from "../harnesses/discovery/detect.ts"
@@ -39,11 +42,11 @@ function childEnv(nextDepth: number): Record<string, string> {
 }
 
 /**
- * These harnesses read project-local configuration (opencode), require a git
+ * These harnesses read project-local configuration (opencode, pi), require a git
  * repo (codex), or enforce workspace trust (cursor), so a different workdir
  * needs its own readiness probe within the same aggregate deadline.
  */
-const WORKDIR_SENSITIVE_IDS = new Set<string>(["opencode", "codex", "cursor"])
+const WORKDIR_SENSITIVE_IDS = new Set<string>(["opencode", "codex", "cursor", "pi"])
 
 interface DelegateRunContext {
   depth: number
@@ -56,6 +59,26 @@ interface DelegateRunContext {
 
 interface DelegateRunScope extends DelegateRunContext {
   withSlot: <T>(action: () => Promise<T>) => Promise<T>
+}
+
+/** Resolve session-only storage with native path validation, independently of auth/config homes. */
+export function resolvePiSessionDir(
+  input: { piSessionDir?: string },
+  env: NodeJS.ProcessEnv,
+): string {
+  if (input.piSessionDir !== undefined) {
+    if (input.piSessionDir.includes("\0"))
+      throw new Error("piSessionDir must not contain NUL bytes.")
+    if (!isAbsolute(input.piSessionDir))
+      throw new Error(`piSessionDir must be an absolute path; got '${input.piSessionDir}'.`)
+    return input.piSessionDir
+  }
+  if (env.XDG_CACHE_HOME && isAbsolute(env.XDG_CACHE_HOME))
+    return join(env.XDG_CACHE_HOME, "delegate", "pi-sessions")
+  if (env.HOME && isAbsolute(env.HOME)) return join(env.HOME, ".cache", "delegate", "pi-sessions")
+  throw new Error(
+    "Cannot resolve Pi session directory: neither XDG_CACHE_HOME nor HOME is absolute.",
+  )
 }
 
 export function createDelegateRun(
@@ -107,6 +130,9 @@ async function delegateRun(
   if (input.agySandbox !== undefined && input.harness !== "agy") {
     throw new Error("agySandbox is supported only by the agy harness.")
   }
+
+  if (input.piSessionDir !== undefined && input.harness !== "pi")
+    throw new Error("piSessionDir is supported only by the pi harness.")
 
   const promptBytes = Buffer.byteLength(input.prompt, "utf8")
   if (promptBytes > MAX_PROMPT_BYTES) {
@@ -172,7 +198,9 @@ async function delegateRun(
     }
   }
 
-  const argv = spec.buildArgs(input, cwd)
+  const piSessionDir = spec.id === "pi" ? resolvePiSessionDir(input, process.env) : undefined
+  const buildInput = piSessionDir !== undefined ? { ...input, piSessionDir } : input
+  const argv = spec.buildArgs(buildInput, cwd)
   // The startup probe runs each builder without a model; a builder can behave
   // differently once one is supplied, so the real command line is checked too.
   assertArgv(spec, argv, input.prompt)
@@ -181,6 +209,7 @@ async function delegateRun(
     // Preparation above may await refresh, workdir resolution or inspection.
     // Do not launch a turn if its MCP request was cancelled in the meantime.
     signal?.throwIfAborted()
+    if (piSessionDir !== undefined) mkdirSync(piSessionDir, { recursive: true, mode: 0o700 })
     const result = await runProcess(detectedHarness.executable, argv, {
       cwd,
       env: childEnv(depth + 1),

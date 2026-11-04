@@ -69,7 +69,7 @@ export const HARNESSES: HarnessSpec[] = [
     promptFlag: "--print",
     modelSupported: true,
     notes:
-      "Antigravity CLI print mode. Uses agy's own agent and model catalogue, so `model` takes an agy model id rather than a provider string.",
+      "Antigravity CLI print mode. Uses agy's own agent and model catalogue, so `model` takes an agy model id rather than a provider string. Sessions are not separated from normal agy sessions; per-invocation isolation via --settings has not been verified.",
     buildArgs: (input) => {
       const args: string[] = []
       if (input.agySandbox) args.push("--sandbox")
@@ -215,11 +215,31 @@ export const HARNESSES: HarnessSpec[] = [
     promptFlag: null,
     modelSupported: true,
     notes:
-      "OpenCode `run` against the project config, agents, and skills of this workspace, started with `--standalone` so the turn runs in this server's own process group instead of being handed to an already-running OpenCode server that the wall-clock limit could not stop.",
+      "OpenCode `run` against the project config, agents, and skills of this workspace, started with `--standalone` so the turn runs in this server's own process group instead of being handed to an already-running OpenCode server that the wall-clock limit could not stop. Sessions are not separated from normal OpenCode sessions; no session-directory flag is available.",
     buildArgs: (input) => {
       const args = ["run", "--standalone"]
       if (input.model) args.push("--model", input.model)
       return join([args, [input.prompt]])
+    },
+  },
+  {
+    id: "pi",
+    label: "Pi Coding Agent",
+    binaries: ["pi"],
+    cwdFlag: null,
+    stdinClosed: true,
+    promptFlag: "--print",
+    modelSupported: true,
+    notes:
+      "Pi print mode uses isolated --session-dir storage while preserving configured extensions, MCP, network and permissions. No explicit model catalog; selectors pass unverified to Pi's native fuzzy resolver. Prompts starting with @ are refused because Pi treats them as file arguments.",
+    buildArgs: (input) => {
+      if (input.prompt.startsWith("@"))
+        throw new Error("Pi processes '@…' as a file argument; the prompt must not start with '@'.")
+      const args: string[] = []
+      if (input.model) args.push("--model", input.model)
+      if (input.piSessionDir !== undefined) args.push("--session-dir", input.piSessionDir)
+      args.push("--print", input.prompt)
+      return args
     },
   },
   {

@@ -2,6 +2,7 @@
 import { devNull } from "node:os"
 import type { HarnessSpec } from "../catalog/registry.ts"
 import { evaluateOpenCodeEvidence, type OpenCodeEvidence } from "./evidence/opencode.ts"
+import { inspectPi } from "./evidence/pi.ts"
 import {
   createProbe,
   DiscoveryBusyError,
@@ -197,6 +198,8 @@ async function inspectHarness(
       return inspectCodex(executable, options)
     case "opencode":
       return inspectOpenCode(executable, options)
+    case "pi":
+      return inspectPi(executable, options)
     case "amp":
     case "cursor":
     case "crush":

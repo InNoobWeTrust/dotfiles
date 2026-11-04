@@ -26,6 +26,8 @@ and processes. Add `DELEGATE_E2E_REAL=1` for one paid turn against the real
 | The interface stays simple | E2E must assert exactly `delegate_status`, `delegate_models` and `delegate_run`, including an empty harness PATH; discovery uses stable tool names |
 | Presence is not readiness | Critical tests distinguish missing, unconfigured and unknown executables; unsupported inspectors spawn no model/login probes and are not selectable |
 | Signed-in AGY becomes selectable without a model probe | Critical tests accept `/usage` percentages from 0% to 100% despite label/layout changes and reject missing/invalid percentages, auth prompts and failed/timed-out probes; E2E covers sign-out refresh, refused dispatch, default model and native model passthrough |
+| Pi readiness and dispatch | Verify the offline, extension/MCP-disabled `--list-models` probe requires a populated native table; no-models prose and failed or incomplete probes remain `unknown`; a successful populated listing remains usable despite stderr warnings. Extension-only providers are invisible and migrations may run. Confirm native model passthrough, Pi `@` prompt refusal, and normal runs retaining native extensions, MCP, network and permissions; Pi listing via `delegate_models` is unsupported. |
+| Pi session storage | Verify an absolute NUL-free `piSessionDir`, rejection for other harnesses and invalid paths, XDG/HOME defaults, private creation without chmod of existing directories, and effective `--session-dir` in argv. Sessions persist until manual removal; other harnesses retain their normal stores. |
 | Inspection is bounded and non-recursive | Tests assert exact non-model CLI argv, aggregate inspection budgets, at most two concurrent inspections, fixed safe reasons and no probes under `DELEGATE_INSPECTION=1` |
 | Status recovers without catalog churn | E2E refreshes after configuration changes and verifies unknown/unconfigured harnesses cannot launch a turn |
 | A prompt reaches the CLI as one literal argument | E2E stub logs every argv element and the prompt appears verbatim as the last element; unit tests pass a prompt containing shell syntax and an argument that looks like one to every `buildArgs` and to `runProcess`, and neither is ever re-parsed |
@@ -64,6 +66,10 @@ Executed checks (not a green full suite or user acceptance):
 
 The reported pre-change baseline was 61 passing tests plus a separate
 `models.test.ts` SDK@1/client loader error, not a green full suite.
+
+The Pi gates above describe acceptance criteria, not executed Pi verification. The
+pre-change baseline recorded an SDK import failure in `bun run test` and an E2E
+survivor-lifecycle failure; do not infer a full-suite pass from these criteria.
 
 The dated verification sections below are preserved historical evidence.
 Their mode-selection claims are obsolete, not current acceptance guarantees.

@@ -42,6 +42,7 @@ describe("harness registry", () => {
       hermes: ["--in", workdir, "-z", prompt],
       kilo: ["run", "--dir", workdir, prompt],
       opencode: ["run", "--standalone", prompt],
+      pi: ["--print", prompt],
       qwen: ["-p", prompt],
     }
     expect(HARNESSES.map(({ id }) => id).sort()).toEqual(Object.keys(expected).sort())
@@ -71,6 +72,7 @@ describe("harness registry", () => {
       hermes: ["--in", workdir, "--model", "some-model", "-z", prompt],
       kilo: ["run", "--dir", workdir, "--model", "some-model", prompt],
       opencode: ["run", "--standalone", "--model", "some-model", prompt],
+      pi: ["--model", "some-model", "--print", prompt],
       qwen: ["-m", "some-model", "-p", prompt],
     }
     for (const [id, argv] of Object.entries(expected))
@@ -78,6 +80,27 @@ describe("harness registry", () => {
     expect(() => mustFind("amp").buildArgs(input({ model: "some-model" }), workdir)).toThrow(
       /model flag/,
     )
+  })
+
+  test("Pi custom session argv and @ prompt guard", () => {
+    const pi = mustFind("pi")
+    const prompt = input().prompt
+    expect(pi.buildArgs(input({ piSessionDir: "/sessions/custom" }), "/tmp")).toEqual([
+      "--session-dir",
+      "/sessions/custom",
+      "--print",
+      prompt,
+    ])
+    expect(pi.buildArgs(input({ model: "m", piSessionDir: "/sessions/custom" }), "/tmp")).toEqual([
+      "--model",
+      "m",
+      "--session-dir",
+      "/sessions/custom",
+      "--print",
+      prompt,
+    ])
+    expect(() => pi.buildArgs(input({ prompt: "@AGENTS.md" }), "/tmp")).toThrow(/file argument/)
+    expect(() => pi.buildArgs(input(), "/tmp")).not.toThrow()
   })
 
   test("AGY sandbox remains an independent optional flag", () => {

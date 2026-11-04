@@ -20,7 +20,7 @@ const positiveInt = (max: number) => z.number().int().positive().max(max)
 const notAnOption = (value: string): boolean => !value.startsWith("-")
 
 const optionSafe = (label: string) => ({
-  message: `${label} must not start with '-': the harness CLI would read it as an option rather than as the value. No supported CLI takes an end-of-options delimiter for the prompt, so the text has to start with a letter, a digit, or a space — a leading space is invisible to the harness and keeps a bullet list or diff intact.`,
+  message: `${label} must not start with '-': the harness CLI would read it as an option rather than as the value. Pi supports --, but adapters lack a shared end-of-options convention; prefix the text with a space when needed.`,
 })
 
 /**
@@ -52,6 +52,12 @@ export const delegateInputSchema = {
     .default(DEFAULT_WALL_TIME_MS)
     .describe(
       "Wall-clock limit for the whole delegated turn: CLI startup, model/tool round trips, internal swarm coordination and final synthesis. Default 900000 (15 min), maximum 7200000 (2 h). Keep the default for substantive AGY work unless evidence justifies a different bound; do not infer a two-minute task from a fast model. Match any prompt budget to this deadline. On expiry the harness process group is killed and partial output is returned; expiry alone does not prove the route is broken.",
+    ),
+  piSessionDir: z
+    .string()
+    .optional()
+    .describe(
+      "Pi-only absolute session storage path; defaults under XDG_CACHE_HOME or HOME. Other harnesses reject this field.",
     ),
   agySandbox: z
     .boolean()

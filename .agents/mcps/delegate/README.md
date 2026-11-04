@@ -11,7 +11,7 @@ Spawn an **external AI subagent** through three stable tools: `delegate_status` 
 |---|---|
 | Bun | Resolves major-versioned MCP SDK@1 and Zod@4 imports automatically; no committed `node_modules` |
 | An executable on the MCP server's `PATH` | Shell aliases are not executables and are not resolved by a non-login server |
-| Inspectable account/provider configuration | Automatic inspectors: AGY, Claude, Codex, OpenCode; other harnesses report `unknown` readiness |
+| Inspectable account/provider configuration | Automatic inspectors: AGY, Claude, Codex, OpenCode, Pi; other harnesses report `unknown` readiness |
 
 ## Start
 
@@ -51,7 +51,13 @@ All three tools always exist, even when no harness is selectable.
 AGY uses `agy --print /usage` (a CLI-served account report, not a model turn).
 Claude uses `auth status`; Codex uses `login status`; OpenCode inspects integrations
 and providers through its service, then enabled models through a private API process.
-The service may start automatically; delegated model turns still use a private server. Each harness gets an
+The service may start automatically; delegated model turns still use a private server.
+Pi uses `--list-models --offline --no-extensions --no-mcp`: a populated native
+model table is configuration evidence, not proof of model access. Warnings do not
+block a successful populated listing. No models is ambiguous and reports `unknown`;
+extension-only providers are invisible to this probe.
+The Pi CLI may perform idempotent native migrations during inspection.
+Each harness gets an
 aggregate eight-second inspection budget, with at most two inspections in flight;
 process cleanup can extend that deadline briefly.
 
@@ -98,7 +104,9 @@ Pass a returned `selector` unchanged as `delegate_run.model`; OpenCode selectors
 run validation uses the full internal catalog, independently of status hints.
 
 Listing supports OpenCode and AGY only, even if another harness supports model selection.
-An installed harness may provide a catalog without being ready to run; check status before dispatch.
+For Pi, pass its native model selector unchanged; Delegate does not verify it against a
+catalog, and `delegate_models` does not support Pi. An installed harness may provide a
+catalog without being ready to run; check status before dispatch.
 Commandcode is not registered.
 
 | Listing field | Meaning |
@@ -158,6 +166,15 @@ Set `workdir` unless you want the task to run in the connected agent's MCP root.
 // → { "ok": true, "data": { "exitCode": 0, "stdout": "amp\nagy\n…", "stop": "exited", … } }
 ```
 
+```jsonc
+// Pi: choose a session directory distinct from your normal Pi sessions
+{ "tool": "delegate_run", "input": { "harness": "pi", "prompt": "Summarize the README. Read only; no edits or commands.", "workdir": "/abs/path/to/project", "piSessionDir": "/abs/path/to/delegate-pi-sessions" } }
+```
+
+Pi runs retain its native extensions, MCP servers, network and permissions; the
+restricted flags above apply only to readiness inspection. Pi refuses prompts
+starting with `@`, which its CLI treats as file includes.
+
 The external subagent receives no parent conversation or resumable session and
 cannot ask a follow-up question. Include the goal, necessary context, allowed
 actions, exact paths, acceptance criteria and return format in the prompt.
@@ -177,9 +194,10 @@ actions, exact paths, acceptance criteria and return format in the prompt.
 | `harness` | required | CLI ID from `delegate_status().data.harnesses`; unknown or unconfigured IDs are refused |
 | `prompt` | required | The whole task, as one argument. Max 64 KiB. Must not begin with `-`. |
 | `workdir` | MCP root, else server directory | Absolute directory the harness runs in; supplies working directory, not filesystem isolation |
-| `model` | harness default | Exact native selector from explicit discovery; empty status hints do not mean no models. Must not begin with `-`. Check `modelSupported`. |
+| `model` | harness default | Native selector; use explicit discovery where supported. Pi selectors pass unchanged to its native resolver without catalog verification. Empty status hints do not mean no models. Must not begin with `-`. Check `modelSupported`. |
 | `wallTimeMs` | 900000 | Wall-clock limit for the whole turn (max 7200000): CLI startup, model/tool round trips, swarm coordination and synthesis. On expiry the process group is killed and partial output is returned. |
 | `agySandbox` | omitted | AGY-only optional terminal profile; normally omit. Other harnesses reject this field. |
+| `piSessionDir` | Pi cache directory | Pi-only absolute path without NUL bytes; other harnesses reject it. See session storage below. |
 
 ### Interpreting output
 
@@ -209,8 +227,21 @@ private (0700), files owner-only (0600). Files remain until removed, can contain
 sensitive output, and have no automatic expiry. `stdoutBytes` and `stderrBytes`
 count raw saved bytes.
 
-For project-sensitive harnesses, a different `workdir` triggers fresh inspection
-before launch; the result does not overwrite the server's startup snapshot.
+For project-sensitive harnesses, including Pi, a different `workdir` triggers fresh
+inspection before launch; the result does not overwrite the server's startup snapshot.
+
+### Session storage
+
+Pi uses `piSessionDir` when supplied. Otherwise it uses
+`$XDG_CACHE_HOME/delegate/pi-sessions` if `XDG_CACHE_HOME` is absolute, or
+`$HOME/.cache/delegate/pi-sessions` otherwise; if neither location is available,
+the run fails. Newly created directories use mode 0700 (subject to umask); existing
+directories are not chmodded. Sessions remain until manually removed, and the
+returned argv shows the effective `--session-dir`.
+
+Other harnesses continue to use their normal session stores; their sessions are not
+separated by Delegate. Whether AGY's per-invocation `--settings` can provide session
+isolation has not been verified.
 
 ## Costs and limits
 

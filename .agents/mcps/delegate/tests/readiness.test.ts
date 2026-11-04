@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test"
 import { devNull } from "node:os"
 import type { RunOptions, RunResult } from "../src/execution/process/execute.ts"
 import { type HarnessSpec, harnessById } from "../src/harnesses/catalog/registry.ts"
+import { parsePiListModels } from "../src/harnesses/discovery/evidence/pi.ts"
 import { inspectReadiness } from "../src/harnesses/discovery/readiness.ts"
 
 type RunCall = { file: string; args: string[]; options: RunOptions }
@@ -524,5 +525,65 @@ describe("inspectReadiness", () => {
     expect(result.models).toEqual([])
     expect(result.reason).not.toContain("__RAW_CLI_VALUE__")
     expect(result.reason).not.toContain(raw)
+  })
+})
+
+describe("Pi readiness", () => {
+  const header =
+    "provider        model                                               context  max-out  thinking  images"
+  const row =
+    "anthropic       claude-sonnet-4-6                                   1M       128K     yes       yes"
+  test("recognizes exact native table and rejects no-model prose", () => {
+    expect(parsePiListModels(`${header}\n${row}`)).toBe(true)
+    expect(
+      parsePiListModels("No models available. See:\n  /path/providers.md\n  /path/models.md"),
+    ).toBe(false)
+    expect(parsePiListModels("provider  model  context  max-out  thinking  images")).toBe(false)
+  })
+  test("probe is fail-closed and hardened", async () => {
+    const { calls, run } = queueRun([exited(`${header}\n${row}`)])
+    const result = await inspectReadiness(mustFind("pi"), "/opt/pi", {
+      cwd: "/workspace",
+      env: { ...BASE_ENV },
+      run,
+    })
+    expect(calls[0]?.args).toEqual(["--list-models", "--offline", "--no-extensions", "--no-mcp"])
+    expect(result.readiness).toBe("configured")
+    expect(result.models).toEqual([])
+    expect(calls[0]?.options.env.DELEGATE_INSPECTION).toBe("1")
+  })
+  test("never admits ambiguous, failed or incomplete Pi evidence", async () => {
+    const table = `${header}\n${row}`
+    const noModels =
+      "No models available. Use /login to log into a provider via OAuth or API key. See:\n  /path/to/providers.md\n  /path/to/models.md"
+    for (const evidence of [
+      exited(noModels),
+      exited(header),
+      exited("unexpected output"),
+      exited(table, { exitCode: 1 }),
+      exited(table, { truncated: true }),
+      exited(table, { stop: "wall_time", exitCode: null }),
+    ]) {
+      const { run } = queueRun([evidence])
+      const result = await inspectReadiness(mustFind("pi"), "/opt/pi", {
+        cwd: "/workspace",
+        env: { ...BASE_ENV },
+        run,
+      })
+      expect(result.readiness).toBe("unknown")
+      expect(result.models).toEqual([])
+      expect(result.reason).not.toContain(noModels)
+    }
+  })
+  test("accepts successful Pi table despite stderr warnings", async () => {
+    const table = `${header}\n${row}`
+    const { run } = queueRun([exited(table, { stderr: "Warning: errors loading models.json" })])
+    const result = await inspectReadiness(mustFind("pi"), "/opt/pi", {
+      cwd: "/workspace",
+      env: { ...BASE_ENV },
+      run,
+    })
+    expect(result.readiness).toBe("configured")
+    expect(result.models).toEqual([])
   })
 })

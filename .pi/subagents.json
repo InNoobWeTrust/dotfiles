@@ -16,7 +16,7 @@
   "widgetMode": "background",
   "outputTranscript": true,
   "worktreeIsolation": true,
-  "maxSubagentDepth": 2,
+  "maxSubagentDepth": 3,
   "fallbackSubagent": "general-purpose",
   "reportUsage": true,
   "showCost": true,
