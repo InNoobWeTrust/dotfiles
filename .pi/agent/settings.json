@@ -6,7 +6,7 @@
     "npm:@tintinweb/pi-subagents"
   ],
   "images": {
-    "blockImages": true
+    "blockImages": false
   },
   "showHardwareCursor": true,
   "editorPaddingX": 0,
