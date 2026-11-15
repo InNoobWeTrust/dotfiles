@@ -82,6 +82,7 @@ Trigger **Audit/Evolve** (not full Bootstrap) when any of:
 - User says: audit foundation, evolve agents setup, sync .agents, foundation drift, missing skills
 - `skills/INDEX` routes to a skill path that does not exist
 - New major subsystem landed and `docs/architecture.md` / `GLOSSARY.md` were not updated in the same change set
+- A module/package/sub-project gains or needs its own manifest, lint/format/typecheck configuration, or quality commands; audit that module scope, inherit repo-level rules, and report missing repo-level guidance separately
 - Global pack revision in `FOUNDATION.md` is older than 90 days (copy mode) and user is doing foundation-related work
 - First session in a repo that has `AGENTS.md` but no `.agents/FOUNDATION.md`;
   investigate source-vs-installed identity, not automatic full Bootstrap

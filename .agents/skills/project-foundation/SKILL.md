@@ -1,11 +1,11 @@
 ---
 name: project-foundation
-description: "Use this skill to bootstrap, audit, or evolve a project's AI-augmented foundation — AGENTS.md, GLOSSARY.md, rules, skills core pack, Makefile, architecture docs, quality gates, and harness-specific MCP configuration management. Activate for new project setup, foundation drift detection, syncing .agents from global, syncing MCP configurations, or when INDEX.md points at missing skills. Skip when editing a single existing rule or skill body with no pack-level change."
+description: "Use this skill to bootstrap, audit, or evolve an AI-augmented foundation for a repository, module, package, or sub-project — AGENTS.md, GLOSSARY.md, rules, skills core pack, Makefile or package commands, architecture docs, quality gates, linting/formatting/typechecking wiring, and harness-specific MCP configuration management. Activate for new project or sub-project setup, module-level foundation or tooling gaps (linters, formatters, type checks, quality commands), foundation drift detection, syncing .agents from global, syncing MCP configurations, or when INDEX.md points at missing skills. Skip when editing a single existing rule or skill body with no pack-level change."
 ---
 
 # Project Foundation
 
-Keeps a repo’s agent-facing foundation **complete, loadable, and honest relative to the codebase**. Bootstrap is only one mode — **Audit/Evolve** is the ongoing mode.
+Keeps the agent-facing foundation of a repository or one of its modules, packages, or sub-projects **complete, loadable, and honest relative to the codebase**. Bootstrap is only one mode — **Audit/Evolve** is the ongoing mode.
 
 Progressive disclosure: this file is the workflow. Pack membership and checklists live in:
 
@@ -22,6 +22,7 @@ Progressive disclosure: this file is the workflow. Pack membership and checklist
 |---|---|
 | No `AGENTS.md` / no `.agents/` / "set up new project" | **A — Bootstrap** |
 | "audit foundation", "evolve", "sync .agents", missing skill at runtime, stale architecture/glossary | **B — Audit/Evolve** |
+| Existing repo foundation; a module/package/sub-project needs its own lint/format/typecheck wiring, quality commands, or foundation artifacts | **B — Audit/Evolve**, scoped to that module (inherit repo rules; no whole-repo re-bootstrap) |
 | Core skills only as INDEX stubs; teammate can't load skills | **C — Materialize core pack** (often inside A or B) |
 | "sync mcp", "update mcp config" | **MCP Sync** (load `references/mcp-sync.md`) |
 
@@ -105,7 +106,7 @@ Use the presence checklist in `references/drift-checks.md` section A. All critic
 
 ## Mode B — Audit/Evolve
 
-Use when the foundation already exists. **Do not re-bootstrap from scratch.**
+Use when the foundation already exists. **Do not re-bootstrap from scratch.** For a module, package, or sub-project inside an established repository, scope the audit and fixes to that module: inherit repository-level rules and commands, materialize only module-local artifacts justified by its manifest and conventions, and report repo-level gaps separately. Do not duplicate the repository pack or treat the module as a second repository. For module scope, read the repository `.agents/FOUNDATION.md` as inherited identity; update it only if repo-level artifacts changed, and never rewrite it for module-local work. Tool, linter or dependency additions still require human stack approval; before approval, report the existing native tools and the proposed smallest set.
 
 1. Read `.agents/FOUNDATION.md` (if missing → treat as an identity gap). An authoring
    source pack uses `mode: source`, its actual source/revision and checked scope;
