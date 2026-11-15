@@ -125,8 +125,7 @@ snapshots are exempt and live in marked paths.
 
 | Measure | Default | Typical gate |
 |---|---|---|
-| Cognitive complexity per function | ≤ 15 | Sonar/Biome cognitive complexity, `gocognit`, clippy |
-| Cyclomatic complexity per function | ≤ 10 | Ruff `C901`, ESLint `complexity` |
+| Complexity per function (select one; not cumulative) | **Cognitive ≤ 15** where the project's approved checker supports it; otherwise **Cyclomatic ≤ 10** where supported; if neither, report the gap. Both only as a recorded project policy. | Sonar/Biome cognitive complexity, `gocognit`, clippy; Ruff `C901`, ESLint `complexity` |
 | Function body | ≤ 50 lines | ESLint `max-lines-per-function`, Ruff `PLR0915`, `funlen` |
 | Block nesting depth | ≤ 4 | ESLint `max-depth`, `nestif` |
 | Parameters | ≤ 5 (use a typed options object beyond) | Ruff `PLR0913`, ESLint `max-params` |
@@ -135,6 +134,15 @@ snapshots are exempt and live in marked paths.
 | Dead code | none introduced | knip, vulture, `deadcode`, `cargo-machete` |
 | Boundaries | zero violations of §1.2/§1.4 | dependency-cruiser, eslint-plugin-boundaries, import-linter, depguard, ArchUnit |
 | Reviewable step | ≤ 400 changed hand-written non-test lines, one concern | diff stat in handoff |
+
+These measures answer different questions—cognitive complexity weighs nesting and
+readability, cyclomatic complexity counts independent paths—and their scores are not
+interchangeable. Select one measure supported by the project's approved checker and
+record any override in the structure contract or linter configuration; do not add a
+linter solely for the unselected metric. The selected measure is mandatory; the other
+is not an implied requirement. An existing recorded complexity gate stays in force,
+and a project that records both enforces both. If no approved checker supports either
+measure, report the gap rather than substituting a score or installing tooling.
 
 A directory with more than ~20 source files, or a file that mixes features, is a
 regrouping signal for review, not an automatic gate.

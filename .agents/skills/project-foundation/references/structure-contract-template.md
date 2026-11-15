@@ -33,7 +33,7 @@ Include a concise block (keep total `AGENTS.md` within the ~150-line / 8 KB budg
   5. Separate structural tidy steps (pure moves/renames) from behavior changes; keep each reviewable step ≤ 400 hand-written non-test LOC.
   6. Test-flight slices narrow scope, not structure; once behavior is locked, clean all structural findings inside the task footprint before completion.
 - **Limits (project overrides; omit rows that use global defaults):**
-  - Cognitive complexity ≤ 15 | Cyclomatic ≤ 10 | Function ≤ 50 lines | Nesting ≤ 4 | Params ≤ 5 | File ≤ 400 code lines (tests ≤ 800) | No new clone ≥ 50 tokens.
+  - Complexity (select one; both only if recorded; if neither is supported, record the gap): Cognitive ≤ 15 (preferred where supported) or Cyclomatic ≤ 10 | Function ≤ 50 lines | Nesting ≤ 4 | Params ≤ 5 | File ≤ 400 code lines (tests ≤ 800) | No new clone ≥ 50 tokens.
 - **Structure gate command:** `make quality` (must pass with pasted output before handoff).
 ```
 
@@ -52,7 +52,7 @@ ratchet policy for the stack:
 | Gate | Tool / Rule | Threshold | Command |
 |---|---|---|---|
 | Formatting & style | <biome / prettier / ruff format / gofmt / rustfmt> | zero diff | `make lint` |
-| Complexity & size | <eslint / biome / ruff C90+PLR / golangci-lint / clippy> | cog ≤ 15, cyc ≤ 10, fn ≤ 50 LOC, depth ≤ 4, params ≤ 5, file ≤ 400 LOC | `make quality` |
+| Complexity & size | <eslint / biome / ruff C90+PLR / golangci-lint / clippy> | one selected gate: cog ≤ 15 (preferred where supported) or cyc ≤ 10; both only if recorded; if neither is supported, record the gap; fn ≤ 50 LOC, depth ≤ 4, params ≤ 5, file ≤ 400 LOC | `make quality` |
 | Architecture boundaries | <dependency-cruiser / eslint-plugin-boundaries / import-linter / depguard / cargo-deny / ArchUnit> | zero forbidden or circular edges | `make quality` |
 | Duplication | `jscpd` (min-tokens 50, min-lines 5) | zero new clones | `make quality` |
 | Dead code | <knip / vulture / deadcode / cargo-machete> | zero new unused exports/files/deps | `make quality` |
