@@ -1,0 +1,64 @@
+# Maintaining agent definitions
+
+For maintainers and agents adding, removing, renaming, or changing profiles. These are existing requirements, not model rankings or permission to change the fleet.
+
+| Requirement | Boundary |
+| --- | --- |
+| Research before assigning roles | Never invent strengths, weaknesses, or task suitability |
+| Keep descriptions useful to callers | Keep research and provenance in fleet records |
+| Verify the complete change | File/schema checks do not establish runtime quality |
+
+## 1. Scope and governing sources
+
+- **Confirm authority.** Research is not implementation permission. Preserve approved mappings, scope, configuration, and exclusions; obtain required human stack approval and reuse it only while unchanged.
+- **Read sources.** Consult [fleet evidence](../docs/quality-tooling/fleet-benchmarks.md), [routing policy](../docs/skills-and-rules/agent-routing-evidence.md), [failure lessons](../docs/skills-and-rules/agent-guidance-lessons.md), and [model-benchmarking](../skills/model-benchmarking/SKILL.md), not just recollection/summaries.
+- **Protect existing work.** Preserve unrelated/staged work, permissions, enabled state, primary settings, modes, and variants outside approved scope. Git writes, installs, restarts, and paid probes need authorization.
+- **Reconcile requirements.** Current instructions/user decisions govern, not historical examples. Report unresolved material conflicts; do not silently choose an interpretation.
+
+## 2. Research each changed model before writing descriptions
+
+- **Verify identity/access.** Check exact IDs/variants against the live catalog and configured registry. Membership, metadata validity, entitlement, quota, reachability, and successful invocation are separate evidence.
+- **Research task fit.** Investigate strengths, weaknesses, and failures through benchmarks, firsthand practitioner reports, and checked local outcomes. Catalogs, context size, tool flags, price, and vendor taglines do not prove competence.
+- **Record provenance.** Retain model/checkpoint or family, benchmark version, effort, harness, source date/type, task, and actual checks. Distinguish snippets, vendor claims, anecdotes, and controlled measurements; copied reports/votes are not independent evidence.
+- **Keep counterevidence.** Retain failures/conflicts. Never invent rankings, averages, acceptance rates, uptime, or disagreement explanations; missing values are `unknown`, not zero or weak.
+- **Compare like evidence.** Benchmark versions differ. Model-level scores do not measure a configured effort/endpoint/harness; checkpoint scores are not alias averages. Curated rolling aliases may use recent family-level qualitative evidence without pinning; never silently substitute models/variants.
+- **Separate competencies.** Architecture, orchestration, implementation, skeptical review, writing, and extraction need distinct evidence. Coding scores do not establish design judgment, review precision, or writing competence; document work needs a reader, outline, and source boundary.
+- **Expose gaps.** Generic bounded-task wording is not researched suitability. Record conservative allocations/checked trials as such, not demonstrated strengths; report gaps before unsupported assignments.
+- **Vet free routes.** Check pricing, lifecycle, privacy/data use, limits, and observed reliability. Free access proves neither quality, privacy, uptime, account usability, nor unattended-work suitability. Historical examples do not establish current quotas.
+
+## 3. Maintain evidence alongside profile changes
+
+- **Update the ledger.** Follow the fleet guide and [CSV](../docs/quality-tooling/fleet-benchmarks.csv): every addition/removal, retired rows with `status: removed` plus reason, and refreshed affected-model evidence.
+- **Keep dates honest.** Recheck changed-model rows only; preserve other dates. Record benchmark identities/dates and `unknown` metrics; copying IDs is not checking task fit.
+- **Separate evidence.** Keep provenance, limitations, and deployment observations in repository fleet records, not reusable skills/descriptions. Description-only work needs evidence, not an oversized report.
+- **Report unavailable sources.** An inaccessible source or malformed ledger is a gap, not a complete lookup or permission to silently repair unrelated data.
+
+## 4. Write for the caller, not the investigation
+
+- **Make selection actionable.** Use 1–2 concise sentences: task fit, trigger, required scope, limits, and alternatives. Selection must not require the evidence ledger.
+- **Ground roles.** Derive boundaries from research, never names, brands, price, stereotypes, or a desire to differentiate profiles.
+- **Exclude residue.** No scores, parameter counts, marketing, prices, plan/quota commentary, provenance links, dates, history, chat metaphors, or reading assignments. Express uncertainty only as selection-relevant constraints; keep evidence elsewhere.
+- **Decouple identity.** Model assignment belongs in `model:`, not prompt prose. Orchestrator dispatch uses agent IDs, not model names in parentheses; model selection does not supply a personality.
+- **Preserve reader context.** Include needed inputs and constraints without assuming the chat. Remove unrelated history, not genuine privacy, provider-identity, or permission safeguards.
+
+## 5. Separate description, worker prompt, configuration, and authority
+
+- **Description:** helps the caller choose; it is not proof the worker received instructions.
+- **Worker prompt:** OpenCode uses the Markdown body as system prompt. Do not assume frontmatter reaches workers, require self-reading, or put worker instructions only in descriptions. Profiles do not replace discovery/bounded handoffs.
+- **Configuration:** verify keys/permissions against the consuming harness and provider schema/configuration. Never invent fields or copy reasoning variants/options/permission shapes from an unrelated route.
+- **Authority:** task fit grants no permissions/decision rights. Preserve local direction policy and [governing instructions](../AGENTS.md): GPT/Codex and unidentified routes remain atomic-execution/factual-verification only unless the user explicitly changes policy; benchmarks cannot override it.
+- **Direction changes:** need an eligible proposal, separate original-source validation, and decision authority. The primary records/executes; configuration is not access. Assess aliases/hidden fallbacks by the serving model.
+
+## 6. Verify and hand off
+
+- **Inspect actual effects.** Check files, IDs, mode, variants, enabled state, permissions, unrelated diffs, deletion absence, and consumers/references. Update in-scope links/dispatch; report unresolved outside consumers.
+- **Verify support.** Check claims against research and ledger changes against additions/retirements. Valid files/schema/diffs do not establish appropriate routing.
+- **Check both readers.** Review caller selection separately from worker execution and native enforcement. Required independent checking reconciles original user requirements with the actual result, not just the author's intentions.
+- **Report proof honestly.** Separate executed/failed/skipped/unavailable checks, manual versus parser/schema checks, catalog versus invocation, and source versus runtime evidence. Edited guidance proves neither compliance nor improvement.
+- **Respect acceptance.** Report paths, evidence, gaps, and decisions; checks do not establish user acceptance or authorize unrelated changes.
+
+## Conflicting and contextual sources
+
+The [outcome review guide](../docs/skills-and-rules/end-user-outcome-reviews.md), under "For agent definitions, check two readers separately", includes scores in descriptions. Active model-benchmarking guidance, the fleet guide, and [prompt corrections](../memories/knowledge/agent_prompt_crafting.md) exclude them. Follow the active no-scores requirement; that conflicting document is not rewritten here.
+
+[Orchestration notes](../docs/skills-and-rules/agent-orchestration-design.md) give historical examples/heuristics, not current account evidence or universal rankings. Do not transfer checkpoint claims.
