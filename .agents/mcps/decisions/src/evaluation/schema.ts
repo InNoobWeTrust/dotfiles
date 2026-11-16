@@ -1,9 +1,9 @@
 // Evaluation input and provider-response contracts.
 import { z } from "zod@4"
 
-import { MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_RESPONSE_MODELS } from "./providers/config.ts"
+import { MODEL, FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL, OPENROUTER_RESPONSE_MODELS } from "./providers/config.ts"
 export { MODEL, FALLBACK_MODEL } from "./providers/config.ts"
-export type DecisionModel = typeof MODEL | typeof FALLBACK_MODEL | typeof MERCURY_MODEL | typeof GPT_MODEL
+export type DecisionModel = typeof MODEL | typeof FALLBACK_MODEL | typeof GEMINI_MODEL | typeof GPT_MODEL
 
 const label = z.string().min(1).max(100)
 const instructions = z.string().min(1).max(8000)
@@ -44,7 +44,7 @@ export type EvaluateArgs = z.infer<typeof evaluateSchema>
 const probability = z.number().min(0).max(1)
 const probabilities = z.record(z.string(), probability)
 const responseSchema = z.object({
-  model: z.enum([MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL]),
+  model: z.enum([MODEL, FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL]),
   answers: z.record(z.string(), z.discriminatedUnion("type", [
     z.object({ type: z.literal("choice"), choice: z.string(), probabilities: probabilities.optional(), confidence: probability.optional() }),
     z.object({ type: z.literal("score"), score: z.number(), probabilities: probabilities.optional(), confidence: probability.optional() }),

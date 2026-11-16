@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from "bun:test"
 import { discoverProviders } from "../src/evaluation/providers/availability.ts"
-import { MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/evaluation/providers/config.ts"
+import { MODEL, FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/evaluation/providers/config.ts"
 import type { DecisionModel, ResponsePayload } from "../src/evaluation/schema.ts"
 
 const originalFetch = globalThis.fetch
@@ -147,16 +147,16 @@ test("OpenRouter rate limits do not create direct-Cloudflare cooldown state", as
   expect(second.providers.cloudflare).not.toHaveProperty("retryAt")
 })
 
-for (const [cfStatus, mercuryStatus, gptStatus, enabled] of [
+for (const [cfStatus, geminiStatus, gptStatus, enabled] of [
   [429, 200, 200, true], [429, 429, 200, true], [401, 200, 200, false],
   [429, 401, 200, false], [429, 429, 429, false], [200, 401, 401, true],
 ] as const) {
-  test(`four-route discovery gate ${cfStatus}/${mercuryStatus}/${gptStatus}`, async () => {
+  test(`four-route discovery gate ${cfStatus}/${geminiStatus}/${gptStatus}`, async () => {
     let calls = 0
     globalThis.fetch = async (url, init) => {
       calls++
       const model = JSON.parse(String(init!.body)).model as DecisionModel
-      const status = model === MODEL ? 429 : model === FALLBACK_MODEL ? cfStatus : model === MERCURY_MODEL ? mercuryStatus : gptStatus
+      const status = model === MODEL ? 429 : model === FALLBACK_MODEL ? cfStatus : model === GEMINI_MODEL ? geminiStatus : gptStatus
       if (model !== MODEL) {
         expect(String(url)).toBe(OPENROUTER_ENDPOINT)
         expect(new Headers(init!.headers).get("authorization")).toBe("Bearer fake-router-key")
@@ -166,7 +166,7 @@ for (const [cfStatus, mercuryStatus, gptStatus, enabled] of [
     const result = await discoverProviders(validate, bothEnv)
     expect(result.evaluateAvailable).toBe(enabled)
     expect(calls).toBe(4)
-    expect(result.providers.mercury.httpStatus).toBe(mercuryStatus)
+    expect(result.providers.gemini.httpStatus).toBe(geminiStatus)
     expect(result.providers.gpt.httpStatus).toBe(gptStatus)
   })
 }
@@ -175,6 +175,6 @@ test("OpenRouter credentials alone cannot enable evaluation", async () => {
   const result = await discoverProviders(validate, { OPENROUTER_API_KEY: "fake-router-key" })
   expect(result.evaluateAvailable).toBe(false)
   expect(result.providers.cloudflare.available).toBe(true)
-  expect(result.providers.mercury.available).toBe(true)
+  expect(result.providers.gemini.available).toBe(true)
   expect(result.providers.gpt.available).toBe(true)
 })

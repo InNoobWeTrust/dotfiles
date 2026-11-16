@@ -10,7 +10,7 @@ A decision-support MCP backed by OpenCode Zen, with optional OpenRouter rate-lim
 | Property | Value |
 |---|---|
 | **Purpose** | Structured decisions through `https://opencode.ai/zen/v1/systemone` |
-| **Models, in order** | `jev-1.13-free` → `cloudflare/clef-flash` → `inception/mercury-decide:free` → `openai/gpt-6-luna-decisions` |
+| **Models, in order** | `jev-1.13-free` → `cloudflare/clef-flash` → `google/gemini-decision-1` → `openai/gpt-6-luna-decisions` |
 | **Prerequisites** | Bun, inherited `OPENCODE_API_KEY`; optional `OPENROUTER_API_KEY` for all fallbacks |
 | **Tools** | `discover`; `evaluate` only after startup/discovery verifies a usable route |
 | **Registration** | [OpenCode configuration only](../../../.config/opencode/opencode.jsonc), not the shared MCP registry |
@@ -18,7 +18,7 @@ A decision-support MCP backed by OpenCode Zen, with optional OpenRouter rate-lim
 ```text
 OpenCode → MCP evaluate → Zen Jev
                          └─ 429 → OpenRouter Clef
-                                   └─ 429 → OpenRouter Mercury free
+                                   └─ 429 → OpenRouter Gemini Decision 1
                                              └─ 429 → OpenRouter GPT Luna
 ```
 
@@ -28,17 +28,19 @@ System One answers **choice, score and boolean questions**, not chat prompts. Ea
 
 Launch OpenCode from a shell that has loaded `~/.shrc`, with your existing `OPENCODE_API_KEY` available in its environment and the repository's dotfiles deployed. The [launcher](bin/mcp-decisions) reads no `.env` files; no new key is stored in MCP configuration or output.
 
-For all three fallbacks, inherit `OPENROUTER_API_KEY`; configure Cloudflare/OpenAI BYOK inside OpenRouter, not in this MCP. No direct Cloudflare account ID or token is needed or read. Keep values outside chat and MCP configuration; the MCP reads neither account files nor stored OpenCode credentials. Reconnect the MCP after changing its environment or this code.
+For all three fallbacks, inherit `OPENROUTER_API_KEY`; configure Cloudflare/Google/OpenAI BYOK inside OpenRouter, not in this MCP. No direct Cloudflare account ID or token is needed or read. Keep values outside chat and MCP configuration; the MCP reads neither account files nor stored OpenCode credentials. Reconnect the MCP after changing its environment or this code.
 
 Only **HTTP 429** advances the ordered chain; other HTTP errors, network failures and invalid answers stop it. All fallbacks require the OpenRouter key and a request within 256 KiB; Clef additionally requires two or more choice options and at most **12,000 serialized UTF-8 request bytes**, conservatively leaving headroom for its smallest listed 16K-token backend (not an exact token count). Ineligible routes are skipped, never truncated; all attempts share the original timeout and cancellation signal. There is no direct Workers AI transport or account cooldown.
 
-**Costs:** Mercury's `:free` route is listed free; Clef and GPT Luna are paid OpenRouter routes (listed **$0.038** and **$0.10 / million input tokens**, respectively). OpenRouter controls BYOK routing and billing; this MCP does not enforce BYOK-only service or a spend cap, and the direct Workers AI allowance does not apply as an MCP guarantee. Changing models changes estimates; validate consequential thresholds independently.
+**Costs:** All three OpenRouter fallbacks are paid routes: Clef is listed at **$0.019**, Gemini Decision 1 and GPT Luna each at **$0.10 / million input tokens** (catalog checked 2026-11-16). Google BYOK is configured in OpenRouter; this MCP reads no Google key and does not enforce BYOK-only service or a spend cap. OpenRouter controls routing and billing; the direct Workers AI allowance does not apply as an MCP guarantee.
+
+The fixed chain does not track temporary free OpenRouter models. Changing models changes estimates; validate consequential thresholds independently.
 
 ### Startup availability and discovery
 
 Following the LSP MCP's capability-gating pattern, startup checks inherited credentials and sends one tiny, public-data decision request to each configured model. The probes run in parallel, each with a **4-second** timeout and a **16 KiB** response limit. They verify authentication, endpoint reachability, model identity and a valid answer—not merely the presence of an environment variable. No credentials means no request to that provider. Probes consume quota and may incur the account's normal inference charges; no automatic retries or periodic polling run.
 
-`discover` is always available. `evaluate` appears if Zen passes, or Zen returns 429 and the ordered fallback checks reach an available route. Unconfigured and rate-limited routes are skipped; authentication, network, malformed-response and other HTTP failures stop traversal. Fallback keys alone cannot enable evaluation without Zen's credential context. With both keys configured, discovery makes **four parallel probes, including paid Clef and GPT Luna**, even when Zen is healthy.
+`discover` is always available. `evaluate` appears if Zen passes, or Zen returns 429 and the ordered fallback checks reach an available route. Unconfigured and rate-limited routes are skipped; authentication, network, malformed-response and other HTTP failures stop traversal. Fallback keys alone cannot enable evaluation without Zen's credential context. With both keys configured, discovery makes **four parallel probes, including paid Clef, Gemini Decision 1 and GPT Luna**, even when Zen is healthy.
 
 If `evaluate` is absent, call `discover` to check again and refresh registration, then relist tools. Concurrent discovery calls share one probe batch; discovery is refused while an evaluation runs. Failed provider invocations remove `evaluate` until discovery succeeds; caller cancellation and input-size errors do not. Availability is a point-in-time check, not an uptime or remaining-quota guarantee—do not run discovery before every evaluation.
 
@@ -97,7 +99,7 @@ When the serialized result exceeds 64 KiB, `answers` and `usage` are omitted fro
 - **Provider rejection:** `HTTP_ERROR` includes the HTTP status, not the raw provider body. Check account access, rate limits and API compatibility.
 - **Resource bounds:** One evaluation at a time (`BUSY` for concurrent calls), at most 256 KiB serialized request. The full HTTP response body is streamed to a private XDG cache before parsing; there is no response-size limit. Invalid structured answers fail explicitly. Large results that exceed the 64 KiB inline threshold are stored at `resultPath` and the envelope omits `answers`; the result is never clipped.
 - **Output paths:** Every response includes `responsePath` (raw HTTP body) and `resultPath` (normalized result JSON). Both paths are absolute, private (0700/0600) and not auto-expired; do not store secrets in `state` or `questions`. Paths are null only when the cache directory could not be created (`OUTPUT_CAPTURE_FAILED`); error envelopes also include paths when capture succeeded before the failure.
-- **Cost and privacy:** State and questions go to each attempted provider, potentially including OpenRouter and its upstream OpenAI service. Timeouts are not spend caps and do not guarantee upstream cancellation. Each route is attempted at most once, with its own private raw response cache; returned paths identify the last attempt. Earlier captures remain on disk and are not auto-expired.
+- **Cost and privacy:** State and questions go to each attempted provider, potentially including OpenRouter and its upstream Cloudflare, Google or OpenAI services. Timeouts are not spend caps and do not guarantee upstream cancellation. Each route is attempted at most once, with its own private raw response cache; returned paths identify the last attempt. Earlier captures remain on disk and are not auto-expired.
 - **Interpretation:** Probabilities are model estimates, not guarantees. Validate consequential decisions independently.
 - **Decision ownership:** Compare the suggestion with evidence; choose only within authority or explain a recommendation before asking the user. On failure/unavailability, report the limitation and use ordinary judgment only where the active workflow allows; never waive a hard stop or retry blindly.
 
@@ -107,7 +109,7 @@ See [provider support and Hugging Face findings](details/provider-candidates.md)
 
 ## Maintenance
 
-[server.ts](src/server.ts) owns composition/startup; [protocol/tools.ts](src/protocol/tools.ts) owns registration. [evaluation/providers/availability.ts](src/evaluation/providers/availability.ts) probes routes before exposing evaluation. [evaluation/providers/config.ts](src/evaluation/providers/config.ts) fixes destinations and model aliases; [evaluation/api.ts](src/evaluation/api.ts) owns ordered attempts and wire adaptation; [evaluation/capture/response.ts](src/evaluation/capture/response.ts) owns private captures. [evaluation/schema.ts](src/evaluation/schema.ts) validates flat Zen/OpenRouter replies. Boolean questions map to `noul`; OpenRouter preserves question IDs, fills missing boolean descriptions with `true`/`false`, and null score descriptions with their zero-based index. Discovery retains `providers.cloudflare` for Clef's upstream-vendor status, now through OpenRouter. Probe replies are bounded, discarded and never cached.
+[server.ts](src/server.ts) owns composition/startup; [protocol/tools.ts](src/protocol/tools.ts) owns registration. [evaluation/providers/availability.ts](src/evaluation/providers/availability.ts) probes routes before exposing evaluation. [evaluation/providers/config.ts](src/evaluation/providers/config.ts) fixes destinations and model aliases; [evaluation/api.ts](src/evaluation/api.ts) owns ordered attempts and wire adaptation; [evaluation/capture/response.ts](src/evaluation/capture/response.ts) owns private captures. [evaluation/schema.ts](src/evaluation/schema.ts) validates flat Zen/OpenRouter replies. Boolean questions map to `noul`; OpenRouter preserves question IDs, fills missing boolean descriptions with `true`/`false`, and null score descriptions with their zero-based index. Discovery reports `providers.zen`, `providers.cloudflare`, `providers.gemini` and `providers.gpt`; the latter three use OpenRouter. Probe replies are bounded, discarded and never cached.
 
 Runtime follows the repository's Bun/MCP SDK v1/Zod v4 conventions, with automatic package resolution and no local `node_modules`. Native `mcp.servers` registration coexists with legacy OpenCode entries; other harnesses are unchanged.
 

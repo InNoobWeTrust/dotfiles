@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test"
 import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs"
 import { join } from "node:path"
 import { evaluate, failure } from "../src/evaluation/api.ts"
-import { ENDPOINT, FALLBACK_MODEL, MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/evaluation/providers/config.ts"
+import { ENDPOINT, FALLBACK_MODEL, MODEL, GEMINI_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/evaluation/providers/config.ts"
 import type { DecisionModel, EvaluateArgs, ResponsePayload } from "../src/evaluation/schema.ts"
 
 const envNames = ["OPENCODE_API_KEY", "CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN", "OPENROUTER_API_KEY", "XDG_CACHE_HOME"] as const
@@ -159,15 +159,15 @@ describe("429-only Clef fallback security and state", () => {
     expect(calls).toHaveLength(2)
   })
 
-  test("UTF-8 body over 12000 bytes and single-option choices skip Clef to Mercury without truncation", async () => {
+  test("UTF-8 body over 12000 bytes and single-option choices skip Clef to Gemini without truncation", async () => {
     const large = { ...args, state: "界".repeat(4100) }
     expect(large.state.length).toBeLessThan(12000)
     expect(Buffer.byteLength(large.state)).toBeGreaterThan(12000)
     const single: EvaluateArgs = { ...args, questions: { only: { type: "choice", instructions: "Pick", criteria: { a: null } } } }
     for (const input of [large, single]) {
       const id = Object.keys(input.questions)[0]
-      replies.push(primary429(), cf({ [id]: choice }, MERCURY_MODEL))
-      expect((await run(input)).model).toBe(MERCURY_MODEL)
+      replies.push(primary429(), cf({ [id]: choice }, GEMINI_MODEL))
+      expect((await run(input)).model).toBe(GEMINI_MODEL)
       expect(JSON.parse(String(calls.at(-1)!.init.body)).state).toBe(input.state)
       expect(JSON.parse(String(calls.at(-1)!.init.body)).questions).toEqual(input.questions)
     }
@@ -175,10 +175,10 @@ describe("429-only Clef fallback security and state", () => {
     expect(JSON.parse(String(calls[0].init.body)).state).toBe(large.state)
   })
 
-  test("Clef 429 advances to Mercury without retaining a Workers AI account cooldown", async () => {
+  test("Clef 429 advances to Gemini without retaining a provider cooldown", async () => {
     for (const header of ["120", new Date(Date.now() + 180000).toUTCString(), null, "invalid"]) {
-      replies.push(primary429(), new Response("private-clef-quota", { status: 429, headers: header === null ? {} : { "retry-after": header } }), cf(undefined, MERCURY_MODEL))
-      expect((await run()).model).toBe(MERCURY_MODEL)
+      replies.push(primary429(), new Response("private-clef-quota", { status: 429, headers: header === null ? {} : { "retry-after": header } }), cf(undefined, GEMINI_MODEL))
+      expect((await run()).model).toBe(GEMINI_MODEL)
     }
     expect(calls).toHaveLength(12)
     expect(calls.filter(call => JSON.parse(String(call.init.body)).model === FALLBACK_MODEL)).toHaveLength(4)
@@ -198,7 +198,7 @@ describe("429-only Clef fallback security and state", () => {
     expect(calls).toHaveLength(6)
   })
 
-  test("Clef connection, malformed JSON and obsolete Workers AI envelope failures do not retry", async () => {
+  test("Clef connection, malformed JSON and invalid response failures do not retry", async () => {
     for (const [reply, code] of [[new TypeError("fake-cf-token private detail"), "CONNECTION_FAILED"], [new Response("private malformed"), "INVALID_RESPONSE"], [new Response('{"success":false,"errors":["private"]}'), "INVALID_RESPONSE"]] as const) {
       replies.push(primary429(), reply)
       const result = await failed()
@@ -287,24 +287,24 @@ describe("ordered OpenRouter fallbacks and spending boundary", () => {
     expect((await run(boundary)).model).toBe(FALLBACK_MODEL)
     expect(Buffer.byteLength(String(calls.at(-1)!.init.body))).toBe(12000)
 
-    replies.push(primary429(), router(MERCURY_MODEL))
-    expect((await run({ ...boundary, state: boundary.state + "x" })).model).toBe(MERCURY_MODEL)
+    replies.push(primary429(), router(GEMINI_MODEL))
+    expect((await run({ ...boundary, state: boundary.state + "x" })).model).toBe(GEMINI_MODEL)
 
     const questions: EvaluateArgs["questions"] = { flag: { type: "boolean", instructions: "Likely?", criteria: { true: null } } }
     const native = { flag: { ...questions.flag, type: "noul" } }
     const beforeNormalization = JSON.stringify({ model: FALLBACK_MODEL, state: "", questions: native })
     const input = { ...args, questions, state: "x".repeat(12000 - Buffer.byteLength(beforeNormalization)) }
-    replies.push(primary429(), new Response(JSON.stringify({ model: MERCURY_MODEL, answers: { flag: { type: "noul", noul: 0.5 } } })))
-    expect((await run(input)).model).toBe(MERCURY_MODEL)
+    replies.push(primary429(), new Response(JSON.stringify({ model: GEMINI_MODEL, answers: { flag: { type: "noul", noul: 0.5 } } })))
+    expect((await run(input)).model).toBe(GEMINI_MODEL)
     expect(JSON.parse(String(calls.at(-1)!.init.body)).questions.flag.criteria).toEqual({ true: "true", false: "false" })
   })
 
-  test("429 chain is Zen → OpenRouter Clef → Mercury Free → GPT with isolated credentials and one deadline", async () => {
+  test("429 chain is Zen → OpenRouter Clef → Google Gemini Decision 1 → GPT with isolated credentials and one deadline", async () => {
     process.env.OPENROUTER_API_KEY = "fake-router-key"
     replies.push(primary429(), primary429(), primary429(), router(GPT_MODEL))
     const result = await run()
     expect(result.model).toBe(GPT_MODEL)
-    expect(calls.map(call => JSON.parse(String(call.init.body)).model)).toEqual([MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL])
+    expect(calls.map(call => JSON.parse(String(call.init.body)).model)).toEqual([MODEL, FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL])
     expect(calls.slice(1).map(call => call.url)).toEqual([OPENROUTER_ENDPOINT, OPENROUTER_ENDPOINT, OPENROUTER_ENDPOINT])
     expect(calls.map(call => new Headers(call.init.headers).get("authorization"))).toEqual([
       "Bearer fake-zen-key", "Bearer fake-router-key", "Bearer fake-router-key", "Bearer fake-router-key",
@@ -322,14 +322,14 @@ describe("ordered OpenRouter fallbacks and spending boundary", () => {
     expect(JSON.parse(readFileSync(result.responsePath, "utf8")).model).toBe(GPT_MODEL)
   })
 
-  test("Mercury success after Clef 429 never spends on GPT", async () => {
+  test("Gemini success after Clef 429 never spends on GPT", async () => {
     process.env.OPENROUTER_API_KEY = "fake-router-key"
-    replies.push(primary429(), primary429(), router(MERCURY_MODEL))
-    expect((await run()).model).toBe(MERCURY_MODEL)
+    replies.push(primary429(), primary429(), router(GEMINI_MODEL))
+    expect((await run()).model).toBe(GEMINI_MODEL)
     expect(calls).toHaveLength(3)
   })
 
-  test("Mercury non-429 errors never escalate to paid GPT", async () => {
+  test("Gemini non-429 errors never escalate to paid GPT", async () => {
     process.env.OPENROUTER_API_KEY = "fake-router-key"
     for (const status of [400, 401, 402, 403, 500, 503]) {
       replies.push(primary429(), primary429(), new Response("private router failure fake-router-key", { status }))
@@ -345,7 +345,7 @@ describe("ordered OpenRouter fallbacks and spending boundary", () => {
     expect(calls.every(call => JSON.parse(String(call.init.body)).model !== GPT_MODEL)).toBe(true)
   })
 
-  test("Clef non-429 errors stop before Mercury and GPT", async () => {
+  test("Clef non-429 errors stop before Gemini and GPT", async () => {
     process.env.OPENROUTER_API_KEY = "fake-router-key"
     replies.push(primary429(), new Response("private", { status: 401 }))
     expect((await failed()).error.status).toBe(401)
@@ -372,7 +372,7 @@ describe("ordered OpenRouter fallbacks and spending boundary", () => {
     expect(result.answers.optional).toEqual({ type: "boolean", probability: 0.6 })
   })
 
-  test("abort after Mercury 429 prevents GPT", async () => {
+  test("abort after Gemini 429 prevents GPT", async () => {
     process.env.OPENROUTER_API_KEY = "fake-router-key"
     const controller = new AbortController()
     replies.push(primary429(), primary429(), async () => {

@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, writeFileSync, rmSync } from "node:fs"
 import { join } from "node:path"
 import { spawn } from "node:child_process"
 import { createInterface } from "node:readline"
-import { FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/evaluation/providers/config.ts"
+import { FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "../src/evaluation/providers/config.ts"
 
 // Only HTTP is replaced; the real launcher, SDK, codecs and handlers run together.
 const preload = `
@@ -20,12 +20,12 @@ globalThis.fetch = async (url, init) => {
       ? {type:"score",score:0.5} : {type:"choice",choice:Object.keys(q.criteria)[0]}]));
   const model = process.env.TEST_INVALID === "yes" && !probe ? "unexpected-model" :
      body.model === "cloudflare/clef-flash" ? "cloudflare/clef-flash" :
-       body.model.startsWith("inception/") ? "inception/mercury-decide-20260930" : "openai/gpt-6-luna-decisions-20261006";
+       body.model === "google/gemini-decision-1" ? "google/gemini-decision-1-20261111" : "openai/gpt-6-luna-decisions-20261006";
   return Response.json({model,answers});
 };
 `
 
-for (const { winner, invalid } of [FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL].flatMap(winner =>
+for (const { winner, invalid } of [FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL].flatMap(winner =>
   [false, true].map(invalid => ({ winner, invalid })))) {
   test(`real launcher OpenRouter ${winner}: ${invalid ? "rejects wrong model" : "validates aliases and all question types"}`, async () => {
     const scratch = mkdtempSync(join(process.env.TMPDIR ?? "/tmp/opencode", "decisions-or-"))
@@ -99,11 +99,11 @@ for (const { winner, invalid } of [FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL].fla
       expect(payload.answers.grade).toEqual({ type: "score", score: 0.5 })
       expect(payload.answers.flag).toEqual({ type: "boolean", probability: 0.75 })
       const raw = JSON.parse(readFileSync(payload.responsePath, "utf8"))
-      expect(raw.model).toBe(winner === FALLBACK_MODEL ? "cloudflare/clef-flash" : winner === MERCURY_MODEL ? "inception/mercury-decide-20260930" : "openai/gpt-6-luna-decisions-20261006")
+      expect(raw.model).toBe(winner === FALLBACK_MODEL ? "cloudflare/clef-flash" : winner === GEMINI_MODEL ? "google/gemini-decision-1-20261111" : "openai/gpt-6-luna-decisions-20261006")
       const events = readFileSync(eventsPath, "utf8").trim().split("\n").map(line => JSON.parse(line))
       expect(events.filter(event => event.probe)).toHaveLength(4)
       expect(events.filter(event => !event.probe).map(event => event.body.model))
-        .toEqual(["jev-1.13-free", ...[FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL].slice(0, [FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL].indexOf(winner) + 1)])
+        .toEqual(["jev-1.13-free", ...[FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL].slice(0, [FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL].indexOf(winner) + 1)])
       for (const event of events.filter(event => event.url === OPENROUTER_ENDPOINT)) {
         expect(event.authorization).toBe("Bearer fake-openrouter")
       }

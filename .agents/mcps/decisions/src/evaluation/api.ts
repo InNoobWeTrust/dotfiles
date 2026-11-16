@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs"
 import type { ZodError } from "zod@4"
 import type { DecisionModel, EvaluateArgs, ResponsePayload } from "./schema.ts"
 import { INLINE_OUTPUT_BYTES, ResponseCapture } from "./capture/response.ts"
-import { ENDPOINT, MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "./providers/config.ts"
+import { ENDPOINT, MODEL, FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "./providers/config.ts"
 
 export { ENDPOINT, MODEL } from "./providers/config.ts"
 const MAX_REQUEST_BYTES = 256 * 1024
@@ -12,7 +12,7 @@ const MAX_REQUEST_BYTES = 256 * 1024
 const MAX_CLEF_BYTES = 12000
 
 /** Adapt nullable/partial criteria to OpenRouter's documented Decisions schema. */
-function openRouterRequest(args: EvaluateArgs, model: typeof FALLBACK_MODEL | typeof MERCURY_MODEL | typeof GPT_MODEL) {
+function openRouterRequest(args: EvaluateArgs, model: typeof FALLBACK_MODEL | typeof GEMINI_MODEL | typeof GPT_MODEL) {
   const key = process.env.OPENROUTER_API_KEY
   if (!key) return
   if (model === FALLBACK_MODEL && Object.values(args.questions).some(
@@ -110,7 +110,7 @@ async function streamBody(capture: ResponseCapture, response: Response): Promise
 }
 
 /**
- * Evaluate on Zen; advance through Clef, Mercury Free, then GPT only on HTTP 429.
+ * Evaluate on Zen; advance through Clef, Google Gemini Decision 1, then GPT only on HTTP 429.
  *
  * validateResponse parses and validates the raw HTTP body string; it is injected by the server
  * so that api.ts itself carries no runtime zod@4 dependency (enabling direct unit testing).
@@ -164,7 +164,7 @@ export async function evaluate(
     }
 
     let selectedModel: DecisionModel = MODEL
-    const fallbacks = [FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL] as const
+    const fallbacks = [FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL] as const
     for (const model of fallbacks) {
       if (response.status !== 429) break
       const fallback = openRouterRequest(args, model)

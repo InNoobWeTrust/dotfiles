@@ -1,5 +1,5 @@
 // Provider reachability probes and evaluation-availability policy.
-import { ENDPOINT, MODEL, FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "./config.ts"
+import { ENDPOINT, MODEL, FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL, OPENROUTER_ENDPOINT } from "./config.ts"
 import type { DecisionModel, ResponsePayload } from "../schema.ts"
 
 type Status = "unconfigured" | "available" | "rate_limited" | "unauthorized" | "unreachable" | "invalid_response" | "http_error"
@@ -76,28 +76,28 @@ async function probe(
   }
 }
 
-/** At most four parallel, tiny inference requests, including paid Clef/GPT when configured. No retries or credential-file reads. */
+/** At most four parallel, tiny inference requests, including paid Clef/Gemini/GPT when configured. No retries or credential-file reads. */
 export async function discoverProviders(
   validate: Validator,
   env: Record<string, string | undefined> = process.env,
   signal: AbortSignal = new AbortController().signal,
 ) {
-  const [zen, cf, mercury, gpt] = await Promise.all([
+  const [zen, cf, gemini, gpt] = await Promise.all([
     env.OPENCODE_API_KEY
       ? probe(MODEL, ENDPOINT, env.OPENCODE_API_KEY, validate, signal)
       : Promise.resolve<ProviderAvailability>({ model: MODEL, available: false, status: "unconfigured" }),
-    ...[FALLBACK_MODEL, MERCURY_MODEL, GPT_MODEL].map(model => env.OPENROUTER_API_KEY
+    ...[FALLBACK_MODEL, GEMINI_MODEL, GPT_MODEL].map(model => env.OPENROUTER_API_KEY
       ? probe(model, OPENROUTER_ENDPOINT, env.OPENROUTER_API_KEY, validate, signal)
       : Promise.resolve<ProviderAvailability>({ model, available: false, status: "unconfigured" })),
   ])
   // Match runtime order: a real non-429 failure cannot be bypassed to enable paid routing.
   let evaluateAvailable = zen.available
   if (zen.status === "rate_limited") {
-    for (const fallback of [cf, mercury, gpt]) {
+    for (const fallback of [cf, gemini, gpt]) {
       if (fallback.available) { evaluateAvailable = true; break }
       if (!["unconfigured", "rate_limited"].includes(fallback.status)) break
     }
   }
   return { checkedAt: new Date().toISOString(), evaluateAvailable,
-    providers: { zen, cloudflare: cf, mercury, gpt } }
+    providers: { zen, cloudflare: cf, gemini, gpt } }
 }
